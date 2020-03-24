@@ -272,18 +272,15 @@ class Api(up42.Tools):
 
     def get_blocks(
         self,
-        status_filter: str = "public",
-        type_filter=None,
+        block_type=None,
         basic: bool = True,
         as_dataframe=False,
     ) -> Union[Dict, List[Dict]]:
         """
-        Gets a list of all public and/or custom blocks on the marketplace.
+        Gets a list of all public blocks on the marketplace.
 
         Args:
-            status_filter: Optionally filters to a specific stats type of the block,
-                "public" or "custom", default None.
-            type_filter: Optionally filters to "data" or "processing" blocks, default None.
+            block_type: Optionally filters to "data" or "processing" blocks, default None.
             basic: Optionally returns simple version {block_id : block_name}
             as_dataframe: Returns a dataframe instead of json (default).
 
@@ -292,55 +289,30 @@ class Api(up42.Tools):
             dict.
         """
         try:
-            type_filter = type_filter.lower()
-            status_filter = status_filter.lower()
+            block_type = block_type.lower()
         except AttributeError:
             pass
 
-        if status_filter in [None, "public"]:
-            url = f"{self._endpoint()}/blocks"
-            print(url)
-            response_json = self._request(request_type="GET", url=url)
-            public_blocks_json = response_json["data"]
-        if status_filter in [None, "custom"]:
-            url = f"{self._endpoint()}/users/me/blocks"
-            print(url)
-            response_json = self._request(request_type="GET", url=url)
-            custom_blocks_json = response_json["data"]
+        url = f"{self._endpoint()}/blocks"
+        response_json = self._request(request_type="GET", url=url)
+        public_blocks_json = response_json["data"]
 
-        if status_filter is None:
-            logger.info("Getting public and custom blocks.")
-            blocks_json = public_blocks_json + custom_blocks_json
-        elif status_filter == "public":
-            logger.info("Getting public blocks.")
-            blocks_json = public_blocks_json
-        elif status_filter == "custom":
-            logger.info("Getting custom blocks.")
-            blocks_json = custom_blocks_json
-
-        if type_filter == "data":
+        if block_type == "data":
             logger.info("Getting only data blocks.")
-            blocks_json = [block for block in blocks_json if block["type"] == "DATA"]
-        elif type_filter == "processing":
+            blocks_json = [block for block in public_blocks_json if block["type"] == "DATA"]
+        elif block_type == "processing":
             logger.info("Getting only processing blocks.")
             blocks_json = [
-                block for block in blocks_json if block["type"] == "PROCESSING"
+                block for block in public_blocks_json if block["type"] == "PROCESSING"
             ]
+        else:
+            blocks_json = public_blocks_json
 
         if basic:
             logger.info(
                 "Getting basic information, use basic=False for all block details."
             )
-            # Custom block names can be non unique!
-            if status_filter in [None, "custom"]:
-                blocks_basic = {}
-                for idx, block in enumerate(blocks_json):
-                    if block["name"] not in list(blocks_basic.keys()):
-                        blocks_basic[block["name"]] = block["id"]
-                    else:
-                        blocks_basic[f'custom_{idx}_{block["name"]}'] = block["id"]
-            else:
-                blocks_basic = {block["name"]: block["id"] for block in blocks_json}
+            blocks_basic = {block["name"]: block["id"] for block in blocks_json}
             if as_dataframe:
                 return pd.DataFrame.from_dict(blocks_basic, orient="index")
             else:
