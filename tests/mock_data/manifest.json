@@ -1,0 +1,42 @@
+{
+"_up42_specification_version": 2,
+"name": "sharpening",
+"type": "processing",
+"tags": [
+    "imagery",
+    "processing",
+    "preprocessing",
+    "filtering",
+    "filter",
+    "sharpening",
+    "sharpen",
+    "highpass"
+],
+"display_name": "Sharpening Filter",
+"description": "This block enhances the sharpness of a raster image by applying an unsharp mask filter algorithm.",
+"parameters": {
+    "strength": {"type": "string", "default": "medium"}
+},
+"machine": {
+    "type": "large"
+},
+"input_capabilities": {
+    "raster": {
+        "up42_standard": {
+            "format": "GTiff"
+        }
+    }
+},
+"output_capabilities": {
+    "raster": {
+        "up42_standard": {
+            "format": "GTiff",
+            "bands": ">",
+            "sensor": ">",
+            "resolution": ">",
+            "dtype": ">",
+            "processing_level": ">"
+        }
+    }
+}
+}
