@@ -1,10 +1,10 @@
-# up42-py
-Python API interface for using UP42
-
 ![coverage](coverage.svg)
+<img align="right" src="docs/_assets/banner-up42-py-small.png" alt="" width="300"/>
 
-Documentation with Quickstart, Tutorials & Code-Reference: [https://up42.github.io/up42-py/](https://up42.github.io/up42-py/)
+# up42-py
+**Python interface for UP42, the geospatial marketplace and developer platform.**
 
+**Documentation**: [https://up42.github.io/up42-py/](https://up42.github.io/up42-py/)
 
 ## API structure:
 See also [docs/quickstart](https://up42.github.io/up42-py/quickstart/01_quickstart)

@@ -6,7 +6,7 @@ edit_uri: ''  #disables edit button
 ## Repository
 repo_name: up42-py
 repo_url: https://github.com/up42/up42-py
-copyright: None
+copyright: UP42
 
 ## Social Media
 extra:
