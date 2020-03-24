@@ -31,11 +31,6 @@ project = api.initialize_project()
 
 
 ```python
-api.get_blocks()
-```
-
-
-```python
 # Create a workflow & add blocks/tasks to the workflow.
 workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
 blocks = api.get_blocks(basic=True)
@@ -97,8 +92,26 @@ Example functions: `.get_blocks`, `.get_block_details`, `.delete_custom_block`, 
 
 
 ```python
-api = up42.Api(cfg_file="config.json")
+api = up42.Api(cfg_file="config.json", env="dev")
 api
+```
+
+### Catalog
+
+Example functions: `.construct_parameter`, `.search`, `.download_quicklooks`
+
+
+```python
+catalog = api.initialize_catalog()
+catalog
+```
+
+or
+
+
+```python
+up42.Catalog(api=api, 
+             backend="ONE_ATLAS")
 ```
 
 ### Project
@@ -108,7 +121,18 @@ Example functions: `.get_workflows`, `.create_workflow`, `.get_project_settings`
 
 ```python
 UP42_PROJECT_ID="8956d18d-33bc-47cb-93bd-0055ff21da8f" 
+```
 
+
+```python
+project = api.initialize_project()
+project
+```
+
+or
+
+
+```python
 up42.Project(api=api,
              project_id=UP42_PROJECT_ID)
 ```
@@ -122,7 +146,18 @@ Alltough most often used from the workflow object, a few generic aoi functions a
 
 ```python
 UP42_WORKFLOW_ID="7fb2ec8a-45be-41ad-a50f-98ba6b528b98"
+```
 
+
+```python
+workflow = api.initialize_workflow(workflow_id=UP42_WORKFLOW_ID)
+workflow
+```
+
+or
+
+
+```python
 up42.Workflow(api, 
               project_id=api.project_id, 
               workflow_id=UP42_WORKFLOW_ID)
@@ -130,12 +165,23 @@ up42.Workflow(api,
 
 ### Job
 
-Example functions: `.get_status`, `.track_status`, `.rerun_job`, `.cancel_job`, `.get_results`, `.get_logs`, `.get_quicklook`, `.download_results`, `.plot_results`, `.map_results`, `.upload_results_to_bucket`, `.get_job_tasks`, `.get_job_tasks_results`
+Example functions: `.get_status`, `.track_status`, `.cancel_job`, `.get_results`, `.get_logs`, `.get_quicklook`, `.download_results`, `.plot_results`, `.map_results`, `.upload_results_to_bucket`, `.get_job_tasks`, `.get_job_tasks_results`
 
 
 ```python
 UP42_JOB_ID="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021"
+```
 
+
+```python
+job = api.initialize_job(job_id=UP42_JOB_ID)
+job
+```
+
+or
+
+
+```python
 up42.Job(job_id=UP42_JOB_ID, 
          project_id=UP42_PROJECT_ID,
          api=api)
@@ -148,25 +194,35 @@ Example functions: `.get_result_json`, `.download_results`, `.get_quicklooks`
 
 ```python
 UP42_JOBTASK_ID="3f772637-09aa-4164-bded-692fcd746d20"
+```
 
+
+```python
+jobtask = api.initialize_jobtask(job_task_id=UP42_JOBTASK_ID,
+                                 job_id=UP42_JOB_ID)
+jobtask
+```
+
+or
+
+
+```python
 up42.JobTask(job_task_id=UP42_JOBTASK_ID,
              job_id=UP42_JOB_ID,
              project_id=UP42_PROJECT_ID,
              api=api)
 ```
 
-### Catalog
+### Tools
 
-Example functions: `.construct_parameters`, `.search`, `.get_quicklooks`
+The tools are available in each up42 object.
 
-
-```python
-catalog = up42.Catalog(api=api, 
-                       backend="ONE_ATLAS")
-catalog
-```
+Example functions: `.read_vector_file`, `.get_example_aoi`, `.draw_aoi`, `plot_coverage`, `plot_quicklook`, `plot_result`
 
 
 ```python
-
+# Can be accessed from each up42 object, e.g.
+api.get_example_aoi()
+workflow.get_example_aoi()
+job.get_example_aoi()
 ```

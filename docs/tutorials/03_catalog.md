@@ -12,9 +12,8 @@ import pandas as pd
 
 
 ```python
-api = up42.Api(cfg_file="config.json")
-
-catalog = up42.Catalog(api=api)
+api = up42.Api(cfg_file="config.json", env="dev")
+catalog = api.initialize_catalog()
 catalog
 ```
 
@@ -25,7 +24,7 @@ catalog
 #aoi = api.read_vector_file("data/aoi_berlin.geojson", 
 #                           as_dataframe=True)
 aoi = api.get_example_aoi(location="Berlin", as_dataframe=True)
-aoi.plot()
+aoi
 ```
 
 

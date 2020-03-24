@@ -14,8 +14,7 @@ import up42
 
 
 ```python
-api = up42.Api(cfg_file="config.json")
-
+api = up42.Api(cfg_file="config.json", env="dev")
 project = api.initialize_project()
 ```
 
@@ -87,14 +86,10 @@ workflow
 
 
 ```python
-# Alternative: Directly access the existing workflow via the id.
+# Alternative: Directly access the existing workflow the id (has to exist within the accessed project).
 
-UP42_PROJECT_ID="8956d18d-33bc-47cb-93bd-0055ff21da8f" 
 UP42_WORKFLOW_ID="7fb2ec8a-45be-41ad-a50f-98ba6b528b98"
-
-workflow = up42.Workflow(workflow_id=UP42_WORKFLOW_ID, 
-                         project_id=UP42_PROJECT_ID,
-                         api=api)
+workflow = api.initialize_workflow(workflow_id=UP42_WORKFLOW_ID)
 
 workflow
 ```
