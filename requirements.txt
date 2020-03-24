@@ -7,6 +7,7 @@ folium
 IPython
 jupyterlab
 geopandas
+descartes
 pandas
 branca
 shapely
