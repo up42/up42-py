@@ -1,0 +1,12 @@
+requests
+tenacity
+geojson
+rasterio
+matplotlib
+folium
+IPython
+jupyterlab
+geopandas
+pandas
+branca
+shapely
