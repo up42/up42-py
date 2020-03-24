@@ -32,7 +32,6 @@ def test_find_credentials_cfg_file(api_mock):
     api_mock._find_credentials()
     assert api_mock.project_id is not None
     assert api_mock.project_api_key is not None
-    assert api_mock.auth_type == "project"
 
 
 def test_endpoint(api_mock):

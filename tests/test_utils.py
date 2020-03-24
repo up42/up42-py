@@ -89,7 +89,7 @@ def test_any_vector_to_fc(len_fc, in_vector):
     assert fc["features"][0]["geometry"].get("coordinates") is not None
 
 
-def test_any_vector_to_fc_rasies_with_not_accepted():
+def test_any_vector_to_fc_raises_with_not_accepted():
     ring = LinearRing([(0, 0), (1, 1), (1, 0)])
     with pytest.raises(ValueError):
         any_vector_to_fc(ring)
