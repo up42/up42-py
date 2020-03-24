@@ -5,14 +5,12 @@
 %load_ext autoreload
 %autoreload 2
 
-from pprint import pprint
 import up42
-import pandas as pd
 ```
 
 
 ```python
-api = up42.Api(cfg_file="config.json", env="dev")
+api = up42.Api(cfg_file="config.json")
 catalog = api.initialize_catalog()
 catalog
 ```

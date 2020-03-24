@@ -14,7 +14,7 @@ import up42
 
 
 ```python
-api = up42.Api(cfg_file="config.json", env="dev")
+api = up42.Api(cfg_file="config.json")
 project = api.initialize_project()
 ```
 
@@ -30,7 +30,8 @@ You can either create a new workflow, use project.get_workflows() to get all exi
 
 Example: Sentinel 2 streaming & sharpening filter
 
-<img src="_assets/workflow.png" width="400" align="left">
+
+<img src="/tutorials/_assets/workflow.png" width="400" align="left">   
 
 
 ```python
@@ -175,7 +176,7 @@ input_parameters
 job = workflow.create_and_run_job(input_parameters=input_parameters, track_status=True)
 ```
 
-<img src="_assets/job_running.png" width="700" align="left">
+<img src="/tutorials/_assets/job_running.png" width="700" align="left">
 
 ## Download & Display results
 
