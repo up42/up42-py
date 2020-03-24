@@ -36,7 +36,7 @@ pip install -e .
 
 3. Create a new project on [UP42](https://up42.com).
 
-4. Create a `config.json` file with the [project credentials](https://docs.up42.com/getting-started/first-api-request.html#run-your-first-job-via-the-api).
+4. Create a `config.json` file and fill in the [project credentials](https://docs.up42.com/getting-started/first-api-request.html#run-your-first-job-via-the-api).
 ```json
 {
   "project_id": "...",
@@ -53,7 +53,19 @@ project = api.initialize_project()
 print(project)
 ```
 
-**Quickstart 30 sec example:**
+## Quickstart
+
+### Api structure:
+
+- The UP42 Python Api uses seven object classes, representing the **hierachical structure** of UP42: **Api > Project > Workflow > Job > JobTask** and **Catalog & Tools**.
+- Each object provides the full functionality at that specific level and can spawn elements of one level below, e.g.
+    - `workflow = Project().create_workflow()``
+    - `job = workflow.create_and_run_job()``
+<br> 
+- Usually the user starts with the *Api* object, then spawns objects of a lower level (e.g. initializes a project, creates a new workflow, runs a job etc.). 
+- To access a lower-level object directly, e.g. a job that was already run on UP42 initialize the object directly via `api.initialize_job(job_id='123456789')`.
+
+### 30 sec example:
 
 See also [docs/30-seconds-example](https://up42.github.io/up42-py/quickstart/01_quickstart/#30-seconds-example) or the Jupyter Notebook in the examples folder.
 

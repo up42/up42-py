@@ -30,8 +30,9 @@ You can either create a new workflow, use project.get_workflows() to get all exi
 
 Example: Sentinel 2 streaming & sharpening filter
 
-
-<img src="/tutorials/_assets/workflow.png" width="400" align="left">   
+<p align="center">
+    <img src="/_assets/workflow.png" width="400" align="center">
+</p>
 
 
 ```python
@@ -176,7 +177,9 @@ input_parameters
 job = workflow.create_and_run_job(input_parameters=input_parameters, track_status=True)
 ```
 
-<img src="/tutorials/_assets/job_running.png" width="700" align="left">
+<p align="center">
+    <img src="/_assets/job_running.png" width="700">
+</p>
 
 ## Download & Display results
 

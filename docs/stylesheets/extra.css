@@ -236,6 +236,13 @@ table {
 
 /* mkdocstrings styling
 
+/* Indentation of function doc */
+div.doc-contents:not(.first) {
+  padding-left: 25px;
+  border-left: 4px solid rgba(230, 230, 230);
+  margin-bottom: 80px;
+}
+
 /* Don't capitalize names. */
 h5.doc-heading {
   text-transform: none !important;

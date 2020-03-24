@@ -35,6 +35,6 @@ print(project)
 <br>
 
 !!! Success "Success!"
-    Continue with the [Quickstart](01_quickstart.md) or [Tutorial](02_typical_usage.md) section!
+    Continue with the [Getting Started](01_quickstart.md) section!
 
 <br>
