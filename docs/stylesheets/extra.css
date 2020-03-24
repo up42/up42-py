@@ -1,0 +1,260 @@
+/* Increase logo width because mkdocs material enforces 48 x 48 */
+.md-logo img {
+    width: 36px;
+    height: auto;
+}
+
+/* More visible headers*/
+.md-main h1 {
+    margin: 0.5em 0 1.0em 0;
+    color: #333;
+    font-weight: bold;
+    font-size: 36px;
+    line-height: 40px;
+    /*
+    counter-increment: section-1;
+    counter-reset: section-2 section-3 section-4;
+    */
+}
+.md-main h2 {
+    margin: 1.5em 0 0.4em 0;
+    color: #595959;
+    font-weight: normal;
+    font-size: 30px;
+    line-height: 36px;
+    border-bottom: 1px solid #fff;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+    padding-bottom: 10px;
+    /*
+    counter-increment: section-2;
+    counter-reset: section-3 section-4;
+    */
+}
+.md-main h3 {
+    margin: 1.2em 0 0.4em 0;
+    color: #595959;
+    font-weight: normal;
+    font-size: 26px;
+    line-height: 40px;
+    /*
+    counter-increment: section-3;
+    counter-reset: section-4;
+    */
+}
+.md-main h4 {
+    margin: 1.0em 0 0.4em 0;
+    color: #333;
+    font-weight: normal;
+    font-size: 20px;
+    line-height: 20px;
+    /* counter-increment: section-4; */
+}
+
+
+/* Define class for block image in block documentation trimmed*/
+.blockimage {
+    width: 200px;
+    margin-right: 20px;
+    margin-top: 7px;
+    position:relative;
+    float:left;
+}
+.blockimage img {
+   width:100%;
+   max-width:100%;
+    float:left;
+}
+
+
+/* change link colors for indigo theme */
+.md-header-nav__button:hover {
+    opacity: 1;
+    color: #cc00cc;
+    transition: color 0.5s;
+}
+[data-md-color-primary="indigo"] .md-typeset a {
+    color: #cc00cc;
+}
+[data-md-color-primary="indigo"] .md-typeset a:hover {
+    color: #ff33bb;
+}
+.md-nav__link:hover {
+    color: #ff33bb;
+}
+.md-footer-nav__link {
+    font-weight: bold;
+}
+.md-footer-nav__link:hover {
+    opacity: 1;
+    color: #ff33bb;
+    transition: color 0.5s;
+}
+
+/* display external links with icon */
+div.md-content a[href^="http://"]:not([href*="http://127.0.0.1:8000"]):after,
+div.md-content a[href^="https://"]:not([href*="http://127.0.0.1:8000"]):after,
+div.md-content a[href^="http://"]:not([href*="https://docs.up42.com"]):after,
+div.md-content a[href^="https://"]:not([href*="https://docs.up42.com"]):after,
+div.md-content a[href^="//"]:not([href*="http://127.0.0.1:8000"]) {
+    font-family: "FontAwesome";
+    content: " \f08e";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 70%;
+    vertical-align: top;
+    display: inline-block;
+    text-decoration: none;
+    padding-left: 3px;
+}
+
+
+/*Table styling*/
+table {
+  padding: 0; }
+  table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0; }
+    table tr:nth-child(2n) {
+      background-color: #f8f8f8; }
+    table tr th {
+      font-weight: bold;
+      border: 0px solid #cccccc;
+      text-align: centre;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr td {
+      border: 0px solid #cccccc;
+      text-align: centre;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr th :first-child, table tr td :first-child {
+      margin-top: 0; }
+    table tr th :last-child, table tr td :last-child {
+      margin-bottom: 0; }
+
+/*Neccessary css for tabbed extension*/
+.tabbed-set {
+  display: flex;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.tabbed-set .highlight {
+  background: #ddd;
+}
+
+.tabbed-set .tabbed-content {
+  display: none;
+  order: 99;
+  width: 100%;
+}
+
+.tabbed-set label {
+  width: auto;
+  margin: 0 0.5em;
+  padding: 0.25em;
+  font-size: 120%;
+  cursor: pointer;
+}
+
+.tabbed-set input {
+  position: absolute;
+  opacity: 0;
+}
+
+.tabbed-set input:nth-child(n+1) {
+  color: #333333;
+}
+
+.tabbed-set input:nth-child(n+1):checked + label {
+    color: #FF5252;
+}
+
+.tabbed-set input:nth-child(n+1):checked + label + .tabbed-content {
+    display: block;
+}
+
+
+/* Admonition settings option*/
+.md-typeset .admonition.settings, .md-typeset details.settings {
+    border-left: .22rem solid #448aff;
+}
+.md-typeset .admonition.settings>.admonition-title, .md-typeset details.settings>.admonition-title, .md-typeset details.settings>summary {
+    border-bottom: .1rem solid rgba(236, 243, 255), .1);
+    background-color: rgba(236, 243, 255), .1);
+}
+.md-typeset .admonition.settings>.admonition-title:before, .md-typeset details.settings>.admonition-title:before, .md-typeset details.settings>summary:before {
+    color: #448aff;
+    content: "settings"}
+
+
+/* Code block size, but then too small in blocks*/
+/*code { font-size: 0.75em !important; }*/
+
+
+/* Site width etc.*/
+/*
+.md-grid {
+    max-width: 122rem !important;
+}
+.framed-python{
+  margin-top:-70px;
+  overflow:hidden;
+}
+.framed-r{
+  margin-top:0px;
+  overflow:hidden;
+}
+.framed-r-api{
+  margin-top:-50px;
+  overflow:hidden;
+}
+.framed-github{
+  height:100vh !important;
+  width:100% !important;
+}
+*/
+
+
+/*Toc right margins*/
+/*
+@media only screen and (min-width: 76.25em){
+  .framed-python{
+    margin-left:-45px;
+  }
+  .framed-r-api{
+    margin-left:-45px;
+  }
+  .md-sidebar--secondary {
+    margin-left: 100% !important;
+  }
+}
+*/
+
+
+/* mkdocstrings styling
+
+div.autodoc {
+  padding-left: 25px;
+  border-left: 4px solid rgba(230, 230, 230);
+}
+
+/*
+.highlight:first-child {
+    font-weight: bold;
+    font-size: 100%
+    margin: .07
+}
+
+up42.api.Api.create_environment.fm:first-child {
+    font-weight: bold;
+    font-size: 26px;
+}
+
+up42.api.Api.create_environment.n:first-child {
+    font-weight: bold;
+    font-size: 26px;
+}
+*/
