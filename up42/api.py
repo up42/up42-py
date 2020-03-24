@@ -261,14 +261,31 @@ class Api(up42.Tools):
             return response
 
     def initialize_project(self) -> "up42.Project":
-        """
-        Directly returns the correct project object.
+        """Directly returns the correct project object (has to exist on UP42)."""
+        project = up42.Project(api=self, project_id=self.project_id)
+        project._get_info()
+        return project
 
-        Returns:
-            The project object.
-        """
-        logger.debug("Initializing Project object.")
-        return up42.Project(api=self, project_id=self.project_id)
+    def initialize_catalog(self, backend: str = "ONE_ATLAS") -> "up42.Catalog":
+        """Directly returns a catalog object."""
+        return up42.Catalog(api=self, backend=backend)
+
+    def initialize_workflow(self, workflow_id) -> "up42.Workflow":
+        """Directly returns a workflow object (has to exist on UP42)."""
+        workflow = up42.Workflow(api=self, workflow_id=workflow_id,
+                                 project_id=self.project_id)
+        return workflow
+
+    def initialize_job(self, job_id, order_ids: List[str] = [""]) -> "up42.Job":
+        """Directly returns a Job object (has to exist on UP42)."""
+        job = up42.Job(api=self, job_id=job_id, project_id=self.project_id, order_ids=order_ids)
+        return job
+
+    def initialize_jobtask(self, job_task_id, job_id) -> "up42.Job":
+        """Directly returns a JobTask object (has to exist on UP42)."""
+        jobtask = up42.JobTask(api=self, job_task_id=job_task_id, job_id=job_id,
+                               project_id=self.project_id)
+        return jobtask
 
     def get_blocks(
         self,
