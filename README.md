@@ -1,27 +1,23 @@
 ![coverage](coverage.svg)
-<img align="right" src="docs/_assets/banner-up42-py-small.png" alt="" width="300"/>
+<img align="right" src="docs/_assets/banner-up42-py-small.png" alt="" width="250"/>
 
 # up42-py
 **Python interface for UP42, the geospatial marketplace and developer platform.**
 
-**Documentation**: [https://up42.github.io/up42-py/](https://up42.github.io/up42-py/)
+Documentation: [https://up42.github.io/up42-py/](https://up42.github.io/up42-py/)
 
 ## API structure:
-See also [docs/quickstart](https://up42.github.io/up42-py/quickstart/01_quickstart)
 
-- The Python Api uses seven object classes, representing the **hierachical structure** of UP42: **Api > Project > Workflow > Job > JobTask** and **Catalog & Tools**.
+- The up42-py classes mirror the **hierachical structure** of UP42: **Api > Project > Workflow > Job > JobTask** and **Catalog & Tools**.
 - Each object provides the full functionality at that specific level and can spawn elements of one level below, e.g.
     - `workflow = Project().create_workflow()`
     - `job = workflow.create_and_run_job()`
-<br>
-- Usually the user starts with the *Api* object, then spawns objects of a lower level (e.g. initializes a project, creates a new workflow, runs a job etc.).
-- In some cases you might want to access a lower level object directly, e.g. a job that was already run on UP42. Then you can can directly initiate that job object via its job-id.
+- The user starts with the *Api* object, then spawns objects of a lower level or accesses objects existing on UP42 directly.
 
 
 ## Installation
-See also [docs/installation](https://up42.github.io/up42-py/installation/)
 
-1. **Optional**: Create a virtual environment:
+1. *Optional*: Create a virtual environment:
 ```bash
 mkvirtualenv --python=$(which python3.7) up42-py
 ```
@@ -53,19 +49,8 @@ project = api.initialize_project()
 print(project)
 ```
 
-## Quickstart
 
-### Api structure:
-
-- The UP42 Python Api uses seven object classes, representing the **hierachical structure** of UP42: **Api > Project > Workflow > Job > JobTask** and **Catalog & Tools**.
-- Each object provides the full functionality at that specific level and can spawn elements of one level below, e.g.
-    - `workflow = Project().create_workflow()``
-    - `job = workflow.create_and_run_job()``
-<br> 
-- Usually the user starts with the *Api* object, then spawns objects of a lower level (e.g. initializes a project, creates a new workflow, runs a job etc.). 
-- To access a lower-level object directly, e.g. a job that was already run on UP42 initialize the object directly via `api.initialize_job(job_id='123456789')`.
-
-### 30 sec example:
+## Quickstart - 30 seconds example
 
 See also [docs/30-seconds-example](https://up42.github.io/up42-py/quickstart/01_quickstart/#30-seconds-example) or the Jupyter Notebook in the examples folder.
 

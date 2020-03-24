@@ -36,7 +36,7 @@ nav:
         - JobTask: 'reference/jobtask.md'
         - Tools: 'reference/tools.md'
     - Advanced Tutorials:
-        - Parallel Jobs: 'advanced/parallel_jobs.md'
+        - Parallel Jobs: 'advanced/airports-parallel.md'
 
 
 ## Configuration
