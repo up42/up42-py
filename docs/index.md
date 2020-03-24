@@ -16,7 +16,7 @@ Welcome to UP42 - the developer platform and marketplace for geospatial data and
 [UP42 Documentation](https://docs.up42.com)
 [Github Repositories](https://github.com/up42)  
 [UP42 docs repository](https://github.com/up42/docs)  
-[UP42 Python package](https://github.com/up42/up42-py-internal)  
+[UP42 Python package](https://github.com/up42/up42-py)  
 
 
 ## Support

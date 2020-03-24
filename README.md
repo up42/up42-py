@@ -1,4 +1,4 @@
-# up42-py-internal
+# up42-py
 Python API interface for using UP42
 
 ![coverage](coverage.svg)
