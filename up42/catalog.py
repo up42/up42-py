@@ -5,11 +5,11 @@ from typing import Dict, Union, List
 
 import geopandas as gpd
 import shapely
-from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
+from shapely.geometry import Point, Polygon
 
-from .tools import Tools
 from .auth import Auth
+from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__, level=logging.CRITICAL)  # TODO: Remove/set to INFO

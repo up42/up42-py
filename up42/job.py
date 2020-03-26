@@ -10,15 +10,15 @@ import folium
 import geopandas as gpd
 import numpy as np
 import rasterio
-from rasterio.io import MemoryFile
-from rasterio.warp import calculate_default_transform, reproject, Resampling
 import requests
 import requests.exceptions
 from IPython.display import display
+from rasterio.io import MemoryFile
+from rasterio.warp import calculate_default_transform, reproject, Resampling
 
-from .tools import Tools
 from .auth import Auth
 from .jobtask import JobTask
+from .tools import Tools
 from .utils import get_logger, is_notebook, folium_base_map
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO

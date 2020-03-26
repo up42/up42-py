@@ -6,7 +6,6 @@ import requests
 import requests.exceptions
 from tenacity import (
     Retrying,
-    RetryError,
     wait_fixed,
     stop_after_attempt,
     retry_if_exception_type,

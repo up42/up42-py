@@ -4,14 +4,14 @@ from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Union, Optional
 
-import geopandas as gpd
 import geojson
+import geopandas as gpd
 import shapely
 from geojson import Feature, FeatureCollection
 
-from .tools import Tools
 from .auth import Auth
 from .job import Job
+from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
@@ -112,7 +112,7 @@ class Workflow(Tools):
         full_input_tasks_definition = []
 
         # Get public + custom blocks.
-        blocks_name_id = self.auth.get_blocks(basic=True)
+        blocks_name_id = self.get_blocks(basic=True)
         blocks_id_name = {
             value: key for key, value in blocks_name_id.items()
         }  # pylint: disable=

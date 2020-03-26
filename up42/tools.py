@@ -1,19 +1,19 @@
-import os
 import json
+import math
+import os
 from pathlib import Path
 from typing import Tuple, List, Union, Dict
-import math
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
 import rasterio
+import requests.exceptions
 import shapely
 from IPython import get_ipython
 from IPython.display import display
 from geojson import FeatureCollection
 from rasterio.plot import show
-import requests.exceptions
 from tenacity import RetryError
 
 from .utils import get_logger, folium_base_map, DrawFoliumOverride, is_notebook
@@ -78,9 +78,6 @@ class Tools:
             return df
         else:
             return df.__geo_interface__
-
-    def read_vector(self):
-        pass
 
     def get_example_aoi(
         self, location: str = "Berlin", as_dataframe: bool = False
