@@ -55,7 +55,6 @@ def initialize_job(job_id, order_ids: List[str] = [""]) -> "Job":
         auth=_auth, job_id=job_id, project_id=_auth.project_id, order_ids=order_ids
     )
 
-
 def initialize_jobtask(job_task_id, job_id) -> "JobTask":
     """Directly returns a JobTask object (has to exist on UP42)."""
     if _auth is None:
@@ -63,3 +62,9 @@ def initialize_jobtask(job_task_id, job_id) -> "JobTask":
     return JobTask(
         auth=_auth, job_task_id=job_task_id, job_id=job_id, project_id=_auth.project_id
     )
+
+
+def get_blocks(block_type=None, basic: bool = True, as_dataframe=False,):
+    tools = Tools(auth=_auth)
+    blocks = tools.get_blocks(block_type=block_type, basic=basic, as_dataframe=as_dataframe)
+    return blocks

@@ -76,7 +76,7 @@ class Auth(Tools):
             logger.info("Authentication with UP42 successful!")
 
     def __repr__(self):
-        return f"UP42ProjectAPI(project_id={self.project_id}, env={self.env})"
+        return f"UP42ProjectAuth(project_id={self.project_id}, env={self.env})"
 
     def _find_credentials(self) -> None:
         """

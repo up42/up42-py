@@ -23,15 +23,17 @@ logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 # pylint: disable=no-member
 class Tools:
-    def __init__(self,):
+    def __init__(self, auth=None):
         """
         The tools class contains functionality that is not bound to a specific UP42 object,
         e.g. for aoi handling etc., UP42 block information, validatin a block manifest etc.
-        They can be accessed from every object.
+        They can be accessed from every object and also from the imported up42 package directly.
 
         Public methods:
             read_vector_file, get_example_aoi, draw_aoi, plot_coverage, plot_quicklook
         """
+        if auth:
+            self.auth = auth
 
     # pylint: disable=no-self-use
     def read_vector_file(
