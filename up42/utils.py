@@ -169,7 +169,8 @@ def any_vector_to_fc(
         gpd.GeoDataFrame,
         shapely.geometry.polygon.Polygon,
         shapely.geometry.polygon.Point,
-    ], as_dataframe: bool=False
+    ],
+    as_dataframe: bool = False,
 ) -> Union[Dict, gpd.GeoDataFrame]:
     """
     Gets a uniform feature collection dictionary (with fc and f bboxes) from any input vector type.
