@@ -22,7 +22,7 @@ logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 # TODO: Test stuff with nonlinear structure.
 
 
-class Api(Tools):
+class Auth(Tools):
     def __init__(
         self,
         cfg_file: Union[str, Path] = None,

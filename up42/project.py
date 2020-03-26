@@ -2,7 +2,7 @@ import logging
 from typing import Dict, List, Union
 
 from .tools import Tools
-from .api import Api
+from .auth import Auth
 from .workflow import Workflow
 from .utils import get_logger
 
@@ -10,7 +10,7 @@ logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 
 class Project(Tools):
-    def __init__(self, api: Api, project_id: str):
+    def __init__(self, auth: Auth, project_id: str):
         """
         The Project class can query all available workflows and spawn new workflows
         within an UP42 project. Also handles project user settings.
@@ -19,20 +19,20 @@ class Project(Tools):
             create_workflow, get_workflows, get_project_settings,
             update_project_settings
         """
-        self.api = api
+        self.auth = auth
         self.project_id = project_id
-        if self.api.authenticate:
+        if self.auth.authenticate:
             self.info = self._get_info()
 
     def __repr__(self):
         return (
-            f"Project(project_id={self.project_id}, api={self.api}, info={self.info})"
+            f"Project(project_id={self.project_id}, auth={self.auth}, info={self.info})"
         )
 
     def _get_info(self):
         """Gets metadata info from sever for an existing project"""
-        url = f"{self.api._endpoint()}/projects/{self.project_id}"
-        response_json = self.api._request(request_type="GET", url=url)
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}"
+        response_json = self.auth._request(request_type="GET", url=url)
         self.info = response_json["data"]
         return self.info
 
@@ -70,13 +70,13 @@ class Project(Tools):
                 )
                 return existing_workflow
 
-        url = f"{self.api._endpoint()}/projects/{self.project_id}/workflows/"
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
         payload = {"name": name, "description": description}
-        response_json = self.api._request(request_type="POST", url=url, data=payload)
+        response_json = self.auth._request(request_type="POST", url=url, data=payload)
         workflow_id = response_json["data"]["id"]
         logger.info("Created new workflow: %s.", workflow_id)
         workflow = Workflow(
-            self.api, project_id=self.project_id, workflow_id=workflow_id
+            self.auth, project_id=self.project_id, workflow_id=workflow_id
         )
         return workflow
 
@@ -90,8 +90,8 @@ class Project(Tools):
         Returns:
             Workflow objects in the project or alternatively json info of the workflows.
         """
-        url = f"{self.api._endpoint()}/projects/{self.project_id}/workflows"
-        response_json = self.api._request(request_type="GET", url=url)
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows"
+        response_json = self.auth._request(request_type="GET", url=url)
         workflows_json = response_json["data"]
         logger.info(
             "Got %s workflows for project %s.", len(workflows_json), self.project_id
@@ -101,7 +101,7 @@ class Project(Tools):
             return workflows_json
         else:
             workflows = [
-                Workflow(self.api, project_id=self.project_id, workflow_id=work["id"])
+                Workflow(self.auth, project_id=self.project_id, workflow_id=work["id"])
                 for work in workflows_json
             ]
             return workflows
@@ -113,8 +113,8 @@ class Project(Tools):
         Returns:
             The project settings.
         """
-        url = f"{self.api._endpoint()}/projects/{self.project_id}/settings"
-        response_json = self.api._request(request_type="GET", url=url)
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
+        response_json = self.auth._request(request_type="GET", url=url)
         project_settings = response_json["data"]
         return project_settings
 
@@ -132,7 +132,7 @@ class Project(Tools):
             max_concurrent_jobs: The maximum number of concurrent jobs, from 1-10, default 1.
             number_of_images:
         """
-        url = f"{self.api._endpoint()}/projects/{self.project_id}/settings"
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
         payload = [
             {
                 "name": "JOB_QUERY_MAX_AOI_SIZE",
@@ -147,5 +147,5 @@ class Project(Tools):
                 "value": f"{10 if number_of_images is None else number_of_images}",
             },
         ]
-        self.api._request(request_type="PUT", url=url, data=payload)
+        self.auth._request(request_type="PUT", url=url, data=payload)
         logger.info("Updated project settings: %s", payload)

@@ -10,7 +10,7 @@ from .context import Project
 
 @pytest.fixture()
 def project_mock(api_mock):
-    project = Project(api=api_mock, project_id=api_mock.project_id)
+    project = Project(auth=api_mock, project_id=api_mock.project_id)
     return project
 
 

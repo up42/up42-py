@@ -3,12 +3,12 @@ import os
 import pytest
 import requests_mock
 
-from .context import Api, Catalog, Project, Workflow, Job, JobTask
+from .context import Auth, Catalog, Project, Workflow, Job, JobTask
 
 
 @pytest.fixture()
 def api_mock():
-    api = Api(
+    api = Auth(
         project_id="project_id123",
         project_api_key="project_apikey123",
         authenticate=False,
@@ -20,14 +20,14 @@ def api_mock():
 
 @pytest.fixture()
 def project_mock(api_mock):
-    project = Project(api=api_mock, project_id=api_mock.project_id)
+    project = Project(auth=api_mock, project_id=api_mock.project_id)
     return project
 
 
 @pytest.fixture()
 def workflow_mock(api_mock):
     workflow = Workflow(
-        api=api_mock, workflow_id="workflow_id123", project_id=api_mock.project_id
+        auth=api_mock, workflow_id="workflow_id123", project_id=api_mock.project_id
     )
     return workflow
 
@@ -52,7 +52,7 @@ def project_mock_with_info(api_mock):
         url_project_info = f"{api_mock._endpoint()}/projects/{api_mock.project_id}"
         m.get(url=url_project_info, text='{"data": {"xyz":789}, "error":{}}')
 
-        project = Project(api=api_mock, project_id=api_mock.project_id)
+        project = Project(auth=api_mock, project_id=api_mock.project_id)
     return project
 
 
@@ -68,7 +68,7 @@ def workflow_mock_with_info(api_mock):
         m.get(url=url_workflow_info, text='{"data": {"xyz":789}, "error":{}}')
 
         workflow = Workflow(
-            api=api_mock, workflow_id="workflow_id123", project_id=api_mock.project_id
+            auth=api_mock, workflow_id="workflow_id123", project_id=api_mock.project_id
         )
     return workflow
 
@@ -88,7 +88,7 @@ def jobtask_mock_with_info(api_mock):
 
 @pytest.fixture()
 def api_live():
-    api = Api(
+    api = Auth(
         project_id=os.getenv("UP42_PROJECT_ID_test_up42_py"),
         project_api_key=os.getenv("UP42_PROJECT_API_KEY_test_up42_py"),
     )
