@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 
 
-
 @pytest.mark.live
 def test_validate_manifest_valid(tools_live):
     _location_ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))

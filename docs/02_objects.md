@@ -1,29 +1,25 @@
 # Objects
 
-This section gives an overview of the the available **functionality** at each level of the UP42 API, and how to **initialize** the 7 objects directly (e.g. if you don't want to create a new workflow and job, but want to access an already existing job on UP42).
+This section gives an overview of the the available **functionality** at each level of the UP42 API, and how to **initialize** the 6 objects directly (e.g. if you don't want to create a new workflow and job, but want to access an already existing job on UP42).
+
+
+```python
+import up42
+up42.authenticate(cfg_file="config.json")
+```
 
 ## Tools
 
 The tools' functionalities can be accessed from each up42 object.
 
-Example functions: `.read_vector_file`, `.get_example_aoi`, `.draw_aoi`, `plot_coverage`, `plot_quicklook`, `plot_result`
+Example functions: `.read_vector_file`, `.get_example_aoi`, `.draw_aoi`, `plot_coverage`, `plot_quicklook`, `plot_result`, `.get_blocks`, `.get_block_details`, `.delete_custom_block`, `.validate_manifest`, `.initialize_project`
 
 
 ```python
 # Can be accessed from each up42 object, e.g.
-api.get_example_aoi()
-workflow.get_example_aoi()
-job.get_example_aoi()
-```
-
-## Api
-
-Example functions: `.get_blocks`, `.get_block_details`, `.delete_custom_block`, `.validate_manifest`, `.initialize_project`
-
-
-```python
-api = up42.Api(cfg_file="config.json", env="dev")
-api
+up42.get_example_aoi()
+#workflow.get_example_aoi()
+#job.get_example_aoi()
 ```
 
 ## Catalog
@@ -32,7 +28,7 @@ Example functions: `.construct_parameter`, `.search`, `.download_quicklooks`
 
 
 ```python
-catalog = api.initialize_catalog()
+catalog = up42.initialize_catalog()
 catalog
 ```
 
@@ -44,7 +40,7 @@ Example functions: `.get_workflows`, `.create_workflow`, `.get_project_settings`
 ```python
 UP42_PROJECT_ID="8956d18d-33bc-47cb-93bd-0055ff21da8f" 
 
-project = api.initialize_project()
+project = up42.initialize_project()
 project
 ```
 
@@ -58,7 +54,7 @@ Alltough most often used from the workflow object, a few generic aoi functions a
 ```python
 UP42_WORKFLOW_ID="7fb2ec8a-45be-41ad-a50f-98ba6b528b98"
 
-workflow = api.initialize_workflow(workflow_id=UP42_WORKFLOW_ID)
+workflow = up42.initialize_workflow(workflow_id=UP42_WORKFLOW_ID)
 workflow
 ```
 
@@ -70,7 +66,7 @@ Example functions: `.get_status`, `.track_status`, `.cancel_job`, `.get_results`
 ```python
 UP42_JOB_ID="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021"
 
-job = api.initialize_job(job_id=UP42_JOB_ID)
+job = up42.initialize_job(job_id=UP42_JOB_ID)
 job
 ```
 
@@ -82,7 +78,12 @@ Example functions: `.get_result_json`, `.download_results`, `.get_quicklooks`
 ```python
 UP42_JOBTASK_ID="3f772637-09aa-4164-bded-692fcd746d20"
 
-jobtask = api.initialize_jobtask(job_task_id=UP42_JOBTASK_ID,
+jobtask = up42.initialize_jobtask(job_task_id=UP42_JOBTASK_ID,
                                  job_id=UP42_JOB_ID)
 jobtask
+```
+
+
+```python
+
 ```

@@ -10,8 +10,8 @@ import up42
 
 
 ```python
-api = up42.Api(cfg_file="config.json")
-catalog = api.initialize_catalog()
+up42.authenticate(cfg_file="config.json")
+catalog = up42.initialize_catalog()
 catalog
 ```
 
@@ -19,15 +19,14 @@ catalog
 
 
 ```python
-#aoi = api.read_vector_file("data/aoi_berlin.geojson", 
+#aoi = up42.read_vector_file("data/aoi_berlin.geojson", 
 #                           as_dataframe=True)
-aoi = api.get_example_aoi(location="Berlin", as_dataframe=True)
+aoi = up42.get_example_aoi(location="Berlin", as_dataframe=True)
 aoi
 ```
 
 
 ```python
-catalog = up42.Catalog(api=api)
 search_paramaters = catalog.construct_parameter(geometry=aoi, 
                                                 start_date="2014-01-01",
                                                 end_date="2016-12-31",

@@ -29,11 +29,13 @@ def authenticate(cfg_file=None, project_id=None, project_api_key=None, **kwargs)
         **kwargs
     )
 
+
 def initialize_project() -> "Project":
     """Directly returns the correct Project object (has to exist on UP42)."""
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
     return Project(auth=_auth, project_id=_auth.project_id)
+
 
 def initialize_catalog(backend: str = "ONE_ATLAS") -> "Catalog":
     """Directly returns a Catalog object."""
@@ -98,40 +100,45 @@ def delete_environment(environment_id: str) -> None:
     tools = Tools(auth=_auth)
     tools.delete_environment(environment_id)
 
+
 def read_vector_file(
     filename: str = "aoi.geojson", as_dataframe: bool = False
 ) -> FeatureCollection:
     tools = Tools(auth=_auth)
     return tools.read_vector_file(filename, as_dataframe)
 
+
 def get_example_aoi(
-        location: str = "Berlin", as_dataframe: bool = False
+    location: str = "Berlin", as_dataframe: bool = False
 ) -> FeatureCollection:
     tools = Tools(auth=_auth)
     return tools.get_example_aoi(location, as_dataframe)
+
 
 def draw_aoi() -> None:
     tools = Tools(auth=_auth)
     tools.draw_aoi()
 
-def plot_coverage(scenes: gpd.GeoDataFrame,
-        aoi: gpd.GeoDataFrame = None,
-        legend_column: str = None,
-        figsize=(12, 16),
-    ) -> None:
+
+def plot_coverage(
+    scenes: gpd.GeoDataFrame,
+    aoi: gpd.GeoDataFrame = None,
+    legend_column: str = None,
+    figsize=(12, 16),
+) -> None:
     tools = Tools(auth=_auth)
     tools.plot_coverage(scenes, aoi, legend_column, figsize)
 
-def plot_quicklook(
-    figsize: Tuple[int, int] = (8, 8), filepaths: List = None
-) -> None:
+
+def plot_quicklook(figsize: Tuple[int, int] = (8, 8), filepaths: List = None) -> None:
     tools = Tools(auth=_auth)
     tools.plot_quicklook(figsize, filepaths)
 
+
 def plot_results(
-        figsize: Tuple[int, int] = (8, 8),
-        filepaths: List[str] = None,
-        titles: List[str] = None,
-    ) -> None:
+    figsize: Tuple[int, int] = (8, 8),
+    filepaths: List[str] = None,
+    titles: List[str] = None,
+) -> None:
     tools = Tools(auth=_auth)
     tools.plot_results(figsize, filepaths, titles)
