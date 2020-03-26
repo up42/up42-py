@@ -48,7 +48,7 @@ pip install -e .
 import up42
 
 up42.authenticate(cfg_file="config.json")
-project = api.initialize_project()
+project = up42.initialize_project()
 print(project)
 ```
 
@@ -61,7 +61,7 @@ See also [docs/30-seconds-example](https://up42.github.io/up42-py/quickstart/01_
 import up42
 
 # Get the the project credentials & authenticate with UP42.
-up42.authenticate("config.json", env="dev")
+up42.authenticate("config.json")
 
 # Create a workflow in the project.
 project = up42.initialize_project()

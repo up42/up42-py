@@ -1,4 +1,4 @@
-# Parallel jobs
+# Parallel Jobs
 
 ## Example: Airport monitoring
 
@@ -16,7 +16,7 @@ from pathlib import Path
 import up42
 ```
 
-### 10 random airports in Spain
+### 10 random airports in a Spain
 
 https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat
 
@@ -63,8 +63,7 @@ airports.iloc[0].geometry
 
 ```python
 # Authentificate
-api = up42.Api(cfg_file="config.json"
-               env="dev")
+api = up42.authenticate(cfg_file="config.json")
 ```
 
 
