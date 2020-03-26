@@ -47,7 +47,7 @@ pip install -e .
 ```python
 import up42
 
-api = up42.Api(cfg_file="config.json")
+up42.authenticate(cfg_file="config.json")
 project = api.initialize_project()
 print(project)
 ```
