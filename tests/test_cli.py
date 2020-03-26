@@ -73,3 +73,33 @@ def test_delete_environment(cli_runner):
 def test_validate_manifest(cli_runner):
     result = cli_runner.invoke(cli.main, ["validate-manifest", "-h"])
     assert result.exit_code == 0
+
+
+@pytest.mark.live()
+def test_project(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project"])
+    assert result.exit_code == 0
+
+
+@pytest.mark.live()
+def test_create_workflow(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "create-workflow", "-h"])
+    assert result.exit_code == 0
+
+
+@pytest.mark.live()
+def test_get_project_settings(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "get-project-settings"])
+    assert result.exit_code == 0
+
+
+@pytest.mark.live()
+def test_get_workflows(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "get-workflows"])
+    assert result.exit_code == 0
+
+
+@pytest.mark.live()
+def test_update_project_settings(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "update-project-settings", "-h"])
+    assert result.exit_code == 0

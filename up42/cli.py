@@ -5,6 +5,11 @@ import click
 
 from .auth import Auth
 from .tools import Tools
+from .project import Project
+from .workflow import Workflow
+from .job import Job
+from .jobtask import JobTask
+from .catalog import Catalog
 from .utils import get_logger
 
 logger = get_logger(__name__)
@@ -197,6 +202,79 @@ def validate_manifest(auth, manifest_json):
     Validate a block manifest.
     """
     logger.info(Tools(auth).validate_manifest(manifest_json))
+
+
+# Project
+@main.group()
+@click.pass_context
+def project(ctx):
+    """
+    Create and get workflows, manage project settings and more.
+    """
+    ctx.obj = Project(ctx.obj, ctx.obj.project_id)
+
+
+COMMAND_PROJECT = project.command(context_settings=CONTEXT_SETTINGS)
+
+
+@COMMAND_PROJECT
+@click.pass_obj
+@click.argument("name")
+def create_workflow(project, name):
+    """
+    Create a workflow.
+    """
+    project.create_workflow(name)
+
+
+@COMMAND_PROJECT
+@click.pass_obj
+def get_workflows(project):
+    """
+    Get the project workflows.
+    """
+    logger.info(project.get_workflows())
+
+
+@COMMAND_PROJECT
+@click.pass_obj
+def get_project_settings(project):
+    """
+    Get the project settings.
+    """
+    logger.info(project.get_project_settings())
+
+
+@COMMAND_PROJECT
+@click.option(
+    "--max-aoi-size",
+    type=click.IntRange(1, 10000),
+    help="The maximum area of interest geometry size, from 1-1000 sqkm, default 10 sqkm.",
+)
+@click.option(
+    "--max-concurrent-jobs",
+    type=click.IntRange(1, 10),
+    help="The maximum number of concurrent jobs, from 1-10, default 1.",
+)
+@click.option(
+    "--number-of-images",
+    type=click.IntRange(1, 20),
+    help="The maximum number of images returned with each job, from 1-20, default 10.",
+)
+@click.pass_obj
+def update_project_settings(
+    project, max_aoi_size, max_concurrent_jobs, number_of_images
+):
+    """
+    Update project settings.
+    """
+    logger.info(f"Previous project settings:{project.get_project_settings()}")
+    project.update_project_settings(
+        max_aoi_size=max_aoi_size,
+        max_concurrent_jobs=max_concurrent_jobs,
+        number_of_images=number_of_images,
+    )
+    logger.info(f"New project settings: {project.get_project_settings()}")
 
 
 # Workflows
