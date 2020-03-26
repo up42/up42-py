@@ -28,6 +28,7 @@ nav:
       - Objects: '02_objects.md'
       - Catalog Search: '03_catalog.md'
       - Typical Usage: '04_typical_usage.md'
+    - CLI: '05_cli.md'
     - Code Reference:
         - Project: 'reference/project.md'
         - Workflow: 'reference/workflow.md'
