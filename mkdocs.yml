@@ -29,7 +29,6 @@ nav:
       - Catalog Search: '03_catalog.md'
       - Typical Usage: '04_typical_usage.md'
     - Code Reference:
-        - Api: 'reference/api.md'
         - Project: 'reference/project.md'
         - Workflow: 'reference/workflow.md'
         - Job: 'reference/job.md'
