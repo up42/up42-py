@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Dict, List, Union, Optional
 
 import geopandas as gpd
+import geojson
 import shapely
 from geojson import Feature, FeatureCollection
 
@@ -237,6 +238,7 @@ class Workflow(Tools):
                 Dict,
                 Feature,
                 FeatureCollection,
+                geojson.Polygon,
                 List,
                 gpd.GeoDataFrame,
                 shapely.geometry.polygon.Polygon,
