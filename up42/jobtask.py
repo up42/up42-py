@@ -8,15 +8,16 @@ import geopandas as gpd
 import requests
 import requests.exceptions
 
-import up42
+from .tools import Tools
+from .api import Api
 from .utils import get_logger
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 
-class JobTask(up42.Tools):
+class JobTask(Tools):
     def __init__(
-        self, api: up42.Api, project_id: str, job_id: str, job_task_id: str,
+        self, api: Api, project_id: str, job_id: str, job_task_id: str,
     ):
         """The JobTask class provides access to the results and parameters of single
         Tasks of UP42 Jobs (each Job contains one or multiple Jobtasks, one for each

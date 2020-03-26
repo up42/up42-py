@@ -5,13 +5,12 @@ from pathlib import Path
 import pytest
 import requests_mock
 
-import up42  # pylint-disable=wrong-import-order
 from .fixtures import api_mock, api_live
-
+from .context import Project
 
 @pytest.fixture()
 def project_mock(api_mock):
-    project = up42.Project(api=api_mock, project_id=api_mock.project_id)
+    project = Project(api=api_mock, project_id=api_mock.project_id)
     return project
 
 
@@ -96,7 +95,7 @@ def test_request_with_retry(api_mock):
 
 def test_initialize_project(api_mock):
     project = api_mock.initialize_project()
-    assert isinstance(project, up42.Project)
+    assert isinstance(project, Project)
 
 
 def test_initialize_project_with_get_info(api_mock):
@@ -107,14 +106,14 @@ def test_initialize_project_with_get_info(api_mock):
         m.get(url=url_project_info, text='{"data": {"xyz":789}, "error":{}}')
 
         project = api_mock.initialize_project()
-    assert isinstance(project, up42.Project)
+    assert isinstance(project, Project)
     assert project.info["xyz"] == 789
 
 
 @pytest.mark.live
 def test_initialize_project_live(api_live):
     project = api_live.initialize_project()
-    assert isinstance(project, up42.Project)
+    assert isinstance(project, Project)
     assert project.info["name"] == "python-sdk-test-project"
 
 

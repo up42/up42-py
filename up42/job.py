@@ -16,16 +16,18 @@ import requests
 import requests.exceptions
 from IPython.display import display
 
-import up42
+from .tools import Tools
+from .api import Api
+from .jobtask import JobTask
 from .utils import get_logger, is_notebook, folium_base_map
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 
 # pylint: disable=dangerous-default-value
-class Job(up42.Tools):
+class Job(Tools):
     def __init__(
-        self, api: up42.Api, project_id: str, job_id: str, order_ids: List[str] = [""],
+        self, api: Api, project_id: str, job_id: str, order_ids: List[str] = [""],
     ):
         """The Job class provides access to the results, parameters and tasks of UP42
         Jobs (Workflows that have been run as Jobs).
@@ -382,7 +384,7 @@ class Job(up42.Tools):
             if as_return:
                 return job_logs
 
-    def get_job_tasks(self, return_json: bool = False) -> Union["up42.JobTask", Dict]:
+    def get_job_tasks(self, return_json: bool = False) -> Union["JobTask", Dict]:
         """
         Get the individual items of the job as JobTask objects or json.
 
@@ -401,7 +403,7 @@ class Job(up42.Tools):
         job_tasks_json = response_json["data"]
 
         job_tasks = [
-            up42.JobTask(
+            JobTask(
                 api=self.api,
                 project_id=self.project_id,
                 job_id=self.job_id,

@@ -8,14 +8,16 @@ import geopandas as gpd
 import shapely
 from geojson import Feature, FeatureCollection
 
-import up42
+from .tools import Tools
+from .api import Api
+from .job import Job
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 
-class Workflow(up42.Tools):
-    def __init__(self, api: up42.Api, project_id: str, workflow_id: str):
+class Workflow(Tools):
+    def __init__(self, api: Api, project_id: str, workflow_id: str):
         """
         The Workflow class can query all available and spawn new jobs for
         an UP42 Workflow and helps to find and set the the workflow tasks, parameters
@@ -307,7 +309,7 @@ class Workflow(up42.Tools):
         self,
         input_parameters: Union[Dict, str, Path] = None,
         track_status: bool = False,
-    ) -> "up42.Job":
+    ) -> "Job":
         """
         Creates and runs a new job.
 
@@ -345,13 +347,13 @@ class Workflow(up42.Tools):
         )
         job_json = response_json["data"]
         logger.info("Created and running new job: %s.", job_json["id"])
-        job = up42.Job(self.api, job_id=job_json["id"], project_id=self.project_id,)
+        job = Job(self.api, job_id=job_json["id"], project_id=self.project_id,)
 
         if track_status:
             job.track_status()
         return job
 
-    def get_jobs(self, return_json: bool = False) -> Union[List["up42.Job"], Dict]:
+    def get_jobs(self, return_json: bool = False) -> Union[List["Job"], Dict]:
         """
         Get all jobs in the specific project as job objects or json.
 
@@ -374,7 +376,7 @@ class Workflow(up42.Tools):
             return jobs_json
         else:
             jobs = [
-                up42.Job(self.api, job_id=job["id"], project_id=self.project_id)
+                Job(self.api, job_id=job["id"], project_id=self.project_id)
                 for job in jobs_json
             ]
             return jobs

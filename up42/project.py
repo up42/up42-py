@@ -1,14 +1,16 @@
 import logging
 from typing import Dict, List, Union
 
-import up42
+from .tools import Tools
+from .api import Api
+from .workflow import Workflow
 from .utils import get_logger
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 
-class Project(up42.Tools):
-    def __init__(self, api: up42.Api, project_id: str):
+class Project(Tools):
+    def __init__(self, api: Api, project_id: str):
         """
         The Project class can query all available workflows and spawn new workflows
         within an UP42 project. Also handles project user settings.
@@ -36,7 +38,7 @@ class Project(up42.Tools):
 
     def create_workflow(
         self, name: str, description: str = "", use_existing: bool = False
-    ) -> "up42.Workflow":
+    ) -> "Workflow":
         """
         Creates a new workflow and returns a workflow object.
 
@@ -73,14 +75,12 @@ class Project(up42.Tools):
         response_json = self.api._request(request_type="POST", url=url, data=payload)
         workflow_id = response_json["data"]["id"]
         logger.info("Created new workflow: %s.", workflow_id)
-        workflow = up42.Workflow(
+        workflow = Workflow(
             self.api, project_id=self.project_id, workflow_id=workflow_id
         )
         return workflow
 
-    def get_workflows(
-        self, return_json: bool = False
-    ) -> Union[List["up42.Workflow"], Dict]:
+    def get_workflows(self, return_json: bool = False) -> Union[List["Workflow"], Dict]:
         """
         Gets all workflows in a project as workflow objects or json.
 
@@ -101,9 +101,7 @@ class Project(up42.Tools):
             return workflows_json
         else:
             workflows = [
-                up42.Workflow(
-                    self.api, project_id=self.project_id, workflow_id=work["id"]
-                )
+                Workflow(self.api, project_id=self.project_id, workflow_id=work["id"])
                 for work in workflows_json
             ]
             return workflows

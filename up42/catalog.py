@@ -8,7 +8,8 @@ import shapely
 from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
 
-import up42
+from .tools import Tools
+from .api import Api
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__, level=logging.CRITICAL)  # TODO: Remove/set to INFO
@@ -18,8 +19,8 @@ logger = get_logger(__name__, level=logging.CRITICAL)  # TODO: Remove/set to INF
 # Scenes() would be dataframe with quicklook preview images in it.
 
 
-class Catalog(up42.Tools):
-    def __init__(self, api: up42.Api, backend: str = "ONE_ATLAS"):
+class Catalog(Tools):
+    def __init__(self, api: Api, backend: str = "ONE_ATLAS"):
         """The Catalog class enables access to the UP42 catalog search. You can search
         for satellite image scenes for different sensors and criteria like cloud cover etc.
 

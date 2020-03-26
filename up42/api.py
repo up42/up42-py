@@ -1,5 +1,4 @@
 import json
-import logging
 from pathlib import Path
 from typing import Dict, List, Union
 
@@ -14,7 +13,7 @@ from tenacity import (
     retry_if_exception_type,
 )
 
-import up42
+from .tools import Tools
 from .utils import get_logger
 
 # TODO: Logger produces multiple printouts in Jupyter Lab, known issue.
@@ -23,7 +22,7 @@ logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 # TODO: Test stuff with nonlinear structure.
 
 
-class Api(up42.Tools):
+class Api(Tools):
     def __init__(
         self,
         cfg_file: Union[str, Path] = None,
@@ -260,38 +259,48 @@ class Api(up42.Tools):
         else:  # E.g. for DELETE
             return response
 
-    def initialize_project(self) -> "up42.Project":
+    def initialize_project(self) -> "Project":
         """Directly returns the correct project object (has to exist on UP42)."""
-        project = up42.Project(api=self, project_id=self.project_id)
-        project._get_info()
+        from .project import Project
+
+        project = Project(api=self, project_id=self.project_id)
         return project
 
-    def initialize_catalog(self, backend: str = "ONE_ATLAS") -> "up42.Catalog":
+    def initialize_catalog(self, backend: str = "ONE_ATLAS") -> "Catalog":
         """Directly returns a catalog object."""
-        return up42.Catalog(api=self, backend=backend)
+        from .catalog import Catalog
 
-    def initialize_workflow(self, workflow_id) -> "up42.Workflow":
+        return Catalog(api=self, backend=backend)
+
+    def initialize_workflow(self, workflow_id) -> "Workflow":
         """Directly returns a workflow object (has to exist on UP42)."""
-        workflow = up42.Workflow(api=self, workflow_id=workflow_id,
-                                 project_id=self.project_id)
+        from .workflow import Workflow
+
+        workflow = Workflow(
+            api=self, workflow_id=workflow_id, project_id=self.project_id
+        )
         return workflow
 
-    def initialize_job(self, job_id, order_ids: List[str] = [""]) -> "up42.Job":
+    def initialize_job(self, job_id, order_ids: List[str] = [""]) -> "Job":
         """Directly returns a Job object (has to exist on UP42)."""
-        job = up42.Job(api=self, job_id=job_id, project_id=self.project_id, order_ids=order_ids)
+        from .job import Job
+
+        job = Job(
+            api=self, job_id=job_id, project_id=self.project_id, order_ids=order_ids
+        )
         return job
 
-    def initialize_jobtask(self, job_task_id, job_id) -> "up42.Job":
+    def initialize_jobtask(self, job_task_id, job_id) -> "JobTask":
         """Directly returns a JobTask object (has to exist on UP42)."""
-        jobtask = up42.JobTask(api=self, job_task_id=job_task_id, job_id=job_id,
-                               project_id=self.project_id)
+        from .jobtask import JobTask
+
+        jobtask = JobTask(
+            api=self, job_task_id=job_task_id, job_id=job_id, project_id=self.project_id
+        )
         return jobtask
 
     def get_blocks(
-        self,
-        block_type=None,
-        basic: bool = True,
-        as_dataframe=False,
+        self, block_type=None, basic: bool = True, as_dataframe=False,
     ) -> Union[Dict, List[Dict]]:
         """
         Gets a list of all public blocks on the marketplace.
@@ -316,7 +325,9 @@ class Api(up42.Tools):
 
         if block_type == "data":
             logger.info("Getting only data blocks.")
-            blocks_json = [block for block in public_blocks_json if block["type"] == "DATA"]
+            blocks_json = [
+                block for block in public_blocks_json if block["type"] == "DATA"
+            ]
         elif block_type == "processing":
             logger.info("Getting only processing blocks.")
             blocks_json = [

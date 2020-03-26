@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 from shapely.geometry import Point, Polygon, LinearRing
 
-from up42.utils import folium_base_map, any_vector_to_fc
+from .context import any_vector_to_fc, folium_base_map
 
 
 def test_folium_base_map():

@@ -4,7 +4,7 @@ import pytest
 import requests_mock
 
 from .fixtures import api_mock, project_mock, project_mock_with_info
-import up42
+from .context import Project, Workflow
 
 
 def test_project_get_info(project_mock):
@@ -15,7 +15,7 @@ def test_project_get_info(project_mock):
         m.get(url=url_project_info, text='{"data": {"xyz":789}, "error":{}}')
 
         info = project_mock._get_info()
-    assert isinstance(project_mock, up42.Project)
+    assert isinstance(project_mock, Project)
     assert info["xyz"] == 789
     assert project_mock.info["xyz"] == 789
 
@@ -37,7 +37,7 @@ def test_create_workflow(project_mock):
         workflow = project_mock.create_workflow(
             name="workflow_name123", description="workflow_description123"
         )
-    assert isinstance(workflow, up42.Workflow)
+    assert isinstance(workflow, Workflow)
 
 
 def test_create_workflow_use_existing(project_mock):
