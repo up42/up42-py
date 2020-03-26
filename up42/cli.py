@@ -2,7 +2,8 @@ import click
 import json
 from pathlib import Path
 
-from .api import Api
+from .auth import Auth
+from .tools import Tools
 from .utils import get_logger
 
 logger = get_logger(__name__)
@@ -40,9 +41,9 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 def main(ctx, cfg_file, project_id, project_api_key):
     ctx.ensure_object(dict)
     if cfg_file:
-        ctx.obj = Api(cfg_file, env=ENV)
+        ctx.obj = Auth(cfg_file, env=ENV)
     elif project_id and project_api_key:
-        ctx.obj = Api(project_id, project_api_key, env=ENV)
+        ctx.obj = Auth(project_id, project_api_key, env=ENV)
 
 
 COMMAND = main.command(context_settings=CONTEXT_SETTINGS)
@@ -50,21 +51,21 @@ COMMAND = main.command(context_settings=CONTEXT_SETTINGS)
 
 @COMMAND
 @click.pass_obj
-def auth(api):
+def auth(auth):
     """
     Check authentication.
     """
-    logger.info(api)
+    logger.info(auth)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following commands to persist with this authentication:")
-    logger.info(f"export UP42_PROJECT_ID={api.project_id}")
-    logger.info(f"export UP42_PROJECT_API_KEY={api.project_api_key}")
+    logger.info(f"export UP42_PROJECT_ID={auth.project_id}")
+    logger.info(f"export UP42_PROJECT_API_KEY={auth.project_api_key}")
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
 @COMMAND
 @click.pass_obj
-def config(api):
+def config(auth):
     """
     Create a config file.
     """
@@ -73,15 +74,18 @@ def config(api):
 
     logger.info(f"Saving config to {config_path}")
 
-    json_config = {"project_id": api.project_id, "project_api_key": api.project_api_key}
+    json_config = {
+        "project_id": auth.project_id,
+        "project_api_key": auth.project_api_key,
+    }
 
     with open(config_path, "w") as cfg:
         json.dump(json_config, cfg)
 
-    api = Api(cfg_file=config_path, env=ENV)
+    auth = Auth(cfg_file=config_path, env=ENV)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following command to persist with this authentication:")
-    logger.info(f"export UP42_CFG_FILE={api.cfg_file}")
+    logger.info(f"export UP42_CFG_FILE={auth.cfg_file}")
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -98,17 +102,17 @@ def config(api):
     "--basic/--full", default=True, help="Show basic or full block information."
 )
 @click.pass_obj
-def get_blocks(api, block_type, basic):
+def get_blocks(auth, block_type, basic):
     """
     Get public blocks information.
     """
-    logger.info(api.get_blocks(block_type, basic))
+    logger.info(Tools(auth).get_blocks(block_type, basic))
 
 
 def blocks_from_context():
     class OptionChoiceFromContext(click.Option):
         def full_process_value(self, ctx, value):
-            self.type = click.Choice(ctx.obj.get_blocks().keys())
+            self.type = click.Choice(Tools(ctx.obj).get_blocks().keys())
             return super(OptionChoiceFromContext, self).full_process_value(ctx, value)
 
     return OptionChoiceFromContext
@@ -123,37 +127,37 @@ def blocks_from_context():
     cls=blocks_from_context(),
 )
 @click.pass_obj
-def get_block_details(api, block_name):
+def get_block_details(auth, block_name):
     """
     Get details of block by block name.
     """
-    logger.info(api.get_block_details(api.get_blocks()[block_name]))
+    logger.info(Tools(auth).get_block_details(Tools(auth).get_blocks()[block_name]))
 
 
 @COMMAND
 @click.pass_obj
-def get_environments(api):
+def get_environments(auth):
     """
     Get all UP42 environments.
     """
-    logger.info(api.get_environments())
+    logger.info(Tools(auth).get_environments())
 
 
 @COMMAND
 @click.argument("name")
 @click.argument("environment-variables", type=click.File())
 @click.pass_obj
-def create_environment(api, name, environment_variables):
+def create_environment(auth, name, environment_variables):
     """
     Create an UP42 environment.
     """
-    logger.info(api.create_environment(name, json.load(environment_variables)))
+    logger.info(Tools(auth).create_environment(name, json.load(environment_variables)))
 
 
 def environments_from_context():
     class OptionChoiceFromContext(click.Option):
         def full_process_value(self, ctx, value):
-            env_names = [env["name"] for env in ctx.obj.get_environments()]
+            env_names = [env["name"] for env in Tools(ctx.obj).get_environments()]
             self.type = click.Choice(env_names)
             return super(OptionChoiceFromContext, self).full_process_value(ctx, value)
 
@@ -169,27 +173,30 @@ def environments_from_context():
     cls=environments_from_context(),
 )
 @click.pass_obj
-def delete_environment(api, environment_name):
+def delete_environment(auth, environment_name):
     """
     Delete an UP42 environment.
     """
     env_id = [
-        env["id"] for env in api.get_environments() if env["name"] == environment_name
+        env["id"]
+        for env in Tools(auth).get_environments()
+        if env["name"] == environment_name
     ]
     if click.confirm(
         f"Are you sure you want to delete '{environment_name}'?", abort=True
     ):
-        api.delete_environment(env_id)
+        auth.delete_environment(env_id)
 
 
 @COMMAND
 @click.argument("manifest-json", type=click.Path(exists=True))
 @click.pass_obj
-def validate_manifest(api, manifest_json):
+def validate_manifest(auth, manifest_json):
     """
     Validate a block manifest.
     """
-    logger.info(api.validate_manifest(manifest_json))
+    logger.info(Tools(auth).validate_manifest(manifest_json))
+
 
 # Workflows
 

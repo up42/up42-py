@@ -57,6 +57,7 @@ def test_delete_environment(cli_runner):
     result = cli_runner.invoke(cli.main, ["delete-environment", "SOME_NAME"], input="y")
     assert result.exit_code == 0
 
+
 def test_validate_manifest(cli_runner):
     result = cli_runner.invoke(cli.main, ["validate-manifest", "-h"])
     assert result.exit_code == 0
