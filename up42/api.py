@@ -259,46 +259,6 @@ class Api(Tools):
         else:  # E.g. for DELETE
             return response
 
-    def initialize_project(self) -> "Project":
-        """Directly returns the correct project object (has to exist on UP42)."""
-        from .project import Project
-
-        project = Project(api=self, project_id=self.project_id)
-        return project
-
-    def initialize_catalog(self, backend: str = "ONE_ATLAS") -> "Catalog":
-        """Directly returns a catalog object."""
-        from .catalog import Catalog
-
-        return Catalog(api=self, backend=backend)
-
-    def initialize_workflow(self, workflow_id) -> "Workflow":
-        """Directly returns a workflow object (has to exist on UP42)."""
-        from .workflow import Workflow
-
-        workflow = Workflow(
-            api=self, workflow_id=workflow_id, project_id=self.project_id
-        )
-        return workflow
-
-    def initialize_job(self, job_id, order_ids: List[str] = [""]) -> "Job":
-        """Directly returns a Job object (has to exist on UP42)."""
-        from .job import Job
-
-        job = Job(
-            api=self, job_id=job_id, project_id=self.project_id, order_ids=order_ids
-        )
-        return job
-
-    def initialize_jobtask(self, job_task_id, job_id) -> "JobTask":
-        """Directly returns a JobTask object (has to exist on UP42)."""
-        from .jobtask import JobTask
-
-        jobtask = JobTask(
-            api=self, job_task_id=job_task_id, job_id=job_id, project_id=self.project_id
-        )
-        return jobtask
-
     def get_blocks(
         self, block_type=None, basic: bool = True, as_dataframe=False,
     ) -> Union[Dict, List[Dict]]:
