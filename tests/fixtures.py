@@ -34,7 +34,10 @@ def workflow_mock(api_mock):
 
 @pytest.fixture()
 def job_mock(api_mock):
-    pass
+    job = up42.Job(
+        api=api_mock, project_id=api_mock.project_id, job_id="job_id123"
+    )
+    return job
 
 
 @pytest.fixture()
