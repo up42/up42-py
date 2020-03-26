@@ -185,6 +185,7 @@ def any_vector_to_fc(
             Dict,
             FeatureCollection,
             Feature,
+            geojson.Polygon,
             List,
             gpd.GeoDataFrame,
             shapely.geometry.polygon.Polygon,
@@ -205,6 +206,10 @@ def any_vector_to_fc(
             elif vector["type"] == "Feature":
                 df = gpd.GeoDataFrame.from_features(
                     FeatureCollection([vector]), crs=4326
+                )
+            elif vector["type"] == "Polygon":
+                df = gpd.GeoDataFrame.from_features(
+                    FeatureCollection([Feature(geometry=vector)]), crs=4326
                 )
         except KeyError:
             raise ValueError(
