@@ -14,8 +14,8 @@ import up42
 
 
 ```python
-api = up42.Api(cfg_file="config.json")
-project = api.initialize_project()
+api = up42.authenticate(cfg_file="config.json")
+project = up42.initialize_project()
 ```
 
 Get information about the available blocks to later construct your workflow.
@@ -31,7 +31,7 @@ You can either create a new workflow, use project.get_workflows() to get all exi
 Example: Sentinel 2 streaming & sharpening filter
 
 <p align="center">
-    <img src="/_assets/workflow.png" width="400" align="center">
+    <img src="_assets/workflow.png" width="400" align="center">
 </p>
 
 
@@ -178,7 +178,7 @@ job = workflow.create_and_run_job(input_parameters=input_parameters, track_statu
 ```
 
 <p align="center">
-    <img src="/_assets/job_running.png" width="700">
+    <img src="_assets/job_running.png" width="700">
 </p>
 
 ## Download & Display results
