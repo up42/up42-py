@@ -191,10 +191,6 @@ def validate_manifest(api, manifest_json):
     """
     logger.info(api.validate_manifest(manifest_json))
 
-
-# Projects
-
-
 # Workflows
 
 
