@@ -102,13 +102,13 @@ def read_vector_file(
     filename: str = "aoi.geojson", as_dataframe: bool = False
 ) -> FeatureCollection:
     tools = Tools(auth=_auth)
-    tools.read_vector_file(filename, as_dataframe)
+    return tools.read_vector_file(filename, as_dataframe)
 
 def get_example_aoi(
         location: str = "Berlin", as_dataframe: bool = False
 ) -> FeatureCollection:
     tools = Tools(auth=_auth)
-    tools.get_example_aoi(location, as_dataframe)
+    return tools.get_example_aoi(location, as_dataframe)
 
 def draw_aoi() -> None:
     tools = Tools(auth=_auth)

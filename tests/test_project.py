@@ -1,16 +1,13 @@
-import os
-
-import pytest
 import requests_mock
 
-from .fixtures import api_mock, project_mock, project_mock_with_info
 from .context import Project, Workflow
+from .fixtures import auth_mock, project_mock
 
 
 def test_project_get_info(project_mock):
     with requests_mock.Mocker() as m:
         url_project_info = (
-            f"{project_mock.api._endpoint()}/projects/{project_mock.project_id}"
+            f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}"
         )
         m.get(url=url_project_info, text='{"data": {"xyz":789}, "error":{}}')
 
@@ -26,7 +23,7 @@ def test_get_workflows():
 
 def test_create_workflow(project_mock):
     with requests_mock.Mocker() as m:
-        url_workflow_creation = f"{project_mock.api._endpoint()}/projects/{project_mock.project_id}/workflows/"
+        url_workflow_creation = f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/workflows/"
         text_workflow_creation = (
             '{"error":null,"data":{"id":"workflow_id123","displayId":"uezs12"}}'
         )
