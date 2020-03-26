@@ -149,7 +149,9 @@ class JobTask(Tools):
                 f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
                 f"/tasks/{self.job_task_id}/outputs/quicklooks/{ql_id}"
             )
-            response = self.auth._request(request_type="GET", url=url, return_text=False)
+            response = self.auth._request(
+                request_type="GET", url=url, return_text=False
+            )
 
             with open(out_path, "wb") as dst:
                 for chunk in response:

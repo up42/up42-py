@@ -51,7 +51,9 @@ def initialize_job(job_id, order_ids: List[str] = [""]) -> "Job":
     """Directly returns a Job object (has to exist on UP42)."""
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    return Job(auth=_auth, job_id=job_id, project_id=_auth.project_id, order_ids=order_ids)
+    return Job(
+        auth=_auth, job_id=job_id, project_id=_auth.project_id, order_ids=order_ids
+    )
 
 
 def initialize_jobtask(job_task_id, job_id) -> "JobTask":

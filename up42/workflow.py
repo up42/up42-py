@@ -347,7 +347,7 @@ class Workflow(Tools):
         )
         job_json = response_json["data"]
         logger.info("Created and running new job: %s.", job_json["id"])
-        job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id, )
+        job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
 
         if track_status:
             job.track_status()
