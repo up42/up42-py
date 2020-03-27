@@ -391,7 +391,7 @@ def get_jobs(workflow):
 @COMMAND_WORKFLOW
 @click.pass_obj
 @click.option(
-    "--basic/--full", default=False, help="Show basic or full task information."
+    "--basic/--full", default=True, help="Show basic or full task information."
 )
 def get_tasks(workflow, basic):
     """
