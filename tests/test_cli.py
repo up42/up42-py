@@ -17,6 +17,11 @@ def cli_runner():
     return CliRunner()
 
 
+WORKFLOW_ENVS = mock.patch.dict(
+    "os.environ", {"UP42_WORKFLOW_ID": os.environ.get("TEST_UP42_WORKFLOW_ID"),},
+)
+
+
 @pytest.mark.live()
 def test_main(cli_runner):
     result = cli_runner.invoke(cli.main)
@@ -102,4 +107,58 @@ def test_get_workflows(cli_runner):
 @pytest.mark.live()
 def test_update_project_settings(cli_runner):
     result = cli_runner.invoke(cli.main, ["project", "update-project-settings", "-h"])
+    assert result.exit_code == 0
+
+
+@pytest.mark.live()
+def test_workflow_from_name(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "workflow-from-name", "-h"])
+    assert result.exit_code == 0
+
+
+@pytest.mark.live()
+def test_workflow(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "workflow", "-h"])
+    assert result.exit_code == 0
+
+
+@WORKFLOW_ENVS
+@pytest.mark.live()
+def test_workflow_get_info(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "workflow", "get-info"])
+    assert result.exit_code == 0
+
+
+@WORKFLOW_ENVS
+@pytest.mark.live()
+def test_workflow_update_name(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "workflow", "update-name", "-h"])
+    assert result.exit_code == 0
+
+
+@WORKFLOW_ENVS
+@pytest.mark.live()
+def test_workflow_delete(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "workflow", "delete", "-h"])
+    assert result.exit_code == 0
+
+
+@WORKFLOW_ENVS
+@pytest.mark.live()
+def test_get_jobs(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "workflow", "get-jobs"])
+    assert result.exit_code == 0
+
+
+@WORKFLOW_ENVS
+@pytest.mark.live()
+def test_get_tasks(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "workflow", "get-tasks"])
+    assert result.exit_code == 0
+
+
+@WORKFLOW_ENVS
+@pytest.mark.live()
+def test_get_parameter_info(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "workflow", "get-parameter-info"])
     assert result.exit_code == 0

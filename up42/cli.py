@@ -1,7 +1,8 @@
+import click
+import os
 import json
 from pathlib import Path
-
-import click
+import tempfile
 
 from .auth import Auth
 from .tools import Tools
@@ -64,8 +65,8 @@ def auth(auth):
     logger.info(auth)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following commands to persist with this authentication:")
-    logger.info("export UP42_PROJECT_ID=%s", auth.project_id)
-    logger.info("export UP42_PROJECT_API_KEY=%s", auth.project_api_key)
+    logger.info(f"export UP42_PROJECT_ID={auth.project_id}")
+    logger.info(f"export UP42_PROJECT_API_KEY={auth.project_api_key}")
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -78,7 +79,7 @@ def config(auth):
     config_path = Path("~/UP42_CONFIG.json")
     config_path = config_path.expanduser()
 
-    logger.info("Saving config to %s", config_path)
+    logger.info(f"Saving config to {config_path}")
 
     json_config = {
         "project_id": auth.project_id,
@@ -91,7 +92,7 @@ def config(auth):
     auth = Auth(cfg_file=config_path, env=ENV)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following command to persist with this authentication:")
-    logger.info("export UP42_CFG_FILE=%s", auth.cfg_file)
+    logger.info(f"export UP42_CFG_FILE={auth.cfg_file}")
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -277,7 +278,135 @@ def update_project_settings(
     logger.info(f"New project settings: {project.get_project_settings()}")
 
 
+def workflows_from_context():
+    class OptionChoiceFromContext(click.Option):
+        def full_process_value(self, ctx, value):
+            workflow_names = [wkf.info["name"] for wkf in ctx.obj.get_workflows()]
+            self.type = click.Choice(workflow_names)
+            return super(OptionChoiceFromContext, self).full_process_value(ctx, value)
+
+    return OptionChoiceFromContext
+
+
+@COMMAND_PROJECT
+@click.option(
+    "-name",
+    "--workflow-name",
+    help="Workflow name to use.",
+    required=True,
+    cls=workflows_from_context(),
+)
+@click.pass_context
+def workflow_from_name(ctx, workflow_name):
+    """
+    Use a workflow from name.
+    """
+    wf = ctx.obj.create_workflow(workflow_name, use_existing=True)
+    ctx.invoke(workflow, workflow_id=wf.workflow_id)
+
+
 # Workflows
+@project.group()
+@click.pass_context
+@click.option(
+    "-WID",
+    "--WORKFLOW-ID",
+    "workflow_id",
+    envvar="UP42_WORKFLOW_ID",
+    help="Your workflow ID, get it by creating a workflow or running 'up42 project get-worflows'",
+    required=True,
+)
+def workflow(ctx, workflow_id):
+    """
+    Add workflow tasks, run a job and more.
+    """
+    ctx.obj = Workflow(ctx.obj.auth, ctx.obj.project_id, workflow_id)
+    if not os.environ.get("UP42_WORKFLOW_ID"):
+        logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        logger.info("Run the following command to persist with this workflow:")
+        logger.info(f"export UP42_WORKFLOW_ID={workflow_id}")
+        logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+
+COMMAND_WORKFLOW = workflow.command(context_settings=CONTEXT_SETTINGS)
+
+
+@COMMAND_WORKFLOW
+@click.pass_obj
+def get_info(workflow):
+    """
+    Get information about the workflow.
+    """
+    logger.info(workflow.info)
+
+
+@COMMAND_WORKFLOW
+@click.option("--name", type=str, help="New name for the workflow.", required=True)
+@click.option(
+    "--description", type=str, help="An optional description for the workflow.",
+)
+@click.pass_context
+def update_name(ctx, name, description):
+    """
+    Update the workflow name.
+    """
+    logger.info(f"Current info: {ctx.obj.info}")
+    if click.confirm(
+        f"Are you sure you want to change the name '{ctx.obj.info.get('name')}' to '{name}'?",
+        abort=True,
+    ):
+        ctx.obj.update_name(name, description)
+        ctx.obj = Workflow(ctx.obj.auth, ctx.obj.project_id, ctx.obj.workflow_id)
+        logger.info(f"New info: {ctx.obj.info}")
+
+
+@COMMAND_WORKFLOW
+@click.pass_obj
+def delete(workflow):
+    """
+    Delete the workflow.
+    """
+    logger.info(f"Current info: {ctx.obj.info}")
+    if click.confirm(
+        f"Are you sure you want to delete workflow '{ctx.obj.info.get('name')}'?",
+        abort=True,
+    ):
+        workflow.delete()
+        if os.environ.get("UP42_WORKFLOW_ID"):
+            logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+            logger.info("Make sure to remove the environment variable with:")
+            logger.info(f"UP42_WORKFLOW_ID=")
+            logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+
+@COMMAND_WORKFLOW
+@click.pass_obj
+def get_jobs(workflow):
+    """
+    Get the jobs ran with this workflow.
+    """
+    logger.info(workflow.get_jobs())
+
+
+@COMMAND_WORKFLOW
+@click.pass_obj
+@click.option(
+    "--basic/--full", default=False, help="Show basic or full task information."
+)
+def get_tasks(workflow, basic):
+    """
+    Get the workflow tasks list (DAG).
+    """
+    logger.info(workflow.get_workflow_tasks(basic=basic))
+
+
+@COMMAND_WORKFLOW
+@click.pass_obj
+def get_parameter_info(workflow):
+    """
+    Get info about the parameters of each task in the workflow to make it easy to construct the desired parameters.
+    """
+    logger.info(workflow.get_parameter_info())
 
 
 # Jobs
