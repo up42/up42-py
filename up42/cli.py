@@ -313,7 +313,7 @@ def workflow_from_name(ctx, workflow_name):
     "--WORKFLOW-ID",
     "workflow_id",
     envvar="UP42_WORKFLOW_ID",
-    help="Your workflow ID, get it by creating a workflow or running 'up42 project get-worflows'",
+    help="Your workflow ID, get it by creating a workflow or running 'up42 project get-workflows'",
     required=True,
 )
 def workflow(ctx, workflow_id):
