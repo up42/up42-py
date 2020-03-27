@@ -418,6 +418,31 @@ def get_compatible_blocks(workflow):
     logger.info(workflow.get_compatible_blocks())
 
 
+@COMMAND_WORKFLOW
+@click.argument("input-tasks-json", type=click.File("rb"))
+@click.pass_obj
+def add_workflow_tasks(workflow, input_tasks_json):
+    """
+    Adds or overwrites workflow tasks.
+    - Name is arbitrary but best use the block name. Always use :1 to be able to identify the order when two times the same workflow task is used.
+    - API by itself validates if the underlying block for the selected block-id is available.
+    """
+    input_tasks = json.load(input_tasks_json)
+    logger.info(workflow.add_workflow_tasks(input_tasks))
+
+
+@COMMAND_WORKFLOW
+@click.argument("input-parameters-json", type=click.File("rb"))
+@click.option("--track", help="Track status of job in shell.", is_flag=True)
+@click.pass_obj
+def create_and_run_job(workflow, input_parameters_json, track):
+    """
+    Creates and runs a new job.
+    """
+    input_parameters = json.load(input_parameters_json)
+    logger.info(workflow.create_and_run_job(input_parameters, track))
+
+
 # Jobs
 
 

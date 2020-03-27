@@ -1,8 +1,15 @@
 import os
 from unittest import mock
+from pathlib import Path
 import pytest
 from click.testing import CliRunner
 from up42 import cli
+
+
+# VARS THAT NEED SETTINGS:
+#  TEST_UP42_PROJECT_ID
+#  TEST_UP42_PROJECT_API_KEY
+#  TEST_UP42_WORKFLOW_ID
 
 
 @pytest.fixture()
@@ -171,3 +178,33 @@ def test_get_compatible_blocks(cli_runner):
         cli.main, ["project", "workflow", "get-compatible-blocks"]
     )
     assert result.exit_code == 0
+
+
+@WORKFLOW_ENVS
+@pytest.mark.live()
+def test_add_workflow_tasks(cli_runner):
+    result = cli_runner.invoke(
+        cli.main, ["project", "workflow", "add-workflow-tasks", "-h"]
+    )
+    assert result.exit_code == 0
+
+    input_tasks_json = Path(__file__).resolve().parent / "mock_data/input_tasks_simple.json"
+    result = cli_runner.invoke(
+        cli.main, ["project", "workflow", "add-workflow-tasks", str(input_tasks_json)]
+    )
+    assert result.exit_code == 0
+
+
+@WORKFLOW_ENVS
+@pytest.mark.live()
+def test_create_and_run_job(cli_runner):
+    result = cli_runner.invoke(
+        cli.main, ["project", "workflow", "create-and-run-job", "-h"]
+    )
+    assert result.exit_code == 0
+
+    #input_parameters_json = Path(__file__).resolve().parent / "mock_data/input_parameters_simple.json"
+    #result = cli_runner.invoke(
+    #    cli.main, ["project", "workflow", "create-and-run-job", str(input_parameters_json), "--track"]
+    #)
+    #assert result.exit_code == 0
