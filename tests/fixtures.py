@@ -3,7 +3,7 @@ import os
 import pytest
 import requests_mock
 
-from .context import Auth, Project, Workflow, Tools
+from .context import Auth, Project, Workflow, Job, Tools
 
 
 @pytest.fixture()
@@ -34,7 +34,10 @@ def workflow_mock(auth_mock):
 
 @pytest.fixture()
 def job_mock(auth_mock):
-    pass
+    job = Job(
+        auth=auth_mock, project_id=auth_mock.project_id, job_id="job_id123"
+    )
+    return job
 
 
 @pytest.fixture()
