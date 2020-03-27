@@ -3,13 +3,13 @@ import os
 import pytest
 import requests_mock
 
-from .fixtures import api_mock, job_mock
+from .fixtures import auth_mock, job_mock
 import up42
 
 
 def test_job_get_info(job_mock):
     with requests_mock.Mocker() as m:
-        url_job_info = f"{job_mock.api._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
+        url_job_info = f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
         m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
 
         info = job_mock._get_info()
