@@ -152,8 +152,8 @@ def test_get_jobs(cli_runner):
 
 @WORKFLOW_ENVS
 @pytest.mark.live()
-def test_get_tasks(cli_runner):
-    result = cli_runner.invoke(cli.main, ["project", "workflow", "get-tasks"])
+def test_get_workflow_tasks(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "workflow", "get-workflow-tasks"])
     assert result.exit_code == 0
 
 

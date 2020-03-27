@@ -393,7 +393,7 @@ def get_jobs(workflow):
 @click.option(
     "--basic/--full", default=True, help="Show basic or full task information."
 )
-def get_tasks(workflow, basic):
+def get_workflow_tasks(workflow, basic):
     """
     Get the workflow tasks list (DAG).
     """
