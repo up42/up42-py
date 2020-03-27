@@ -10,22 +10,24 @@ import folium
 import geopandas as gpd
 import numpy as np
 import rasterio
-from rasterio.io import MemoryFile
-from rasterio.warp import calculate_default_transform, reproject, Resampling
 import requests
 import requests.exceptions
 from IPython.display import display
+from rasterio.io import MemoryFile
+from rasterio.warp import calculate_default_transform, reproject, Resampling
 
-import up42
+from .auth import Auth
+from .jobtask import JobTask
+from .tools import Tools
 from .utils import get_logger, is_notebook, folium_base_map
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 
 # pylint: disable=dangerous-default-value
-class Job(up42.Tools):
+class Job(Tools):
     def __init__(
-        self, api: up42.Api, project_id: str, job_id: str, order_ids: List[str] = [""],
+        self, auth: Auth, project_id: str, job_id: str, order_ids: List[str] = [""],
     ):
         """The Job class provides access to the results, parameters and tasks of UP42
         Jobs (Workflows that have been run as Jobs).
@@ -35,23 +37,23 @@ class Job(up42.Tools):
             download_result, upload_result_to_bucket, map_result,
             get_log, get_job_tasks, get_job_tasks_result_json
         """
-        self.api = api
+        self.auth = auth
         self.project_id = project_id
         self.job_id = job_id
         self.order_ids = order_ids
-        if self.api.authenticate:
+        if self.auth.authenticate:
             self.info = self._get_info()
 
     def __repr__(self):
         return (
             f"Job(job_id={self.job_id}, project_id={self.project_id}, "
-            f"order_ids={str(self.order_ids)}, api={self.api}, info={self.info})"
+            f"order_ids={str(self.order_ids)}, auth={self.auth}, info={self.info})"
         )
 
     def _get_info(self):
         """Gets metadata info from an existing Job"""
-        url = f"{self.api._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
-        response_json = self.api._request(request_type="GET", url=url)
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
+        response_json = self.auth._request(request_type="GET", url=url)
         self.info = response_json["data"]
         return self.info
 
@@ -101,8 +103,8 @@ class Job(up42.Tools):
 
     def cancel_job(self) -> None:
         """Cancels a pending or running job."""
-        url = f"{self.api._endpoint()}/jobs/{self.job_id}/cancel/"
-        self.api._request(request_type="POST", url=url)
+        url = f"{self.auth._endpoint()}/jobs/{self.job_id}/cancel/"
+        self.auth._request(request_type="POST", url=url)
         logger.info("Job canceled: %s", self.job_id)
 
     def download_quicklook(self, out_dir=None) -> Dict:
@@ -134,10 +136,10 @@ class Job(up42.Tools):
             The job data.json json.
         """
         url = (
-            f"{self.api._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
             f"/outputs/data-json/"
         )
-        response_json = self.api._request(request_type="GET", url=url)
+        response_json = self.auth._request(request_type="GET", url=url)
 
         if as_dataframe:
             # UP42 results are always in EPSG 4326
@@ -148,10 +150,10 @@ class Job(up42.Tools):
 
     def _get_download_url(self) -> str:
         url = (
-            f"{self.api._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
             f"/downloads/results/"
         )
-        response_json = self.api._request(request_type="GET", url=url)
+        response_json = self.auth._request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
         return download_url
 
@@ -368,10 +370,10 @@ class Job(up42.Tools):
 
         for idx, job_task_id in enumerate(job_tasks_ids):
             url = (
-                f"{self.api._endpoint()}/projects/{self.project_id}/jobs/"
+                f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/"
                 f"{self.job_id}/tasks/{job_task_id}/logs"
             )
-            response_json = self.api._request(request_type="GET", url=url)
+            response_json = self.auth._request(request_type="GET", url=url)
 
             job_logs[job_task_id] = response_json
 
@@ -382,7 +384,7 @@ class Job(up42.Tools):
             if as_return:
                 return job_logs
 
-    def get_job_tasks(self, return_json: bool = False) -> Union["up42.JobTask", Dict]:
+    def get_job_tasks(self, return_json: bool = False) -> Union["JobTask", Dict]:
         """
         Get the individual items of the job as JobTask objects or json.
 
@@ -393,16 +395,16 @@ class Job(up42.Tools):
             The job task objects in a list.
         """
         url = (
-            f"{self.api._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
             f"/tasks/"
         )
         logger.info("Getting job tasks: %s", self.job_id)
-        response_json = self.api._request(request_type="GET", url=url)
+        response_json = self.auth._request(request_type="GET", url=url)
         job_tasks_json = response_json["data"]
 
         job_tasks = [
-            up42.JobTask(
-                api=self.api,
+            JobTask(
+                auth=self.auth,
                 project_id=self.project_id,
                 job_id=self.job_id,
                 job_task_id=task["id"],
@@ -427,10 +429,10 @@ class Job(up42.Tools):
         job_tasks_results_json = {}
         for job_task_id in job_tasks_ids:
             url = (
-                f"{self.api._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
+                f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
                 f"/tasks/{job_task_id}/outputs/data-json"
             )
-            response_json = self.api._request(request_type="GET", url=url)
+            response_json = self.auth._request(request_type="GET", url=url)
 
             job_tasks_results_json[job_task_id] = response_json
         return job_tasks_results_json

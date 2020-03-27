@@ -27,14 +27,14 @@ pip install -e .
 ```python
 import up42
 
-api = up42.Api(cfg_file="config.json")
-project = api.initialize_project()
+up42.authenticate(cfg_file="config.json")
+project = up42.initialize_project()
 print(project)
 ```
 
 <br>
 
 !!! Success "Success!"
-    Continue with the [Quickstart](01_quickstart.md) or [Tutorial](02_typical_usage.md) section!
+    Continue with the [Getting Started](01_quickstart.md) section!
 
 <br>

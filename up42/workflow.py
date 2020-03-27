@@ -4,18 +4,21 @@ from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Union, Optional
 
+import geojson
 import geopandas as gpd
 import shapely
 from geojson import Feature, FeatureCollection
 
-import up42
+from .auth import Auth
+from .job import Job
+from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 
-class Workflow(up42.Tools):
-    def __init__(self, api: up42.Api, project_id: str, workflow_id: str):
+class Workflow(Tools):
+    def __init__(self, auth: Auth, project_id: str, workflow_id: str):
         """
         The Workflow class can query all available and spawn new jobs for
         an UP42 Workflow and helps to find and set the the workflow tasks, parameters
@@ -25,25 +28,25 @@ class Workflow(up42.Tools):
             get_compatible_blocks, get_workflow_tasks, add_workflow_tasks, get_parameter_info,
             construct_parameter, create_and_run_job, get_jobs, update_name, delete
         """
-        self.api = api
+        self.auth = auth
         self.project_id = project_id
         self.workflow_id = workflow_id
-        if self.api.authenticate:
+        if self.auth.authenticate:
             self.info = self._get_info()
 
     def __repr__(self):
         return (
             f"Workflow(workflow_id={self.workflow_id}, project_id={self.project_id}, "
-            f"api={self.api}, info={self.info})"
+            f"auth={self.auth}, info={self.info})"
         )
 
     def _get_info(self) -> Dict:
         """Gets metadata info from an existing workflow"""
         url = (
-            f"{self.api._endpoint()}/projects/{self.project_id}/workflows/"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
             f"{self.workflow_id}"
         )
-        response_json = self.api._request(request_type="GET", url=url)
+        response_json = self.auth._request(request_type="GET", url=url)
         self.info = response_json["data"]
         return self.info
 
@@ -57,10 +60,10 @@ class Workflow(up42.Tools):
         """
         last_task = list(self.get_workflow_tasks(basic=True)[-1].keys())[0]
         url = (
-            f"{self.api._endpoint()}/projects/{self.project_id}/workflows/{self.workflow_id}/"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/{self.workflow_id}/"
             f"compatible-blocks?parentTaskName={last_task}"
         )
-        response_json = self.api._request(request_type="GET", url=url)
+        response_json = self.auth._request(request_type="GET", url=url)
         compatible_blocks = response_json["data"]["blocks"]
         # TODO: Plot diagram of current workflow in green, attachable blocks in red.
         return compatible_blocks
@@ -76,10 +79,10 @@ class Workflow(up42.Tools):
             The workflow task info.
         """
         url = (
-            f"{self.api._endpoint()}/projects/{self.project_id}/workflows/"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
             f"{self.workflow_id}/tasks"
         )
-        response_json = self.api._request(request_type="GET", url=url)
+        response_json = self.auth._request(request_type="GET", url=url)
         tasks = response_json["data"]
         logger.info("Got %s tasks/blocks in workflow %s.", len(tasks), self.workflow_id)
 
@@ -109,7 +112,7 @@ class Workflow(up42.Tools):
         full_input_tasks_definition = []
 
         # Get public + custom blocks.
-        blocks_name_id = self.api.get_blocks(basic=True)
+        blocks_name_id = self.get_blocks(basic=True)
         blocks_id_name = {
             value: key for key, value in blocks_name_id.items()
         }  # pylint: disable=
@@ -183,10 +186,10 @@ class Workflow(up42.Tools):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
 
         url = (
-            f"{self.api._endpoint()}/projects/{self.project_id}/workflows/"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
             f"{self.workflow_id}/tasks/"
         )
-        self.api._request(request_type="POST", url=url, data=input_tasks)
+        self.auth._request(request_type="POST", url=url, data=input_tasks)
         logger.info("Added tasks to workflow: %r", input_tasks)
 
     def get_parameter_info(self) -> Dict:
@@ -235,6 +238,7 @@ class Workflow(up42.Tools):
                 Dict,
                 Feature,
                 FeatureCollection,
+                geojson.Polygon,
                 List,
                 gpd.GeoDataFrame,
                 shapely.geometry.polygon.Polygon,
@@ -307,7 +311,7 @@ class Workflow(up42.Tools):
         self,
         input_parameters: Union[Dict, str, Path] = None,
         track_status: bool = False,
-    ) -> "up42.Job":
+    ) -> "Job":
         """
         Creates and runs a new job.
 
@@ -337,21 +341,21 @@ class Workflow(up42.Tools):
 
         name = "_py"  # Enables recognition of python API usage.
         url = (
-            f"{self.api._endpoint()}/projects/{self.project_id}/"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/"
             f"workflows/{self.workflow_id}/jobs?name={name}"
         )
-        response_json = self.api._request(
+        response_json = self.auth._request(
             request_type="POST", url=url, data=input_parameters
         )
         job_json = response_json["data"]
         logger.info("Created and running new job: %s.", job_json["id"])
-        job = up42.Job(self.api, job_id=job_json["id"], project_id=self.project_id,)
+        job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
 
         if track_status:
             job.track_status()
         return job
 
-    def get_jobs(self, return_json: bool = False) -> Union[List["up42.Job"], Dict]:
+    def get_jobs(self, return_json: bool = False) -> Union[List["Job"], Dict]:
         """
         Get all jobs in the specific project as job objects or json.
 
@@ -361,8 +365,8 @@ class Workflow(up42.Tools):
         Returns:
             All job objects as a list, or alternatively the jobs info as json.
         """
-        url = f"{self.api._endpoint()}/projects/{self.project_id}/jobs"
-        response_json = self.api._request(request_type="GET", url=url)
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
+        response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = response_json["data"]
         logger.info(
             "Got %s jobs for workflow %s in project %s.",
@@ -374,7 +378,7 @@ class Workflow(up42.Tools):
             return jobs_json
         else:
             jobs = [
-                up42.Job(self.api, job_id=job["id"], project_id=self.project_id)
+                Job(self.auth, job_id=job["id"], project_id=self.project_id)
                 for job in jobs_json
             ]
             return jobs
@@ -389,10 +393,10 @@ class Workflow(up42.Tools):
         """
         properties_to_update = {"name": name, "description": description}
         url = (
-            f"{self.api._endpoint()}/projects/{self.project_id}/workflows/"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
             f"{self.workflow_id}"
         )
-        self.api._request(request_type="PUT", url=url, data=properties_to_update)
+        self.auth._request(request_type="PUT", url=url, data=properties_to_update)
         logger.info("Updated workflow name: %r", properties_to_update)
 
     def delete(self) -> None:
@@ -400,9 +404,9 @@ class Workflow(up42.Tools):
         Deletes the workflow and sets the Python object to None.
         """
         url = (
-            f"{self.api._endpoint()}/projects/{self.project_id}/workflows/"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
             f"{self.workflow_id}"
         )
-        self.api._request(request_type="DELETE", url=url, return_text=False)
+        self.auth._request(request_type="DELETE", url=url, return_text=False)
         logger.info("Successfully deleted workflow: %s", self.workflow_id)
         del self

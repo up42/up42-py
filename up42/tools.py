@@ -1,17 +1,20 @@
+import json
+import math
 import os
 from pathlib import Path
-from typing import Tuple, List
-import math
+from typing import Tuple, List, Union, Dict
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
 import rasterio
+import requests.exceptions
 import shapely
 from IPython import get_ipython
 from IPython.display import display
 from geojson import FeatureCollection
 from rasterio.plot import show
+from tenacity import RetryError
 
 from .utils import get_logger, folium_base_map, DrawFoliumOverride, is_notebook
 
@@ -20,14 +23,17 @@ logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 # pylint: disable=no-member
 class Tools:
-    def __init__(self,):
+    def __init__(self, auth=None):
         """
-        The tools class contains class independent functionality for e.g. aoi handling etc.
-        They can be accessed from every object.
+        The tools class contains functionality that is not bound to a specific UP42 object,
+        e.g. for aoi handling etc., UP42 block information, validatin a block manifest etc.
+        They can be accessed from every object and also from the imported up42 package directly.
 
         Public methods:
             read_vector_file, get_example_aoi, draw_aoi, plot_coverage, plot_quicklook
         """
+        if auth:
+            self.auth = auth
 
     # pylint: disable=no-self-use
     def read_vector_file(
@@ -72,9 +78,6 @@ class Tools:
             return df
         else:
             return df.__geo_interface__
-
-    def read_vector(self):
-        pass
 
     def get_example_aoi(
         self, location: str = "Berlin", as_dataframe: bool = False
@@ -267,3 +270,200 @@ class Tools:
             axs[idx].set_axis_off()
         plt.tight_layout()
         plt.show()
+
+    def get_blocks(
+        self, block_type=None, basic: bool = True, as_dataframe=False,
+    ) -> Union[Dict, List[Dict]]:
+        """
+        Gets a list of all public blocks on the marketplace.
+
+        Args:
+            block_type: Optionally filters to "data" or "processing" blocks, default None.
+            basic: Optionally returns simple version {block_id : block_name}
+            as_dataframe: Returns a dataframe instead of json (default).
+
+        Returns:
+            A list of the public blocks and their metadata. Optional a simpler version
+            dict.
+        """
+        try:
+            block_type = block_type.lower()
+        except AttributeError:
+            pass
+
+        url = f"{self.auth._endpoint()}/blocks"
+        response_json = self.auth._request(request_type="GET", url=url)
+        public_blocks_json = response_json["data"]
+
+        if block_type == "data":
+            logger.info("Getting only data blocks.")
+            blocks_json = [
+                block for block in public_blocks_json if block["type"] == "DATA"
+            ]
+        elif block_type == "processing":
+            logger.info("Getting only processing blocks.")
+            blocks_json = [
+                block for block in public_blocks_json if block["type"] == "PROCESSING"
+            ]
+        else:
+            blocks_json = public_blocks_json
+
+        if basic:
+            logger.info(
+                "Getting basic information, use basic=False for all block details."
+            )
+            blocks_basic = {block["name"]: block["id"] for block in blocks_json}
+            if as_dataframe:
+                return pd.DataFrame.from_dict(blocks_basic, orient="index")
+            else:
+                return blocks_basic
+
+        else:
+            if as_dataframe:
+                return pd.DataFrame(blocks_json)
+            else:
+                return blocks_json
+
+    def get_block_details(self, block_id: str, as_dataframe=False) -> Dict:
+        """
+        Gets the detailed information about a specific (public or custom) block from
+        the server, includes all manifest.json and marketplace.json contents.
+
+        Args:
+            block_id: The block id.
+            as_dataframe: Returns a dataframe instead of json (default).
+
+        Returns:
+            A dict of the block details metadata for the specific block.
+        """
+        try:
+            url = f"{self.auth._endpoint()}/blocks/{block_id}"  # public blocks
+            response_json = self.auth._request(request_type="GET", url=url)
+        except (requests.exceptions.HTTPError, RetryError):
+            url = f"{self._endpoint()}/users/me/blocks/{block_id}"  # custom blocks
+            response_json = self.auth._request(request_type="GET", url=url)
+        details_json = response_json["data"]
+
+        if as_dataframe:
+            return pd.DataFrame.from_dict(details_json, orient="index").transpose()
+        else:
+            return details_json
+
+    def get_environments(self, as_dataframe=False) -> Dict:
+        """
+        Gets all existing UP42 environments, used for separating storage of API keys
+        etc.
+
+        Args:
+            as_dataframe: Returns a dataframe instead of json (default).
+
+        Returns:
+            The environments as json info.
+        """
+        url = f"{self.auth._endpoint()}/environments"
+        response_json = self.auth._request(request_type="GET", url=url)
+        environments_json = response_json["data"]
+
+        if as_dataframe:
+            return pd.DataFrame(environments_json)
+        else:
+            return environments_json
+
+    def create_environment(self, name: str, environment_variables: Dict = None) -> Dict:
+        """
+        Creates a new UP42 environments, used for separating storage of API keys
+        etc.
+
+        Args:
+            name: Name of the new environment.
+            environment_variables: The variables to add to the environment, see example.
+
+        Returns:
+            The json info of the newly created environment.
+
+        Example:
+            ```python
+            environment_variables=
+                {"username": "up42", "password": "password"}
+            ```
+        """
+        existing_environment_names = [env["name"] for env in self.get_environments()]
+        if name in existing_environment_names:
+            raise Exception("An environment with the name %s already exists.", name)
+        payload = {"name": name, "secrets": environment_variables}
+        url = f"{self.auth._endpoint()}/environments"
+        response_json = self.auth._request(request_type="POST", url=url, data=payload)
+        return response_json["data"]
+
+    def delete_environment(self, environment_id: str) -> None:
+        """
+        Deletes a specific environment.
+
+        Args:
+            environment_id: The id of the environment to delete. See also get_environments.
+        """
+        url = f"{self.auth._endpoint()}/environments/{environment_id}"
+        self.auth._request(request_type="DELETE", url=url, return_text=False)
+        logger.info("Successfully deleted environment: %s", environment_id)
+
+    def validate_manifest(self, path_or_json: Union[str, Path, Dict]) -> Dict:
+        """
+        Validates the block manifest, input either manifest json string or filepath.
+
+        Args:
+            path_or_json: The input manifest, either filepath or json string, see example.
+
+        Returns:
+            A dictionary with the validation result and potential validation errors.
+
+        Example:
+            ```json
+                {
+                    "_up42_specification_version": 2,
+                    "name": "sharpening",
+                    "type": "processing",
+                    "tags": [
+                        "imagery",
+                        "processing"
+                    ],
+                    "display_name": "Sharpening Filter",
+                    "description": "This block enhances the sharpness of a raster image by applying an unsharp mask filter algorithm.",
+                    "parameters": {
+                        "strength": {"type": "string", "default": "medium"}
+                    },
+                    "machine": {
+                        "type": "large"
+                    },
+                    "input_capabilities": {
+                        "raster": {
+                            "up42_standard": {
+                                "format": "GTiff"
+                            }
+                        }
+                    },
+                    "output_capabilities": {
+                        "raster": {
+                            "up42_standard": {
+                                "format": "GTiff",
+                                "bands": ">",
+                                "sensor": ">",
+                                "resolution": ">",
+                                "dtype": ">",
+                                "processing_level": ">"
+                            }
+                        }
+                    }
+                }
+            ```
+        """
+        if isinstance(path_or_json, (str, Path)):
+            with open(path_or_json) as src:
+                manifest_json = json.load(src)
+        else:
+            manifest_json = path_or_json
+        url = f"{self.auth._endpoint()}/validate-schema/block"
+        response_json = self.auth._request(
+            request_type="POST", url=url, data=manifest_json
+        )
+        logger.info("The manifest is valid.")
+        return response_json["data"]

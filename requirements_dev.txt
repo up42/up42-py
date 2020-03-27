@@ -1,11 +1,11 @@
-mkdocs
+mkdocs==1.0.4
 mkdocs-material
 pandoc
 pygments
 pymdown-extensions>=7.0b2
 mkdocs-autolinks-plugin
 mkdocs-table-reader-plugin
-mkdocstrings
+mkdocstrings==0.8.0
 black
 requests-mock
 pytest<5.4

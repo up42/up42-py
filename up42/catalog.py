@@ -5,10 +5,11 @@ from typing import Dict, Union, List
 
 import geopandas as gpd
 import shapely
-from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
+from shapely.geometry import Point, Polygon
 
-import up42
+from .auth import Auth
+from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__, level=logging.CRITICAL)  # TODO: Remove/set to INFO
@@ -18,19 +19,19 @@ logger = get_logger(__name__, level=logging.CRITICAL)  # TODO: Remove/set to INF
 # Scenes() would be dataframe with quicklook preview images in it.
 
 
-class Catalog(up42.Tools):
-    def __init__(self, api: up42.Api, backend: str = "ONE_ATLAS"):
+class Catalog(Tools):
+    def __init__(self, auth: Auth, backend: str = "ONE_ATLAS"):
         """The Catalog class enables access to the UP42 catalog search. You can search
         for satellite image scenes for different sensors and criteria like cloud cover etc.
 
         Public Methods:
             construct_parameter, search, download_quicklook
         """
-        self.api = api
+        self.auth = auth
         self.querystring = {"backend": backend}  # TODO: Sobloo
 
     def __repr__(self):
-        return f"Catalog(querystring={self.querystring}, api={self.api})"
+        return f"Catalog(querystring={self.querystring}, auth={self.auth})"
 
     def construct_parameter(
         self,
@@ -147,8 +148,8 @@ class Catalog(up42.Tools):
             ```
         """
         logger.info("Searching catalog with: %r", search_paramaters)
-        url = f"{self.api._endpoint()}/catalog/stac/search"
-        response_json = self.api._request(
+        url = f"{self.auth._endpoint()}/catalog/stac/search"
+        response_json = self.auth._request(
             "POST", url, search_paramaters, self.querystring
         )
         logger.info("%d results returned.", len(response_json["features"]))
@@ -227,9 +228,9 @@ class Catalog(up42.Tools):
 
             # TODO: Add sobloo to backend.
             url = (
-                f"{self.api._endpoint()}/catalog/{provider}/image/{image_id}/quicklook"
+                f"{self.auth._endpoint()}/catalog/{provider}/image/{image_id}/quicklook"
             )
-            response = self.api._request("GET", url, return_text=False)
+            response = self.auth._request("GET", url, return_text=False)
 
             with open(out_path, "wb") as dst:
                 for chunk in response:

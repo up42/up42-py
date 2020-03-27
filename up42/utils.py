@@ -170,7 +170,8 @@ def any_vector_to_fc(
         shapely.geometry.polygon.Polygon,
         shapely.geometry.polygon.Point,
     ],
-) -> Dict:
+    as_dataframe: bool = False,
+) -> Union[Dict, gpd.GeoDataFrame]:
     """
     Gets a uniform feature collection dictionary (with fc and f bboxes) from any input vector type.
 
@@ -178,6 +179,7 @@ def any_vector_to_fc(
         vector: One of Dict, FeatureCollection, Feature, List of bounds coordinates,
             gpd.GeoDataFrame, shapely.geometry.polygon.Polygon, shapely.geometry.polygon.Point. All assume EPSG 4326
             and Polygons!
+        as_dataframe: GeoDataFrame output with as_dataframe=True.
     """
     if not isinstance(
         vector,
@@ -185,6 +187,7 @@ def any_vector_to_fc(
             Dict,
             FeatureCollection,
             Feature,
+            geojson.Polygon,
             List,
             gpd.GeoDataFrame,
             shapely.geometry.polygon.Polygon,
@@ -205,6 +208,10 @@ def any_vector_to_fc(
             elif vector["type"] == "Feature":
                 df = gpd.GeoDataFrame.from_features(
                     FeatureCollection([vector]), crs=4326
+                )
+            elif vector["type"] == "Polygon":
+                df = gpd.GeoDataFrame.from_features(
+                    FeatureCollection([Feature(geometry=vector)]), crs=4326
                 )
         except KeyError:
             raise ValueError(
@@ -228,8 +235,11 @@ def any_vector_to_fc(
             if df.crs != "epsg:4326":
                 df = df.to_crs(4326)
 
-    fc = df.__geo_interface__
-    return fc
+    if as_dataframe:
+        return df
+    else:
+        fc = df.__geo_interface__
+        return fc
 
 
 def fc_to_query_geometry(

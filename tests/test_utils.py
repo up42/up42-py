@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 from shapely.geometry import Point, Polygon, LinearRing
 
-from up42.utils import folium_base_map, any_vector_to_fc
+from .context import any_vector_to_fc, folium_base_map
 
 
 def test_folium_base_map():
@@ -73,6 +73,22 @@ poly = Polygon([(0, 0), (1, 1), (1, 0)])
                             ),
                         },
                     }
+                ],
+            },
+        ),
+        (
+            1,
+            {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [-97.324448, 37.72246],
+                        [-97.349682, 37.722732],
+                        [-97.349939, 37.708405],
+                        [-97.322989, 37.708202],
+                        [-97.320414, 37.708473],
+                        [-97.324448, 37.72246],
+                    ]
                 ],
             },
         ),
