@@ -409,6 +409,15 @@ def get_parameter_info(workflow):
     logger.info(workflow.get_parameter_info())
 
 
+@COMMAND_WORKFLOW
+@click.pass_obj
+def get_compatible_blocks(workflow):
+    """
+    Get all compatible blocks for the current workflow.
+    """
+    logger.info(workflow.get_compatible_blocks())
+
+
 # Jobs
 
 

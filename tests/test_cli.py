@@ -162,3 +162,12 @@ def test_get_tasks(cli_runner):
 def test_get_parameter_info(cli_runner):
     result = cli_runner.invoke(cli.main, ["project", "workflow", "get-parameter-info"])
     assert result.exit_code == 0
+
+
+@WORKFLOW_ENVS
+@pytest.mark.live()
+def test_get_compatible_blocks(cli_runner):
+    result = cli_runner.invoke(
+        cli.main, ["project", "workflow", "get-compatible-blocks"]
+    )
+    assert result.exit_code == 0
