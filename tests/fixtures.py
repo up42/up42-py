@@ -3,7 +3,7 @@ import os
 import pytest
 import requests_mock
 
-from .context import Auth, Project, Workflow, Job, JobTask, Tools
+from .context import Auth, Project, Workflow, Job, JobTask, Tools, Catalog
 
 
 @pytest.fixture()
@@ -102,8 +102,8 @@ def job_mock(auth_mock):
 
 @pytest.fixture()
 def job_live():
-    job = Job(project_id=auth_live.project_id,
-              job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
+    job = Job(
+        project_id=auth_live.project_id, job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
     )
     return job
 
@@ -120,22 +120,40 @@ def jobtask_mock(auth_mock):
         )
         m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
 
-        job = JobTask(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id, jobtask_id=jobtask_id)
+        job = JobTask(
+            auth=auth_mock,
+            project_id=auth_mock.project_id,
+            job_id=job_id,
+            jobtask_id=jobtask_id,
+        )
     return job
 
 
 @pytest.fixture()
 def jobtask_live():
-    jobtask = JobTask(project_id=auth_live.project_id,
-                      job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
-                      jobtask_id=os.getenv("UP42_JOBTASK_ID_test_up42_py"),
-                      )
+    jobtask = JobTask(
+        project_id=auth_live.project_id,
+        job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
+        jobtask_id=os.getenv("UP42_JOBTASK_ID_test_up42_py"),
+    )
     return jobtask
+
 
 @pytest.fixture()
 def tools_mock(auth_mock):
     return Tools(auth=auth_mock)
 
+
 @pytest.fixture()
 def tools_live(auth_live):
     return Tools(auth=auth_live)
+
+
+@pytest.fixture()
+def catalog_mock(auth_mock):
+    return Catalog(auth=auth_mock)
+
+
+@pytest.fixture()
+def catalog_live(auth_live):
+    return Catalog(auth=auth_live)
