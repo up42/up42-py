@@ -30,7 +30,7 @@ class JobTask(Tools):
         self.project_id = project_id
         self.job_id = job_id
         self.job_task_id = job_task_id
-        if self.auth.authenticate:
+        if self.auth.get_info:
             self.info = self._get_info()
 
     def __repr__(self):

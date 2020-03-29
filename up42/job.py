@@ -41,7 +41,7 @@ class Job(Tools):
         self.project_id = project_id
         self.job_id = job_id
         self.order_ids = order_ids
-        if self.auth.authenticate:
+        if self.auth.get_info:
             self.info = self._get_info()
 
     def __repr__(self):

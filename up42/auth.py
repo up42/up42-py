@@ -29,7 +29,7 @@ class Auth(Tools):
         **kwargs,
     ):
         """
-        The Api class handles the authentication with UP42, can create projects, gives
+        The Auth class handles the authentication with UP42, can create projects, gives
         access to the blocks on the UP42 marketplace, handles environment settings and
         other generic UP42 functions.
 
@@ -54,6 +54,7 @@ class Auth(Tools):
         self.env = "com"
         self.authenticate = True
         self.retry = True
+        self.get_info = True
 
         if kwargs is not None:
             try:
@@ -66,6 +67,10 @@ class Auth(Tools):
                 pass
             try:
                 self.retry: bool = kwargs["retry"]
+            except KeyError:
+                pass
+            try:
+                self.get_info: bool = kwargs["get_info"]
             except KeyError:
                 pass
 
