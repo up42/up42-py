@@ -5,6 +5,8 @@ from .fixtures import auth_mock, project_mock
 
 
 def test_project_get_info(project_mock):
+    del project_mock.info
+
     with requests_mock.Mocker() as m:
         url_project_info = (
             f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}"
@@ -22,10 +24,12 @@ def test_get_workflows():
 
 
 def test_create_workflow(project_mock):
+    project_mock.auth.get_info=False
+
     with requests_mock.Mocker() as m:
         url_workflow_creation = f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/workflows/"
         text_workflow_creation = (
-            '{"error":null,"data":{"id":"workflow_id123","displayId":"uezs12"}}'
+            '{"error":null,"data":{"id":"workflow_id123","displayId":"workflow_displayId123"}}'
         )
         m.post(
             url=url_workflow_creation, text=text_workflow_creation,
@@ -35,6 +39,7 @@ def test_create_workflow(project_mock):
             name="workflow_name123", description="workflow_description123"
         )
     assert isinstance(workflow, Workflow)
+    assert not hasattr(workflow, "info")
 
 
 def test_create_workflow_use_existing(project_mock):

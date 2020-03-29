@@ -18,7 +18,6 @@ def auth_mock_no_request():
 
 @pytest.fixture()
 def auth_mock():
-    # Gets token, but
     with requests_mock.Mocker() as m:
         url_token = f"https://project_id123:project_apikey123@api.up42.com/oauth/token"
         m.post(
@@ -59,7 +58,7 @@ def workflow_mock(auth_mock):
     workflow_id = "workflow_id123"
     with requests_mock.Mocker() as m:
         url_workflow_info = (
-            f"{auth_mock.auth._endpoint()}/projects/"
+            f"{auth_mock._endpoint()}/projects/"
             f"{auth_mock.project_id}/workflows/"
             f"{workflow_id}"
         )
@@ -67,7 +66,7 @@ def workflow_mock(auth_mock):
 
         workflow = Workflow(
             auth=auth_mock,
-            workflow_id="workflow_id123",
+            workflow_id=workflow_id,
             project_id=auth_mock.project_id,
         )
     return workflow
@@ -76,21 +75,19 @@ def workflow_mock(auth_mock):
 def workflow_live():
     pass
 
-# @pytest.fixture()
-# def job_mock_no_info(auth_mock):
-#     return Job(auth=auth_mock, project_id=auth_mock.project_id, job_id="job_id123")
-
 @pytest.fixture()
 def job_mock(auth_mock):
-    pass
+    job_id = "jobid_123"
+    with requests_mock.Mocker() as m:
+        url_job_info = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
+        m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
+
+        job = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id)
+    return job
 
 @pytest.fixture()
 def job_live():
     pass
-
-# @pytest.fixture()
-# def jobtask_mock_no_info(auth_mock):
-#     return JobTask(auth=auth_mock, project_id=auth_mock.project_id, job_id="job_id123", job_task_id="jobtask_id123")
 
 @pytest.fixture()
 def jobtask_mock(auth_mock):
@@ -103,13 +100,8 @@ def jobtask_live():
 
 
 @pytest.fixture()
-def tools_live():
-    auth_live = Auth(
-        project_id=os.getenv("UP42_PROJECT_ID_test_up42_py"),
-        project_api_key=os.getenv("UP42_PROJECT_API_KEY_test_up42_py"),
-    )
-    tools = Tools(auth=auth_live)
-    return tools
+def tools_live(auth_live):
+    return Tools(auth=auth_live)
 
 
 
