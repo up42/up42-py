@@ -55,8 +55,9 @@ def project_mock(auth_mock):
 
 
 @pytest.fixture()
-def project_live():
-    pass
+def project_live(auth_live):
+    project = Project(auth=auth_live, project_id=auth_live.project_id)
+    return project
 
 
 @pytest.fixture()
@@ -77,13 +78,18 @@ def workflow_mock(auth_mock):
 
 
 @pytest.fixture()
-def workflow_live():
-    pass
+def workflow_live(auth_live):
+    workflow = Workflow(
+        project_id=auth_live.project_id,
+        workflow_id=os.getenv("UP42_WORKFLOW_ID_test_up42_py"),
+    )
+    return workflow
 
 
 @pytest.fixture()
 def job_mock(auth_mock):
     job_id = "jobid_123"
+
     with requests_mock.Mocker() as m:
         url_job_info = (
             f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
@@ -96,18 +102,39 @@ def job_mock(auth_mock):
 
 @pytest.fixture()
 def job_live():
-    pass
+    job = Job(project_id=auth_live.project_id,
+              job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
+    )
+    return job
 
 
 @pytest.fixture()
 def jobtask_mock(auth_mock):
-    pass
+    job_task_id = "jobtaskid_123"
+    job_id = "jobid_123"
+
+    with requests_mock.Mocker() as m:
+        url_job_info = (
+            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
+            f"/tasks/"
+        )
+        m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
+
+        job = JobTask(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id, job_task_id=job_task_id)
+    return job
 
 
 @pytest.fixture()
 def jobtask_live():
-    pass
+    jobtask = JobTask(project_id=auth_live.project_id,
+              job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
+              job_task_id=os.getenv("UP42_JOBTASK_ID_test_up42_py"),
+              )
+    return jobtask
 
+@pytest.fixture()
+def tools_mock(auth_mock):
+    return Tools(auth=auth_mock)
 
 @pytest.fixture()
 def tools_live(auth_live):
