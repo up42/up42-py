@@ -5,7 +5,7 @@ setup(
     version="0.1",
     description="Python SDK for UP42",
     url="https://github.com/up42/up42-py",
-    license='MIT',
+    license="MIT",
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,

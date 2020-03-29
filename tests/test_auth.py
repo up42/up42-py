@@ -6,6 +6,7 @@ import requests_mock
 
 from .fixtures import auth_mock_no_request, auth_mock
 
+
 def test_no_credentials_raises(auth_mock_no_request):
     auth_mock_no_request.project_id = None
     auth_mock_no_request.project_api_key = None
@@ -48,7 +49,9 @@ def test_generate_headers(auth_mock_no_request):
         "Authorization": f"Bearer token_1011",
         "cache-control": "no-cache",
     }
-    assert auth_mock_no_request._generate_headers(token="token_1011") == expected_headers
+    assert (
+        auth_mock_no_request._generate_headers(token="token_1011") == expected_headers
+    )
 
 
 def test_request_helper(auth_mock):

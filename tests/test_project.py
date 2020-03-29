@@ -24,13 +24,11 @@ def test_get_workflows():
 
 
 def test_create_workflow(project_mock):
-    project_mock.auth.get_info=False
+    project_mock.auth.get_info = False
 
     with requests_mock.Mocker() as m:
         url_workflow_creation = f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/workflows/"
-        text_workflow_creation = (
-            '{"error":null,"data":{"id":"workflow_id123","displayId":"workflow_displayId123"}}'
-        )
+        text_workflow_creation = '{"error":null,"data":{"id":"workflow_id123","displayId":"workflow_displayId123"}}'
         m.post(
             url=url_workflow_creation, text=text_workflow_creation,
         )
