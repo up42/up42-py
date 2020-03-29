@@ -110,7 +110,7 @@ def job_live():
 
 @pytest.fixture()
 def jobtask_mock(auth_mock):
-    job_task_id = "jobtaskid_123"
+    jobtask_id = "jobtaskid_123"
     job_id = "jobid_123"
 
     with requests_mock.Mocker() as m:
@@ -120,16 +120,16 @@ def jobtask_mock(auth_mock):
         )
         m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
 
-        job = JobTask(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id, job_task_id=job_task_id)
+        job = JobTask(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id, jobtask_id=jobtask_id)
     return job
 
 
 @pytest.fixture()
 def jobtask_live():
     jobtask = JobTask(project_id=auth_live.project_id,
-              job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
-              job_task_id=os.getenv("UP42_JOBTASK_ID_test_up42_py"),
-              )
+                      job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
+                      jobtask_id=os.getenv("UP42_JOBTASK_ID_test_up42_py"),
+                      )
     return jobtask
 
 @pytest.fixture()

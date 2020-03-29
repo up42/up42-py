@@ -17,7 +17,7 @@ logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 class JobTask(Tools):
     def __init__(
-        self, auth: Auth, project_id: str, job_id: str, job_task_id: str,
+        self, auth: Auth, project_id: str, job_id: str, jobtask_id: str,
     ):
         """The JobTask class provides access to the results and parameters of single
         Tasks of UP42 Jobs (each Job contains one or multiple Jobtasks, one for each
@@ -29,13 +29,13 @@ class JobTask(Tools):
         self.auth = auth
         self.project_id = project_id
         self.job_id = job_id
-        self.job_task_id = job_task_id
+        self.jobtask_id = jobtask_id
         if self.auth.get_info:
             self.info = self._get_info()
 
     def __repr__(self):
         return (
-            f"JobTask(job_task_id={self.job_task_id}, job={self.job_id}, "
+            f"JobTask(jobtask_id={self.jobtask_id}, job={self.job_id}, "
             f"auth={self.auth}, info={self.info})"
         )
 
@@ -63,7 +63,7 @@ class JobTask(Tools):
         """
         url = (
             f"{self.auth._endpoint()}/projects/{self.auth.project_id}/jobs/{self.job_id}"
-            f"/tasks/{self.job_task_id}/outputs/data-json/"
+            f"/tasks/{self.jobtask_id}/outputs/data-json/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
 
@@ -77,7 +77,7 @@ class JobTask(Tools):
     def _get_download_url(self):
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
-            f"/tasks/{self.job_task_id}/downloads/results/"
+            f"/tasks/{self.jobtask_id}/downloads/results/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
@@ -135,7 +135,7 @@ class JobTask(Tools):
 
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
-            f"/tasks/{self.job_task_id}/outputs/quicklooks/"
+            f"/tasks/{self.jobtask_id}/outputs/quicklooks/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
         quicklook_ids = response_json["data"]
@@ -147,7 +147,7 @@ class JobTask(Tools):
 
             url = (
                 f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
-                f"/tasks/{self.job_task_id}/outputs/quicklooks/{ql_id}"
+                f"/tasks/{self.jobtask_id}/outputs/quicklooks/{ql_id}"
             )
             response = self.auth._request(
                 request_type="GET", url=url, return_text=False

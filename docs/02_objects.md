@@ -60,7 +60,7 @@ workflow
 
 ## Job
 
-Example functions: `.get_status`, `.track_status`, `.cancel_job`, `.get_results`, `.get_logs`, `.get_quicklook`, `.download_results`, `.plot_results`, `.map_results`, `.upload_results_to_bucket`, `.get_job_tasks`, `.get_job_tasks_results`
+Example functions: `.get_status`, `.track_status`, `.cancel_job`, `.get_results`, `.get_logs`, `.get_quicklook`, `.download_results`, `.plot_results`, `.map_results`, `.upload_results_to_bucket`, `.get_jobtasks`, `.get_jobtasks_results`
 
 
 ```python
@@ -78,7 +78,7 @@ Example functions: `.get_result_json`, `.download_results`, `.get_quicklooks`
 ```python
 UP42_JOBTASK_ID="3f772637-09aa-4164-bded-692fcd746d20"
 
-jobtask = up42.initialize_jobtask(job_task_id=UP42_JOBTASK_ID,
+jobtask = up42.initialize_jobtask(jobtask_id=UP42_JOBTASK_ID,
                                  job_id=UP42_JOB_ID)
 jobtask
 ```

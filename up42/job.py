@@ -35,7 +35,7 @@ class Job(Tools):
         Public Methods:
             get_status, track_status, cancel_job, download_quicklook, get_result_json
             download_result, upload_result_to_bucket, map_result,
-            get_log, get_job_tasks, get_job_tasks_result_json
+            get_log, get_jobtasks, get_jobtasks_result_json
         """
         self.auth = auth
         self.project_id = project_id
@@ -118,7 +118,7 @@ class Job(Tools):
         Path(out_dir).mkdir(parents=True, exist_ok=True)
 
         # Currently only the first/data task produces quicklooks.
-        data_task = self.get_job_tasks()[0]
+        data_task = self.get_jobtasks()[0]
         out_paths = data_task.download_quicklook(out_dir=out_dir)
         self.quicklook = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
@@ -354,37 +354,37 @@ class Job(Tools):
         # TODO: Check if job ended, seems to give error messages when used while still running.
         # but relevant to get logs while running and possible. just sometimes error.
 
-        job_tasks = self.get_job_tasks(return_json=True)
-        job_tasks_ids = [task["id"] for task in job_tasks]
+        jobtasks = self.get_jobtasks(return_json=True)
+        jobtasks_ids = [task["id"] for task in jobtasks]
 
         logger.info(
-            "Getting logs for %s job tasks: %s", len(job_tasks_ids), job_tasks_ids
+            "Getting logs for %s job tasks: %s", len(jobtasks_ids), jobtasks_ids
         )
         job_logs = {}
 
         if as_print:
             print(
-                f"Printing logs of {len(job_tasks_ids)} JobTasks in Job with job_id "
+                f"Printing logs of {len(jobtasks_ids)} JobTasks in Job with job_id "
                 f"{self.job_id}:\n"
             )
 
-        for idx, job_task_id in enumerate(job_tasks_ids):
+        for idx, jobtask_id in enumerate(jobtasks_ids):
             url = (
                 f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/"
-                f"{self.job_id}/tasks/{job_task_id}/logs"
+                f"{self.job_id}/tasks/{jobtask_id}/logs"
             )
             response_json = self.auth._request(request_type="GET", url=url)
 
-            job_logs[job_task_id] = response_json
+            job_logs[jobtask_id] = response_json
 
             if as_print:
                 print("----------------------------------------------------------")
-                print(f"JobTask {idx+1} with job_task_id {job_task_id}:\n")
+                print(f"JobTask {idx+1} with jobtask_id {jobtask_id}:\n")
                 print(response_json)
             if as_return:
                 return job_logs
 
-    def get_job_tasks(self, return_json: bool = False) -> Union["JobTask", Dict]:
+    def get_jobtasks(self, return_json: bool = False) -> Union["JobTask", Dict]:
         """
         Get the individual items of the job as JobTask objects or json.
 
@@ -400,23 +400,23 @@ class Job(Tools):
         )
         logger.info("Getting job tasks: %s", self.job_id)
         response_json = self.auth._request(request_type="GET", url=url)
-        job_tasks_json = response_json["data"]
+        jobtasks_json = response_json["data"]
 
-        job_tasks = [
+        jobtasks = [
             JobTask(
                 auth=self.auth,
                 project_id=self.project_id,
                 job_id=self.job_id,
-                job_task_id=task["id"],
+                jobtask_id=task["id"],
             )
-            for task in job_tasks_json
+            for task in jobtasks_json
         ]
         if return_json:
-            return job_tasks_json
+            return jobtasks_json
         else:
-            return job_tasks
+            return jobtasks
 
-    def get_job_tasks_result_json(self) -> Dict:
+    def get_jobtasks_result_json(self) -> Dict:
         """
         Convenience function to get the resulting data.json of all job tasks
         in a dictionary of strings.
@@ -424,15 +424,15 @@ class Job(Tools):
         Returns:
             The data.json of alle single job tasks.
         """
-        job_tasks = self.get_job_tasks(return_json=True)
-        job_tasks_ids = [task["id"] for task in job_tasks]
-        job_tasks_results_json = {}
-        for job_task_id in job_tasks_ids:
+        jobtasks = self.get_jobtasks(return_json=True)
+        jobtasks_ids = [task["id"] for task in jobtasks]
+        jobtasks_results_json = {}
+        for jobtask_id in jobtasks_ids:
             url = (
                 f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
-                f"/tasks/{job_task_id}/outputs/data-json"
+                f"/tasks/{jobtask_id}/outputs/data-json"
             )
             response_json = self.auth._request(request_type="GET", url=url)
 
-            job_tasks_results_json[job_task_id] = response_json
-        return job_tasks_results_json
+            jobtasks_results_json[jobtask_id] = response_json
+        return jobtasks_results_json
