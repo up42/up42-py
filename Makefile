@@ -11,7 +11,7 @@ install:
 install[dev]:
 	pip install -r $(SRC)/requirements.txt
 	pip install -e .
-	pip install -r $(SRC)/requirements_dev.txt
+	pip install -r $(SRC)/requirements-dev.txt
 
 test:
 	bash test.sh
