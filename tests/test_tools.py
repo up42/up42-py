@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pytest
 
+from .fixtures import auth_live, tools_live  # pylint: disable=unused-import
+
 
 @pytest.mark.live
 def test_validate_manifest_valid(tools_live):

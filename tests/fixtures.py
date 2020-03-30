@@ -38,8 +38,8 @@ def auth_mock():
 @pytest.fixture()
 def auth_live():
     auth = Auth(
-        project_id=os.getenv("UP42_PROJECT_ID_test_up42_py"),
-        project_api_key=os.getenv("UP42_PROJECT_API_KEY_test_up42_py"),
+        project_id=os.getenv("TEST_UP42_PROJECT_ID"),
+        project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
     return auth
 
