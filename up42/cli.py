@@ -247,7 +247,12 @@ def create_workflow(project, name):
     """
     Create a workflow.
     """
-    project.create_workflow(name)
+    wf = project.create_workflow(name)
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info("Run the following command to persist with this workflow:")
+    logger.info(f"export UP42_WORKFLOW_ID={wf.workflow_id}")
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
 
 
 @COMMAND_PROJECT
@@ -318,14 +323,16 @@ def workflows_from_context():
     required=True,
     cls=workflows_from_context(),
 )
-@click.pass_context
-def workflow_from_name(ctx, workflow_name):
+@click.pass_obj
+def workflow_from_name(project, workflow_name):
     """
     Use a workflow from name.
     """
-    wf = ctx.obj.create_workflow(workflow_name, use_existing=True)
-    ctx.invoke(workflow, workflow_id=wf.workflow_id)
-
+    wf = project.create_workflow(workflow_name, use_existing=True)
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info("Run the following command to persist with this workflow:")
+    logger.info(f"export UP42_WORKFLOW_ID={wf.workflow_id}")
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 # Workflows
 @main.group()
