@@ -210,11 +210,20 @@ def test_create_and_run_job(cli_runner):
     )
     assert result.exit_code == 0
 
-    # input_parameters_json = Path(__file__).resolve().parent / "mock_data/input_parameters_simple.json"
-    # result = cli_runner.invoke(
-    #    cli.main, ["project", "workflow", "create-and-run-job", str(input_parameters_json), "--track"]
-    # )
-    # assert result.exit_code == 0
+    input_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    )
+    result = cli_runner.invoke(
+        cli.main,
+        [
+            "project",
+            "workflow",
+            "create-and-run-job",
+            str(input_parameters_json),
+            "--track",
+        ],
+    )
+    assert result.exit_code == 0
 
 
 @JOB_ENVS
