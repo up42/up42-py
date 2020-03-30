@@ -24,13 +24,6 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.option(
-    "-CFG",
-    "--CFG-FILE",
-    "cfg_file",
-    envvar="UP42_CFG_FILE",
-    help="File path to the cfg.json with {project_id: '...', project_api_key: '...'}",
-)
-@click.option(
     "-PID",
     "--PROJECT-ID",
     "project_id",
@@ -44,13 +37,20 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
     envvar="UP42_PROJECT_API_KEY",
     help="Your project API KEY, get in the Project settings in the console.",
 )
+@click.option(
+    "-CFG",
+    "--CFG-FILE",
+    "cfg_file",
+    envvar="UP42_CFG_FILE",
+    help="File path to the cfg.json with {project_id: '...', project_api_key: '...'}",
+)
 @click.pass_context
-def main(ctx, cfg_file, project_id, project_api_key):
+def main(ctx, project_id, project_api_key, cfg_file):
     ctx.ensure_object(dict)
-    if cfg_file:
-        ctx.obj = Auth(cfg_file, env=ENV)
-    elif project_id and project_api_key:
-        ctx.obj = Auth(project_id, project_api_key, env=ENV)
+    if project_id and project_api_key:
+        ctx.obj = Auth(project_id=project_id, project_api_key=project_api_key, env=ENV)
+    elif cfg_file:
+        ctx.obj = Auth(cfg_file=cfg_file, env=ENV)
 
 
 COMMAND = main.command(context_settings=CONTEXT_SETTINGS)
