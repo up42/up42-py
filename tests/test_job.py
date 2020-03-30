@@ -1,10 +1,7 @@
-import os
-
-import pytest
 import requests_mock
 
-from .fixtures import auth_mock, job_mock
-import up42
+from .fixtures import auth_mock, job_mock  # pylint: disable=unused-import
+import up42  # pylint: disable=wrong-import-order
 
 
 def test_job_get_info(job_mock):

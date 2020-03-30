@@ -15,6 +15,7 @@ from .utils import get_logger
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 
+# pylint: disable=duplicate-code
 class JobTask(Tools):
     def __init__(
         self, auth: Auth, project_id: str, job_id: str, jobtask_id: str,
@@ -30,6 +31,8 @@ class JobTask(Tools):
         self.project_id = project_id
         self.job_id = job_id
         self.jobtask_id = jobtask_id
+        self.quicklook = None
+        self.result = None
         if self.auth.get_info:
             self.info = self._get_info()
 
@@ -83,7 +86,7 @@ class JobTask(Tools):
         download_url = response_json["data"]["url"]
         return download_url
 
-    def download_result(self, out_dir: Union[str, Path] = None) -> None:
+    def download_result(self, out_dir: Union[str, Path] = None) -> List[str]:
         """
         Downloads and unpacks the job task result. Default download to Desktop.
 
@@ -107,11 +110,11 @@ class JobTask(Tools):
             files = tgz.getmembers()
             tif_files = [i for i in files if i.isfile() and i.name.endswith(".tif")]
             out_filepaths = []
-            for count, f in enumerate(tif_files):
-                out = tgz.extractfile(f)
+            for count, f in enumerate(tif_files):  # type: ignore
+                out = tgz.extractfile(f)  # type: ignore
                 out_file = out_dir / Path(f"{self.job_id}_{count}.tif")
                 with open(out_file, "wb") as o:
-                    o.write(out.read())
+                    o.write(out.read())  # type: ignore
                 out_filepaths.append(str(out_file))
 
         logger.info("Download successful of files %s", out_filepaths)
@@ -140,7 +143,7 @@ class JobTask(Tools):
         response_json = self.auth._request(request_type="GET", url=url)
         quicklook_ids = response_json["data"]
 
-        out_paths = []
+        out_paths: List[Path] = []
         for ql_id in quicklook_ids:
             out_path = Path(out_dir) / f"quicklook_{ql_id}.jpg"
             out_paths.append(out_path)

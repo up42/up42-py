@@ -1,6 +1,4 @@
 import warnings
-
-warnings.simplefilter(action="ignore", category=FutureWarning)
 from pathlib import Path
 from typing import List, Union, Dict, Tuple
 
@@ -16,12 +14,13 @@ from .job import Job
 from .jobtask import JobTask
 from .catalog import Catalog
 
+warnings.simplefilter(action="ignore", category=FutureWarning)
 
 _auth = None
 
 
 def authenticate(cfg_file=None, project_id=None, project_api_key=None, **kwargs):
-    global _auth
+    global _auth  # pylint: disable=global-statement
     _auth = Auth(
         cfg_file=cfg_file,
         project_id=project_id,
@@ -51,7 +50,7 @@ def initialize_workflow(workflow_id) -> "Workflow":
     return Workflow(auth=_auth, workflow_id=workflow_id, project_id=_auth.project_id)
 
 
-def initialize_job(job_id, order_ids: List[str] = [""]) -> "Job":
+def initialize_job(job_id, order_ids: List[str] = None) -> "Job":
     """Directly returns a Job object (has to exist on UP42)."""
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
@@ -120,6 +119,7 @@ def draw_aoi() -> None:
     tools.draw_aoi()
 
 
+# pylint: disable=duplicate-code
 def plot_coverage(
     scenes: gpd.GeoDataFrame,
     aoi: gpd.GeoDataFrame = None,
@@ -141,4 +141,4 @@ def plot_results(
     titles: List[str] = None,
 ) -> None:
     tools = Tools(auth=_auth)
-    tools.plot_results(figsize, filepaths, titles)
+    tools.plot_result(figsize, filepaths, titles)

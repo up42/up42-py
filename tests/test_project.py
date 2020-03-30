@@ -1,7 +1,7 @@
 import requests_mock
 
 from .context import Project, Workflow
-from .fixtures import auth_mock, project_mock
+from .fixtures import auth_mock, project_mock  # pylint: disable=unused-import
 
 
 def test_project_get_info(project_mock):
@@ -40,5 +40,5 @@ def test_create_workflow(project_mock):
     assert not hasattr(workflow, "info")
 
 
-def test_create_workflow_use_existing(project_mock):
+def test_create_workflow_use_existing():
     pass

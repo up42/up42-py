@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import requests_mock
 
-from .fixtures import auth_mock_no_request, auth_mock
+from .fixtures import auth_mock_no_request, auth_mock  # pylint: disable=unused-import
 
 
 def test_no_credentials_raises(auth_mock_no_request):
@@ -35,7 +35,11 @@ def test_endpoint(auth_mock_no_request):
 
 def test_get_token_project(auth_mock_no_request):
     with requests_mock.Mocker() as m:
-        url_token = f"https://{auth_mock_no_request.project_id}:{auth_mock_no_request.project_api_key}@api.up42.{auth_mock_no_request.env}/oauth/token"
+        url_token = (
+            f"https://{auth_mock_no_request.project_id}:"
+            f"{auth_mock_no_request.project_api_key}@api.up42."
+            f"{auth_mock_no_request.env}/oauth/token"
+        )
         m.post(
             url=url_token, text='{"data":{"accessToken":"token_789"}}',
         )

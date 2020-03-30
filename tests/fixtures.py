@@ -5,7 +5,7 @@ import requests_mock
 
 from .context import Auth, Project, Workflow, Job, JobTask, Tools, Catalog
 
-
+# TODO: Use patch.dict instead of 2 fictures?
 @pytest.fixture()
 def auth_mock_no_request():
     auth = Auth(
@@ -38,8 +38,8 @@ def auth_mock():
 @pytest.fixture()
 def auth_live():
     auth = Auth(
-        project_id=os.getenv("UP42_PROJECT_ID_test_up42_py"),
-        project_api_key=os.getenv("UP42_PROJECT_API_KEY_test_up42_py"),
+        project_id=os.getenv("TEST_UP42_PROJECT_ID"),
+        project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
     return auth
 
@@ -80,8 +80,9 @@ def workflow_mock(auth_mock):
 @pytest.fixture()
 def workflow_live(auth_live):
     workflow = Workflow(
+        auth=auth_live,
         project_id=auth_live.project_id,
-        workflow_id=os.getenv("UP42_WORKFLOW_ID_test_up42_py"),
+        workflow_id=os.getenv("TEST_UP42_WORKFLOW_ID"),
     )
     return workflow
 
@@ -101,9 +102,11 @@ def job_mock(auth_mock):
 
 
 @pytest.fixture()
-def job_live():
+def job_live(auth_live):
     job = Job(
-        project_id=auth_live.project_id, job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
+        auth=auth_live,
+        project_id=auth_live.project_id,
+        job_id=os.getenv("TEST_UP42_JOB_ID"),
     )
     return job
 
@@ -130,11 +133,12 @@ def jobtask_mock(auth_mock):
 
 
 @pytest.fixture()
-def jobtask_live():
+def jobtask_live(auth_live):
     jobtask = JobTask(
+        auth=auth_live,
         project_id=auth_live.project_id,
-        job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
-        jobtask_id=os.getenv("UP42_JOBTASK_ID_test_up42_py"),
+        job_id=os.getenv("TEST_UP42_JOB_ID"),
+        jobtask_id=os.getenv("TEST_UP42_JOBTASK_ID"),
     )
     return jobtask
 

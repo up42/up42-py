@@ -1,11 +1,5 @@
-import json
-from pathlib import Path
-
-import pytest
-import requests_mock
-
-from .fixtures import auth_mock, catalog_mock
-import up42
+from .fixtures import auth_mock, catalog_mock  # pylint: disable=unused-import
+import up42  # pylint: disable=wrong-import-order
 
 
 def test_catalog(catalog_mock):

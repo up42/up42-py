@@ -1,6 +1,7 @@
-import click
 import json
 from pathlib import Path
+
+import click
 
 from .auth import Auth
 from .tools import Tools
@@ -58,8 +59,8 @@ def auth(auth):
     logger.info(auth)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following commands to persist with this authentication:")
-    logger.info(f"export UP42_PROJECT_ID={auth.project_id}")
-    logger.info(f"export UP42_PROJECT_API_KEY={auth.project_api_key}")
+    logger.info("export UP42_PROJECT_ID=%s", auth.project_id)
+    logger.info("export UP42_PROJECT_API_KEY=%s", auth.project_api_key)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -72,7 +73,7 @@ def config(auth):
     config_path = Path("~/UP42_CONFIG.json")
     config_path = config_path.expanduser()
 
-    logger.info(f"Saving config to {config_path}")
+    logger.info("Saving config to %s", config_path)
 
     json_config = {
         "project_id": auth.project_id,
@@ -85,7 +86,7 @@ def config(auth):
     auth = Auth(cfg_file=config_path, env=ENV)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following command to persist with this authentication:")
-    logger.info(f"export UP42_CFG_FILE={auth.cfg_file}")
+    logger.info("export UP42_CFG_FILE=%s", auth.cfg_file)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 

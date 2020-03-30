@@ -24,10 +24,10 @@ from .utils import get_logger, is_notebook, folium_base_map
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 
-# pylint: disable=dangerous-default-value
+# pylint: disable=duplicate-code
 class Job(Tools):
     def __init__(
-        self, auth: Auth, project_id: str, job_id: str, order_ids: List[str] = [""],
+        self, auth: Auth, project_id: str, job_id: str, order_ids: List[str] = None,
     ):
         """The Job class provides access to the results, parameters and tasks of UP42
         Jobs (Workflows that have been run as Jobs).
@@ -40,7 +40,10 @@ class Job(Tools):
         self.auth = auth
         self.project_id = project_id
         self.job_id = job_id
-        self.order_ids = order_ids
+        self.quicklook = None
+        self.result = None
+        if order_ids is None:
+            self.order_ids = [""]
         if self.auth.get_info:
             self.info = self._get_info()
 
@@ -70,14 +73,14 @@ class Job(Tools):
         logger.info("Job is %s", status)
         return status
 
-    def track_status(self, report_time: int = 30) -> None:
+    def track_status(self, report_time: int = 30) -> str:
         """
         Continuously gets the job status until job has finished or failed.
 
         Args:
             report_time: The intervall (in seconds) when to query the job status.
         """
-        status = None
+        status = "NOT STARTED"
         time_asleep = 0
 
         logger.info("Tracking job status every %s seconds", report_time)
@@ -93,13 +96,12 @@ class Job(Tools):
                 sleep(5)
                 time_asleep += 5
 
-            if status == "SUCCEEDED":
-                logger.info("Job finished successfully %s - SUCCEEDED!", self.job_id)
-                return status
-
             if status in ["FAILED", "ERROR", "CANCELLED", "CANCELLING"]:
                 self.get_log(as_print=True)
                 raise ValueError("Job has failed! See the above log.")
+
+        logger.info("Job finished successfully %s - SUCCEEDED!", self.job_id)
+        return status
 
     def cancel_job(self) -> None:
         """Cancels a pending or running job."""
@@ -107,7 +109,7 @@ class Job(Tools):
         self.auth._request(request_type="POST", url=url)
         logger.info("Job canceled: %s", self.job_id)
 
-    def download_quicklook(self, out_dir=None) -> Dict:
+    def download_quicklook(self, out_dir=None) -> List[Path]:
         """
         Conveniance function that downloads the quicklooks of the first/data jobtask.
 
@@ -119,7 +121,7 @@ class Job(Tools):
 
         # Currently only the first/data task produces quicklooks.
         data_task = self.get_jobtasks()[0]
-        out_paths = data_task.download_quicklook(out_dir=out_dir)
+        out_paths: List[Path] = data_task.download_quicklook(out_dir=out_dir)  # type: ignore
         self.quicklook = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
 
@@ -182,13 +184,13 @@ class Job(Tools):
             r = requests.get(download_url)
             dst_tgz.write(r.content)
         # Unpack
-        out_filepaths = []
+        out_filepaths: List[str] = []
         with tarfile.open(tgz_file) as tar:
             members = tar.getmembers()
             tif_files = [i for i in members if i.isfile() and i.name.endswith(".tif")]
             for idx, tif_file in enumerate(tif_files):
                 f = tar.extractfile(tif_file)
-                content = f.read()
+                content = f.read()  # type: ignore
                 # TODO: Maybe jobid_sceneid etc?
                 out_fp = out_dir / Path(f"{self.job_id}_{idx}.tif")
                 with open(out_fp, "wb") as dst:
@@ -198,7 +200,7 @@ class Job(Tools):
         logger.info(
             "Download successful of %s files %s", len(out_filepaths), out_filepaths
         )
-        self.result = out_filepaths  # pylint: disable=attribute-defined-outside-init
+        self.result = out_filepaths
         return out_filepaths
 
     def upload_result_to_bucket(
@@ -236,7 +238,7 @@ class Job(Tools):
         if not is_notebook():
             raise ValueError("Only works in Jupyter notebook.")
 
-        df = self.get_result_json(as_dataframe=True)
+        df: gpd.GeoDataFrame = self.get_result_json(as_dataframe=True)  # type: ignore
         # TODO: centroid of total_bounds
         centroid = df.iloc[0].geometry.centroid
 
@@ -259,7 +261,7 @@ class Job(Tools):
                 "dashArray": "5, 5",
             }
 
-        for index, row in df.iterrows():
+        for index, row in df.iterrows():  # type: ignore
             try:
                 layer_name = row[name_column]
             except KeyError:
@@ -278,7 +280,7 @@ class Job(Tools):
                 if not isinstance(info_columns, list):
                     raise ValueError("Provide a list!")
                 infos = [f"{row[info_col]}\n" for info_col in info_columns]
-                infos = "".join(infos)
+                infos = "".join(infos)  # type: ignore
                 folium.Popup(f"{layer_name}\n{infos}").add_to(f)
             f.add_to(m)
         # Same: folium.GeoJson(df, name=name_column, style_function=style_function,
@@ -289,7 +291,8 @@ class Job(Tools):
         # This requires reprojecting on the user pc, not via the api.
         # Reproject raster and add to map
         dst_crs = 4326
-        for idx, raster_fp in enumerate(self.result):
+        results: List[Path] = self.result
+        for idx, raster_fp in enumerate(results):
 
             with rasterio.open(raster_fp) as src:
                 dst_profile = src.meta.copy()
@@ -333,14 +336,14 @@ class Job(Tools):
             )
 
         # Collapse layer control with too many features.
-        if df.shape[0] > 4:  # pylint: disable=simplifiable-if-statement
+        if df.shape[0] > 4:  # pylint: disable=simplifiable-if-statement  #type: ignore
             collapsed = True
         else:
             collapsed = False
         folium.LayerControl(position="bottomleft", collapsed=collapsed).add_to(m)
         display(m)
 
-    def get_log(self, as_print: bool = True, as_return: bool = False) -> Dict:
+    def get_log(self, as_print: bool = True, as_return: bool = False):
         """
         Convenience function to print or return the logs of all job tasks.
 
@@ -354,7 +357,7 @@ class Job(Tools):
         # TODO: Check if job ended, seems to give error messages when used while still running.
         # but relevant to get logs while running and possible. just sometimes error.
 
-        jobtasks = self.get_jobtasks(return_json=True)
+        jobtasks: List[Dict] = self.get_jobtasks(return_json=True)  # type: ignore
         jobtasks_ids = [task["id"] for task in jobtasks]
 
         logger.info(
@@ -384,7 +387,9 @@ class Job(Tools):
             if as_return:
                 return job_logs
 
-    def get_jobtasks(self, return_json: bool = False) -> Union["JobTask", Dict]:
+    def get_jobtasks(
+        self, return_json: bool = False
+    ) -> Union[List["JobTask"], List[Dict]]:
         """
         Get the individual items of the job as JobTask objects or json.
 
@@ -400,7 +405,7 @@ class Job(Tools):
         )
         logger.info("Getting job tasks: %s", self.job_id)
         response_json = self.auth._request(request_type="GET", url=url)
-        jobtasks_json = response_json["data"]
+        jobtasks_json: List[Dict] = response_json["data"]
 
         jobtasks = [
             JobTask(
@@ -424,7 +429,7 @@ class Job(Tools):
         Returns:
             The data.json of alle single job tasks.
         """
-        jobtasks = self.get_jobtasks(return_json=True)
+        jobtasks: List[Dict] = self.get_jobtasks(return_json=True)  # type: ignore
         jobtasks_ids = [task["id"] for task in jobtasks]
         jobtasks_results_json = {}
         for jobtask_id in jobtasks_ids:

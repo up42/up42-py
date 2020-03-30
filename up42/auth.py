@@ -51,28 +51,22 @@ class Auth(Tools):
         self.project_id = project_id
         self.project_api_key = project_api_key
 
-        self.env = "com"
-        self.authenticate = True
-        self.retry = True
-        self.get_info = True
-
-        if kwargs is not None:
-            try:
-                self.env: str = kwargs["env"]
-            except KeyError:
-                pass
-            try:
-                self.authenticate: bool = kwargs["authenticate"]
-            except KeyError:
-                pass
-            try:
-                self.retry: bool = kwargs["retry"]
-            except KeyError:
-                pass
-            try:
-                self.get_info: bool = kwargs["get_info"]
-            except KeyError:
-                pass
+        try:
+            self.env: str = kwargs["env"]
+        except KeyError:
+            self.env = "com"
+        try:
+            self.authenticate: bool = kwargs["authenticate"]
+        except KeyError:
+            self.authenticate = True
+        try:
+            self.retry: bool = kwargs["retry"]
+        except KeyError:
+            self.retry = True
+        try:
+            self.get_info: bool = kwargs["get_info"]
+        except KeyError:
+            self.get_info = True
 
         if self.authenticate:
             self._find_credentials()
@@ -115,7 +109,8 @@ class Auth(Tools):
         """Gets the endpoint."""
         return f"https://api.up42.{self.env}"
 
-    def _get_token(self) -> None:
+    # pylint: disable=assignment-from-no-return
+    def _get_token(self):
         try:
             self._get_token_project()
         except requests.exceptions.HTTPError:
@@ -137,9 +132,8 @@ class Auth(Tools):
         token_response = requests.request("POST", url, data=payload, headers=headers)
         token_response.raise_for_status()
         token = json.loads(token_response.text)
-        self.token = token["data"][
-            "accessToken"
-        ]  # pylint: disable=attribute-defined-outside-init
+        # pylint: disable=attribute-defined-outside-init
+        self.token = token["data"]["accessToken"]
 
     @staticmethod
     def _generate_headers(token: str) -> Dict[str, str]:
@@ -153,7 +147,7 @@ class Auth(Tools):
     # pylint: disable=dangerous-default-value
     def _request_helper(
         self, request_type: str, url: str, data: Dict = {}, querystring: Dict = {}
-    ) -> str:
+    ) -> requests.Response:
         """
         Helper function for the request running the actual request with the correct headers.
 
@@ -190,7 +184,7 @@ class Auth(Tools):
         data: Union[Dict, List] = {},
         querystring: Dict = {},
         return_text: bool = True,
-    ):
+    ) -> Union[str, requests.Response]:
         """
         Handles retrying the request and automatically gets a new token if the old
         is invalid.
@@ -223,12 +217,12 @@ class Auth(Tools):
                 self._request_helper, request_type, url, data, querystring
             )
         else:
-            response = self._request_helper(request_type, url, data, querystring)
+            response = self._request_helper(request_type, url, data, querystring)  # type: ignore
 
         # TODO: Improve error messages on backend.
         # TODO: Put error messages in the specific functions.
         if response.status_code != 200:
-            if response.status_code == 403:
+            if response.status_code == 403:  # pylint: disable=no-else-raise
                 raise ValueError(
                     "Access not possible, check if the given ids are correct, "
                     "you have sufficient credits, "
@@ -247,6 +241,7 @@ class Auth(Tools):
                 response_text = response.text
 
             # Handle api error messages here before handling it in every single function.
+            # pylint: disable=no-else-raise
             try:
                 if response_text["error"] is not None and response_text["data"] is None:
                     raise ValueError(response_text["error"])
