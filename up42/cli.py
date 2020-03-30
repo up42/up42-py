@@ -306,7 +306,7 @@ def workflow_from_name(ctx, workflow_name):
 
 
 # Workflows
-@project.group()
+@main.group()
 @click.pass_context
 @click.option(
     "-WID",
@@ -320,7 +320,7 @@ def workflow(ctx, workflow_id):
     """
     Add workflow tasks, run a job and more.
     """
-    ctx.obj = Workflow(ctx.obj.auth, ctx.obj.project_id, workflow_id)
+    ctx.obj = Workflow(ctx.obj, ctx.obj.project_id, workflow_id)
     if not os.environ.get("UP42_WORKFLOW_ID"):
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         logger.info("Run the following command to persist with this workflow:")
@@ -446,7 +446,7 @@ def create_and_run_job(workflow, input_parameters_json, track):
 
 
 # Jobs
-@project.group()
+@main.group()
 @click.pass_context
 @click.option(
     "-JID",
@@ -460,7 +460,7 @@ def job(ctx, job_id):
     """
     Get job status, results and more.
     """
-    ctx.obj = Job(ctx.obj.auth, ctx.obj.project_id, job_id)
+    ctx.obj = Job(ctx.obj, ctx.obj.project_id, job_id)
     if not os.environ.get("UP42_JOB_ID"):
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         logger.info("Run the following command to persist with this job:")
