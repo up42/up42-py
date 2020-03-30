@@ -254,7 +254,6 @@ def create_workflow(project, name):
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
-
 @COMMAND_PROJECT
 @click.pass_obj
 def get_workflows(project):
@@ -333,6 +332,7 @@ def workflow_from_name(project, workflow_name):
     logger.info("Run the following command to persist with this workflow:")
     logger.info(f"export UP42_WORKFLOW_ID={wf.workflow_id}")
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
 
 # Workflows
 @main.group()
@@ -471,7 +471,11 @@ def create_and_run_job(workflow, input_parameters_json, track):
     Creates and runs a new job.
     """
     input_parameters = json.load(input_parameters_json)
-    logger.info(workflow.create_and_run_job(input_parameters, track))
+    jb = workflow.create_and_run_job(input_parameters, track)
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info("Run the following command to persist with this job:")
+    logger.info(f"export UP42_JOB_ID={jb.job_id}")
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
 # Jobs
