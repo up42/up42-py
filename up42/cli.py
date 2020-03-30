@@ -470,9 +470,9 @@ def job(ctx, job_id):
 COMMAND_JOB = job.command(context_settings=CONTEXT_SETTINGS)
 
 
-@COMMAND_JOB
+@job.command("get-info", context_settings=CONTEXT_SETTINGS)
 @click.pass_obj
-def get_info(job):
+def job_get_info(job):
     """
     Get information about the job.
     """
