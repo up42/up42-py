@@ -80,6 +80,7 @@ def workflow_mock(auth_mock):
 @pytest.fixture()
 def workflow_live(auth_live):
     workflow = Workflow(
+        auth=auth_live,
         project_id=auth_live.project_id,
         workflow_id=os.getenv("UP42_WORKFLOW_ID_test_up42_py"),
     )
@@ -101,9 +102,11 @@ def job_mock(auth_mock):
 
 
 @pytest.fixture()
-def job_live():
+def job_live(auth_live):
     job = Job(
-        project_id=auth_live.project_id, job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
+        auth=auth_live,
+        project_id=auth_live.project_id,
+        job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
     )
     return job
 
@@ -130,8 +133,9 @@ def jobtask_mock(auth_mock):
 
 
 @pytest.fixture()
-def jobtask_live():
+def jobtask_live(auth_live):
     jobtask = JobTask(
+        auth=auth_live,
         project_id=auth_live.project_id,
         job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
         jobtask_id=os.getenv("UP42_JOBTASK_ID_test_up42_py"),

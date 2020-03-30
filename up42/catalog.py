@@ -19,6 +19,7 @@ logger = get_logger(__name__, level=logging.CRITICAL)  # TODO: Remove/set to INF
 # Scenes() would be dataframe with quicklook preview images in it.
 
 
+# pylint: disable=duplicate-code
 class Catalog(Tools):
     def __init__(self, auth: Auth, backend: str = "ONE_ATLAS"):
         """The Catalog class enables access to the UP42 catalog search. You can search
@@ -29,12 +30,14 @@ class Catalog(Tools):
         """
         self.auth = auth
         self.querystring = {"backend": backend}  # TODO: Sobloo
+        self.quicklook = None
 
     def __repr__(self):
         return f"Catalog(querystring={self.querystring}, auth={self.auth})"
 
+    # pylint: disable=dangerous-default-value
+    @staticmethod
     def construct_parameter(
-        self,
         geometry: Union[
             Dict, Feature, FeatureCollection, List, gpd.GeoDataFrame, Point, Polygon,
         ],
@@ -175,6 +178,7 @@ class Catalog(Tools):
                 ]
             return row
 
+        # pylint: disable=unnecessary-lambda
         df = df.apply(lambda row: _get_scene_id(row), axis=1)
         df.crs = dst_crs  # apply can reset crs
         if as_dataframe:
@@ -194,7 +198,7 @@ class Catalog(Tools):
         Returns:
 
         """
-        pass  # pylint: disable=unncessary-pass
+        pass  # pylint: disable=unnecessary-pass
         # TODO: Add to plot_coverage legend, to dataframe results as optional.
 
     def download_quicklook(

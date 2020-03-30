@@ -112,7 +112,7 @@ class Workflow(Tools):
         full_input_tasks_definition = []
 
         # Get public + custom blocks.
-        blocks_name_id = self.get_blocks(basic=True)
+        blocks_name_id: Dict = self.get_blocks(basic=True)  # type: ignore
         blocks_id_name = {
             value: key for key, value in blocks_name_id.items()
         }  # pylint: disable=
@@ -297,7 +297,7 @@ class Workflow(Tools):
             aoi_fc = any_vector_to_fc(vector=geometry,)
             aoi_feature = fc_to_query_geometry(
                 fc=aoi_fc,
-                geometry_operation=geometry_operation,
+                geometry_operation=geometry_operation,  # type: ignore
                 squash_multiple_features=handle_multiple_features,
             )
 

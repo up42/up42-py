@@ -1,14 +1,18 @@
 import requests_mock
 
 from .context import Workflow
-from .fixtures import auth_mock, workflow_mock
+from .fixtures import auth_mock, workflow_mock  # pylint: disable=unused-import
 
 
 def test_workflow_get_info(workflow_mock):
     del workflow_mock.info
 
     with requests_mock.Mocker() as m:
-        url_workflow_info = f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/{workflow_mock.workflow_id}"
+        url_workflow_info = (
+            f"{workflow_mock.auth._endpoint()}/projects/"
+            f"{workflow_mock.project_id}/workflows/"
+            f"{workflow_mock.workflow_id}"
+        )
         m.get(url=url_workflow_info, text='{"data": {"xyz":789}, "error":{}}')
 
         info = workflow_mock._get_info()
@@ -23,7 +27,12 @@ def test_get_workflow_tasks(workflow_mock):
             f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
             f"{workflow_mock.workflow_id}/tasks"
         )
-        text_workflow_tasks = '{"data": [{"id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89","block": {"name": "sobloo-s2-l1c-aoiclipped"}},{"id": "af626c54-156e-4f13-a743-55efd27de533","block": {"name": "sharpening"}}],"error": {}}'
+        text_workflow_tasks = (
+            '{"data": [{"id": "c0d04ec3-98d7-4183-902f-5bcb2a17'
+            '6d89","block": {"name": "sobloo-s2-l1c-aoiclipped"}},'
+            '{"id": "af626c54-156e-4f13-a743-55efd27de533","block":'
+            ' {"name": "sharpening"}}],"error": {}}'
+        )
         m.get(url=url_workflow_tasks, text=text_workflow_tasks)
 
         tasks = workflow_mock.get_workflow_tasks(basic=False)
@@ -34,6 +43,6 @@ def test_get_workflow_tasks(workflow_mock):
     }
 
 
-def test_construct_full_workflow_tasks_dict(workflow_mock):
+def test_construct_full_workflow_tasks_dict():
     # TODO: Mock get_blocks!
     pass

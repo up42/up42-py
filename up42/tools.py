@@ -21,7 +21,7 @@ from .utils import get_logger, folium_base_map, DrawFoliumOverride, is_notebook
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 
-# pylint: disable=no-member
+# pylint: disable=no-member, duplicate-code
 class Tools:
     def __init__(self, auth=None):
         """
@@ -34,6 +34,8 @@ class Tools:
         """
         if auth:
             self.auth = auth
+        self.quicklook = None
+        self.result = None
 
     # pylint: disable=no-self-use
     def read_vector_file(
@@ -112,8 +114,8 @@ class Tools:
         else:
             return example_aoi
 
-    @staticmethod
-    def draw_aoi() -> None:
+    # pylint: disable=no-self-use
+    def draw_aoi(self) -> None:
         """
         Opens a interactive map to draw an aoi by hand, export via the export button.
         Then read in via read_aoi_file().
@@ -181,18 +183,18 @@ class Tools:
         self, figsize: Tuple[int, int] = (8, 8), filepaths: List = None
     ) -> None:
         """
-        Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
+        Plots the downloaded quicklooks (filepaths saved to self.quicklook of the
         respective object, e.g. job, catalog).
 
         Args:
             figsize: matplotlib figure size.
         """
         if filepaths is None:
-            if not hasattr(self, "quicklook") or self.quicklook is None:
+            if self.quicklook is None:
                 raise ValueError(
                     "You first need to download the quicklooks via .download_quicklook()."
                 )
-            filepaths = self.quicklook  # pylint: disable=no-member
+            filepaths = self.quicklook
         if is_notebook():
             get_ipython().run_line_magic("matplotlib", "inline")
         else:
@@ -237,11 +239,9 @@ class Tools:
         # TODO: Handle more bands.
         # TODO: add histogram equalization? But requires skimage dependency.
         if filepaths is None:
-            if (
-                not hasattr(self, "result") or self.result is None
-            ):  # pylint: disable=no-member
+            if self.result is None:
                 raise ValueError("You first need to download the results.")
-            filepaths = self.result  # pylint: disable=no-member
+            filepaths = self.result
         if not titles:
             titles = [Path(fp).stem for fp in filepaths]
 
@@ -273,7 +273,7 @@ class Tools:
 
     def get_blocks(
         self, block_type=None, basic: bool = True, as_dataframe=False,
-    ) -> Union[Dict, List[Dict]]:
+    ) -> Union[List[Dict], Dict]:
         """
         Gets a list of all public blocks on the marketplace.
 
@@ -340,7 +340,7 @@ class Tools:
             url = f"{self.auth._endpoint()}/blocks/{block_id}"  # public blocks
             response_json = self.auth._request(request_type="GET", url=url)
         except (requests.exceptions.HTTPError, RetryError):
-            url = f"{self._endpoint()}/users/me/blocks/{block_id}"  # custom blocks
+            url = f"{self.auth._endpoint()}/users/me/blocks/{block_id}"  # custom blocks
             response_json = self.auth._request(request_type="GET", url=url)
         details_json = response_json["data"]
 
@@ -389,7 +389,7 @@ class Tools:
         """
         existing_environment_names = [env["name"] for env in self.get_environments()]
         if name in existing_environment_names:
-            raise Exception("An environment with the name %s already exists.", name)
+            raise Exception(f"An environment with the name {name} already exists.")
         payload = {"name": name, "secrets": environment_variables}
         url = f"{self.auth._endpoint()}/environments"
         response_json = self.auth._request(request_type="POST", url=url, data=payload)
@@ -427,7 +427,8 @@ class Tools:
                         "processing"
                     ],
                     "display_name": "Sharpening Filter",
-                    "description": "This block enhances the sharpness of a raster image by applying an unsharp mask filter algorithm.",
+                    "description": "This block enhances the sharpness of a raster
+                        image by applying an unsharp mask filter algorithm.",
                     "parameters": {
                         "strength": {"type": "string", "default": "medium"}
                     },
