@@ -1,16 +1,12 @@
-import click
 import os
 import json
 from pathlib import Path
-import tempfile
+import click
 
 from .auth import Auth
 from .tools import Tools
 from .project import Project
 from .workflow import Workflow
-from .job import Job
-from .jobtask import JobTask
-from .catalog import Catalog
 from .utils import get_logger
 
 logger = get_logger(__name__)
@@ -20,6 +16,9 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 # To activate bash autocompletion
 # eval "$(_UP42_COMPLETE=source_bash up42)"
+
+# For usage of fstrings
+# pylint: disable=logging-format-interpolation
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
@@ -331,9 +330,9 @@ def workflow(ctx, workflow_id):
 COMMAND_WORKFLOW = workflow.command(context_settings=CONTEXT_SETTINGS)
 
 
-@COMMAND_WORKFLOW
+@workflow.command("get-info", context_settings=CONTEXT_SETTINGS)
 @click.pass_obj
-def get_info(workflow):
+def workflow_get_info(workflow):
     """
     Get information about the workflow.
     """
@@ -366,16 +365,16 @@ def delete(workflow):
     """
     Delete the workflow.
     """
-    logger.info(f"Current info: {ctx.obj.info}")
+    logger.info(f"Current info: {workflow.info}")
     if click.confirm(
-        f"Are you sure you want to delete workflow '{ctx.obj.info.get('name')}'?",
+        f"Are you sure you want to delete workflow '{workflow.info.get('name')}'?",
         abort=True,
     ):
         workflow.delete()
         if os.environ.get("UP42_WORKFLOW_ID"):
             logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
             logger.info("Make sure to remove the environment variable with:")
-            logger.info(f"UP42_WORKFLOW_ID=")
+            logger.info(f"UP42_WORKFLOW_ID={workflow.workflow_id}")
             logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -424,8 +423,10 @@ def get_compatible_blocks(workflow):
 def add_workflow_tasks(workflow, input_tasks_json):
     """
     Adds or overwrites workflow tasks.
-    - Name is arbitrary but best use the block name. Always use :1 to be able to identify the order when two times the same workflow task is used.
-    - API by itself validates if the underlying block for the selected block-id is available.
+    - Name is arbitrary but best use the block name. Always use :1 to be able to
+    identify the order when two times the same workflow task is used.
+    - API by itself validates if the underlying block for the selected block-id
+    is available.
     """
     input_tasks = json.load(input_tasks_json)
     logger.info(workflow.add_workflow_tasks(input_tasks))

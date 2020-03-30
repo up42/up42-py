@@ -188,7 +188,9 @@ def test_add_workflow_tasks(cli_runner):
     )
     assert result.exit_code == 0
 
-    input_tasks_json = Path(__file__).resolve().parent / "mock_data/input_tasks_simple.json"
+    input_tasks_json = (
+        Path(__file__).resolve().parent / "mock_data/input_tasks_simple.json"
+    )
     result = cli_runner.invoke(
         cli.main, ["project", "workflow", "add-workflow-tasks", str(input_tasks_json)]
     )
@@ -203,8 +205,8 @@ def test_create_and_run_job(cli_runner):
     )
     assert result.exit_code == 0
 
-    #input_parameters_json = Path(__file__).resolve().parent / "mock_data/input_parameters_simple.json"
-    #result = cli_runner.invoke(
+    # input_parameters_json = Path(__file__).resolve().parent / "mock_data/input_parameters_simple.json"
+    # result = cli_runner.invoke(
     #    cli.main, ["project", "workflow", "create-and-run-job", str(input_parameters_json), "--track"]
-    #)
-    #assert result.exit_code == 0
+    # )
+    # assert result.exit_code == 0
