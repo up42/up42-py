@@ -10,6 +10,7 @@ from up42 import cli
 #  TEST_UP42_PROJECT_ID
 #  TEST_UP42_PROJECT_API_KEY
 #  TEST_UP42_WORKFLOW_ID
+#  TEST_UP42_JOB_ID
 
 
 @pytest.fixture()
@@ -26,6 +27,10 @@ def cli_runner():
 
 WORKFLOW_ENVS = mock.patch.dict(
     "os.environ", {"UP42_WORKFLOW_ID": os.environ.get("TEST_UP42_WORKFLOW_ID"),},
+)
+
+JOB_ENVS = mock.patch.dict(
+    "os.environ", {"UP42_JOB_ID": os.environ.get("TEST_UP42_JOB_ID"),},
 )
 
 
@@ -210,3 +215,82 @@ def test_create_and_run_job(cli_runner):
     #    cli.main, ["project", "workflow", "create-and-run-job", str(input_parameters_json), "--track"]
     # )
     # assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_job(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "job", "-h"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_job_get_info(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "job", "get-info"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_cancel_job(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "job", "cancel-job", "-h"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_download_quicklook(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "job", "download-quicklook", "-h"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_download_result(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "job", "download-result", "-h"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_get_job_tasks(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "job", "get-job-tasks"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_job_tasks_result_json(cli_runner):
+    result = cli_runner.invoke(
+        cli.main, ["project", "job", "get-job-tasks-result-json"]
+    )
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_get_log(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "job", "get-log"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_get_result_json(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "job", "get-result-json"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_get_status(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "job", "get-status"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_track_status(cli_runner):
+    result = cli_runner.invoke(cli.main, ["project", "job", "track-status"])
+    assert result.exit_code == 0

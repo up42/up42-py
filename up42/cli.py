@@ -445,6 +445,136 @@ def create_and_run_job(workflow, input_parameters_json, track):
 
 
 # Jobs
+@project.group()
+@click.pass_context
+@click.option(
+    "-JID",
+    "--JOB-ID",
+    "job_id",
+    envvar="UP42_JOB_ID",
+    help="Your job ID, get it by creating a job or running 'up42 project workflow get-jobs'",
+    required=True,
+)
+def job(ctx, job_id):
+    """
+    Get job status, results and more.
+    """
+    ctx.obj = Job(ctx.obj.auth, ctx.obj.project_id, job_id)
+    if not os.environ.get("UP42_JOB_ID"):
+        logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        logger.info("Run the following command to persist with this job:")
+        logger.info(f"export UP42_JOB_ID={job_id}")
+        logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+
+COMMAND_JOB = job.command(context_settings=CONTEXT_SETTINGS)
+
+
+@COMMAND_JOB
+@click.pass_obj
+def get_info(job):
+    """
+    Get information about the job.
+    """
+    logger.info(job.info)
+
+
+@COMMAND_JOB
+@click.pass_obj
+def cancel_job(job):
+    """
+    Cancel a job that is running.
+    """
+    job.get_status()
+    if click.confirm("Are you sure you want to cancel job with job id '{job.job_id}'?"):
+        job.cancel_job()
+
+
+@COMMAND_JOB
+@click.argument(
+    "output_directory",
+    type=click.Path(exists=True, writable=True, file_okay=False, resolve_path=True),
+)
+@click.pass_obj
+def download_quicklook(job, output_directory):
+    """
+    Download a job quicklook.
+    """
+    logger.info(job.download_quicklook(output_directory))
+
+
+@COMMAND_JOB
+@click.argument(
+    "output_directory",
+    type=click.Path(exists=True, writable=True, file_okay=False, resolve_path=True),
+)
+@click.pass_obj
+def download_result(job, output_directory):
+    """
+    Download and unpack the job result.
+    """
+    logger.info(job.download_result(output_directory))
+
+
+@COMMAND_JOB
+@click.pass_obj
+def get_job_tasks(job):
+    """
+    Get the individual items of the job.
+    """
+    logger.info(job.get_jobtasks())
+
+
+@COMMAND_JOB
+@click.pass_obj
+def get_job_tasks_result_json(job):
+    """
+    Convenience function to get the resulting data.json of all job tasks.
+    """
+    logger.info(job.get_jobtasks_result_json())
+
+
+@COMMAND_JOB
+@click.pass_obj
+def get_log(job):
+    """
+    Convenience function to print or return the logs of all job tasks.
+    """
+    job.get_log()
+
+
+@COMMAND_JOB
+@click.pass_obj
+def get_result_json(job):
+    """
+    Get the job result data.json.
+    """
+    job.get_result_json()
+
+
+@COMMAND_JOB
+@click.pass_obj
+def get_status(job):
+    """
+    Get the job status.
+    """
+    logger.info(job.get_status())
+
+
+@COMMAND_JOB
+@click.option(
+    "-i",
+    "--interval",
+    help="Interval between getting job status in seconds.",
+    default=30,
+    type=click.IntRange(1, 300),
+)
+@click.pass_obj
+def track_status(job, interval):
+    """
+    Track the job status with regular time intervals.
+    """
+    logger.info(job.track_status(interval))
 
 
 # Catalog
