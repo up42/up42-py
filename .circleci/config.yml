@@ -10,7 +10,9 @@ jobs:
       - checkout
       - run:
           name: Install requirements
-          command: pip install -r requirements-dev.txt
+          command: |
+            pip install -r requirements.txt
+            pip install -r requirements-dev.txt
       - run:
           name: Runnning tests
           command: make test
