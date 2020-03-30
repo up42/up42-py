@@ -11,7 +11,7 @@ from .utils import get_logger
 
 logger = get_logger(__name__)
 
-ENV = "dev"
+ENV = "com"
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 # To activate bash autocompletion
