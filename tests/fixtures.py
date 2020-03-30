@@ -5,7 +5,7 @@ import requests_mock
 
 from .context import Auth, Project, Workflow, Job, JobTask, Tools, Catalog
 
-
+# TODO: Use patch.dict instead of 2 fictures?
 @pytest.fixture()
 def auth_mock_no_request():
     auth = Auth(
@@ -82,7 +82,7 @@ def workflow_live(auth_live):
     workflow = Workflow(
         auth=auth_live,
         project_id=auth_live.project_id,
-        workflow_id=os.getenv("UP42_WORKFLOW_ID_test_up42_py"),
+        workflow_id=os.getenv("TEST_UP42_WORKFLOW_ID"),
     )
     return workflow
 
@@ -106,7 +106,7 @@ def job_live(auth_live):
     job = Job(
         auth=auth_live,
         project_id=auth_live.project_id,
-        job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
+        job_id=os.getenv("TEST_UP42_JOB_ID"),
     )
     return job
 
@@ -137,8 +137,8 @@ def jobtask_live(auth_live):
     jobtask = JobTask(
         auth=auth_live,
         project_id=auth_live.project_id,
-        job_id=os.getenv("UP42_JOB_ID_test_up42_py"),
-        jobtask_id=os.getenv("UP42_JOBTASK_ID_test_up42_py"),
+        job_id=os.getenv("TEST_UP42_JOB_ID"),
+        jobtask_id=os.getenv("TEST_UP42_JOBTASK_ID"),
     )
     return jobtask
 

@@ -6,7 +6,7 @@ import up42
 if __name__ == "__main__":
     # 30 seconds example with slight changes and production.
     up42.authenticate(
-        roject_id=os.getenv("TEST_UP42_PROJECT_ID"),
+        project_id=os.getenv("TEST_UP42_PROJECT_ID"),
         project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
     project = up42.initialize_project()
