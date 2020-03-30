@@ -30,7 +30,7 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
     "--PROJECT-ID",
     "project_id",
     envvar="UP42_PROJECT_ID",
-    help="Your project ID, get in the Project settings in the console.",
+    help="Your project ID, get it in the Project settings in the console.",
 )
 @click.option(
     "-PAPIKEY",
