@@ -64,7 +64,9 @@ def auth(auth):
     """
     Check authentication.
     """
-    click.echo(click.style("""
+    click.echo(
+        click.style(
+            """
                                                      ▓▌  ▓▀▀▓
             ╟▓▓▓▓▌     ╟▓▓▓▓▌  ▓▓▓▓▓▓▓▓▓▓▓▓▄       ▄▀▀▌    ╓▓
             ▓▓▓▓▓▌     ▓▓▓▓▓▌  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓   ,▓▌╓▓▌,  ▓▀
@@ -77,7 +79,10 @@ def auth(auth):
                                ▓▓▓▀
                                 └
 
-    """, fg="blue"))
+    """,
+            fg="blue",
+        )
+    )
 
     logger.info(auth)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
