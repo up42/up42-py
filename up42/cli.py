@@ -7,11 +7,12 @@ from .auth import Auth
 from .tools import Tools
 from .project import Project
 from .workflow import Workflow
+from .job import Job
 from .utils import get_logger
 
 logger = get_logger(__name__)
 
-ENV = "dev"
+ENV = "com"
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 # To activate bash autocompletion
@@ -22,13 +23,6 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
-@click.option(
-    "-CFG",
-    "--CFG-FILE",
-    "cfg_file",
-    envvar="UP42_CFG_FILE",
-    help="File path to the cfg.json with {project_id: '...', project_api_key: '...'}",
-)
 @click.option(
     "-PID",
     "--PROJECT-ID",
@@ -43,13 +37,20 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
     envvar="UP42_PROJECT_API_KEY",
     help="Your project API KEY, get in the Project settings in the console.",
 )
+@click.option(
+    "-CFG",
+    "--CFG-FILE",
+    "cfg_file",
+    envvar="UP42_CFG_FILE",
+    help="File path to the cfg.json with {project_id: '...', project_api_key: '...'}",
+)
 @click.pass_context
-def main(ctx, cfg_file, project_id, project_api_key):
+def main(ctx, project_id, project_api_key, cfg_file):
     ctx.ensure_object(dict)
-    if cfg_file:
-        ctx.obj = Auth(cfg_file, env=ENV)
-    elif project_id and project_api_key:
-        ctx.obj = Auth(project_id, project_api_key, env=ENV)
+    if project_id and project_api_key:
+        ctx.obj = Auth(project_id=project_id, project_api_key=project_api_key, env=ENV)
+    elif cfg_file:
+        ctx.obj = Auth(cfg_file=cfg_file, env=ENV)
 
 
 COMMAND = main.command(context_settings=CONTEXT_SETTINGS)
@@ -305,7 +306,7 @@ def workflow_from_name(ctx, workflow_name):
 
 
 # Workflows
-@project.group()
+@main.group()
 @click.pass_context
 @click.option(
     "-WID",
@@ -319,7 +320,7 @@ def workflow(ctx, workflow_id):
     """
     Add workflow tasks, run a job and more.
     """
-    ctx.obj = Workflow(ctx.obj.auth, ctx.obj.project_id, workflow_id)
+    ctx.obj = Workflow(ctx.obj, ctx.obj.project_id, workflow_id)
     if not os.environ.get("UP42_WORKFLOW_ID"):
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         logger.info("Run the following command to persist with this workflow:")
@@ -445,6 +446,136 @@ def create_and_run_job(workflow, input_parameters_json, track):
 
 
 # Jobs
+@main.group()
+@click.pass_context
+@click.option(
+    "-JID",
+    "--JOB-ID",
+    "job_id",
+    envvar="UP42_JOB_ID",
+    help="Your job ID, get it by creating a job or running 'up42 project workflow get-jobs'",
+    required=True,
+)
+def job(ctx, job_id):
+    """
+    Get job status, results and more.
+    """
+    ctx.obj = Job(ctx.obj, ctx.obj.project_id, job_id)
+    if not os.environ.get("UP42_JOB_ID"):
+        logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        logger.info("Run the following command to persist with this job:")
+        logger.info(f"export UP42_JOB_ID={job_id}")
+        logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+
+COMMAND_JOB = job.command(context_settings=CONTEXT_SETTINGS)
+
+
+@job.command("get-info", context_settings=CONTEXT_SETTINGS)
+@click.pass_obj
+def job_get_info(job):
+    """
+    Get information about the job.
+    """
+    logger.info(job.info)
+
+
+@COMMAND_JOB
+@click.pass_obj
+def cancel_job(job):
+    """
+    Cancel a job that is running.
+    """
+    job.get_status()
+    if click.confirm("Are you sure you want to cancel job with job id '{job.job_id}'?"):
+        job.cancel_job()
+
+
+@COMMAND_JOB
+@click.argument(
+    "output_directory",
+    type=click.Path(exists=True, writable=True, file_okay=False, resolve_path=True),
+)
+@click.pass_obj
+def download_quicklook(job, output_directory):
+    """
+    Download a job quicklook.
+    """
+    logger.info(job.download_quicklook(output_directory))
+
+
+@COMMAND_JOB
+@click.argument(
+    "output_directory",
+    type=click.Path(exists=True, writable=True, file_okay=False, resolve_path=True),
+)
+@click.pass_obj
+def download_result(job, output_directory):
+    """
+    Download and unpack the job result.
+    """
+    logger.info(job.download_result(output_directory))
+
+
+@COMMAND_JOB
+@click.pass_obj
+def get_job_tasks(job):
+    """
+    Get the individual items of the job.
+    """
+    logger.info(job.get_jobtasks())
+
+
+@COMMAND_JOB
+@click.pass_obj
+def get_job_tasks_result_json(job):
+    """
+    Convenience function to get the resulting data.json of all job tasks.
+    """
+    logger.info(job.get_jobtasks_result_json())
+
+
+@COMMAND_JOB
+@click.pass_obj
+def get_log(job):
+    """
+    Convenience function to print or return the logs of all job tasks.
+    """
+    job.get_log()
+
+
+@COMMAND_JOB
+@click.pass_obj
+def get_result_json(job):
+    """
+    Get the job result data.json.
+    """
+    job.get_result_json()
+
+
+@COMMAND_JOB
+@click.pass_obj
+def get_status(job):
+    """
+    Get the job status.
+    """
+    logger.info(job.get_status())
+
+
+@COMMAND_JOB
+@click.option(
+    "-i",
+    "--interval",
+    help="Interval between getting job status in seconds.",
+    default=30,
+    type=click.IntRange(1, 300),
+)
+@click.pass_obj
+def track_status(job, interval):
+    """
+    Track the job status with regular time intervals.
+    """
+    logger.info(job.track_status(interval))
 
 
 # Catalog

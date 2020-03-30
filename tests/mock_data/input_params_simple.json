@@ -31,10 +31,10 @@
     },
     "max_cloud_cover": 5
   },
-  "sharpening:1": {
-    "strength": {
-      "type": "string",
-      "default": "medium"
-    }
+  "tiling:1": {
+    "tile_width": 768,
+    "tile_height": 768,
+    "match_extents": false,
+    "discard_empty_tiles": true
   }
 }

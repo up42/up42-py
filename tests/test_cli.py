@@ -10,6 +10,7 @@ from up42 import cli
 #  TEST_UP42_PROJECT_ID
 #  TEST_UP42_PROJECT_API_KEY
 #  TEST_UP42_WORKFLOW_ID
+#  TEST_UP42_JOB_ID
 
 
 @pytest.fixture()
@@ -26,6 +27,10 @@ def cli_runner():
 
 WORKFLOW_ENVS = mock.patch.dict(
     "os.environ", {"UP42_WORKFLOW_ID": os.environ.get("TEST_UP42_WORKFLOW_ID"),},
+)
+
+JOB_ENVS = mock.patch.dict(
+    "os.environ", {"UP42_JOB_ID": os.environ.get("TEST_UP42_JOB_ID"),},
 )
 
 
@@ -125,74 +130,70 @@ def test_workflow_from_name(cli_runner):
 
 @pytest.mark.live()
 def test_workflow(cli_runner):
-    result = cli_runner.invoke(cli.main, ["project", "workflow", "-h"])
+    result = cli_runner.invoke(cli.main, ["workflow", "-h"])
     assert result.exit_code == 0
 
 
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_workflow_get_info(cli_runner):
-    result = cli_runner.invoke(cli.main, ["project", "workflow", "get-info"])
+    result = cli_runner.invoke(cli.main, ["workflow", "get-info"])
     assert result.exit_code == 0
 
 
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_workflow_update_name(cli_runner):
-    result = cli_runner.invoke(cli.main, ["project", "workflow", "update-name", "-h"])
+    result = cli_runner.invoke(cli.main, ["workflow", "update-name", "-h"])
     assert result.exit_code == 0
 
 
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_workflow_delete(cli_runner):
-    result = cli_runner.invoke(cli.main, ["project", "workflow", "delete", "-h"])
+    result = cli_runner.invoke(cli.main, ["workflow", "delete", "-h"])
     assert result.exit_code == 0
 
 
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_get_jobs(cli_runner):
-    result = cli_runner.invoke(cli.main, ["project", "workflow", "get-jobs"])
+    result = cli_runner.invoke(cli.main, ["workflow", "get-jobs"])
     assert result.exit_code == 0
 
 
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_get_workflow_tasks(cli_runner):
-    result = cli_runner.invoke(cli.main, ["project", "workflow", "get-workflow-tasks"])
+    result = cli_runner.invoke(cli.main, ["workflow", "get-workflow-tasks"])
     assert result.exit_code == 0
 
 
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_get_parameter_info(cli_runner):
-    result = cli_runner.invoke(cli.main, ["project", "workflow", "get-parameter-info"])
+    result = cli_runner.invoke(cli.main, ["workflow", "get-parameter-info"])
     assert result.exit_code == 0
 
 
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_get_compatible_blocks(cli_runner):
-    result = cli_runner.invoke(
-        cli.main, ["project", "workflow", "get-compatible-blocks"]
-    )
+    result = cli_runner.invoke(cli.main, ["workflow", "get-compatible-blocks"])
     assert result.exit_code == 0
 
 
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_add_workflow_tasks(cli_runner):
-    result = cli_runner.invoke(
-        cli.main, ["project", "workflow", "add-workflow-tasks", "-h"]
-    )
+    result = cli_runner.invoke(cli.main, ["workflow", "add-workflow-tasks", "-h"])
     assert result.exit_code == 0
 
     input_tasks_json = (
         Path(__file__).resolve().parent / "mock_data/input_tasks_simple.json"
     )
     result = cli_runner.invoke(
-        cli.main, ["project", "workflow", "add-workflow-tasks", str(input_tasks_json)]
+        cli.main, ["workflow", "add-workflow-tasks", str(input_tasks_json)]
     )
     assert result.exit_code == 0
 
@@ -200,13 +201,91 @@ def test_add_workflow_tasks(cli_runner):
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_create_and_run_job(cli_runner):
+    result = cli_runner.invoke(cli.main, ["workflow", "create-and-run-job", "-h"])
+    assert result.exit_code == 0
+
+    input_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    )
     result = cli_runner.invoke(
-        cli.main, ["project", "workflow", "create-and-run-job", "-h"]
+        cli.main,
+        ["workflow", "create-and-run-job", str(input_parameters_json), "--track",],
     )
     assert result.exit_code == 0
 
-    # input_parameters_json = Path(__file__).resolve().parent / "mock_data/input_parameters_simple.json"
-    # result = cli_runner.invoke(
-    #    cli.main, ["project", "workflow", "create-and-run-job", str(input_parameters_json), "--track"]
-    # )
-    # assert result.exit_code == 0
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_job(cli_runner):
+    result = cli_runner.invoke(cli.main, ["job", "-h"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_job_get_info(cli_runner):
+    result = cli_runner.invoke(cli.main, ["job", "get-info"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_cancel_job(cli_runner):
+    result = cli_runner.invoke(cli.main, ["job", "cancel-job", "-h"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_download_quicklook(cli_runner):
+    result = cli_runner.invoke(cli.main, ["job", "download-quicklook", "-h"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_download_result(cli_runner):
+    result = cli_runner.invoke(cli.main, ["job", "download-result", "-h"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_get_job_tasks(cli_runner):
+    result = cli_runner.invoke(cli.main, ["job", "get-job-tasks"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_job_tasks_result_json(cli_runner):
+    result = cli_runner.invoke(cli.main, ["job", "get-job-tasks-result-json"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_get_log(cli_runner):
+    result = cli_runner.invoke(cli.main, ["job", "get-log"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_get_result_json(cli_runner):
+    result = cli_runner.invoke(cli.main, ["job", "get-result-json"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_get_status(cli_runner):
+    result = cli_runner.invoke(cli.main, ["job", "get-status"])
+    assert result.exit_code == 0
+
+
+@JOB_ENVS
+@pytest.mark.live()
+def test_track_status(cli_runner):
+    result = cli_runner.invoke(cli.main, ["job", "track-status"])
+    assert result.exit_code == 0
