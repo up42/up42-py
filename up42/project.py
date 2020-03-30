@@ -130,7 +130,7 @@ class Project(Tools):
         Args:
             max_aoi_size: The maximum area of interest geometry size, from 1-1000 sqkm, default 10 sqkm.
             max_concurrent_jobs: The maximum number of concurrent jobs, from 1-10, default 1.
-            number_of_images:
+            number_of_images: The maximum number of images returned with each job, from 1-20, default 10.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
         payload = [
