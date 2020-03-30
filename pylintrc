@@ -16,6 +16,7 @@ disable=
     too-many-locals,
     protected-access,
     redefined-outer-name,
+    too-many-instance-attributes,
     fixme
 
 [FORMAT]
@@ -31,3 +32,10 @@ const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__)|logger|api|_api)$
 [DESIGN]
 max-args=6
 ignored-argument-names=_.*|self
+
+[SIMILARITIES]
+# Minimum lines number of a similarity.
+min-similarity-lines=8   # TODO: Reset lower when pylint bug fixed #214.
+ignore-comments=yes
+ignore-docstrings=yes
+ignore-imports=no
