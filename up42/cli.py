@@ -1,6 +1,7 @@
 import os
 import json
 from pathlib import Path
+from datetime import datetime, timedelta
 import click
 
 from .auth import Auth
@@ -8,6 +9,7 @@ from .tools import Tools
 from .project import Project
 from .workflow import Workflow
 from .job import Job
+from .catalog import Catalog
 from .utils import get_logger
 
 logger = get_logger(__name__)
@@ -579,3 +581,81 @@ def track_status(job, interval):
 
 
 # Catalog
+
+
+@main.group()
+@click.pass_context
+def catalog(ctx):
+    """
+    UP42 catalog search. You can search for satellite image scenes
+    for different sensors and criteria like cloud cover.
+    """
+    ctx.obj = Catalog(ctx.obj)
+
+
+COMMAND_CATALOG = catalog.command(context_settings=CONTEXT_SETTINGS)
+
+
+@COMMAND_CATALOG
+@click.argument(
+    "geom_file", type=click.Path(exists=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    "--start-date",
+    type=click.DateTime(formats=["%Y-%m-%d"]),
+    default=(datetime.today() - timedelta(days=7)).strftime("%Y-%m-%d"),
+    help="Query period starting day, format '2020-01-01'. Defaults to today minus 7 days.",
+)
+@click.option(
+    "--end-date",
+    type=click.DateTime(formats=["%Y-%m-%d"]),
+    default=datetime.today().strftime("%Y-%m-%d"),
+    help="Query period ending day, format '2020-01-01'. Defaults to today.",
+)
+@click.option(
+    "--sensors",
+    type=click.Choice(
+        ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5",]
+    ),
+    multiple=True,
+    default=["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5",],
+    help="Imagery sensors to search for.",
+)
+@click.option(
+    "--max-cloud-cover",
+    type=click.IntRange(0, 100),
+    default=20,
+    help="Maximum cloudcover percentage. 100 will return all scenes,"
+    "8.4 will return all scenes with 8.4 or less cloudcover.",
+)
+@click.option(
+    "--limit", type=int, default=1, help="The maximum number of search results."
+)
+@click.pass_obj
+def construct_parameters(
+    catalog, geom_file, start_date, end_date, sensors, limit, max_cloud_cover
+):
+    """
+    Follows STAC principles and property names to create a filter for
+    catalog search.
+    """
+    geometry = catalog.read_vector_file(geom_file)
+    start_date_str = start_date.strftime("%Y-%m-%d")
+    end_date_str = end_date.strftime("%Y-%m-%d")
+    logger.info(
+        catalog.construct_parameter(
+            geometry, start_date_str, end_date_str, sensors, limit, max_cloud_cover
+        )
+    )
+
+
+@COMMAND_CATALOG
+@click.argument("search_parameters_json", type=click.File("r"))
+@click.pass_obj
+def search(catalog, search_parameters_json):
+    """
+    Searches the catalog for the the search parameter and returns the metadata of
+    the matching scenes. Generate search parameters with
+    'up42 catalog construct-parameter'.
+    """
+    logger.info(catalog.search(json.load(search_parameters_json), as_dataframe=False))
