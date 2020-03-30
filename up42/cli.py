@@ -15,7 +15,7 @@ from .utils import get_logger
 logger = get_logger(__name__)
 
 ENV = "com"
-CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
+CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], show_default=True)
 
 # To activate bash autocompletion
 # eval "$(_UP42_COMPLETE=source_bash up42)"
@@ -624,13 +624,13 @@ COMMAND_CATALOG = catalog.command(context_settings=CONTEXT_SETTINGS)
     "--start-date",
     type=click.DateTime(formats=["%Y-%m-%d"]),
     default=(datetime.today() - timedelta(days=7)).strftime("%Y-%m-%d"),
-    help="Query period starting day, format '2020-01-01'. Defaults to today minus 7 days.",
+    help="Query period starting day, format '2020-01-01'.",
 )
 @click.option(
     "--end-date",
     type=click.DateTime(formats=["%Y-%m-%d"]),
     default=datetime.today().strftime("%Y-%m-%d"),
-    help="Query period ending day, format '2020-01-01'. Defaults to today.",
+    help="Query period ending day, format '2020-01-01'.",
 )
 @click.option(
     "--sensors",
