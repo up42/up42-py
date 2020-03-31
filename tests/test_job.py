@@ -4,12 +4,7 @@ import requests_mock
 import pytest
 
 # pylint: disable=unused-import
-from .fixtures import (
-    auth_mock,
-    auth_live,
-    job_mock,
-    job_live,
-)
+from .fixtures import auth_mock, auth_live, job_mock, job_live, jobtask_mock
 import up42  # pylint: disable=wrong-import-order
 
 
@@ -28,13 +23,58 @@ def test_job_get_info(job_mock):
     assert info["xyz"] == 789
     assert job_mock.info["xyz"] == 789
 
+
 # pylint: disable=unused-argument
-def test_get_status(job_mock):
-    pass
+@pytest.mark.parametrize("status", ["NOT STARTED", "PENDING", "RUNNING"])
+def test_get_status(job_mock, status):
+    del job_mock.info
+
+    with requests_mock.Mocker() as m:
+        url_job_info = (
+            f"{job_mock.auth._endpoint()}/projects/"
+            f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+
+        job_status = job_mock.get_status()
+    assert job_status == status
 
 
-def test_track_status(job_mock):
-    pass
+@pytest.mark.parametrize("status", ["SUCCEEDED"])
+def test_track_status_pass(job_mock, status):
+    del job_mock.info
+    with requests_mock.Mocker() as m:
+        url_job_info = (
+            f"{job_mock.auth._endpoint()}/projects/"
+            f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+
+        job_status = job_mock.track_status()
+    assert job_status == status
+
+
+@pytest.mark.parametrize("status", ["FAILED", "ERROR", "CANCELLED", "CANCELLING"])
+def test_track_status_fail(job_mock, jobtask_mock, status):
+    with pytest.raises(ValueError):
+        del job_mock.info
+        with requests_mock.Mocker() as m:
+            url_job_info = (
+                f"{job_mock.auth._endpoint()}/projects/"
+                f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+            )
+            m.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+            url_job_tasks = (
+                f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
+                f"/tasks/"
+            )
+            m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
+            url_log = (
+                f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/"
+                f"{job_mock.job_id}/tasks/{jobtask_mock.jobtask_id}/logs"
+            )
+            m.get(url_log, json="")
+            job_mock.track_status()
 
 
 def test_cancel_job(job_mock):
@@ -49,12 +89,31 @@ def test_get_result_json(job_mock):
     pass
 
 
-def test_get_log(job_mock):
-    pass
+def test_get_log(job_mock, jobtask_mock):
+    with requests_mock.Mocker() as m:
+        url_job_tasks = (
+            f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
+            f"/tasks/"
+        )
+        m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
+        url_log = (
+            f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/"
+            f"{job_mock.job_id}/tasks/{jobtask_mock.jobtask_id}/logs"
+        )
+        m.get(url_log, json="")
+        assert job_mock.get_log(as_return=True)[jobtask_mock.jobtask_id] == ""
 
 
-def test_get_jobtasks(job_mock):
-    pass
+def test_get_jobtasks(job_mock, jobtask_mock):
+    with requests_mock.Mocker() as m:
+        url_job_tasks = (
+            f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
+            f"/tasks/"
+        )
+        m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
+        job_tasks = job_mock.get_jobtasks()
+        assert isinstance(job_tasks[0], up42.JobTask)
+        assert job_tasks[0].jobtask_id == jobtask_mock.jobtask_id
 
 
 def test_get_jobtasks_result_json(job_mock):
