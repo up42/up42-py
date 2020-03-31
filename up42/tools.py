@@ -233,7 +233,7 @@ class Tools:
     def plot_result(
         self,
         figsize: Tuple[int, int] = (8, 8),
-        filepaths: List[str] = None,
+        filepaths: List[Union[str, Path]] = None,
         titles: List[str] = None,
     ) -> None:
         """
@@ -249,12 +249,17 @@ class Tools:
             if self.result is None:
                 raise ValueError("You first need to download the results.")
             filepaths = self.result
+        filepaths = [Path(path) for path in filepaths]
 
         plot_file_format = ["tif"]  # TODO: Add other fileformats.
-        imagepaths = [path for path in filepaths if str(path.suffix) in plot_file_format]
+        imagepaths = [
+            path for path in filepaths if str(path.suffix) in plot_file_format  # type: ignore
+        ]
         if not imagepaths:
-            raise ValueError(f"Only results of the formats {plot_file_format} can "
-                             "currently be plotted.")
+            raise ValueError(
+                f"Only results of the formats {plot_file_format} can "
+                "currently be plotted."
+            )
 
         if not titles:
             titles = [Path(fp).stem for fp in imagepaths]

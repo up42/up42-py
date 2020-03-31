@@ -7,6 +7,7 @@ import pytest
 from .fixtures import auth_live, tools_live  # pylint: disable=unused-import
 from .context import Tools
 
+
 @pytest.mark.live
 def test_validate_manifest_valid(tools_live):
     _location_ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
