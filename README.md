@@ -1,14 +1,25 @@
-![coverage](coverage.svg)
-<img align="right" src="docs/_assets/banner-up42-py-small.png" alt="" width="250"/>
+<h1 align="center">
+    <a href="https://github.com/up42/up42-py" title="up42-py">
+    <img width="200" alt="" src="docs/_assets/banner-up42-py.png"> </a>
+    <br>
+</h1>
 
-# up42-py
-**Python interface for UP42, the geospatial marketplace and developer platform.**
+<p align="center">
+    <strong>Python interface for UP42, the geospatial marketplace and developer platform.</strong>
+</p>
 
-Documentation: [https://up42.github.io/up42-py/](https://up42.github.io/up42-py/)
+<p align="center">
+    <a href="https://pypi.org/project/up42-py/" title="up42-py on pypi"><img src="https://img.shields.io/pypi/v/up42-py"></a>
+    <img src="./coverage.svg">
+    <a href="https://pypi.org/project/up42-py/" title="up42-py on pypi"><img src="     /github/workflow/status/:user/:repo/:workflow"></a>
+    <a href="https://twitter.com/UP42Official" title="UP42 on Twitter"><img src="https://img.shields.io/twitter/follow/UP42Official.svg?style=social"></a>
+</p>
 
-## API structure:
+Read the **[Documentation](https://up42.github.io/up42-py/)** for more detail.
+Visit **[UP42.com](https://https://up42.com)** to get started for free!
 
-## API-Structure
+
+## SDK structure:
 
 - The UP42 Python SDK uses six object classes, representing the **hierarchical structure** of the UP42 platform:
     - **Project > Workflow > Job > JobTask**,
@@ -20,6 +31,42 @@ Documentation: [https://up42.github.io/up42-py/](https://up42.github.io/up42-py/
     - `job = workflow.create_and_run_job()`
 - Usually a user starts by creating a project object and then spawns objects of a lower level (e.g. creates a new workflow, creates&runs a job etc.).
 - It is also possible to directly access a lower-level object, e.g. a job that was already run on UP42 can be used to initialize the corresponding object via `up42.initialize_job(job_id='123456789')`.
+
+
+## Example
+
+Here's a basic example of some of the functions that up42-py provides. After authentication with an
+UP42 project, a new workflow (Get Sentinel-2 scene, sharpen image) is created and filled with tasks. 
+An aoi and the workflow parameters are defined. After running the job, the results are downloaded and visualized.
+
+```python
+import up42
+
+up42.authenticate("config.json")
+project = up42.initialize_project()
+
+workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
+# Add blocks/tasks to the workflow.
+blocks = up42.get_blocks(basic=True)
+input_tasks= [blocks['sobloo-s2-l1c-aoiclipped'], 
+              blocks['sharpening']]
+workflow.add_workflow_tasks(input_tasks=input_tasks)
+
+# Define the aoi and input parameters of the workflow to run it.
+aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
+input_parameters = workflow.construct_parameter(geometry=aoi, 
+                                                geometry_operation="bbox", 
+                                                start_date="2020-01-01",
+                                                end_date="2020-01-20",
+                                                limit=1)
+
+job = workflow.create_and_run_job(input_parameters=input_parameters)
+job.track_status()
+
+job.download_result()
+job.map_result()
+```
+
 
 ## Installation
 
@@ -56,48 +103,4 @@ print(project)
 ```
 
 
-## Quickstart - 30 seconds example
 
-See also [docs/30-seconds-example](https://up42.github.io/up42-py/quickstart/01_quickstart/#30-seconds-example) or the Jupyter Notebook in the examples folder.
-
-```python
-import up42
-
-# Get the the project credentials & authenticate with UP42.
-up42.authenticate("config.json")
-
-# Create a workflow in the project.
-project = up42.initialize_project()
-workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
-
-# Add blocks/tasks to the workflow.
-blocks = up42.get_blocks(basic=True)
-input_tasks= [blocks['sobloo-s2-l1c-aoiclipped'], 
-              blocks['sharpening']]
-workflow.add_workflow_tasks(input_tasks=input_tasks)
-
-# Define the aoi and input parameters of the workflow to run it.
-aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
-input_parameters = workflow.construct_parameter(geometry=aoi, 
-                                                geometry_operation="bbox", 
-                                                start_date="2020-01-01",
-                                                end_date="2020-01-20",
-                                                limit=1)
-print(input_parameters)
-
-# Run the workflow as a job
-job = workflow.create_and_run_job(input_parameters=input_parameters)
-job.track_status()
-
-# Plot the scene quicklooks.
-job.download_quicklook()
-job.plot_quicklook()
-
-# Plot & analyse the results.
-results_fp = job.download_result()
-print(results_fp)
-
-job.plot_result()
-
-job.map_result()
-```
