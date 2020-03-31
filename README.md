@@ -10,22 +10,25 @@ Documentation: [https://up42.github.io/up42-py/](https://up42.github.io/up42-py/
 
 ## API-Structure
 
-- The UP42 Python Api uses six object classes, representing the **hierachical structure** of UP42: **Project > Workflow > Job > JobTask** and **Catalog & Tools**.
-- Each object provides the full functionality at that specific level and can spawn elements of one level below, e.g.
+- The UP42 Python SDK uses six object classes, representing the **hierarchical structure** of the UP42 platform:
+    - **Project > Workflow > Job > JobTask**,
+    - **Catalog** and
+    - **Tools**.
+- Each object (besides Catalog and Tools) provides the full functionality at that specific level and can spawn elements of one level below, e.g.
     - `project = up42.initialize_project()`
     - `workflow = Project().create_workflow()`
     - `job = workflow.create_and_run_job()`
-- Usually the user starts with the project object, then spawns objects of a lower level (e.g. creates a new workflow, creates&runs a job etc.). 
-- To access a lower-level object directly, e.g. a job that was already run on UP42 initialize the object directly via `up42.initialize_job(job_id='123456789')`.
+- Usually a user starts by creating a project object and then spawns objects of a lower level (e.g. creates a new workflow, creates&runs a job etc.).
+- It is also possible to directly access a lower-level object, e.g. a job that was already run on UP42 can be used to initialize the corresponding object via `up42.initialize_job(job_id='123456789')`.
 
 ## Installation
 
-1. *Optional*: Create a virtual environment:
+1. *Optional (but highly recommended)*: Create a virtual environment e.g. using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/):
 ```bash
 mkvirtualenv --python=$(which python3.7) up42-py
 ```
 
-2. Install locally with systemlink (code changes are reflected):
+2. Install locally with SystemLink (code changes are reflected):
 ```bash
 git clone git@github.com:up42/up42-py.git
 cd up42-py
