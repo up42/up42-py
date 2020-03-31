@@ -78,7 +78,10 @@ def test_track_status_fail(job_mock, jobtask_mock, status):
 
 
 def test_cancel_job(job_mock):
-    pass
+    with requests_mock.Mocker() as m:
+        url = f"{job_mock.auth._endpoint()}/jobs/{job_mock.job_id}/cancel/"
+        m.post(url, status_code=200)
+        job_mock.cancel_job()
 
 
 def test_download_quicklook(job_mock):
@@ -86,7 +89,16 @@ def test_download_quicklook(job_mock):
 
 
 def test_get_result_json(job_mock):
-    pass
+    with requests_mock.Mocker() as m:
+        url = (
+            f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
+            f"/outputs/data-json/"
+        )
+        m.get(url, json={"type": "FeatureCollection", "features": []})
+        assert job_mock.get_result_json() == {
+            "type": "FeatureCollection",
+            "features": [],
+        }
 
 
 def test_get_log(job_mock, jobtask_mock):
@@ -116,11 +128,28 @@ def test_get_jobtasks(job_mock, jobtask_mock):
         assert job_tasks[0].jobtask_id == jobtask_mock.jobtask_id
 
 
-def test_get_jobtasks_result_json(job_mock):
-    pass
+def test_get_jobtasks_result_json(job_mock, jobtask_mock):
+    with requests_mock.Mocker() as m:
+        url_job_tasks = (
+            f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
+            f"/tasks/"
+        )
+        m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
+        url = (
+            f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
+            f"/tasks/{jobtask_mock.jobtask_id}/outputs/data-json"
+        )
+        m.get(url, json={"type": "FeatureCollection", "features": [],})
+        res = job_mock.get_jobtasks_result_json()
+        assert len(res) == 1
+        assert res[jobtask_mock.jobtask_id] == {
+            "type": "FeatureCollection",
+            "features": [],
+        }
 
 
 def test_map_result(job_mock):
+
     pass
 
 
