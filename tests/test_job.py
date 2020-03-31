@@ -84,8 +84,34 @@ def test_cancel_job(job_mock):
         job_mock.cancel_job()
 
 
-def test_download_quicklook(job_mock):
-    pass
+def test_download_quicklook(job_mock, jobtask_mock):
+    with tempfile.TemporaryDirectory() as tempdir:
+        with requests_mock.Mocker() as m:
+            url_job_tasks = (
+                f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
+                f"/tasks/"
+            )
+            m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
+
+            url_quicklook = (
+                f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
+                f"/tasks/{jobtask_mock.jobtask_id}/outputs/quicklooks/"
+            )
+            m.get(url_quicklook, json={"data": ["a_quicklook.png"]})
+            url = (
+                f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
+                f"/tasks/{jobtask_mock.jobtask_id}/outputs/quicklooks/a_quicklook.png"
+            )
+            quicklook_file = (
+                Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+            )
+
+            m.get(url, content=open(quicklook_file, "rb").read())
+
+            quick = job_mock.download_quicklook(tempdir)
+            assert len(quick) == 1
+            assert quick[0].exists()
+            assert quick[0].suffix == ".png"
 
 
 def test_get_result_json(job_mock):
