@@ -11,8 +11,16 @@
 <p align="center">
     <a href="https://pypi.org/project/up42-py/" title="up42-py on pypi"><img src="https://img.shields.io/pypi/v/up42-py"></a>
     <img src="./coverage.svg">
-    <a href="https://pypi.org/project/up42-py/" title="up42-py on pypi"><img src="     /github/workflow/status/:user/:repo/:workflow"></a>
-    <a href="https://twitter.com/UP42Official" title="UP42 on Twitter"><img src="https://img.shields.io/twitter/follow/UP42Official.svg?style=social"></a>
+     <a href="https://twitter.com/UP42Official" title="UP42 on Twitter"><img src="https://img.shields.io/twitter/follow/UP42Official.svg?style=social"></a>
+</p>
+
+<p align="center">
+  <a href="https://up42.github.io/up42-py/">Documentation</a> •
+  <a href="http://www.up42.com">UP42.com</a> •
+  <a href=""> </a>
+  <a href="#structure">Structure</a> •
+  <a href="#example">Example</a> •
+  <a href="#example">Installation</a> •
 </p>
 
 Read the **[Documentation](https://up42.github.io/up42-py/)** for more detail.
@@ -35,8 +43,7 @@ Visit **[UP42.com](https://https://up42.com)** to get started for free!
 
 ## Example
 
-Here's a basic example of some of the functions that up42-py provides. After authentication with an
-UP42 project, a new workflow (Get Sentinel-2 scene, sharpen image) is created and filled with tasks. 
+After authentication with an UP42 project, a new workflow is created and filled with tasks (Sentinel-2 data, image sharpening). 
 An aoi and the workflow parameters are defined. After running the job, the results are downloaded and visualized.
 
 ```python
@@ -102,5 +109,10 @@ project = up42.initialize_project()
 print(project)
 ```
 
+---
 
-
+<p align="center">
+    <a href="http://www.up42.com">UP42</a>
+    <a href="https://up42.github.io/up42-py/">Documentation</a>    
+    <a href="https://twitter.com/UP42Official" title="UP42 on Twitter"><img src="https://img.shields.io/twitter/follow/UP42Official.svg?style=social"></a>
+</p>
