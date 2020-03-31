@@ -29,6 +29,42 @@ def test_job_get_info(job_mock):
     assert job_mock.info["xyz"] == 789
 
 
+def test_get_status(job_mock):
+    pass
+
+
+def test_track_status(job_mock):
+    pass
+
+
+def test_cancel_job(job_mock):
+    pass
+
+
+def test_download_quicklook(job_mock):
+    pass
+
+
+def test_get_result_json(job_mock):
+    pass
+
+
+def test_get_log(job_mock):
+    pass
+
+
+def test_get_jobtasks(job_mock):
+    pass
+
+
+def test_get_jobtasks_result_json(job_mock):
+    pass
+
+
+def test_map_result(job_mock):
+    pass
+
+
 def test_job_download_result(job_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"
