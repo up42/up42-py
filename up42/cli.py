@@ -14,7 +14,6 @@ from .utils import get_logger
 
 logger = get_logger(__name__)
 
-ENV = "com"
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], show_default=True)
 
 # To activate bash autocompletion
@@ -46,13 +45,17 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], show_default=True)
     envvar="UP42_CFG_FILE",
     help="File path to the cfg.json with {project_id: '...', project_api_key: '...'}",
 )
+@click.option(
+    "--env",
+    default="com"
+)
 @click.pass_context
-def main(ctx, project_id, project_api_key, cfg_file):
+def main(ctx, project_id, project_api_key, cfg_file, env):
     ctx.ensure_object(dict)
     if project_id and project_api_key:
-        ctx.obj = Auth(project_id=project_id, project_api_key=project_api_key, env=ENV)
+        ctx.obj = Auth(project_id=project_id, project_api_key=project_api_key, env=env)
     elif cfg_file:
-        ctx.obj = Auth(cfg_file=cfg_file, env=ENV)
+        ctx.obj = Auth(cfg_file=cfg_file, env=env)
 
 
 COMMAND = main.command(context_settings=CONTEXT_SETTINGS)
@@ -93,8 +96,12 @@ def auth(auth):
 
 
 @COMMAND
+@click.option(
+    "--env",
+    default="com"
+)
 @click.pass_obj
-def config(auth):
+def config(auth, env):
     """
     Create a config file.
     """
@@ -111,7 +118,7 @@ def config(auth):
     with open(config_path, "w") as cfg:
         json.dump(json_config, cfg)
 
-    auth = Auth(cfg_file=config_path, env=ENV)
+    auth = Auth(cfg_file=config_path, env=env)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following command to persist with this authentication:")
     logger.info(f"export UP42_CFG_FILE={auth.cfg_file}")
