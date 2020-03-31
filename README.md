@@ -21,7 +21,9 @@
 </p>
 
 ## Highlights
-
+- The full functionality of UP42 in a Python package, focused on ease of use and automation!
+- Many convenience methods for visualization of results, finding an area of interest etc.
+ 
 
 ## Structure
 
@@ -35,7 +37,6 @@
     - `job = workflow.create_and_run_job()`
 - Usually a user starts by creating a project object and then spawns objects of a lower level.
 - It is also possible to directly access a lower-level object, e.g. a job that was already run on UP42 can be used to initialize the corresponding object via `up42.initialize_job(job_id='123456789')`.
-
 
 ## Example
 
@@ -109,4 +110,4 @@ print(project)
 
 You can reach us via Email [support@up42.com](mailto:support@up42.com) or open a github issue. We are happy to answer all of your questions!
 
-In case you want to fix a bug or contribute please read [CONTRIBUTE.md](contribute.md).
+Contributions and bugfixes are welcome, please have a look at [contribute.md](contribute.md).
