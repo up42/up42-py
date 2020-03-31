@@ -17,13 +17,6 @@ Or using a `config.json` file:
 up42 -CFG [path to config.json] auth
 ```
 
-If you want to create a `config.json` file from a project key pair, you can use the
-config command.
-
-```bash
-up42 -PID [PROJECT_ID] -PAPIKEY [PROJECT_API_KEY] config
-```
-
 You can make the authentication persistent by storing either the project key
 pair or the path to the config file as an environment variable.
 
@@ -45,6 +38,13 @@ to your bash profile file:
 export UP42_CFG_FILE=[path to config.json] >> ~/.bashrc
 # MacOS
 export UP42_CFG_FILE=[path to config.json] >> ~/.bash_profile
+```
+
+If you want to create a `config.json` file from a project key pair, you can use the
+config command.
+
+```bash
+up42 -PID [PROJECT_ID] -PAPIKEY [PROJECT_API_KEY] config
 ```
 
 ## Workflows
