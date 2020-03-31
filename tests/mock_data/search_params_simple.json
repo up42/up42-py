@@ -1,0 +1,57 @@
+{
+  "datetime": "2020-03-23T00:00:00Z/2020-03-30T00:00:00Z",
+  "intersects": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          13.375966,
+          52.515068
+        ],
+        [
+          13.375966,
+          52.516639
+        ],
+        [
+          13.378314,
+          52.516639
+        ],
+        [
+          13.378314,
+          52.515068
+        ],
+        [
+          13.375966,
+          52.515068
+        ]
+      ]
+    ]
+  },
+  "limit": 1,
+  "query": {
+    "cloudCoverage": {
+      "lte": 20
+    },
+    "dataBlock": {
+      "in": [
+        "oneatlas-pleiades-fullscene",
+        "oneatlas-pleiades-aoiclipped",
+        "oneatlas-spot-fullscene",
+        "oneatlas-spot-aoiclipped",
+        "sobloo-sentinel1-l1c-grd-full",
+        "sobloo-sentinel1-l1c-grd-aoiclipped",
+        "sobloo-sentinel1-l1c-slc-full",
+        "sobloo-sentinel2-lic-msi-full",
+        "sobloo-sentinel2-lic-msi-aoiclipped",
+        "sobloo-sentinel3-full",
+        "sobloo-sentinel5-preview-full"
+      ]
+    }
+  },
+  "sortby": [
+    {
+      "field": "properties.cloudCoverage",
+      "direction": "asc"
+    }
+  ]
+}

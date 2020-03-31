@@ -1,6 +1,7 @@
 import os
 import json
 from pathlib import Path
+from datetime import datetime, timedelta
 import click
 
 from .auth import Auth
@@ -8,12 +9,12 @@ from .tools import Tools
 from .project import Project
 from .workflow import Workflow
 from .job import Job
+from .catalog import Catalog
 from .utils import get_logger
 
 logger = get_logger(__name__)
 
-ENV = "com"
-CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
+CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], show_default=True)
 
 # To activate bash autocompletion
 # eval "$(_UP42_COMPLETE=source_bash up42)"
@@ -28,7 +29,7 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
     "--PROJECT-ID",
     "project_id",
     envvar="UP42_PROJECT_ID",
-    help="Your project ID, get in the Project settings in the console.",
+    help="Your project ID, get it in the Project settings in the console.",
 )
 @click.option(
     "-PAPIKEY",
@@ -44,13 +45,14 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
     envvar="UP42_CFG_FILE",
     help="File path to the cfg.json with {project_id: '...', project_api_key: '...'}",
 )
+@click.option("--env", default="com")
 @click.pass_context
-def main(ctx, project_id, project_api_key, cfg_file):
+def main(ctx, project_id, project_api_key, cfg_file, env):
     ctx.ensure_object(dict)
     if project_id and project_api_key:
-        ctx.obj = Auth(project_id=project_id, project_api_key=project_api_key, env=ENV)
+        ctx.obj = Auth(project_id=project_id, project_api_key=project_api_key, env=env)
     elif cfg_file:
-        ctx.obj = Auth(cfg_file=cfg_file, env=ENV)
+        ctx.obj = Auth(cfg_file=cfg_file, env=env)
 
 
 COMMAND = main.command(context_settings=CONTEXT_SETTINGS)
@@ -62,6 +64,26 @@ def auth(auth):
     """
     Check authentication.
     """
+    click.echo(
+        click.style(
+            """
+                                                     ▓▌  ▓▀▀▓
+            ╟▓▓▓▓▌     ╟▓▓▓▓▌  ▓▓▓▓▓▓▓▓▓▓▓▓▄       ▄▀▀▌    ╓▓
+            ▓▓▓▓▓▌     ▓▓▓▓▓▌  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓   ,▓▌╓▓▌,  ▓▀
+            ▓▓▓▓▓▌     ▓▓▓▓▓▌  ▓▓▓▓▓    ╘▀▓▓▓▓▓      ▀▀  ████═
+            ▓▓▓▓▓▌     ▓▓▓▓▓▌  ▓▓▓▓▌      ▀▓▓▓▓▌
+            ╫▓▓▓▓▓     ▓▓▓▓▓▌  ▓▓▓▓▌      ▓▓▓▓▓▌
+             ▓▓▓▓▓▓▄▄▄▓▓▓▓▓▓   ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▀
+              █▓▓▓▓▓▓▓▓▓▓▓▀`   ▓▓▓▓▓▓▓▓▓▓▓▓▓▀
+                ▀▀█▓▓▓█▀▀      ▓▓▓▓▓▀▀▀▀▀▀'
+                               ▓▓▓▀
+                                └
+
+    """,
+            fg="blue",
+        )
+    )
+
     logger.info(auth)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following commands to persist with this authentication:")
@@ -71,8 +93,9 @@ def auth(auth):
 
 
 @COMMAND
+@click.option("--env", default="com")
 @click.pass_obj
-def config(auth):
+def config(auth, env):
     """
     Create a config file.
     """
@@ -89,7 +112,7 @@ def config(auth):
     with open(config_path, "w") as cfg:
         json.dump(json_config, cfg)
 
-    auth = Auth(cfg_file=config_path, env=ENV)
+    auth = Auth(cfg_file=config_path, env=env)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following command to persist with this authentication:")
     logger.info(f"export UP42_CFG_FILE={auth.cfg_file}")
@@ -225,7 +248,11 @@ def create_workflow(project, name):
     """
     Create a workflow.
     """
-    project.create_workflow(name)
+    wf = project.create_workflow(name)
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info("Run the following command to persist with this workflow:")
+    logger.info(f"export UP42_WORKFLOW_ID={wf.workflow_id}")
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
 @COMMAND_PROJECT
@@ -234,7 +261,7 @@ def get_workflows(project):
     """
     Get the project workflows.
     """
-    logger.info(project.get_workflows())
+    logger.info(project.get_workflows(return_json=True))
 
 
 @COMMAND_PROJECT
@@ -296,13 +323,16 @@ def workflows_from_context():
     required=True,
     cls=workflows_from_context(),
 )
-@click.pass_context
-def workflow_from_name(ctx, workflow_name):
+@click.pass_obj
+def workflow_from_name(project, workflow_name):
     """
     Use a workflow from name.
     """
-    wf = ctx.obj.create_workflow(workflow_name, use_existing=True)
-    ctx.invoke(workflow, workflow_id=wf.workflow_id)
+    wf = project.create_workflow(workflow_name, use_existing=True)
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info("Run the following command to persist with this workflow:")
+    logger.info(f"export UP42_WORKFLOW_ID={wf.workflow_id}")
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
 # Workflows
@@ -385,7 +415,7 @@ def get_jobs(workflow):
     """
     Get the jobs ran with this workflow.
     """
-    logger.info(workflow.get_jobs())
+    logger.info(workflow.get_jobs(return_json=True))
 
 
 @COMMAND_WORKFLOW
@@ -442,7 +472,11 @@ def create_and_run_job(workflow, input_parameters_json, track):
     Creates and runs a new job.
     """
     input_parameters = json.load(input_parameters_json)
-    logger.info(workflow.create_and_run_job(input_parameters, track))
+    jb = workflow.create_and_run_job(input_parameters, track)
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info("Run the following command to persist with this job:")
+    logger.info(f"export UP42_JOB_ID={jb.job_id}")
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
 # Jobs
@@ -523,7 +557,7 @@ def get_job_tasks(job):
     """
     Get the individual items of the job.
     """
-    logger.info(job.get_jobtasks())
+    logger.info(job.get_jobtasks(return_json=True))
 
 
 @COMMAND_JOB
@@ -579,3 +613,81 @@ def track_status(job, interval):
 
 
 # Catalog
+
+
+@main.group()
+@click.pass_context
+def catalog(ctx):
+    """
+    UP42 catalog search. You can search for satellite image scenes
+    for different sensors and criteria like cloud cover.
+    """
+    ctx.obj = Catalog(ctx.obj)
+
+
+COMMAND_CATALOG = catalog.command(context_settings=CONTEXT_SETTINGS)
+
+
+@COMMAND_CATALOG
+@click.argument(
+    "geom_file", type=click.Path(exists=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    "--start-date",
+    type=click.DateTime(formats=["%Y-%m-%d"]),
+    default=(datetime.today() - timedelta(days=7)).strftime("%Y-%m-%d"),
+    help="Query period starting day, format '2020-01-01'.",
+)
+@click.option(
+    "--end-date",
+    type=click.DateTime(formats=["%Y-%m-%d"]),
+    default=datetime.today().strftime("%Y-%m-%d"),
+    help="Query period ending day, format '2020-01-01'.",
+)
+@click.option(
+    "--sensors",
+    type=click.Choice(
+        ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5",]
+    ),
+    multiple=True,
+    default=["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5",],
+    help="Imagery sensors to search for.",
+)
+@click.option(
+    "--max-cloud-cover",
+    type=click.IntRange(0, 100),
+    default=20,
+    help="Maximum cloudcover percentage. 100 will return all scenes,"
+    "8.4 will return all scenes with 8.4 or less cloudcover.",
+)
+@click.option(
+    "--limit", type=int, default=1, help="The maximum number of search results."
+)
+@click.pass_obj
+def construct_parameters(
+    catalog, geom_file, start_date, end_date, sensors, limit, max_cloud_cover
+):
+    """
+    Follows STAC principles and property names to create a filter for
+    catalog search.
+    """
+    geometry = catalog.read_vector_file(geom_file)
+    start_date_str = start_date.strftime("%Y-%m-%d")
+    end_date_str = end_date.strftime("%Y-%m-%d")
+    logger.info(
+        catalog.construct_parameter(
+            geometry, start_date_str, end_date_str, sensors, limit, max_cloud_cover
+        )
+    )
+
+
+@COMMAND_CATALOG
+@click.argument("search_parameters_json", type=click.File("r"))
+@click.pass_obj
+def search(catalog, search_parameters_json):
+    """
+    Searches the catalog for the search parameter and returns the metadata of
+    the matching scenes. Generate search parameters with
+    'up42 catalog construct-parameter'.
+    """
+    logger.info(catalog.search(json.load(search_parameters_json), as_dataframe=False))

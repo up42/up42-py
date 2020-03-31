@@ -289,3 +289,32 @@ def test_get_status(cli_runner):
 def test_track_status(cli_runner):
     result = cli_runner.invoke(cli.main, ["job", "track-status"])
     assert result.exit_code == 0
+
+
+@pytest.mark.live()
+def test_catalog(cli_runner):
+    result = cli_runner.invoke(cli.main, ["catalog", "-h"])
+    assert result.exit_code == 0
+
+
+@pytest.mark.live()
+def test_construct_parameters(cli_runner):
+    result = cli_runner.invoke(cli.main, ["catalog", "construct-parameters", "-h"])
+    assert result.exit_code == 0
+
+    aoi_geojson = Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
+    result = cli_runner.invoke(
+        cli.main, ["catalog", "construct-parameters", str(aoi_geojson)]
+    )
+    assert result.exit_code == 0
+
+
+@pytest.mark.live()
+def test_catalog_search(cli_runner):
+    search_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
+    )
+    result = cli_runner.invoke(
+        cli.main, ["catalog", "search", str(search_parameters_json)]
+    )
+    assert result.exit_code == 0
