@@ -170,7 +170,6 @@ class Job(Tools):
             List of the downloaded results' filepaths.
         """
         # TODO: Overwrite argument
-        # TODO: Handle other filetypes than tif, Not working for Fullscenes etc.
         download_url = self._get_download_url()
 
         if out_dir is None:
@@ -187,12 +186,16 @@ class Job(Tools):
         out_filepaths: List[str] = []
         with tarfile.open(tgz_file) as tar:
             members = tar.getmembers()
-            tif_files = [i for i in members if i.isfile() and i.name.endswith(".tif")]
-            for idx, tif_file in enumerate(tif_files):
-                f = tar.extractfile(tif_file)
+            files = [
+                i
+                for i in members
+                if i.isfile() and str(Path(i.name).name) != "data.json"
+            ]
+            for file in files:
+                f = tar.extractfile(file)
                 content = f.read()  # type: ignore
                 # TODO: Maybe jobid_sceneid etc?
-                out_fp = out_dir / Path(f"{self.job_id}_{idx}.tif")
+                out_fp = Path(out_dir) / Path(file.name).name
                 with open(out_fp, "wb") as dst:
                     dst.write(content)
                 out_filepaths.append(str(out_fp))
