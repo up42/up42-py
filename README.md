@@ -1,6 +1,6 @@
 <h1 align="center">
     <a href="https://github.com/up42/up42-py" title="up42-py">
-    <img width="200" alt="" src="./docs/_assets/github-banner-up42py.jpg"> </a>
+    <img alt="" src="./docs/_assets/github-banner-up42py.jpg"> </a>
     <br>
 </h1>
 
