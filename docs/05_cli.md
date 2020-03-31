@@ -24,8 +24,8 @@ config command.
 up42 -PID [PROJECT_ID] -PAPIKEY [PROJECT_API_KEY] config
 ```
 
-You can persist with the authentication by saving either the
-project key pair or path to the config file as an environment variable.
+You can make the authentication persistent by storing either the project key
+pair or the path to the config file as an environment variable.
 
 ```bash
 export UP42_PROJECT_ID=[PROJECT_ID]
@@ -38,7 +38,7 @@ Or when using `config.json`.
 export UP42_CFG_FILE=[path to config.json]
 ```
 
-To save the authentication for future sessions make sure to append this variables
+To save the authentication for future sessions make sure to append these variables
 to your bash profile file:
 ```bash
 # Linux
@@ -83,13 +83,13 @@ up42 workflow add-workflow-tasks new_workflow_tasks.json
 up42 job -h
 ```
 
-Create a run a new job with parameters defined in a json file (see [typical usage](04_typical_usage.md) for an example):
+Create and run a new job with parameters defined in a json file (see [typical usage](04_typical_usage.md) for an example):
 ```bash
 up42 workflow create-and-run-job input_parameters.json --track
 ```
 
 After running the command to persist the job you can download the quicklooks from
-job in current working directory:
+job in current working directory (note that not all data blocks support quicklooks):
 ```bash
 up42 job download-quicklooks .
 ```

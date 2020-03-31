@@ -685,7 +685,7 @@ def construct_parameters(
 @click.pass_obj
 def search(catalog, search_parameters_json):
     """
-    Searches the catalog for the the search parameter and returns the metadata of
+    Searches the catalog for the search parameter and returns the metadata of
     the matching scenes. Generate search parameters with
     'up42 catalog construct-parameter'.
     """
