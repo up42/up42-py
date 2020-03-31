@@ -145,7 +145,7 @@ class JobTask(Tools):
 
         out_paths: List[Path] = []
         for ql_id in quicklook_ids:
-            out_path = Path(out_dir) / f"quicklook_{ql_id}.jpg"
+            out_path = Path(out_dir) / f"quicklook_{ql_id}"
             out_paths.append(out_path)
 
             url = (
