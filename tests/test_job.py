@@ -28,7 +28,7 @@ def test_job_get_info(job_mock):
     assert info["xyz"] == 789
     assert job_mock.info["xyz"] == 789
 
-
+# pylint: disable=unused-argument
 def test_get_status(job_mock):
     pass
 
@@ -105,4 +105,4 @@ def test_job_download_result_no_tiff_live(auth_live):
         out_files = job.download_result(Path(tempdir))
         for file in out_files:
             assert Path(file).exists()
-        assert len(out_files) == 1
+        assert len(out_files) == 98
