@@ -4,7 +4,29 @@ from pathlib import Path
 import pytest
 import requests_mock
 
-from .fixtures import auth_mock_no_request, auth_mock  # pylint: disable=unused-import
+from .context import Auth
+
+# pylint: disable=unused-import
+from .fixtures import (
+    auth_mock_no_request,
+    auth_mock,
+    auth_live,
+)
+
+
+def test_auth_kwargs():
+    auth = Auth(
+        project_id="project_id123",
+        project_api_key="project_apikey123",
+        env="abc",
+        authenticate=False,
+        retry=False,
+        get_info=False,
+    )
+    assert auth.env == "abc"
+    assert not auth.authenticate
+    assert not auth.retry
+    assert not auth.get_info
 
 
 def test_no_credentials_raises(auth_mock_no_request):
@@ -45,6 +67,11 @@ def test_get_token_project(auth_mock_no_request):
         )
         auth_mock_no_request._get_token_project()
     assert auth_mock_no_request.token == "token_789"
+
+
+@pytest.mark.live
+def test_get_token_project_live(auth_live):
+    assert hasattr(auth_live, "token")
 
 
 def test_generate_headers(auth_mock_no_request):

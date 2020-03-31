@@ -78,15 +78,16 @@ class Auth(Tools):
 
     def _find_credentials(self) -> None:
         """
-        Finds the project credentials provided as class arguments or in the config file.
+        Sources the project credentials from a provided config file and error handling
+        if no credentials are provided in arguments or config file.
         """
-        if self.cfg_file is None:
-            if self.project_id is None or self.project_api_key is None:
+        if self.project_id is None or self.project_api_key is None:
+            if self.cfg_file is None:
                 raise ValueError(
-                    "Provide project credentials via arguments or config file!"
+                    "Provide project_id and project_api_key via arguments or config file!"
                 )
-        # Source credentials from config file.
-        elif self.cfg_file is not None:
+
+            # Source credentials from config file.
             try:
                 with open(self.cfg_file) as src:
                     config = json.load(src)
@@ -95,14 +96,20 @@ class Auth(Tools):
                         self.project_api_key = config["project_api_key"]
                     except KeyError:
                         raise ValueError(
-                            "Provided config file does not conatin project_id and project_api_key!"
+                            "Provided config file does not contain project_id and "
+                            "project_api_key!"
                         )
-                logger.info("Got credentials from config.json.")
+                logger.info("Got credentials from config file.")
             except FileNotFoundError:
-                raise ValueError("Selected config.json file does not exist!")
-        else:
-            raise ValueError(
-                "Provide project credentials via arguments or config file!"
+                raise ValueError("Selected config file does not exist!")
+
+        elif all(
+            v is not None
+            for v in [self.cfg_file, self.project_id, self.project_api_key]
+        ):
+            logger.info(
+                "Credentials are provided via arguments and config file, "
+                "now using the argument credentials."
             )
 
     def _endpoint(self) -> str:
