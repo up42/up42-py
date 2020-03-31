@@ -45,10 +45,7 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], show_default=True)
     envvar="UP42_CFG_FILE",
     help="File path to the cfg.json with {project_id: '...', project_api_key: '...'}",
 )
-@click.option(
-    "--env",
-    default="com"
-)
+@click.option("--env", default="com")
 @click.pass_context
 def main(ctx, project_id, project_api_key, cfg_file, env):
     ctx.ensure_object(dict)
@@ -96,10 +93,7 @@ def auth(auth):
 
 
 @COMMAND
-@click.option(
-    "--env",
-    default="com"
-)
+@click.option("--env", default="com")
 @click.pass_obj
 def config(auth, env):
     """
@@ -267,7 +261,7 @@ def get_workflows(project):
     """
     Get the project workflows.
     """
-    logger.info(project.get_workflows())
+    logger.info(project.get_workflows(return_json=True))
 
 
 @COMMAND_PROJECT
@@ -421,7 +415,7 @@ def get_jobs(workflow):
     """
     Get the jobs ran with this workflow.
     """
-    logger.info(workflow.get_jobs())
+    logger.info(workflow.get_jobs(return_json=True))
 
 
 @COMMAND_WORKFLOW
@@ -563,7 +557,7 @@ def get_job_tasks(job):
     """
     Get the individual items of the job.
     """
-    logger.info(job.get_jobtasks())
+    logger.info(job.get_jobtasks(return_json=True))
 
 
 @COMMAND_JOB
