@@ -161,9 +161,11 @@ class Tools:
             get_ipython().run_line_magic("matplotlib", "inline")
 
         if legend_column not in scenes.columns:
-            legend_column = None
-            logger.info("Given legend_column name not in scene dataframe, "
-                        "plotting without legend.")
+            legend_column = None  # type: ignore
+            logger.info(
+                "Given legend_column name not in scene dataframe, "
+                "plotting without legend."
+            )
 
         ax = scenes.plot(
             legend_column,
