@@ -233,7 +233,7 @@ class Tools:
     def plot_result(
         self,
         figsize: Tuple[int, int] = (8, 8),
-        filepaths: List[str] = None,
+        filepaths: List[Union[str, Path]] = None,
         titles: List[str] = None,
     ) -> None:
         """
@@ -243,33 +243,44 @@ class Tools:
             figsize: matplotlib figure size.
             filepaths: Paths to images to plot. Optional, by default picks up the downloaded results.
         """
-        # TODO: Add other fileformats.
         # TODO: Handle more bands.
         # TODO: add histogram equalization? But requires skimage dependency.
         if filepaths is None:
             if self.result is None:
                 raise ValueError("You first need to download the results.")
             filepaths = self.result
+        filepaths = [Path(path) for path in filepaths]
+
+        plot_file_format = ["tif"]  # TODO: Add other fileformats.
+        imagepaths = [
+            path for path in filepaths if str(path.suffix) in plot_file_format  # type: ignore
+        ]
+        if not imagepaths:
+            raise ValueError(
+                f"Only results of the formats {plot_file_format} can "
+                "currently be plotted."
+            )
+
         if not titles:
-            titles = [Path(fp).stem for fp in filepaths]
+            titles = [Path(fp).stem for fp in imagepaths]
 
         if is_notebook():
             get_ipython().run_line_magic("matplotlib", "inline")
         else:
             raise ValueError("Only works in Jupyter notebook.")
 
-        if len(filepaths) < 2:
+        if len(imagepaths) < 2:
             nrows, ncols = 1, 1
         else:
             ncols = 3
-            nrows = int(math.ceil(len(filepaths) / float(ncols)))
+            nrows = int(math.ceil(len(imagepaths) / float(ncols)))
 
         fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
-        if len(filepaths) > 1:
+        if len(imagepaths) > 1:
             axs = axs.ravel()
         else:
             axs = [axs]
-        for idx, (fp, title) in enumerate(zip(filepaths, titles)):
+        for idx, (fp, title) in enumerate(zip(imagepaths, titles)):
             with rasterio.open(fp) as src:
                 img_array = src.read()
                 show(

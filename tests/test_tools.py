@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from .fixtures import auth_live, tools_live  # pylint: disable=unused-import
+from .context import Tools
 
 
 @pytest.mark.live
@@ -31,3 +32,9 @@ def test_validate_manifest_invalid(tools_live):
         )
     with pytest.raises(ValueError):
         tools_live.validate_manifest(path_or_json=mainfest_json)
+
+
+def test_plot_result_not_accepted_file_format_raises():
+    filepaths = [Path("abc/123.hdf", "abc/123.json")]
+    with pytest.raises(ValueError):
+        Tools().plot_result(filepaths=filepaths)
