@@ -123,7 +123,7 @@ def draw_aoi() -> None:
 def plot_coverage(
     scenes: gpd.GeoDataFrame,
     aoi: gpd.GeoDataFrame = None,
-    legend_column: str = None,
+    legend_column: str = "scene_id",
     figsize=(12, 16),
 ) -> None:
     tools = Tools(auth=_auth)

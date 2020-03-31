@@ -167,6 +167,7 @@ class Catalog(Tools):
         geometry = search_paramaters["intersects"]
         poly = shapely.geometry.shape(geometry)
         df = df[df.intersects(poly)]
+        df = df.reset_index()
 
         # Make scene_id more easily accessible
         def _get_scene_id(row):
@@ -180,7 +181,7 @@ class Catalog(Tools):
 
         # pylint: disable=unnecessary-lambda
         df = df.apply(lambda row: _get_scene_id(row), axis=1)
-        df.crs = dst_crs  # apply can reset crs
+        df.crs = dst_crs  # apply resets crs
         if as_dataframe:
             return df
         else:
