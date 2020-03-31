@@ -145,7 +145,7 @@ class Tools:
     def plot_coverage(
         scenes: gpd.GeoDataFrame,
         aoi: gpd.GeoDataFrame = None,
-        legend_column: str = None,
+        legend_column: str = "scene_id",
         figsize=(12, 16),
     ) -> None:
         """
@@ -153,12 +153,17 @@ class Tools:
         Args:
             scenes: GeoDataFrame of scenes, result of catalog.search()
             aoi: GeoDataFrame of aoi.
-            legend_column: Dataframe column set to legend, e.g. "scene_id".
-                If None is provided, no legend is plotted.
+            legend_column: Dataframe column set to legend, default is "scene_id".
+                Legend entries are sorted and this determines plotting order.
             figsize: Matplotlib figure size.
         """
         if is_notebook():
             get_ipython().run_line_magic("matplotlib", "inline")
+
+        if legend_column not in scenes.columns:
+            legend_column = None
+            logger.info("Given legend_column name not in scene dataframe, "
+                        "plotting without legend.")
 
         ax = scenes.plot(
             legend_column,
@@ -169,6 +174,7 @@ class Tools:
             alpha=0.7,
             legend_kwds=dict(loc="upper left", bbox_to_anchor=(1, 1)),
         )
+
         if aoi is not None:
             aoi.plot(color="r", ax=ax, fc="None", edgecolor="r", lw=1)
             # TODO: Add aoi to legend.
