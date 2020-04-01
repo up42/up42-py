@@ -165,60 +165,6 @@ def get_block_details(auth, block_name):
 
 
 @COMMAND
-@click.pass_obj
-def get_environments(auth):
-    """
-    Get all UP42 environments.
-    """
-    logger.info(Tools(auth).get_environments())
-
-
-@COMMAND
-@click.argument("name")
-@click.argument("environment-variables", type=click.File())
-@click.pass_obj
-def create_environment(auth, name, environment_variables):
-    """
-    Create an UP42 environment.
-    """
-    logger.info(Tools(auth).create_environment(name, json.load(environment_variables)))
-
-
-def environments_from_context():
-    class OptionChoiceFromContext(click.Option):
-        def full_process_value(self, ctx, value):
-            env_names = [env["name"] for env in Tools(ctx.obj).get_environments()]
-            self.type = click.Choice(env_names)
-            return super(OptionChoiceFromContext, self).full_process_value(ctx, value)
-
-    return OptionChoiceFromContext
-
-
-@COMMAND
-@click.option(
-    "-n",
-    "--environment-name",
-    help="Environment name to delete.",
-    required=True,
-    cls=environments_from_context(),
-)
-@click.pass_obj
-def delete_environment(auth, environment_name):
-    """
-    Delete an UP42 environment.
-    """
-    env_id = [
-        env["id"]
-        for env in Tools(auth).get_environments()
-        if env["name"] == environment_name
-    ]
-    if click.confirm(
-        f"Are you sure you want to delete '{environment_name}'?", abort=True
-    ):
-        Tools(auth).delete_environment(env_id)
-
-
-@COMMAND
 @click.argument("manifest-json", type=click.Path(exists=True))
 @click.pass_obj
 def validate_manifest(auth, manifest_json):

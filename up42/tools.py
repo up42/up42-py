@@ -368,63 +368,6 @@ class Tools:
         else:
             return details_json
 
-    def get_environments(self, as_dataframe=False) -> Dict:
-        """
-        Gets all existing UP42 environments, used for separating storage of API keys
-        etc.
-
-        Args:
-            as_dataframe: Returns a dataframe instead of json (default).
-
-        Returns:
-            The environments as json info.
-        """
-        url = f"{self.auth._endpoint()}/environments"
-        response_json = self.auth._request(request_type="GET", url=url)
-        environments_json = response_json["data"]
-
-        if as_dataframe:
-            return pd.DataFrame(environments_json)
-        else:
-            return environments_json
-
-    def create_environment(self, name: str, environment_variables: Dict = None) -> Dict:
-        """
-        Creates a new UP42 environments, used for separating storage of API keys
-        etc.
-
-        Args:
-            name: Name of the new environment.
-            environment_variables: The variables to add to the environment, see example.
-
-        Returns:
-            The json info of the newly created environment.
-
-        Example:
-            ```python
-            environment_variables=
-                {"username": "up42", "password": "password"}
-            ```
-        """
-        existing_environment_names = [env["name"] for env in self.get_environments()]
-        if name in existing_environment_names:
-            raise Exception(f"An environment with the name {name} already exists.")
-        payload = {"name": name, "secrets": environment_variables}
-        url = f"{self.auth._endpoint()}/environments"
-        response_json = self.auth._request(request_type="POST", url=url, data=payload)
-        return response_json["data"]
-
-    def delete_environment(self, environment_id: str) -> None:
-        """
-        Deletes a specific environment.
-
-        Args:
-            environment_id: The id of the environment to delete. See also get_environments.
-        """
-        url = f"{self.auth._endpoint()}/environments/{environment_id}"
-        self.auth._request(request_type="DELETE", url=url, return_text=False)
-        logger.info("Successfully deleted environment: %s", environment_id)
-
     def validate_manifest(self, path_or_json: Union[str, Path, Dict]) -> Dict:
         """
         Validates the block manifest, input either manifest json string or filepath.

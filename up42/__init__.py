@@ -85,21 +85,6 @@ def validate_manifest(path_or_json: Union[str, Path, Dict]) -> Dict:
     return tools.validate_manifest(path_or_json)
 
 
-def get_environments(as_dataframe=False) -> Dict:
-    tools = Tools(auth=_auth)
-    return tools.get_environments(as_dataframe)
-
-
-def create_environment(name: str, environment_variables: Dict = None) -> Dict:
-    tools = Tools(auth=_auth)
-    return tools.create_environment(name, environment_variables)
-
-
-def delete_environment(environment_id: str) -> None:
-    tools = Tools(auth=_auth)
-    tools.delete_environment(environment_id)
-
-
 def read_vector_file(
     filename: str = "aoi.geojson", as_dataframe: bool = False
 ) -> FeatureCollection:
