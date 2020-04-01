@@ -57,3 +57,17 @@ http://127.0.0.1:8000
 ```
 
 Edit the markdown files in up42-py/docs. Save them to see the changes reflected in the preview.
+
+
+## Run the tests
+
+In the main folder up42-py, run:
+
+```bash
+make test
+```
+
+or run all tests including the live tests:
+```bash
+make test[live]
+```
