@@ -27,18 +27,12 @@ class Auth(Tools):
         **kwargs,
     ):
         """
-        The Auth class handles the authentication with UP42, can create projects, gives
-        access to the blocks on the UP42 marketplace, handles environment settings and
-        other generic UP42 functions.
+        The Auth class handles the authentication with UP42.
 
         Info:
             Authentication is possible via the credentials of a specific project (project_id &
             project_api_key). To get your **project id** and **project api key**, follow
             the instructions in the docs installation chapter.
-
-        Public methods:
-            initialize_project, get_blocks, get_block_details, delete_custom_block,
-            get_environments, create_environment, delete_environment, validate_manifest
 
         Args:
             cfg_file: File path to the cfg.json with {project_id: "...", project_api_key: "..."}.
