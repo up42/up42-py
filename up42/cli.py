@@ -150,7 +150,7 @@ def blocks_from_context():
 
 @COMMAND
 @click.option(
-    "-name",
+    "-n",
     "--block-name",
     help="Block name to get details.",
     required=True,
@@ -196,7 +196,7 @@ def environments_from_context():
 
 @COMMAND
 @click.option(
-    "-name",
+    "-n",
     "--environment-name",
     help="Environment name to delete.",
     required=True,
@@ -317,7 +317,7 @@ def workflows_from_context():
 
 @COMMAND_PROJECT
 @click.option(
-    "-name",
+    "-n",
     "--workflow-name",
     help="Workflow name to use.",
     required=True,
@@ -371,7 +371,14 @@ def workflow_get_info(workflow):
 
 
 @COMMAND_WORKFLOW
-@click.option("--name", type=str, help="New name for the workflow.", required=True)
+@click.option(
+    "-n",
+    "--workflow-name",
+    "name",
+    type=str,
+    help="New name for the workflow.",
+    required=True,
+)
 @click.option(
     "--description", type=str, help="An optional description for the workflow.",
 )
