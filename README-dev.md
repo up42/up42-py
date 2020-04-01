@@ -4,7 +4,7 @@
 
 The development installation is necessary if you want to contribute to up42-py, e.g. to fix a bug.
 
-1. *Optional (but highly recommended)*: Create a virtual environment e.g. using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/):
+1. *Optional (but highly recommended)*: Create a new virtual environment e.g. using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/):
 ```bash
 mkvirtualenv --python=$(which python3.7) up42-py
 ```

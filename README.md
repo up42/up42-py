@@ -27,7 +27,7 @@
 - Many convenience methods for visualization of results, finding an area of interest etc.
  
 
-## Structure
+## Package Overview
 
 - The UP42 Python SDK uses six object classes, representing the **hierarchical structure** of the UP42 platform:
     - **Project > Workflow > Job > JobTask**,
@@ -39,6 +39,7 @@
     - `job = workflow.create_and_run_job()`
 - Usually a user starts by creating a project object and then spawns objects of a lower level.
 - It is also possible to directly access a lower-level object, e.g. a job that was already run on UP42 can be used to initialize the corresponding object via `up42.initialize_job(job_id='123456789')`.
+
 
 ## Example
 
@@ -76,22 +77,16 @@ job.map_result()
 
 ## Installation
 
-1. *Optional (but highly recommended)*: Create a virtual environment e.g. using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/):
+The package requires Python > 3.6.
+
+1. Install via pip:
 ```bash
-mkvirtualenv --python=$(which python3.7) up42-py
+pip install up42-py
 ```
 
-2. Install locally with SystemLink (code changes are reflected):
-```bash
-git clone git@github.com:up42/up42-py.git
-cd up42-py
-pip install -r requirements.txt
-pip install -e .
-```
+2. Create a new project on [UP42](https://up42.com).
 
-3. Create a new project on [UP42](https://up42.com).
-
-4. Create a `config.json` file and fill in the [project credentials](https://docs.up42.com/getting-started/first-api-request.html#run-your-first-job-via-the-api).
+3. Create a `config.json` file and fill in the [project credentials](https://docs.up42.com/getting-started/first-api-request.html#run-your-first-job-via-the-api).
 ```json
 {
   "project_id": "...",
@@ -108,8 +103,9 @@ project = up42.initialize_project()
 print(project)
 ```
 
-## Support & Contribution
+For a development installation and further instructions see the [developer readme](README-dev.md).
+
+
+## Support
 
 You can reach us via Email [support@up42.com](mailto:support@up42.com) or open a github issue. We are happy to answer all of your questions!
-
-Contributions and bugfixes are welcome, please have a look at [contribute.md](contribute.md).
