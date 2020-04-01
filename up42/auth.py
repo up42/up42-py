@@ -17,8 +17,6 @@ from .utils import get_logger
 # TODO: Logger produces multiple printouts in Jupyter Lab, known issue.
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
-# TODO: Test stuff with nonlinear structure.
-
 
 class Auth(Tools):
     def __init__(
@@ -226,7 +224,7 @@ class Auth(Tools):
         else:
             response = self._request_helper(request_type, url, data, querystring)  # type: ignore
 
-        # TODO: Improve error messages on backend.
+        # TODO: Uniform error format on backend, too many different cases.
         # TODO: Put error messages in the specific functions.
         if response.status_code != 200:
             if response.status_code == 403:  # pylint: disable=no-else-raise
@@ -240,7 +238,6 @@ class Auth(Tools):
                 raise ValueError("Product not found!")
 
         # Handle response text.
-        # TODO: Uniform error format on backend, too many different cases.
         if return_text:
             try:
                 response_text = json.loads(response.text)

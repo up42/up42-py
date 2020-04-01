@@ -180,7 +180,7 @@ class Workflow(Tools):
                                  'blockId': '4ed70368-d4e1-4462-bef6-14e768049471'}]
             ```
         """
-        # TODO: User be able to only provide block task names or display name. But problematic with custom blocks.
+        # TODO: User be able to only provide block task names or display name.
         # Construct proper task definition from simplified input.
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
@@ -290,7 +290,7 @@ class Workflow(Tools):
                 input_parameters[data_block_name]["ids"] = scene_ids
                 input_parameters[data_block_name]["limit"] = len(scene_ids)
                 input_parameters[data_block_name].pop("time")
-                # TODO: In cas of ids remove all non-relevant parameters. Cleaner.
+                # TODO: In case of ids remove all non-relevant parameters. Cleaner.
             elif start_date is not None and end_date is not None:
                 datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
                 input_parameters[data_block_name]["time"] = datetime
@@ -304,9 +304,6 @@ class Workflow(Tools):
             input_parameters[data_block_name][geometry_operation] = aoi_feature
         return input_parameters
 
-    # @retry(
-    #     wait=wait_exponential(multiplier=1, min=1, max=1)
-    # )  # TODO: find optimal retry.
     def create_and_run_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,
