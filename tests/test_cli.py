@@ -121,10 +121,10 @@ def test_create_workflow(cli_runner):
     result = cli_runner.invoke(cli.main, ["project", "create-workflow", "-h"])
     assert result.exit_code == 0
 
-    result = cli_runner.invoke(
-        cli.main, ["project", "create-workflow", "a_cli_workflow"]
-    )
-    assert result.exit_code == 0
+    # result = cli_runner.invoke(
+    #    cli.main, ["project", "create-workflow", "a_cli_workflow"]
+    # )
+    # assert result.exit_code == 0
 
 
 @pytest.mark.live()
@@ -151,7 +151,7 @@ def test_workflow_from_name(cli_runner):
     assert result.exit_code == 0
 
     result = cli_runner.invoke(
-        cli.main, ["project", "workflow-from-name", "-n", "a_cli_workflow"]
+        cli.main, ["project", "workflow-from-name", "-n", "test_cli"]
     )
     assert result.exit_code == 0
 
