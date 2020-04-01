@@ -215,7 +215,7 @@ def delete_environment(auth, environment_name):
     if click.confirm(
         f"Are you sure you want to delete '{environment_name}'?", abort=True
     ):
-        auth.delete_environment(env_id)
+        Tools(auth).delete_environment(env_id)
 
 
 @COMMAND
