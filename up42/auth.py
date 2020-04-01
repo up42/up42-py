@@ -17,8 +17,6 @@ from .utils import get_logger
 # TODO: Logger produces multiple printouts in Jupyter Lab, known issue.
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
-# TODO: Test stuff with nonlinear structure.
-
 
 class Auth(Tools):
     def __init__(
@@ -29,18 +27,12 @@ class Auth(Tools):
         **kwargs,
     ):
         """
-        The Auth class handles the authentication with UP42, can create projects, gives
-        access to the blocks on the UP42 marketplace, handles environment settings and
-        other generic UP42 functions.
+        The Auth class handles the authentication with UP42.
 
         Info:
             Authentication is possible via the credentials of a specific project (project_id &
             project_api_key). To get your **project id** and **project api key**, follow
             the instructions in the docs installation chapter.
-
-        Public methods:
-            initialize_project, get_blocks, get_block_details, delete_custom_block,
-            get_environments, create_environment, delete_environment, validate_manifest
 
         Args:
             cfg_file: File path to the cfg.json with {project_id: "...", project_api_key: "..."}.
@@ -226,7 +218,7 @@ class Auth(Tools):
         else:
             response = self._request_helper(request_type, url, data, querystring)  # type: ignore
 
-        # TODO: Improve error messages on backend.
+        # TODO: Uniform error format on backend, too many different cases.
         # TODO: Put error messages in the specific functions.
         if response.status_code != 200:
             if response.status_code == 403:  # pylint: disable=no-else-raise
@@ -240,7 +232,6 @@ class Auth(Tools):
                 raise ValueError("Product not found!")
 
         # Handle response text.
-        # TODO: Uniform error format on backend, too many different cases.
         if return_text:
             try:
                 response_text = json.loads(response.text)

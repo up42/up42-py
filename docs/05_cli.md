@@ -9,12 +9,12 @@ up42 -h
 ## Authenticate
 You can authenticate with a `PROJECT_ID` and `PROJECT_API_KEY`
 ```bash
-up42 -PID [PROJECT_ID] -PAPIKEY [PROJECT_API_KEY] auth
+up42 -pid [PROJECT_ID] -pkey [PROJECT_API_KEY] auth
 ```
 
 Or using a `config.json` file:
 ```bash
-up42 -CFG [path to config.json] auth
+up42 -cfg [path to config.json] auth
 ```
 
 You can make the authentication persistent by storing either the project key
@@ -44,7 +44,7 @@ If you want to create a `config.json` file from a project key pair, you can use 
 config command.
 
 ```bash
-up42 -PID [PROJECT_ID] -PAPIKEY [PROJECT_API_KEY] config
+up42 -pid [PROJECT_ID] -pkey [PROJECT_API_KEY] config
 ```
 
 ## Workflows
@@ -129,9 +129,4 @@ up42 get-blocks
 Get block details by name:
 ```bash
 up42 get-block-details -name oneatlas-pleiades-aoiclipped
-```
-
-Get all environments in the platform:
-```bash
-up42 get-environments
 ```

@@ -25,22 +25,22 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], show_default=True)
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.option(
-    "-PID",
-    "--PROJECT-ID",
+    "-pid",
+    "--project-id",
     "project_id",
     envvar="UP42_PROJECT_ID",
     help="Your project ID, get it in the Project settings in the console.",
 )
 @click.option(
-    "-PAPIKEY",
-    "--PROJECT-API-KEY",
+    "-pkey",
+    "--project-api-key",
     "project_api_key",
     envvar="UP42_PROJECT_API_KEY",
     help="Your project API KEY, get in the Project settings in the console.",
 )
 @click.option(
-    "-CFG",
-    "--CFG-FILE",
+    "-cfg",
+    "--config-file",
     "cfg_file",
     envvar="UP42_CFG_FILE",
     help="File path to the cfg.json with {project_id: '...', project_api_key: '...'}",
@@ -150,7 +150,7 @@ def blocks_from_context():
 
 @COMMAND
 @click.option(
-    "-name",
+    "-n",
     "--block-name",
     help="Block name to get details.",
     required=True,
@@ -162,60 +162,6 @@ def get_block_details(auth, block_name):
     Get details of block by block name.
     """
     logger.info(Tools(auth).get_block_details(Tools(auth).get_blocks()[block_name]))
-
-
-@COMMAND
-@click.pass_obj
-def get_environments(auth):
-    """
-    Get all UP42 environments.
-    """
-    logger.info(Tools(auth).get_environments())
-
-
-@COMMAND
-@click.argument("name")
-@click.argument("environment-variables", type=click.File())
-@click.pass_obj
-def create_environment(auth, name, environment_variables):
-    """
-    Create an UP42 environment.
-    """
-    logger.info(Tools(auth).create_environment(name, json.load(environment_variables)))
-
-
-def environments_from_context():
-    class OptionChoiceFromContext(click.Option):
-        def full_process_value(self, ctx, value):
-            env_names = [env["name"] for env in Tools(ctx.obj).get_environments()]
-            self.type = click.Choice(env_names)
-            return super(OptionChoiceFromContext, self).full_process_value(ctx, value)
-
-    return OptionChoiceFromContext
-
-
-@COMMAND
-@click.option(
-    "-name",
-    "--environment-name",
-    help="Environment name to delete.",
-    required=True,
-    cls=environments_from_context(),
-)
-@click.pass_obj
-def delete_environment(auth, environment_name):
-    """
-    Delete an UP42 environment.
-    """
-    env_id = [
-        env["id"]
-        for env in Tools(auth).get_environments()
-        if env["name"] == environment_name
-    ]
-    if click.confirm(
-        f"Are you sure you want to delete '{environment_name}'?", abort=True
-    ):
-        auth.delete_environment(env_id)
 
 
 @COMMAND
@@ -317,7 +263,7 @@ def workflows_from_context():
 
 @COMMAND_PROJECT
 @click.option(
-    "-name",
+    "-n",
     "--workflow-name",
     help="Workflow name to use.",
     required=True,
@@ -339,8 +285,8 @@ def workflow_from_name(project, workflow_name):
 @main.group()
 @click.pass_context
 @click.option(
-    "-WID",
-    "--WORKFLOW-ID",
+    "-wid",
+    "--workflow-id",
     "workflow_id",
     envvar="UP42_WORKFLOW_ID",
     help="Your workflow ID, get it by creating a workflow or running 'up42 project get-workflows'",
@@ -371,7 +317,14 @@ def workflow_get_info(workflow):
 
 
 @COMMAND_WORKFLOW
-@click.option("--name", type=str, help="New name for the workflow.", required=True)
+@click.option(
+    "-n",
+    "--workflow-name",
+    "name",
+    type=str,
+    help="New name for the workflow.",
+    required=True,
+)
 @click.option(
     "--description", type=str, help="An optional description for the workflow.",
 )
@@ -483,8 +436,8 @@ def create_and_run_job(workflow, input_parameters_json, track):
 @main.group()
 @click.pass_context
 @click.option(
-    "-JID",
-    "--JOB-ID",
+    "-jid",
+    "--job-id",
     "job_id",
     envvar="UP42_JOB_ID",
     help="Your job ID, get it by creating a job or running 'up42 project workflow get-jobs'",
