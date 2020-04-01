@@ -310,6 +310,7 @@ class Workflow(Tools):
     def create_and_run_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,
+        test_query: bool = False,
         track_status: bool = False,
     ) -> "Job":
         """
@@ -317,14 +318,13 @@ class Workflow(Tools):
 
         Args:
             input_parameters: Either json string of workflow parameters or filepath to json.
+            test_query: If set, runs a test query (search for available imagery based on your data parameters).
             track_status: Automatically attaches workflow.track_status which queries
                 the job status every 30 seconds.
 
         Returns:
             The spawned job object.
         """
-        # TODO: Currently runs both dry & live run at the same time. Make selectable via config in request, see docs.
-
         if input_parameters is None:
             raise ValueError(
                 "Select the job_parameters! You can use "
@@ -338,6 +338,12 @@ class Workflow(Tools):
             logger.info("Loading job parameters from json file.")
 
         logger.info("Selected input_parameters: %s.", input_parameters)
+
+        if test_query:
+            input_parameters.update({"config": {"mode": "DRY_RUN"}})
+            logger.info("+++++++++++++++++++++++++++++++++")
+            logger.info("Running this job as Test Query...")
+            logger.info("+++++++++++++++++++++++++++++++++")
 
         name = "_py"  # Enables recognition of python API usage.
         url = (

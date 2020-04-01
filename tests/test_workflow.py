@@ -81,6 +81,8 @@ def test_create_and_run_job_test_query_live(workflow_live):
     )
     assert isinstance(jb, up42.Job)
     with open(input_parameters_json) as src:
-        assert jb.info["inputs"] == json.load(src) + {"config": {"mode": "DRY_RUN"}}
+        job_info_params = json.load(src)
+        job_info_params.update({"config": {"mode": "DRY_RUN"}})
+        assert jb.info["inputs"] == job_info_params
         assert jb.info["mode"] == "DRY_RUN"
     assert jb.get_status() == "SUCCEEDED"
