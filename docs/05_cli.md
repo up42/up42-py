@@ -130,8 +130,3 @@ Get block details by name:
 ```bash
 up42 get-block-details -name oneatlas-pleiades-aoiclipped
 ```
-
-Get all environments in the platform:
-```bash
-up42 get-environments
-```
