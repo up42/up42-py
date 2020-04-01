@@ -64,6 +64,12 @@ def test_get_block_details(cli_runner):
     result = cli_runner.invoke(cli.main, ["get-block-details", "-h"])
     assert result.exit_code == 0
 
+    result = cli_runner.invoke(cli.main, ["get-block-details", "-n", "tiling"])
+    assert result.exit_code == 0
+
+    result = cli_runner.invoke(cli.main, ["get-block-details", "-n", "never_a_block"])
+    assert result.exit_code == 2
+
 
 @pytest.mark.live()
 def test_get_environments(cli_runner):
@@ -76,19 +82,31 @@ def test_create_environment(cli_runner):
     result = cli_runner.invoke(cli.main, ["create-environment", "-h"])
     assert result.exit_code == 0
 
+    mock_env = Path(__file__).resolve().parent / "mock_data/env.json"
+    result = cli_runner.invoke(
+        cli.main, ["create-environment", "a_environment", str(mock_env)]
+    )
+    assert result.exit_code == 0
+
 
 @pytest.mark.live()
 def test_delete_environment(cli_runner):
     result = cli_runner.invoke(cli.main, ["delete-environment", "-h"])
     assert result.exit_code == 0
     # Test prompt
-    # result = cli_runner.invoke(cli.main, ["delete-environment", "SOME_NAME"], input="y")
-    # assert result.exit_code == 0
+    result = cli_runner.invoke(
+        cli.main, ["delete-environment", "-n", "a_environment"], input="y"
+    )
+    assert result.exit_code == 0
 
 
 @pytest.mark.live()
 def test_validate_manifest(cli_runner):
     result = cli_runner.invoke(cli.main, ["validate-manifest", "-h"])
+    assert result.exit_code == 0
+
+    mock_manifest = Path(__file__).resolve().parent / "mock_data/manifest.json"
+    result = cli_runner.invoke(cli.main, ["validate-manifest", str(mock_manifest)])
     assert result.exit_code == 0
 
 
@@ -102,6 +120,11 @@ def test_project(cli_runner):
 def test_create_workflow(cli_runner):
     result = cli_runner.invoke(cli.main, ["project", "create-workflow", "-h"])
     assert result.exit_code == 0
+
+    # result = cli_runner.invoke(
+    #    cli.main, ["project", "create-workflow", "a_cli_workflow"]
+    # )
+    # assert result.exit_code == 0
 
 
 @pytest.mark.live()
@@ -127,10 +150,23 @@ def test_workflow_from_name(cli_runner):
     result = cli_runner.invoke(cli.main, ["project", "workflow-from-name", "-h"])
     assert result.exit_code == 0
 
+    result = cli_runner.invoke(
+        cli.main, ["project", "workflow-from-name", "-n", "test_cli"]
+    )
+    assert result.exit_code == 0
+
+    result = cli_runner.invoke(
+        cli.main, ["project", "workflow-from-name", "-n", "never_a_workflow"]
+    )
+    assert result.exit_code == 2
+
 
 @pytest.mark.live()
 def test_workflow(cli_runner):
     result = cli_runner.invoke(cli.main, ["workflow", "-h"])
+    assert result.exit_code == 0
+
+    result = cli_runner.invoke(cli.main, ["workflow"])
     assert result.exit_code == 0
 
 
@@ -218,6 +254,9 @@ def test_create_and_run_job(cli_runner):
 @pytest.mark.live()
 def test_job(cli_runner):
     result = cli_runner.invoke(cli.main, ["job", "-h"])
+    assert result.exit_code == 0
+
+    result = cli_runner.invoke(cli.main, ["job"])
     assert result.exit_code == 0
 
 
