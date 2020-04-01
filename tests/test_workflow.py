@@ -1,7 +1,17 @@
+from pathlib import Path
+import json
+import pytest
 import requests_mock
 
+# pylint: disable=unused-import,wrong-import-order
 from .context import Workflow
-from .fixtures import auth_mock, workflow_mock  # pylint: disable=unused-import
+from .fixtures import (
+    auth_mock,
+    auth_live,
+    workflow_mock,
+    workflow_live,
+)
+import up42
 
 
 def test_workflow_get_info(workflow_mock):
@@ -46,3 +56,31 @@ def test_get_workflow_tasks(workflow_mock):
 def test_construct_full_workflow_tasks_dict():
     # TODO: Mock get_blocks!
     pass
+
+
+@pytest.mark.live
+def test_create_and_run_job_live(workflow_live):
+    input_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    )
+    jb = workflow_live.create_and_run_job(input_parameters_json, track_status=True)
+    assert isinstance(jb, up42.Job)
+    with open(input_parameters_json) as src:
+        assert jb.info["inputs"] == json.load(src)
+        assert jb.info["mode"] == "DEFAULT"
+    assert jb.get_status() == "SUCCEEDED"
+
+
+@pytest.mark.live
+def test_create_and_run_job_test_query_live(workflow_live):
+    input_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    )
+    jb = workflow_live.create_and_run_job(
+        input_parameters_json, test_query=True, track_status=True
+    )
+    assert isinstance(jb, up42.Job)
+    with open(input_parameters_json) as src:
+        assert jb.info["inputs"] == json.load(src) + {"config": {"mode": "DRY_RUN"}}
+        assert jb.info["mode"] == "DRY_RUN"
+    assert jb.get_status() == "SUCCEEDED"
