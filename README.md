@@ -4,6 +4,8 @@
     <br>
 </h1>
 
+![](docs/_assets/github-banner-3.jpg)
+
 <p align="center">
     <strong>Python interface for UP42, the geospatial marketplace and developer platform.</strong>
 </p>
