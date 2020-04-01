@@ -194,7 +194,6 @@ class Job(Tools):
             for file in files:
                 f = tar.extractfile(file)
                 content = f.read()  # type: ignore
-                # TODO: Maybe jobid_sceneid etc?
                 out_fp = Path(out_dir) / Path(file.name).name
                 with open(out_fp, "wb") as dst:
                     dst.write(content)
@@ -357,9 +356,6 @@ class Job(Tools):
         Returns:
             The log strings (only if as_return was selected).
         """
-        # TODO: Check if job ended, seems to give error messages when used while still running.
-        # but relevant to get logs while running and possible. just sometimes error.
-
         jobtasks: List[Dict] = self.get_jobtasks(return_json=True)  # type: ignore
         jobtasks_ids = [task["id"] for task in jobtasks]
 

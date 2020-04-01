@@ -12,7 +12,7 @@ from .auth import Auth
 from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
-logger = get_logger(__name__, level=logging.CRITICAL)  # TODO: Remove/set to INFO
+logger = get_logger(__name__, level=logging.INFO)
 
 
 # TODO: Midterm add catalog result class? Scenes() etc. that also as feedback to workflow input.
