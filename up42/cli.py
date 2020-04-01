@@ -25,22 +25,22 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], show_default=True)
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.option(
-    "-PID",
-    "--PROJECT-ID",
+    "-pid",
+    "--project-id",
     "project_id",
     envvar="UP42_PROJECT_ID",
     help="Your project ID, get it in the Project settings in the console.",
 )
 @click.option(
-    "-PAPIKEY",
-    "--PROJECT-API-KEY",
+    "-pkey",
+    "--project-api-key",
     "project_api_key",
     envvar="UP42_PROJECT_API_KEY",
     help="Your project API KEY, get in the Project settings in the console.",
 )
 @click.option(
-    "-CFG",
-    "--CFG-FILE",
+    "-cfg",
+    "--config-file",
     "cfg_file",
     envvar="UP42_CFG_FILE",
     help="File path to the cfg.json with {project_id: '...', project_api_key: '...'}",
@@ -339,8 +339,8 @@ def workflow_from_name(project, workflow_name):
 @main.group()
 @click.pass_context
 @click.option(
-    "-WID",
-    "--WORKFLOW-ID",
+    "-wid",
+    "--workflow-id",
     "workflow_id",
     envvar="UP42_WORKFLOW_ID",
     help="Your workflow ID, get it by creating a workflow or running 'up42 project get-workflows'",
@@ -483,8 +483,8 @@ def create_and_run_job(workflow, input_parameters_json, track):
 @main.group()
 @click.pass_context
 @click.option(
-    "-JID",
-    "--JOB-ID",
+    "-jid",
+    "--job-id",
     "job_id",
     envvar="UP42_JOB_ID",
     help="Your job ID, get it by creating a job or running 'up42 project workflow get-jobs'",
