@@ -5,12 +5,7 @@ import requests_mock
 
 # pylint: disable=unused-import,wrong-import-order
 from .context import Workflow
-from .fixtures import (
-    auth_mock,
-    auth_live,
-    workflow_mock,
-    workflow_live,
-)
+from .fixtures import auth_mock, auth_live, workflow_mock, workflow_live, job_mock
 import up42
 
 
@@ -56,6 +51,27 @@ def test_get_workflow_tasks(workflow_mock):
 def test_construct_full_workflow_tasks_dict():
     # TODO: Mock get_blocks!
     pass
+
+
+def test_create_and_run_job(workflow_mock, job_mock):
+    with requests_mock.Mocker() as m:
+        job_url = (
+            f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+            f"workflows/{workflow_mock.workflow_id}/jobs?name=_py"
+        )
+        m.post(url=job_url, json={"data": {"id": job_mock.job_id}})
+        input_parameters_json = (
+            Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+        )
+        m.get(
+            url=f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/"
+            f"jobs/{job_mock.job_id}",
+            json={"data": {}},
+        )
+
+        jb = workflow_mock.create_and_run_job(input_parameters_json)
+        assert isinstance(jb, up42.Job)
+        assert jb.job_id == job_mock.job_id
 
 
 @pytest.mark.live

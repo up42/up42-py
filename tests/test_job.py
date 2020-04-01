@@ -173,6 +173,7 @@ def test_get_jobtasks_result_json(job_mock, jobtask_mock):
             "features": [],
         }
 
+
 def test_job_download_result(job_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"
