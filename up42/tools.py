@@ -40,7 +40,7 @@ class Tools:
     # pylint: disable=no-self-use
     def read_vector_file(
         self, filename: str = "aoi.geojson", as_dataframe: bool = False
-    ) -> FeatureCollection:
+    ) -> Union[Dict, gpd.GeoDataFrame]:
         """
         Reads vector files (geojson, shapefile, kml, wkt) to a feature collection,
         for use as the aoi geometry in the workflow input parameters
@@ -83,7 +83,7 @@ class Tools:
 
     def get_example_aoi(
         self, location: str = "Berlin", as_dataframe: bool = False
-    ) -> FeatureCollection:
+    ) -> Union[dict, gpd.GeoDataFrame]:
         """
         Gets predefined, small, rectangular example aoi for the selected location.
 
