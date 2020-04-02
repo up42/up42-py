@@ -8,13 +8,10 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
 import rasterio
-import requests.exceptions
 import shapely
 from IPython import get_ipython
 from IPython.display import display
-from geojson import FeatureCollection
 from rasterio.plot import show
-from tenacity import RetryError
 
 from .utils import get_logger, folium_base_map, DrawFoliumOverride, is_notebook
 
@@ -348,7 +345,7 @@ class Tools:
 
     def get_block_details(self, block_id: str, as_dataframe=False) -> Dict:
         """
-        Gets the detailed information about a specific (public or custom) block from
+        Gets the detailed information about a specific public block from
         the server, includes all manifest.json and marketplace.json contents.
 
         Args:
@@ -358,12 +355,8 @@ class Tools:
         Returns:
             A dict of the block details metadata for the specific block.
         """
-        try:
-            url = f"{self.auth._endpoint()}/blocks/{block_id}"  # public blocks
-            response_json = self.auth._request(request_type="GET", url=url)
-        except (requests.exceptions.HTTPError, RetryError):
-            url = f"{self.auth._endpoint()}/users/me/blocks/{block_id}"  # custom blocks
-            response_json = self.auth._request(request_type="GET", url=url)
+        url = f"{self.auth._endpoint()}/blocks/{block_id}"  # public blocks
+        response_json = self.auth._request(request_type="GET", url=url)
         details_json = response_json["data"]
 
         if as_dataframe:
