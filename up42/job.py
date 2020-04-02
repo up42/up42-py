@@ -104,7 +104,7 @@ class Job(Tools):
                 raise ValueError("Job has failed! See the above log.")
             elif status in ["CANCELLED", "CANCELLING"]:
                 logger.info("Job is %s! - %s", status, self.job_id)
-                raise ValueError("Job has been canceled!")
+                raise ValueError("Job has been cancelled!")
             elif status == "SUCCEEDED":
                 logger.info("Job finished successfully! - %s", self.job_id)
 
