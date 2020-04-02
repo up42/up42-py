@@ -7,7 +7,12 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../u
 # Import the required classes and functions
 # pylint: disable=unused-import,wrong-import-position
 from up42.tools import Tools
-from up42.utils import any_vector_to_fc, folium_base_map
+from up42.utils import (
+    is_notebook,
+    folium_base_map,
+    any_vector_to_fc,
+    fc_to_query_geometry,
+)
 from up42.auth import Auth
 from up42.project import Project
 from up42.workflow import Workflow

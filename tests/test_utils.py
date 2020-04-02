@@ -1,10 +1,22 @@
+import json
+from pathlib import Path
+
 import folium
 import geopandas as gpd
 import pandas as pd
 import pytest
 from shapely.geometry import Point, Polygon, LinearRing
 
-from .context import any_vector_to_fc, folium_base_map
+from .context import (
+    is_notebook,
+    folium_base_map,
+    any_vector_to_fc,
+    fc_to_query_geometry,
+)
+
+
+def test_is_notebook():
+    assert is_notebook() == False
 
 
 def test_folium_base_map():
@@ -109,3 +121,42 @@ def test_any_vector_to_fc_raises_with_not_accepted():
     ring = LinearRing([(0, 0), (1, 1), (1, 0)])
     with pytest.raises(ValueError):
         any_vector_to_fc(ring)
+
+
+def test_fc_to_query_geometry_contains():
+    fp = Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
+    with open(fp) as json_file:
+        fc = json.load(json_file)
+    query_geometry = fc_to_query_geometry(fc=fc, geometry_operation="intersects")
+    assert isinstance(query_geometry, dict)
+    assert query_geometry["type"] == "Polygon"
+    assert query_geometry["coordinates"] == [
+        [
+            [13.375966, 52.515068],
+            [13.375966, 52.516639],
+            [13.378314, 52.516639],
+            [13.378314, 52.515068],
+            [13.375966, 52.515068],
+        ]
+    ]
+
+
+# TODO
+def test_fc_to_query_geometry_bbox():
+    fp = Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
+    with open(fp) as json_file:
+        fc = json.load(json_file)
+    query_geometry = fc_to_query_geometry(fc=fc, geometry_operation="bbox")
+    assert isinstance(query_geometry, list)
+    assert len(query_geometry) == 4
+    assert query_geometry == []
+
+
+def test_fc_to_query_geometry_squash():
+    pass
+
+
+def fc_to_query_geometry_raises_with_not_accepted():
+    ring = LinearRing([(0, 0), (1, 1), (1, 0)])
+    with pytest.raises(ValueError):
+        fc_to_query_geometry(ring)
