@@ -1,4 +1,5 @@
 import requests_mock
+import pytest
 
 from .context import Project, Workflow
 
@@ -98,6 +99,7 @@ def test_get_workflows(project_mock):
     assert isinstance(workflows[0], Workflow)
 
 
+@pytest.mark.live
 def test_get_workflows_live(project_live):
     workflows = project_live.get_workflows()
     assert isinstance(workflows[0], Workflow)
@@ -122,6 +124,7 @@ def test_get_project_settings(project_mock):
     assert project_settings[0]["name"] == "MAX_CONCURRENT_JOBS"
 
 
+@pytest.mark.live
 def test_get_project_settings_live(project_live):
     project_settings = project_live.get_project_settings()
     assert isinstance(project_settings, list)
@@ -149,5 +152,6 @@ def test_get_project_settings_live(project_live):
 #
 #
 # # TODO: Potentially deactivated by mistake by backend.
+# @pytest.mark.live
 # def test_update_project_settings_live(project_live):
 #     project_live.update_project_settings(max_concurrent_jobs=1)
