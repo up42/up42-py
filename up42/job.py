@@ -77,30 +77,37 @@ class Job(Tools):
         """
         Continuously gets the job status until job has finished or failed.
 
+        Internally checks every five seconds for the status, prints the log every
+        time interval given in report_time argument.
+
         Args:
             report_time: The intervall (in seconds) when to query the job status.
         """
         status = "NOT STARTED"
         time_asleep = 0
 
-        logger.info("Tracking job status every %s seconds", report_time)
+        logger.info("Tracking job status ...")
         while status != "SUCCEEDED":
             logger.setLevel(logging.CRITICAL)
             status = self.get_status()
             logger.setLevel(logging.INFO)
 
-            if time_asleep % report_time == 0:
-                logger.info("Job is %s! - %s", status, self.job_id)
-
             if status in ["NOT STARTED", "PENDING", "RUNNING"]:
-                sleep(5)
-                time_asleep += 5
-
-            if status in ["FAILED", "ERROR", "CANCELLED", "CANCELLING"]:
+                if time_asleep % report_time == 0:
+                    logger.info("Job is %s! - %s", status, self.job_id)
+                else:
+                    sleep(5)
+                    time_asleep += 5
+            elif status in ["FAILED", "ERROR"]:
+                logger.info("Job is %s! - %s", status, self.job_id)
                 self.get_log(as_print=True)
                 raise ValueError("Job has failed! See the above log.")
+            elif status in ["CANCELLED", "CANCELLING"]:
+                logger.info("Job is %s! - %s", status, self.job_id)
+                raise ValueError("Job has been canceled!")
+            elif status == "SUCCEEDED":
+                logger.info("Job finished successfully! - %s", self.job_id)
 
-        logger.info("Job finished successfully %s - SUCCEEDED!", self.job_id)
         return status
 
     def cancel_job(self) -> None:
