@@ -124,6 +124,9 @@ class Tools:
         supported by folium.
         And ipyleaflet misses raster vizualization & folium plugins functionality.
         """
+        if not is_notebook():
+            raise ValueError("Only works in Jupyter notebook.")
+
         m = folium_base_map(layer_control=True)
         DrawFoliumOverride(
             export=True,
@@ -197,6 +200,9 @@ class Tools:
         Args:
             figsize: matplotlib figure size.
         """
+        if is_notebook():
+            get_ipython().run_line_magic("matplotlib", "inline")
+
         # TODO: Remove empty axes & give title option.
         if filepaths is None:
             if self.quicklook is None:
@@ -204,10 +210,6 @@ class Tools:
                     "You first need to download the quicklooks via .download_quicklook()."
                 )
             filepaths = self.quicklook
-        if is_notebook():
-            get_ipython().run_line_magic("matplotlib", "inline")
-        else:
-            raise ValueError("Only works in Jupyter notebook.")
 
         if len(filepaths) < 2:
             nrows, ncols = 1, 1
