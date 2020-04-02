@@ -1,25 +1,23 @@
 # Quickstart
 
 
-```python
-%load_ext autoreload
-%autoreload 2
-```
+## Package Overview
 
-## API-Structure
-
-- The UP42 Python Api uses six object classes, representing the **hierachical structure** of UP42: **Project > Workflow > Job > JobTask** and **Catalog & Tools**.
-- Each object provides the full functionality at that specific level and can spawn elements of one level below, e.g.
-    - `project = up42.initialize_project()`   
+- The UP42 Python SDK uses six object classes, representing the **hierarchical structure** of the UP42 platform:
+    - **Project > Workflow > Job > JobTask**,
+    - **Catalog** and
+    - **Tools**.
+- Each object (besides Catalog and Tools) provides the full functionality at that specific level and can spawn elements of one level below, e.g.
+    - `project = up42.initialize_project()`
     - `workflow = Project().create_workflow()`
     - `job = workflow.create_and_run_job()`
-<br> 
-- Usually the user starts with the project object, then spawns objects of a lower level (e.g. creates a new workflow, creates&runs a job etc.). 
-- To access a lower-level object directly, e.g. a job that was already run on UP42 initialize the object directly via `up42.initialize_job(job_id='123456789')`.
+- Usually a user starts by creating a project object and then spawns objects of a lower level.
+- It is also possible to directly access a lower-level object, e.g. a job that was already run on UP42 can be used to initialize the corresponding object via `up42.initialize_job(job_id='123456789')`.
 
 ## 30 seconds example
 
-Runs a workflow consisting of Sentinel-2 Streaming and image sharpening.
+After authentication with the UP42 project, a new workflow is created and filled with tasks (Sentinel-2 data, image sharpening). 
+The area of interest and workflow parameters are defined. After running the job, the results are downloaded and visualized.
 
 
 ```python
@@ -28,19 +26,13 @@ import up42
 
 
 ```python
-# Get the the project credentials & authenticate with UP42.
 up42.authenticate("config.json")
-```
-
-
-```python
-# Create a workflow in the project.
 project = up42.initialize_project()
-workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
 ```
 
 
 ```python
+workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
 # Add blocks/tasks to the workflow.
 blocks = up42.get_blocks(basic=True)
 input_tasks= [blocks['sobloo-s2-l1c-aoiclipped'], 
@@ -57,37 +49,17 @@ input_parameters = workflow.construct_parameter(geometry=aoi,
                                                 start_date="2020-01-01",
                                                 end_date="2020-01-20",
                                                 limit=1)
-print(input_parameters)
 ```
 
 
 ```python
-# Run the workflow as a job
 job = workflow.create_and_run_job(input_parameters=input_parameters)
 job.track_status()
 ```
 
 
 ```python
-# Plot the scene quicklooks.
-job.download_quicklook()
-job.plot_quicklook()
-```
-
-
-```python
-# Plot & analyse the results.
-results_fp = job.download_result()
-print(results_fp)
-```
-
-
-```python
-job.plot_result()
-```
-
-
-```python
+job.download_result()
 job.map_result()
 ```
 

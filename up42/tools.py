@@ -197,6 +197,7 @@ class Tools:
         Args:
             figsize: matplotlib figure size.
         """
+        # TODO: Remove empty axes & give title option.
         if filepaths is None:
             if self.quicklook is None:
                 raise ValueError(
