@@ -85,7 +85,7 @@ class Tools:
         Gets predefined, small, rectangular example aoi for the selected location.
 
         Args:
-            location: Location, one of Berlin, Washingtion.
+            location: Location, one of Berlin, Washington.
             as_dataframe:
 
         Returns:
@@ -98,8 +98,9 @@ class Tools:
                 f"{os.path.dirname(__file__)}/data/aoi_berlin.geojson"
             )
         elif location == "Washington":
-            # TODO
-            pass
+            example_aoi = self.read_vector_file(
+                f"{os.path.dirname(__file__)}/data/aoi_washington.geojson"
+            )
         elif location == "Tokyo":
             pass
         else:
