@@ -17,13 +17,16 @@
 <p align="center">
   <a href="https://up42.github.io/up42-py/">Documentation</a> •
   <a href="http://www.up42.com">UP42.com</a> •
-  <a href="#support">Support & Contribution</a>
+  <a href="#support">Support</a>
 </p>
 
 ## Highlights
-- The full functionality of UP42 in a Python package, focused on ease of use and automation!
-- Many convenience methods for visualization of results, finding an area of interest etc.
- 
+- Python package for easy access to [UP42's](http://www.up42.com) geospatial datasets & processing workflows
+- For geospatial analysis & product builders!
+- Interactive maps & visualization, ideal with Jupyter notebooks  
+- Command Line Interface (CLI)
+
+<br>
 
 ## Package Overview
 
@@ -38,11 +41,12 @@
 - Usually a user starts by creating a project object and then spawns objects of a lower level.
 - It is also possible to directly access a lower-level object, e.g. a job that was already run on UP42 can be used to initialize the corresponding object via `up42.initialize_job(job_id='123456789')`.
 
+<br>
 
-## Example
+## 30-seconds Example
 
-After authentication with an UP42 project, a new workflow is created and filled with tasks (Sentinel-2 data, image sharpening). 
-An aoi and the workflow parameters are defined. After running the job, the results are downloaded and visualized.
+After authentication with the UP42 project, a new workflow is created and filled with tasks (Sentinel-2 data, image sharpening). 
+The area of interest and workflow parameters are defined. After running the job, the results are downloaded and visualized.
 
 ```python
 import up42
@@ -72,8 +76,9 @@ job.download_result()
 job.map_result()
 ```
 
+<br>
 
-## Installation
+## Installation & Getting Started
 
 The package requires Python > 3.6.
 
@@ -101,9 +106,14 @@ project = up42.initialize_project()
 print(project)
 ```
 
-For a development installation and further instructions see the [developer readme](README-dev.md).
+Success! Continue with the **[Getting Started chapter](https://up42.github.io/up42-py/01_quickstart/)** in the documentation!
 
+<br>
+
+For a developer installation (in case you want to contribute to up42-py) see the [developer readme](README-dev.md).
+
+<br>
 
 ## Support
 
-You can reach us via Email [support@up42.com](mailto:support@up42.com) or open a github issue. We are happy to answer all of your questions!
+You can reach us via Email [support@up42.com](mailto:support@up42.com) or open a github issue. We are happy to answer your questions or help with using UP42!

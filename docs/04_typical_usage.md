@@ -4,9 +4,6 @@ This overview of the most important functions repeats the previous 30-seconds-ex
 
 
 ```python
-%load_ext autoreload
-%autoreload 2
-
 import up42
 ```
 
