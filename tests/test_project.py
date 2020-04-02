@@ -30,8 +30,14 @@ def test_create_workflow(project_mock):
     project_mock.auth.get_info = False
 
     with requests_mock.Mocker() as m:
-        url_workflow_creation = f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/workflows/"
-        text_workflow_creation = '{"error":null,"data":{"id":"workflow_id123","displayId":"workflow_displayId123"}}'
+        url_workflow_creation = (
+            f"{project_mock.auth._endpoint()}/projects/"
+            f"{project_mock.project_id}/workflows/"
+        )
+        text_workflow_creation = (
+            '{"error":null,"data":{"id":"workflow_id123",'
+            '"displayId":"workflow_displayId123"}}'
+        )
         m.post(
             url=url_workflow_creation, text=text_workflow_creation,
         )
@@ -45,7 +51,10 @@ def test_create_workflow(project_mock):
 
 def test_create_workflow_use_existing(project_mock):
     with requests_mock.Mocker() as m:
-        url_workflows_get = f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/workflows"
+        url_workflows_get = (
+            f"{project_mock.auth._endpoint()}/projects/"
+            f"{project_mock.project_id}/workflows"
+        )
         m.get(
             url=url_workflows_get,
             text='{"data": [{"id":"workflow_id123"}], "error":{}}',
@@ -57,7 +66,8 @@ def test_create_workflow_use_existing(project_mock):
         )
         m.get(
             url=url_workflow_info,
-            text='{"data": {"name":"workflow_name123", "description":"workflow_description123"}, "error":{}}',
+            text='{"data": {"name":"workflow_name123", "description":'
+            '"workflow_description123"}, "error":{}}',
         )
 
         workflow = project_mock.create_workflow(
@@ -72,10 +82,14 @@ def test_get_workflows(project_mock):
     project_mock.auth.get_info = False
 
     with requests_mock.Mocker() as m:
-        url_workflows_get = f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/workflows"
+        url_workflows_get = (
+            f"{project_mock.auth._endpoint()}/projects/"
+            f"{project_mock.project_id}/workflows"
+        )
         m.get(
             url=url_workflows_get,
-            text='{"data": [{"id":"workflow_id123"}, {"id":"workflow_id789"}], "error":{}}',
+            text='{"data": [{"id":"workflow_id123"}, {"id":"workflow_id789"}], '
+            '"error":{}}',
         )
 
         workflows = project_mock.get_workflows()
@@ -92,10 +106,14 @@ def test_get_workflows_live(project_live):
 
 def test_get_project_settings(project_mock):
     with requests_mock.Mocker() as m:
-        url_project_settings = f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/settings"
+        url_project_settings = (
+            f"{project_mock.auth._endpoint()}/projects"
+            f"/{project_mock.project_id}/settings"
+        )
         m.get(
             url=url_project_settings,
-            text='{"data": [{"name":"MAX_CONCURRENT_JOBS"}, {"name":"MAX_AOI_SIZE"}, {"name":"JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE"}], "error":{}}',
+            text='{"data": [{"name":"MAX_CONCURRENT_JOBS"}, {"name":"MAX_AOI_SIZE"}, '
+            '{"name":"JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE"}], "error":{}}',
         )
 
         project_settings = project_mock.get_project_settings()
@@ -111,14 +129,25 @@ def test_get_project_settings_live(project_live):
     assert project_settings[0]["name"] == "MAX_CONCURRENT_JOBS"
 
 
+# # TODO
 # def test_update_project_settings(project_mock):
 #     with requests_mock.Mocker() as m:
-#         url_update_project_settings = f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/settings"
-#         m.post(url=url_update_project_settings, json=[{'name': 'JOB_QUERY_MAX_AOI_SIZE', 'value': '300'}, {'name': 'MAX_CONCURRENT_JOBS', 'value': '10'}, {'name': 'JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE', 'value': '10'}])
+#         url_update_project_settings = (
+#             f"{project_mock.auth._endpoint()}/projects/"
+#             f"{project_mock.project_id}/settings"
+#         )
+#         m.post(
+#             url=url_update_project_settings,
+#             json=[
+#                 {"name": "JOB_QUERY_MAX_AOI_SIZE", "value": "300"},
+#                 {"name": "MAX_CONCURRENT_JOBS", "value": "10"},
+#                 {"name": "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE", "value": "10"},
+#             ],
+#         )
 #
 #         project_mock.update_project_settings(max_concurrent_jobs=300)
-
-
-# TODO: Potentially deactivated by mistake by backend.
+#
+#
+# # TODO: Potentially deactivated by mistake by backend.
 # def test_update_project_settings_live(project_live):
 #     project_live.update_project_settings(max_concurrent_jobs=1)
