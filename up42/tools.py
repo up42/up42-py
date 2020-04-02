@@ -250,9 +250,11 @@ class Tools:
             if self.result is None:
                 raise ValueError("You first need to download the results.")
             filepaths = self.result
+        if not isinstance(filepaths, list):
+            filepaths = [filepaths]
         filepaths = [Path(path) for path in filepaths]
 
-        plot_file_format = ["tif"]  # TODO: Add other fileformats.
+        plot_file_format = [".tif"]  # TODO: Add other fileformats.
         imagepaths = [
             path for path in filepaths if str(path.suffix) in plot_file_format  # type: ignore
         ]
