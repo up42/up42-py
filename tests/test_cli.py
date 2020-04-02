@@ -14,16 +14,17 @@ from up42 import cli
 
 
 @pytest.fixture()
-@mock.patch.dict(
+def cli_runner():
+    return CliRunner()
+
+
+PROJECT_ENVS = mock.patch.dict(
     "os.environ",
     {
         "UP42_PROJECT_ID": os.environ.get("TEST_UP42_PROJECT_ID"),
         "UP42_PROJECT_API_KEY": os.environ.get("TEST_UP42_PROJECT_API_KEY"),
     },
 )
-def cli_runner():
-    return CliRunner()
-
 
 WORKFLOW_ENVS = mock.patch.dict(
     "os.environ", {"UP42_WORKFLOW_ID": os.environ.get("TEST_UP42_WORKFLOW_ID"),},
@@ -34,18 +35,21 @@ JOB_ENVS = mock.patch.dict(
 )
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_main(cli_runner):
     result = cli_runner.invoke(cli.main)
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_auth(cli_runner):
     result = cli_runner.invoke(cli.main, ["auth"])
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_config(cli_runner):
     with cli_runner.isolated_filesystem():
@@ -53,12 +57,14 @@ def test_config(cli_runner):
         assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_get_blocks(cli_runner):
     result = cli_runner.invoke(cli.main, ["get-blocks"])
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_get_block_details(cli_runner):
     result = cli_runner.invoke(cli.main, ["get-block-details", "-h"])
@@ -71,6 +77,7 @@ def test_get_block_details(cli_runner):
     assert result.exit_code == 2
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_validate_manifest(cli_runner):
     result = cli_runner.invoke(cli.main, ["validate-manifest", "-h"])
@@ -81,12 +88,14 @@ def test_validate_manifest(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_project(cli_runner):
     result = cli_runner.invoke(cli.main, ["project"])
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_create_workflow(cli_runner):
     result = cli_runner.invoke(cli.main, ["project", "create-workflow", "-h"])
@@ -98,24 +107,28 @@ def test_create_workflow(cli_runner):
     # assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_get_project_settings(cli_runner):
     result = cli_runner.invoke(cli.main, ["project", "get-project-settings"])
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_get_workflows(cli_runner):
     result = cli_runner.invoke(cli.main, ["project", "get-workflows"])
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_update_project_settings(cli_runner):
     result = cli_runner.invoke(cli.main, ["project", "update-project-settings", "-h"])
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_workflow_from_name(cli_runner):
     result = cli_runner.invoke(cli.main, ["project", "workflow-from-name", "-h"])
@@ -132,6 +145,7 @@ def test_workflow_from_name(cli_runner):
     assert result.exit_code == 2
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_workflow(cli_runner):
     result = cli_runner.invoke(cli.main, ["workflow", "-h"])
@@ -141,6 +155,7 @@ def test_workflow(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_workflow_get_info(cli_runner):
@@ -148,6 +163,7 @@ def test_workflow_get_info(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_workflow_update_name(cli_runner):
@@ -155,6 +171,7 @@ def test_workflow_update_name(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_workflow_delete(cli_runner):
@@ -162,6 +179,7 @@ def test_workflow_delete(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_get_jobs(cli_runner):
@@ -169,6 +187,7 @@ def test_get_jobs(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_get_workflow_tasks(cli_runner):
@@ -176,6 +195,7 @@ def test_get_workflow_tasks(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_get_parameter_info(cli_runner):
@@ -183,6 +203,7 @@ def test_get_parameter_info(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_get_compatible_blocks(cli_runner):
@@ -190,6 +211,7 @@ def test_get_compatible_blocks(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_add_workflow_tasks(cli_runner):
@@ -205,6 +227,7 @@ def test_add_workflow_tasks(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @WORKFLOW_ENVS
 @pytest.mark.live()
 def test_create_and_run_job(cli_runner):
@@ -221,6 +244,7 @@ def test_create_and_run_job(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
 def test_job(cli_runner):
@@ -231,6 +255,7 @@ def test_job(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
 def test_job_get_info(cli_runner):
@@ -238,6 +263,7 @@ def test_job_get_info(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
 def test_cancel_job(cli_runner):
@@ -245,6 +271,7 @@ def test_cancel_job(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
 def test_download_quicklook(cli_runner):
@@ -252,6 +279,7 @@ def test_download_quicklook(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
 def test_download_result(cli_runner):
@@ -259,6 +287,7 @@ def test_download_result(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
 def test_get_job_tasks(cli_runner):
@@ -266,6 +295,7 @@ def test_get_job_tasks(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
 def test_job_tasks_result_json(cli_runner):
@@ -273,6 +303,7 @@ def test_job_tasks_result_json(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
 def test_get_log(cli_runner):
@@ -280,6 +311,7 @@ def test_get_log(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
 def test_get_result_json(cli_runner):
@@ -287,6 +319,7 @@ def test_get_result_json(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
 def test_get_status(cli_runner):
@@ -294,6 +327,7 @@ def test_get_status(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
 def test_track_status(cli_runner):
@@ -301,12 +335,14 @@ def test_track_status(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_catalog(cli_runner):
     result = cli_runner.invoke(cli.main, ["catalog", "-h"])
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_construct_parameters(cli_runner):
     result = cli_runner.invoke(cli.main, ["catalog", "construct-parameters", "-h"])
@@ -319,6 +355,7 @@ def test_construct_parameters(cli_runner):
     assert result.exit_code == 0
 
 
+@PROJECT_ENVS
 @pytest.mark.live()
 def test_catalog_search(cli_runner):
     search_parameters_json = (
