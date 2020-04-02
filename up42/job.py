@@ -83,23 +83,23 @@ class Job(Tools):
         Args:
             report_time: The intervall (in seconds) when to query the job status.
         """
+        logger.info(
+            "Tracking job status continuously, reporting every %s seconds...",
+            report_time,
+        )
         status = "NOT STARTED"
         time_asleep = 0
 
-        logger.info("Tracking job status ...")
         while status != "SUCCEEDED":
             logger.setLevel(logging.CRITICAL)
             status = self.get_status()
             logger.setLevel(logging.INFO)
 
             if status in ["NOT STARTED", "PENDING", "RUNNING"]:
-                if time_asleep % report_time == 0:
+                if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info("Job is %s! - %s", status, self.job_id)
-                else:
-                    sleep(5)
-                    time_asleep += 5
             elif status in ["FAILED", "ERROR"]:
-                logger.info("Job is %s! - %s", status, self.job_id)
+                logger.info("Job is %s! - %s - Printing logs ...", status, self.job_id)
                 self.get_log(as_print=True)
                 raise ValueError("Job has failed! See the above log.")
             elif status in ["CANCELLED", "CANCELLING"]:
@@ -107,6 +107,9 @@ class Job(Tools):
                 raise ValueError("Job has been canceled!")
             elif status == "SUCCEEDED":
                 logger.info("Job finished successfully! - %s", self.job_id)
+
+            sleep(5)
+            time_asleep += 5
 
         return status
 
