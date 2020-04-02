@@ -135,23 +135,19 @@ def test_get_project_settings_live(project_live):
 # # TODO
 # def test_update_project_settings(project_mock):
 #     with requests_mock.Mocker() as m:
-#         url_update_project_settings = (
-#             f"{project_mock.auth._endpoint()}/projects/"
-#             f"{project_mock.project_id}/settings"
-#         )
+#         url_update_project_settings = f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/settings"
 #         m.post(
-#             url=url_update_project_settings,
-#             json=[
-#                 {"name": "JOB_QUERY_MAX_AOI_SIZE", "value": "300"},
+#             url_update_project_settings,
+#             json={"data":[
+#                 {"name": "JOB_QUERY_MAX_AOI_SIZE", "value": "100"},
 #                 {"name": "MAX_CONCURRENT_JOBS", "value": "10"},
 #                 {"name": "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE", "value": "10"},
-#             ],
-#         )
-#
-#         project_mock.update_project_settings(max_concurrent_jobs=300)
-#
-#
-# # TODO: Potentially deactivated by mistake by backend.
-# @pytest.mark.live
-# def test_update_project_settings_live(project_live):
-#     project_live.update_project_settings(max_concurrent_jobs=1)
+#             ]},
+#         status_code=200)
+#         project_mock.update_project_settings(max_aoi_size=100)
+
+
+# # TODO: Needs cc or remove.
+@pytest.mark.live
+def test_update_project_settings_live(project_live):
+    project_live.update_project_settings(max_aoi_size=100)
