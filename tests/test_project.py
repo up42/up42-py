@@ -19,7 +19,7 @@ def test_project_get_info(project_mock):
         url_project_info = (
             f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}"
         )
-        m.get(url=url_project_info, text='{"data": {"xyz":789}, "error":{}}')
+        m.get(url=url_project_info, json={"data": {"xyz": 789}, "error": {}})
 
         info = project_mock._get_info()
     assert isinstance(project_mock, Project)
@@ -35,12 +35,12 @@ def test_create_workflow(project_mock):
             f"{project_mock.auth._endpoint()}/projects/"
             f"{project_mock.project_id}/workflows/"
         )
-        text_workflow_creation = (
-            '{"error":null,"data":{"id":"workflow_id123",'
-            '"displayId":"workflow_displayId123"}}'
-        )
+        json_workflow_creation = {
+            "error": {},
+            "data": {"id": "workflow_id123", "displayId": "workflow_displayId123"},
+        }
         m.post(
-            url=url_workflow_creation, text=text_workflow_creation,
+            url=url_workflow_creation, json=json_workflow_creation,
         )
 
         workflow = project_mock.create_workflow(
@@ -58,7 +58,7 @@ def test_create_workflow_use_existing(project_mock):
         )
         m.get(
             url=url_workflows_get,
-            text='{"data": [{"id":"workflow_id123"}], "error":{}}',
+            json={"data": [{"id": "workflow_id123"}], "error": {}},
         )
 
         url_workflow_info = (
@@ -67,8 +67,13 @@ def test_create_workflow_use_existing(project_mock):
         )
         m.get(
             url=url_workflow_info,
-            text='{"data": {"name":"workflow_name123", "description":'
-            '"workflow_description123"}, "error":{}}',
+            json={
+                "data": {
+                    "name": "workflow_name123",
+                    "description": "workflow_description123",
+                },
+                "error": {},
+            },
         )
 
         workflow = project_mock.create_workflow(
@@ -89,8 +94,10 @@ def test_get_workflows(project_mock):
         )
         m.get(
             url=url_workflows_get,
-            text='{"data": [{"id":"workflow_id123"}, {"id":"workflow_id789"}], '
-            '"error":{}}',
+            json={
+                "data": [{"id": "workflow_id123"}, {"id": "workflow_id789"}],
+                "error": {},
+            },
         )
 
         workflows = project_mock.get_workflows()
@@ -114,8 +121,14 @@ def test_get_project_settings(project_mock):
         )
         m.get(
             url=url_project_settings,
-            text='{"data": [{"name":"MAX_CONCURRENT_JOBS"}, {"name":"MAX_AOI_SIZE"}, '
-            '{"name":"JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE"}], "error":{}}',
+            json={
+                "data": [
+                    {"name": "MAX_CONCURRENT_JOBS"},
+                    {"name": "MAX_AOI_SIZE"},
+                    {"name": "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE"},
+                ],
+                "error": {},
+            },
         )
 
         project_settings = project_mock.get_project_settings()
@@ -130,21 +143,6 @@ def test_get_project_settings_live(project_live):
     assert isinstance(project_settings, list)
     assert len(project_settings) == 3
     assert project_settings[0]["name"] == "MAX_CONCURRENT_JOBS"
-
-
-# # TODO
-# def test_update_project_settings(project_mock):
-#     with requests_mock.Mocker() as m:
-#         url_update_project_settings = f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/settings"
-#         m.post(
-#             url_update_project_settings,
-#             json={"data":[
-#                 {"name": "JOB_QUERY_MAX_AOI_SIZE", "value": "100"},
-#                 {"name": "MAX_CONCURRENT_JOBS", "value": "10"},
-#                 {"name": "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE", "value": "10"},
-#             ]},
-#         status_code=200)
-#         project_mock.update_project_settings(max_aoi_size=100)
 
 
 # # TODO: Needs cc or remove.
