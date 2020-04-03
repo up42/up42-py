@@ -245,14 +245,14 @@ def any_vector_to_fc(
 def fc_to_query_geometry(
     fc: Union[Dict, FeatureCollection],
     geometry_operation: str,
-    squash_multiple_features: str = "footprint",
+    squash_multiple_features: str = "union",
 ) -> Union[List, geojson.Polygon]:
     """
     From a feature collection (one or multiple polygons) & any geometry_operation,
     gets a single query geometry for the workflow parameters.
     Returns either a list of bounds or a geojson Polygon depending on geometry_operation.
     If an input fc with multiple features is provided, it gets squashed to a single
-    output geometry, either by taking the first geometry or the union of all geometries,
+    output geometry, either by taking the first geometry or the union (footprint) of all geometries,
     depending on handle_multiple_features.
 
     Examples (geometry & geometry_operation > always returns a single feature):
@@ -260,16 +260,16 @@ def fc_to_query_geometry(
             - feature & "intersects/contains" > same as input feature
             - feature & "bbox" > rectangular feature that is the bbox of the input feature
         Multiple input geometries:
-            - features & "intersects/contains" > feature of first object in fc or union of fc (depending
-                on "handle_multiple_features")
-            - features & "bbox" > rectangular feature of first object in fc or union of fc (depending
-                on "handle_multiple_features")
+            - features & "intersects/contains" > feature of first object in fc or union
+                of fc (depending on "handle_multiple_features")
+            - features & "bbox" > rectangular feature of first object in fc or union of
+                fc (depending on "handle_multiple_features")
 
     Args:
         fc: feature collection
         geometry_operation: One of "bbox", "intersects", "contains".
-        squash_multiple_features: One of "footprint" (default, bounding
-            box of all features) or "first" (takes the first feature.
+        squash_multiple_features: One of "union" (default, footprint of all features)
+            or "first" (takes the first feature.
 
     Returns:
 
@@ -300,22 +300,27 @@ def fc_to_query_geometry(
             squash_multiple_features,
         )
         if geometry_operation == "bbox":
-            if squash_multiple_features == "footprint":
+            if squash_multiple_features == "union":
                 try:
                     query_geometry = list(fc["bbox"])
                 except KeyError:
-                    raise Exception("not yet implemented")  # TODO: Create bbox list
+                    query_geometry = list(
+                        gpd.GeoDataFrame.from_features(fc, crs=4326).total_bounds
+                    )
             elif squash_multiple_features == "first":
                 try:
                     query_geometry = fc["features"][0]["bbox"]
                 except KeyError:
-                    raise Exception("not yet implemented")  # TODO: Create bbox
+                    query_geometry = list(
+                        shapely.geometry.shape(fc["features"][0]["geometry"]).bounds
+                    )
         elif geometry_operation in [
             "intersects",
             "contains",
         ]:  # pylint: disable=no-else-raise
-            if squash_multiple_features == "footprint":
-                raise Exception("not yet implemented")  # TODO: unary union
+            if squash_multiple_features == "union":
+                union_poly = gpd.GeoDataFrame.from_features(fc, crs=4326).unary_union
+                query_geometry = shapely.geometry.mapping(union_poly)
             elif squash_multiple_features == "first":
                 query_geometry = fc["features"][0]["geometry"]
     return query_geometry
