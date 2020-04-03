@@ -117,7 +117,7 @@ def test_plot_result_not_accepted_file_format_raises():
 def test_get_blocks_live(tools_live):
     blocks = tools_live.get_blocks(basic=False, as_dataframe=True)
     assert isinstance(blocks, pd.DataFrame)
-    assert "tiling" in list(blocks.keys())
+    assert "tiling" in list(blocks["name"])
 
 
 def test_get_blocks_not_basic_dataframe(tools_mock):
