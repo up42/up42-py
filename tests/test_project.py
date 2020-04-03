@@ -143,9 +143,3 @@ def test_get_project_settings_live(project_live):
     assert isinstance(project_settings, list)
     assert len(project_settings) == 3
     assert project_settings[0]["name"] == "MAX_CONCURRENT_JOBS"
-
-
-# # TODO: Needs cc or remove.
-@pytest.mark.live
-def test_update_project_settings_live(project_live):
-    project_live.update_project_settings(max_aoi_size=100)
