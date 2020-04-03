@@ -161,6 +161,8 @@ def test_fc_to_query_geometry_multiple_intersects_union_default():
         fc = json.load(json_file)
     query_geometry = fc_to_query_geometry(fc=fc, geometry_operation="intersects")
     assert isinstance(query_geometry, dict)
+
+    # TODO: Reduce coordinate precision.
     assert query_geometry == {
         "type": "Polygon",
         "coordinates": (
