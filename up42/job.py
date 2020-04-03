@@ -190,9 +190,23 @@ class Job(Tools):
         # Download
         tgz_file = tempfile.mktemp()
         with open(tgz_file, "wb") as dst_tgz:
-            r = requests.get(download_url)
-            r.raise_for_status()
-            dst_tgz.write(r.content)
+            headers = {"Range": "bytes=0-512"}
+            r = requests.get(download_url, headers=headers)
+            bytes_total = int(r.headers["x-goog-stored-content-length"])
+            print(r.headers)
+            chunk_size = 512
+            for i in range(0, bytes_total, chunk_size):
+                start = i
+                end = start + chunk_size - 1 # Bytes ranges are inclusive
+                headers = {"Range": f"bytes={start}-{end}"}
+                try:
+                    r = requests.get(download_url, headers=headers)
+                    r.raise_for_status()
+                    dst_tgz.write(r.content)
+                except requests.exceptions.HTTPError:
+                    r = requests.get(self._get_download_url(), headers=headers)
+                    dst_tgz.write(r.content)
+
         # Unpack
         out_filepaths: List[str] = []
         with tarfile.open(tgz_file) as tar:
