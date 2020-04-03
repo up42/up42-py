@@ -85,6 +85,7 @@ def auth(auth):
     )
 
     logger.info(auth)
+    # TODO: fail if auth is bad
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following commands to persist with this authentication:")
     logger.info(f"export UP42_PROJECT_ID={auth.project_id}")
@@ -542,7 +543,7 @@ def get_result_json(job):
     """
     Get the job result data.json.
     """
-    job.get_result_json()
+    logger.info(job.get_result_json())
 
 
 @COMMAND_JOB
