@@ -191,6 +191,7 @@ class Job(Tools):
         tgz_file = tempfile.mktemp()
         with open(tgz_file, "wb") as dst_tgz:
             r = requests.get(download_url)
+            r.raise_for_status()
             dst_tgz.write(r.content)
         # Unpack
         out_filepaths: List[str] = []
