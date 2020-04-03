@@ -141,7 +141,6 @@ def test_fc_to_query_geometry_contains():
     ]
 
 
-# TODO
 def test_fc_to_query_geometry_bbox():
     fp = Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
     with open(fp) as json_file:
@@ -149,10 +148,11 @@ def test_fc_to_query_geometry_bbox():
     query_geometry = fc_to_query_geometry(fc=fc, geometry_operation="bbox")
     assert isinstance(query_geometry, list)
     assert len(query_geometry) == 4
-    assert query_geometry == []
+    assert query_geometry == [13.375966, 52.515068, 13.378314, 52.516639]
 
 
 def test_fc_to_query_geometry_squash():
+    # fc with multiple
     pass
 
 

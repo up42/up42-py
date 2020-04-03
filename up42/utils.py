@@ -279,15 +279,16 @@ def fc_to_query_geometry(
             "geometry_operation needs to be one of bbox", "intersects", "contains",
         )
 
-    # With the now uniform feature collection, decide to return a feature or list of bounds (bbox).
     # TODO: Handle multipolygons
+
+    # With the now uniform feature collection, decide to return a feature or list of bounds (bbox).
     if len(fc["features"]) == 1:
         f = fc["features"][0]
         if geometry_operation == "bbox":
             try:
                 query_geometry = list(f["bbox"])
             except KeyError:
-                raise Exception("not yet implemented")  # TODO: Create bbox list of f
+                query_geometry = list(shapely.geometry.shape(f["geometry"]).bounds)
         elif geometry_operation in ["intersects", "contains"]:
             query_geometry = f["geometry"]
     # In case of multiple geometries transform the feature collection a single aoi
