@@ -115,9 +115,10 @@ def test_plot_result_not_accepted_file_format_raises():
 
 @pytest.mark.live
 def test_get_blocks_live(tools_live):
-    blocks = tools_live.get_blocks(basic=False, as_dataframe=True)
-    assert isinstance(blocks, pd.DataFrame)
-    assert "tiling" in list(blocks.keys())
+    blocks = tools_live.get_blocks(basic=False)
+    assert isinstance(blocks, list)
+    blocknames = [block["name"] for block in blocks]
+    assert "tiling" in blocknames
 
 
 def test_get_blocks_not_basic_dataframe(tools_mock):
