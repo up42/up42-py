@@ -8,13 +8,10 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
 import rasterio
-import requests.exceptions
 import shapely
 from IPython import get_ipython
 from IPython.display import display
-from geojson import FeatureCollection
 from rasterio.plot import show
-from tenacity import RetryError
 
 from .utils import get_logger, folium_base_map, DrawFoliumOverride, is_notebook
 
@@ -40,7 +37,7 @@ class Tools:
     # pylint: disable=no-self-use
     def read_vector_file(
         self, filename: str = "aoi.geojson", as_dataframe: bool = False
-    ) -> FeatureCollection:
+    ) -> Union[Dict, gpd.GeoDataFrame]:
         """
         Reads vector files (geojson, shapefile, kml, wkt) to a feature collection,
         for use as the aoi geometry in the workflow input parameters
@@ -83,12 +80,12 @@ class Tools:
 
     def get_example_aoi(
         self, location: str = "Berlin", as_dataframe: bool = False
-    ) -> FeatureCollection:
+    ) -> Union[dict, gpd.GeoDataFrame]:
         """
         Gets predefined, small, rectangular example aoi for the selected location.
 
         Args:
-            location: Location, one of Berlin, Washingtion.
+            location: Location, one of Berlin, Washington.
             as_dataframe:
 
         Returns:
@@ -101,8 +98,9 @@ class Tools:
                 f"{os.path.dirname(__file__)}/data/aoi_berlin.geojson"
             )
         elif location == "Washington":
-            # TODO
-            pass
+            example_aoi = self.read_vector_file(
+                f"{os.path.dirname(__file__)}/data/aoi_washington.geojson"
+            )
         elif location == "Tokyo":
             pass
         else:
@@ -124,6 +122,9 @@ class Tools:
         supported by folium.
         And ipyleaflet misses raster vizualization & folium plugins functionality.
         """
+        if not is_notebook():
+            raise ValueError("Only works in Jupyter notebook.")
+
         m = folium_base_map(layer_control=True)
         DrawFoliumOverride(
             export=True,
@@ -197,6 +198,9 @@ class Tools:
         Args:
             figsize: matplotlib figure size.
         """
+        if is_notebook():
+            get_ipython().run_line_magic("matplotlib", "inline")
+
         # TODO: Remove empty axes & give title option.
         if filepaths is None:
             if self.quicklook is None:
@@ -204,10 +208,6 @@ class Tools:
                     "You first need to download the quicklooks via .download_quicklook()."
                 )
             filepaths = self.quicklook
-        if is_notebook():
-            get_ipython().run_line_magic("matplotlib", "inline")
-        else:
-            raise ValueError("Only works in Jupyter notebook.")
 
         if len(filepaths) < 2:
             nrows, ncols = 1, 1
@@ -250,9 +250,11 @@ class Tools:
             if self.result is None:
                 raise ValueError("You first need to download the results.")
             filepaths = self.result
+        if not isinstance(filepaths, list):
+            filepaths = [filepaths]
         filepaths = [Path(path) for path in filepaths]
 
-        plot_file_format = ["tif"]  # TODO: Add other fileformats.
+        plot_file_format = [".tif"]  # TODO: Add other fileformats.
         imagepaths = [
             path for path in filepaths if str(path.suffix) in plot_file_format  # type: ignore
         ]
@@ -346,7 +348,7 @@ class Tools:
 
     def get_block_details(self, block_id: str, as_dataframe=False) -> Dict:
         """
-        Gets the detailed information about a specific (public or custom) block from
+        Gets the detailed information about a specific public block from
         the server, includes all manifest.json and marketplace.json contents.
 
         Args:
@@ -356,12 +358,8 @@ class Tools:
         Returns:
             A dict of the block details metadata for the specific block.
         """
-        try:
-            url = f"{self.auth._endpoint()}/blocks/{block_id}"  # public blocks
-            response_json = self.auth._request(request_type="GET", url=url)
-        except (requests.exceptions.HTTPError, RetryError):
-            url = f"{self.auth._endpoint()}/users/me/blocks/{block_id}"  # custom blocks
-            response_json = self.auth._request(request_type="GET", url=url)
+        url = f"{self.auth._endpoint()}/blocks/{block_id}"  # public blocks
+        response_json = self.auth._request(request_type="GET", url=url)
         details_json = response_json["data"]
 
         if as_dataframe:
