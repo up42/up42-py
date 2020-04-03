@@ -9,7 +9,11 @@ def test_jobtask_get_info(jobtask_mock):
     del jobtask_mock.info
 
     with requests_mock.Mocker() as m:
-        url_jobtask_info = f"{jobtask_mock.auth._endpoint()}/projects/{jobtask_mock.project_id}/jobs/{jobtask_mock.job_id}/tasks/"
+        url_jobtask_info = (
+            f"{jobtask_mock.auth._endpoint()}/"
+            f"projects/{jobtask_mock.project_id}/jobs/"
+            f"{jobtask_mock.job_id}/tasks/"
+        )
         m.get(url=url_jobtask_info, text='{"data": {"xyz":789}, "error":{}}')
 
         info = jobtask_mock._get_info()
