@@ -193,7 +193,7 @@ class Job(Tools):
             headers = {"Range": "bytes=0-512"}
             r = requests.get(download_url, headers=headers)
             bytes_total = int(r.headers["x-goog-stored-content-length"])
-            chunk_size = 512
+            chunk_size = 10000000
             for i in range(0, bytes_total, chunk_size):
                 start = i
                 end = start + chunk_size - 1  # Bytes ranges are inclusive
