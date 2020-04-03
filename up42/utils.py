@@ -246,11 +246,11 @@ def fc_to_query_geometry(
     fc: Union[Dict, FeatureCollection],
     geometry_operation: str,
     squash_multiple_features: str = "union",
-) -> Union[List, geojson.Polygon]:
+) -> Union[List, dict]:
     """
     From a feature collection (one or multiple polygons) & any geometry_operation,
     gets a single query geometry for the workflow parameters.
-    Returns either a list of bounds or a geojson Polygon depending on geometry_operation.
+    Returns either a list of bounds or a geojson Polygon (as dict) depending on geometry_operation.
     If an input fc with multiple features is provided, it gets squashed to a single
     output geometry, either by taking the first geometry or the union (footprint) of all geometries,
     depending on handle_multiple_features.
