@@ -16,3 +16,4 @@ mypy-extensions
 pytest-cov
 pytest-mypy
 coverage-badge
+mock
