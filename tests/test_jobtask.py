@@ -1,11 +1,15 @@
+from pathlib import Path
+import tempfile
+
 import requests_mock
+import pytest
 
 # pylint: disable=unused-import
-from .fixtures import auth_mock, auth_live, jobtask_mock, jobtask_live
+from .fixtures import auth_mock, auth_live, job_live, jobtask_mock, jobtask_live
 import up42  # pylint: disable=wrong-import-order
 
 
-def test_jobtask_get_info(jobtask_mock):
+def test_get_info(jobtask_mock):
     del jobtask_mock.info
 
     with requests_mock.Mocker() as m:
@@ -20,3 +24,52 @@ def test_jobtask_get_info(jobtask_mock):
     assert isinstance(jobtask_mock, up42.JobTask)
     assert info["xyz"] == 789
     assert jobtask_mock.info["xyz"] == 789
+
+
+def test_get_result_json(jobtask_mock):
+    with requests_mock.Mocker() as m:
+        url = (
+            f"{jobtask_mock.auth._endpoint()}/projects/{jobtask_mock.auth.project_id}/jobs/{jobtask_mock.job_id}"
+            f"/tasks/{jobtask_mock.jobtask_id}/outputs/data-json/"
+        )
+        m.get(url, json={"type": "FeatureCollection", "features": []})
+        assert jobtask_mock.get_result_json() == {
+            "type": "FeatureCollection",
+            "features": [],
+        }
+
+
+@pytest.mark.live
+def test_get_result_json_live(jobtask_live):
+    result_json = jobtask_live.get_result_json()
+    assert result_json["type"] == "FeatureCollection"
+    assert len(result_json["features"][0]["bbox"]) == 4
+
+
+def test_jobtask_download_result(jobtask_mock):
+    with requests_mock.Mocker() as m:
+        download_url = "http://up42.api.com/abcdef"
+        url_download_result = (
+            f"{jobtask_mock.auth._endpoint()}/projects/{jobtask_mock.project_id}/jobs/{jobtask_mock.job_id}"
+            f"/tasks/{jobtask_mock.jobtask_id}/downloads/results/"
+        )
+        m.get(url_download_result, json={"data": {"url": download_url}, "error": {}})
+
+        out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+        out_tgz_file = open(out_tgz, "rb")
+        m.get(url=download_url, content=out_tgz_file.read())
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            out_files = jobtask_mock.download_result(out_dir=tempdir)
+            for file in out_files:
+                assert Path(file).exists()
+            assert len(out_files) == 1
+
+
+def test_jobtask_download_result_live(jobtask_live):
+    with tempfile.TemporaryDirectory() as tempdir:
+        out_files = jobtask_live.download_result(out_dir=tempdir)
+        for file in out_files:
+            assert Path(file).exists()
+        assert len(out_files) == 1
+        assert Path(out_files[0]).suffix == ".tif"
