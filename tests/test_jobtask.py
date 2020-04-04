@@ -5,7 +5,7 @@ import requests_mock
 import pytest
 
 # pylint: disable=unused-import
-from .fixtures import auth_mock, auth_live, job_live, jobtask_mock, jobtask_live
+from .fixtures import auth_mock, auth_live, jobtask_mock, jobtask_live
 import up42  # pylint: disable=wrong-import-order
 
 
@@ -29,8 +29,9 @@ def test_get_info(jobtask_mock):
 def test_get_result_json(jobtask_mock):
     with requests_mock.Mocker() as m:
         url = (
-            f"{jobtask_mock.auth._endpoint()}/projects/{jobtask_mock.auth.project_id}/jobs/{jobtask_mock.job_id}"
-            f"/tasks/{jobtask_mock.jobtask_id}/outputs/data-json/"
+            f"{jobtask_mock.auth._endpoint()}/projects/{jobtask_mock.auth.project_id}/"
+            f"jobs/{jobtask_mock.job_id}/tasks/{jobtask_mock.jobtask_id}/"
+            f"outputs/data-json/"
         )
         m.get(url, json={"type": "FeatureCollection", "features": []})
         assert jobtask_mock.get_result_json() == {
@@ -50,8 +51,9 @@ def test_jobtask_download_result(jobtask_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"
         url_download_result = (
-            f"{jobtask_mock.auth._endpoint()}/projects/{jobtask_mock.project_id}/jobs/{jobtask_mock.job_id}"
-            f"/tasks/{jobtask_mock.jobtask_id}/downloads/results/"
+            f"{jobtask_mock.auth._endpoint()}/projects/{jobtask_mock.project_id}/"
+            f"jobs/{jobtask_mock.job_id}/tasks/{jobtask_mock.jobtask_id}/"
+            f"downloads/results/"
         )
         m.get(url_download_result, json={"data": {"url": download_url}, "error": {}})
 
@@ -66,6 +68,7 @@ def test_jobtask_download_result(jobtask_mock):
             assert len(out_files) == 1
 
 
+@pytest.mark.live
 def test_jobtask_download_result_live(jobtask_live):
     with tempfile.TemporaryDirectory() as tempdir:
         out_files = jobtask_live.download_result(out_dir=tempdir)
@@ -73,3 +76,38 @@ def test_jobtask_download_result_live(jobtask_live):
             assert Path(file).exists()
         assert len(out_files) == 1
         assert Path(out_files[0]).suffix == ".tif"
+
+
+def test_download_quicklook(jobtask_mock):
+    with tempfile.TemporaryDirectory() as tempdir:
+        with requests_mock.Mocker() as m:
+            url_quicklook = (
+                f"{jobtask_mock.auth._endpoint()}/projects/{jobtask_mock.project_id}/"
+                f"jobs/{jobtask_mock.job_id}"
+                f"/tasks/{jobtask_mock.jobtask_id}/outputs/quicklooks/"
+            )
+            m.get(url_quicklook, json={"data": ["a_quicklook.png"]})
+            url = (
+                f"{jobtask_mock.auth._endpoint()}/projects/{jobtask_mock.project_id}/"
+                f"jobs/{jobtask_mock.job_id}"
+                f"/tasks/{jobtask_mock.jobtask_id}/outputs/quicklooks/a_quicklook.png"
+            )
+            quicklook_file = (
+                Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+            )
+
+            m.get(url, content=open(quicklook_file, "rb").read())
+
+            quick = jobtask_mock.download_quicklook(tempdir)
+            assert len(quick) == 1
+            assert quick[0].exists()
+            assert quick[0].suffix == ".png"
+
+
+@pytest.mark.live
+def test_download_quicklook_live(jobtask_live):
+    with tempfile.TemporaryDirectory() as tempdir:
+        out_files = jobtask_live.download_quicklook(out_dir=tempdir)
+        assert len(out_files) == 1
+        assert Path(out_files[0]).exists()
+        assert Path(out_files[0]).suffix == ".png"
