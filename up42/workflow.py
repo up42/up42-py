@@ -58,7 +58,7 @@ class Workflow(Tools):
 
         Currently no data blocks can be attached to other data blocks.
         """
-        last_task = list(self.get_workflow_tasks(basic=True)[-1].keys())[0]
+        last_task = list(self.get_workflow_tasks(basic=True).keys())[-1]  # type: ignore
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/{self.workflow_id}/"
             f"compatible-blocks?parentTaskName={last_task}"
@@ -66,6 +66,9 @@ class Workflow(Tools):
         response_json = self.auth._request(request_type="GET", url=url)
         compatible_blocks = response_json["data"]["blocks"]
         # TODO: Plot diagram of current workflow in green, attachable blocks in red.
+        compatible_blocks = {
+            block["name"]: block["blockId"] for block in compatible_blocks
+        }
         return compatible_blocks
 
     def get_workflow_tasks(self, basic: bool = False) -> Union[List, Dict]:
@@ -87,7 +90,7 @@ class Workflow(Tools):
         logger.info("Got %s tasks/blocks in workflow %s.", len(tasks), self.workflow_id)
 
         if basic:
-            return [{task["name"]: task["id"]} for task in tasks]
+            return {task["name"]: task["id"] for task in tasks}
         else:
             return tasks
 
