@@ -268,7 +268,7 @@ def test_download_result_from_gcs(job_mock):
         m.get(
             url=cloud_storage_url,
             content=out_tgz_file.read(),
-            headers={"x-goog-stored-content-length": "181"},
+            headers={"x-goog-stored-content-length": f"20000001"},
         )
         with tempfile.TemporaryDirectory() as tempdir:
             out_files = _download_result_from_gcs(

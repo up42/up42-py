@@ -74,10 +74,9 @@ def _download_result_from_gcs(
         headers = {"Range": "bytes=0-512"}
         r = requests.get(func_get_download_url(), headers=headers)
         bytes_total = int(r.headers["x-goog-stored-content-length"])
-        chunk_size = 10 ^ 7  # 10mb
+        chunk_size = 10000000 # 10mb
         # TODO: Find better solution for gcs token issue.
-        for i in range(0, bytes_total, chunk_size):
-            start = i
+        for start in range(0, bytes_total, chunk_size):
             end = start + chunk_size - 1  # Bytes ranges are inclusive
             headers = {"Range": f"bytes={start}-{end}"}
             try:
