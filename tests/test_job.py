@@ -1,5 +1,7 @@
+import os
 from pathlib import Path
 import tempfile
+
 import requests_mock
 import pytest
 
@@ -209,9 +211,9 @@ def test_job_download_result_no_tiff_live(auth_live):
         job = up42.Job(
             auth=auth_live,
             project_id=auth_live.project_id,
-            job_id="99bc9fab-cffa-4010-bdac-2b0620c7e1cb",
+            job_id=os.getenv("TEST_UP42_JOB_ID_NC_FILE"),
         )
         out_files = job.download_result(Path(tempdir))
-        for file in out_files:
-            assert Path(file).exists()
-        assert len(out_files) == 98
+        assert Path(out_files[0]).exists()
+        assert Path(out_files[0]).suffix == ".nc"
+        assert len(out_files) == 1
