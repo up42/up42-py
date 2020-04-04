@@ -12,7 +12,7 @@ from up42.utils import (
     folium_base_map,
     any_vector_to_fc,
     fc_to_query_geometry,
-    _download_result_from_gcs
+    _download_result_from_gcs,
 )
 from up42.auth import Auth
 from up42.project import Project

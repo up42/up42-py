@@ -15,9 +15,7 @@ from .context import (
     any_vector_to_fc,
     fc_to_query_geometry,
     _download_result_from_gcs,
-    Job
 )
-from .fixtures import auth_mock, job_mock
 
 
 def test_is_notebook():
@@ -257,12 +255,13 @@ def test_fc_to_query_geometry_raises_with_not_accepted():
         fc_to_query_geometry(ring, geometry_operation="bbox")
 
 
-def test_download_result_from_gcs(job_mock):
+def test_download_result_from_gcs():
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
-    with requests_mock.Mocker() as m:
-        def _simplified_get_download_url():
-            return cloud_storage_url
 
+    def _simplified_get_download_url():
+        return cloud_storage_url
+
+    with requests_mock.Mocker() as m:
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         out_tgz_file = open(out_tgz, "rb")
         m.get(
@@ -272,8 +271,8 @@ def test_download_result_from_gcs(job_mock):
         )
         with tempfile.TemporaryDirectory() as tempdir:
             out_files = _download_result_from_gcs(
-                func_get_download_url=_simplified_get_download_url,
-                out_dir=tempdir)
+                func_get_download_url=_simplified_get_download_url, out_dir=tempdir
+            )
             for file in out_files:
                 assert Path(file).exists()
             assert len(out_files) == 1

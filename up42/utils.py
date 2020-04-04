@@ -74,7 +74,7 @@ def _download_result_from_gcs(
         headers = {"Range": "bytes=0-512"}
         r = requests.get(func_get_download_url(), headers=headers)
         bytes_total = int(r.headers["x-goog-stored-content-length"])
-        chunk_size = 10000000 # 10mb
+        chunk_size = 10000000  # 10mb
         # TODO: Find better solution for gcs token issue.
         for start in range(0, bytes_total, chunk_size):
             end = start + chunk_size - 1  # Bytes ranges are inclusive
@@ -331,6 +331,9 @@ def fc_to_query_geometry(
         raise ValueError(
             "geometry_operation needs to be one of bbox", "intersects", "contains",
         )
+
+    if fc["type"] != "FeatureCollection":
+        raise ValueError("Geometry argument only supports Feature Collections!")
 
     # TODO: Handle multipolygons
 
