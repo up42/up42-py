@@ -331,8 +331,10 @@ def fc_to_query_geometry(
         raise ValueError(
             "geometry_operation needs to be one of bbox", "intersects", "contains",
         )
-
-    if fc["type"] != "FeatureCollection":
+    try:
+        if fc["type"] != "FeatureCollection":
+            raise ValueError("Geometry argument only supports Feature Collections!")
+    except (KeyError, TypeError):
         raise ValueError("Geometry argument only supports Feature Collections!")
 
     # TODO: Handle multipolygons
