@@ -117,19 +117,19 @@ def jobtask_mock(auth_mock):
     job_id = "jobid_123"
 
     with requests_mock.Mocker() as m:
-        url_job_info = (
+        url_jobtask_info = (
             f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
             f"/tasks/"
         )
-        m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
+        m.get(url=url_jobtask_info, text='{"data": {"xyz":789}, "error":{}}')
 
-        job = JobTask(
+        jobtask = JobTask(
             auth=auth_mock,
             project_id=auth_mock.project_id,
             job_id=job_id,
             jobtask_id=jobtask_id,
         )
-    return job
+    return jobtask
 
 
 @pytest.fixture()
