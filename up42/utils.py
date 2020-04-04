@@ -59,7 +59,7 @@ def is_notebook() -> bool:
 
 def _download_result_from_gcs(
     func_get_download_url: Callable, out_dir: Union[str, Path, None]
-):
+) -> List[str]:
     """
     General download function for results of job and jobtask from cloud storage
     provider.
