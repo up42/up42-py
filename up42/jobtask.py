@@ -1,16 +1,12 @@
 import os
-import tarfile
-import tempfile
 from pathlib import Path
 from typing import Dict, Union, List
 
 import geopandas as gpd
-import requests
-import requests.exceptions
 
 from .auth import Auth
 from .tools import Tools
-from .utils import get_logger
+from .utils import get_logger, _download_result_from_gcs
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
@@ -88,36 +84,26 @@ class JobTask(Tools):
 
     def download_result(self, out_dir: Union[str, Path] = None) -> List[str]:
         """
-        Downloads and unpacks the job task result. Default download to Desktop.
+        Downloads and unpacks the jobtask result. Default download to Desktop.
 
         Args:
             out_dir: The output directory for the downloaded files.
+        Returns:
+            List of the downloaded results' filepaths.
         """
-        download_url = self._get_download_url()
+        # TODO: Overwrite argument
+        # TODO: tdqm bar
+        logger.info("Downloading results of jobtask %s", self.jobtask_id)
 
-        # TODO: Add tdqm progress bar
+        out_filepaths = _download_result_from_gcs(
+            func_get_download_url=self._get_download_url, out_dir=out_dir,
+        )
 
-        if out_dir is None:
-            out_dir = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop")
-        Path(out_dir).mkdir(parents=True, exist_ok=True)
-        logger.info("Downloading results of job %s", self.job_id)
+        logger.info(
+            "Download successful of %s files %s", len(out_filepaths), out_filepaths
+        )
 
-        tgz_file = tempfile.mktemp()
-        with open(tgz_file, "wb") as f:
-            r = requests.get(download_url)
-            f.write(r.content)
-        with tarfile.open(tgz_file) as tgz:
-            files = tgz.getmembers()
-            tif_files = [i for i in files if i.isfile() and i.name.endswith(".tif")]
-            out_filepaths = []
-            for count, f in enumerate(tif_files):  # type: ignore
-                out = tgz.extractfile(f)  # type: ignore
-                out_file = out_dir / Path(f"{self.job_id}_{count}.tif")
-                with open(out_file, "wb") as o:
-                    o.write(out.read())  # type: ignore
-                out_filepaths.append(str(out_file))
-
-        logger.info("Download successful of files %s", out_filepaths)
+        self.result = out_filepaths
         return out_filepaths
 
     def download_quicklook(self, out_dir: Union[str, Path] = None,) -> List[Path]:

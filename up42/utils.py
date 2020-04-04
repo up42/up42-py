@@ -3,7 +3,10 @@ import copy
 import hashlib
 import logging
 import os
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Callable
+from pathlib import Path
+import tempfile
+import tarfile
 
 import folium.plugins
 import geojson
@@ -12,6 +15,7 @@ import shapely
 from IPython import get_ipython
 from branca.element import CssLink, Element, Figure, JavascriptLink
 from geojson import Feature, FeatureCollection
+import requests
 
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
@@ -51,6 +55,56 @@ def is_notebook() -> bool:
             return False
     except NameError:
         return False  # Standard Python interpreter
+
+
+def _download_result_from_gcs(
+    func_get_download_url: Callable, out_dir: Union[str, Path, None]
+):
+    """
+    General download function for results of job and jobtask from cloud storage
+    provider.
+    """
+    if out_dir is None:
+        out_dir = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop")
+    Path(out_dir).mkdir(parents=True, exist_ok=True)
+
+    # Download
+    tgz_file = tempfile.mktemp()
+    with open(tgz_file, "wb") as dst_tgz:
+        headers = {"Range": "bytes=0-512"}
+        r = requests.get(func_get_download_url(), headers=headers)
+        bytes_total = int(r.headers["x-goog-stored-content-length"])
+        chunk_size = 10 ^ 7  # 10mb
+        # TODO: Find better solution for gcs token issue.
+        for i in range(0, bytes_total, chunk_size):
+            start = i
+            end = start + chunk_size - 1  # Bytes ranges are inclusive
+            headers = {"Range": f"bytes={start}-{end}"}
+            try:
+                r = requests.get(func_get_download_url(), headers=headers)
+                r.raise_for_status()
+                dst_tgz.write(r.content)
+            except requests.exceptions.HTTPError:
+                # Tokens expires before download complete.
+                r = requests.get(func_get_download_url(), headers=headers)
+                dst_tgz.write(r.content)
+
+    # Unpack
+    out_filepaths: List[str] = []
+    with tarfile.open(tgz_file) as tar:
+        members = tar.getmembers()
+        files = [
+            i for i in members if i.isfile() and str(Path(i.name).name) != "data.json"
+        ]
+        for file in files:
+            f = tar.extractfile(file)
+            content = f.read()  # type: ignore
+            out_fp = Path(out_dir) / Path(file.name).name
+            with open(out_fp, "wb") as dst:
+                dst.write(content)
+            out_filepaths.append(str(out_fp))
+
+    return out_filepaths
 
 
 def folium_base_map(
