@@ -1,6 +1,8 @@
 import logging
 from typing import Dict, List, Union
 
+from tqdm import tqdm
+
 from .auth import Auth
 from .tools import Tools
 from .utils import get_logger
@@ -102,7 +104,7 @@ class Project(Tools):
         else:
             workflows = [
                 Workflow(self.auth, project_id=self.project_id, workflow_id=work["id"])
-                for work in workflows_json
+                for work in tqdm(workflows_json)
             ]
             return workflows
 

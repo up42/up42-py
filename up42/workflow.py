@@ -8,6 +8,7 @@ import geojson
 import geopandas as gpd
 import shapely
 from geojson import Feature, FeatureCollection
+from tqdm import tqdm
 
 from .auth import Auth
 from .job import Job
@@ -383,7 +384,7 @@ class Workflow(Tools):
         else:
             jobs = [
                 Job(self.auth, job_id=job["id"], project_id=self.project_id)
-                for job in jobs_json
+                for job in tqdm(jobs_json)
             ]
             return jobs
 
