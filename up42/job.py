@@ -1,5 +1,4 @@
 import logging
-import os
 from pathlib import Path
 from time import sleep
 from typing import Dict, List, Union
@@ -117,19 +116,26 @@ class Job(Tools):
         self.auth._request(request_type="POST", url=url)
         logger.info("Job canceled: %s", self.job_id)
 
-    def download_quicklook(self, out_dir=None) -> List[Path]:
+    def download_quicklook(
+        self, output_directory: Union[str, Path, None]
+    ) -> List[Path]:
         """
         Conveniance function that downloads the quicklooks of the data (dirst) jobtask.
 
         After download, can be plotted via job.plot_quicklook().
         """
-        if out_dir is None:
-            out_dir = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop")
-        Path(out_dir).mkdir(parents=True, exist_ok=True)
+        if output_directory is None:
+            output_directory = Path.cwd()
+        else:
+            output_directory = Path(output_directory)
+        output_directory.mkdir(parents=True, exist_ok=True)
+        logger.info("Download directory: %s:", str(output_directory))
 
         # Currently only the first/data task produces quicklooks.
         data_task = self.get_jobtasks()[0]
-        out_paths: List[Path] = data_task.download_quicklook(out_dir=out_dir)  # type: ignore
+        out_paths: List[Path] = data_task.download_quicklook(  # type: ignore
+            output_directory=output_directory
+        )  # type: ignore
         self.quicklook = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
 
@@ -167,12 +173,15 @@ class Job(Tools):
         download_url = response_json["data"]["url"]
         return download_url
 
-    def download_result(self, out_dir: Union[str, Path, None] = None,) -> List[str]:
+    def download_result(
+        self, output_directory: Union[str, Path, None] = None,
+    ) -> List[str]:
         """
         Downloads and unpacks the job result.
 
         Args:
-            out_dir: The output folder. Default download to the Desktop.
+            output_directory: The file output directory, defaults to the current working
+                directory.
 
         Returns:
             List of the downloaded results' filepaths.
@@ -182,11 +191,8 @@ class Job(Tools):
         logger.info("Downloading results of job %s", self.job_id)
 
         out_filepaths = _download_result_from_gcs(
-            func_get_download_url=self._get_download_url, out_dir=out_dir,
-        )
-
-        logger.info(
-            "Download successful of %s files %s", len(out_filepaths), out_filepaths
+            func_get_download_url=self._get_download_url,
+            output_directory=output_directory,
         )
 
         self.result = out_filepaths
