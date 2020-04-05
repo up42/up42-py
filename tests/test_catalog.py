@@ -1,27 +1,29 @@
 from pathlib import Path
 import json
 
+import requests_mock
 import pytest
+import geopandas as gpd
 
 # pylint: disable=unused-import
 from .fixtures import (
     auth_mock,
+    auth_live,
     catalog_mock,
     catalog_live,
 )
 import up42  # pylint: disable=wrong-import-order
 
 
-def test_catalog(catalog_mock):
-    assert isinstance(catalog_mock, up42.Catalog)
+with open(
+    Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
+) as json_file:
+    mock_search_parameters = json.load(json_file)
 
 
-def test_construct_parameter(catalog_mock):
-    fp = Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
-    with open(fp) as json_file:
-        fc = json.load(json_file)
-    search_paramater = catalog_mock.construct_parameters(
-        geometry=fc,
+def test_construct_parameters(catalog_mock):
+    search_paramaters = catalog_mock.construct_parameters(
+        geometry=mock_search_parameters["intersects"],
         start_date="2014-01-01",
         end_date="2016-12-31",
         sensors=["pleiades"],
@@ -30,57 +32,79 @@ def test_construct_parameter(catalog_mock):
         limit=4,
         ascending=False,
     )
-    assert isinstance(search_paramater, dict)
-    assert search_paramater["datetime"] == "2014-01-01T00:00:00Z/2016-12-31T00:00:00Z"
-    assert search_paramater["intersects"]["type"] == "Polygon"
-    assert search_paramater["limit"] == 4
-    assert search_paramater["query"] == {
-        "cloudCoverage": {"lte": 20},
-        "dataBlock": {
-            "in": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-aoiclipped"]
-        },
-    }
-    assert search_paramater["sortby"] == [
-        {"field": "properties.cloudCoverage", "direction": "desc"}
-    ]
+    assert isinstance(search_paramaters, dict)
+    assert search_paramaters["datetime"] == mock_search_parameters["datetime"]
+    assert json.dumps(search_paramaters["intersects"]) == json.dumps(
+        search_paramaters["intersects"]
+    )
+    assert search_paramaters["limit"] == mock_search_parameters["limit"]
+    assert search_paramaters["query"] == mock_search_parameters["query"]
+    assert search_paramaters["sortby"] == mock_search_parameters["sortby"]
 
 
 def test_search(catalog_mock):
-    pass
+    with open(
+        Path(__file__).resolve().parent / "mock_data/search_response.json"
+    ) as json_file:
+        json_search_response = json.load(json_file)
+
+    with requests_mock.Mocker() as m:
+        url_search = f"{catalog_mock.auth._endpoint()}/catalog/stac/search"
+        m.post(
+            url=url_search, json=json_search_response,
+        )
+        search_results = catalog_mock.search(mock_search_parameters)
+
+    assert isinstance(search_results, gpd.GeoDataFrame)
+    assert search_results.shape == (1, 10)
 
 
 @pytest.mark.live
 def test_search_live(catalog_live):
-    search_parameters = {
-        "datetime": "2014-01-01T00:00:00Z/2016-12-31T00:00:00Z",
-        "intersects": {
-            "type": "Polygon",
-            "coordinates": (
-                (
-                    (13.375966, 52.515068),
-                    (13.375966, 52.516639),
-                    (13.378314, 52.516639),
-                    (13.378314, 52.515068),
-                    (13.375966, 52.515068),
-                ),
-            ),
-        },
-        "limit": 4,
-        "query": {
-            "cloudCoverage": {"lte": 20},
-            "dataBlock": {
-                "in": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-aoiclipped"]
-            },
-        },
-        "sortby": [{"field": "properties.cloudCoverage", "direction": "desc"}],
-    }
-    catalog_live.search(search_parameters)
+    search_results = catalog_live.search(mock_search_parameters)
+    assert isinstance(search_results, gpd.GeoDataFrame)
+    assert search_results.shape == (4, 10)
+    assert list(search_results.columns) == [
+        "index",
+        "geometry",
+        "id",
+        "acquisitionDate",
+        "constellation",
+        "providerName",
+        "blockNames",
+        "cloudCoverage",
+        "providerProperties",
+        "scene_id",
+    ]
+    assert list(search_results.index) == list(range(search_results.shape[0]))
+
+    # As fc
+    search_results = catalog_live.search(mock_search_parameters, as_dataframe=False)
+    assert isinstance(search_results, dict)
+    assert search_results["type"] == "FeatureCollection"
 
 
 def test_download_quicklook(catalog_mock):
-    pass
+    sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
+
+    provider = "oneatlas"
+    with requests_mock.Mocker() as m:
+        url = f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
+        quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+        m.get(url, content=open(quicklook_file, "rb").read())
+
+        out_paths = catalog_mock.download_quicklook([sel_id])
+
+    assert len(out_paths) == 1
+    assert Path(out_paths[0]).exists()
+    assert Path(out_paths[0]).suffix == ".jpg"
 
 
 @pytest.mark.live
 def test_download_quicklook_live(catalog_live):
-    pass
+    out_paths = catalog_live.download_quicklook(
+        ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"]
+    )
+    assert len(out_paths) == 1
+    assert Path(out_paths[0]).exists()
+    assert Path(out_paths[0]).suffix == ".jpg"

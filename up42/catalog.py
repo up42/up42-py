@@ -213,7 +213,7 @@ class Catalog(Tools):
 
         After download, can be plotted via catalog.plot_quicklook().
         Args:
-            image_ids: provider image_id
+            image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
             provider:  One of "oneatlas", "sobloo"
             out_dir: defaults to desktop.
 
@@ -228,7 +228,9 @@ class Catalog(Tools):
 
         out_paths = []
         for image_id in image_ids:
-            out_path = Path(out_dir) / f"quicklook_{image_id}.jpg"
+            out_path = (
+                Path(out_dir) / f"quicklook_{image_id}.jpg"
+            )  # TODO: Dependent on provider!? Same for quicklook UP42 results!
             out_paths.append(out_path)
 
             # TODO: Add sobloo to backend.
