@@ -154,7 +154,7 @@ input_parameters = {
 
 
 ```python
-input_parameters = workflow.construct_parameter(geometry=aoi, geometry_operation="bbox", limit=1)
+input_parameters = workflow.construct_parameters(geometry=aoi, geometry_operation="bbox", limit=1)
 input_parameters
 ```
 

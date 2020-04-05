@@ -44,7 +44,7 @@ workflow.add_workflow_tasks(input_tasks=input_tasks)
 ```python
 # Define the aoi and input parameters of the workflow to run it.
 aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
-input_parameters = workflow.construct_parameter(geometry=aoi, 
+input_parameters = workflow.construct_parameters(geometry=aoi, 
                                                 geometry_operation="bbox", 
                                                 start_date="2020-01-01",
                                                 end_date="2020-01-20",

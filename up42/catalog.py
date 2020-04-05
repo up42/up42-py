@@ -37,7 +37,7 @@ class Catalog(Tools):
 
     # pylint: disable=dangerous-default-value
     @staticmethod
-    def construct_parameter(
+    def construct_parameters(
         geometry: Union[
             Dict, Feature, FeatureCollection, List, gpd.GeoDataFrame, Point, Polygon,
         ],
@@ -55,7 +55,7 @@ class Catalog(Tools):
         max_cloudcover: float = 100,
         sortby: str = "cloudCoverage",
         ascending: bool = True,
-    ):
+    ) -> Dict:
         """
         Follows STAC principles and property names.
 

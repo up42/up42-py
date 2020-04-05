@@ -24,7 +24,7 @@ aoi
 
 
 ```python
-search_paramaters = catalog.construct_parameter(geometry=aoi, 
+search_paramaters = catalog.construct_parameters(geometry=aoi, 
                                                 start_date="2014-01-01",
                                                 end_date="2016-12-31",
                                                 sensors=["pleiades"],
