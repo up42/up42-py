@@ -157,15 +157,14 @@ class Workflow(Tools):
         """
         Adds or overwrites workflow tasks.
 
-        - Name is arbitrary but best use the block name. Always use :1 to be able to
-        identify the order when two times the same workflow task is used.
-        - API by itself validates if the underlying block for the selected block-id is
-        available.
-
         Args:
             input_tasks: The input tasks, can be provided in the simplified (list of block ids,
                 is automatically transformed to the full version) or full version
                 (dict of block id, block name and parent block name).
+                - Name is arbitrary but best use the block name. Always use :1 to be able to
+                    identify the order when two times the same workflow task is used.
+                - API by itself validates if the underlying block for the selected block-id is
+        available.
 
         Example:
             ```python
@@ -327,9 +326,7 @@ class Workflow(Tools):
         """
         if input_parameters is None:
             raise ValueError(
-                "Select the job_parameters! You can use "
-                ".get_default_parameters() to get the default parameters "
-                "of the workflow."
+                "Select the job_parameters, use workflow.construct_parameters()!"
             )
 
         if isinstance(input_parameters, (str, Path)):

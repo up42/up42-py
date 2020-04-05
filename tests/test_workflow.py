@@ -2,11 +2,54 @@ from pathlib import Path
 import json
 import pytest
 import requests_mock
+import shapely
 
 # pylint: disable=unused-import,wrong-import-order
 from .context import Workflow
 from .fixtures import auth_mock, auth_live, workflow_mock, workflow_live, job_mock
 import up42
+
+
+json_workflow_tasks = {
+    "data": [
+        {
+            "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
+            "name": "sobloo-s2-l1c-aoiclipped:1",
+            "block": {
+                "name": "sobloo-s2-l1c-aoiclipped",
+                "parameters": {
+                    "nodata": {"type": "number",},
+                    "time": {
+                        "type": "dateRange",
+                        "default": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+                    },
+                },
+            },
+        },
+        {
+            "id": "af626c54-156e-4f13-a743-55efd27de533",
+            "name": "tiling:1",
+            "block": {
+                "name": "tiling",
+                "parameters": {
+                    "nodata": {
+                        "type": "number",
+                        "default": None,
+                        "required": False,
+                        "description": "Value representing..",
+                    },
+                    "tile_width": {
+                        "type": "number",
+                        "default": 768,
+                        "required": True,
+                        "description": "Width of a tile in pixels",
+                    },
+                },
+            },
+        },
+    ],
+    "error": {},
+}
 
 
 def test_workflow_get_info(workflow_mock):
@@ -27,32 +70,17 @@ def test_workflow_get_info(workflow_mock):
 
 
 def test_get_compatible_blocks(workflow_mock):
+    url_workflow_tasks = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks"
+    )
     with requests_mock.Mocker() as m:
-        url_workflow_tasks = (
-            f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
-            f"{workflow_mock.workflow_id}/tasks"
-        )
-        json_workflow_tasks = {
-            "data": [
-                {
-                    "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
-                    "name": "sobloo-s2-l1c-aoiclipped:1",
-                    "block": {"name": "sobloo-s2-l1c-aoiclipped"},
-                },
-                {
-                    "id": "af626c54-156e-4f13-a743-55efd27de533",
-                    "name": "sharpening:1",
-                    "block": {"name": "sharpening"},
-                },
-            ],
-            "error": {},
-        }
         m.get(url=url_workflow_tasks, json=json_workflow_tasks)
 
         url_compatible_blocks = (
             f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
             f"workflows/{workflow_mock.workflow_id}/"
-            f"compatible-blocks?parentTaskName=sharpening:1"
+            f"compatible-blocks?parentTaskName=tiling:1"
         )
         json_compatible_blocks = {
             "data": {
@@ -78,26 +106,10 @@ def test_get_compatible_blocks_live(workflow_live):
 
 
 def test_get_workflow_tasks_normal_and_basic(workflow_mock):
-    json_workflow_tasks = {
-        "data": [
-            {
-                "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
-                "name": "sobloo-s2-l1c-aoiclipped:1",
-                "block": {"name": "sobloo-s2-l1c-aoiclipped"},
-            },
-            {
-                "id": "af626c54-156e-4f13-a743-55efd27de533",
-                "name": "sharpening",
-                "block": {"name": "sharpening"},
-            },
-        ],
-        "error": {},
-    }
     url_workflow_tasks = (
         f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
         f"{workflow_mock.workflow_id}/tasks"
     )
-
     with requests_mock.Mocker() as m:
         m.get(url=url_workflow_tasks, json=json_workflow_tasks)
         tasks = workflow_mock.get_workflow_tasks(basic=False)
@@ -105,7 +117,16 @@ def test_get_workflow_tasks_normal_and_basic(workflow_mock):
     assert tasks[0] == {
         "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
         "name": "sobloo-s2-l1c-aoiclipped:1",
-        "block": {"name": "sobloo-s2-l1c-aoiclipped"},
+        "block": {
+            "name": "sobloo-s2-l1c-aoiclipped",
+            "parameters": {
+                "nodata": {"type": "number"},
+                "time": {
+                    "type": "dateRange",
+                    "default": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+                },
+            },
+        },
     }
 
     with requests_mock.Mocker() as m:
@@ -115,6 +136,7 @@ def test_get_workflow_tasks_normal_and_basic(workflow_mock):
     assert tasks["sobloo-s2-l1c-aoiclipped:1"] == "c0d04ec3-98d7-4183-902f-5bcb2a176d89"
 
 
+@pytest.mark.live
 def test_get_workflow_tasks_live(workflow_live):
     workflow_tasks = workflow_live.get_workflow_tasks(basic=True)
     assert isinstance(workflow_tasks, dict)
@@ -158,32 +180,153 @@ def test_construct_full_workflow_tasks_dict(workflow_mock):
     )
 
 
-# def test_add_workflow_tasks():
-#     input_tasks_simple = [
-#         "a2daaab4-196d-4226-a018-a810444dcad1",
-#         "4ed70368-d4e1-4462-bef6-14e768049471",
-#     ]
+def test_add_workflow_tasks_full(workflow_mock, caplog):
+    input_tasks_full = [
+        {
+            "name": "sobloo-s2-l1c-aoiclipped:1",
+            "parentName": None,
+            "blockId": "a2daaab4-196d-4226-a018-a810444dcad1",
+        },
+        {
+            "name": "sharpening:1",
+            "parentName": "sobloo-s2-l1c-aoiclipped",
+            "blockId": "4ed70368-d4e1-4462-bef6-14e768049471",
+        },
+    ]
+
+    job_url = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks/"
+    )
+    with requests_mock.Mocker() as m:
+        m.post(url=job_url, status_code=200)
+
+        workflow_mock.add_workflow_tasks(input_tasks_full)
+    assert f"Added tasks to workflow: {input_tasks_full}" in caplog.text
 
 
 @pytest.mark.live
-def test_add_workflow_tasks_live():
-    pass
+def test_add_workflow_tasks_simple_not_existing_block_id_raises_live(workflow_live):
+    input_tasks_simple = ["12345"]
+    with pytest.raises(Exception):
+        workflow_live.add_workflow_tasks(input_tasks_simple)
 
 
-def test_get_parameter_info():
-    pass
+def test_get_parameter_info(workflow_mock):
+    url_workflow_tasks = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks"
+    )
+    with requests_mock.Mocker() as m:
+        m.get(url=url_workflow_tasks, json=json_workflow_tasks)
+        parameter_info = workflow_mock.get_parameter_info()
+    assert isinstance(parameter_info, dict)
+    assert all(
+        x in list(parameter_info.keys())
+        for x in ["tiling:1", "sobloo-s2-l1c-aoiclipped:1"]
+    )
+    assert all(
+        x in list(parameter_info["tiling:1"].keys()) for x in ["nodata", "tile_width"]
+    )
 
 
-def test_get_parameter_info_live():
-    pass
+@pytest.mark.live
+def test_get_parameter_info_live(workflow_live):
+    parameter_info = workflow_live.get_parameter_info()
+    assert isinstance(parameter_info, dict)
+    assert all(
+        x in list(parameter_info.keys())
+        for x in ["tiling:1", "sobloo-s2-l1c-aoiclipped:1"]
+    )
+    assert all(
+        x in list(parameter_info["tiling:1"].keys())
+        for x in ["nodata", "tile_width", "match_extents"]
+    )
 
 
-def test_get_default_parameters():
-    pass
+def test_get_default_parameters(workflow_mock):
+    url_workflow_tasks = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks"
+    )
+    with requests_mock.Mocker() as m:
+        m.get(url=url_workflow_tasks, json=json_workflow_tasks)
+        default_parameters = workflow_mock._get_default_parameters()
+    assert isinstance(default_parameters, dict)
+    assert all(
+        x in list(default_parameters.keys())
+        for x in ["tiling:1", "sobloo-s2-l1c-aoiclipped:1"]
+    )
+    assert default_parameters["tiling:1"] == {"tile_width": 768}
+    assert default_parameters["sobloo-s2-l1c-aoiclipped:1"] == {
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00"
+    }
 
 
-def test_construct_parameter():
-    pass
+def test_construct_parameter(workflow_mock):
+    url_workflow_tasks = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks"
+    )
+    with requests_mock.Mocker() as m:
+        m.get(url=url_workflow_tasks, json=json_workflow_tasks)
+
+        parameters = workflow_mock.construct_parameter(
+            geometry=shapely.geometry.point.Point(1, 3),
+            geometry_operation="bbox",
+            start_date="2014-01-01",
+            end_date="2016-12-31",
+            limit=1,
+        )
+    assert isinstance(parameters, dict)
+    assert parameters == {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "time": "2014-01-01T00:00:00Z/2016-12-31T00:00:00Z",
+            "limit": 1,
+            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
+        },
+        "tiling:1": {"tile_width": 768},
+    }
+
+
+def test_construct_parameter_scene_ids(workflow_mock):
+    url_workflow_tasks = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks"
+    )
+    with requests_mock.Mocker() as m:
+        m.get(url=url_workflow_tasks, json=json_workflow_tasks)
+
+        parameters = workflow_mock.construct_parameter(
+            geometry=shapely.geometry.point.Point(1, 3),
+            geometry_operation="bbox",
+            scene_ids=["s2_123223"],
+        )
+    assert isinstance(parameters, dict)
+    assert parameters == {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "ids": ["s2_123223"],
+            "limit": 1,
+            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
+        },
+        "tiling:1": {"tile_width": 768},
+    }
+
+
+def test_construct_parameter_order_ids(workflow_mock):
+    url_workflow_tasks = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks"
+    )
+    with requests_mock.Mocker() as m:
+        m.get(url=url_workflow_tasks, json=json_workflow_tasks)
+
+        parameters = workflow_mock.construct_parameter(order_ids=["8472712912"])
+    assert isinstance(parameters, dict)
+    assert parameters == {
+        "sobloo-s2-l1c-aoiclipped:1": {"order_ids": ["8472712912"]},
+        "tiling:1": {"tile_width": 768},
+    }
 
 
 def test_create_and_run_job(workflow_mock, job_mock):
