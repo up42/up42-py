@@ -59,7 +59,7 @@ def is_notebook() -> bool:
 
 
 def _download_result_from_gcs(
-    func_get_download_url: Callable, output_directory: Union[str, Path, None]
+    func_get_download_url: Callable, output_directory: Union[str, Path]
 ) -> List[str]:
     """
     General download function for results of job and jobtask from cloud storage
@@ -70,12 +70,7 @@ def _download_result_from_gcs(
         output_directory: The file output directory, defaults to the current working
             directory.
     """
-    if output_directory is None:
-        output_directory = Path.cwd()
-    else:
-        output_directory = Path(output_directory)
-    output_directory.mkdir(parents=True, exist_ok=True)
-    logger.info("Download directory: %s", str(output_directory))
+    output_directory = Path(output_directory)
 
     # Download
     tgz_file = tempfile.mktemp()
@@ -107,7 +102,7 @@ def _download_result_from_gcs(
         for file in files:
             f = tar.extractfile(file)
             content = f.read()  # type: ignore
-            out_fp = output_directory.joinpath(Path(file.name)).name
+            out_fp = output_directory / f"result_{Path(file.name).name}"
             with open(out_fp, "wb") as dst:
                 dst.write(content)
             out_filepaths.append(str(out_fp))

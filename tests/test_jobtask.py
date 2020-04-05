@@ -104,8 +104,8 @@ def test_download_quicklook(jobtask_mock):
 
             quick = jobtask_mock.download_quicklook(tempdir)
             assert len(quick) == 1
-            assert quick[0].exists()
-            assert quick[0].suffix == ".png"
+            assert Path(quick[0]).exists()
+            assert Path(quick[0]).suffix == ".png"
 
 
 @pytest.mark.live

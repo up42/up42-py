@@ -97,6 +97,15 @@ class JobTask(Tools):
         # TODO: Overwrite argument
         logger.info("Downloading results of jobtask %s", self.jobtask_id)
 
+        if output_directory is None:
+            output_directory = (
+                Path.cwd() / f"project_{self.auth.project_id}" / f"job_{self.job_id}"
+            )
+        else:
+            output_directory = Path(output_directory)
+        output_directory.mkdir(parents=True, exist_ok=True)
+        logger.info("Download directory: %s", str(output_directory))
+
         out_filepaths = _download_result_from_gcs(
             func_get_download_url=self._get_download_url,
             output_directory=output_directory,
@@ -109,7 +118,7 @@ class JobTask(Tools):
         self, output_directory: Union[str, Path, None] = None,
     ) -> List[str]:
         """
-        Downloads quicklooks of all job tasks to disk.
+        Downloads quicklooks of the job task to disk.
 
         After download, can be plotted via jobtask.plot_quicklook().
 
@@ -120,8 +129,11 @@ class JobTask(Tools):
         Returns:
             The quicklooks filepaths.
         """
+        print(1)
         if output_directory is None:
-            output_directory = Path.cwd()
+            output_directory = (
+                Path.cwd() / f"project_{self.auth.project_id}" / f"job_{self.job_id}"
+            )
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)

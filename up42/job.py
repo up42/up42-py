@@ -116,21 +116,12 @@ class Job(Tools):
         self.auth._request(request_type="POST", url=url)
         logger.info("Job canceled: %s", self.job_id)
 
-    def download_quicklook(
-        self, output_directory: Union[str, Path, None]
-    ) -> List[str]:
+    def download_quicklook(self, output_directory: Union[str, Path, None]) -> List[str]:
         """
         Conveniance function that downloads the quicklooks of the data (dirst) jobtask.
 
         After download, can be plotted via job.plot_quicklook().
         """
-        if output_directory is None:
-            output_directory = Path.cwd()
-        else:
-            output_directory = Path(output_directory)
-        output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info("Download directory: %s", str(output_directory))
-
         # Currently only the first/data task produces quicklooks.
         data_task = self.get_jobtasks()[0]
         out_paths: List[str] = data_task.download_quicklook(  # type: ignore
@@ -188,6 +179,15 @@ class Job(Tools):
         """
         # TODO: Overwrite argument
         logger.info("Downloading results of job %s", self.job_id)
+
+        if output_directory is None:
+            output_directory = (
+                Path.cwd() / f"project_{self.auth.project_id}" / f"job_{self.job_id}"
+            )
+        else:
+            output_directory = Path(output_directory)
+        output_directory.mkdir(parents=True, exist_ok=True)
+        logger.info("Download directory: %s", str(output_directory))
 
         out_filepaths = _download_result_from_gcs(
             func_get_download_url=self._get_download_url,

@@ -224,7 +224,9 @@ class Catalog(Tools):
         logger.info("Getting quicklook for %s", image_ids)
 
         if output_directory is None:
-            output_directory = Path.cwd()
+            output_directory = (
+                Path.cwd() / f"project_{self.auth.project_id}" / "catalog"
+            )
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
