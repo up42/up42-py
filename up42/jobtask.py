@@ -129,7 +129,6 @@ class JobTask(Tools):
         Returns:
             The quicklooks filepaths.
         """
-        print(1)
         if output_directory is None:
             output_directory = (
                 Path.cwd() / f"project_{self.auth.project_id}" / f"job_{self.job_id}"
