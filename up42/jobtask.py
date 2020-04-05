@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Dict, Union, List
 
 import geopandas as gpd
+from tqdm import tqdm
 
 from .auth import Auth
 from .tools import Tools
@@ -94,7 +95,6 @@ class JobTask(Tools):
             List of the downloaded results' filepaths.
         """
         # TODO: Overwrite argument
-        # TODO: tdqm bar
         logger.info("Downloading results of jobtask %s", self.jobtask_id)
 
         out_filepaths = _download_result_from_gcs(
@@ -107,7 +107,7 @@ class JobTask(Tools):
 
     def download_quicklook(
         self, output_directory: Union[str, Path, None] = None,
-    ) -> List[Path]:
+    ) -> List[str]:
         """
         Downloads quicklooks of all job tasks to disk.
 
@@ -125,7 +125,7 @@ class JobTask(Tools):
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info("Download directory: %s:", str(output_directory))
+        logger.info("Download directory: %s", str(output_directory))
 
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
@@ -134,10 +134,10 @@ class JobTask(Tools):
         response_json = self.auth._request(request_type="GET", url=url)
         quicklook_ids = response_json["data"]
 
-        out_paths: List[Path] = []
-        for ql_id in quicklook_ids:
+        out_paths: List[str] = []
+        for ql_id in tqdm(quicklook_ids):
             out_path = output_directory / f"quicklook_{ql_id}"
-            out_paths.append(out_path)
+            out_paths.append(str(out_path))
 
             url = (
                 f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"

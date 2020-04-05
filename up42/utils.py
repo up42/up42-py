@@ -16,6 +16,7 @@ from IPython import get_ipython
 from branca.element import CssLink, Element, Figure, JavascriptLink
 from geojson import Feature, FeatureCollection
 import requests
+from tqdm import tqdm
 
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
@@ -74,7 +75,7 @@ def _download_result_from_gcs(
     else:
         output_directory = Path(output_directory)
     output_directory.mkdir(parents=True, exist_ok=True)
-    logger.info("Download directory: %s:", str(output_directory))
+    logger.info("Download directory: %s", str(output_directory))
 
     # Download
     tgz_file = tempfile.mktemp()
@@ -84,7 +85,7 @@ def _download_result_from_gcs(
         bytes_total = int(r.headers["x-goog-stored-content-length"])
         chunk_size = 10000000  # 10mb
         # TODO: Find better solution for gcs token issue.
-        for start in range(0, bytes_total, chunk_size):
+        for start in tqdm(range(0, bytes_total, chunk_size)):
             end = start + chunk_size - 1  # Bytes ranges are inclusive
             headers = {"Range": f"bytes={start}-{end}"}
             try:

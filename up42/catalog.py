@@ -6,6 +6,7 @@ import geopandas as gpd
 import shapely
 from geojson import Feature, FeatureCollection
 from shapely.geometry import Point, Polygon
+from tqdm import tqdm
 
 from .auth import Auth
 from .tools import Tools
@@ -206,7 +207,7 @@ class Catalog(Tools):
         image_ids: List[str],
         provider: str = "oneatlas",
         output_directory: Union[str, Path, None] = None,
-    ) -> List[Path]:
+    ) -> List[str]:
         """
         Gets the quicklook of scenes, from oneatlas or sobloo.
 
@@ -227,12 +228,12 @@ class Catalog(Tools):
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info("Download directory: %s:", str(output_directory))
+        logger.info("Download directory: %s", str(output_directory))
 
         out_paths = []
-        for image_id in image_ids:
+        for image_id in tqdm(image_ids):
             out_path = output_directory / f"quicklook_{image_id}.jpg"
-            out_paths.append(out_path)
+            out_paths.append(str(out_path))
 
             # TODO: Add sobloo to backend.
             url = (

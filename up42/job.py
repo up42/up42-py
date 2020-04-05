@@ -118,7 +118,7 @@ class Job(Tools):
 
     def download_quicklook(
         self, output_directory: Union[str, Path, None]
-    ) -> List[Path]:
+    ) -> List[str]:
         """
         Conveniance function that downloads the quicklooks of the data (dirst) jobtask.
 
@@ -129,11 +129,11 @@ class Job(Tools):
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info("Download directory: %s:", str(output_directory))
+        logger.info("Download directory: %s", str(output_directory))
 
         # Currently only the first/data task produces quicklooks.
         data_task = self.get_jobtasks()[0]
-        out_paths: List[Path] = data_task.download_quicklook(  # type: ignore
+        out_paths: List[str] = data_task.download_quicklook(  # type: ignore
             output_directory=output_directory
         )  # type: ignore
         self.quicklook = out_paths  # pylint: disable=attribute-defined-outside-init
@@ -187,7 +187,6 @@ class Job(Tools):
             List of the downloaded results' filepaths.
         """
         # TODO: Overwrite argument
-        # TODO: tdqm bar
         logger.info("Downloading results of job %s", self.job_id)
 
         out_filepaths = _download_result_from_gcs(
