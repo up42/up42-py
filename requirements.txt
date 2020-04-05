@@ -12,3 +12,4 @@ pandas
 branca
 shapely
 click
+tqdm
