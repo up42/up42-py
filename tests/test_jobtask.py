@@ -59,7 +59,11 @@ def test_jobtask_download_result(jobtask_mock):
 
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         out_tgz_file = open(out_tgz, "rb")
-        m.get(url=download_url, content=out_tgz_file.read())
+        m.get(
+            url=download_url,
+            content=out_tgz_file.read(),
+            headers={"x-goog-stored-content-length": "221"},
+        )
 
         with tempfile.TemporaryDirectory() as tempdir:
             out_files = jobtask_mock.download_result(out_dir=tempdir)

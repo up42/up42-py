@@ -1,17 +1,20 @@
 import json
 from pathlib import Path
+import tempfile
 
 import folium
 import geopandas as gpd
 import pandas as pd
 import pytest
 from shapely.geometry import Point, Polygon, LinearRing
+import requests_mock
 
 from .context import (
     is_notebook,
     folium_base_map,
     any_vector_to_fc,
     fc_to_query_geometry,
+    _download_result_from_gcs,
 )
 
 
@@ -246,7 +249,30 @@ def test_fc_to_query_geometry_multiple_bbox_first():
     assert query_geometry == [-17.64723461, 14.64196829, -17.45193768, 14.83313312]
 
 
-def fc_to_query_geometry_raises_with_not_accepted():
+def test_fc_to_query_geometry_raises_with_not_accepted():
     ring = LinearRing([(0, 0), (1, 1), (1, 0)])
     with pytest.raises(ValueError):
         fc_to_query_geometry(ring, geometry_operation="bbox")
+
+
+def test_download_result_from_gcs():
+    cloud_storage_url = "http://clouddownload.api.com/abcdef"
+
+    def _simplified_get_download_url():
+        return cloud_storage_url
+
+    with requests_mock.Mocker() as m:
+        out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+        out_tgz_file = open(out_tgz, "rb")
+        m.get(
+            url=cloud_storage_url,
+            content=out_tgz_file.read(),
+            headers={"x-goog-stored-content-length": f"20000001"},
+        )
+        with tempfile.TemporaryDirectory() as tempdir:
+            out_files = _download_result_from_gcs(
+                func_get_download_url=_simplified_get_download_url, out_dir=tempdir
+            )
+            for file in out_files:
+                assert Path(file).exists()
+            assert len(out_files) == 1
