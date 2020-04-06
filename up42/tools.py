@@ -15,7 +15,7 @@ from rasterio.plot import show
 
 from .utils import get_logger, folium_base_map, DrawFoliumOverride, is_notebook
 
-logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
+logger = get_logger(__name__)
 
 
 # pylint: disable=no-member, duplicate-code
@@ -27,12 +27,12 @@ class Tools:
         They can be accessed from every object and also from the imported up42 package directly.
 
         Public methods:
-            read_vector_file, get_example_aoi, draw_aoi, plot_coverage, plot_quicklook
+            read_vector_file, get_example_aoi, draw_aoi, plot_coverage, plot_quicklooks
         """
         if auth:
             self.auth = auth
-        self.quicklook = None
-        self.result = None
+        self.quicklooks = None
+        self.results = None
 
     # pylint: disable=no-self-use
     def read_vector_file(
@@ -150,9 +150,9 @@ class Tools:
         figsize=(12, 16),
     ) -> None:
         """
-        Plots a coverage map of a dataframe with geometries e.g. the result of catalog.search())
+        Plots a coverage map of a dataframe with geometries e.g. the results of catalog.search())
         Args:
-            scenes: GeoDataFrame of scenes, result of catalog.search()
+            scenes: GeoDataFrame of scenes, results of catalog.search()
             aoi: GeoDataFrame of aoi.
             legend_column: Dataframe column set to legend, default is "scene_id".
                 Legend entries are sorted and this determines plotting order.
@@ -188,11 +188,11 @@ class Tools:
         ax.set_axis_off()
         plt.show()
 
-    def plot_quicklook(
+    def plot_quicklooks(
         self, figsize: Tuple[int, int] = (8, 8), filepaths: List = None
     ) -> None:
         """
-        Plots the downloaded quicklooks (filepaths saved to self.quicklook of the
+        Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
         respective object, e.g. job, catalog).
 
         Args:
@@ -203,11 +203,11 @@ class Tools:
 
         # TODO: Remove empty axes & give title option.
         if filepaths is None:
-            if self.quicklook is None:
+            if self.quicklooks is None:
                 raise ValueError(
-                    "You first need to download the quicklooks via .download_quicklook()."
+                    "You first need to download the quicklooks via .download_quicklooks()."
                 )
-            filepaths = self.quicklook
+            filepaths = self.quicklooks
 
         if len(filepaths) < 2:
             nrows, ncols = 1, 1
@@ -231,7 +231,7 @@ class Tools:
         plt.tight_layout()
         plt.show()
 
-    def plot_result(
+    def plot_results(
         self,
         figsize: Tuple[int, int] = (8, 8),
         filepaths: List[Union[str, Path]] = None,
@@ -247,9 +247,9 @@ class Tools:
         # TODO: Handle more bands.
         # TODO: add histogram equalization? But requires skimage dependency.
         if filepaths is None:
-            if self.result is None:
+            if self.results is None:
                 raise ValueError("You first need to download the results.")
-            filepaths = self.result
+            filepaths = self.results
         if not isinstance(filepaths, list):
             filepaths = [filepaths]
         filepaths = [Path(path) for path in filepaths]
@@ -375,7 +375,7 @@ class Tools:
             path_or_json: The input manifest, either filepath or json string, see example.
 
         Returns:
-            A dictionary with the validation result and potential validation errors.
+            A dictionary with the validation results and potential validation errors.
 
         Example:
             ```json

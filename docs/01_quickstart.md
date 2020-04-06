@@ -59,8 +59,8 @@ job.track_status()
 
 
 ```python
-job.download_result()
-job.map_result()
+job.download_results()
+job.map_results()
 ```
 
 

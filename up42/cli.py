@@ -403,11 +403,11 @@ def get_workflow_tasks(workflow, basic):
 
 @COMMAND_WORKFLOW
 @click.pass_obj
-def get_parameter_info(workflow):
+def get_parameters_info(workflow):
     """
     Get info about the parameters of each task in the workflow to make it easy to construct the desired parameters.
     """
-    logger.info(pprint_json(workflow.get_parameter_info()))
+    logger.info(pprint_json(workflow.get_parameters_info()))
 
 
 @COMMAND_WORKFLOW
@@ -507,11 +507,11 @@ def cancel_job(job):
     type=click.Path(exists=True, writable=True, file_okay=False, resolve_path=True),
 )
 @click.pass_obj
-def download_quicklook(job, output_directory):
+def download_quicklooks(job, output_directory):
     """
-    Download a job quicklook.
+    Download a job's quicklooks.
     """
-    logger.info(job.download_quicklook(output_directory))
+    logger.info(job.download_quicklooks(output_directory))
 
 
 @COMMAND_JOB
@@ -520,16 +520,16 @@ def download_quicklook(job, output_directory):
     type=click.Path(exists=True, writable=True, file_okay=False, resolve_path=True),
 )
 @click.pass_obj
-def download_result(job, output_directory):
+def download_results(job, output_directory):
     """
-    Download and unpack the job result.
+    Download and unpack the job results.
     """
-    logger.info(job.download_result(output_directory))
+    logger.info(job.download_results(output_directory))
 
 
 @COMMAND_JOB
 @click.pass_obj
-def get_job_tasks(job):
+def get_jobtasks(job):
     """
     Get the individual items of the job.
     """
@@ -538,29 +538,29 @@ def get_job_tasks(job):
 
 @COMMAND_JOB
 @click.pass_obj
-def get_job_tasks_result_json(job):
+def get_jobtasks_results_json(job):
     """
     Convenience function to get the resulting data.json of all job tasks.
     """
-    logger.info(pprint_json(job.get_jobtasks_result_json()))
+    logger.info(pprint_json(job.get_jobtasks_results_json()))
 
 
 @COMMAND_JOB
 @click.pass_obj
-def get_log(job):
+def get_logs(job):
     """
     Convenience function to print or return the logs of all job tasks.
     """
-    job.get_log()
+    job.get_logs()
 
 
 @COMMAND_JOB
 @click.pass_obj
-def get_result_json(job):
+def get_results_json(job):
     """
-    Get the job result data.json.
+    Get the job results data.json.
     """
-    logger.info(pprint_json(job.get_result_json()))
+    logger.info(pprint_json(job.get_results_json()))
 
 
 @COMMAND_JOB
@@ -664,9 +664,9 @@ def construct_parameters(
 @click.pass_obj
 def search(catalog, search_parameters_json):
     """
-    Searches the catalog for the search parameter and returns the metadata of
+    Searches the catalog for the search parameters and returns the metadata of
     the matching scenes. Generate search parameters with
-    'up42 catalog construct-parameter'.
+    'up42 catalog construct-parameters'.
     """
     logger.info(
         pprint_json(

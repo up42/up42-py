@@ -17,13 +17,13 @@ if __name__ == "__main__":
     ]
     workflow.add_workflow_tasks(input_tasks=input_tasks)
     aoi = workflow.get_example_aoi(location="Berlin")
-    input_parameters = workflow.construct_parameter(
+    input_parameters = workflow.construct_parameters(
         geometry=aoi, geometry_operation="bbox", limit=1
     )
 
     job = workflow.create_and_run_job(input_parameters=input_parameters)
     job.track_status()
-    results_fp = job.download_result(output_directory="/tmp")
+    results_fp = job.download_results(output_directory="/tmp")
 
     for fp in results_fp:
         assert Path(fp).exists()

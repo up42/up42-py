@@ -1,8 +1,5 @@
-import binascii
 import copy
-import hashlib
 import logging
-import os
 from typing import Dict, List, Union, Callable
 from pathlib import Path
 import tempfile
@@ -22,6 +19,9 @@ LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 
 def get_logger(name, level=logging.INFO):
+    """
+    Use level=logging.CRITICAL to disable temporarily.
+    """
     logger = logging.getLogger(name)  # pylint: disable=redefined-outer-name
     logger.setLevel(level)
     # create console handler and set level to debug
@@ -34,14 +34,6 @@ def get_logger(name, level=logging.INFO):
 
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
-
-
-def hash_password(password):
-    """Hash a password for storing it on disk."""
-    salt = hashlib.sha256(os.urandom(60)).hexdigest().encode("ascii")
-    pwdhash = hashlib.pbkdf2_hmac("sha512", password.encode("utf-8"), salt, 100000)
-    pwdhash = binascii.hexlify(pwdhash)
-    return (salt + pwdhash).decode("ascii")
 
 
 def is_notebook() -> bool:
@@ -58,7 +50,7 @@ def is_notebook() -> bool:
         return False  # Standard Python interpreter
 
 
-def _download_result_from_gcs(
+def download_results_from_gcs(
     func_get_download_url: Callable, output_directory: Union[str, Path]
 ) -> List[str]:
     """

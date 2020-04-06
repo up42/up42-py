@@ -115,7 +115,7 @@ for job in jobs:
 outdir = Path.cwd()
 out_filepaths=[]
 for job in jobs:
-    fp = job.download_result(output_directory=outdir / "img")
+    fp = job.download_results(output_directory=outdir / "img")
     out_filepaths.append(fp[0])
 
 print("finished")
@@ -124,7 +124,7 @@ print("finished")
 
 ```python
 # Visualize downloaded results
-api.plot_result(figsize=(22,22), filepaths=out_filepaths, titles=airports.airport.to_list())
+api.plot_results(figsize=(22,22), filepaths=out_filepaths, titles=airports.airport.to_list())
 ```
 
 

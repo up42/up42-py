@@ -25,6 +25,7 @@
 - For geospatial analysis & product builders!
 - Interactive maps & visualization, ideal with Jupyter notebooks  
 - Command Line Interface (CLI)
+- Developer tools for UP42 custom blocks (coming soon)
 
 <br>
 
@@ -63,7 +64,7 @@ workflow.add_workflow_tasks(input_tasks=input_tasks)
 
 # Define the aoi and input parameters of the workflow to run it.
 aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
-input_parameters = workflow.construct_parameter(geometry=aoi, 
+input_parameters = workflow.construct_parameters(geometry=aoi, 
                                                 geometry_operation="bbox", 
                                                 start_date="2020-01-01",
                                                 end_date="2020-01-20",
@@ -72,8 +73,8 @@ input_parameters = workflow.construct_parameter(geometry=aoi,
 job = workflow.create_and_run_job(input_parameters=input_parameters)
 job.track_status()
 
-job.download_result()
-job.map_result()
+job.download_results()
+job.map_results()
 ```
 
 <br>

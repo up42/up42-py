@@ -43,6 +43,14 @@ def test_construct_parameters(catalog_mock):
     assert search_paramaters["sortby"] == mock_search_parameters["sortby"]
 
 
+def test_construct_parameters_unsopported_sensor_raises(catalog_mock):
+    with pytest.raises(ValueError):
+        catalog_mock.construct_parameters(
+            geometry=mock_search_parameters["intersects"],
+            sensors=["some_unspoorted_sensor"],
+        )
+
+
 def test_search(catalog_mock):
     with open(
         Path(__file__).resolve().parent / "mock_data/search_response.json"
@@ -96,7 +104,7 @@ def test_download_quicklook(catalog_mock):
             )
             m.get(url, content=open(quicklook_file, "rb").read())
 
-            out_paths = catalog_mock.download_quicklook(
+            out_paths = catalog_mock.download_quicklooks(
                 [sel_id], output_directory=tempdir
             )
 
@@ -108,7 +116,7 @@ def test_download_quicklook(catalog_mock):
 @pytest.mark.live
 def test_download_quicklook_live(catalog_live):
     with tempfile.TemporaryDirectory() as tempdir:
-        out_paths = catalog_live.download_quicklook(
+        out_paths = catalog_live.download_quicklooks(
             ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"], output_directory=tempdir
         )
         assert len(out_paths) == 1

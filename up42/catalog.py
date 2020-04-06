@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 from typing import Dict, Union, List
 
@@ -12,12 +11,34 @@ from .auth import Auth
 from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
-logger = get_logger(__name__, level=logging.INFO)
+logger = get_logger(__name__)
 
 
-# TODO: Midterm add catalog result class? Scenes() etc. that also as feedback to workflow input.
+# TODO: Midterm add catalog results class? Scenes() etc. that also as feedback to workflow input.
 # Scenes() would be dataframe with quicklook preview images in it.
 
+
+blocks_default = [
+    "oneatlas-pleiades-fullscene",
+    "oneatlas-pleiades-aoiclipped",
+    "oneatlas-spot-fullscene",
+    "oneatlas-spot-aoiclipped",
+    "sobloo-sentinel1-l1c-grd-full",
+    "sobloo-sentinel1-l1c-grd-aoiclipped",
+    "sobloo-sentinel1-l1c-slc-full",
+    "sobloo-sentinel2-lic-msi-full",
+    "sobloo-sentinel2-lic-msi-aoiclipped",
+    "sobloo-sentinel3-full",
+    "sobloo-sentinel5-preview-full",
+]
+supported_sensors = [
+    "pleiades",
+    "spot",
+    "sentinel1",
+    "sentinel2",
+    "sentinel3",
+    "sentinel5",
+]
 
 # pylint: disable=duplicate-code
 class Catalog(Tools):
@@ -26,11 +47,11 @@ class Catalog(Tools):
         for satellite image scenes for different sensors and criteria like cloud cover etc.
 
         Public Methods:
-            construct_parameter, search, download_quicklook
+            construct_parameters, search, download_quicklooks
         """
         self.auth = auth
-        self.querystring = {"backend": backend}  # TODO: Sobloo
-        self.quicklook = None
+        self.querystring = {"backend": backend}
+        self.quicklooks = None
 
     def __repr__(self):
         return f"Catalog(querystring={self.querystring}, auth={self.auth})"
@@ -71,25 +92,15 @@ class Catalog(Tools):
             ascending: Ascending sort order by default, descending if False.
 
         Returns:
-            The constructed parameter dictionary.
+            The constructed parameters dictionary.
         """
         datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
-
-        blocks_default = [
-            "oneatlas-pleiades-fullscene",
-            "oneatlas-pleiades-aoiclipped",
-            "oneatlas-spot-fullscene",
-            "oneatlas-spot-aoiclipped",
-            "sobloo-sentinel1-l1c-grd-full",
-            "sobloo-sentinel1-l1c-grd-aoiclipped",
-            "sobloo-sentinel1-l1c-slc-full",
-            "sobloo-sentinel2-lic-msi-full",
-            "sobloo-sentinel2-lic-msi-aoiclipped",
-            "sobloo-sentinel3-full",
-            "sobloo-sentinel5-preview-full",
-        ]
         block_filters = []
         for sensor in sensors:
+            if sensor not in supported_sensors:
+                raise ValueError(
+                    f"Currently only these sensors are supported: {supported_sensors}"
+                )
             for block in blocks_default:
                 if sensor in block.split("-"):
                     block_filters.append(block)
@@ -125,7 +136,7 @@ class Catalog(Tools):
         self, search_paramaters: Dict, as_dataframe: bool = True
     ) -> Union[gpd.GeoDataFrame, Dict]:
         """
-        Searches the catalog for the the search parameter and returns the metadata of
+        Searches the catalog for the the search parameters and returns the metadata of
         the matching scenes.
 
         Args:
@@ -133,7 +144,7 @@ class Catalog(Tools):
             as_dataframe: return type, GeoDataFrame if True (default), FeatureCollection if False.
 
         Returns:
-            The search result as a GeoDataFrame, optionally as json dict.
+            The search results as a GeoDataFrame, optionally as json dict.
 
         Example:
             ```python
@@ -187,31 +198,16 @@ class Catalog(Tools):
         else:
             return df.__geo_interface__
 
-    def calculate_coverage(
-        self, input_df: gpd.GeoDataFrame, geometry: Polygon, unit="percent"
-    ):
-        """Calculates the coverage of a geodataframe (e.g. search results) with a given aoi.
-
-        Args:
-            geometry: The geometry to compare against.
-            unit: "percent" (default) or "sqkm".
-
-        Returns:
-
-        """
-        pass  # pylint: disable=unnecessary-pass
-        # TODO: Add to plot_coverage legend, to dataframe results as optional.
-
-    def download_quicklook(
+    def download_quicklooks(
         self,
         image_ids: List[str],
         provider: str = "oneatlas",
         output_directory: Union[str, Path, None] = None,
     ) -> List[str]:
         """
-        Gets the quicklook of scenes, from oneatlas or sobloo.
+        Gets the quicklooks of scenes, from oneatlas or sobloo.
 
-        After download, can be plotted via catalog.plot_quicklook().
+        After download, can be plotted via catalog.plot_quicklooks().
         Args:
             image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
             provider:  One of "oneatlas", "sobloo"
@@ -221,7 +217,7 @@ class Catalog(Tools):
         Returns:
             List of quicklook image output file paths.
         """
-        logger.info("Getting quicklook for %s", image_ids)
+        logger.info("Getting quicklooks for image_ids %s", image_ids)
 
         if output_directory is None:
             output_directory = (
@@ -247,5 +243,5 @@ class Catalog(Tools):
                 for chunk in response:
                     dst.write(chunk)
 
-        self.quicklook = out_paths  # pylint: disable=attribute-defined-outside-init
+        self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths

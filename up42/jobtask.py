@@ -6,9 +6,9 @@ from tqdm import tqdm
 
 from .auth import Auth
 from .tools import Tools
-from .utils import get_logger, _download_result_from_gcs
+from .utils import get_logger, download_results_from_gcs
 
-logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
+logger = get_logger(__name__)
 
 
 # pylint: disable=duplicate-code
@@ -21,14 +21,14 @@ class JobTask(Tools):
         block in the workflow).
 
         Public Methods:
-            get_result_json, download_result, download_quicklook
+            get_results_json, download_results, download_quicklooks
         """
         self.auth = auth
         self.project_id = project_id
         self.job_id = job_id
         self.jobtask_id = jobtask_id
-        self.quicklook = None
-        self.result = None
+        self.quicklooks = None
+        self.results = None
         if self.auth.get_info:
             self.info = self._get_info()
 
@@ -48,11 +48,11 @@ class JobTask(Tools):
         self.info = response_json["data"]
         return self.info
 
-    def get_result_json(
+    def get_results_json(
         self, as_dataframe: bool = False
     ) -> Union[Dict, gpd.GeoDataFrame]:
         """
-        Gets the Jobtask result data.json.
+        Gets the Jobtask results data.json.
 
         Args:
             as_dataframe: "fc" for FeatureCollection dict, "df" for GeoDataFrame.
@@ -82,11 +82,11 @@ class JobTask(Tools):
         download_url = response_json["data"]["url"]
         return download_url
 
-    def download_result(
+    def download_results(
         self, output_directory: Union[str, Path, None] = None
     ) -> List[str]:
         """
-        Downloads and unpacks the jobtask result. Default download to Desktop.
+        Downloads and unpacks the jobtask results. Default download to Desktop.
 
         Args:
             output_directory: The file output directory, defaults to the current working
@@ -106,21 +106,21 @@ class JobTask(Tools):
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", str(output_directory))
 
-        out_filepaths = _download_result_from_gcs(
+        out_filepaths = download_results_from_gcs(
             func_get_download_url=self._get_download_url,
             output_directory=output_directory,
         )
 
-        self.result = out_filepaths
+        self.results = out_filepaths
         return out_filepaths
 
-    def download_quicklook(
+    def download_quicklooks(
         self, output_directory: Union[str, Path, None] = None,
     ) -> List[str]:
         """
         Downloads quicklooks of the job task to disk.
 
-        After download, can be plotted via jobtask.plot_quicklook().
+        After download, can be plotted via jobtask.plot_quicklooks().
 
         Args:
             output_directory: The file output directory, defaults to the current working
@@ -143,10 +143,10 @@ class JobTask(Tools):
             f"/tasks/{self.jobtask_id}/outputs/quicklooks/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
-        quicklook_ids = response_json["data"]
+        quicklooks_ids = response_json["data"]
 
         out_paths: List[str] = []
-        for ql_id in tqdm(quicklook_ids):
+        for ql_id in tqdm(quicklooks_ids):
             out_path = output_directory / f"quicklook_{ql_id}"
             out_paths.append(str(out_path))
 
@@ -162,5 +162,5 @@ class JobTask(Tools):
                 for chunk in response:
                     dst.write(chunk)
 
-        self.quicklook = out_paths  # pylint: disable=attribute-defined-outside-init
+        self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths

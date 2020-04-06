@@ -1,6 +1,7 @@
 import warnings
 from pathlib import Path
 from typing import List, Union, Dict, Tuple
+import logging
 
 from geojson import FeatureCollection
 import geopandas as gpd
@@ -13,8 +14,11 @@ from .workflow import Workflow
 from .job import Job
 from .jobtask import JobTask
 from .catalog import Catalog
+from .utils import get_logger
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
+
+logger = get_logger(__name__, level=logging.INFO)
 
 _auth = None
 
@@ -33,6 +37,7 @@ def initialize_project() -> "Project":
     """Directly returns the correct Project object (has to exist on UP42)."""
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
+    logger.info("Working on Project with project_id %s", _auth.project_id)
     return Project(auth=_auth, project_id=_auth.project_id)
 
 
@@ -115,15 +120,15 @@ def plot_coverage(
     tools.plot_coverage(scenes, aoi, legend_column, figsize)
 
 
-def plot_quicklook(figsize: Tuple[int, int] = (8, 8), filepaths: List = None) -> None:
+def plot_quicklooks(figsize: Tuple[int, int] = (8, 8), filepaths: List = None) -> None:
     tools = Tools(auth=_auth)
-    tools.plot_quicklook(figsize, filepaths)
+    tools.plot_quicklooks(figsize, filepaths)
 
 
-def plot_result(
+def plot_results(
     figsize: Tuple[int, int] = (8, 8),
     filepaths: List[Union[str, Path]] = None,
     titles: List[str] = None,
 ) -> None:
     tools = Tools(auth=_auth)
-    tools.plot_result(figsize, filepaths, titles)
+    tools.plot_results(figsize, filepaths, titles)
