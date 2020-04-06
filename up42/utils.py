@@ -18,7 +18,7 @@ from tqdm import tqdm
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 
-def get_logger(name, level=logging.INFO, use_exisiting_named_logger=True):
+def get_logger(name, level=logging.INFO):
     """
     Use level=logging.CRITICAL to disable temporarily.
     """
