@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import tempfile
 
 import requests_mock
 import pytest
@@ -86,25 +87,30 @@ def test_search_live(catalog_live):
 
 def test_download_quicklook(catalog_mock):
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
+    with tempfile.TemporaryDirectory() as tempdir:
+        provider = "oneatlas"
+        with requests_mock.Mocker() as m:
+            url = f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
+            quicklook_file = (
+                Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+            )
+            m.get(url, content=open(quicklook_file, "rb").read())
 
-    provider = "oneatlas"
-    with requests_mock.Mocker() as m:
-        url = f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
-        quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-        m.get(url, content=open(quicklook_file, "rb").read())
+            out_paths = catalog_mock.download_quicklook(
+                [sel_id], output_directory=tempdir
+            )
 
-        out_paths = catalog_mock.download_quicklook([sel_id])
-
-    assert len(out_paths) == 1
-    assert Path(out_paths[0]).exists()
-    assert Path(out_paths[0]).suffix == ".jpg"
+        assert len(out_paths) == 1
+        assert Path(out_paths[0]).exists()
+        assert Path(out_paths[0]).suffix == ".jpg"
 
 
 @pytest.mark.live
 def test_download_quicklook_live(catalog_live):
-    out_paths = catalog_live.download_quicklook(
-        ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"]
-    )
-    assert len(out_paths) == 1
-    assert Path(out_paths[0]).exists()
-    assert Path(out_paths[0]).suffix == ".jpg"
+    with tempfile.TemporaryDirectory() as tempdir:
+        out_paths = catalog_live.download_quicklook(
+            ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"], output_directory=tempdir
+        )
+        assert len(out_paths) == 1
+        assert Path(out_paths[0]).exists()
+        assert Path(out_paths[0]).suffix == ".jpg"
