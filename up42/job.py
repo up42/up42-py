@@ -9,7 +9,6 @@ import numpy as np
 import rasterio
 import requests
 import requests.exceptions
-from IPython.display import display
 from rasterio.io import MemoryFile
 from rasterio.warp import calculate_default_transform, reproject, Resampling
 
@@ -233,6 +232,7 @@ class Job(Tools):
         """
         if not is_notebook():
             raise ValueError("Only works in Jupyter notebook.")
+        from IPython.display import display  # pylint: disable=import-outside-toplevel
 
         df: gpd.GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
         # TODO: centroid of total_bounds
