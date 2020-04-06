@@ -3,6 +3,7 @@ import math
 import os
 from pathlib import Path
 from typing import Tuple, List, Union, Dict
+import sys
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -12,6 +13,10 @@ import shapely
 from rasterio.plot import show
 
 from .utils import get_logger, folium_base_map, DrawFoliumOverride, is_notebook
+
+if "IPython" in sys.modules:
+    from IPython import get_ipython  # pylint: disable=import-error
+    from IPython.display import display  # pylint: disable=import-outside-toplevel
 
 logger = get_logger(__name__)
 
@@ -122,7 +127,6 @@ class Tools:
         """
         if not is_notebook():
             raise ValueError("Only works in Jupyter notebook.")
-        from IPython.display import display  # pylint: disable=import-outside-toplevel
 
         m = folium_base_map(layer_control=True)
         DrawFoliumOverride(
@@ -158,8 +162,6 @@ class Tools:
             figsize: Matplotlib figure size.
         """
         if is_notebook():
-            from IPython import get_ipython  # pylint: disable=import-outside-toplevel
-
             get_ipython().run_line_magic("matplotlib", "inline")
 
         if legend_column not in scenes.columns:
@@ -200,11 +202,7 @@ class Tools:
             figsize: matplotlib figure size.
         """
         if is_notebook():
-            from IPython import get_ipython  # pylint: disable=import-outside-toplevel
-
-            get_ipython().run_line_magic(
-                "matplotlib", "inline"
-            )  # pylint: disable=import-outside-toplevel
+            get_ipython().run_line_magic("matplotlib", "inline")
 
         # TODO: Remove empty axes & give title option.
         if filepaths is None:
@@ -273,8 +271,6 @@ class Tools:
             titles = [Path(fp).stem for fp in imagepaths]
 
         if is_notebook():
-            from IPython import get_ipython  # pylint: disable=import-outside-toplevel
-
             get_ipython().run_line_magic("matplotlib", "inline")
 
         if len(imagepaths) < 2:

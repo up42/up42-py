@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 from time import sleep
 from typing import Dict, List, Union
+import sys
 
 import folium
 import geopandas as gpd
@@ -16,6 +17,9 @@ from .auth import Auth
 from .jobtask import JobTask
 from .tools import Tools
 from .utils import get_logger, is_notebook, folium_base_map, download_results_from_gcs
+
+if "IPython" in sys.modules:
+    from IPython.display import display  # pylint: disable=import-error
 
 logger = get_logger(__name__)
 
@@ -232,7 +236,6 @@ class Job(Tools):
         """
         if not is_notebook():
             raise ValueError("Only works in Jupyter notebook.")
-        from IPython.display import display  # pylint: disable=import-outside-toplevel
 
         df: gpd.GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
         # TODO: centroid of total_bounds

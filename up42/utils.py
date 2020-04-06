@@ -4,6 +4,7 @@ from typing import Dict, List, Union, Callable
 from pathlib import Path
 import tempfile
 import tarfile
+import sys
 
 import folium.plugins
 import geojson
@@ -40,8 +41,10 @@ logger = get_logger(__name__)
 def is_notebook() -> bool:
     """Checks if the Python instance is run in a Jupyter notebook."""
     try:
-        from IPython import get_ipython  # pylint: disable=import-outside-toplevel
-
+        if "IPython" in sys.modules:
+            from IPython import get_ipython  # pylint: disable=import-outside-toplevel
+        else:
+            return False
         shell = get_ipython().__class__.__name__
         if shell == "ZMQInteractiveShell":
             return True  # Jupyter notebook or qtconsole
@@ -50,7 +53,7 @@ def is_notebook() -> bool:
         else:
             return False
     except (ModuleNotFoundError, NameError):
-        return False  # Standard Python interpreter / no Ipython installed
+        return False  # Standard Python interpreter
 
 
 def download_results_from_gcs(
