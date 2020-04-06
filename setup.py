@@ -1,8 +1,15 @@
+import io
+from pathlib import Path
 from setuptools import setup, find_packages
+
+
+version = io.open(
+    Path(__file__).resolve().parent / "up42/_version.txt", encoding="utf-8"
+).read()
 
 setup(
     name="up42-py",
-    version="0.8",
+    version=version,
     description="Python SDK for UP42",
     url="https://github.com/up42/up42-py",
     license="MIT",
