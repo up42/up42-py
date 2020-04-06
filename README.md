@@ -25,6 +25,7 @@
 - For geospatial analysis & product builders!
 - Interactive maps & visualization, ideal with Jupyter notebooks  
 - Command Line Interface (CLI)
+- Developer tools for UP42 custom blocks (coming soon)
 
 <br>
 
