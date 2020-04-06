@@ -30,6 +30,7 @@ def get_logger(name, level=logging.INFO):
     formatter = logging.Formatter(LOG_FORMAT)
     ch.setFormatter(formatter)
     logger.addHandler(ch)
+    logger.propagate = False
     return logger
 
 

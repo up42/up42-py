@@ -116,7 +116,9 @@ class Workflow(Tools):
         full_input_tasks_definition = []
 
         # Get public + custom blocks.
+        logging.getLogger("up42.tools").setLevel(logging.CRITICAL)
         blocks_name_id: Dict = self.get_blocks(basic=True)  # type: ignore
+        logging.getLogger("up42.tools").setLevel(logging.INFO)
         blocks_id_name = {
             value: key for key, value in blocks_name_id.items()
         }  # pylint: disable=
