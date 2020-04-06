@@ -18,7 +18,7 @@ from tqdm import tqdm
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 
-def get_logger(name, level=logging.INFO):
+def get_logger(name, level=logging.INFO, use_exisiting_named_logger=True):
     """
     Use level=logging.CRITICAL to disable temporarily.
     """
@@ -34,7 +34,7 @@ def get_logger(name, level=logging.INFO):
     return logger
 
 
-logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
+logger = get_logger(__name__)
 
 
 def is_notebook() -> bool:

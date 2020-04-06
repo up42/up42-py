@@ -54,6 +54,7 @@ class Project(Tools):
             The workflow object.
         """
         if use_existing:
+            logger.info("Getting existing workflows in project ...")
             logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
             existing_workflows = self.get_workflows()
             logging.getLogger("up42.workflow").setLevel(logging.INFO)
