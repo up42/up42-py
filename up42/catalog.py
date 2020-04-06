@@ -1,5 +1,4 @@
 import logging
-import os
 from pathlib import Path
 from typing import Dict, Union, List
 
@@ -7,6 +6,7 @@ import geopandas as gpd
 import shapely
 from geojson import Feature, FeatureCollection
 from shapely.geometry import Point, Polygon
+from tqdm import tqdm
 
 from .auth import Auth
 from .tools import Tools
@@ -206,8 +206,8 @@ class Catalog(Tools):
         self,
         image_ids: List[str],
         provider: str = "oneatlas",
-        out_dir: Union[str, Path] = None,
-    ) -> List[Path]:
+        output_directory: Union[str, Path, None] = None,
+    ) -> List[str]:
         """
         Gets the quicklook of scenes, from oneatlas or sobloo.
 
@@ -215,23 +215,27 @@ class Catalog(Tools):
         Args:
             image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
             provider:  One of "oneatlas", "sobloo"
-            out_dir: defaults to desktop.
+            output_directory: The file output directory, defaults to the current working
+                directory.
 
         Returns:
             List of quicklook image output file paths.
         """
         logger.info("Getting quicklook for %s", image_ids)
 
-        if out_dir is None:
-            out_dir = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop")
-        Path(out_dir).mkdir(parents=True, exist_ok=True)
+        if output_directory is None:
+            output_directory = (
+                Path.cwd() / f"project_{self.auth.project_id}" / "catalog"
+            )
+        else:
+            output_directory = Path(output_directory)
+        output_directory.mkdir(parents=True, exist_ok=True)
+        logger.info("Download directory: %s", str(output_directory))
 
         out_paths = []
-        for image_id in image_ids:
-            out_path = (
-                Path(out_dir) / f"quicklook_{image_id}.jpg"
-            )  # TODO: Dependent on provider!? Same for quicklook UP42 results!
-            out_paths.append(out_path)
+        for image_id in tqdm(image_ids):
+            out_path = output_directory / f"quicklook_{image_id}.jpg"
+            out_paths.append(str(out_path))
 
             # TODO: Add sobloo to backend.
             url = (

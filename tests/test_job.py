@@ -112,8 +112,8 @@ def test_download_quicklook(job_mock, jobtask_mock):
 
             quick = job_mock.download_quicklook(tempdir)
             assert len(quick) == 1
-            assert quick[0].exists()
-            assert quick[0].suffix == ".png"
+            assert Path(quick[0]).exists()
+            assert Path(quick[0]).suffix == ".png"
 
 
 def test_get_result_json(job_mock):
@@ -187,7 +187,11 @@ def test_job_download_result(job_mock):
 
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         out_tgz_file = open(out_tgz, "rb")
-        m.get(url=download_url, content=out_tgz_file.read())
+        m.get(
+            url=download_url,
+            content=out_tgz_file.read(),
+            headers={"x-goog-stored-content-length": "163"},
+        )
 
         with tempfile.TemporaryDirectory() as tempdir:
             out_files = job_mock.download_result(tempdir)
@@ -217,3 +221,18 @@ def test_job_download_result_no_tiff_live(auth_live):
         assert Path(out_files[0]).exists()
         assert Path(out_files[0]).suffix == ".nc"
         assert len(out_files) == 1
+
+
+@pytest.mark.skip
+@pytest.mark.live
+def test_job_download_result_live_slow_gcs_new_token(auth_live):
+    job = up42.Job(
+        auth=auth_live,
+        project_id=auth_live.project_id,
+        job_id="99bc9fab-cffa-4010-bdac-2b0620c7e1cb",
+    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        out_files = job.download_result(Path(tempdir))
+        for file in out_files:
+            assert Path(file).exists()
+        assert len(out_files) == 98

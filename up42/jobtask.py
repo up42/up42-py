@@ -1,16 +1,12 @@
-import os
-import tarfile
-import tempfile
 from pathlib import Path
 from typing import Dict, Union, List
 
 import geopandas as gpd
-import requests
-import requests.exceptions
+from tqdm import tqdm
 
 from .auth import Auth
 from .tools import Tools
-from .utils import get_logger
+from .utils import get_logger, _download_result_from_gcs
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
@@ -86,55 +82,61 @@ class JobTask(Tools):
         download_url = response_json["data"]["url"]
         return download_url
 
-    def download_result(self, out_dir: Union[str, Path] = None) -> List[str]:
+    def download_result(
+        self, output_directory: Union[str, Path, None] = None
+    ) -> List[str]:
         """
-        Downloads and unpacks the job task result. Default download to Desktop.
+        Downloads and unpacks the jobtask result. Default download to Desktop.
 
         Args:
-            out_dir: The output directory for the downloaded files.
+            output_directory: The file output directory, defaults to the current working
+                directory.
+        Returns:
+            List of the downloaded results' filepaths.
         """
-        download_url = self._get_download_url()
+        # TODO: Overwrite argument
+        logger.info("Downloading results of jobtask %s", self.jobtask_id)
 
-        # TODO: Add tdqm progress bar
+        if output_directory is None:
+            output_directory = (
+                Path.cwd() / f"project_{self.auth.project_id}" / f"job_{self.job_id}"
+            )
+        else:
+            output_directory = Path(output_directory)
+        output_directory.mkdir(parents=True, exist_ok=True)
+        logger.info("Download directory: %s", str(output_directory))
 
-        if out_dir is None:
-            out_dir = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop")
-        Path(out_dir).mkdir(parents=True, exist_ok=True)
-        logger.info("Downloading results of job %s", self.job_id)
+        out_filepaths = _download_result_from_gcs(
+            func_get_download_url=self._get_download_url,
+            output_directory=output_directory,
+        )
 
-        tgz_file = tempfile.mktemp()
-        with open(tgz_file, "wb") as f:
-            r = requests.get(download_url)
-            f.write(r.content)
-        with tarfile.open(tgz_file) as tgz:
-            files = tgz.getmembers()
-            tif_files = [i for i in files if i.isfile() and i.name.endswith(".tif")]
-            out_filepaths = []
-            for count, f in enumerate(tif_files):  # type: ignore
-                out = tgz.extractfile(f)  # type: ignore
-                out_file = out_dir / Path(f"{self.job_id}_{count}.tif")
-                with open(out_file, "wb") as o:
-                    o.write(out.read())  # type: ignore
-                out_filepaths.append(str(out_file))
-
-        logger.info("Download successful of files %s", out_filepaths)
+        self.result = out_filepaths
         return out_filepaths
 
-    def download_quicklook(self, out_dir: Union[str, Path] = None,) -> List[Path]:
+    def download_quicklook(
+        self, output_directory: Union[str, Path, None] = None,
+    ) -> List[str]:
         """
-        Downloads quicklooks of all job tasks to disk.
+        Downloads quicklooks of the job task to disk.
 
         After download, can be plotted via jobtask.plot_quicklook().
 
         Args:
-            out_dir: Output directory.
+            output_directory: The file output directory, defaults to the current working
+                directory.
 
         Returns:
             The quicklooks filepaths.
         """
-        if out_dir is None:
-            out_dir = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop")
-        Path(out_dir).mkdir(parents=True, exist_ok=True)
+        if output_directory is None:
+            output_directory = (
+                Path.cwd() / f"project_{self.auth.project_id}" / f"job_{self.job_id}"
+            )
+        else:
+            output_directory = Path(output_directory)
+        output_directory.mkdir(parents=True, exist_ok=True)
+        logger.info("Download directory: %s", str(output_directory))
 
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
@@ -143,10 +145,10 @@ class JobTask(Tools):
         response_json = self.auth._request(request_type="GET", url=url)
         quicklook_ids = response_json["data"]
 
-        out_paths: List[Path] = []
-        for ql_id in quicklook_ids:
-            out_path = Path(out_dir) / f"quicklook_{ql_id}"
-            out_paths.append(out_path)
+        out_paths: List[str] = []
+        for ql_id in tqdm(quicklook_ids):
+            out_path = output_directory / f"quicklook_{ql_id}"
+            out_paths.append(str(out_path))
 
             url = (
                 f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"

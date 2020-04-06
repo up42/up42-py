@@ -8,6 +8,7 @@ import geojson
 import geopandas as gpd
 import shapely
 from geojson import Feature, FeatureCollection
+from tqdm import tqdm
 
 from .auth import Auth
 from .job import Job
@@ -58,7 +59,7 @@ class Workflow(Tools):
 
         Currently no data blocks can be attached to other data blocks.
         """
-        last_task = list(self.get_workflow_tasks(basic=True)[-1].keys())[0]
+        last_task = list(self.get_workflow_tasks(basic=True).keys())[-1]  # type: ignore
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/{self.workflow_id}/"
             f"compatible-blocks?parentTaskName={last_task}"
@@ -66,6 +67,9 @@ class Workflow(Tools):
         response_json = self.auth._request(request_type="GET", url=url)
         compatible_blocks = response_json["data"]["blocks"]
         # TODO: Plot diagram of current workflow in green, attachable blocks in red.
+        compatible_blocks = {
+            block["name"]: block["blockId"] for block in compatible_blocks
+        }
         return compatible_blocks
 
     def get_workflow_tasks(self, basic: bool = False) -> Union[List, Dict]:
@@ -87,7 +91,7 @@ class Workflow(Tools):
         logger.info("Got %s tasks/blocks in workflow %s.", len(tasks), self.workflow_id)
 
         if basic:
-            return [{task["name"]: task["id"]} for task in tasks]
+            return {task["name"]: task["id"] for task in tasks}
         else:
             return tasks
 
@@ -154,15 +158,14 @@ class Workflow(Tools):
         """
         Adds or overwrites workflow tasks.
 
-        - Name is arbitrary but best use the block name. Always use :1 to be able to
-        identify the order when two times the same workflow task is used.
-        - API by itself validates if the underlying block for the selected block-id is
-        available.
-
         Args:
             input_tasks: The input tasks, can be provided in the simplified (list of block ids,
                 is automatically transformed to the full version) or full version
                 (dict of block id, block name and parent block name).
+                - Name is arbitrary but best use the block name. Always use :1 to be able to
+                    identify the order when two times the same workflow task is used.
+                - API by itself validates if the underlying block for the selected block-id is
+        available.
 
         Example:
             ```python
@@ -324,9 +327,7 @@ class Workflow(Tools):
         """
         if input_parameters is None:
             raise ValueError(
-                "Select the job_parameters! You can use "
-                ".get_default_parameters() to get the default parameters "
-                "of the workflow."
+                "Select the job_parameters, use workflow.construct_parameters()!"
             )
 
         if isinstance(input_parameters, (str, Path)):
@@ -383,7 +384,7 @@ class Workflow(Tools):
         else:
             jobs = [
                 Job(self.auth, job_id=job["id"], project_id=self.project_id)
-                for job in jobs_json
+                for job in tqdm(jobs_json)
             ]
             return jobs
 

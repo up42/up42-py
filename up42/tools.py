@@ -332,7 +332,7 @@ class Tools:
 
         if basic:
             logger.info(
-                "Getting basic information, use basic=False for all block details."
+                "Getting blocks name and id, use basic=False for all block details."
             )
             blocks_basic = {block["name"]: block["id"] for block in blocks_json}
             if as_dataframe:

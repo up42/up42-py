@@ -1,7 +1,4 @@
 import logging
-import os
-import tarfile
-import tempfile
 from pathlib import Path
 from time import sleep
 from typing import Dict, List, Union
@@ -19,7 +16,7 @@ from rasterio.warp import calculate_default_transform, reproject, Resampling
 from .auth import Auth
 from .jobtask import JobTask
 from .tools import Tools
-from .utils import get_logger, is_notebook, folium_base_map
+from .utils import get_logger, is_notebook, folium_base_map, _download_result_from_gcs
 
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
@@ -119,19 +116,17 @@ class Job(Tools):
         self.auth._request(request_type="POST", url=url)
         logger.info("Job canceled: %s", self.job_id)
 
-    def download_quicklook(self, out_dir=None) -> List[Path]:
+    def download_quicklook(self, output_directory: Union[str, Path, None]) -> List[str]:
         """
-        Conveniance function that downloads the quicklooks of the first/data jobtask.
+        Conveniance function that downloads the quicklooks of the data (dirst) jobtask.
 
         After download, can be plotted via job.plot_quicklook().
         """
-        if out_dir is None:
-            out_dir = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop")
-        Path(out_dir).mkdir(parents=True, exist_ok=True)
-
         # Currently only the first/data task produces quicklooks.
         data_task = self.get_jobtasks()[0]
-        out_paths: List[Path] = data_task.download_quicklook(out_dir=out_dir)  # type: ignore
+        out_paths: List[str] = data_task.download_quicklook(  # type: ignore
+            output_directory=output_directory
+        )  # type: ignore
         self.quicklook = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
 
@@ -169,50 +164,36 @@ class Job(Tools):
         download_url = response_json["data"]["url"]
         return download_url
 
-    def download_result(self, out_dir: Union[str, Path] = None,) -> List[str]:
+    def download_result(
+        self, output_directory: Union[str, Path, None] = None,
+    ) -> List[str]:
         """
         Downloads and unpacks the job result.
 
         Args:
-            out_dir: The output folder. Default download to the Desktop.
+            output_directory: The file output directory, defaults to the current working
+                directory.
 
         Returns:
             List of the downloaded results' filepaths.
         """
         # TODO: Overwrite argument
-        download_url = self._get_download_url()
-
-        if out_dir is None:
-            out_dir = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop")
-        Path(out_dir).mkdir(parents=True, exist_ok=True)
         logger.info("Downloading results of job %s", self.job_id)
 
-        # Download
-        tgz_file = tempfile.mktemp()
-        with open(tgz_file, "wb") as dst_tgz:
-            r = requests.get(download_url)
-            r.raise_for_status()
-            dst_tgz.write(r.content)
-        # Unpack
-        out_filepaths: List[str] = []
-        with tarfile.open(tgz_file) as tar:
-            members = tar.getmembers()
-            files = [
-                i
-                for i in members
-                if i.isfile() and str(Path(i.name).name) != "data.json"
-            ]
-            for file in files:
-                f = tar.extractfile(file)
-                content = f.read()  # type: ignore
-                out_fp = Path(out_dir) / Path(file.name).name
-                with open(out_fp, "wb") as dst:
-                    dst.write(content)
-                out_filepaths.append(str(out_fp))
+        if output_directory is None:
+            output_directory = (
+                Path.cwd() / f"project_{self.auth.project_id}" / f"job_{self.job_id}"
+            )
+        else:
+            output_directory = Path(output_directory)
+        output_directory.mkdir(parents=True, exist_ok=True)
+        logger.info("Download directory: %s", str(output_directory))
 
-        logger.info(
-            "Download successful of %s files %s", len(out_filepaths), out_filepaths
+        out_filepaths = _download_result_from_gcs(
+            func_get_download_url=self._get_download_url,
+            output_directory=output_directory,
         )
+
         self.result = out_filepaths
         return out_filepaths
 

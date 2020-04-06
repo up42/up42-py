@@ -59,10 +59,14 @@ def test_jobtask_download_result(jobtask_mock):
 
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         out_tgz_file = open(out_tgz, "rb")
-        m.get(url=download_url, content=out_tgz_file.read())
+        m.get(
+            url=download_url,
+            content=out_tgz_file.read(),
+            headers={"x-goog-stored-content-length": "221"},
+        )
 
         with tempfile.TemporaryDirectory() as tempdir:
-            out_files = jobtask_mock.download_result(out_dir=tempdir)
+            out_files = jobtask_mock.download_result(output_directory=tempdir)
             for file in out_files:
                 assert Path(file).exists()
             assert len(out_files) == 1
@@ -71,7 +75,7 @@ def test_jobtask_download_result(jobtask_mock):
 @pytest.mark.live
 def test_jobtask_download_result_live(jobtask_live):
     with tempfile.TemporaryDirectory() as tempdir:
-        out_files = jobtask_live.download_result(out_dir=tempdir)
+        out_files = jobtask_live.download_result(output_directory=tempdir)
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 1
@@ -100,14 +104,14 @@ def test_download_quicklook(jobtask_mock):
 
             quick = jobtask_mock.download_quicklook(tempdir)
             assert len(quick) == 1
-            assert quick[0].exists()
-            assert quick[0].suffix == ".png"
+            assert Path(quick[0]).exists()
+            assert Path(quick[0]).suffix == ".png"
 
 
 @pytest.mark.live
 def test_download_quicklook_live(jobtask_live):
     with tempfile.TemporaryDirectory() as tempdir:
-        out_files = jobtask_live.download_quicklook(out_dir=tempdir)
+        out_files = jobtask_live.download_quicklook(output_directory=tempdir)
         assert len(out_files) == 1
         assert Path(out_files[0]).exists()
         assert Path(out_files[0]).suffix == ".png"

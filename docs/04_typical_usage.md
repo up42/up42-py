@@ -183,7 +183,7 @@ job = workflow.create_and_run_job(input_parameters=input_parameters, track_statu
 
 ```python
 # Download job result (default downloads to Desktop). Only works after download is finished.
-results_fp = job.download_result(out_dir=None)
+results_fp = job.download_result(output_directory=None)
 ```
 
 

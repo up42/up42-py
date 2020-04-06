@@ -3,7 +3,10 @@ import copy
 import hashlib
 import logging
 import os
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Callable
+from pathlib import Path
+import tempfile
+import tarfile
 
 import folium.plugins
 import geojson
@@ -12,6 +15,8 @@ import shapely
 from IPython import get_ipython
 from branca.element import CssLink, Element, Figure, JavascriptLink
 from geojson import Feature, FeatureCollection
+import requests
+from tqdm import tqdm
 
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
@@ -51,6 +56,60 @@ def is_notebook() -> bool:
             return False
     except NameError:
         return False  # Standard Python interpreter
+
+
+def _download_result_from_gcs(
+    func_get_download_url: Callable, output_directory: Union[str, Path]
+) -> List[str]:
+    """
+    General download function for results of job and jobtask from cloud storage
+    provider.
+
+    Args:
+        func_get_download_url:
+        output_directory: The file output directory, defaults to the current working
+            directory.
+    """
+    output_directory = Path(output_directory)
+
+    # Download
+    tgz_file = tempfile.mktemp()
+    with open(tgz_file, "wb") as dst_tgz:
+        headers = {"Range": "bytes=0-512"}
+        r = requests.get(func_get_download_url(), headers=headers)
+        bytes_total = int(r.headers["x-goog-stored-content-length"])
+        chunk_size = 10000000  # 10mb
+        # TODO: Find better solution for gcs token issue.
+        for start in tqdm(range(0, bytes_total, chunk_size)):
+            end = start + chunk_size - 1  # Bytes ranges are inclusive
+            headers = {"Range": f"bytes={start}-{end}"}
+            try:
+                r = requests.get(func_get_download_url(), headers=headers)
+                r.raise_for_status()
+                dst_tgz.write(r.content)
+            except requests.exceptions.HTTPError:
+                # Tokens expires before download complete.
+                r = requests.get(func_get_download_url(), headers=headers)
+                dst_tgz.write(r.content)
+
+    # Unpack
+    out_filepaths: List[str] = []
+    with tarfile.open(tgz_file) as tar:
+        members = tar.getmembers()
+        files = [
+            i for i in members if i.isfile() and str(Path(i.name).name) != "data.json"
+        ]
+        for file in files:
+            f = tar.extractfile(file)
+            content = f.read()  # type: ignore
+            out_fp = output_directory / f"result_{Path(file.name).name}"
+            with open(out_fp, "wb") as dst:
+                dst.write(content)
+            out_filepaths.append(str(out_fp))
+
+    logger.info("Download successful of %s files %s", len(out_filepaths), out_filepaths)
+
+    return out_filepaths
 
 
 def folium_base_map(
@@ -278,6 +337,11 @@ def fc_to_query_geometry(
         raise ValueError(
             "geometry_operation needs to be one of bbox", "intersects", "contains",
         )
+    try:
+        if fc["type"] != "FeatureCollection":
+            raise ValueError("Geometry argument only supports Feature Collections!")
+    except (KeyError, TypeError):
+        raise ValueError("Geometry argument only supports Feature Collections!")
 
     # TODO: Handle multipolygons
 
