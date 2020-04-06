@@ -50,6 +50,7 @@ def test_construct_parameters_unsopported_sensor_raises(catalog_mock):
             sensors=["some_unspoorted_sensor"],
         )
 
+
 def test_search(catalog_mock):
     with open(
         Path(__file__).resolve().parent / "mock_data/search_response.json"

@@ -98,7 +98,9 @@ class Catalog(Tools):
         block_filters = []
         for sensor in sensors:
             if sensor not in supported_sensors:
-                raise ValueError("Currently only these sensors are supported: %s", supported_sensors)
+                raise ValueError(
+                    f"Currently only these sensors are supported: {supported_sensors}"
+                )
             for block in blocks_default:
                 if sensor in block.split("-"):
                     block_filters.append(block)
