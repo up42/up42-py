@@ -39,14 +39,6 @@ def get_logger(name, level=logging.INFO):
 logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
 
 
-def hash_password(password):
-    """Hash a password for storing it on disk."""
-    salt = hashlib.sha256(os.urandom(60)).hexdigest().encode("ascii")
-    pwdhash = hashlib.pbkdf2_hmac("sha512", password.encode("utf-8"), salt, 100000)
-    pwdhash = binascii.hexlify(pwdhash)
-    return (salt + pwdhash).decode("ascii")
-
-
 def is_notebook() -> bool:
     """Checks if the Python instance is run in a Jupyter notebook."""
     try:
