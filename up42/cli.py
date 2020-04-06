@@ -529,7 +529,7 @@ def download_results(job, output_directory):
 
 @COMMAND_JOB
 @click.pass_obj
-def get_job_tasks(job):
+def get_jobtasks(job):
     """
     Get the individual items of the job.
     """
@@ -538,7 +538,7 @@ def get_job_tasks(job):
 
 @COMMAND_JOB
 @click.pass_obj
-def get_job_tasks_results_json(job):
+def get_jobtasks_results_json(job):
     """
     Convenience function to get the resulting data.json of all job tasks.
     """
