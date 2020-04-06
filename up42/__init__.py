@@ -16,9 +16,9 @@ from .jobtask import JobTask
 from .catalog import Catalog
 from .utils import get_logger
 
-warnings.simplefilter(action="ignore", category=FutureWarning)
-
 logger = get_logger(__name__, level=logging.INFO)
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
 
 _auth = None
 
