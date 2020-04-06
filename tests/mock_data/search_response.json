@@ -1,0 +1,89 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              13.35980932,
+              52.82825842
+            ],
+            [
+              13.67038728,
+              52.82799681
+            ],
+            [
+              13.66843248,
+              52.48594575
+            ],
+            [
+              13.36198458,
+              52.48425005
+            ],
+            [
+              13.35980932,
+              52.82825842
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "6dffb8be-c2ab-46e3-9c1c-6958a54e4527",
+        "acquisitionDate": "2016-07-16T10:12:26Z",
+        "constellation": "PHR",
+        "providerName": "oneatlas",
+        "blockNames": [
+          "oneatlas-pleiades-fullscene",
+          "oneatlas-pleiades-aoiclipped"
+        ],
+        "cloudCoverage": 12.54,
+        "providerProperties": {
+          "commercialReference": "97",
+          "acquisitionDate": "2016-07-16T10:12:26.056Z",
+          "qualified": false,
+          "acquisitionStation": "FR1",
+          "sourceIdentifier": "DS_PHR1A_201607161011500_FR1_PX_E013N52_0716_03370",
+          "archivingCenter": "FR1",
+          "processingDate": "2018-05-05T01:02:31.290",
+          "parentIdentifier": "DS_PHR1A_201607161012260_FR1_PX_E013N52_0716_03374",
+          "azimuthAngle": 179.9861639114113,
+          "title": "DS_PHR1A_201607161011500_FR1_PX_E013N52_0716_03370",
+          "resolution": 0.5,
+          "workspaceTitle": "Public",
+          "blockNames": [
+            "oneatlas-pleiades-fullscene",
+            "oneatlas-pleiades-aoiclipped"
+          ],
+          "platform": "PHR1A",
+          "productCategory": "image",
+          "spectralRange": "VISIBLE",
+          "processingLevel": "SENSOR",
+          "acquisitionIdentifier": "DS_PHR1A_201607161012260_FR1_PX_E013N52_0716_03374",
+          "productionStatus": "IN_CLOUD",
+          "sensorType": "OPTICAL",
+          "correlationId": "71330287-bca7-4024-832f-754d8e46f81d",
+          "processorName": "DRS-MM V2.6vV2.6",
+          "workspaceName": "public",
+          "id": "6dffb8be-c2ab-46e3-9c1c-6958a54e4527",
+          "publicationDate": "2018-12-04T23:56:49.728416569Z",
+          "illuminationElevationAngle": 56.70265097813063,
+          "productType": "bundle",
+          "expirationDate": "2019-12-04T23:56:49.728416569Z",
+          "workspaceId": "0e33eb50-3404-48ad-b835-b0b4b72a5625",
+          "incidenceAngleAcrossTrack": 11.53906540722151,
+          "cloudCover": 12.54,
+          "format": "image/jp2",
+          "illuminationAzimuthAngle": 153.9064171767454,
+          "incidenceAngleAlongTrack": -1.203590963654628,
+          "incidenceAngle": 11.59835585043974,
+          "processingCenter": "FCMUGC",
+          "organisationName": "AIRBUS DS GEO",
+          "snowCover": 0
+        }
+      },
+      "type": "Feature"
+    }
+  ]
+}

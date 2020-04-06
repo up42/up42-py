@@ -37,7 +37,7 @@ class Catalog(Tools):
 
     # pylint: disable=dangerous-default-value
     @staticmethod
-    def construct_parameter(
+    def construct_parameters(
         geometry: Union[
             Dict, Feature, FeatureCollection, List, gpd.GeoDataFrame, Point, Polygon,
         ],
@@ -55,7 +55,7 @@ class Catalog(Tools):
         max_cloudcover: float = 100,
         sortby: str = "cloudCoverage",
         ascending: bool = True,
-    ):
+    ) -> Dict:
         """
         Follows STAC principles and property names.
 
@@ -213,7 +213,7 @@ class Catalog(Tools):
 
         After download, can be plotted via catalog.plot_quicklook().
         Args:
-            image_ids: provider image_id
+            image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
             provider:  One of "oneatlas", "sobloo"
             output_directory: The file output directory, defaults to the current working
                 directory.

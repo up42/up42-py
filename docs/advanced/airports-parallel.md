@@ -101,7 +101,7 @@ workflow.get_workflow_tasks(basic=True)
 # Run jobs in parallel
 jobs = []
 for airport in airports.geometry:
-    input_parameters = workflow.construct_parameter(geometry=airport, geometry_operation="bbox")
+    input_parameters = workflow.construct_parameters(geometry=airport, geometry_operation="bbox")
     input_parameters[f"{selected_block}:1"]["max_cloud_cover"] = 10
     
     job = workflow.create_and_run_job(input_parameters=input_parameters)

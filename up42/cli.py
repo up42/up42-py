@@ -634,7 +634,7 @@ def construct_parameters(
     start_date_str = start_date.strftime("%Y-%m-%d")
     end_date_str = end_date.strftime("%Y-%m-%d")
     logger.info(
-        catalog.construct_parameter(
+        catalog.construct_parameters(
             geometry, start_date_str, end_date_str, sensors, limit, max_cloud_cover
         )
     )
