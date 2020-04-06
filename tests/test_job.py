@@ -112,8 +112,8 @@ def test_download_quicklook(job_mock, jobtask_mock):
 
             quick = job_mock.download_quicklook(tempdir)
             assert len(quick) == 1
-            assert quick[0].exists()
-            assert quick[0].suffix == ".png"
+            assert Path(quick[0]).exists()
+            assert Path(quick[0]).suffix == ".png"
 
 
 def test_get_result_json(job_mock):

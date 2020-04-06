@@ -271,7 +271,8 @@ def test_download_result_from_gcs():
         )
         with tempfile.TemporaryDirectory() as tempdir:
             out_files = _download_result_from_gcs(
-                func_get_download_url=_simplified_get_download_url, out_dir=tempdir
+                func_get_download_url=_simplified_get_download_url,
+                output_directory=tempdir,
             )
             for file in out_files:
                 assert Path(file).exists()

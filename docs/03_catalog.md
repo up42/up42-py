@@ -48,7 +48,7 @@ catalog.plot_coverage(scenes=search_results,
 ```python
 catalog.download_quicklook(image_ids=search_results.id.to_list(), 
                            provider="oneatlas", 
-                           out_dir=None)
+                           output_directory=None)
 ```
 
 

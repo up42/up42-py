@@ -115,7 +115,7 @@ for job in jobs:
 outdir = Path.cwd()
 out_filepaths=[]
 for job in jobs:
-    fp = job.download_result(out_dir=outdir / "img")
+    fp = job.download_result(output_directory=outdir / "img")
     out_filepaths.append(fp[0])
 
 print("finished")

@@ -16,6 +16,7 @@ from IPython import get_ipython
 from branca.element import CssLink, Element, Figure, JavascriptLink
 from geojson import Feature, FeatureCollection
 import requests
+from tqdm import tqdm
 
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
@@ -58,15 +59,18 @@ def is_notebook() -> bool:
 
 
 def _download_result_from_gcs(
-    func_get_download_url: Callable, out_dir: Union[str, Path, None]
+    func_get_download_url: Callable, output_directory: Union[str, Path]
 ) -> List[str]:
     """
     General download function for results of job and jobtask from cloud storage
     provider.
+
+    Args:
+        func_get_download_url:
+        output_directory: The file output directory, defaults to the current working
+            directory.
     """
-    if out_dir is None:
-        out_dir = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop")
-    Path(out_dir).mkdir(parents=True, exist_ok=True)
+    output_directory = Path(output_directory)
 
     # Download
     tgz_file = tempfile.mktemp()
@@ -76,7 +80,7 @@ def _download_result_from_gcs(
         bytes_total = int(r.headers["x-goog-stored-content-length"])
         chunk_size = 10000000  # 10mb
         # TODO: Find better solution for gcs token issue.
-        for start in range(0, bytes_total, chunk_size):
+        for start in tqdm(range(0, bytes_total, chunk_size)):
             end = start + chunk_size - 1  # Bytes ranges are inclusive
             headers = {"Range": f"bytes={start}-{end}"}
             try:
@@ -98,10 +102,12 @@ def _download_result_from_gcs(
         for file in files:
             f = tar.extractfile(file)
             content = f.read()  # type: ignore
-            out_fp = Path(out_dir) / Path(file.name).name
+            out_fp = output_directory / f"result_{Path(file.name).name}"
             with open(out_fp, "wb") as dst:
                 dst.write(content)
             out_filepaths.append(str(out_fp))
+
+    logger.info("Download successful of %s files %s", len(out_filepaths), out_filepaths)
 
     return out_filepaths
 
