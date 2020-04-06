@@ -140,6 +140,7 @@ class Auth(Tools):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
             "cache-control": "no-cache",
+            "X-UP42-info": "python/1.0",
         }
         return headers
 
