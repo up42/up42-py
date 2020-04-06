@@ -18,6 +18,28 @@ logger = get_logger(__name__)
 # Scenes() would be dataframe with quicklook preview images in it.
 
 
+blocks_default = [
+    "oneatlas-pleiades-fullscene",
+    "oneatlas-pleiades-aoiclipped",
+    "oneatlas-spot-fullscene",
+    "oneatlas-spot-aoiclipped",
+    "sobloo-sentinel1-l1c-grd-full",
+    "sobloo-sentinel1-l1c-grd-aoiclipped",
+    "sobloo-sentinel1-l1c-slc-full",
+    "sobloo-sentinel2-lic-msi-full",
+    "sobloo-sentinel2-lic-msi-aoiclipped",
+    "sobloo-sentinel3-full",
+    "sobloo-sentinel5-preview-full",
+]
+supported_sensors = [
+    "pleiades",
+    "spot",
+    "sentinel1",
+    "sentinel2",
+    "sentinel3",
+    "sentinel5",
+]
+
 # pylint: disable=duplicate-code
 class Catalog(Tools):
     def __init__(self, auth: Auth, backend: str = "ONE_ATLAS"):
@@ -28,7 +50,7 @@ class Catalog(Tools):
             construct_parameter, search, download_quicklook
         """
         self.auth = auth
-        self.querystring = {"backend": backend}  # TODO: Sobloo
+        self.querystring = {"backend": backend}
         self.quicklook = None
 
     def __repr__(self):
@@ -73,28 +95,6 @@ class Catalog(Tools):
             The constructed parameter dictionary.
         """
         datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
-
-        blocks_default = [
-            "oneatlas-pleiades-fullscene",
-            "oneatlas-pleiades-aoiclipped",
-            "oneatlas-spot-fullscene",
-            "oneatlas-spot-aoiclipped",
-            "sobloo-sentinel1-l1c-grd-full",
-            "sobloo-sentinel1-l1c-grd-aoiclipped",
-            "sobloo-sentinel1-l1c-slc-full",
-            "sobloo-sentinel2-lic-msi-full",
-            "sobloo-sentinel2-lic-msi-aoiclipped",
-            "sobloo-sentinel3-full",
-            "sobloo-sentinel5-preview-full",
-        ]
-        supported_sensors = [
-            "pleiades",
-            "spot",
-            "sentinel1",
-            "sentinel2",
-            "sentinel3",
-            "sentinel5",
-        ]
         block_filters = []
         for sensor in sensors:
             if sensor not in supported_sensors:
