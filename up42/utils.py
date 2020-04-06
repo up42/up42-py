@@ -22,6 +22,9 @@ LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 
 def get_logger(name, level=logging.INFO):
+    """
+    Use level=logging.CRITICAL to disable temporarily.
+    """
     logger = logging.getLogger(name)  # pylint: disable=redefined-outer-name
     logger.setLevel(level)
     # create console handler and set level to debug

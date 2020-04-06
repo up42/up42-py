@@ -8,7 +8,7 @@ from .auth import Auth
 from .tools import Tools
 from .utils import get_logger, _download_result_from_gcs
 
-logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
+logger = get_logger(__name__)
 
 
 # pylint: disable=duplicate-code

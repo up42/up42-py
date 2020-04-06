@@ -15,7 +15,7 @@ from .tools import Tools
 from .utils import get_logger
 
 # TODO: Logger produces multiple printouts in Jupyter Lab, known issue.
-logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
+logger = get_logger(__name__)
 
 
 class Auth(Tools):

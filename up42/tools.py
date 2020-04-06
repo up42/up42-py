@@ -15,7 +15,7 @@ from rasterio.plot import show
 
 from .utils import get_logger, folium_base_map, DrawFoliumOverride, is_notebook
 
-logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
+logger = get_logger(__name__)
 
 
 # pylint: disable=no-member, duplicate-code

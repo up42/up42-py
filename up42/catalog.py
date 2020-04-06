@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 from typing import Dict, Union, List
 
@@ -12,7 +11,7 @@ from .auth import Auth
 from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
-logger = get_logger(__name__, level=logging.INFO)
+logger = get_logger(__name__)
 
 
 # TODO: Midterm add catalog result class? Scenes() etc. that also as feedback to workflow input.

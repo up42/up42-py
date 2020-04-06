@@ -18,7 +18,7 @@ from .jobtask import JobTask
 from .tools import Tools
 from .utils import get_logger, is_notebook, folium_base_map, _download_result_from_gcs
 
-logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
+logger = get_logger(__name__)
 
 
 # pylint: disable=duplicate-code

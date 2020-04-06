@@ -8,7 +8,7 @@ from .tools import Tools
 from .utils import get_logger
 from .workflow import Workflow
 
-logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
+logger = get_logger(__name__)
 
 
 class Project(Tools):

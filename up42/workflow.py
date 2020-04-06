@@ -15,7 +15,7 @@ from .job import Job
 from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
-logger = get_logger(__name__)  # level=logging.CRITICAL  #INFO
+logger = get_logger(__name__)
 
 
 class Workflow(Tools):
