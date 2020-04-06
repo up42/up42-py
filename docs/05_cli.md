@@ -95,7 +95,7 @@ up42 job download-quicklooks .
 ```
 Or download and unpack the results:
 ```bash
-up42 job download-result .
+up42 job download-results .
 ```
 
 You can also print out the logs of the job:

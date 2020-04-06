@@ -1,11 +1,6 @@
 # Quickstart
 
 
-```python
-%load_ext autoreload
-%autoreload 2
-```
-
 ## Package Overview
 
 - The UP42 Python SDK uses six object classes, representing the **hierarchical structure** of the UP42 platform:
@@ -72,8 +67,8 @@ workflow.add_workflow_tasks(input_tasks=input_tasks)
 aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
 input_parameters = workflow.construct_parameters(geometry=aoi, 
                                                  geometry_operation="bbox", 
-                                                 start_date="2020-01-01",
-                                                 end_date="2020-01-20",
+                                                 start_date="2018-01-01",
+                                                 end_date="2020-12-31",
                                                  limit=1)
 input_parameters
 ```
@@ -114,27 +109,10 @@ job.track_status()
 job.download_results()
 ```
 
-    2020-04-06 17:02:05,563 - up42.job - INFO - Downloading results of job 8897a5a4-f35a-4a3b-9c70-c2d01af097b7
-    2020-04-06 17:02:05,564 - up42.job - INFO - Download directory: /Users/christoph.rieke/repos/up42-py/examples/project_8956d18d-33bc-47cb-93bd-0055ff21da8f/job_8897a5a4-f35a-4a3b-9c70-c2d01af097b7
-    100%|██████████| 1/1 [00:00<00:00,  1.22it/s]
-    2020-04-06 17:02:07,404 - up42.utils - INFO - Download successful of 1 files ['/Users/christoph.rieke/repos/up42-py/examples/project_8956d18d-33bc-47cb-93bd-0055ff21da8f/job_8897a5a4-f35a-4a3b-9c70-c2d01af097b7/result_57d173b2-1d75-446b-9e9a-877526fe5af6.tif']
-
-
-
-
-
-    ['/Users/christoph.rieke/repos/up42-py/examples/project_8956d18d-33bc-47cb-93bd-0055ff21da8f/job_8897a5a4-f35a-4a3b-9c70-c2d01af097b7/result_57d173b2-1d75-446b-9e9a-877526fe5af6.tif']
-
-
-
 
 ```python
 job.plot_results()
 ```
-
-
-![png](output_10_0.png)
-
 
 
 ```python

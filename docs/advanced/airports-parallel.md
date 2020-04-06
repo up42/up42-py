@@ -74,6 +74,7 @@ project
 
 
 ```python
+# Only works when you have added your credit card information to the UP42 account.
 project.update_project_settings(max_concurrent_jobs=10)
 ```
 
@@ -96,6 +97,8 @@ workflow.get_workflow_tasks(basic=True)
 
 ### Run jobs in parallel
 
+Very crude, this will soon be available in the API in one command!
+
 
 ```python
 # Run jobs in parallel
@@ -115,7 +118,7 @@ for job in jobs:
 outdir = Path.cwd()
 out_filepaths=[]
 for job in jobs:
-    fp = job.download_results(output_directory=outdir / "img")
+    fp = job.download_results(out_dir=outdir / "img")
     out_filepaths.append(fp[0])
 
 print("finished")
