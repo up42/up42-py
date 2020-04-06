@@ -47,11 +47,11 @@ class Catalog(Tools):
         for satellite image scenes for different sensors and criteria like cloud cover etc.
 
         Public Methods:
-            construct_parameter, search, download_quicklook
+            construct_parameter, search, download_quicklooks
         """
         self.auth = auth
         self.querystring = {"backend": backend}
-        self.quicklook = None
+        self.quicklooks = None
 
     def __repr__(self):
         return f"Catalog(querystring={self.querystring}, auth={self.auth})"
@@ -198,16 +198,16 @@ class Catalog(Tools):
         else:
             return df.__geo_interface__
 
-    def download_quicklook(
+    def download_quicklooks(
         self,
         image_ids: List[str],
         provider: str = "oneatlas",
         output_directory: Union[str, Path, None] = None,
     ) -> List[str]:
         """
-        Gets the quicklook of scenes, from oneatlas or sobloo.
+        Gets the quicklooks of scenes, from oneatlas or sobloo.
 
-        After download, can be plotted via catalog.plot_quicklook().
+        After download, can be plotted via catalog.plot_quicklooks().
         Args:
             image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
             provider:  One of "oneatlas", "sobloo"
@@ -217,7 +217,7 @@ class Catalog(Tools):
         Returns:
             List of quicklook image output file paths.
         """
-        logger.info("Getting quicklook for %s", image_ids)
+        logger.info("Getting quicklooks for image_ids %s", image_ids)
 
         if output_directory is None:
             output_directory = (
@@ -243,5 +243,5 @@ class Catalog(Tools):
                 for chunk in response:
                     dst.write(chunk)
 
-        self.quicklook = out_paths  # pylint: disable=attribute-defined-outside-init
+        self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths

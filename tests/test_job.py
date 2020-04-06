@@ -110,7 +110,7 @@ def test_download_quicklook(job_mock, jobtask_mock):
 
             m.get(url, content=open(quicklook_file, "rb").read())
 
-            quick = job_mock.download_quicklook(tempdir)
+            quick = job_mock.download_quicklooks(tempdir)
             assert len(quick) == 1
             assert Path(quick[0]).exists()
             assert Path(quick[0]).suffix == ".png"

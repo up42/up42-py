@@ -102,7 +102,7 @@ def test_download_quicklook(jobtask_mock):
 
             m.get(url, content=open(quicklook_file, "rb").read())
 
-            quick = jobtask_mock.download_quicklook(tempdir)
+            quick = jobtask_mock.download_quicklooks(tempdir)
             assert len(quick) == 1
             assert Path(quick[0]).exists()
             assert Path(quick[0]).suffix == ".png"
@@ -111,7 +111,7 @@ def test_download_quicklook(jobtask_mock):
 @pytest.mark.live
 def test_download_quicklook_live(jobtask_live):
     with tempfile.TemporaryDirectory() as tempdir:
-        out_files = jobtask_live.download_quicklook(output_directory=tempdir)
+        out_files = jobtask_live.download_quicklooks(output_directory=tempdir)
         assert len(out_files) == 1
         assert Path(out_files[0]).exists()
         assert Path(out_files[0]).suffix == ".png"

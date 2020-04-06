@@ -27,11 +27,11 @@ class Tools:
         They can be accessed from every object and also from the imported up42 package directly.
 
         Public methods:
-            read_vector_file, get_example_aoi, draw_aoi, plot_coverage, plot_quicklook
+            read_vector_file, get_example_aoi, draw_aoi, plot_coverage, plot_quicklooks
         """
         if auth:
             self.auth = auth
-        self.quicklook = None
+        self.quicklooks = None
         self.result = None
 
     # pylint: disable=no-self-use
@@ -188,11 +188,11 @@ class Tools:
         ax.set_axis_off()
         plt.show()
 
-    def plot_quicklook(
+    def plot_quicklooks(
         self, figsize: Tuple[int, int] = (8, 8), filepaths: List = None
     ) -> None:
         """
-        Plots the downloaded quicklooks (filepaths saved to self.quicklook of the
+        Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
         respective object, e.g. job, catalog).
 
         Args:
@@ -203,11 +203,11 @@ class Tools:
 
         # TODO: Remove empty axes & give title option.
         if filepaths is None:
-            if self.quicklook is None:
+            if self.quicklooks is None:
                 raise ValueError(
-                    "You first need to download the quicklooks via .download_quicklook()."
+                    "You first need to download the quicklooks via .download_quicklooks()."
                 )
-            filepaths = self.quicklook
+            filepaths = self.quicklooks
 
         if len(filepaths) < 2:
             nrows, ncols = 1, 1

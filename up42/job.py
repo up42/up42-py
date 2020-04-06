@@ -30,14 +30,14 @@ class Job(Tools):
         Jobs (Workflows that have been run as Jobs).
 
         Public Methods:
-            get_status, track_status, cancel_job, download_quicklook, get_result_json
+            get_status, track_status, cancel_job, download_quicklooks, get_result_json
             download_result, upload_result_to_bucket, map_result,
             get_log, get_jobtasks, get_jobtasks_result_json
         """
         self.auth = auth
         self.project_id = project_id
         self.job_id = job_id
-        self.quicklook = None
+        self.quicklooks = None
         self.result = None
         if order_ids is None:
             self.order_ids = [""]
@@ -116,18 +116,20 @@ class Job(Tools):
         self.auth._request(request_type="POST", url=url)
         logger.info("Job canceled: %s", self.job_id)
 
-    def download_quicklook(self, output_directory: Union[str, Path, None]) -> List[str]:
+    def download_quicklooks(
+        self, output_directory: Union[str, Path, None]
+    ) -> List[str]:
         """
         Conveniance function that downloads the quicklooks of the data (dirst) jobtask.
 
-        After download, can be plotted via job.plot_quicklook().
+        After download, can be plotted via job.plot_quicklooks().
         """
         # Currently only the first/data task produces quicklooks.
         data_task = self.get_jobtasks()[0]
-        out_paths: List[str] = data_task.download_quicklook(  # type: ignore
+        out_paths: List[str] = data_task.download_quicklooks(  # type: ignore
             output_directory=output_directory
         )  # type: ignore
-        self.quicklook = out_paths  # pylint: disable=attribute-defined-outside-init
+        self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
 
     def get_result_json(

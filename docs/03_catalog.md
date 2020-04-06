@@ -46,14 +46,14 @@ catalog.plot_coverage(scenes=search_results,
 
 
 ```python
-catalog.download_quicklook(image_ids=search_results.id.to_list(), 
+catalog.download_quicklooks(image_ids=search_results.id.to_list(), 
                            provider="oneatlas", 
                            output_directory=None)
 ```
 
 
 ```python
-catalog.plot_quicklook(figsize=(20,20))
+catalog.plot_quicklooks(figsize=(20,20))
 ```
 
 

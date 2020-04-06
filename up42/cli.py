@@ -507,11 +507,11 @@ def cancel_job(job):
     type=click.Path(exists=True, writable=True, file_okay=False, resolve_path=True),
 )
 @click.pass_obj
-def download_quicklook(job, output_directory):
+def download_quicklooks(job, output_directory):
     """
-    Download a job quicklook.
+    Download a job's quicklooks.
     """
-    logger.info(job.download_quicklook(output_directory))
+    logger.info(job.download_quicklooks(output_directory))
 
 
 @COMMAND_JOB
