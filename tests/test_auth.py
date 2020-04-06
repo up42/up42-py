@@ -1,3 +1,4 @@
+import io
 import json
 from pathlib import Path
 
@@ -75,10 +76,14 @@ def test_get_token_project_live(auth_live):
 
 
 def test_generate_headers(auth_mock_no_request):
+    version = io.open(
+        Path(__file__).resolve().parents[1] / "up42/_version.txt", encoding="utf-8"
+    ).read()
     expected_headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer token_1011",
         "cache-control": "no-cache",
+        "X-UP42-info": f"python/{version}",
     }
     assert (
         auth_mock_no_request._generate_headers(token="token_1011") == expected_headers
