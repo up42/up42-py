@@ -11,4 +11,5 @@ folium
 branca
 matplotlib
 descartes
+Ipython
 jupyterlab
