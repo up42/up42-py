@@ -64,33 +64,34 @@ def auth(auth):
     """
     Check authentication.
     """
-    click.echo(
-        click.style(
-            """
-                                                     ▓▌  ▓▀▀▓
-            ╟▓▓▓▓▌     ╟▓▓▓▓▌  ▓▓▓▓▓▓▓▓▓▓▓▓▄       ▄▀▀▌    ╓▓
-            ▓▓▓▓▓▌     ▓▓▓▓▓▌  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓   ,▓▌╓▓▌,  ▓▀
-            ▓▓▓▓▓▌     ▓▓▓▓▓▌  ▓▓▓▓▓    ╘▀▓▓▓▓▓      ▀▀  ████═
-            ▓▓▓▓▓▌     ▓▓▓▓▓▌  ▓▓▓▓▌      ▀▓▓▓▓▌
-            ╫▓▓▓▓▓     ▓▓▓▓▓▌  ▓▓▓▓▌      ▓▓▓▓▓▌
-             ▓▓▓▓▓▓▄▄▄▓▓▓▓▓▓   ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▀
-              █▓▓▓▓▓▓▓▓▓▓▓▀`   ▓▓▓▓▓▓▓▓▓▓▓▓▓▀
-                ▀▀█▓▓▓█▀▀      ▓▓▓▓▓▀▀▀▀▀▀'
-                               ▓▓▓▀
-                                └
+    if auth:
+        click.echo(
+            click.style(
+                """
+                                                         ▓▌  ▓▀▀▓
+                ╟▓▓▓▓▌     ╟▓▓▓▓▌  ▓▓▓▓▓▓▓▓▓▓▓▓▄       ▄▀▀▌    ╓▓
+                ▓▓▓▓▓▌     ▓▓▓▓▓▌  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓   ,▓▌╓▓▌,  ▓▀
+                ▓▓▓▓▓▌     ▓▓▓▓▓▌  ▓▓▓▓▓    ╘▀▓▓▓▓▓      ▀▀  ████═
+                ▓▓▓▓▓▌     ▓▓▓▓▓▌  ▓▓▓▓▌      ▀▓▓▓▓▌
+                ╫▓▓▓▓▓     ▓▓▓▓▓▌  ▓▓▓▓▌      ▓▓▓▓▓▌
+                 ▓▓▓▓▓▓▄▄▄▓▓▓▓▓▓   ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▀
+                  █▓▓▓▓▓▓▓▓▓▓▓▀`   ▓▓▓▓▓▓▓▓▓▓▓▓▓▀
+                    ▀▀█▓▓▓█▀▀      ▓▓▓▓▓▀▀▀▀▀▀'
+                                   ▓▓▓▀
+                                    └
 
-    """,
-            fg="blue",
+        """,
+                fg="blue",
+            )
         )
-    )
-
-    logger.info(auth)
-    # TODO: fail if auth is bad
-    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    logger.info("Run the following commands to persist with this authentication:")
-    logger.info(f"export UP42_PROJECT_ID={auth.project_id}")
-    logger.info(f"export UP42_PROJECT_API_KEY={auth.project_api_key}")
-    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        logger.info(auth)
+        logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        logger.info("Run the following commands to persist with this authentication:")
+        logger.info(f"export UP42_PROJECT_ID={auth.project_id}")
+        logger.info(f"export UP42_PROJECT_API_KEY={auth.project_api_key}")
+        logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    else:
+        logger.error("Unable to authenticate! Check project keys or config file.")
 
 
 @COMMAND
@@ -100,24 +101,27 @@ def config(auth, env):
     """
     Create a config file.
     """
-    config_path = Path("~/UP42_CONFIG.json")
-    config_path = config_path.expanduser()
+    if auth:
+        config_path = Path("~/UP42_CONFIG.json")
+        config_path = config_path.expanduser()
 
-    logger.info(f"Saving config to {config_path}")
+        logger.info(f"Saving config to {config_path}")
 
-    json_config = {
-        "project_id": auth.project_id,
-        "project_api_key": auth.project_api_key,
-    }
+        json_config = {
+            "project_id": auth.project_id,
+            "project_api_key": auth.project_api_key,
+        }
 
-    with open(config_path, "w") as cfg:
-        json.dump(json_config, cfg)
+        with open(config_path, "w") as cfg:
+            json.dump(json_config, cfg)
 
-    auth = Auth(cfg_file=config_path, env=env)
-    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    logger.info("Run the following command to persist with this authentication:")
-    logger.info(f"export UP42_CFG_FILE={auth.cfg_file}")
-    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        auth = Auth(cfg_file=config_path, env=env)
+        logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        logger.info("Run the following command to persist with this authentication:")
+        logger.info(f"export UP42_CFG_FILE={auth.cfg_file}")
+        logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    else:
+        logger.error("Unable to authenticate! Check project keys or config file.")
 
 
 # Tools
