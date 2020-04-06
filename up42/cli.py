@@ -27,6 +27,13 @@ def pprint_json(obj, indent=2):
     return "\n" + json.dumps(obj, indent=indent, sort_keys=True)
 
 
+def cfg_default(defult_path="./config.json"):
+    if Path(defult_path).exists():
+        return defult_path
+    else:
+        return
+
+
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.option(
     "-pid",
@@ -46,8 +53,10 @@ def pprint_json(obj, indent=2):
     "-cfg",
     "--config-file",
     "cfg_file",
+    type=click.Path(),
+    default=cfg_default(),
     envvar="UP42_CFG_FILE",
-    help="File path to the cfg.json with {project_id: '...', project_api_key: '...'}",
+    help="File path to the config.json with {project_id: '...', project_api_key: '...'}",
 )
 @click.option("--env", default="com")
 @click.pass_context
@@ -106,9 +115,7 @@ def config(auth, env):
     Create a config file.
     """
     if auth:
-        config_path = Path("~/UP42_CONFIG.json")
-        config_path = config_path.expanduser()
-
+        config_path = Path("./config.json").resolve()
         logger.info(f"Saving config to {config_path}")
 
         json_config = {
@@ -119,7 +126,7 @@ def config(auth, env):
         with open(config_path, "w") as cfg:
             json.dump(json_config, cfg)
 
-        auth = Auth(cfg_file=config_path, env=env)
+        auth = Auth(cfg_file=str(config_path), env=env)
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         logger.info("Run the following command to persist with this authentication:")
         logger.info(f"export UP42_CFG_FILE={auth.cfg_file}")
