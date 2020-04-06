@@ -22,6 +22,9 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], show_default=True)
 # For usage of fstrings
 # pylint: disable=logging-format-interpolation
 
+def pprint_json(obj, indent=2):
+    return "\n" + json.dumps(obj, indent=indent, sort_keys=True)
+
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.option(
@@ -141,7 +144,7 @@ def get_blocks(auth, block_type, basic):
     """
     Get public blocks information.
     """
-    logger.info(Tools(auth).get_blocks(block_type, basic))
+    logger.info(pprint_json(Tools(auth).get_blocks(block_type, basic)))
 
 
 def blocks_from_context():
@@ -166,7 +169,7 @@ def get_block_details(auth, block_name):
     """
     Get details of block by block name.
     """
-    logger.info(Tools(auth).get_block_details(Tools(auth).get_blocks()[block_name]))
+    logger.info(pprint_json(Tools(auth).get_block_details(Tools(auth).get_blocks()[block_name])))
 
 
 @COMMAND
@@ -176,7 +179,7 @@ def validate_manifest(auth, manifest_json):
     """
     Validate a block manifest.
     """
-    logger.info(Tools(auth).validate_manifest(manifest_json))
+    logger.info(pprint_json(Tools(auth).validate_manifest(manifest_json)))
 
 
 # Project
@@ -212,7 +215,7 @@ def get_workflows(project):
     """
     Get the project workflows.
     """
-    logger.info(project.get_workflows(return_json=True))
+    logger.info(pprint_json(project.get_workflows(return_json=True)))
 
 
 @COMMAND_PROJECT
@@ -221,7 +224,7 @@ def get_project_settings(project):
     """
     Get the project settings.
     """
-    logger.info(project.get_project_settings())
+    logger.info(pprint_json(project.get_project_settings()))
 
 
 @COMMAND_PROJECT
@@ -318,7 +321,7 @@ def workflow_get_info(workflow):
     """
     Get information about the workflow.
     """
-    logger.info(workflow.info)
+    logger.info(pprint_json(workflow.info))
 
 
 @COMMAND_WORKFLOW
@@ -373,7 +376,7 @@ def get_jobs(workflow):
     """
     Get the jobs ran with this workflow.
     """
-    logger.info(workflow.get_jobs(return_json=True))
+    logger.info(pprint_json(workflow.get_jobs(return_json=True)))
 
 
 @COMMAND_WORKFLOW
@@ -385,7 +388,7 @@ def get_workflow_tasks(workflow, basic):
     """
     Get the workflow tasks list (DAG).
     """
-    logger.info(workflow.get_workflow_tasks(basic=basic))
+    logger.info(pprint_json(workflow.get_workflow_tasks(basic=basic)))
 
 
 @COMMAND_WORKFLOW
@@ -394,7 +397,7 @@ def get_parameter_info(workflow):
     """
     Get info about the parameters of each task in the workflow to make it easy to construct the desired parameters.
     """
-    logger.info(workflow.get_parameter_info())
+    logger.info(pprint_json(workflow.get_parameter_info()))
 
 
 @COMMAND_WORKFLOW
@@ -403,7 +406,7 @@ def get_compatible_blocks(workflow):
     """
     Get all compatible blocks for the current workflow.
     """
-    logger.info(workflow.get_compatible_blocks())
+    logger.info(pprint_json(workflow.get_compatible_blocks()))
 
 
 @COMMAND_WORKFLOW
@@ -474,7 +477,7 @@ def job_get_info(job):
     """
     Get information about the job.
     """
-    logger.info(job.info)
+    logger.info(pprint_json(job.info))
 
 
 @COMMAND_JOB
@@ -520,7 +523,7 @@ def get_job_tasks(job):
     """
     Get the individual items of the job.
     """
-    logger.info(job.get_jobtasks(return_json=True))
+    logger.info(pprint_json(job.get_jobtasks(return_json=True)))
 
 
 @COMMAND_JOB
@@ -529,7 +532,7 @@ def get_job_tasks_result_json(job):
     """
     Convenience function to get the resulting data.json of all job tasks.
     """
-    logger.info(job.get_jobtasks_result_json())
+    logger.info(pprint_json(job.get_jobtasks_result_json()))
 
 
 @COMMAND_JOB
@@ -547,7 +550,7 @@ def get_result_json(job):
     """
     Get the job result data.json.
     """
-    logger.info(job.get_result_json())
+    logger.info(pprint_json(job.get_result_json()))
 
 
 @COMMAND_JOB
@@ -638,9 +641,9 @@ def construct_parameters(
     start_date_str = start_date.strftime("%Y-%m-%d")
     end_date_str = end_date.strftime("%Y-%m-%d")
     logger.info(
-        catalog.construct_parameters(
+        pprint_json(catalog.construct_parameters(
             geometry, start_date_str, end_date_str, sensors, limit, max_cloud_cover
-        )
+        ))
     )
 
 
@@ -653,4 +656,4 @@ def search(catalog, search_parameters_json):
     the matching scenes. Generate search parameters with
     'up42 catalog construct-parameter'.
     """
-    logger.info(catalog.search(json.load(search_parameters_json), as_dataframe=False))
+    logger.info(pprint_json(catalog.search(json.load(search_parameters_json), as_dataframe=False)))
