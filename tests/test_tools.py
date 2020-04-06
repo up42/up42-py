@@ -110,7 +110,7 @@ def test_get_blocks(tools_mock):
 def test_plot_result_not_accepted_file_format_raises():
     filepaths = [Path("abc/123.hdf", "abc/123.json")]
     with pytest.raises(ValueError):
-        Tools().plot_result(filepaths=filepaths)
+        Tools().plot_results(filepaths=filepaths)
 
 
 @pytest.mark.live

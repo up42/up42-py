@@ -21,7 +21,7 @@ class JobTask(Tools):
         block in the workflow).
 
         Public Methods:
-            get_results_json, download_result, download_quicklooks
+            get_results_json, download_results, download_quicklooks
         """
         self.auth = auth
         self.project_id = project_id

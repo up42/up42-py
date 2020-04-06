@@ -131,4 +131,4 @@ def plot_results(
     titles: List[str] = None,
 ) -> None:
     tools = Tools(auth=_auth)
-    tools.plot_result(figsize, filepaths, titles)
+    tools.plot_results(figsize, filepaths, titles)

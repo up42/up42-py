@@ -231,7 +231,7 @@ class Tools:
         plt.tight_layout()
         plt.show()
 
-    def plot_result(
+    def plot_results(
         self,
         figsize: Tuple[int, int] = (8, 8),
         filepaths: List[Union[str, Path]] = None,
