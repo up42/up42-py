@@ -123,7 +123,7 @@ def test_get_result_json(job_mock):
             f"/outputs/data-json/"
         )
         m.get(url, json={"type": "FeatureCollection", "features": []})
-        assert job_mock.get_result_json() == {
+        assert job_mock.get_results_json() == {
             "type": "FeatureCollection",
             "features": [],
         }
@@ -141,7 +141,7 @@ def test_get_log(job_mock, jobtask_mock):
             f"{job_mock.job_id}/tasks/{jobtask_mock.jobtask_id}/logs"
         )
         m.get(url_log, json="")
-        assert job_mock.get_log(as_return=True)[jobtask_mock.jobtask_id] == ""
+        assert job_mock.get_logs(as_return=True)[jobtask_mock.jobtask_id] == ""
 
 
 def test_get_jobtasks(job_mock, jobtask_mock):
@@ -168,7 +168,7 @@ def test_get_jobtasks_result_json(job_mock, jobtask_mock):
             f"/tasks/{jobtask_mock.jobtask_id}/outputs/data-json"
         )
         m.get(url, json={"type": "FeatureCollection", "features": [],})
-        res = job_mock.get_jobtasks_result_json()
+        res = job_mock.get_jobtasks_results_json()
         assert len(res) == 1
         assert res[jobtask_mock.jobtask_id] == {
             "type": "FeatureCollection",
@@ -194,7 +194,7 @@ def test_job_download_result(job_mock):
         )
 
         with tempfile.TemporaryDirectory() as tempdir:
-            out_files = job_mock.download_result(tempdir)
+            out_files = job_mock.download_results(tempdir)
             for file in out_files:
                 assert Path(file).exists()
             assert len(out_files) == 1
@@ -203,7 +203,7 @@ def test_job_download_result(job_mock):
 @pytest.mark.live
 def test_job_download_result_live(job_live):
     with tempfile.TemporaryDirectory() as tempdir:
-        out_files = job_live.download_result(Path(tempdir))
+        out_files = job_live.download_results(Path(tempdir))
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 1
@@ -217,7 +217,7 @@ def test_job_download_result_no_tiff_live(auth_live):
             project_id=auth_live.project_id,
             job_id=os.getenv("TEST_UP42_JOB_ID_NC_FILE"),
         )
-        out_files = job.download_result(Path(tempdir))
+        out_files = job.download_results(Path(tempdir))
         assert Path(out_files[0]).exists()
         assert Path(out_files[0]).suffix == ".nc"
         assert len(out_files) == 1
@@ -232,7 +232,7 @@ def test_job_download_result_live_slow_gcs_new_token(auth_live):
         job_id="99bc9fab-cffa-4010-bdac-2b0620c7e1cb",
     )
     with tempfile.TemporaryDirectory() as tempdir:
-        out_files = job.download_result(Path(tempdir))
+        out_files = job.download_results(Path(tempdir))
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 98

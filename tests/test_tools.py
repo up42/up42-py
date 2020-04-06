@@ -80,13 +80,13 @@ def test_plot_quicklook_alternative_filepaths(tools_mock):
 def test_plot_result(tools_mock):
     fp_tif = Path(__file__).resolve().parent / "mock_data/s2_128.tif"
     tools_mock.result = [fp_tif]
-    tools_mock.plot_result()
+    tools_mock.plot_results()
 
 
 @patch("matplotlib.pyplot.show")
 def test_plot_result_alternative_filepaths_and_titles(tools_mock):
     fp_tif = Path(__file__).resolve().parent / "mock_data/s2_128.tif"
-    tools_mock.plot_result(filepaths=[fp_tif, fp_tif, fp_tif], titles=["a", "b", "c"])
+    tools_mock.plot_results(filepaths=[fp_tif, fp_tif, fp_tif], titles=["a", "b", "c"])
 
 
 def test_get_blocks(tools_mock):

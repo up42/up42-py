@@ -520,11 +520,11 @@ def download_quicklooks(job, output_directory):
     type=click.Path(exists=True, writable=True, file_okay=False, resolve_path=True),
 )
 @click.pass_obj
-def download_result(job, output_directory):
+def download_results(job, output_directory):
     """
-    Download and unpack the job result.
+    Download and unpack the job results.
     """
-    logger.info(job.download_result(output_directory))
+    logger.info(job.download_results(output_directory))
 
 
 @COMMAND_JOB
@@ -538,11 +538,11 @@ def get_job_tasks(job):
 
 @COMMAND_JOB
 @click.pass_obj
-def get_job_tasks_result_json(job):
+def get_job_tasks_results_json(job):
     """
     Convenience function to get the resulting data.json of all job tasks.
     """
-    logger.info(pprint_json(job.get_jobtasks_result_json()))
+    logger.info(pprint_json(job.get_jobtasks_results_json()))
 
 
 @COMMAND_JOB
@@ -551,16 +551,16 @@ def get_log(job):
     """
     Convenience function to print or return the logs of all job tasks.
     """
-    job.get_log()
+    job.get_logs()
 
 
 @COMMAND_JOB
 @click.pass_obj
-def get_result_json(job):
+def get_results_json(job):
     """
-    Get the job result data.json.
+    Get the job results data.json.
     """
-    logger.info(pprint_json(job.get_result_json()))
+    logger.info(pprint_json(job.get_results_json()))
 
 
 @COMMAND_JOB

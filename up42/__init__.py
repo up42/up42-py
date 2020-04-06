@@ -125,7 +125,7 @@ def plot_quicklooks(figsize: Tuple[int, int] = (8, 8), filepaths: List = None) -
     tools.plot_quicklooks(figsize, filepaths)
 
 
-def plot_result(
+def plot_results(
     figsize: Tuple[int, int] = (8, 8),
     filepaths: List[Union[str, Path]] = None,
     titles: List[str] = None,

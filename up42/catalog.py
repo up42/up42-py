@@ -14,7 +14,7 @@ from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 logger = get_logger(__name__)
 
 
-# TODO: Midterm add catalog result class? Scenes() etc. that also as feedback to workflow input.
+# TODO: Midterm add catalog results class? Scenes() etc. that also as feedback to workflow input.
 # Scenes() would be dataframe with quicklook preview images in it.
 
 
@@ -144,7 +144,7 @@ class Catalog(Tools):
             as_dataframe: return type, GeoDataFrame if True (default), FeatureCollection if False.
 
         Returns:
-            The search result as a GeoDataFrame, optionally as json dict.
+            The search results as a GeoDataFrame, optionally as json dict.
 
         Example:
             ```python

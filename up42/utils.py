@@ -61,7 +61,7 @@ def is_notebook() -> bool:
         return False  # Standard Python interpreter
 
 
-def _download_result_from_gcs(
+def _download_results_from_gcs(
     func_get_download_url: Callable, output_directory: Union[str, Path]
 ) -> List[str]:
     """

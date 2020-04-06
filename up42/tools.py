@@ -32,7 +32,7 @@ class Tools:
         if auth:
             self.auth = auth
         self.quicklooks = None
-        self.result = None
+        self.results = None
 
     # pylint: disable=no-self-use
     def read_vector_file(
@@ -150,9 +150,9 @@ class Tools:
         figsize=(12, 16),
     ) -> None:
         """
-        Plots a coverage map of a dataframe with geometries e.g. the result of catalog.search())
+        Plots a coverage map of a dataframe with geometries e.g. the results of catalog.search())
         Args:
-            scenes: GeoDataFrame of scenes, result of catalog.search()
+            scenes: GeoDataFrame of scenes, results of catalog.search()
             aoi: GeoDataFrame of aoi.
             legend_column: Dataframe column set to legend, default is "scene_id".
                 Legend entries are sorted and this determines plotting order.
@@ -247,9 +247,9 @@ class Tools:
         # TODO: Handle more bands.
         # TODO: add histogram equalization? But requires skimage dependency.
         if filepaths is None:
-            if self.result is None:
+            if self.results is None:
                 raise ValueError("You first need to download the results.")
-            filepaths = self.result
+            filepaths = self.results
         if not isinstance(filepaths, list):
             filepaths = [filepaths]
         filepaths = [Path(path) for path in filepaths]
@@ -375,7 +375,7 @@ class Tools:
             path_or_json: The input manifest, either filepath or json string, see example.
 
         Returns:
-            A dictionary with the validation result and potential validation errors.
+            A dictionary with the validation results and potential validation errors.
 
         Example:
             ```json

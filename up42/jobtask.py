@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from .auth import Auth
 from .tools import Tools
-from .utils import get_logger, _download_result_from_gcs
+from .utils import get_logger, _download_results_from_gcs
 
 logger = get_logger(__name__)
 
@@ -28,7 +28,7 @@ class JobTask(Tools):
         self.job_id = job_id
         self.jobtask_id = jobtask_id
         self.quicklooks = None
-        self.result = None
+        self.results = None
         if self.auth.get_info:
             self.info = self._get_info()
 
@@ -48,11 +48,11 @@ class JobTask(Tools):
         self.info = response_json["data"]
         return self.info
 
-    def get_result_json(
+    def get_results_json(
         self, as_dataframe: bool = False
     ) -> Union[Dict, gpd.GeoDataFrame]:
         """
-        Gets the Jobtask result data.json.
+        Gets the Jobtask results data.json.
 
         Args:
             as_dataframe: "fc" for FeatureCollection dict, "df" for GeoDataFrame.
@@ -82,11 +82,11 @@ class JobTask(Tools):
         download_url = response_json["data"]["url"]
         return download_url
 
-    def download_result(
+    def download_results(
         self, output_directory: Union[str, Path, None] = None
     ) -> List[str]:
         """
-        Downloads and unpacks the jobtask result. Default download to Desktop.
+        Downloads and unpacks the jobtask results. Default download to Desktop.
 
         Args:
             output_directory: The file output directory, defaults to the current working
@@ -106,12 +106,12 @@ class JobTask(Tools):
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", str(output_directory))
 
-        out_filepaths = _download_result_from_gcs(
+        out_filepaths = _download_results_from_gcs(
             func_get_download_url=self._get_download_url,
             output_directory=output_directory,
         )
 
-        self.result = out_filepaths
+        self.results = out_filepaths
         return out_filepaths
 
     def download_quicklooks(

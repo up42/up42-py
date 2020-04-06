@@ -16,7 +16,7 @@ from rasterio.warp import calculate_default_transform, reproject, Resampling
 from .auth import Auth
 from .jobtask import JobTask
 from .tools import Tools
-from .utils import get_logger, is_notebook, folium_base_map, _download_result_from_gcs
+from .utils import get_logger, is_notebook, folium_base_map, _download_results_from_gcs
 
 logger = get_logger(__name__)
 
@@ -30,15 +30,15 @@ class Job(Tools):
         Jobs (Workflows that have been run as Jobs).
 
         Public Methods:
-            get_status, track_status, cancel_job, download_quicklooks, get_result_json
-            download_result, upload_result_to_bucket, map_result,
-            get_log, get_jobtasks, get_jobtasks_result_json
+            get_status, track_status, cancel_job, download_quicklooks, get_results_json
+            download_results, upload_results_to_bucket, map_results,
+            get_log, get_jobtasks, get_jobtasks_results_json
         """
         self.auth = auth
         self.project_id = project_id
         self.job_id = job_id
         self.quicklooks = None
-        self.result = None
+        self.results = None
         if order_ids is None:
             self.order_ids = [""]
         if self.auth.get_info:
@@ -97,7 +97,7 @@ class Job(Tools):
                     logger.info("Job is %s! - %s", status, self.job_id)
             elif status in ["FAILED", "ERROR"]:
                 logger.info("Job is %s! - %s - Printing logs ...", status, self.job_id)
-                self.get_log(as_print=True)
+                self.get_logs(as_print=True)
                 raise ValueError("Job has failed! See the above log.")
             elif status in ["CANCELLED", "CANCELLING"]:
                 logger.info("Job is %s! - %s", status, self.job_id)
@@ -132,11 +132,11 @@ class Job(Tools):
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
 
-    def get_result_json(
+    def get_results_json(
         self, as_dataframe: bool = False
     ) -> Union[Dict, gpd.GeoDataFrame]:
         """
-        Gets the Job result data.json.
+        Gets the Job results data.json.
 
         Args:
             as_dataframe: Return type, Default Feature Collection. GeoDataFrame if True.
@@ -166,11 +166,11 @@ class Job(Tools):
         download_url = response_json["data"]["url"]
         return download_url
 
-    def download_result(
+    def download_results(
         self, output_directory: Union[str, Path, None] = None,
     ) -> List[str]:
         """
-        Downloads and unpacks the job result.
+        Downloads and unpacks the job results.
 
         Args:
             output_directory: The file output directory, defaults to the current working
@@ -191,18 +191,18 @@ class Job(Tools):
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", str(output_directory))
 
-        out_filepaths = _download_result_from_gcs(
+        out_filepaths = _download_results_from_gcs(
             func_get_download_url=self._get_download_url,
             output_directory=output_directory,
         )
 
-        self.result = out_filepaths
+        self.results = out_filepaths
         return out_filepaths
 
-    def upload_result_to_bucket(
+    def upload_results_to_bucket(
         self, gs_client, bucket, folder, extension: str = ".tgz", version: str = "v0"
     ) -> None:
-        """Uploads the result to a custom google cloud storage bucket."""
+        """Uploads the results to a custom google cloud storage bucket."""
         download_url = self._get_download_url()
         r = requests.get(download_url)
 
@@ -211,19 +211,19 @@ class Job(Tools):
                 str(Path(version) / Path(folder) / Path(self.order_ids[0] + extension))
             )
             logger.info(
-                "Upload job %s result with order_ids to %s...", self.job_id, blob.name
+                "Upload job %s results with order_ids to %s...", self.job_id, blob.name
             )
         else:
             blob = bucket.blob(
                 str(Path(version) / Path(folder) / Path(self.job_id + extension))
             )
-            logger.info("Upload job %s result to %s...", self.job_id, blob.name)
+            logger.info("Upload job %s results to %s...", self.job_id, blob.name)
         blob.upload_from_string(
             data=r.content, content_type="application/octet-stream", client=gs_client,
         )
         logger.info("Uploaded!")
 
-    def map_result(self, name_column: str = None, info_columns: List = None) -> None:
+    def map_results(self, name_column: str = None, info_columns: List = None) -> None:
         """
         Displays data.json, and if available, one or multiple results geotiffs
 
@@ -234,7 +234,7 @@ class Job(Tools):
         if not is_notebook():
             raise ValueError("Only works in Jupyter notebook.")
 
-        df: gpd.GeoDataFrame = self.get_result_json(as_dataframe=True)  # type: ignore
+        df: gpd.GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
         # TODO: centroid of total_bounds
         centroid = df.iloc[0].geometry.centroid
 
@@ -287,7 +287,7 @@ class Job(Tools):
         # This requires reprojecting on the user pc, not via the api.
         # Reproject raster and add to map
         dst_crs = 4326
-        results: List[Path] = self.result
+        results: List[Path] = self.results
         for idx, raster_fp in enumerate(results):
 
             with rasterio.open(raster_fp) as src:
@@ -339,7 +339,7 @@ class Job(Tools):
         folium.LayerControl(position="bottomleft", collapsed=collapsed).add_to(m)
         display(m)
 
-    def get_log(self, as_print: bool = True, as_return: bool = False):
+    def get_logs(self, as_print: bool = True, as_return: bool = False):
         """
         Convenience function to print or return the logs of all job tasks.
 
@@ -414,7 +414,7 @@ class Job(Tools):
         else:
             return jobtasks
 
-    def get_jobtasks_result_json(self) -> Dict:
+    def get_jobtasks_results_json(self) -> Dict:
         """
         Convenience function to get the resulting data.json of all job tasks
         in a dictionary of strings.

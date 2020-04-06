@@ -73,8 +73,8 @@ input_parameters = workflow.construct_parameters(geometry=aoi,
 job = workflow.create_and_run_job(input_parameters=input_parameters)
 job.track_status()
 
-job.download_result()
-job.map_result()
+job.download_results()
+job.map_results()
 ```
 
 <br>

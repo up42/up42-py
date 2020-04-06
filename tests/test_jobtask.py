@@ -34,7 +34,7 @@ def test_get_result_json(jobtask_mock):
             f"outputs/data-json/"
         )
         m.get(url, json={"type": "FeatureCollection", "features": []})
-        assert jobtask_mock.get_result_json() == {
+        assert jobtask_mock.get_results_json() == {
             "type": "FeatureCollection",
             "features": [],
         }
@@ -42,7 +42,7 @@ def test_get_result_json(jobtask_mock):
 
 @pytest.mark.live
 def test_get_result_json_live(jobtask_live):
-    result_json = jobtask_live.get_result_json()
+    result_json = jobtask_live.get_results_json()
     assert result_json["type"] == "FeatureCollection"
     assert len(result_json["features"][0]["bbox"]) == 4
 
@@ -66,7 +66,7 @@ def test_jobtask_download_result(jobtask_mock):
         )
 
         with tempfile.TemporaryDirectory() as tempdir:
-            out_files = jobtask_mock.download_result(output_directory=tempdir)
+            out_files = jobtask_mock.download_results(output_directory=tempdir)
             for file in out_files:
                 assert Path(file).exists()
             assert len(out_files) == 1
@@ -75,7 +75,7 @@ def test_jobtask_download_result(jobtask_mock):
 @pytest.mark.live
 def test_jobtask_download_result_live(jobtask_live):
     with tempfile.TemporaryDirectory() as tempdir:
-        out_files = jobtask_live.download_result(output_directory=tempdir)
+        out_files = jobtask_live.download_results(output_directory=tempdir)
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 1
