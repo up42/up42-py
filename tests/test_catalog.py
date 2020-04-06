@@ -42,6 +42,13 @@ def test_construct_parameters(catalog_mock):
     assert search_paramaters["sortby"] == mock_search_parameters["sortby"]
 
 
+def test_construct_parameters_unsopported_sensor_raises(catalog_mock):
+    with pytest.raises(ValueError):
+        catalog_mock.construct_parameters(
+            geometry=mock_search_parameters["intersects"],
+            sensors=["some_unspoorted_sensor"],
+        )
+
 def test_search(catalog_mock):
     with open(
         Path(__file__).resolve().parent / "mock_data/search_response.json"

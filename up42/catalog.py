@@ -87,8 +87,18 @@ class Catalog(Tools):
             "sobloo-sentinel3-full",
             "sobloo-sentinel5-preview-full",
         ]
+        supported_sensors = [
+            "pleiades",
+            "spot",
+            "sentinel1",
+            "sentinel2",
+            "sentinel3",
+            "sentinel5",
+        ]
         block_filters = []
         for sensor in sensors:
+            if sensor not in supported_sensors:
+                raise ValueError("Currently only these sensors are supported: %s", supported_sensors)
             for block in blocks_default:
                 if sensor in block.split("-"):
                     block_filters.append(block)
