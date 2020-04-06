@@ -22,6 +22,7 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], show_default=True)
 # For usage of fstrings
 # pylint: disable=logging-format-interpolation
 
+
 def pprint_json(obj, indent=2):
     return "\n" + json.dumps(obj, indent=indent, sort_keys=True)
 
@@ -169,7 +170,9 @@ def get_block_details(auth, block_name):
     """
     Get details of block by block name.
     """
-    logger.info(pprint_json(Tools(auth).get_block_details(Tools(auth).get_blocks()[block_name])))
+    logger.info(
+        pprint_json(Tools(auth).get_block_details(Tools(auth).get_blocks()[block_name]))
+    )
 
 
 @COMMAND
@@ -641,9 +644,11 @@ def construct_parameters(
     start_date_str = start_date.strftime("%Y-%m-%d")
     end_date_str = end_date.strftime("%Y-%m-%d")
     logger.info(
-        pprint_json(catalog.construct_parameters(
-            geometry, start_date_str, end_date_str, sensors, limit, max_cloud_cover
-        ))
+        pprint_json(
+            catalog.construct_parameters(
+                geometry, start_date_str, end_date_str, sensors, limit, max_cloud_cover
+            )
+        )
     )
 
 
@@ -656,4 +661,8 @@ def search(catalog, search_parameters_json):
     the matching scenes. Generate search parameters with
     'up42 catalog construct-parameter'.
     """
-    logger.info(pprint_json(catalog.search(json.load(search_parameters_json), as_dataframe=False)))
+    logger.info(
+        pprint_json(
+            catalog.search(json.load(search_parameters_json), as_dataframe=False)
+        )
+    )
