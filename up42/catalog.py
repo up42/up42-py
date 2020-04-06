@@ -196,21 +196,6 @@ class Catalog(Tools):
         else:
             return df.__geo_interface__
 
-    def calculate_coverage(
-        self, input_df: gpd.GeoDataFrame, geometry: Polygon, unit="percent"
-    ):
-        """Calculates the coverage of a geodataframe (e.g. search results) with a given aoi.
-
-        Args:
-            geometry: The geometry to compare against.
-            unit: "percent" (default) or "sqkm".
-
-        Returns:
-
-        """
-        pass  # pylint: disable=unnecessary-pass
-        # TODO: Add to plot_coverage legend, to dataframe results as optional.
-
     def download_quicklook(
         self,
         image_ids: List[str],
