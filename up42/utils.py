@@ -9,6 +9,7 @@ import folium.plugins
 import geojson
 import geopandas as gpd
 import shapely
+from shapely.geometry import Point, Polygon
 from IPython import get_ipython
 from branca.element import CssLink, Element, Figure, JavascriptLink
 from geojson import Feature, FeatureCollection
@@ -214,13 +215,7 @@ class DrawFoliumOverride(folium.plugins.Draw):
 
 def any_vector_to_fc(
     vector: Union[
-        Dict,
-        Feature,
-        FeatureCollection,
-        List,
-        gpd.GeoDataFrame,
-        shapely.geometry.polygon.Polygon,
-        shapely.geometry.polygon.Point,
+        Dict, Feature, FeatureCollection, List, gpd.GeoDataFrame, Polygon, Point,
     ],
     as_dataframe: bool = False,
 ) -> Union[Dict, gpd.GeoDataFrame]:
@@ -229,7 +224,7 @@ def any_vector_to_fc(
 
     Args:
         vector: One of Dict, FeatureCollection, Feature, List of bounds coordinates,
-            gpd.GeoDataFrame, shapely.geometry.polygon.Polygon, shapely.geometry.polygon.Point. All assume EPSG 4326
+            gpd.GeoDataFrame, shapely.geometry.Polygon, shapely.geometry.Point. All assume EPSG 4326
             and Polygons!
         as_dataframe: GeoDataFrame output with as_dataframe=True.
     """
@@ -242,8 +237,8 @@ def any_vector_to_fc(
             geojson.Polygon,
             List,
             gpd.GeoDataFrame,
-            shapely.geometry.polygon.Polygon,
-            shapely.geometry.polygon.Point,
+            Polygon,
+            Point,
         ),
     ):
         raise ValueError(
@@ -276,9 +271,9 @@ def any_vector_to_fc(
                 df = gpd.GeoDataFrame({"geometry": [box_poly]}, crs=4326)
             else:
                 raise ValueError("The list requires 4 bounds coordinates.")
-        elif isinstance(vector, shapely.geometry.polygon.Polygon):
+        elif isinstance(vector, Polygon):
             df = gpd.GeoDataFrame({"geometry": [vector]}, crs=4326)
-        elif isinstance(vector, shapely.geometry.polygon.Point):
+        elif isinstance(vector, Point):
             df = gpd.GeoDataFrame(
                 {"geometry": [vector.buffer(0.00001)]}, crs=4326
             )  # Around 1m buffer # TODO: Find better solution than small buffer?

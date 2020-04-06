@@ -17,6 +17,7 @@ Welcome to UP42 - the developer platform and marketplace for geospatial data and
 - For geospatial analysis & product builders!
 - Interactive maps & visualization, ideal with Jupyter notebooks  
 - Command Line Interface (CLI)
+- Developer tools for UP42 custom blocks (coming soon)
 
 ## Related links
 [UP42 Website](https://up42.com)  
