@@ -6,7 +6,7 @@ from typing import Dict, List, Union, Optional
 
 import geojson
 import geopandas as gpd
-import shapely
+from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
 from tqdm import tqdm
 
@@ -246,7 +246,8 @@ class Workflow(Tools):
                 geojson.Polygon,
                 List,
                 gpd.GeoDataFrame,
-                shapely.geometry.polygon.Polygon,
+                Polygon,
+                Point,
             ]
         ] = None,
         geometry_operation: Optional[str] = None,
@@ -264,8 +265,8 @@ class Workflow(Tools):
 
         Args:
             geometry: One of Dict, FeatureCollection, Feature, List,
-                gpd.GeoDataFrame, shapely.geometry.polygon.Polygon. All assume EPSG 4326
-                and Polygons!
+                gpd.GeoDataFrame, shapely.geometry.Polygon, shapely.geometry.Point. All
+                assume EPSG 4326.
             geometry_operation: Desired operation, One of "bbox", "intersects", "contains".
             limit: Maximum number of expected results.
             start_date: Query period starting day, format "2020-01-01".
