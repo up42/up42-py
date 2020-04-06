@@ -131,7 +131,7 @@ There are also multiple ways to construct the workflow input parameters, you can
 
 
 ```python
-workflow.get_parameter_info()
+workflow.get_parameters_info()
 ```
 
 

@@ -219,7 +219,7 @@ def test_get_parameter_info(workflow_mock):
     )
     with requests_mock.Mocker() as m:
         m.get(url=url_workflow_tasks, json=json_workflow_tasks)
-        parameter_info = workflow_mock.get_parameter_info()
+        parameter_info = workflow_mock.get_parameters_info()
     assert isinstance(parameter_info, dict)
     assert all(
         x in list(parameter_info.keys())
@@ -232,7 +232,7 @@ def test_get_parameter_info(workflow_mock):
 
 @pytest.mark.live
 def test_get_parameter_info_live(workflow_live):
-    parameter_info = workflow_live.get_parameter_info()
+    parameter_info = workflow_live.get_parameters_info()
     assert isinstance(parameter_info, dict)
     assert all(
         x in list(parameter_info.keys())
@@ -271,7 +271,7 @@ def test_construct_parameter(workflow_mock):
     with requests_mock.Mocker() as m:
         m.get(url=url_workflow_tasks, json=json_workflow_tasks)
 
-        parameters = workflow_mock.construct_parameter(
+        parameters = workflow_mock.construct_parameters(
             geometry=shapely.geometry.point.Point(1, 3),
             geometry_operation="bbox",
             start_date="2014-01-01",
@@ -297,7 +297,7 @@ def test_construct_parameter_scene_ids(workflow_mock):
     with requests_mock.Mocker() as m:
         m.get(url=url_workflow_tasks, json=json_workflow_tasks)
 
-        parameters = workflow_mock.construct_parameter(
+        parameters = workflow_mock.construct_parameters(
             geometry=shapely.geometry.point.Point(1, 3),
             geometry_operation="bbox",
             scene_ids=["s2_123223"],
@@ -321,7 +321,7 @@ def test_construct_parameter_order_ids(workflow_mock):
     with requests_mock.Mocker() as m:
         m.get(url=url_workflow_tasks, json=json_workflow_tasks)
 
-        parameters = workflow_mock.construct_parameter(order_ids=["8472712912"])
+        parameters = workflow_mock.construct_parameters(order_ids=["8472712912"])
     assert isinstance(parameters, dict)
     assert parameters == {
         "sobloo-s2-l1c-aoiclipped:1": {"order_ids": ["8472712912"]},

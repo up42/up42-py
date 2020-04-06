@@ -403,11 +403,11 @@ def get_workflow_tasks(workflow, basic):
 
 @COMMAND_WORKFLOW
 @click.pass_obj
-def get_parameter_info(workflow):
+def get_parameters_info(workflow):
     """
     Get info about the parameters of each task in the workflow to make it easy to construct the desired parameters.
     """
-    logger.info(pprint_json(workflow.get_parameter_info()))
+    logger.info(pprint_json(workflow.get_parameters_info()))
 
 
 @COMMAND_WORKFLOW
@@ -664,9 +664,9 @@ def construct_parameters(
 @click.pass_obj
 def search(catalog, search_parameters_json):
     """
-    Searches the catalog for the search parameter and returns the metadata of
+    Searches the catalog for the search parameters and returns the metadata of
     the matching scenes. Generate search parameters with
-    'up42 catalog construct-parameter'.
+    'up42 catalog construct-parameters'.
     """
     logger.info(
         pprint_json(

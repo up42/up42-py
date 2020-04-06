@@ -26,8 +26,8 @@ class Workflow(Tools):
         and aoi.
 
         Public Methods:
-            get_compatible_blocks, get_workflow_tasks, add_workflow_tasks, get_parameter_info,
-            construct_parameter, create_and_run_job, get_jobs, update_name, delete
+            get_compatible_blocks, get_workflow_tasks, add_workflow_tasks, get_parameters_info,
+            construct_parameters, create_and_run_job, get_jobs, update_name, delete
         """
         self.auth = auth
         self.project_id = project_id
@@ -156,7 +156,7 @@ class Workflow(Tools):
 
     def add_workflow_tasks(self, input_tasks: Union[List, List[Dict]]) -> None:
         """
-        Adds or overwrites workflow tasks.
+        Adds or overwrites workflow tasks in a workflow on UP42.
 
         Args:
             input_tasks: The input tasks, can be provided in the simplified (list of block ids,
@@ -183,7 +183,7 @@ class Workflow(Tools):
                                  'blockId': '4ed70368-d4e1-4462-bef6-14e768049471'}]
             ```
         """
-        # TODO: User be able to only provide block task names or display name.
+        # TODO: User should be able to only provide block task names or display name.
         # Construct proper task definition from simplified input.
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
@@ -195,13 +195,13 @@ class Workflow(Tools):
         self.auth._request(request_type="POST", url=url, data=input_tasks)
         logger.info("Added tasks to workflow: %r", input_tasks)
 
-    def get_parameter_info(self) -> Dict:
+    def get_parameters_info(self) -> Dict:
         """
         Gets infos about the workflow parameters of each block in the workflow to
         make it easy to construct the desired parameters.
 
         Returns:
-            Workflow parameter info json.
+            Workflow parameters info json.
         """
         workflow_parameters_info = {}
         workflow_tasks = self.get_workflow_tasks()
@@ -234,7 +234,7 @@ class Workflow(Tools):
             default_workflow_parameters[task_name] = default_task_parameters
         return default_workflow_parameters
 
-    def construct_parameter(
+    def construct_parameters(
         self,
         geometry: Optional[
             Union[

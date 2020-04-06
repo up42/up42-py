@@ -17,7 +17,7 @@ if __name__ == "__main__":
     ]
     workflow.add_workflow_tasks(input_tasks=input_tasks)
     aoi = workflow.get_example_aoi(location="Berlin")
-    input_parameters = workflow.construct_parameter(
+    input_parameters = workflow.construct_parameters(
         geometry=aoi, geometry_operation="bbox", limit=1
     )
 

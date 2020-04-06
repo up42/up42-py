@@ -47,7 +47,7 @@ class Catalog(Tools):
         for satellite image scenes for different sensors and criteria like cloud cover etc.
 
         Public Methods:
-            construct_parameter, search, download_quicklooks
+            construct_parameters, search, download_quicklooks
         """
         self.auth = auth
         self.querystring = {"backend": backend}
@@ -92,7 +92,7 @@ class Catalog(Tools):
             ascending: Ascending sort order by default, descending if False.
 
         Returns:
-            The constructed parameter dictionary.
+            The constructed parameters dictionary.
         """
         datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
         block_filters = []
@@ -136,7 +136,7 @@ class Catalog(Tools):
         self, search_paramaters: Dict, as_dataframe: bool = True
     ) -> Union[gpd.GeoDataFrame, Dict]:
         """
-        Searches the catalog for the the search parameter and returns the metadata of
+        Searches the catalog for the the search parameters and returns the metadata of
         the matching scenes.
 
         Args:
