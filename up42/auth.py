@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import io
 from typing import Dict, List, Union
 
 import requests
@@ -136,11 +137,14 @@ class Auth(Tools):
 
     @staticmethod
     def _generate_headers(token: str) -> Dict[str, str]:
+        version = io.open(
+            Path(__file__).resolve().parent / "_version.txt", encoding="utf-8"
+        ).read()
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
             "cache-control": "no-cache",
-            "X-UP42-info": "python/0.8",
+            "X-UP42-info": f"python/{version}",
         }
         return headers
 
