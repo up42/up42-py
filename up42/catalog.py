@@ -148,12 +148,11 @@ class Catalog(Tools):
 
         Example:
             ```python
-                search_params=
-                  {
+                search_paramaters={
                     "datetime": "2019-01-01T00:00:00Z/2019-01-15T00:00:00Z",
                     "intersects": {
                         "type": "Polygon",
-                        "coordinates": [[13.32113746,52.73971768],[13.15981158,52.2092959],
+                        "coordinates": [[[13.32113746,52.73971768],[13.15981158,52.2092959],
                         [13.62204483,52.15632025],[13.78859517,52.68655119],[13.32113746,
                         52.73971768]]]},
                     "limit": 1,
@@ -171,6 +170,12 @@ class Catalog(Tools):
         # UP42 results are always in EPSG 4326
         dst_crs = 4326
         df = gpd.GeoDataFrame.from_features(response_json, crs=dst_crs)
+        if df.empty:
+            if as_dataframe:
+                return df
+            else:
+                return df.__geo_interface__
+
         # TODO: Resolve on backend
         # Filter to actual geometries intersecting the aoi (Sobloo search uses a rectangular
         # bounds geometry, can contain scenes that touch the aoi bbox, but not the aoi.
