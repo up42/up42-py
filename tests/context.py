@@ -20,3 +20,11 @@ from up42.workflow import Workflow
 from up42.job import Job
 from up42.jobtask import JobTask
 from up42.catalog import Catalog
+from up42.__init__ import (
+    authenticate,
+    initialize_project,
+    initialize_catalog,
+    initialize_workflow,
+    initialize_job,
+    initialize_jobtask,
+)
