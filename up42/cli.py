@@ -547,7 +547,7 @@ def get_job_tasks_results_json(job):
 
 @COMMAND_JOB
 @click.pass_obj
-def get_log(job):
+def get_logs(job):
     """
     Convenience function to print or return the logs of all job tasks.
     """

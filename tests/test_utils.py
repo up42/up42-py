@@ -14,7 +14,7 @@ from .context import (
     folium_base_map,
     any_vector_to_fc,
     fc_to_query_geometry,
-    _download_results_from_gcs,
+    download_results_from_gcs,
 )
 
 
@@ -270,7 +270,7 @@ def test_download_result_from_gcs():
             headers={"x-goog-stored-content-length": f"20000001"},
         )
         with tempfile.TemporaryDirectory() as tempdir:
-            out_files = _download_results_from_gcs(
+            out_files = download_results_from_gcs(
                 func_get_download_url=_simplified_get_download_url,
                 output_directory=tempdir,
             )

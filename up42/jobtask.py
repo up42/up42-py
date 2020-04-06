@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from .auth import Auth
 from .tools import Tools
-from .utils import get_logger, _download_results_from_gcs
+from .utils import get_logger, download_results_from_gcs
 
 logger = get_logger(__name__)
 
@@ -21,7 +21,7 @@ class JobTask(Tools):
         block in the workflow).
 
         Public Methods:
-            get_result_json, download_result, download_quicklooks
+            get_results_json, download_result, download_quicklooks
         """
         self.auth = auth
         self.project_id = project_id
@@ -106,7 +106,7 @@ class JobTask(Tools):
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", str(output_directory))
 
-        out_filepaths = _download_results_from_gcs(
+        out_filepaths = download_results_from_gcs(
             func_get_download_url=self._get_download_url,
             output_directory=output_directory,
         )

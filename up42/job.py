@@ -16,7 +16,7 @@ from rasterio.warp import calculate_default_transform, reproject, Resampling
 from .auth import Auth
 from .jobtask import JobTask
 from .tools import Tools
-from .utils import get_logger, is_notebook, folium_base_map, _download_results_from_gcs
+from .utils import get_logger, is_notebook, folium_base_map, download_results_from_gcs
 
 logger = get_logger(__name__)
 
@@ -32,7 +32,7 @@ class Job(Tools):
         Public Methods:
             get_status, track_status, cancel_job, download_quicklooks, get_results_json
             download_results, upload_results_to_bucket, map_results,
-            get_log, get_jobtasks, get_jobtasks_results_json
+            get_logs, get_jobtasks, get_jobtasks_results_json
         """
         self.auth = auth
         self.project_id = project_id
@@ -191,7 +191,7 @@ class Job(Tools):
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", str(output_directory))
 
-        out_filepaths = _download_results_from_gcs(
+        out_filepaths = download_results_from_gcs(
             func_get_download_url=self._get_download_url,
             output_directory=output_directory,
         )
