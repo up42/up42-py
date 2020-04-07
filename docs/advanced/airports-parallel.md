@@ -68,7 +68,7 @@ api = up42.authenticate(cfg_file="config.json")
 
 
 ```python
-project = api.initialize_project()
+project = up42.initialize_project()
 project
 ```
 
@@ -87,7 +87,7 @@ workflow
 
 ```python
 # Fill the workflow with tasks
-blocks = api.get_blocks(basic=True)
+blocks = up42.get_blocks(basic=True)
 
 selected_block = "sobloo-s2-l1c-aoiclipped"
 workflow.add_workflow_tasks([blocks[selected_block]])
@@ -113,21 +113,24 @@ for airport in airports.geometry:
 # Track status until the last job is finished.
 for job in jobs:
     job.track_status(report_time=20)
-    
+```
+
+
+```python
 # Download results:
-outdir = Path.cwd()
 out_filepaths=[]
 for job in jobs:
-    fp = job.download_results(out_dir=outdir / "img")
+    fp = job.download_results()
     out_filepaths.append(fp[0])
 
 print("finished")
+print(out_filepaths)
 ```
 
 
 ```python
 # Visualize downloaded results
-api.plot_results(figsize=(22,22), filepaths=out_filepaths, titles=airports.airport.to_list())
+up42.plot_results(figsize=(22,22), filepaths=out_filepaths, titles=airports.airport.to_list())
 ```
 
 

@@ -65,10 +65,11 @@ workflow.add_workflow_tasks(input_tasks=input_tasks)
 # Define the aoi and input parameters of the workflow to run it.
 aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
 input_parameters = workflow.construct_parameters(geometry=aoi, 
-                                                geometry_operation="bbox", 
-                                                start_date="2020-01-01",
-                                                end_date="2020-01-20",
-                                                limit=1)
+                                                 geometry_operation="bbox", 
+                                                 start_date="2018-01-01",
+                                                 end_date="2020-12-31",
+                                                 limit=1)
+input_parameters["sobloo-s2-l1c-aoiclipped:1"].update({"max_cloud_cover":60})
 
 job = workflow.create_and_run_job(input_parameters=input_parameters)
 job.track_status()
