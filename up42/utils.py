@@ -69,7 +69,7 @@ def download_results_from_gcs(
     # Download
     tgz_file = tempfile.mktemp()
     with open(tgz_file, "wb") as dst_tgz:
-        headers = {"Range": "bytes=0-1024"}
+        headers = {"Range": "bytes=0-1"}
         r = requests.get(func_get_download_url(), headers=headers)
         bytes_total = int(r.headers.get("x-goog-stored-content-length", 0))
         if bytes_total:
