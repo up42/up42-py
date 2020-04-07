@@ -117,7 +117,7 @@ class Job(Tools):
         logger.info("Job canceled: %s", self.job_id)
 
     def download_quicklooks(
-        self, output_directory: Union[str, Path, None]
+        self, output_directory: Union[str, Path, None] = None
     ) -> List[str]:
         """
         Conveniance function that downloads the quicklooks of the data (dirst) jobtask.

@@ -166,7 +166,6 @@ class Catalog(Tools):
             "POST", url, search_paramaters, self.querystring
         )
         logger.info("%d results returned.", len(response_json["features"]))
-
         # UP42 results are always in EPSG 4326
         dst_crs = 4326
         df = gpd.GeoDataFrame.from_features(response_json, crs=dst_crs)
@@ -233,16 +232,20 @@ class Catalog(Tools):
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", str(output_directory))
 
-        out_paths = []
+        if isinstance(image_ids, str):
+            image_ids = [image_ids]
+
+        out_paths: List[str] = []
         for image_id in tqdm(image_ids):
             out_path = output_directory / f"quicklook_{image_id}.jpg"
             out_paths.append(str(out_path))
 
-            # TODO: Add sobloo to backend.
             url = (
                 f"{self.auth._endpoint()}/catalog/{provider}/image/{image_id}/quicklook"
             )
-            response = self.auth._request("GET", url, return_text=False)
+            response = self.auth._request(
+                request_type="GET", url=url, return_text=False
+            )
 
             with open(out_path, "wb") as dst:
                 for chunk in response:
