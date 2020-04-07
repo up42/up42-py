@@ -5,8 +5,7 @@ env:
 	workon up42-py
 
 install:
-	pip install -r $(SRC)/requirements.txt
-	pip install -e .
+	pip install up42-py
 
 install[dev]:
 	pip install -r $(SRC)/requirements.txt

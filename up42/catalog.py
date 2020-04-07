@@ -148,12 +148,11 @@ class Catalog(Tools):
 
         Example:
             ```python
-                search_params=
-                  {
+                search_paramaters={
                     "datetime": "2019-01-01T00:00:00Z/2019-01-15T00:00:00Z",
                     "intersects": {
                         "type": "Polygon",
-                        "coordinates": [[13.32113746,52.73971768],[13.15981158,52.2092959],
+                        "coordinates": [[[13.32113746,52.73971768],[13.15981158,52.2092959],
                         [13.62204483,52.15632025],[13.78859517,52.68655119],[13.32113746,
                         52.73971768]]]},
                     "limit": 1,
@@ -167,10 +166,15 @@ class Catalog(Tools):
             "POST", url, search_paramaters, self.querystring
         )
         logger.info("%d results returned.", len(response_json["features"]))
-
         # UP42 results are always in EPSG 4326
         dst_crs = 4326
         df = gpd.GeoDataFrame.from_features(response_json, crs=dst_crs)
+        if df.empty:
+            if as_dataframe:
+                return df
+            else:
+                return df.__geo_interface__
+
         # TODO: Resolve on backend
         # Filter to actual geometries intersecting the aoi (Sobloo search uses a rectangular
         # bounds geometry, can contain scenes that touch the aoi bbox, but not the aoi.
@@ -228,16 +232,20 @@ class Catalog(Tools):
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", str(output_directory))
 
-        out_paths = []
+        if isinstance(image_ids, str):
+            image_ids = [image_ids]
+
+        out_paths: List[str] = []
         for image_id in tqdm(image_ids):
             out_path = output_directory / f"quicklook_{image_id}.jpg"
             out_paths.append(str(out_path))
 
-            # TODO: Add sobloo to backend.
             url = (
                 f"{self.auth._endpoint()}/catalog/{provider}/image/{image_id}/quicklook"
             )
-            response = self.auth._request("GET", url, return_text=False)
+            response = self.auth._request(
+                request_type="GET", url=url, return_text=False
+            )
 
             with open(out_path, "wb") as dst:
                 for chunk in response:

@@ -147,7 +147,7 @@ class JobTask(Tools):
 
         out_paths: List[str] = []
         for ql_id in tqdm(quicklooks_ids):
-            out_path = output_directory / f"quicklook_{ql_id}"
+            out_path = output_directory / f"quicklook_{ql_id}"  # No suffix required.
             out_paths.append(str(out_path))
 
             url = (
