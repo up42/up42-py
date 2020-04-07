@@ -71,10 +71,7 @@ def download_results_from_gcs(
     with open(tgz_file, "wb") as dst_tgz:
         headers = {"Range": "bytes=0-1024"}
         r = requests.get(func_get_download_url(), headers=headers)
-        bytes_total = None
-        if r.headers.get("x-goog-stored-content-length"):
-            bytes_total = int(r.headers.get("x-goog-stored-content-length"))
-
+        bytes_total = int(r.headers.get("x-goog-stored-content-length", 0))
         if bytes_total:
             chunk_size = 10000000  # 10mb
             # TODO: Find better solution for gcs token issue.
