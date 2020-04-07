@@ -16,8 +16,9 @@ setup(
     url="https://github.com/up42/up42-py",
     license="MIT",
     packages=find_packages(exclude=("tests", "docs", "examples")),
-    package_data={"": ["_version.txt", "data/aoi_berlin.geojson",
-                       "data/aoi_washington.geojson"]},
+    package_data={
+        "": ["_version.txt", "data/aoi_berlin.geojson", "data/aoi_washington.geojson"]
+    },
     include_package_data=True,
     zip_safe=False,
     install_requires=Path(parent_dir / "requirements.txt").read_text().splitlines(),
