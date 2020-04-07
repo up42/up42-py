@@ -69,22 +69,30 @@ def download_results_from_gcs(
     # Download
     tgz_file = tempfile.mktemp()
     with open(tgz_file, "wb") as dst_tgz:
-        headers = {"Range": "bytes=0-512"}
+        headers = {"Range": "bytes=0-1024"}
         r = requests.get(func_get_download_url(), headers=headers)
-        bytes_total = int(r.headers["x-goog-stored-content-length"])
-        chunk_size = 10000000  # 10mb
-        # TODO: Find better solution for gcs token issue.
-        for start in tqdm(range(0, bytes_total, chunk_size)):
-            end = start + chunk_size - 1  # Bytes ranges are inclusive
-            headers = {"Range": f"bytes={start}-{end}"}
-            try:
-                r = requests.get(func_get_download_url(), headers=headers)
-                r.raise_for_status()
-                dst_tgz.write(r.content)
-            except requests.exceptions.HTTPError:
-                # Tokens expires before download complete.
-                r = requests.get(func_get_download_url(), headers=headers)
-                dst_tgz.write(r.content)
+        bytes_total = None
+        if r.headers.get("x-goog-stored-content-length"):
+            bytes_total = int(r.headers.get("x-goog-stored-content-length"))
+
+        if bytes_total:
+            chunk_size = 10000000  # 10mb
+            # TODO: Find better solution for gcs token issue.
+            for start in tqdm(range(0, bytes_total, chunk_size)):
+                end = start + chunk_size - 1  # Bytes ranges are inclusive
+                headers = {"Range": f"bytes={start}-{end}"}
+                try:
+                    r = requests.get(func_get_download_url(), headers=headers)
+                    r.raise_for_status()
+                    dst_tgz.write(r.content)
+                except requests.exceptions.HTTPError:
+                    # Tokens expires before download complete.
+                    r = requests.get(func_get_download_url(), headers=headers)
+                    dst_tgz.write(r.content)
+        else:
+            r = requests.get(func_get_download_url())
+            r.raise_for_status()
+            dst_tgz.write(r.content)
 
     # Unpack
     out_filepaths: List[str] = []
