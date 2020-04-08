@@ -4,6 +4,7 @@ from typing import Dict, Union, List
 import geopandas as gpd
 import shapely
 from geojson import Feature, FeatureCollection
+from requests.exceptions import HTTPError
 from shapely.geometry import Point, Polygon
 from tqdm import tqdm
 
@@ -225,8 +226,9 @@ class Catalog(Tools):
 
         implemented_providers = ["oneatlas"]
         if provider not in implemented_providers:
-            raise ValueError("This provider is not yet implemented for quicklook "
-                             "download!")
+            raise ValueError(
+                "This provider is not yet implemented for quicklook " "download!"
+            )
 
         if output_directory is None:
             output_directory = (
@@ -253,8 +255,8 @@ class Catalog(Tools):
                     request_type="GET", url=url, return_text=False
                 )
                 response.raise_for_status()
-            except:
-                raise
+            except HTTPError as err:
+                raise SystemExit(err)
 
             with open(out_path, "wb") as dst:
                 for chunk in response:
