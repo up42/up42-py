@@ -262,9 +262,7 @@ def test_download_result_from_gcs():
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         out_tgz_file = open(out_tgz, "rb")
         m.get(
-            url=cloud_storage_url,
-            content=out_tgz_file.read(),
-            headers={"x-goog-stored-content-length": f"20000001"},
+            url=cloud_storage_url, content=out_tgz_file.read(),
         )
         with tempfile.TemporaryDirectory() as tempdir:
             out_files = download_results_from_gcs(
