@@ -76,7 +76,10 @@ def download_results_from_gcs(
                 if chunk:  # filter out keep-alive new chunks
                     dst_tgz.write(chunk)
         except requests.exceptions.HTTPError as err:
-            raise SystemExit(err)
+            logger.debug("Connection error, please try again! %s", err)
+            raise requests.exceptions.HTTPError(
+                f"Connection error, please try again! {err}"
+            )
 
     # Unpack and exclude data.json
     out_filepaths: List[str] = []
