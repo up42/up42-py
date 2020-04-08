@@ -342,7 +342,7 @@ class Workflow(Tools):
 
         if test_query:
             # TODO: Fix type union
-            input_parameters = input_parameters.copy()
+            input_parameters = input_parameters.copy()  # type: ignore
             input_parameters.update({"config": {"mode": "DRY_RUN"}})  # type: ignore
             logger.info("+++++++++++++++++++++++++++++++++")
             logger.info("Running this job as Test Query...")
