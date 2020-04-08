@@ -15,16 +15,18 @@
 </p>
 
 <p align="center">
-  <a href="https://up42.github.io/up42-py/">Documentation</a> •
-  <a href="http://www.up42.com">UP42.com</a> •
-  <a href="#support">Support</a>
+    <b>
+      <a href="https://up42.github.io/up42-py/">Documentation</a> &nbsp; • &nbsp;
+      <a href="http://www.up42.com">UP42.com</a> &nbsp; • &nbsp;
+      <a href="#support">Support</a>
+    </b>
 </p>
 
 ## Highlights
-- Python package for easy access to [UP42's](http://www.up42.com) geospatial datasets & processing workflows
-- For geospatial analysis & product builders!
-- Interactive maps & visualization, ideal with Jupyter notebooks  
-- Command Line Interface (CLI)
+- Python package for easy access to [UP42's](http://www.up42.com) **geospatial datasets** & **processing workflows**
+- For geospatial **analysis** & **product builders**!
+- Interactive maps & **visualization**, ideal with Jupyter notebooks  
+- Command Line Interface (**CLI**)
 - Developer tools for UP42 custom blocks (coming soon)
 
 <br>
@@ -118,4 +120,4 @@ For a developer installation (in case you want to contribute to up42-py) see the
 
 ## Support
 
-You can reach us via Email [support@up42.com](mailto:support@up42.com) or open a github issue. We are happy to answer your questions or help with using UP42!
+For any kind of issues or help please contact us via Email **[support@up42.com](mailto:support@up42.com)** or open a **github issue**.
