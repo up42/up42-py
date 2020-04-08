@@ -3,6 +3,7 @@ import logging
 from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Union, Optional
+import copy
 
 import geojson
 import geopandas as gpd
@@ -342,6 +343,7 @@ class Workflow(Tools):
 
         if test_query:
             # TODO: Fix type union
+            input_parameters = copy.deepcopy(input_parameters)
             input_parameters.update({"config": {"mode": "DRY_RUN"}})  # type: ignore
             logger.info("+++++++++++++++++++++++++++++++++")
             logger.info("Running this job as Test Query...")
