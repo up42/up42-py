@@ -86,12 +86,12 @@ class Tools:
 
         Args:
             location: Location, one of Berlin, Washington.
-            as_dataframe:
+            as_dataframe: Returns a dataframe instead of dict FeatureColletions
+                (default).
 
         Returns:
             Feature collection json with the selected aoi.
         """
-        # TODO: Add more geometries.
         logger.info("Getting small example aoi in %s.", location)
         if location == "Berlin":
             example_aoi = self.read_vector_file(
@@ -101,10 +101,10 @@ class Tools:
             example_aoi = self.read_vector_file(
                 f"{os.path.dirname(__file__)}/data/aoi_washington.geojson"
             )
-        elif location == "Tokyo":
-            pass
         else:
-            raise ValueError("Please select one of 'Berlin', 'Washington' or 'Tokyo'!")
+            raise ValueError(
+                "Please select one of 'Berlin' or 'Washington' as the " "location!"
+            )
 
         if as_dataframe:
             df = gpd.GeoDataFrame.from_features(example_aoi, crs=4326)
