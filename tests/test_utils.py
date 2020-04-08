@@ -258,21 +258,15 @@ def test_fc_to_query_geometry_raises_with_not_accepted():
 def test_download_result_from_gcs():
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
-    def _simplified_get_download_url():
-        return cloud_storage_url
-
     with requests_mock.Mocker() as m:
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         out_tgz_file = open(out_tgz, "rb")
         m.get(
-            url=cloud_storage_url,
-            content=out_tgz_file.read(),
-            headers={"x-goog-stored-content-length": f"20000001"},
+            url=cloud_storage_url, content=out_tgz_file.read(),
         )
         with tempfile.TemporaryDirectory() as tempdir:
             out_files = download_results_from_gcs(
-                func_get_download_url=_simplified_get_download_url,
-                output_directory=tempdir,
+                download_url=cloud_storage_url, output_directory=tempdir,
             )
             for file in out_files:
                 assert Path(file).exists()

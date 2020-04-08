@@ -225,14 +225,14 @@ def test_job_download_result_no_tiff_live(auth_live):
 
 @pytest.mark.skip
 @pytest.mark.live
-def test_job_download_result_live_slow_gcs_new_token(auth_live):
+def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live):
     job = up42.Job(
         auth=auth_live,
         project_id=auth_live.project_id,
-        job_id="99bc9fab-cffa-4010-bdac-2b0620c7e1cb",
+        job_id="30f82b44-1505-4773-ab23-31fa61ba9b4c",
     )
     with tempfile.TemporaryDirectory() as tempdir:
         out_files = job.download_results(Path(tempdir))
         for file in out_files:
             assert Path(file).exists()
-        assert len(out_files) == 98
+        assert len(out_files) == 490

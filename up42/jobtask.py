@@ -106,9 +106,9 @@ class JobTask(Tools):
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", str(output_directory))
 
+        download_url = self._get_download_url()
         out_filepaths = download_results_from_gcs(
-            func_get_download_url=self._get_download_url,
-            output_directory=output_directory,
+            download_url=download_url, output_directory=output_directory,
         )
 
         self.results = out_filepaths

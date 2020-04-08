@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import Dict, List, Union, Callable
+from typing import Dict, List, Union
 from pathlib import Path
 import tempfile
 import tarfile
@@ -53,14 +53,14 @@ def is_notebook() -> bool:
 
 
 def download_results_from_gcs(
-    func_get_download_url: Callable, output_directory: Union[str, Path]
+    download_url: str, output_directory: Union[str, Path]
 ) -> List[str]:
     """
     General download function for results of job and jobtask from cloud storage
     provider.
 
     Args:
-        func_get_download_url:
+        download_url: The signed gcs url to download.
         output_directory: The file output directory, defaults to the current working
             directory.
     """
@@ -69,24 +69,19 @@ def download_results_from_gcs(
     # Download
     tgz_file = tempfile.mktemp()
     with open(tgz_file, "wb") as dst_tgz:
-        headers = {"Range": "bytes=0-512"}
-        r = requests.get(func_get_download_url(), headers=headers)
-        bytes_total = int(r.headers["x-goog-stored-content-length"])
-        chunk_size = 10000000  # 10mb
-        # TODO: Find better solution for gcs token issue.
-        for start in tqdm(range(0, bytes_total, chunk_size)):
-            end = start + chunk_size - 1  # Bytes ranges are inclusive
-            headers = {"Range": f"bytes={start}-{end}"}
-            try:
-                r = requests.get(func_get_download_url(), headers=headers)
-                r.raise_for_status()
-                dst_tgz.write(r.content)
-            except requests.exceptions.HTTPError:
-                # Tokens expires before download complete.
-                r = requests.get(func_get_download_url(), headers=headers)
-                dst_tgz.write(r.content)
+        try:
+            r = requests.get(download_url)
+            r.raise_for_status()
+            for chunk in tqdm(r.iter_content(chunk_size=1024)):
+                if chunk:  # filter out keep-alive new chunks
+                    dst_tgz.write(chunk)
+        except requests.exceptions.HTTPError as err:
+            logger.debug("Connection error, please try again! %s", err)
+            raise requests.exceptions.HTTPError(
+                f"Connection error, please try again! {err}"
+            )
 
-    # Unpack
+    # Unpack and exclude data.json
     out_filepaths: List[str] = []
     with tarfile.open(tgz_file) as tar:
         members = tar.getmembers()
