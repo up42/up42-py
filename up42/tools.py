@@ -3,6 +3,7 @@ import math
 import os
 from pathlib import Path
 from typing import Tuple, List, Union, Dict
+import warnings
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -214,6 +215,10 @@ class Tools:
         else:
             ncols = 2
             nrows = int(math.ceil(len(filepaths) / float(ncols)))
+
+        warnings.filterwarnings(
+            "ignore", category=rasterio.errors.NotGeoreferencedWarning
+        )
 
         fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
         if len(filepaths) > 1:
