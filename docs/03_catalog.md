@@ -28,12 +28,12 @@ aoi
 
 ```python
 search_paramaters = catalog.construct_parameters(geometry=aoi, 
-                                                 start_date="2014-01-01",
+                                                 start_date="2018-01-01",
                                                  end_date="2020-12-31",
                                                  sensors=["pleiades"],
                                                  max_cloudcover=20,
                                                  sortby="cloudCoverage", 
-                                                 limit=4)
+                                                 limit=5)
 search_results = catalog.search(search_paramaters=search_paramaters)
 display(search_results.head())
 ```
@@ -49,7 +49,7 @@ catalog.plot_coverage(scenes=search_results,
 
 
 ```python
-catalog.download_quicklooks(image_ids=search_results.id.to_list(), provider="sobloo")
+catalog.download_quicklooks(image_ids=search_results.id.to_list(), provider="oneatlas")  #oneatlas works
 ```
 
 

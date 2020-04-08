@@ -153,7 +153,7 @@ class Auth(Tools):
         self, request_type: str, url: str, data: Dict = {}, querystring: Dict = {}
     ) -> requests.Response:
         """
-        Helper function for the request running the actual request with the correct headers.
+        Helper function for the request, running the actual request with the correct headers.
 
         Args:
             request_type: 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'

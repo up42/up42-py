@@ -4,6 +4,7 @@ from typing import Dict, Union, List
 import geopandas as gpd
 import shapely
 from geojson import Feature, FeatureCollection
+from requests.exceptions import HTTPError
 from shapely.geometry import Point, Polygon
 from tqdm import tqdm
 
@@ -209,12 +210,12 @@ class Catalog(Tools):
         output_directory: Union[str, Path, None] = None,
     ) -> List[str]:
         """
-        Gets the quicklooks of scenes, from oneatlas or sobloo.
+        Gets the quicklooks of scenes, from oneatlas.
 
         After download, can be plotted via catalog.plot_quicklooks().
         Args:
             image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
-            provider:  One of "oneatlas", "sobloo"
+            provider:  One of "oneatlas" (pleiades, spot). Sobloo (Sentinel1-5p coming soon.
             output_directory: The file output directory, defaults to the current working
                 directory.
 
@@ -222,6 +223,12 @@ class Catalog(Tools):
             List of quicklook image output file paths.
         """
         logger.info("Getting quicklooks for image_ids %s", image_ids)
+
+        implemented_providers = ["oneatlas"]
+        if provider not in implemented_providers:
+            raise ValueError(
+                "This provider is not yet implemented for quicklook " "download!"
+            )
 
         if output_directory is None:
             output_directory = (
@@ -243,9 +250,13 @@ class Catalog(Tools):
             url = (
                 f"{self.auth._endpoint()}/catalog/{provider}/image/{image_id}/quicklook"
             )
-            response = self.auth._request(
-                request_type="GET", url=url, return_text=False
-            )
+            try:
+                response = self.auth._request(
+                    request_type="GET", url=url, return_text=False
+                )
+                response.raise_for_status()
+            except HTTPError as err:
+                raise SystemExit(err)
 
             with open(out_path, "wb") as dst:
                 for chunk in response:
