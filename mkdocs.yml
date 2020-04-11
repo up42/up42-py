@@ -22,27 +22,26 @@ extra:
 
 ## Page tree
 nav:
+    - Home: index.md
     - Guides:
-      - Overview: 'index.md'
-      - Installation: 'installation.md'
-      - Authentication: 'authentication.md'
-      - Structure & Functionality: '02_objects.md'
-      - 30 seconds example: '01_quickstart.md'
-      - Typical Usage: '04_typical_usage.md'
-      - Catalog Search: '03_catalog.md'
-      - Command Line Interface: '05_cli.md'
+      - Installation: installation.md
+      - Authentication: authentication.md
+      - Structure: 02_objects.md
+      - 30 seconds example: 01_quickstart.md
+      - Typical Usage: 04_typical_usage.md
+      - Catalog Search: 03_catalog.md
+      - Command Line Interface: 05_cli.md
     - Code Reference:
-        - Project: 'reference/project.md'
-        - Workflow: 'reference/workflow.md'
-        - Job: 'reference/job.md'
-        - JobTask: 'reference/jobtask.md'
-        - Tools: 'reference/tools.md'
+        - Project: reference/project.md
+        - Workflow: reference/workflow.md
+        - Job: reference/job.md
+        - JobTask: reference/jobtask.md
+        - Tools: reference/tools.md
     - Examples:
-        - Parallel Jobs: 'advanced/airports-parallel.md'
+        - Parallel Jobs: advanced/airports-parallel.md
     - FAQ:
-        - FAQ: 'faq.md'
-        - Changelog: 'changelog.md'
-
+        - FAQ: faq.md
+        - Changelog: changelog.md
 
 ## Configuration
 theme:
@@ -124,7 +123,7 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
-  #- pymdown.tabbed
+  - pymdownx.tabbed
 
 google_analytics:
   - 'UA-XXXXXXXX-X' #add account
