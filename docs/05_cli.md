@@ -1,9 +1,21 @@
-# CLI
+# Command Line Interface (CLI)
 
-This is an overview of the included python based CLI (Command Line Interface).
+The CLI tool allows you to use the UP42 functionality from the command line. 
+It is installed automatically with and based on the Python SDK. 
+
+
+To check whether the tool is installed and functioning correctly, type the following on your
+terminal or command line. This will print out a summary of the available commands.
 
 ```bash
 up42 -h
+```
+
+
+To get help on a specific command, use:
+
+```bash
+up42 command -h
 ```
 
 ## Authenticate

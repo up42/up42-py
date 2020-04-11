@@ -1,36 +1,14 @@
-# Quickstart
+# 30 seconds example
 
-
-```python
-%load_ext autoreload
-%autoreload 2
-```
-
-## Package Overview
-
-- The UP42 Python SDK uses six object classes, representing the **hierarchical structure** of the UP42 platform:
-    - **Project > Workflow > Job > JobTask**,
-    - **Catalog** and
-    - **Tools**.
-- Each object (besides Catalog and Tools) provides the full functionality at that specific level and can spawn elements of one level below, e.g.
-    - `project = up42.initialize_project()`
-    - `workflow = Project().create_workflow()`
-    - `job = workflow.create_and_run_job()`
-- Usually a user starts by creating a project object and then spawns objects of a lower level.
-- It is also possible to directly access a lower-level object, e.g. a job that was already run on UP42 can be used to initialize the corresponding object via `up42.initialize_job(job_id='123456789')`.
-
-## 30 seconds example
-
-After authentication with the UP42 project, a new workflow is created and filled with tasks (Sentinel-2 data, image sharpening). 
-The area of interest and workflow parameters are defined. After running the job, the results are downloaded and visualized.
-
+A new workflow is created and filled with tasks (Sentinel-2 data, image sharpening). 
+The area of interest and workflow parameters are defined. After running the job, 
+the results are downloaded and visualized.
 
 ```python
 import up42
 ```
 
-
-```python
+```python linenums="1"
 up42.authenticate("config.json")
 project = up42.initialize_project()
 project
@@ -68,14 +46,5 @@ job.track_status()
 
 ```python
 job.download_results()
-```
-
-
-```python
 job.plot_results()
-```
-
-
-```python
-
 ```
