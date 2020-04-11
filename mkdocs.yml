@@ -1,23 +1,24 @@
 ## Project information
 site_name: UP42 Python SDK
 site_description: UP42 Python SDK
-edit_uri: ''  #disables edit button
 
 ## Repository
 repo_name: up42-py
 repo_url: https://github.com/up42/up42-py
-copyright: UP42
+edit_uri: ''  #disables edit button
+
+# Copyright
+copyright: UP42 2020
 
 ## Social Media
 extra:
-  manifest: 'manifest.webmanifest'
   social:
-    - type: 'github'
-      link: 'https://github.com/up42'
-    - type: 'twitter'
-      link: 'https://twitter.com/up42official'
-    - type: 'linkedin'
-      link: 'https://www.linkedin.com/company/up42/'
+    - icon: fontawesome/brands/github
+      link: https://github.com/up42
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/up42official
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/up42/
 
 ## Page tree
 nav:
@@ -45,33 +46,43 @@ nav:
 
 ## Configuration
 theme:
-  name: 'material'
-  language: 'en'
+  name: material
+  # 404 page
+  static_templates:
+    - 404.html
+  # Don't include MkDocs' JavaScript
+  include_search_page: false
+  search_index_only: true
+  # Default values, taken from mkdocs_theme.yml
+  language: en
+  features:
+    - tabs
+    #- instant
   palette:
     primary: 'indigo'
     accent: 'purple'
   font:
     text: 'Roboto'
     code: 'Roboto Mono'
-  logo: '_assets/logo.ico'
-  favicon: '_assets/logo.ico'
-  feature:
-    tabs: true
-  navigation_depth: 2
+#  icon:
+#    logo: '_assets/logo'
+#  favicon: '_assets/logo'
 
 ## Plugins
 plugins:
   - search
   - autolinks
   - table-reader
-#  - mkdocstrings:
-#      default_handler: python
-#      handlers:
-#        python:
-#          rendering:
-#            show_source: true
-#      watch:
-#        - src/my_library
+  - minify:
+      minify_html: true
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          rendering:
+            show_source: true
+      watch:
+        - src/my_library
 
 ## Custom theme additions
 extra_javascript:
@@ -81,9 +92,10 @@ extra_css:
 
 ## Extensions
 markdown_extensions:
-  - markdown.extensions.admonition # For note/tip etc. blocks
+  - markdown.extensions.admonition
+  - markdown.extensions.attr_list
   - markdown.extensions.codehilite:
-      linenums: true
+      guess_lang: false
   - markdown.extensions.def_list
   - markdown.extensions.footnotes
   - markdown.extensions.meta
@@ -98,12 +110,17 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:pymdownx.emoji.twemoji
       emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  # - pymdownx.highlight:
+  #     linenums_style: pymdownx-inline
   - pymdownx.inlinehilite
   - pymdownx.keys
-  - pymdownx.magiclink
+  - pymdownx.magiclink:
   - pymdownx.mark
   - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      check_paths: true
   - pymdownx.superfences
+  - pymdownx.tabbed
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
