@@ -5,7 +5,7 @@
 </h1>
 
 <p align="center">
-    <strong>Python interface for UP42, the geospatial marketplace and developer platform.</strong>
+    <strong>(BETA) Python interface for UP42, the geospatial marketplace and developer platform.</strong>
 </p>
 
 <p align="center">

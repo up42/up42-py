@@ -21,22 +21,26 @@ extra:
 
 ## Page tree
 nav:
-    - Overview: 'index.md'
-    - Installation: 'installation.md'
-    - Getting started:
-      - Quickstart: '01_quickstart.md'
-      - Objects: '02_objects.md'
-      - Catalog Search: '03_catalog.md'
+    - Guides:
+      - Overview: 'index.md'
+      - Installation: 'installation.md'
+      - Authentication: 'authentication.md'
+      - Structure & Functionality: '02_objects.md'
+      - 30 seconds example: '01_quickstart.md'
       - Typical Usage: '04_typical_usage.md'
-    - CLI: '05_cli.md'
+      - Catalog Search: '03_catalog.md'
+      - Command Line Interface: '05_cli.md'
     - Code Reference:
         - Project: 'reference/project.md'
         - Workflow: 'reference/workflow.md'
         - Job: 'reference/job.md'
         - JobTask: 'reference/jobtask.md'
         - Tools: 'reference/tools.md'
-    - Advanced Tutorials:
+    - Examples:
         - Parallel Jobs: 'advanced/airports-parallel.md'
+    - FAQ:
+        - FAQ: 'faq.md'
+        - Changelog: 'changelog.md'
 
 
 ## Configuration
@@ -52,7 +56,7 @@ theme:
   logo: '_assets/logo.ico'
   favicon: '_assets/logo.ico'
   feature:
-    tabs: false
+    tabs: true
   navigation_depth: 2
 
 ## Plugins
@@ -60,14 +64,14 @@ plugins:
   - search
   - autolinks
   - table-reader
-  - mkdocstrings:
-      default_handler: python
-      handlers:
-        python:
-          rendering:
-            show_source: true
-      watch:
-        - src/my_library
+#  - mkdocstrings:
+#      default_handler: python
+#      handlers:
+#        python:
+#          rendering:
+#            show_source: true
+#      watch:
+#        - src/my_library
 
 ## Custom theme additions
 extra_javascript:
