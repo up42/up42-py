@@ -62,7 +62,7 @@ An overview of the the **functionality** of each object
     === "Catalog"
         - `.construct_parameters()`
         - `.search()`
-        - `.download_quicklooks()
+        - `.download_quicklooks()`
         
     === "Tools"
         - `.read_vector_file()`

@@ -20,7 +20,7 @@ import up42
 ```
 
 !!! Success "Success!"
-    Continue with the [Quickstart](01_quickstart.md) and the step-for-step 
+    Continue with the [Quickstart](30-seconds-example.md) and the step-for-step 
     [Getting Started](authentication.md) sections!
 
 <br>

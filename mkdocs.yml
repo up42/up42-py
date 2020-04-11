@@ -26,11 +26,11 @@ nav:
     - Guides:
       - Installation: installation.md
       - Authentication: authentication.md
-      - Structure: 02_objects.md
-      - 30 seconds example: 01_quickstart.md
-      - Typical Usage: 04_typical_usage.md
-      - Catalog Search: 03_catalog.md
-      - Command Line Interface: 05_cli.md
+      - Structure: structure.md
+      - 30 seconds example: 30-seconds-example.md
+      - Typical Usage: typical-usage.md
+      - Catalog Search: catalog.md
+      - Command Line Interface: cli.md
     - Code Reference:
         - Project: reference/project.md
         - Workflow: reference/workflow.md
