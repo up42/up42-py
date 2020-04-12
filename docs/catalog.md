@@ -49,8 +49,3 @@ catalog.download_quicklooks(image_ids=search_results.id.to_list(), provider="one
 ```python
 catalog.plot_quicklooks(figsize=(20,20))
 ```
-
-
-```python
-
-```
