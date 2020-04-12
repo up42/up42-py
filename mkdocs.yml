@@ -27,7 +27,7 @@ nav:
       - Installation: installation.md
       - Authentication: authentication.md
       - Structure: structure.md
-      - 30 seconds example: 30-seconds-example.md
+      - 30 Seconds Example: 30-seconds-example.md
       - Typical Usage: typical-usage.md
       - Catalog Search: catalog.md
       - Command Line Interface: cli.md

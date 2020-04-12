@@ -1,21 +1,14 @@
 # Catalog Search
 
-
 ```python
-%load_ext autoreload
-%autoreload 2
-
 import up42
-```
-
-
-```python
 up42.authenticate(cfg_file="config.json")
+
 catalog = up42.initialize_catalog()
 catalog
 ```
 
-## Search available scenes within aoi
+## Search scenes in aoi
 
 
 ```python

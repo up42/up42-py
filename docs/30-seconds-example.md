@@ -1,15 +1,14 @@
-# 30 seconds example
+# 30 Seconds Example
 
 A new workflow is created and filled with tasks (Sentinel-2 data, image sharpening). 
 The area of interest and workflow parameters are defined. After running the job, 
 the results are downloaded and visualized.
 
+
 ```python
 import up42
-```
-
-```python linenums="1"
 up42.authenticate("config.json")
+
 project = up42.initialize_project()
 project
 ```
@@ -17,7 +16,8 @@ project
 
 ```python
 # Add blocks/tasks to the workflow.
-workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
+workflow = project.create_workflow(name="30-seconds-workflow", 
+                                   use_existing=True)
 blocks = up42.get_blocks(basic=True)
 input_tasks= [blocks['sobloo-s2-l1c-aoiclipped'], 
               blocks['sharpening']]
