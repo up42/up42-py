@@ -38,10 +38,9 @@ nav:
         - JobTask: reference/jobtask.md
         - Tools: reference/tools.md
     - Examples:
-        - Parallel Jobs: advanced/airports-parallel.md
-    - FAQ:
-        - FAQ: faq.md
-        - Changelog: changelog.md
+        - Parallel Jobs: examples/airports-parallel.md
+    - Support & FAQ:
+        - FAQ: support-faq.md
 
 ## Configuration
 theme:
