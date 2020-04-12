@@ -45,6 +45,7 @@ nav:
 ## Configuration
 theme:
   name: material
+  custom_dir: docs/theme_override_home/
   # 404 page
   static_templates:
     - 404.html
