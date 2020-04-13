@@ -1,21 +1,13 @@
-# Typical Usage
+# :national_park: Typical Usage
 
 This overview of the most important functions repeats the previous 30-seconds-example, but in more detail and shows additional functionality and alternative steps.
-
-
-```python
-%load_ext autoreload
-%autoreload 2
-
-import up42
-```
 
 ## Authentificate & access project
 
 
 ```python
+import up42
 up42.authenticate(cfg_file="config.json")
-# up42.authenticate(project_id=xxx, project_api_key=xxxx)
 
 project = up42.initialize_project()
 ```

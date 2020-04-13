@@ -1,10 +1,53 @@
-/* Increase logo width because mkdocs material enforces 48 x 48 */
-.md-logo img {
-    width: 36px;
-    height: auto;
+/* header different color*/
+/*
+.md-header {
+    background-color: #232f3e !important;
+    border-bottom: 1px solid #1b2532 !important;
+}
+*/
+
+
+/* Active tab bold & color */
+.md-tabs__link {
+    font-size: .75rem !important;
+}
+.md-tabs__link--active {
+    font-weight: bold !important;
+    color: var(--md-accent-fg-color);
+}
+.md-tabs__link:hover {
+    color: var(--md-accent-fg-color);
 }
 
-/* More visible headers*/
+/* navigation bar active color*/
+.md-nav__item .md-nav__link--active {
+    font-weight: bold !important;
+    color: var(--md-accent-fg-color);
+}
+.md-nav__item .md-nav__link--active {
+    font-weight: bold !important;
+    font-size: .75rem !important;
+    color: var(--md-accent-fg-color);
+}
+
+/* frontpage elements */
+.tx-hero h1 {
+    font-size: 2.41rem !important;
+}
+a.md-button.md-button--primary {
+    background-color: var(--md-accent-fg-color);
+    border-color: var(--md-accent-fg-color);
+    color: #ffffff;
+}
+a.md-button.md-button--primary:hover {
+    color: #000000;
+}
+a.md-button.md-button:hover {
+    color: #000000;
+}
+
+
+/* More visible headings*/
 .md-main h1 {
     margin: 0.5em 0 1.0em 0;
     color: #333;
@@ -65,38 +108,14 @@
     float:left;
 }
 
-
-/* change link colors for indigo theme */
-.md-header-nav__button:hover {
-    opacity: 1;
-    color: #cc00cc;
-    transition: color 0.5s;
-}
-[data-md-color-primary="indigo"] .md-typeset a {
-    color: #cc00cc;
-}
-[data-md-color-primary="indigo"] .md-typeset a:hover {
-    color: #ff33bb;
-}
-.md-nav__link:hover {
-    color: #ff33bb;
-}
-.md-footer-nav__link {
-    font-weight: bold;
-}
-.md-footer-nav__link:hover {
-    opacity: 1;
-    color: #ff33bb;
-    transition: color 0.5s;
-}
-
 /* display external links with icon */
+/*
 div.md-content a[href^="http://"]:not([href*="http://127.0.0.1:8000"]):after,
 div.md-content a[href^="https://"]:not([href*="http://127.0.0.1:8000"]):after,
 div.md-content a[href^="http://"]:not([href*="https://docs.up42.com"]):after,
 div.md-content a[href^="https://"]:not([href*="https://docs.up42.com"]):after,
-div.md-content a[href^="//"]:not([href*="http://127.0.0.1:8000"]) {
-    font-family: "FontAwesome";
+div.md-content a[href^="//"]:not([href*="http://127.0.0.1:8000"]):after {
+    font-family: 'FontAwesome';
     content: " \f08e";
     font-weight: normal;
     font-style: normal;
@@ -106,6 +125,7 @@ div.md-content a[href^="//"]:not([href*="http://127.0.0.1:8000"]) {
     text-decoration: none;
     padding-left: 3px;
 }
+*/
 
 
 /*Table styling*/
@@ -140,17 +160,14 @@ table {
   position: relative;
   flex-wrap: wrap;
 }
-
 .tabbed-set .highlight {
   background: #ddd;
 }
-
 .tabbed-set .tabbed-content {
   display: none;
   order: 99;
   width: 100%;
 }
-
 .tabbed-set label {
   width: auto;
   margin: 0 0.5em;
@@ -158,20 +175,16 @@ table {
   font-size: 120%;
   cursor: pointer;
 }
-
 .tabbed-set input {
   position: absolute;
   opacity: 0;
 }
-
 .tabbed-set input:nth-child(n+1) {
   color: #333333;
 }
-
 .tabbed-set input:nth-child(n+1):checked + label {
     color: #FF5252;
 }
-
 .tabbed-set input:nth-child(n+1):checked + label + .tabbed-content {
     display: block;
 }
@@ -235,19 +248,16 @@ table {
 
 
 /* mkdocstrings styling
-
 /* Indentation of function doc */
 div.doc-contents:not(.first) {
   padding-left: 25px;
   border-left: 4px solid rgba(230, 230, 230);
   margin-bottom: 80px;
 }
-
 /* Don't capitalize names. */
 h5.doc-heading {
   text-transform: none !important;
 }
-
 /* Don't use vertical space on hidden ToC entries. */
 h6.hidden-toc {
   margin: 0 !important;
@@ -258,17 +268,14 @@ h6.hidden-toc::before {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
-
 /* Don't show permalink of hidden ToC entries. */
 h6.hidden-toc a.headerlink {
   display: none;
 }
-
 /* Avoid breaking parameters name, etc. in table cells. */
 td code {
   word-break: normal !important;
 }
-
 /* For pieces of Markdown rendered in table cells. */
 td p {
   margin-top: 0;
