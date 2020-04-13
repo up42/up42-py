@@ -3,7 +3,6 @@
 The CLI tool allows you to use the UP42 functionality from the command line. 
 It is installed automatically with and based on the Python SDK. 
 
-
 To check whether the tool is installed and functioning correctly, type the following on your
 terminal or command line. This will print out a summary of the available commands.
 
