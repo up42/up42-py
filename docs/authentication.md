@@ -1,4 +1,4 @@
-# Authentication
+# :key: Authentication
 
 In order to use the UP42 Python SDK functionality you need to first authenticate with the
 UP42 servers via your project credentials.
@@ -8,8 +8,8 @@ UP42 servers via your project credentials.
 
 First create a new project in the UP42 interface or use an existing project. **Copy the
 project_id and project_api_key** from the 
-**[Devloper section](https://docs.up42.com/getting-started/first-api-request.html#run-your-first-job-via-the-api)** 
-in the project page.
+**[Developer section](https://docs.up42.com/getting-started/first-api-request.html#run-your-first-job-via-the-api)** 
+in the project page in the UP42 interface.
 
 
 

@@ -1,4 +1,4 @@
-# Catalog Search
+# :world_map: Catalog Search
 
 ```python
 import up42

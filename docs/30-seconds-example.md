@@ -1,4 +1,4 @@
-# 30 Seconds Example
+# :stopwatch: 30 Seconds Example
 
 A new workflow is created and filled with tasks (Sentinel-2 data, image sharpening). 
 The area of interest and workflow parameters are defined. After running the job, 

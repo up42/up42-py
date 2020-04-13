@@ -65,7 +65,7 @@ theme:
     code: Roboto Mono
   icon:  # from .icons path. Add to theme override for custom logo.
     repo: fontawesome/brands/github  # topright github link icon
-    logo: untitled  # top left header logo
+    logo: up42-logo  # top left header logo
   favicon: assets/logo-up42.ico #browser tab logo
 
 ## Plugins
@@ -107,9 +107,7 @@ markdown_extensions:
   - pymdownx.caret
   - pymdownx.critic
   - pymdownx.details
-  - pymdownx.emoji:
-      emoji_index: !!python/name:pymdownx.emoji.twemoji
-      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - pymdownx.emoji
   # - pymdownx.highlight:
   #     linenums_style: pymdownx-inline
   - pymdownx.inlinehilite

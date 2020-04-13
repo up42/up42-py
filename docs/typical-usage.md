@@ -1,4 +1,4 @@
-# Typical Usage
+# :national_park: Typical Usage
 
 This overview of the most important functions repeats the previous 30-seconds-example, but in more detail and shows additional functionality and alternative steps.
 

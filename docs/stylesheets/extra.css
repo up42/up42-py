@@ -4,11 +4,7 @@
     background-color: #232f3e !important;
     border-bottom: 1px solid #1b2532 !important;
 }
-*/
 
-.tx-hero h1 {
-    font-size: 2.41rem !important;
-}
 
 /* Active tab bold & color */
 .md-tabs__link {
@@ -33,7 +29,10 @@
     color: var(--md-accent-fg-color);
 }
 
-/* frontpage Get started button color */
+/* frontpage elements */
+.tx-hero h1 {
+    font-size: 2.41rem !important;
+}
 a.md-button.md-button--primary {
     background-color: var(--md-accent-fg-color);
     border-color: var(--md-accent-fg-color);

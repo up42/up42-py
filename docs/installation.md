@@ -1,4 +1,4 @@
-# Installation
+# :floppy_disk: Installation
 
 ## User installation
 
