@@ -13,7 +13,7 @@ copyright: UP42 2020
 ## Social Media
 extra:
   social:
-    - icon: fontawesome/brands/github
+    - icon: fontawesome/brands/github-alt
       link: https://github.com/up42
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/up42official
@@ -58,14 +58,15 @@ theme:
     - tabs
     #- instant
   palette:
-    primary: 'indigo'
-    accent: 'purple'
+    primary: indigo
+    accent: purple
   font:
-    text: 'Roboto'
-    code: 'Roboto Mono'
-#  icon:
-#    logo: '_assets/logo'
-#  favicon: '_assets/logo'
+    text: Roboto
+    code: Roboto Mono
+  icon:  # from .icons path. Add to theme override for custom logo.
+    repo: fontawesome/brands/github  # topright github link icon
+    logo: untitled  # top left header logo
+  favicon: assets/logo-up42.ico #browser tab logo
 
 ## Plugins
 plugins:
@@ -73,7 +74,7 @@ plugins:
   - autolinks
   - table-reader
   - minify:
-      minify_html: true
+      minify_html: false #true
   - mkdocstrings:
       default_handler: python
       handlers:
