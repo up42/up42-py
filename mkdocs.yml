@@ -38,7 +38,8 @@ nav:
         - JobTask: reference/jobtask.md
         - Tools: reference/tools.md
     - Examples:
-        - Parallel Jobs: examples/airports-parallel.md
+        - Examples: examples/examples-intro.md
+        - Airport monitoring: examples/airport-monitoring.md
     - Support & FAQ:
         - FAQ: support-faq.md
 
