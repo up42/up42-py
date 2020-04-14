@@ -38,7 +38,7 @@ supported_sensors = [
     "sentinel1",
     "sentinel2",
     "sentinel3",
-    "sentinel5",
+    "sentinel5p",
 ]
 
 # pylint: disable=duplicate-code
@@ -71,7 +71,7 @@ class Catalog(Tools):
             "sentinel1",
             "sentinel2",
             "sentinel3",
-            "sentinel5",
+            "sentinel5p",
         ],
         limit: int = 1,
         max_cloudcover: float = 100,
