@@ -38,7 +38,7 @@ supported_sensors = [
     "sentinel1",
     "sentinel2",
     "sentinel3",
-    "sentinel5",
+    "sentinel5p",
 ]
 
 # pylint: disable=duplicate-code
@@ -63,7 +63,7 @@ class Catalog(Tools):
         geometry: Union[
             Dict, Feature, FeatureCollection, List, gpd.GeoDataFrame, Point, Polygon,
         ],
-        start_date: str = "2020-01-01",  # TODO: Other format? More time options?
+        start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
         sensors: List[str] = [
             "pleiades",
@@ -71,7 +71,7 @@ class Catalog(Tools):
             "sentinel1",
             "sentinel2",
             "sentinel3",
-            "sentinel5",
+            "sentinel5p",
         ],
         limit: int = 1,
         max_cloudcover: float = 100,
@@ -82,9 +82,12 @@ class Catalog(Tools):
         Follows STAC principles and property names.
 
         Args:
+            geometry: The search geometry, one of Dict, Feature, FeatureCollection,
+                List, gpd.GeoDataFrame, Point, Polygon.
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
-            geometry:
+            sensors: The satellite sensor(s) to search for, one or multiple of
+                ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5"]
             limit: The maximum number of search results to return.
             max_cloudcover: Maximum cloudcover % - 100 will return all scenes, 8.4 will return all
                 scenes with 8.4 or less cloudcover.
@@ -215,19 +218,23 @@ class Catalog(Tools):
         After download, can be plotted via catalog.plot_quicklooks().
         Args:
             image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
-            provider:  One of "oneatlas" (pleiades, spot). Sobloo (Sentinel1-5p coming soon.
+            provider:  One of "oneatlas" (pleiades, spot) or sobloo (Sentinel1-Sentinel5p).
             output_directory: The file output directory, defaults to the current working
                 directory.
 
         Returns:
             List of quicklook image output file paths.
         """
-        logger.info("Getting quicklooks for image_ids %s", image_ids)
+        logger.info(
+            "Getting quicklooks from provider %s for image_ids: %s", provider, image_ids
+        )
 
-        implemented_providers = ["oneatlas"]
+        if provider == "sobloo":
+            provider = "sobloo-image"
+        implemented_providers = ["sobloo-image", "oneatlas"]
         if provider not in implemented_providers:
             raise ValueError(
-                "This provider is not yet implemented for quicklook " "download!"
+                "This provider is not yet implemented for quicklook download!"
             )
 
         if output_directory is None:
