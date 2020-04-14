@@ -63,7 +63,7 @@ class Catalog(Tools):
         geometry: Union[
             Dict, Feature, FeatureCollection, List, gpd.GeoDataFrame, Point, Polygon,
         ],
-        start_date: str = "2020-01-01",  # TODO: Other format? More time options?
+        start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
         sensors: List[str] = [
             "pleiades",
@@ -82,9 +82,12 @@ class Catalog(Tools):
         Follows STAC principles and property names.
 
         Args:
+            geometry: The search geometry, one of Dict, Feature, FeatureCollection,
+                List, gpd.GeoDataFrame, Point, Polygon.
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
-            geometry:
+            sensors: The satellite sensor(s) to search for, one or multiple of
+                ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5"]
             limit: The maximum number of search results to return.
             max_cloudcover: Maximum cloudcover % - 100 will return all scenes, 8.4 will return all
                 scenes with 8.4 or less cloudcover.
