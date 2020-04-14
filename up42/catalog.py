@@ -215,19 +215,23 @@ class Catalog(Tools):
         After download, can be plotted via catalog.plot_quicklooks().
         Args:
             image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
-            provider:  One of "oneatlas" (pleiades, spot). Sobloo (Sentinel1-5p coming soon.
+            provider:  One of "oneatlas" (pleiades, spot) or sobloo (Sentinel1-Sentinel5p).
             output_directory: The file output directory, defaults to the current working
                 directory.
 
         Returns:
             List of quicklook image output file paths.
         """
-        logger.info("Getting quicklooks for image_ids %s", image_ids)
+        logger.info(
+            "Getting quicklooks from provider %s for image_ids: %s", provider, image_ids
+        )
 
-        implemented_providers = ["oneatlas"]
+        if provider == "sobloo":
+            provider = "sobloo-image"
+        implemented_providers = ["sobloo-image", "oneatlas"]
         if provider not in implemented_providers:
             raise ValueError(
-                "This provider is not yet implemented for quicklook " "download!"
+                "This provider is not yet implemented for quicklook download!"
             )
 
         if output_directory is None:
