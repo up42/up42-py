@@ -5,7 +5,7 @@
 </h1>
 
 <p align="center">
-    <strong>(BETA) Python interface for UP42, the geospatial marketplace and developer platform.</strong>
+    <strong>(BETA) Python package for UP42, the geospatial marketplace and developer platform.</strong>
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@
 </p>
 
 ## Highlights
-- Python package for easy access to [UP42's](http://www.up42.com) **geospatial datasets** & **processing workflows**
+- Python package for easy access to **[UP42's](http://www.up42.com)** **geospatial datasets** & **processing workflows**
 - For geospatial **analysis** & **product builders**!
 - Interactive maps & **visualization**, ideal with Jupyter notebooks  
 - Command Line Interface (**CLI**)
@@ -31,30 +31,42 @@
 
 <br>
 
-## Package Overview
+## Install
 
-- The UP42 Python SDK uses six object classes, representing the **hierarchical structure** of the UP42 platform:
-    - **Project > Workflow > Job > JobTask**,
-    - **Catalog** and
-    - **Tools**.
-- Each object (besides Catalog and Tools) provides the full functionality at that specific level and can spawn elements of one level below, e.g.
+The package requires Python > 3.6.
+
+```bash
+pip install up42-py
+```
+
+See the **[installation docs](https://up42.github.io/up42-py/installation/)** for all details and **[learn how to get started!](https://up42.github.io/up42-py/01_quickstart/)**
+
+<br>
+
+## Overview
+
+- The UP42 Python SDK uses six object classes, representing the **hierarchical structure of UP42**:
+    - **Project > Workflow > Job > JobTask**
+    - **Catalog**
+    - **Tools**
+- Each object can **spawn elements of one level below**, e.g.
     - `project = up42.initialize_project()`
     - `workflow = Project().create_workflow()`
     - `job = workflow.create_and_run_job()`
-- Usually a user starts by creating a project object and then spawns objects of a lower level.
-- It is also possible to directly access a lower-level object, e.g. a job that was already run on UP42 can be used to initialize the corresponding object via `up42.initialize_job(job_id='123456789')`.
 
 <br>
 
 ## 30-seconds Example
 
-After authentication with the UP42 project, a new workflow is created and filled with tasks (Sentinel-2 data, image sharpening). 
+After [authentication](https://up42.github.io/up42-py/authentication/) with the UP42 project, 
+a new workflow is created and filled with tasks ([Sentinel-2 data](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64), 
+[image sharpening](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e)). 
 The area of interest and workflow parameters are defined. After running the job, the results are downloaded and visualized.
 
 ```python
 import up42
 
-up42.authenticate("config.json")
+up42.authenticate(porject_id=12345, project_api_key=12345)
 project = up42.initialize_project()
 
 workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
@@ -79,42 +91,6 @@ job.track_status()
 job.download_results()
 job.map_results()
 ```
-
-<br>
-
-## Installation & Getting Started
-
-The package requires Python > 3.6.
-
-1. Install via pip:
-```bash
-pip install up42-py
-```
-
-2. Create a new project on [UP42](https://up42.com).
-
-3. Create a `config.json` file and fill in the [project credentials](https://docs.up42.com/getting-started/first-api-request.html#run-your-first-job-via-the-api).
-```json
-{
-  "project_id": "...",
-  "project_api_key": "..."
-}
-```
-
-4. Test it in Python! This will authenticate with the UP42 Server and get the project information.
-```python
-import up42
-
-up42.authenticate(cfg_file="config.json")
-project = up42.initialize_project()
-print(project)
-```
-
-Success! Continue with the **[Getting Started chapter](https://up42.github.io/up42-py/01_quickstart/)** in the documentation!
-
-<br>
-
-For a developer installation (in case you want to contribute to up42-py) see the [developer readme](README-dev.md).
 
 <br>
 

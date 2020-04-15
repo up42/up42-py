@@ -65,7 +65,6 @@ theme:
     text: Roboto
     code: Roboto Mono
   icon:  # from .icons path. Add to theme override for custom logo.
-    repo: fontawesome/brands/github  # topright github link icon
     logo: up42-logo  # top left header logo
   favicon: assets/logo-up42.ico #browser tab logo
 

@@ -1,38 +1,32 @@
 # :key: Authentication
 
 In order to use the UP42 Python SDK functionality you need to first authenticate with the
-UP42 servers via your project credentials.
+UP42 servers via your project credentials. 
 
+!!! Info "Get your Project credentials"
+    Log in to [UP42.com](https://console.up42.com) and create a new project or select an existing one.
+    You can find the **project_id** and **project_api_key** in the project's **"Developer" section**.
 
-## Get the project credentials
+## As arguments
 
-First create a new project in the UP42 interface or use an existing project. **Copy the
-project_id and project_api_key** from the 
-**[Developer section](https://docs.up42.com/getting-started/first-api-request.html#run-your-first-job-via-the-api)** 
-in the project page in the UP42 interface.
+Authenticate by passing the project credentials **directly as arguments**:
 
+```python
+import up42
+up42.authenticate(project_id=123, project_api_key=456)
+```
 
-
-## Authenticate
-
-1. You can authenticate by passing the project credentials **directly as arguments**:
-    ```python
-    import up42
-    up42.authenticate(project_id=123, project_api_key=456)
-    ```
-
-2. Alternatively, create a **configuration json file**:
+## Use a configuration file
+Alternatively, create a **configuration json file** and pass its file path:
  
-    ```json
-    {
-      "project_id": "...",
-      "project_api_key": "..."
-    }
-    ```
-    
-    and pass the file path:
-    
-    ```python
-    import up42
-    up42.authenticate(cfg_file="config.json")
-    ```
+```json
+{
+  "project_id": "...",
+  "project_api_key": "..."
+}
+```
+
+```python
+import up42
+up42.authenticate(cfg_file="config.json")
+```
