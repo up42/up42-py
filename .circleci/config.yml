@@ -4,6 +4,9 @@ orbs:
 
 jobs:
   build_and_test:
+    branches:
+      ignore:
+        - gh-pages
     docker:
       - image: circleci/python:3.7
     steps:
@@ -22,6 +25,7 @@ workflows:
   build-and-deploy:
     jobs:
       - build_and_test
-        branches:
-          ignore:
-            - gh-pages
+        filters:
+          branches:
+            ignore:
+              - gh-pages
