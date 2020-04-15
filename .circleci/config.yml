@@ -22,6 +22,6 @@ workflows:
   build-and-deploy:
     jobs:
       - build_and_test
-          branches:
-            ignore:
-              - gh-pages
+        branches:
+          ignore:
+            - gh-pages
