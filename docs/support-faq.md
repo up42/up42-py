@@ -1,16 +1,22 @@
 # :email: Support & FAQ
 
-Please reach out via Email **[support@up42.com](mailto:support@up42.com)** or open a **[github issue](https://github.com/up42/up42-py)**.
+### **Contact**
+
+Please contact us via Email **[support@up42.com](mailto:support@up42.com)** or open a **[github issue](https://github.com/up42/up42-py)**.
 
 <br>
 
-#### Related links
-[UP42 Website](https://up42.com)  
-[UP42 Documentation](https://docs.up42.com)  
-[Github Repositories](https://github.com/up42)  
-[UP42 docs repository](https://github.com/up42/docs)  
-[UP42 Python package](https://github.com/up42/up42-py)  
+### **Related links**
 
+[UP42 Website](https://up42.com)  
+[UP42 Github Repositories](https://github.com/up42)  
+[UP42 Python package](https://github.com/up42/up42-py)  
+[UP42 Documentation](https://docs.up42.com)
+[UP42 docs repository](https://github.com/up42/docs)  
+
+<br>
+
+### **FAQ**
 
 #### **Can I contribute to the SDK?**
 
