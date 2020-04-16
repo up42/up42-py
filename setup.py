@@ -1,17 +1,14 @@
-import io
 from pathlib import Path
 from setuptools import setup, find_packages
 
-parent_dir = Path(__file__).parent
-
-version = io.open(parent_dir / "up42/_version.txt", encoding="utf-8").read()
+parent_dir = Path(__file__).resolve().parent
 
 
 setup(
     name="up42-py",
-    version=version,
+    version=parent_dir.joinpath("up42/_version.txt").read_text(encoding="utf-8"),
     description="Python SDK for UP42",
-    long_description=Path(parent_dir / "README.md").read_text(),
+    long_description=parent_dir.joinpath("README.md").read_text(),
     long_description_content_type="text/markdown",
     url="https://github.com/up42/up42-py",
     license="MIT",
@@ -21,7 +18,7 @@ setup(
     },
     include_package_data=True,
     zip_safe=False,
-    install_requires=Path(parent_dir / "requirements.txt").read_text().splitlines(),
+    install_requires=parent_dir.joinpath("requirements.txt").read_text().splitlines(),
     entry_points="""
         [console_scripts]
         up42=up42.cli:main
