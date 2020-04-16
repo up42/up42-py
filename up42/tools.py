@@ -1,6 +1,5 @@
 import json
 import math
-import os
 from pathlib import Path
 from typing import Tuple, List, Union, Dict
 import warnings
@@ -96,11 +95,11 @@ class Tools:
         logger.info("Getting small example aoi in %s.", location)
         if location == "Berlin":
             example_aoi = self.read_vector_file(
-                f"{os.path.dirname(__file__)}/data/aoi_berlin.geojson"
+                f"{str(Path(__file__).resolve().parent)}/data/aoi_berlin.geojson"
             )
         elif location == "Washington":
             example_aoi = self.read_vector_file(
-                f"{os.path.dirname(__file__)}/data/aoi_washington.geojson"
+                f"{str(Path(__file__).resolve().parent)}/data/aoi_washington.geojson"
             )
         else:
             raise ValueError(

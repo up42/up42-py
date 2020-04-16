@@ -41,7 +41,7 @@ def test_find_credentials_cfg_file(auth_mock_no_request):
     auth_mock_no_request.project_id = None
     auth_mock_no_request.project_api_key = None
 
-    fp = Path(__file__).parent / "mock_data" / "test_config.json"
+    fp = Path(__file__).resolve().parent / "mock_data" / "test_config.json"
     auth_mock_no_request.cfg_file = fp
 
     auth_mock_no_request._find_credentials()
