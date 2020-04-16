@@ -2,7 +2,7 @@ import io
 from pathlib import Path
 from setuptools import setup, find_packages
 
-parent_dir = Path(__file__).parent
+parent_dir = Path(__file__).resolve().parent
 
 version = io.open(parent_dir / "up42/_version.txt", encoding="utf-8").read()
 
