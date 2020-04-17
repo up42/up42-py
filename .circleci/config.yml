@@ -3,10 +3,6 @@ orbs:
   notify-slack: interstellar/notify-slack@0.2.0
 
 jobs:
-  build_and_test:
-    branches:
-      ignore:
-        - gh-pages
     docker:
       - image: circleci/python:3.7
     steps:
