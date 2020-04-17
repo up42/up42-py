@@ -1,13 +1,15 @@
 # :stopwatch: 30 Seconds Example
 
-A new workflow is created and filled with tasks (Sentinel-2 data, image sharpening). 
+A new workflow is created and filled with tasks ([Sentinel-2 data](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64), 
+[image sharpening](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e)). 
 The area of interest and workflow parameters are defined. After running the job, 
 the results are downloaded and visualized.
 
 
 ```python
 import up42
-up42.authenticate("config.json")
+up42.authenticate(porject_id=12345, project_api_key=12345)
+# up42.authenticate(cfg_file="config.json")
 
 project = up42.initialize_project()
 project

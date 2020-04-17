@@ -2,7 +2,7 @@
 
 ## User installation
 
-Install up42-py via pip. It requires Python version > 3.6.
+The package requires Python version > 3.6. Install via pip:
 
 ```bash
 pip install up42-py
@@ -20,8 +20,7 @@ import up42
 ```
 
 !!! Success "Success!"
-    Continue with the [Quickstart](30-seconds-example.md) and the step-for-step 
-    [Getting Started](authentication.md) sections!
+    Continue with the [Authentication chapter](authentication.md)!
 
 <br>
 
