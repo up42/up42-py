@@ -2,12 +2,13 @@
 
 This overview of the most important functions repeats the previous 30-seconds-example, but in more detail and shows additional functionality and alternative steps.
 
-## Authentificate & access project
+## Authenticate & access project
 
 
 ```python
 import up42
-up42.authenticate(cfg_file="config.json")
+up42.authenticate(porject_id=12345, project_api_key=12345)
+# up42.authenticate(cfg_file="config.json")
 
 project = up42.initialize_project()
 ```
@@ -97,11 +98,11 @@ workflow
 
 ## Select the aoi
 
-There are multiple ways to select an aoi, you can:
-- Provide aoi the geometry directly in code as a FeatureCollection, Feature, GeoDataFrame, shapely Polygon or list of bounds coordinates.
-- Use .draw_aoi() to draw the aoi and export it as a geojson.
-- Use .read_vector_file() to read a geojson, json, shapefile, kml or wkt file.
-- Use .get_example_aoi() to read multiple provided sample aois.
+There are multiple ways to select an aoi:  
+- Provide aoi the geometry directly in code as a FeatureCollection, Feature, GeoDataFrame, shapely Polygon or list of bounds coordinates.  
+- Use .draw_aoi() to draw the aoi and export it as a geojson.  
+- Use .read_vector_file() to read a geojson, json, shapefile, kml or wkt file.  
+- Use .get_example_aoi() to read multiple provided sample aois.  
 
 
 ```python
@@ -127,10 +128,14 @@ aoi.head(1)
 
 ## Select the workflow parameters
 
-There are also multiple ways to construct the workflow input parameters, you can:
-- Provide the parameters directly in code as a json string.
-- Use .get_parameters_info() to get a an overview of all potential parameters for the selected workflow and information about the parameter defaults and ranges.
-- Use .get_input_parameters(aoi_type="bbox", aoi_geometry=aoi) to construct the parameters with the provided aoi and all default parameters. Selecting the aoi_type is independent from the provided aoi, you can e.g. provide a irregular Polygon and still select aoi_type="bbox", then the bounding box of the polygon will be selected.
+There are also multiple ways to construct the workflow input parameters:  
+- Provide the parameters directly in code as a json string.  
+- Use .get_parameters_info() to get a an overview of all potential parameters for the 
+selected workflow and information about the parameter defaults and ranges.   
+- Use .get_input_parameters(aoi_type="bbox", aoi_geometry=aoi) to construct the parameters 
+with the provided aoi and all default parameters. Selecting the aoi_type is independent 
+from the provided aoi, you can e.g. provide a irregular Polygon and still select aoi_type="bbox", 
+then the bounding box of the polygon will be selected.  
 
 
 ```python
