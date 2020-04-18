@@ -21,6 +21,9 @@ test[live]:
 e2e:
 	python $(SRC)/tests/e2e.py
 
+gh-pages:
+	mkdocs gh-deploy -m "update gh-pages [ci skip]"
+
 clean:
 	find . -name "__pycache__" -exec rm -rf {} +
 	find . -name ".mypy_cache" -exec rm -rf {} +
