@@ -5,11 +5,11 @@ from pathlib import Path
 import tempfile
 import tarfile
 
-import folium.plugins
+import folium
+from folium.plugins import Draw
 from geopandas import GeoDataFrame
 import shapely
 from shapely.geometry import Point, Polygon
-from branca.element import CssLink, Element, Figure, JavascriptLink
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 import requests
@@ -141,8 +141,11 @@ def folium_base_map(
     return m
 
 
-class DrawFoliumOverride(folium.plugins.Draw):
+class DrawFoliumOverride(Draw):
     def render(self, **kwargs):
+        # pylint: disable=wrong-import-position
+        from branca.element import CssLink, Element, Figure, JavascriptLink
+
         super(DrawFoliumOverride, self).render(**kwargs)
 
         figure = self.get_root()
