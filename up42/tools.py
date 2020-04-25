@@ -9,11 +9,16 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import rasterio
 import shapely
-from IPython import get_ipython
-from IPython.display import display
 from rasterio.plot import show
 
-from .utils import get_logger, folium_base_map, DrawFoliumOverride, is_notebook
+from .utils import get_logger, folium_base_map, DrawFoliumOverride
+
+try:
+    from IPython import get_ipython
+
+    get_ipython().run_line_magic("matplotlib", "inline")
+except ImportError:
+    pass
 
 logger = get_logger(__name__)
 
@@ -113,18 +118,14 @@ class Tools:
             return example_aoi
 
     # pylint: disable=no-self-use
-    def draw_aoi(self) -> None:
+    def draw_aoi(self):
         """
-        Opens a interactive map to draw an aoi by hand, export via the export button.
-        Then read in via read_aoi_file().
+        Displays an interactive map to draw an aoi by hand, returns the folium object if
+        not run in a Jupyter notebook.
 
-        Currently no way to get the drawn geometry via a callback in Python, as not
-        supported by folium.
-        And ipyleaflet misses raster vizualization & folium plugins functionality.
+        Export the drawn aoi via the export button, then read the geometries via
+        read_aoi_file().
         """
-        if not is_notebook():
-            raise ValueError("Only works in Jupyter notebook.")
-
         m = folium_base_map(layer_control=True)
         DrawFoliumOverride(
             export=True,
@@ -140,7 +141,18 @@ class Tools:
             },
             edit_options={"polygon": {"allowIntersection": False}},
         ).add_to(m)
-        display(m)
+
+        try:
+            # pylint: disable=import-outside-toplevel
+            from IPython.display import display
+
+            display(m)
+        except ImportError:
+            logger.info(
+                "Returning folium map object. To display it directly run in a "
+                "Jupyter notebook!"
+            )
+            return m
 
     @staticmethod
     def plot_coverage(
@@ -158,9 +170,6 @@ class Tools:
                 Legend entries are sorted and this determines plotting order.
             figsize: Matplotlib figure size.
         """
-        if is_notebook():
-            get_ipython().run_line_magic("matplotlib", "inline")
-
         if legend_column not in scenes.columns:
             legend_column = None  # type: ignore
             logger.info(
@@ -198,9 +207,6 @@ class Tools:
         Args:
             figsize: matplotlib figure size.
         """
-        if is_notebook():
-            get_ipython().run_line_magic("matplotlib", "inline")
-
         # TODO: Remove empty axes & give title option.
         if filepaths is None:
             if self.quicklooks is None:
@@ -270,11 +276,6 @@ class Tools:
 
         if not titles:
             titles = [Path(fp).stem for fp in imagepaths]
-
-        if is_notebook():
-            get_ipython().run_line_magic("matplotlib", "inline")
-        else:
-            raise ValueError("Only works in Jupyter notebook.")
 
         if len(imagepaths) < 2:
             nrows, ncols = 1, 1
