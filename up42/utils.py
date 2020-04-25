@@ -10,7 +10,6 @@ import geojson
 import geopandas as gpd
 import shapely
 from shapely.geometry import Point, Polygon
-from IPython import get_ipython
 from branca.element import CssLink, Element, Figure, JavascriptLink
 from geojson import Feature, FeatureCollection
 import requests
@@ -36,20 +35,6 @@ def get_logger(name, level=logging.INFO):
 
 
 logger = get_logger(__name__)
-
-
-def is_notebook() -> bool:
-    """Checks if the Python instance is run in a Jupyter notebook."""
-    try:
-        shell = get_ipython().__class__.__name__
-        if shell == "ZMQInteractiveShell":
-            return True  # Jupyter notebook or qtconsole
-        elif shell == "TerminalInteractiveShell":
-            return False  # Terminal running IPython
-        else:
-            return False
-    except NameError:
-        return False  # Standard Python interpreter
 
 
 def download_results_from_gcs(
