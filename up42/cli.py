@@ -623,10 +623,10 @@ COMMAND_CATALOG = catalog.command(context_settings=CONTEXT_SETTINGS)
 @click.option(
     "--sensors",
     type=click.Choice(
-        ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5",]
+        ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p",]
     ),
     multiple=True,
-    default=["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5",],
+    default=["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p",],
     help="Imagery sensors to search for.",
 )
 @click.option(
