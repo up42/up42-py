@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Tuple, List, Union, Dict
 import warnings
 
+from geopandas import GeoDataFrame
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -42,7 +43,7 @@ class Tools:
     # pylint: disable=no-self-use
     def read_vector_file(
         self, filename: str = "aoi.geojson", as_dataframe: bool = False
-    ) -> Union[Dict, gpd.GeoDataFrame]:
+    ) -> Union[Dict, GeoDataFrame]:
         """
         Reads vector files (geojson, shapefile, kml, wkt) to a feature collection,
         for use as the aoi geometry in the workflow input parameters
@@ -67,7 +68,7 @@ class Tools:
                 wkt = wkt_file.read()
                 df = pd.DataFrame({"geometry": [wkt]})
                 df["geometry"] = df["geometry"].apply(shapely.wkt.loads)
-                df = gpd.GeoDataFrame(df, geometry="geometry", crs=4326)
+                df = GeoDataFrame(df, geometry="geometry", crs=4326)
         else:
             df = gpd.read_file(filename)
 
@@ -85,7 +86,7 @@ class Tools:
 
     def get_example_aoi(
         self, location: str = "Berlin", as_dataframe: bool = False
-    ) -> Union[dict, gpd.GeoDataFrame]:
+    ) -> Union[dict, GeoDataFrame]:
         """
         Gets predefined, small, rectangular example aoi for the selected location.
 
@@ -112,7 +113,7 @@ class Tools:
             )
 
         if as_dataframe:
-            df = gpd.GeoDataFrame.from_features(example_aoi, crs=4326)
+            df = GeoDataFrame.from_features(example_aoi, crs=4326)
             return df
         else:
             return example_aoi
@@ -156,8 +157,8 @@ class Tools:
 
     @staticmethod
     def plot_coverage(
-        scenes: gpd.GeoDataFrame,
-        aoi: gpd.GeoDataFrame = None,
+        scenes: GeoDataFrame,
+        aoi: GeoDataFrame = None,
         legend_column: str = "scene_id",
         figsize=(12, 16),
     ) -> None:

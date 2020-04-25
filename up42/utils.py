@@ -6,12 +6,12 @@ import tempfile
 import tarfile
 
 import folium.plugins
-import geojson
-import geopandas as gpd
+from geopandas import GeoDataFrame
 import shapely
 from shapely.geometry import Point, Polygon
 from branca.element import CssLink, Element, Figure, JavascriptLink
 from geojson import Feature, FeatureCollection
+from geojson import Polygon as geojson_Polygon
 import requests
 from tqdm import tqdm
 
@@ -195,17 +195,17 @@ class DrawFoliumOverride(folium.plugins.Draw):
 
 def any_vector_to_fc(
     vector: Union[
-        Dict, Feature, FeatureCollection, List, gpd.GeoDataFrame, Polygon, Point,
+        Dict, Feature, FeatureCollection, List, GeoDataFrame, Polygon, Point,
     ],
     as_dataframe: bool = False,
-) -> Union[Dict, gpd.GeoDataFrame]:
+) -> Union[Dict, GeoDataFrame]:
     """
     Gets a uniform feature collection dictionary (with fc and f bboxes) from any input vector type.
 
     Args:
         vector: One of Dict, FeatureCollection, Feature, List of bounds coordinates,
-            gpd.GeoDataFrame, shapely.geometry.Polygon, shapely.geometry.Point. All assume EPSG 4326
-            and Polygons!
+            GeoDataFrame, shapely.geometry.Polygon, shapely.geometry.Point.
+            All assume EPSG 4326 and Polygons!
         as_dataframe: GeoDataFrame output with as_dataframe=True.
     """
     if not isinstance(
@@ -214,9 +214,9 @@ def any_vector_to_fc(
             Dict,
             FeatureCollection,
             Feature,
-            geojson.Polygon,
+            geojson_Polygon,
             List,
-            gpd.GeoDataFrame,
+            GeoDataFrame,
             Polygon,
             Point,
         ),
@@ -231,13 +231,11 @@ def any_vector_to_fc(
     if isinstance(vector, (Dict, FeatureCollection, Feature)):
         try:
             if vector["type"] == "FeatureCollection":
-                df = gpd.GeoDataFrame.from_features(vector, crs=4326)
+                df = GeoDataFrame.from_features(vector, crs=4326)
             elif vector["type"] == "Feature":
-                df = gpd.GeoDataFrame.from_features(
-                    FeatureCollection([vector]), crs=4326
-                )
+                df = GeoDataFrame.from_features(FeatureCollection([vector]), crs=4326)
             elif vector["type"] == "Polygon":
-                df = gpd.GeoDataFrame.from_features(
+                df = GeoDataFrame.from_features(
                     FeatureCollection([Feature(geometry=vector)]), crs=4326
                 )
         except KeyError:
@@ -248,16 +246,16 @@ def any_vector_to_fc(
         if isinstance(vector, List):
             if len(vector) == 4:
                 box_poly = shapely.geometry.box(*vector)
-                df = gpd.GeoDataFrame({"geometry": [box_poly]}, crs=4326)
+                df = GeoDataFrame({"geometry": [box_poly]}, crs=4326)
             else:
                 raise ValueError("The list requires 4 bounds coordinates.")
         elif isinstance(vector, Polygon):
-            df = gpd.GeoDataFrame({"geometry": [vector]}, crs=4326)
+            df = GeoDataFrame({"geometry": [vector]}, crs=4326)
         elif isinstance(vector, Point):
-            df = gpd.GeoDataFrame(
+            df = GeoDataFrame(
                 {"geometry": [vector.buffer(0.00001)]}, crs=4326
             )  # Around 1m buffer # TODO: Find better solution than small buffer?
-        elif isinstance(vector, gpd.GeoDataFrame):
+        elif isinstance(vector, GeoDataFrame):
             df = vector
             if df.crs != "epsg:4326":
                 df = df.to_crs(4326)
@@ -337,7 +335,7 @@ def fc_to_query_geometry(
                     query_geometry = list(fc["bbox"])
                 except KeyError:
                     query_geometry = list(
-                        gpd.GeoDataFrame.from_features(fc, crs=4326).total_bounds
+                        GeoDataFrame.from_features(fc, crs=4326).total_bounds
                     )
             elif squash_multiple_features == "first":
                 try:
@@ -351,7 +349,7 @@ def fc_to_query_geometry(
             "contains",
         ]:  # pylint: disable=no-else-raise
             if squash_multiple_features == "union":
-                union_poly = gpd.GeoDataFrame.from_features(fc, crs=4326).unary_union
+                union_poly = GeoDataFrame.from_features(fc, crs=4326).unary_union
                 query_geometry = shapely.geometry.mapping(union_poly)
             elif squash_multiple_features == "first":
                 query_geometry = fc["features"][0]["geometry"]

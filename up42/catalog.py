@@ -1,11 +1,11 @@
 from pathlib import Path
 from typing import Dict, Union, List
 
-import geopandas as gpd
-import shapely
+from geopandas import GeoDataFrame
+from shapely.geometry import shape
+from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
 from requests.exceptions import HTTPError
-from shapely.geometry import Point, Polygon
 from tqdm import tqdm
 
 from .auth import Auth
@@ -61,7 +61,7 @@ class Catalog(Tools):
     @staticmethod
     def construct_parameters(
         geometry: Union[
-            Dict, Feature, FeatureCollection, List, gpd.GeoDataFrame, Point, Polygon,
+            Dict, Feature, FeatureCollection, List, GeoDataFrame, Point, Polygon,
         ],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
@@ -83,7 +83,7 @@ class Catalog(Tools):
 
         Args:
             geometry: The search geometry, one of Dict, Feature, FeatureCollection,
-                List, gpd.GeoDataFrame, Point, Polygon.
+                List, GeoDataFrame, Point, Polygon.
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
             sensors: The satellite sensor(s) to search for, one or multiple of
@@ -138,7 +138,7 @@ class Catalog(Tools):
 
     def search(
         self, search_paramaters: Dict, as_dataframe: bool = True
-    ) -> Union[gpd.GeoDataFrame, Dict]:
+    ) -> Union[GeoDataFrame, Dict]:
         """
         Searches the catalog for the the search parameters and returns the metadata of
         the matching scenes.
@@ -172,7 +172,7 @@ class Catalog(Tools):
         logger.info("%d results returned.", len(response_json["features"]))
         # UP42 results are always in EPSG 4326
         dst_crs = 4326
-        df = gpd.GeoDataFrame.from_features(response_json, crs=dst_crs)
+        df = GeoDataFrame.from_features(response_json, crs=dst_crs)
         if df.empty:
             if as_dataframe:
                 return df
@@ -184,7 +184,7 @@ class Catalog(Tools):
         # bounds geometry, can contain scenes that touch the aoi bbox, but not the aoi.
         # So number returned images not consistent with set limit.
         geometry = search_paramaters["intersects"]
-        poly = shapely.geometry.shape(geometry)
+        poly = shape(geometry)
         df = df[df.intersects(poly)]
         df = df.reset_index()
 

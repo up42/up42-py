@@ -4,7 +4,7 @@ from typing import List, Union, Dict, Tuple
 import logging
 
 from geojson import FeatureCollection
-import geopandas as gpd
+from geopandas import GeoDataFrame
 
 # pylint: disable=wrong-import-position
 from .tools import Tools
@@ -111,8 +111,8 @@ def draw_aoi() -> None:
 
 # pylint: disable=duplicate-code
 def plot_coverage(
-    scenes: gpd.GeoDataFrame,
-    aoi: gpd.GeoDataFrame = None,
+    scenes: GeoDataFrame,
+    aoi: GeoDataFrame = None,
     legend_column: str = "scene_id",
     figsize=(12, 16),
 ) -> None:
