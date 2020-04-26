@@ -353,6 +353,23 @@ def test_run_job(workflow_mock, job_mock):
 
 
 @pytest.mark.live
+def test_test_job_live(workflow_live):
+    input_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    )
+    jb = workflow_live.test_job(
+        input_parameters=input_parameters_json, track_status=True
+    )
+    assert isinstance(jb, up42.Job)
+    with open(input_parameters_json) as src:
+        job_info_params = json.load(src)
+        job_info_params.update({"config": {"mode": "DRY_RUN"}})
+        assert jb.info["inputs"] == job_info_params
+        assert jb.info["mode"] == "DRY_RUN"
+    assert jb.get_status() == "SUCCEEDED"
+
+
+@pytest.mark.live
 def test_run_job_live(workflow_live):
     input_parameters_json = (
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
@@ -362,21 +379,6 @@ def test_run_job_live(workflow_live):
     with open(input_parameters_json) as src:
         assert jb.info["inputs"] == json.load(src)
         assert jb.info["mode"] == "DEFAULT"
-    assert jb.get_status() == "SUCCEEDED"
-
-
-@pytest.mark.live
-def test_test_job_live(workflow_live):
-    input_parameters_json = (
-        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
-    )
-    jb = workflow_live.test_job(input_parameters_json, track_status=True)
-    assert isinstance(jb, up42.Job)
-    with open(input_parameters_json) as src:
-        job_info_params = json.load(src)
-        job_info_params.update({"config": {"mode": "DRY_RUN"}})
-        assert jb.info["inputs"] == job_info_params
-        assert jb.info["mode"] == "DRY_RUN"
     assert jb.get_status() == "SUCCEEDED"
 
 
