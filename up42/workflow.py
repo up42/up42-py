@@ -27,7 +27,7 @@ class Workflow(Tools):
 
         Public Methods:
             get_compatible_blocks, get_workflow_tasks, add_workflow_tasks, get_parameters_info,
-            construct_parameters, run_job, get_jobs, update_name, delete
+            construct_parameters, test_job, run_job, get_jobs, update_name, delete
         """
         self.auth = auth
         self.project_id = project_id
