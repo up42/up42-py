@@ -331,7 +331,7 @@ def test_construct_parameter_order_ids(workflow_mock):
     }
 
 
-def test_create_and_run_job(workflow_mock, job_mock):
+def test_run_job(workflow_mock, job_mock):
     with requests_mock.Mocker() as m:
         job_url = (
             f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
@@ -353,7 +353,7 @@ def test_create_and_run_job(workflow_mock, job_mock):
 
 
 @pytest.mark.live
-def test_create_and_run_job_live(workflow_live):
+def test_run_job_live(workflow_live):
     input_parameters_json = (
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
@@ -366,13 +366,11 @@ def test_create_and_run_job_live(workflow_live):
 
 
 @pytest.mark.live
-def test_create_and_run_job_test_query_live(workflow_live):
+def test_test_job_live(workflow_live):
     input_parameters_json = (
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
-    jb = workflow_live.run_job(
-        input_parameters_json, test_query=True, track_status=True
-    )
+    jb = workflow_live.test_job(input_parameters_json, track_status=True)
     assert isinstance(jb, up42.Job)
     with open(input_parameters_json) as src:
         job_info_params = json.load(src)

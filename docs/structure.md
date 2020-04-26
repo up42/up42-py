@@ -9,7 +9,7 @@
 - Each object can **spawn elements of one level below**, e.g.
     - `project = up42.initialize_project()`
     - `workflow = Project().create_workflow()`
-    - `job = workflow.create_and_run_job()`
+    - `job = workflow.run_job()`
 
 
 ## Functionality
@@ -32,7 +32,8 @@ An overview of the the **functionality** of each object
         - `.get_parameters_info()`
         - `.construct_parameters()`
         - `.get_jobs()`
-        - `.create_and_run_job()`
+        - `.test_job()`
+        - `.run_job()`
         - `.get_workflow_tasks()`
         - `.add_workflow_tasks()`
         - `.update_name()`

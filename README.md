@@ -52,7 +52,7 @@ See the **[installation docs](https://up42.github.io/up42-py/installation/)** fo
 - Each object can **spawn elements of one level below**, e.g.
     - `project = up42.initialize_project()`
     - `workflow = Project().create_workflow()`
-    - `job = workflow.create_and_run_job()`
+    - `job = workflow.run_job()`
 
 <br>
 
