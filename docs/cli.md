@@ -94,9 +94,14 @@ up42 workflow add-workflow-tasks new_workflow_tasks.json
 up42 job -h
 ```
 
-Create and run a new job with parameters defined in a json file (see [typical usage](typical-usage.md) for an example):
+First create and run a new test job with parameters defined in a json file (see [typical usage](typical-usage.md) for an example):
 ```bash
-up42 workflow create-and-run-job input_parameters.json --track
+up42 workflow test-job input_parameters.json --track
+```
+
+Then run the actual job with parameters:
+```bash
+up42 workflow run-job input_parameters.json --track
 ```
 
 After running the command to persist the job you can download the quicklooks from
