@@ -17,6 +17,13 @@ from .jobtask import JobTask
 from .tools import Tools
 from .utils import get_logger, folium_base_map, download_results_from_gcs
 
+try:
+    from IPython.display import display
+    from IPython import get_ipython
+except ImportError:
+    # No Ipython installed, Installed but run in shell
+    pass
+
 logger = get_logger(__name__)
 
 
@@ -333,11 +340,9 @@ class Job(Tools):
         folium.LayerControl(position="bottomleft", collapsed=collapsed).add_to(m)
 
         try:
-            # pylint: disable=import-outside-toplevel
-            from IPython.display import display
-
+            assert get_ipython() is not None
             display(m)
-        except ImportError:
+        except (AssertionError, NameError):
             logger.info(
                 "Returning folium map object. To display it directly run in a "
                 "Jupyter notebook!"

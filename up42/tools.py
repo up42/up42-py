@@ -15,10 +15,12 @@ from rasterio.plot import show
 from .utils import get_logger, folium_base_map, DrawFoliumOverride
 
 try:
+    from IPython.display import display
     from IPython import get_ipython
 
     get_ipython().run_line_magic("matplotlib", "inline")
-except ImportError:
+except (ImportError, AttributeError):
+    # No Ipython installed, Installed but run in shell
     pass
 
 logger = get_logger(__name__)
@@ -144,11 +146,9 @@ class Tools:
         ).add_to(m)
 
         try:
-            # pylint: disable=import-outside-toplevel
-            from IPython.display import display
-
+            assert get_ipython() is not None
             display(m)
-        except ImportError:
+        except (AssertionError, NameError):
             logger.info(
                 "Returning folium map object. To display it directly run in a "
                 "Jupyter notebook!"

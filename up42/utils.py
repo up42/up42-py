@@ -143,7 +143,7 @@ def folium_base_map(
 
 class DrawFoliumOverride(Draw):
     def render(self, **kwargs):
-        # pylint: disable=wrong-import-position
+        # pylint: disable=import-outside-toplevel
         from branca.element import CssLink, Element, Figure, JavascriptLink
 
         super(DrawFoliumOverride, self).render(**kwargs)
