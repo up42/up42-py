@@ -313,6 +313,7 @@ class Workflow(Tools):
     def _helper_run_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,
+        test_job=False,
         track_status: bool = False,
     ) -> "Job":
         """
@@ -320,7 +321,7 @@ class Workflow(Tools):
 
         Args:
             input_parameters: Either json string of workflow parameters or filepath to json.
-            test_query: If set, runs a test query (search for available imagery based on your data parameters).
+            test_job: If set, runs a test query (search for available imagery based on your data parameters).
             track_status: Automatically attaches workflow.track_status which queries
                 the job status every 30 seconds.
 
@@ -336,6 +337,13 @@ class Workflow(Tools):
             with open(input_parameters) as src:
                 input_parameters = json.load(src)
             logger.info("Loading job parameters from json file.")
+
+        if test_job:
+            input_parameters = input_parameters.copy()  # type: ignore
+            input_parameters.update({"config": {"mode": "DRY_RUN"}})  # type: ignore
+            logger.info("+++++++++++++++++++++++++++++++++")
+            logger.info("Running this job as Test Query...")
+            logger.info("+++++++++++++++++++++++++++++++++")
 
         logger.info("Selected input_parameters: %s.", input_parameters)
 
@@ -371,13 +379,8 @@ class Workflow(Tools):
         Returns:
             The spawned test job object.
         """
-        input_parameters = input_parameters.copy()  # type: ignore
-        input_parameters.update({"config": {"mode": "DRY_RUN"}})  # type: ignore
-        logger.info("+++++++++++++++++++++++++++++++++")
-        logger.info("Running this job as Test Query...")
-        logger.info("+++++++++++++++++++++++++++++++++")
         return self._helper_run_job(
-            input_parameters=input_parameters, track_status=track_status
+            input_parameters=input_parameters, test_job=True, track_status=track_status
         )
 
     def run_job(
