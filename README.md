@@ -85,7 +85,7 @@ input_parameters = workflow.construct_parameters(geometry=aoi,
                                                  limit=1)
 input_parameters["sobloo-s2-l1c-aoiclipped:1"].update({"max_cloud_cover":60})
 
-job = workflow.create_and_run_job(input_parameters=input_parameters)
+job = workflow.run_job(input_parameters=input_parameters)
 job.track_status()
 
 job.download_results()

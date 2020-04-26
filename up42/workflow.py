@@ -310,7 +310,7 @@ class Workflow(Tools):
             input_parameters[data_block_name][geometry_operation] = aoi_feature
         return input_parameters
 
-    def create_and_run_job(
+    def run_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,
         test_query: bool = False,

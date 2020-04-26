@@ -41,7 +41,7 @@ input_parameters
 
 
 ```python
-job = workflow.create_and_run_job(input_parameters=input_parameters)
+job = workflow.run_job(input_parameters=input_parameters)
 job.track_status()
 ```
 

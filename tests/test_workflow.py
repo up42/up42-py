@@ -347,7 +347,7 @@ def test_create_and_run_job(workflow_mock, job_mock):
             json={"data": {}},
         )
 
-        jb = workflow_mock.create_and_run_job(input_parameters_json)
+        jb = workflow_mock.run_job(input_parameters_json)
         assert isinstance(jb, up42.Job)
         assert jb.job_id == job_mock.job_id
 
@@ -357,7 +357,7 @@ def test_create_and_run_job_live(workflow_live):
     input_parameters_json = (
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
-    jb = workflow_live.create_and_run_job(input_parameters_json, track_status=True)
+    jb = workflow_live.run_job(input_parameters_json, track_status=True)
     assert isinstance(jb, up42.Job)
     with open(input_parameters_json) as src:
         assert jb.info["inputs"] == json.load(src)
@@ -370,7 +370,7 @@ def test_create_and_run_job_test_query_live(workflow_live):
     input_parameters_json = (
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
-    jb = workflow_live.create_and_run_job(
+    jb = workflow_live.run_job(
         input_parameters_json, test_query=True, track_status=True
     )
     assert isinstance(jb, up42.Job)

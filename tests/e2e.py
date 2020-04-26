@@ -21,7 +21,7 @@ if __name__ == "__main__":
         geometry=aoi, geometry_operation="bbox", limit=1
     )
 
-    job = workflow.create_and_run_job(input_parameters=input_parameters)
+    job = workflow.run_job(input_parameters=input_parameters)
     job.track_status()
     results_fp = job.download_results(output_directory="/tmp")
 

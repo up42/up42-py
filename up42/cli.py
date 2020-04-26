@@ -448,7 +448,7 @@ def create_and_run_job(workflow, input_parameters_json, test_query, track):
     Creates and runs a new job.
     """
     input_parameters = json.load(input_parameters_json)
-    jb = workflow.create_and_run_job(input_parameters, test_query, track)
+    jb = workflow.run_job(input_parameters, test_query, track)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following command to persist with this job:")
     logger.info(f"export UP42_JOB_ID={jb.job_id}")

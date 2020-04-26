@@ -178,14 +178,14 @@ input_parameters
 
 ```python
 # Run the workflow as a test job: Similar to catalog search, only returns whoch images were found for the configuration.
-query_job = workflow.create_and_run_job(input_parameters=input_parameters, test_query=True, track_status=True,)
+query_job = workflow.run_job(input_parameters=input_parameters, test_query=True, track_status=True,)
 query_job.get_results_json()
 ```
 
 
 ```python
 # Run the actual workflow.
-job = workflow.create_and_run_job(input_parameters=input_parameters, track_status=True)
+job = workflow.run_job(input_parameters=input_parameters, track_status=True)
 ```
 
 <p align="center">
