@@ -18,28 +18,21 @@ logger = get_logger(__name__)
 # TODO: Midterm add catalog results class? Scenes() etc. that also as feedback to workflow input.
 # Scenes() would be dataframe with quicklook preview images in it.
 
-
-blocks_default = [
-    "oneatlas-pleiades-fullscene",
-    "oneatlas-pleiades-aoiclipped",
-    "oneatlas-spot-fullscene",
-    "oneatlas-spot-aoiclipped",
-    "sobloo-sentinel1-l1c-grd-full",
-    "sobloo-sentinel1-l1c-grd-aoiclipped",
-    "sobloo-sentinel1-l1c-slc-full",
-    "sobloo-sentinel2-lic-msi-full",
-    "sobloo-sentinel2-lic-msi-aoiclipped",
-    "sobloo-sentinel3-full",
-    "sobloo-sentinel5-preview-full",
-]
-supported_sensors = [
-    "pleiades",
-    "spot",
-    "sentinel1",
-    "sentinel2",
-    "sentinel3",
-    "sentinel5p",
-]
+supported_sensors_blocks = {
+    "pleiades": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-aoiclipped",],
+    "spot": ["oneatlas-spot-fullscene", "oneatlas-spot-aoiclipped",],
+    "sentinel1": [
+        "sobloo-sentinel1-l1c-grd-full",
+        "sobloo-sentinel1-l1c-grd-aoiclipped",
+        "sobloo-sentinel1-l1c-slc-full",
+    ],
+    "sentinel2": [
+        "sobloo-sentinel2-lic-msi-full",
+        "sobloo-sentinel2-lic-msi-aoiclipped",
+    ],
+    "sentinel3": ["sobloo-sentinel3-full"],
+    "sentinel5p": ["sobloo-sentinel5-preview-full",],
+}
 
 # pylint: disable=duplicate-code
 class Catalog(Tools):
@@ -99,15 +92,14 @@ class Catalog(Tools):
             The constructed parameters dictionary.
         """
         datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
-        block_filters = []
+        block_filters: List[str] = []
         for sensor in sensors:
-            if sensor not in supported_sensors:
+            if sensor not in list(supported_sensors_blocks.keys()):
                 raise ValueError(
-                    f"Currently only these sensors are supported: {supported_sensors}"
+                    f"Currently only these sensors are supported: "
+                    f"{list(supported_sensors_blocks.keys())}"
                 )
-            for block in blocks_default:
-                if sensor in block.split("-"):
-                    block_filters.append(block)
+            block_filters.extend(supported_sensors_blocks[sensor])
         query_filters = {
             "cloudCoverage": {"lte": max_cloudcover},
             "dataBlock": {"in": block_filters},
