@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, Union, List
 
-import geopandas as gpd
+from geopandas import GeoDataFrame
 from tqdm import tqdm
 
 from .auth import Auth
@@ -48,9 +48,7 @@ class JobTask(Tools):
         self.info = response_json["data"]
         return self.info
 
-    def get_results_json(
-        self, as_dataframe: bool = False
-    ) -> Union[Dict, gpd.GeoDataFrame]:
+    def get_results_json(self, as_dataframe: bool = False) -> Union[Dict, GeoDataFrame]:
         """
         Gets the Jobtask results data.json.
 
@@ -68,7 +66,7 @@ class JobTask(Tools):
 
         if as_dataframe:
             # UP42 results are always in EPSG 4326
-            df = gpd.GeoDataFrame.from_features(response_json, crs=4326)
+            df = GeoDataFrame.from_features(response_json, crs=4326)
             return df
         else:
             return response_json

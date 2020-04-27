@@ -81,7 +81,7 @@ def test_generate_headers(auth_mock_no_request):
     ).read()
     expected_headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer token_1011",
+        "Authorization": "Bearer token_1011",
         "cache-control": "no-cache",
         "X-UP42-info": f"python/{version}",
     }

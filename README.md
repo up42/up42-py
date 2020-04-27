@@ -66,7 +66,7 @@ The area of interest and workflow parameters are defined. After running the job,
 ```python
 import up42
 
-up42.authenticate(porject_id=12345, project_api_key=12345)
+up42.authenticate(project_id=12345, project_api_key=12345)
 project = up42.initialize_project()
 
 workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)

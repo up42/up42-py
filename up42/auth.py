@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-import io
 from typing import Dict, List, Union
 
 import requests
@@ -15,7 +14,6 @@ from tenacity import (
 from .tools import Tools
 from .utils import get_logger
 
-# TODO: Logger produces multiple printouts in Jupyter Lab, known issue.
 logger = get_logger(__name__)
 
 
@@ -137,9 +135,12 @@ class Auth(Tools):
 
     @staticmethod
     def _generate_headers(token: str) -> Dict[str, str]:
-        version = io.open(
-            Path(__file__).resolve().parent / "_version.txt", encoding="utf-8"
-        ).read()
+        version = (
+            Path(__file__)
+            .resolve()
+            .parent.joinpath("_version.txt")
+            .read_text(encoding="utf-8")
+        )
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",

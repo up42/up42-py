@@ -10,17 +10,11 @@ from shapely.geometry import Point, Polygon, LinearRing
 import requests_mock
 
 from .context import (
-    is_notebook,
     folium_base_map,
     any_vector_to_fc,
     fc_to_query_geometry,
     download_results_from_gcs,
 )
-
-
-def test_is_notebook():
-    notebook_available = is_notebook()
-    assert not notebook_available
 
 
 def test_folium_base_map():

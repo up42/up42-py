@@ -4,16 +4,24 @@ from pathlib import Path
 from typing import Tuple, List, Union, Dict
 import warnings
 
+from geopandas import GeoDataFrame
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
 import rasterio
 import shapely
-from IPython import get_ipython
-from IPython.display import display
 from rasterio.plot import show
 
-from .utils import get_logger, folium_base_map, DrawFoliumOverride, is_notebook
+from .utils import get_logger, folium_base_map, DrawFoliumOverride
+
+try:
+    from IPython.display import display
+    from IPython import get_ipython
+
+    get_ipython().run_line_magic("matplotlib", "inline")
+except (ImportError, AttributeError):
+    # No Ipython installed, Installed but run in shell
+    pass
 
 logger = get_logger(__name__)
 
@@ -37,7 +45,7 @@ class Tools:
     # pylint: disable=no-self-use
     def read_vector_file(
         self, filename: str = "aoi.geojson", as_dataframe: bool = False
-    ) -> Union[Dict, gpd.GeoDataFrame]:
+    ) -> Union[Dict, GeoDataFrame]:
         """
         Reads vector files (geojson, shapefile, kml, wkt) to a feature collection,
         for use as the aoi geometry in the workflow input parameters
@@ -62,7 +70,7 @@ class Tools:
                 wkt = wkt_file.read()
                 df = pd.DataFrame({"geometry": [wkt]})
                 df["geometry"] = df["geometry"].apply(shapely.wkt.loads)
-                df = gpd.GeoDataFrame(df, geometry="geometry", crs=4326)
+                df = GeoDataFrame(df, geometry="geometry", crs=4326)
         else:
             df = gpd.read_file(filename)
 
@@ -80,7 +88,7 @@ class Tools:
 
     def get_example_aoi(
         self, location: str = "Berlin", as_dataframe: bool = False
-    ) -> Union[dict, gpd.GeoDataFrame]:
+    ) -> Union[dict, GeoDataFrame]:
         """
         Gets predefined, small, rectangular example aoi for the selected location.
 
@@ -107,24 +115,20 @@ class Tools:
             )
 
         if as_dataframe:
-            df = gpd.GeoDataFrame.from_features(example_aoi, crs=4326)
+            df = GeoDataFrame.from_features(example_aoi, crs=4326)
             return df
         else:
             return example_aoi
 
     # pylint: disable=no-self-use
-    def draw_aoi(self) -> None:
+    def draw_aoi(self):
         """
-        Opens a interactive map to draw an aoi by hand, export via the export button.
-        Then read in via read_aoi_file().
+        Displays an interactive map to draw an aoi by hand, returns the folium object if
+        not run in a Jupyter notebook.
 
-        Currently no way to get the drawn geometry via a callback in Python, as not
-        supported by folium.
-        And ipyleaflet misses raster vizualization & folium plugins functionality.
+        Export the drawn aoi via the export button, then read the geometries via
+        read_aoi_file().
         """
-        if not is_notebook():
-            raise ValueError("Only works in Jupyter notebook.")
-
         m = folium_base_map(layer_control=True)
         DrawFoliumOverride(
             export=True,
@@ -140,12 +144,21 @@ class Tools:
             },
             edit_options={"polygon": {"allowIntersection": False}},
         ).add_to(m)
-        display(m)
+
+        try:
+            assert get_ipython() is not None
+            display(m)
+        except (AssertionError, NameError):
+            logger.info(
+                "Returning folium map object. To display it directly run in a "
+                "Jupyter notebook!"
+            )
+            return m
 
     @staticmethod
     def plot_coverage(
-        scenes: gpd.GeoDataFrame,
-        aoi: gpd.GeoDataFrame = None,
+        scenes: GeoDataFrame,
+        aoi: GeoDataFrame = None,
         legend_column: str = "scene_id",
         figsize=(12, 16),
     ) -> None:
@@ -158,9 +171,6 @@ class Tools:
                 Legend entries are sorted and this determines plotting order.
             figsize: Matplotlib figure size.
         """
-        if is_notebook():
-            get_ipython().run_line_magic("matplotlib", "inline")
-
         if legend_column not in scenes.columns:
             legend_column = None  # type: ignore
             logger.info(
@@ -198,9 +208,6 @@ class Tools:
         Args:
             figsize: matplotlib figure size.
         """
-        if is_notebook():
-            get_ipython().run_line_magic("matplotlib", "inline")
-
         # TODO: Remove empty axes & give title option.
         if filepaths is None:
             if self.quicklooks is None:
@@ -219,7 +226,7 @@ class Tools:
             "ignore", category=rasterio.errors.NotGeoreferencedWarning
         )
 
-        fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
+        _, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
         if len(filepaths) > 1:
             axs = axs.ravel()
         else:
@@ -271,18 +278,13 @@ class Tools:
         if not titles:
             titles = [Path(fp).stem for fp in imagepaths]
 
-        if is_notebook():
-            get_ipython().run_line_magic("matplotlib", "inline")
-        else:
-            raise ValueError("Only works in Jupyter notebook.")
-
         if len(imagepaths) < 2:
             nrows, ncols = 1, 1
         else:
             ncols = 3
             nrows = int(math.ceil(len(imagepaths) / float(ncols)))
 
-        fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
+        _, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
         if len(imagepaths) > 1:
             axs = axs.ravel()
         else:

@@ -4,19 +4,25 @@ from time import sleep
 from typing import Dict, List, Union
 
 import folium
-import geopandas as gpd
+from geopandas import GeoDataFrame
 import numpy as np
 import rasterio
 import requests
 import requests.exceptions
-from IPython.display import display
 from rasterio.io import MemoryFile
 from rasterio.warp import calculate_default_transform, reproject, Resampling
 
 from .auth import Auth
 from .jobtask import JobTask
 from .tools import Tools
-from .utils import get_logger, is_notebook, folium_base_map, download_results_from_gcs
+from .utils import get_logger, folium_base_map, download_results_from_gcs
+
+try:
+    from IPython.display import display
+    from IPython import get_ipython
+except ImportError:
+    # No Ipython installed, Installed but run in shell
+    pass
 
 logger = get_logger(__name__)
 
@@ -132,9 +138,7 @@ class Job(Tools):
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
 
-    def get_results_json(
-        self, as_dataframe: bool = False
-    ) -> Union[Dict, gpd.GeoDataFrame]:
+    def get_results_json(self, as_dataframe: bool = False) -> Union[Dict, GeoDataFrame]:
         """
         Gets the Job results data.json.
 
@@ -152,7 +156,7 @@ class Job(Tools):
 
         if as_dataframe:
             # UP42 results are always in EPSG 4326
-            df = gpd.GeoDataFrame.from_features(response_json, crs=4326)
+            df = GeoDataFrame.from_features(response_json, crs=4326)
             return df
         else:
             return response_json
@@ -231,10 +235,7 @@ class Job(Tools):
         info_columns: Additional columns that are shown when a feature is
             clicked.
         """
-        if not is_notebook():
-            raise ValueError("Only works in Jupyter notebook.")
-
-        df: gpd.GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
+        df: GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
         # TODO: centroid of total_bounds
         centroid = df.iloc[0].geometry.centroid
 
@@ -337,7 +338,16 @@ class Job(Tools):
         else:
             collapsed = False
         folium.LayerControl(position="bottomleft", collapsed=collapsed).add_to(m)
-        display(m)
+
+        try:
+            assert get_ipython() is not None
+            display(m)
+        except (AssertionError, NameError):
+            logger.info(
+                "Returning folium map object. To display it directly run in a "
+                "Jupyter notebook!"
+            )
+            return m
 
     def get_logs(self, as_print: bool = True, as_return: bool = False):
         """
