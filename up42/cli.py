@@ -447,7 +447,7 @@ def test_job(workflow, input_parameters_json, track):
     jb = workflow.test_job(input_parameters, track)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following command to persist with this test job:")
-    logger.info(f"export UP42_JOB_ID={jb.job_id}")
+    logger.info("export UP42_JOB_ID={}".format(jb.job_id))
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
