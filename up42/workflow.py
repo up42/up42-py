@@ -369,7 +369,8 @@ class Workflow(Tools):
         track_status: bool = False,
     ) -> "Job":
         """
-        Creates and runs a new test job.
+        Create a run a new test job (Test Query). With this test query you will not be
+        charged with any data or processing credits, but have a preview of the job result.
 
         Args:
             input_parameters: Either json string of workflow parameters or filepath to json.

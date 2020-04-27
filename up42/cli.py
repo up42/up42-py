@@ -440,7 +440,8 @@ def add_workflow_tasks(workflow, input_tasks_json):
 @click.pass_obj
 def test_job(workflow, input_parameters_json, track):
     """
-    Creates and runs a new job.
+    Create a run a new test job (Test Query). With this test query you will not be
+    charged with any data or processing credits, but have a preview of the job result.
     """
     input_parameters = json.load(input_parameters_json)
     jb = workflow.test_job(input_parameters, track)
