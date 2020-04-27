@@ -2,23 +2,21 @@
 
 ## Example: Airport monitoring
 
-- Get a Sentinel-2 clipped image for airports in a country. 
+- Get a Sentinel-2 clipped image for 10 airports in a country. 
 - Run all jobs in parallel
 - Visualize the results
 
 
 ```python
-%load_ext autoreload
-%autoreload 2
+import up42
 import pandas as pd
 import geopandas as gpd
 from pathlib import Path
-import up42
 ```
 
-### 10 random airports in a Spain
+### 10 random airports in Spain
 
-https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat
+Airport locations scrapped from: https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat
 
 
 ```python
@@ -53,7 +51,7 @@ airports.plot(markersize=20, ax=ax, color="r")
 
 
 ```python
-# Buffer airport point locations by around 100m
+# Buffer airport point locations by roughly 100m
 airports.geometry = airports.geometry.buffer(0.001)
 airports.iloc[0].geometry
 ```
@@ -62,18 +60,17 @@ airports.iloc[0].geometry
 
 
 ```python
-# Authentificate
-api = up42.authenticate(cfg_file="config.json")
-```
+# Authenticate with UP42
+up42.authenticate(project_id=12345, project_api_key=12345)
+#up42.authenticate(cfg_file="config.json")
 
-
-```python
 project = up42.initialize_project()
 project
 ```
 
 
 ```python
+# Increase the parallel job limit for the project.
 # Only works when you have added your credit card information to the UP42 account.
 project.update_project_settings(max_concurrent_jobs=10)
 ```
@@ -97,8 +94,9 @@ workflow.get_workflow_tasks(basic=True)
 
 ### Run jobs in parallel
 
-Very crude, this will soon be available in the API in one command!
+Queries & downloads one image per airport in parallel.
 
+Very crude, this will soon be available in the API in one command!
 
 ```python
 # Run jobs in parallel

@@ -2,6 +2,7 @@
 
 ```python
 import up42
+up42.authenticate(project_id=12345, project_api_key=12345)
 up42.authenticate(cfg_file="config.json")
 
 catalog = up42.initialize_catalog()
@@ -42,7 +43,7 @@ catalog.plot_coverage(scenes=search_results,
 
 
 ```python
-catalog.download_quicklooks(image_ids=search_results.id.to_list(), provider="oneatlas")  #oneatlas works
+catalog.download_quicklooks(image_ids=search_results.id.to_list(), provider="oneatlas")
 ```
 
 
