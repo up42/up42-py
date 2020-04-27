@@ -63,8 +63,8 @@ class JobTask(Tools):
             f"/tasks/{self.jobtask_id}/outputs/data-json/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
-        logger.info("Retrieved {} features.".format(len(response_json["features"])))
-        
+        logger.info("Retrieved %s features.", len(response_json["features"]))
+
         if as_dataframe:
             # UP42 results are always in EPSG 4326
             df = GeoDataFrame.from_features(response_json, crs=4326)
