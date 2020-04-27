@@ -15,7 +15,7 @@ pip install up42-py --upgrade
 ```
 
 !!! Info "Optional: Jupyter Lab"
-    Alltough optional, the UP42 Python SDK is optimally used in a Jupyter notebook, 
+    Although optional, the UP42 Python SDK is optimally used in a Jupyter notebook, 
     which makes data exploration even more comfortable! To install:
     
     ```bash
