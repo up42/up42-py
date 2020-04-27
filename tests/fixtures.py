@@ -21,7 +21,7 @@ def auth_mock_no_request():
 @pytest.fixture()
 def auth_mock():
     with requests_mock.Mocker() as m:
-        url_token = f"https://project_id123:project_apikey123@api.up42.com/oauth/token"
+        url_token = "https://project_id123:project_apikey123@api.up42.com/oauth/token"
         m.post(
             url=url_token, text='{"data":{"accessToken":"token_789"}}',
         )

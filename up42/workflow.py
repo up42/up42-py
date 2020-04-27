@@ -4,10 +4,10 @@ from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Union, Optional
 
-import geojson
-import geopandas as gpd
+from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
+from geojson import Polygon as geojson_Polygon
 from tqdm import tqdm
 
 from .auth import Auth
@@ -243,9 +243,9 @@ class Workflow(Tools):
                 Dict,
                 Feature,
                 FeatureCollection,
-                geojson.Polygon,
+                geojson_Polygon,
                 List,
-                gpd.GeoDataFrame,
+                GeoDataFrame,
                 Polygon,
                 Point,
             ]
@@ -265,7 +265,7 @@ class Workflow(Tools):
 
         Args:
             geometry: One of Dict, FeatureCollection, Feature, List,
-                gpd.GeoDataFrame, shapely.geometry.Polygon, shapely.geometry.Point. All
+                GeoDataFrame, shapely.geometry.Polygon, shapely.geometry.Point. All
                 assume EPSG 4326.
             geometry_operation: Desired operation, One of "bbox", "intersects", "contains".
             limit: Maximum number of expected results.

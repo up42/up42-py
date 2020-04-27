@@ -100,8 +100,8 @@ def auth(auth):
         logger.info(auth)
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         logger.info("Run the following commands to persist with this authentication:")
-        logger.info(f"export UP42_PROJECT_ID={auth.project_id}")
-        logger.info(f"export UP42_PROJECT_API_KEY={auth.project_api_key}")
+        logger.info("export UP42_PROJECT_ID={}".format(auth.project_id))
+        logger.info("export UP42_PROJECT_API_KEY={}".format(auth.project_api_key))
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     else:
         logger.error("Unable to authenticate! Check project keys or config file.")
@@ -116,7 +116,7 @@ def config(auth, env):
     """
     if auth:
         config_path = Path("./config.json").resolve()
-        logger.info(f"Saving config to {config_path}")
+        logger.info("Saving config to {}".format(config_path))
 
         json_config = {
             "project_id": auth.project_id,
@@ -129,7 +129,7 @@ def config(auth, env):
         auth = Auth(cfg_file=str(config_path), env=env)
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         logger.info("Run the following command to persist with this authentication:")
-        logger.info(f"export UP42_CFG_FILE={auth.cfg_file}")
+        logger.info("export UP42_CFG_FILE={}".format(auth.cfg_file))
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     else:
         logger.error("Unable to authenticate! Check project keys or config file.")
@@ -215,7 +215,7 @@ def create_workflow(project, name):
     wf = project.create_workflow(name)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following command to persist with this workflow:")
-    logger.info(f"export UP42_WORKFLOW_ID={wf.workflow_id}")
+    logger.info("export UP42_WORKFLOW_ID={}".format(wf.workflow_id))
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -260,13 +260,13 @@ def update_project_settings(
     """
     Update project settings.
     """
-    logger.info(f"Previous project settings:{project.get_project_settings()}")
+    logger.info("Previous project settings:{}".format(project.get_project_settings()))
     project.update_project_settings(
         max_aoi_size=max_aoi_size,
         max_concurrent_jobs=max_concurrent_jobs,
         number_of_images=number_of_images,
     )
-    logger.info(f"New project settings: {project.get_project_settings()}")
+    logger.info("New project settings: {}".format(project.get_project_settings()))
 
 
 def workflows_from_context():
@@ -295,7 +295,7 @@ def workflow_from_name(project, workflow_name):
     wf = project.create_workflow(workflow_name, use_existing=True)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following command to persist with this workflow:")
-    logger.info(f"export UP42_WORKFLOW_ID={wf.workflow_id}")
+    logger.info("export UP42_WORKFLOW_ID={}".format(wf.workflow_id))
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -318,7 +318,7 @@ def workflow(ctx, workflow_id):
     if not os.environ.get("UP42_WORKFLOW_ID"):
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         logger.info("Run the following command to persist with this workflow:")
-        logger.info(f"export UP42_WORKFLOW_ID={workflow_id}")
+        logger.info("export UP42_WORKFLOW_ID={}".format(workflow_id))
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -351,14 +351,14 @@ def update_name(ctx, name, description):
     """
     Update the workflow name.
     """
-    logger.info(f"Current info: {ctx.obj.info}")
+    logger.info("Current info: {}".format(ctx.obj.info))
     if click.confirm(
         f"Are you sure you want to change the name '{ctx.obj.info.get('name')}' to '{name}'?",
         abort=True,
     ):
         ctx.obj.update_name(name, description)
         ctx.obj = Workflow(ctx.obj.auth, ctx.obj.project_id, ctx.obj.workflow_id)
-        logger.info(f"New info: {ctx.obj.info}")
+        logger.info("New info: {}".format(ctx.obj.info))
 
 
 @COMMAND_WORKFLOW
@@ -367,7 +367,7 @@ def delete(workflow):
     """
     Delete the workflow.
     """
-    logger.info(f"Current info: {workflow.info}")
+    logger.info("Current info: {}".format(workflow.info))
     if click.confirm(
         f"Are you sure you want to delete workflow '{workflow.info.get('name')}'?",
         abort=True,
@@ -376,7 +376,7 @@ def delete(workflow):
         if os.environ.get("UP42_WORKFLOW_ID"):
             logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
             logger.info("Make sure to remove the environment variable with:")
-            logger.info(f"UP42_WORKFLOW_ID={workflow.workflow_id}")
+            logger.info("UP42_WORKFLOW_ID={}".format(workflow.workflow_id))
             logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -462,7 +462,7 @@ def run_job(workflow, input_parameters_json, track):
     jb = workflow.run_job(input_parameters, track)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following command to persist with this job:")
-    logger.info(f"export UP42_JOB_ID={jb.job_id}")
+    logger.info("export UP42_JOB_ID={}".format(jb.job_id))
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -485,7 +485,7 @@ def job(ctx, job_id):
     if not os.environ.get("UP42_JOB_ID"):
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         logger.info("Run the following command to persist with this job:")
-        logger.info(f"export UP42_JOB_ID={job_id}")
+        logger.info("export UP42_JOB_ID={}".format(job_id))
         logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 
@@ -634,10 +634,10 @@ COMMAND_CATALOG = catalog.command(context_settings=CONTEXT_SETTINGS)
 @click.option(
     "--sensors",
     type=click.Choice(
-        ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5",]
+        ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p",]
     ),
     multiple=True,
-    default=["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5",],
+    default=["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p",],
     help="Imagery sensors to search for.",
 )
 @click.option(

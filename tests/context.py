@@ -8,7 +8,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../u
 # pylint: disable=unused-import,wrong-import-position
 from up42.tools import Tools
 from up42.utils import (
-    is_notebook,
     folium_base_map,
     any_vector_to_fc,
     fc_to_query_geometry,

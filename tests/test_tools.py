@@ -38,11 +38,6 @@ def test_get_example_aoi(tools_mock):
     assert fc["type"] == "FeatureCollection"
 
 
-def test_draw_aoi_raises_without_jupyter(tools_mock):
-    with pytest.raises(ValueError):
-        tools_mock.draw_aoi()
-
-
 @patch("matplotlib.pyplot.show")
 def test_plot_coverage(tools_mock):
     df = gpd.read_file(

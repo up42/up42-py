@@ -1,11 +1,11 @@
 from pathlib import Path
 from typing import Dict, Union, List
 
-import geopandas as gpd
-import shapely
+from geopandas import GeoDataFrame
+from shapely.geometry import shape
+from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
 from requests.exceptions import HTTPError
-from shapely.geometry import Point, Polygon
 from tqdm import tqdm
 
 from .auth import Auth
@@ -18,28 +18,21 @@ logger = get_logger(__name__)
 # TODO: Midterm add catalog results class? Scenes() etc. that also as feedback to workflow input.
 # Scenes() would be dataframe with quicklook preview images in it.
 
-
-blocks_default = [
-    "oneatlas-pleiades-fullscene",
-    "oneatlas-pleiades-aoiclipped",
-    "oneatlas-spot-fullscene",
-    "oneatlas-spot-aoiclipped",
-    "sobloo-sentinel1-l1c-grd-full",
-    "sobloo-sentinel1-l1c-grd-aoiclipped",
-    "sobloo-sentinel1-l1c-slc-full",
-    "sobloo-sentinel2-lic-msi-full",
-    "sobloo-sentinel2-lic-msi-aoiclipped",
-    "sobloo-sentinel3-full",
-    "sobloo-sentinel5-preview-full",
-]
-supported_sensors = [
-    "pleiades",
-    "spot",
-    "sentinel1",
-    "sentinel2",
-    "sentinel3",
-    "sentinel5p",
-]
+supported_sensors_blocks = {
+    "pleiades": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-aoiclipped",],
+    "spot": ["oneatlas-spot-fullscene", "oneatlas-spot-aoiclipped",],
+    "sentinel1": [
+        "sobloo-sentinel1-l1c-grd-full",
+        "sobloo-sentinel1-l1c-grd-aoiclipped",
+        "sobloo-sentinel1-l1c-slc-full",
+    ],
+    "sentinel2": [
+        "sobloo-sentinel2-lic-msi-full",
+        "sobloo-sentinel2-lic-msi-aoiclipped",
+    ],
+    "sentinel3": ["sobloo-sentinel3-full"],
+    "sentinel5p": ["sobloo-sentinel5-preview-full",],
+}
 
 # pylint: disable=duplicate-code
 class Catalog(Tools):
@@ -61,7 +54,7 @@ class Catalog(Tools):
     @staticmethod
     def construct_parameters(
         geometry: Union[
-            Dict, Feature, FeatureCollection, List, gpd.GeoDataFrame, Point, Polygon,
+            Dict, Feature, FeatureCollection, List, GeoDataFrame, Point, Polygon,
         ],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
@@ -83,7 +76,7 @@ class Catalog(Tools):
 
         Args:
             geometry: The search geometry, one of Dict, Feature, FeatureCollection,
-                List, gpd.GeoDataFrame, Point, Polygon.
+                List, GeoDataFrame, Point, Polygon.
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
             sensors: The satellite sensor(s) to search for, one or multiple of
@@ -99,15 +92,14 @@ class Catalog(Tools):
             The constructed parameters dictionary.
         """
         datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
-        block_filters = []
+        block_filters: List[str] = []
         for sensor in sensors:
-            if sensor not in supported_sensors:
+            if sensor not in list(supported_sensors_blocks.keys()):
                 raise ValueError(
-                    f"Currently only these sensors are supported: {supported_sensors}"
+                    f"Currently only these sensors are supported: "
+                    f"{list(supported_sensors_blocks.keys())}"
                 )
-            for block in blocks_default:
-                if sensor in block.split("-"):
-                    block_filters.append(block)
+            block_filters.extend(supported_sensors_blocks[sensor])
         query_filters = {
             "cloudCoverage": {"lte": max_cloudcover},
             "dataBlock": {"in": block_filters},
@@ -138,7 +130,7 @@ class Catalog(Tools):
 
     def search(
         self, search_paramaters: Dict, as_dataframe: bool = True
-    ) -> Union[gpd.GeoDataFrame, Dict]:
+    ) -> Union[GeoDataFrame, Dict]:
         """
         Searches the catalog for the the search parameters and returns the metadata of
         the matching scenes.
@@ -172,7 +164,7 @@ class Catalog(Tools):
         logger.info("%d results returned.", len(response_json["features"]))
         # UP42 results are always in EPSG 4326
         dst_crs = 4326
-        df = gpd.GeoDataFrame.from_features(response_json, crs=dst_crs)
+        df = GeoDataFrame.from_features(response_json, crs=dst_crs)
         if df.empty:
             if as_dataframe:
                 return df
@@ -184,7 +176,7 @@ class Catalog(Tools):
         # bounds geometry, can contain scenes that touch the aoi bbox, but not the aoi.
         # So number returned images not consistent with set limit.
         geometry = search_paramaters["intersects"]
-        poly = shapely.geometry.shape(geometry)
+        poly = shape(geometry)
         df = df[df.intersects(poly)]
         df = df.reset_index()
 

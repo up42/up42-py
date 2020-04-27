@@ -14,6 +14,14 @@ If you have an existing installation, update to the newest version via:
 pip install up42-py --upgrade
 ```
 
+!!! Info "Optional: Jupyter Lab"
+    Although optional, the UP42 Python SDK is optimally used in a Jupyter notebook, 
+    which makes data exploration even more comfortable! To install:
+    
+    ```bash
+    pip install jupyterlab
+    ```
+
 Test the successful installation by importing the package in Python:
 ```python
 import up42
