@@ -27,7 +27,7 @@ class Workflow(Tools):
 
         Public Methods:
             get_compatible_blocks, get_workflow_tasks, add_workflow_tasks, get_parameters_info,
-            construct_parameters, create_and_run_job, get_jobs, update_name, delete
+            construct_parameters, test_job, run_job, get_jobs, update_name, delete
         """
         self.auth = auth
         self.project_id = project_id
@@ -283,7 +283,7 @@ class Workflow(Tools):
         data_block_name = list(input_parameters.keys())[0]
 
         if order_ids is not None:
-            # Needs to be handled in this function(not create_and_run_job) as it is only
+            # Needs to be handled in this function(not run_job) as it is only
             # relevant for the data block.
             # TODO: Check for order-id correct schema, should be handled on backend?
             input_parameters[data_block_name] = {"order_ids": order_ids}
@@ -310,23 +310,23 @@ class Workflow(Tools):
             input_parameters[data_block_name][geometry_operation] = aoi_feature
         return input_parameters
 
-    def create_and_run_job(
+    def _helper_run_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,
-        test_query: bool = False,
+        test_job=False,
         track_status: bool = False,
     ) -> "Job":
         """
-        Creates and runs a new job.
+        Helper function to create and run a new real or test job.
 
         Args:
             input_parameters: Either json string of workflow parameters or filepath to json.
-            test_query: If set, runs a test query (search for available imagery based on your data parameters).
+            test_job: If set, runs a test query (search for available imagery based on your data parameters).
             track_status: Automatically attaches workflow.track_status which queries
                 the job status every 30 seconds.
 
         Returns:
-            The spawned job object.
+            The spawned real or test job object.
         """
         if input_parameters is None:
             raise ValueError(
@@ -338,15 +338,14 @@ class Workflow(Tools):
                 input_parameters = json.load(src)
             logger.info("Loading job parameters from json file.")
 
-        logger.info("Selected input_parameters: %s.", input_parameters)
-
-        if test_query:
-            # TODO: Fix type union
+        if test_job:
             input_parameters = input_parameters.copy()  # type: ignore
             input_parameters.update({"config": {"mode": "DRY_RUN"}})  # type: ignore
             logger.info("+++++++++++++++++++++++++++++++++")
             logger.info("Running this job as Test Query...")
             logger.info("+++++++++++++++++++++++++++++++++")
+
+        logger.info("Selected input_parameters: %s.", input_parameters)
 
         name = "_py"  # Enables recognition of python API usage.
         url = (
@@ -363,6 +362,47 @@ class Workflow(Tools):
         if track_status:
             job.track_status()
         return job
+
+    def test_job(
+        self,
+        input_parameters: Union[Dict, str, Path] = None,
+        track_status: bool = False,
+    ) -> "Job":
+        """
+        Create a run a new test job (Test Query). With this test query you will not be
+        charged with any data or processing credits, but have a preview of the job result.
+
+        Args:
+            input_parameters: Either json string of workflow parameters or filepath to json.
+            track_status: Automatically attaches workflow.track_status which queries
+                the job status every 30 seconds.
+
+        Returns:
+            The spawned test job object.
+        """
+        return self._helper_run_job(
+            input_parameters=input_parameters, test_job=True, track_status=track_status
+        )
+
+    def run_job(
+        self,
+        input_parameters: Union[Dict, str, Path] = None,
+        track_status: bool = False,
+    ) -> "Job":
+        """
+        Creates and runs a new job.
+
+        Args:
+            input_parameters: Either json string of workflow parameters or filepath to json.
+            track_status: Automatically attaches workflow.track_status which queries
+                the job status every 30 seconds.
+
+        Returns:
+            The spawned job object.
+        """
+        return self._helper_run_job(
+            input_parameters=input_parameters, track_status=track_status
+        )
 
     def get_jobs(self, return_json: bool = False) -> Union[List["Job"], Dict]:
         """

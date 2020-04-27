@@ -148,6 +148,7 @@ class Job(Tools):
         Returns:
             The job data.json json.
         """
+        # TODO: add as basic
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
             f"/outputs/data-json/"

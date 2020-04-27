@@ -107,7 +107,7 @@ for airport in airports.geometry:
     input_parameters = workflow.construct_parameters(geometry=airport, geometry_operation="bbox")
     input_parameters[f"{selected_block}:1"]["max_cloud_cover"] = 10
     
-    job = workflow.create_and_run_job(input_parameters=input_parameters)
+    job = workflow.run_job(input_parameters=input_parameters)
     jobs.append(job)
     
 # Track status until the last job is finished.

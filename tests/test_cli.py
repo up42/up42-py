@@ -230,16 +230,31 @@ def test_add_workflow_tasks_live(cli_runner):
 @PROJECT_ENVS
 @WORKFLOW_ENVS
 @pytest.mark.live()
-def test_create_and_run_job_live(cli_runner):
-    result = cli_runner.invoke(cli.main, ["workflow", "create-and-run-job", "-h"])
+def test_test_job_live(cli_runner):
+    result = cli_runner.invoke(cli.main, ["workflow", "test-job", "-h"])
     assert result.exit_code == 0
 
     input_parameters_json = (
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
     result = cli_runner.invoke(
-        cli.main,
-        ["workflow", "create-and-run-job", str(input_parameters_json), "--track",],
+        cli.main, ["workflow", "test-job", str(input_parameters_json), "--track",],
+    )
+    assert result.exit_code == 0
+
+
+@PROJECT_ENVS
+@WORKFLOW_ENVS
+@pytest.mark.live()
+def test_run_job_live(cli_runner):
+    result = cli_runner.invoke(cli.main, ["workflow", "run-job", "-h"])
+    assert result.exit_code == 0
+
+    input_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    )
+    result = cli_runner.invoke(
+        cli.main, ["workflow", "run-job", str(input_parameters_json), "--track",],
     )
     assert result.exit_code == 0
 

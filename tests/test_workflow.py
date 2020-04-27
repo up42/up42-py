@@ -331,7 +331,7 @@ def test_construct_parameter_order_ids(workflow_mock):
     }
 
 
-def test_create_and_run_job(workflow_mock, job_mock):
+def test_run_job(workflow_mock, job_mock):
     with requests_mock.Mocker() as m:
         job_url = (
             f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
@@ -347,31 +347,18 @@ def test_create_and_run_job(workflow_mock, job_mock):
             json={"data": {}},
         )
 
-        jb = workflow_mock.create_and_run_job(input_parameters_json)
+        jb = workflow_mock.run_job(input_parameters_json)
         assert isinstance(jb, up42.Job)
         assert jb.job_id == job_mock.job_id
 
 
 @pytest.mark.live
-def test_create_and_run_job_live(workflow_live):
+def test_test_job_live(workflow_live):
     input_parameters_json = (
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
-    jb = workflow_live.create_and_run_job(input_parameters_json, track_status=True)
-    assert isinstance(jb, up42.Job)
-    with open(input_parameters_json) as src:
-        assert jb.info["inputs"] == json.load(src)
-        assert jb.info["mode"] == "DEFAULT"
-    assert jb.get_status() == "SUCCEEDED"
-
-
-@pytest.mark.live
-def test_create_and_run_job_test_query_live(workflow_live):
-    input_parameters_json = (
-        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
-    )
-    jb = workflow_live.create_and_run_job(
-        input_parameters_json, test_query=True, track_status=True
+    jb = workflow_live.test_job(
+        input_parameters=input_parameters_json, track_status=True
     )
     assert isinstance(jb, up42.Job)
     with open(input_parameters_json) as src:
@@ -379,6 +366,19 @@ def test_create_and_run_job_test_query_live(workflow_live):
         job_info_params.update({"config": {"mode": "DRY_RUN"}})
         assert jb.info["inputs"] == job_info_params
         assert jb.info["mode"] == "DRY_RUN"
+    assert jb.get_status() == "SUCCEEDED"
+
+
+@pytest.mark.live
+def test_run_job_live(workflow_live):
+    input_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    )
+    jb = workflow_live.run_job(input_parameters_json, track_status=True)
+    assert isinstance(jb, up42.Job)
+    with open(input_parameters_json) as src:
+        assert jb.info["inputs"] == json.load(src)
+        assert jb.info["mode"] == "DEFAULT"
     assert jb.get_status() == "SUCCEEDED"
 
 

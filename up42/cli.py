@@ -436,19 +436,31 @@ def add_workflow_tasks(workflow, input_tasks_json):
 
 @COMMAND_WORKFLOW
 @click.argument("input-parameters-json", type=click.File("rb"))
-@click.option(
-    "--test-query",
-    help="Only search for available imagery based on your data parameters",
-    is_flag=True,
-)
 @click.option("--track", help="Track status of job in shell.", is_flag=True)
 @click.pass_obj
-def create_and_run_job(workflow, input_parameters_json, test_query, track):
+def test_job(workflow, input_parameters_json, track):
+    """
+    Create a run a new test job (Test Query). With this test query you will not be
+    charged with any data or processing credits, but have a preview of the job result.
+    """
+    input_parameters = json.load(input_parameters_json)
+    jb = workflow.test_job(input_parameters, track)
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info("Run the following command to persist with this test job:")
+    logger.info("export UP42_JOB_ID={}".format(jb.job_id))
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+
+@COMMAND_WORKFLOW
+@click.argument("input-parameters-json", type=click.File("rb"))
+@click.option("--track", help="Track status of job in shell.", is_flag=True)
+@click.pass_obj
+def run_job(workflow, input_parameters_json, track):
     """
     Creates and runs a new job.
     """
     input_parameters = json.load(input_parameters_json)
-    jb = workflow.create_and_run_job(input_parameters, test_query, track)
+    jb = workflow.run_job(input_parameters, track)
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Run the following command to persist with this job:")
     logger.info("export UP42_JOB_ID={}".format(jb.job_id))
