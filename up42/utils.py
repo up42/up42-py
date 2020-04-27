@@ -214,11 +214,11 @@ def any_vector_to_fc(
     if not isinstance(
         vector,
         (
-            Dict,
+            dict,
             FeatureCollection,
             Feature,
             geojson_Polygon,
-            List,
+            list,
             GeoDataFrame,
             Polygon,
             Point,
@@ -231,7 +231,7 @@ def any_vector_to_fc(
 
     ## Transform all possible input geometries to a uniform feature collection.
     vector = copy.deepcopy(vector)  # otherwise changes input geometry.
-    if isinstance(vector, (Dict, FeatureCollection, Feature)):
+    if isinstance(vector, (dict, FeatureCollection, Feature)):
         try:
             if vector["type"] == "FeatureCollection":
                 df = GeoDataFrame.from_features(vector, crs=4326)
@@ -246,7 +246,7 @@ def any_vector_to_fc(
                 "Provided geometry dictionary has to include a featurecollection or feature."
             )
     else:
-        if isinstance(vector, List):
+        if isinstance(vector, list):
             if len(vector) == 4:
                 box_poly = shapely.geometry.box(*vector)
                 df = GeoDataFrame({"geometry": [box_poly]}, crs=4326)

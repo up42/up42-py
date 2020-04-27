@@ -226,7 +226,7 @@ class Tools:
             "ignore", category=rasterio.errors.NotGeoreferencedWarning
         )
 
-        fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
+        _, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
         if len(filepaths) > 1:
             axs = axs.ravel()
         else:
@@ -284,7 +284,7 @@ class Tools:
             ncols = 3
             nrows = int(math.ceil(len(imagepaths) / float(ncols)))
 
-        fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
+        _, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
         if len(imagepaths) > 1:
             axs = axs.ravel()
         else:
