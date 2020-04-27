@@ -7,10 +7,11 @@ This overview of the most important functions repeats the previous 30-seconds-ex
 
 ```python
 import up42
-up42.authenticate(porject_id=12345, project_api_key=12345)
-# up42.authenticate(cfg_file="config.json")
+up42.authenticate(project_id=12345, project_api_key=12345)
+#up42.authenticate(cfg_file="config.json")
 
 project = up42.initialize_project()
+project
 ```
 
 Get information about the available blocks to later construct your workflow.
@@ -39,7 +40,7 @@ workflow
 
 
 ```python
-# Add workflow tasks - simple version
+# Add workflow tasks - simple version. See above .get_blocks() result.
 
 input_tasks= ["a2daaab4-196d-4226-a018-a810444dcad1", "4ed70368-d4e1-4462-bef6-14e768049471"]
 workflow.add_workflow_tasks(input_tasks=input_tasks)

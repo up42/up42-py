@@ -2,7 +2,7 @@
 
 ### **Contact**
 
-Please contact us via Email **[support@up42.com](mailto:support@up42.com)** or open a **[github issue](https://github.com/up42/up42-py)**.
+Please contact us via Email **[support@up42.com](mailto:support@up42.com)** or open a **[github issue](https://github.com/up42/up42-py/issues)**.
 
 <br>
 

@@ -86,7 +86,6 @@ input_parameters = workflow.construct_parameters(geometry=aoi,
 input_parameters["sobloo-s2-l1c-aoiclipped:1"].update({"max_cloud_cover":60})
 
 # Run a test job to query data availability and check the configuration.
-# With this test query you will not be charged with any data or processing credits, but have a preview of the job result.
 test_job = workflow.test_job(input_parameters=input_parameters, track_status=True)
 test_results = test_job.get_results_json()
 print(test_results)
@@ -102,4 +101,4 @@ job.map_results()
 
 ## Support
 
-For any kind of issues or help please contact us via Email **[support@up42.com](mailto:support@up42.com)** or open a **github issue**.
+For any kind of issues or help please contact us via Email **[support@up42.com](mailto:support@up42.com)** or open a **[github issue](https://github.com/up42/up42-py/issues)**.
