@@ -288,7 +288,7 @@ class Job(Tools):
         # TODO: Switch to ipyleaflet!
         # This requires reprojecting on the user pc, not via the api.
         # Reproject raster and add to map
-        dst_crs = 4326
+        dst_crs = "EPSG:4326"
         results: List[Path] = self.results
         for idx, raster_fp in enumerate(results):
 

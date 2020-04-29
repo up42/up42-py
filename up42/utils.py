@@ -237,7 +237,7 @@ def any_vector_to_fc(
                 df = GeoDataFrame.from_features(vector, crs=4326)
             elif vector["type"] == "Feature":
                 df = GeoDataFrame.from_features(FeatureCollection([vector]), crs=4326)
-            elif vector["type"] == "Polygon":
+            elif vector["type"] == "Polygon":  # Geojson geometry
                 df = GeoDataFrame.from_features(
                     FeatureCollection([Feature(geometry=vector)]), crs=4326
                 )
@@ -260,8 +260,8 @@ def any_vector_to_fc(
             )  # Around 1m buffer # TODO: Find better solution than small buffer?
         elif isinstance(vector, GeoDataFrame):
             df = vector
-            if df.crs != "epsg:4326":
-                df = df.to_crs(4326)
+            if df.crs.to_string() != "EPSG:4326":
+                df = df.to_crs(epsg=4326)
 
     if as_dataframe:
         return df

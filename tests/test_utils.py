@@ -4,6 +4,7 @@ import tempfile
 
 import folium
 import geopandas as gpd
+from geopandas import GeoDataFrame
 import pandas as pd
 import pytest
 from shapely.geometry import Point, Polygon, LinearRing
@@ -113,6 +114,10 @@ def test_any_vector_to_fc(len_fc, in_vector):
     assert len(fc["features"]) != 0
     assert len(fc["features"]) == len_fc
     assert fc["features"][0]["geometry"].get("coordinates") is not None
+
+    df = any_vector_to_fc(in_vector, as_dataframe=True)
+    assert isinstance(df, GeoDataFrame)
+    assert df.crs.to_string() == "EPSG:4326"
 
 
 def test_any_vector_to_fc_raises_with_not_accepted():
