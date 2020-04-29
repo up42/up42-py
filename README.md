@@ -77,7 +77,8 @@ input_tasks= [blocks['sobloo-s2-l1c-aoiclipped'],
 workflow.add_workflow_tasks(input_tasks=input_tasks)
 
 # Define the aoi and input parameters of the workflow to run it.
-aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
+aoi = workflow.get_example_aoi(as_dataframe=True)
+#aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
 input_parameters = workflow.construct_parameters(geometry=aoi, 
                                                  geometry_operation="bbox", 
                                                  start_date="2018-01-01",
