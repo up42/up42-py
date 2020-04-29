@@ -74,7 +74,7 @@ class Tools:
         else:
             df = gpd.read_file(filename)
 
-        if df.crs != "epsg:4326":
+        if df.crs.to_string() != "EPSG:4326":
             df = df.to_crs(epsg=4326)
         df.geometry = df.geometry.buffer(0)
         # TODO: Explode multipolygons (if neccessary as union in aoi anyway most often).

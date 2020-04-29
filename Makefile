@@ -25,11 +25,11 @@ gh-pages:
 	mkdocs gh-deploy -m "update gh-pages [ci skip]"
 
 package:
-    python setup.py sdist bdist_wheel
-    twine check dist/*
+	python setup.py sdist bdist_wheel
+	twine check dist/*
 
 upload:
-    twine upload dist/*
+	twine upload dist/*
 
 clean:
 	find . -name "__pycache__" -exec rm -rf {} +

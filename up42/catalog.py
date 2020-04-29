@@ -163,7 +163,7 @@ class Catalog(Tools):
         )
         logger.info("%d results returned.", len(response_json["features"]))
         # UP42 results are always in EPSG 4326
-        dst_crs = 4326
+        dst_crs = "EPSG:4326"
         df = GeoDataFrame.from_features(response_json, crs=dst_crs)
         if df.empty:
             if as_dataframe:
