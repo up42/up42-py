@@ -193,8 +193,7 @@ class Workflow(Tools):
             ```
 
             ```python
-            input_tasks = ["a2daaab4-196d-4226-a018-a810444dcad1",
-                           "4ed70368-d4e1-4462-bef6-14e768049471"]
+            input_tasks = ["sobloo-s2-l1c-aoiclipped", "tiling"]
             ```
 
             ```python
