@@ -100,47 +100,69 @@ class Workflow(Tools):
     ) -> List[Dict]:
         """
         Constructs the full workflow task definition from a simplified version.
+        Accepts blocks ids, block names, block display names & combinations of them.
 
         Args:
-            input_tasks: List of workflow task ids, see example.
+            input_tasks: List of block names, block ids, or block display names.
 
         Returns:
             The full workflow task definition.
 
         Example:
-            ```json
+            ```python
+            input_tasks = ["sobloo-s2-l1c-aoiclipped",
+                           "tiling"]
+            ```
+
+            ```python
             input_tasks = ["a2daaab4-196d-4226-a018-a810444dcad1",
                            "4ed70368-d4e1-4462-bef6-14e768049471"]
+            ```
+
+            ```python
+            input_tasks = ["Sentinel-2 L1C MSI AOI clipped",
+                           "Raster Tiling"]
             ```
         """
         full_input_tasks_definition = []
 
         # Get public + custom blocks.
         logging.getLogger("up42.tools").setLevel(logging.CRITICAL)
-        blocks_name_id: Dict = self.get_blocks(basic=True)  # type: ignore
+        blocks: Dict = self.get_blocks(basic=False)  # type: ignore
         logging.getLogger("up42.tools").setLevel(logging.INFO)
-        blocks_id_name = {
-            value: key for key, value in blocks_name_id.items()
-        }  # pylint: disable=
+
+        # Get ids of the input tasks, regardless of the specified format.
+        blocks_id_name = {block["id"]: block["name"] for block in blocks}
+        blocks_name_id = {block["name"]: block["id"] for block in blocks}
+        blocks_displaynames_id = {block["displayName"]: block["id"] for block in blocks}
+
+        input_tasks_ids = []
         for task in input_tasks:
-            if task not in blocks_id_name:
-                raise Exception(
+            if task in list(blocks_id_name.keys()):
+                input_tasks_ids.append(task)
+            elif task in list(blocks_name_id.keys()):
+                input_tasks_ids.append(blocks_name_id[task])
+            elif task in list(blocks_displaynames_id.keys()):
+                input_tasks_ids.append(blocks_displaynames_id[task])
+            else:
+                raise ValueError(
                     f"The specified input task {task} does not match any "
                     f"available block."
                 )
 
-        first_task = {
-            "name": f"{blocks_id_name[input_tasks[0]]}:1",
+        # Add first task, the data block.
+        data_task = {
+            "name": f"{blocks_id_name[input_tasks_ids[0]]}:1",
             "parentName": None,
-            "blockId": input_tasks[0],
+            "blockId": input_tasks_ids[0],
         }
+        full_input_tasks_definition.append(data_task)
+        previous_task_name = data_task["name"]
 
-        full_input_tasks_definition.append(first_task)
-        previous_task_name = first_task["name"]
-
-        # All following blocks
-        for block_id in input_tasks[1:]:
-            # Check if multiple of the same block are included.
+        # All all following (processing) blocks.
+        for block_id in input_tasks_ids[1:]:
+            # Check if multiple of the same block are in the input tasks definition,
+            # so that is does not get skipped as it has the same id.
             counts = Counter([x["blockId"] for x in full_input_tasks_definition])
             try:
                 count_block = int(counts[block_id]) + 1
@@ -156,24 +178,39 @@ class Workflow(Tools):
             previous_task_name = next_task["name"]
         return full_input_tasks_definition
 
-    def add_workflow_tasks(self, input_tasks: Union[List, List[Dict]]) -> None:
+    def add_workflow_tasks(self, input_tasks: Union[List[str], List[Dict]]) -> None:
         """
         Adds or overwrites workflow tasks in a workflow on UP42.
 
         Args:
-            input_tasks: The input tasks, can be provided in the simplified (list of block ids,
-                is automatically transformed to the full version) or full version
-                (dict of block id, block name and parent block name).
-                - Name is arbitrary but best use the block name. Always use :1 to be able to
-                    identify the order when two times the same workflow task is used.
-                - API by itself validates if the underlying block for the selected block-id is
-                    available.
+            input_tasks: The input tasks, specifying the blocks. Can be a list of the
+                block ids, block names or block display names (The name shown on the
+                [marketplace](https://marketplace.up42.com).
+
+        !!! Info
+            Using block ids specifies a specific version of the block that will be added
+            to the workflow. With block names or block display names, the most recent
+            version of a block will always be added.
 
         Example:
             ```python
             input_tasks_simple = ['a2daaab4-196d-4226-a018-a810444dcad1',
                                   '4ed70368-d4e1-4462-bef6-14e768049471']
             ```
+
+            ```python
+            input_tasks = ["sobloo-s2-l1c-aoiclipped", "tiling"]
+            ```
+
+            ```python
+            input_tasks = ["Sentinel-2 L1C MSI AOI clipped",
+                           "Raster Tiling"]
+
+
+        Optional: The input_tasks can also be provided as the full, detailed workflow task
+        definition (dict of block id, block name and parent block name). Always use :1
+        to be able to identify the order when two times the same workflow task is used.
+        The name is arbitrary, but best use the block name.
 
         Example:
             ```python
@@ -185,7 +222,6 @@ class Workflow(Tools):
                                  'blockId': '4ed70368-d4e1-4462-bef6-14e768049471'}]
             ```
         """
-        # TODO: User should be able to only provide block task names or display name.
         # Construct proper task definition from simplified input.
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
