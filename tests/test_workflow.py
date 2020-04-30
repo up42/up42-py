@@ -175,34 +175,20 @@ def test_construct_full_workflow_tasks_dict_unkwown_block_raises(workflow_mock):
             workflow_mock._construct_full_workflow_tasks_dict(input_tasks=input_tasks)
 
 
-def test_construct_full_workflow_tasks_dict(workflow_mock):
-    input_tasks = [
-        "a2daaab4-196d-4226-a018-a810444dcad1",
-        "4ed70368-d4e1-4462-bef6-14e768049471",
-    ]
-    with requests_mock.Mocker() as m:
-        url_get_blocks = f"{workflow_mock.auth._endpoint()}/blocks"
-        m.get(
-            url=url_get_blocks, json=json_blocks,
-        )
-        full_workflow_tasks_dict = workflow_mock._construct_full_workflow_tasks_dict(
-            input_tasks=input_tasks
-        )
-    assert isinstance(full_workflow_tasks_dict, list)
-    assert full_workflow_tasks_dict[0]["name"] == "sobloo-s2-l1c-aoiclipped:1"
-    assert full_workflow_tasks_dict[0]["parentName"] is None
-    assert full_workflow_tasks_dict[1]["name"] == "tiling:1"
-    assert full_workflow_tasks_dict[1]["parentName"] == "sobloo-s2-l1c-aoiclipped:1"
-    assert (
-        full_workflow_tasks_dict[1]["blockId"] == "4ed70368-d4e1-4462-bef6-14e768049471"
-    )
-
-
-def test_construct_full_workflow_tasks_dict_from_blockname(workflow_mock):
-    input_tasks = [
-        "sobloo-s2-l1c-aoiclipped",
-        "tiling",
-    ]
+@pytest.mark.parametrize(
+    "input_tasks",
+    [
+        [
+            "a2daaab4-196d-4226-a018-a810444dcad1",
+            "4ed70368-d4e1-4462-bef6-14e768049471",
+        ],
+        ["sobloo-s2-l1c-aoiclipped", "tiling"],
+        ["Sentinel-2 L1C MSI AOI clipped", "Raster Tiling",],
+        ["a2daaab4-196d-4226-a018-a810444dcad1", "tiling",],
+        ["Sentinel-2 L1C MSI AOI clipped", "4ed70368-d4e1-4462-bef6-14e768049471",],
+    ],
+)
+def test_construct_full_workflow_tasks_dict(workflow_mock, input_tasks):
     with requests_mock.Mocker() as m:
         url_get_blocks = f"{workflow_mock.auth._endpoint()}/blocks"
         m.get(
