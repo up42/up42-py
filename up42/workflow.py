@@ -129,31 +129,38 @@ class Workflow(Tools):
         logging.getLogger("up42.tools").setLevel(logging.CRITICAL)
         blocks: Dict = self.get_blocks(basic=False)  # type: ignore
         logging.getLogger("up42.tools").setLevel(logging.INFO)
-        block_names = [block["name"] for block in blocks]
-        block_ids = [block["id"] for block in blocks]
-        block_display_names = [block["displayName"] for block in blocks]
 
+        # Get ids of the input tasks, regardless of the specified format.
+        blocks_id_name = {block["id"]: block["name"] for block in blocks}
+        blocks_name_id = {block["name"]: block["id"] for block in blocks}
+        blocks_displaynames_id = {block["displayName"]: block["id"] for block in blocks}
+
+        input_tasks_ids = []
         for task in input_tasks:
-            if task not in block_names + block_ids + block_display_names:
+            if task in list(blocks_id_name.keys()):
+                input_tasks_ids.append(task)
+            elif task in list(blocks_name_id.keys()):
+                input_tasks_ids.append(blocks_name_id[task])
+            elif task in list(blocks_displaynames_id.keys()):
+                input_tasks_ids.append(blocks_displaynames_id[task])
+            else:
                 raise ValueError(
                     f"The specified input task {task} does not match any "
                     f"available block."
                 )
 
-        blocks_id_name = {value: key for key, value in blocks_name_id.items()}
-
-        first_task = {
-            "name": f"{blocks_id_name[input_tasks[0]]}:1",
+        # Add first task, the data block.
+        data_task = {
+            "name": f"{blocks_id_name[input_tasks_ids[0]]}:1",
             "parentName": None,
-            "blockId": input_tasks[0],
+            "blockId": input_tasks_ids[0],
         }
+        full_input_tasks_definition.append(data_task)
+        previous_task_name = data_task["name"]
 
-        full_input_tasks_definition.append(first_task)
-        previous_task_name = first_task["name"]
-
-        # All following blocks
-        for block_id in input_tasks[1:]:
-            # Check if multiple of the same block are included.
+        # All all following (processing) blocks.
+        for block_id in input_tasks_ids[1:]:
+            # Check if multiple of the same block are in the input tasks definition.
             counts = Counter([x["blockId"] for x in full_input_tasks_definition])
             try:
                 count_block = int(counts[block_id]) + 1
