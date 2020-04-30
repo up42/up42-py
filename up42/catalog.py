@@ -18,20 +18,35 @@ logger = get_logger(__name__)
 # TODO: Midterm add catalog results class? Scenes() etc. that also as feedback to workflow input.
 # Scenes() would be dataframe with quicklook preview images in it.
 
-supported_sensors_blocks = {
-    "pleiades": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-aoiclipped",],
-    "spot": ["oneatlas-spot-fullscene", "oneatlas-spot-aoiclipped",],
-    "sentinel1": [
-        "sobloo-sentinel1-l1c-grd-full",
-        "sobloo-sentinel1-l1c-grd-aoiclipped",
-        "sobloo-sentinel1-l1c-slc-full",
-    ],
-    "sentinel2": [
-        "sobloo-sentinel2-lic-msi-full",
-        "sobloo-sentinel2-lic-msi-aoiclipped",
-    ],
-    "sentinel3": ["sobloo-sentinel3-full"],
-    "sentinel5p": ["sobloo-sentinel5-preview-full",],
+supported_sensors = {
+    "pleiades": {
+        "blocks": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-aoiclipped",],
+        "provider": "oneatlas",
+    },
+    "spot": {
+        "block": ["oneatlas-spot-fullscene", "oneatlas-spot-aoiclipped",],
+        "provider": "oneatlas",
+    },
+    "sentinel1": {
+        "block": [
+            "sobloo-sentinel1-l1c-grd-full",
+            "sobloo-sentinel1-l1c-grd-aoiclipped",
+            "sobloo-sentinel1-l1c-slc-full",
+        ],
+        "provider": "sobloo-image",
+    },
+    "sentinel2": {
+        "blocks": [
+            "sobloo-sentinel2-lic-msi-full",
+            "sobloo-sentinel2-lic-msi-aoiclipped",
+        ],
+        "provider": "sobloo-image",
+    },
+    "sentinel3": {"blocks": ["sobloo-sentinel3-full"], "provider": "sobloo-image"},
+    "sentinel5p": {
+        "blocks": ["sobloo-sentinel5-preview-full",],
+        "provider": "sobloo-image",
+    },
 }
 
 # pylint: disable=duplicate-code
@@ -80,7 +95,7 @@ class Catalog(Tools):
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
             sensors: The satellite sensor(s) to search for, one or multiple of
-                ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5"]
+                ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p"]
             limit: The maximum number of search results to return.
             max_cloudcover: Maximum cloudcover % - 100 will return all scenes, 8.4 will return all
                 scenes with 8.4 or less cloudcover.
@@ -94,12 +109,12 @@ class Catalog(Tools):
         datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
         block_filters: List[str] = []
         for sensor in sensors:
-            if sensor not in list(supported_sensors_blocks.keys()):
+            if sensor not in list(supported_sensors.keys()):
                 raise ValueError(
                     f"Currently only these sensors are supported: "
-                    f"{list(supported_sensors_blocks.keys())}"
+                    f"{list(supported_sensors.keys())}"
                 )
-            block_filters.extend(supported_sensors_blocks[sensor])
+            block_filters.extend(supported_sensors[sensor]["blocks"])
         query_filters = {
             "cloudCoverage": {"lte": max_cloudcover},
             "dataBlock": {"in": block_filters},
@@ -201,7 +216,7 @@ class Catalog(Tools):
     def download_quicklooks(
         self,
         image_ids: List[str],
-        provider: str = "oneatlas",
+        sensor: str,
         output_directory: Union[str, Path, None] = None,
     ) -> List[str]:
         """
@@ -210,24 +225,23 @@ class Catalog(Tools):
         After download, can be plotted via catalog.plot_quicklooks().
         Args:
             image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
-            provider:  One of "oneatlas" (pleiades, spot) or sobloo (Sentinel1-Sentinel5p).
+            sensors: The satellite sensor(s) to search for, one of
+                "pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p".
             output_directory: The file output directory, defaults to the current working
                 directory.
 
         Returns:
             List of quicklook image output file paths.
         """
+        if sensor not in list(supported_sensors.keys()):
+            raise ValueError(
+                f"Currently only these sensors are supported: "
+                f"{list(supported_sensors.keys())}"
+            )
+        provider = supported_sensors[sensor]["provider"]
         logger.info(
             "Getting quicklooks from provider %s for image_ids: %s", provider, image_ids
         )
-
-        if provider == "sobloo":
-            provider = "sobloo-image"
-        implemented_providers = ["sobloo-image", "oneatlas"]
-        if provider not in implemented_providers:
-            raise ValueError(
-                "This provider is not yet implemented for quicklook download!"
-            )
 
         if output_directory is None:
             output_directory = (
