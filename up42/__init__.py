@@ -41,11 +41,11 @@ def initialize_project() -> "Project":
     return Project(auth=_auth, project_id=_auth.project_id)
 
 
-def initialize_catalog(backend: str = "ONE_ATLAS") -> "Catalog":
+def initialize_catalog() -> "Catalog":
     """Directly returns a Catalog object."""
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    return Catalog(auth=_auth, backend=backend)
+    return Catalog(auth=_auth)
 
 
 def initialize_workflow(workflow_id) -> "Workflow":

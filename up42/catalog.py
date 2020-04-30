@@ -51,7 +51,7 @@ supported_sensors = {
 
 # pylint: disable=duplicate-code
 class Catalog(Tools):
-    def __init__(self, auth: Auth, backend: str = "ONE_ATLAS"):
+    def __init__(self, auth: Auth):
         """The Catalog class enables access to the UP42 catalog search. You can search
         for satellite image scenes for different sensors and criteria like cloud cover etc.
 
@@ -59,11 +59,10 @@ class Catalog(Tools):
             construct_parameters, search, download_quicklooks
         """
         self.auth = auth
-        self.querystring = {"backend": backend}
         self.quicklooks = None
 
     def __repr__(self):
-        return f"Catalog(querystring={self.querystring}, auth={self.auth})"
+        return f"Catalog(auth={self.auth})"
 
     # pylint: disable=dangerous-default-value
     @staticmethod
@@ -173,9 +172,7 @@ class Catalog(Tools):
         """
         logger.info("Searching catalog with: %r", search_paramaters)
         url = f"{self.auth._endpoint()}/catalog/stac/search"
-        response_json = self.auth._request(
-            "POST", url, search_paramaters, self.querystring  # TODO
-        )
+        response_json = self.auth._request("POST", url, search_paramaters)
         logger.info("%d results returned.", len(response_json["features"]))
         # UP42 results are always in EPSG 4326
         dst_crs = "EPSG:4326"
