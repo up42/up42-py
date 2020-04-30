@@ -103,7 +103,7 @@ class Workflow(Tools):
         Accepts blocks ids, block names, block display names & combinations of them.
 
         Args:
-            input_tasks: List of block names, block ids, oder block display names.
+            input_tasks: List of block names, block ids, or block display names.
 
         Returns:
             The full workflow task definition.
@@ -183,8 +183,14 @@ class Workflow(Tools):
         Adds or overwrites workflow tasks in a workflow on UP42.
 
         Args:
-            input_tasks: The input tasks (a list of block ids, block names or block
-                display names. Use up42.get_blocks() to see these options.
+            input_tasks: The input tasks, specifying the blocks. Can be a list of the
+                block ids, block names or block display names (The name shown on the
+                [marketplace](https://marketplace.up42.com).
+
+        !!! Info
+            Using block ids specifies a specific version of the block that will be added
+            to the workflow. With block names or block display names, the most recent
+            version of a block will always be added.
 
         Example:
             ```python
