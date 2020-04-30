@@ -318,7 +318,10 @@ class Tools:
             block_type = block_type.lower()
         except AttributeError:
             pass
-
+        if not hasattr(self, "auth"):
+            raise Exception(
+                "Requires authentication with UP42, use up42.authenticate()!"
+            )
         url = f"{self.auth._endpoint()}/blocks"
         response_json = self.auth._request(request_type="GET", url=url)
         public_blocks_json = response_json["data"]
@@ -364,6 +367,10 @@ class Tools:
         Returns:
             A dict of the block details metadata for the specific block.
         """
+        if not hasattr(self, "auth"):
+            raise Exception(
+                "Requires authentication with UP42, use up42.authenticate()!"
+            )
         url = f"{self.auth._endpoint()}/blocks/{block_id}"  # public blocks
         response_json = self.auth._request(request_type="GET", url=url)
         details_json = response_json["data"]
@@ -429,6 +436,10 @@ class Tools:
                 manifest_json = json.load(src)
         else:
             manifest_json = path_or_json
+        if not hasattr(self, "auth"):
+            raise Exception(
+                "Requires authentication with UP42, use up42.authenticate()!"
+            )
         url = f"{self.auth._endpoint()}/validate-schema/block"
         response_json = self.auth._request(
             request_type="POST", url=url, data=manifest_json
