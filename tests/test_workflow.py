@@ -180,6 +180,43 @@ def test_construct_full_workflow_tasks_dict(workflow_mock):
     )
 
 
+def test_construct_full_workflow_tasks_dict_from_blockname(workflow_mock):
+    input_tasks = [
+        "sobloo-s2-l1c-aoiclipped",
+        "tiling",
+    ]
+    with requests_mock.Mocker() as m:
+        url_get_blocks = f"{workflow_mock.auth._endpoint()}/blocks"
+        m.get(
+            url=url_get_blocks,
+            json={
+                "data": [
+                    {"id": "4ed70368-d4e1-4462-bef6-14e768049471", "name": "tiling"},
+                    {
+                        "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
+                        "name": "sharpening",
+                    },
+                    {
+                        "id": "a2daaab4-196d-4226-a018-a810444dcad1",
+                        "name": "sobloo-s2-l1c-aoiclipped",
+                    },
+                ],
+                "error": {},
+            },
+        )
+        full_workflow_tasks_dict = workflow_mock._construct_full_workflow_tasks_dict(
+            input_tasks=input_tasks
+        )
+    assert isinstance(full_workflow_tasks_dict, list)
+    assert full_workflow_tasks_dict[0]["name"] == "sobloo-s2-l1c-aoiclipped:1"
+    assert full_workflow_tasks_dict[0]["parentName"] is None
+    assert full_workflow_tasks_dict[1]["name"] == "tiling:1"
+    assert full_workflow_tasks_dict[1]["parentName"] == "sobloo-s2-l1c-aoiclipped:1"
+    assert (
+        full_workflow_tasks_dict[1]["blockId"] == "4ed70368-d4e1-4462-bef6-14e768049471"
+    )
+
+
 @pytest.mark.skip
 # TODO: Resolve
 def test_add_workflow_tasks_full(workflow_mock, caplog):
