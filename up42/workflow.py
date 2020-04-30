@@ -184,7 +184,7 @@ class Workflow(Tools):
 
         Args:
             input_tasks: The input tasks (a list of block ids, block names or block
-                display names.
+                display names. Use up42.get_blocks() to see these options.
 
         Example:
             ```python
@@ -200,6 +200,7 @@ class Workflow(Tools):
             ```python
             input_tasks = ["Sentinel-2 L1C MSI AOI clipped",
                            "Raster Tiling"]
+
 
         Optional: The input_tasks can also be provided as the full, detailed workflow task
         definition (dict of block id, block name and parent block name). Always use :1
