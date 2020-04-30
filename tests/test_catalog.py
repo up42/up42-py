@@ -27,7 +27,7 @@ def test_construct_parameters(catalog_mock):
         geometry=mock_search_parameters["intersects"],
         start_date="2014-01-01",
         end_date="2016-12-31",
-        sensors=["pleiades"],
+        sensors=["pleiades", "spot", "sentinel1"],
         max_cloudcover=20,
         sortby="cloudCoverage",
         limit=4,
