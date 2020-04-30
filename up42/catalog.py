@@ -220,9 +220,9 @@ class Catalog(Tools):
         output_directory: Union[str, Path, None] = None,
     ) -> List[str]:
         """
-        Gets the quicklooks of scenes, from oneatlas.
+        Gets the quicklooks of scenes from a single sensor. After download, can
+        be plotted via catalog.plot_quicklooks().
 
-        After download, can be plotted via catalog.plot_quicklooks().
         Args:
             image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
             sensors: The satellite sensor(s) to search for, one of

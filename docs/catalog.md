@@ -43,7 +43,7 @@ catalog.plot_coverage(scenes=search_results,
 
 
 ```python
-catalog.download_quicklooks(image_ids=search_results.id.to_list(), provider="oneatlas")
+catalog.download_quicklooks(image_ids=search_results.id.to_list(), sensor="pleiades")
 ```
 
 
