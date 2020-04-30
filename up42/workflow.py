@@ -102,32 +102,45 @@ class Workflow(Tools):
         Constructs the full workflow task definition from a simplified version.
 
         Args:
-            input_tasks: List of workflow task ids, see example.
+            input_tasks: List of block names, block ids, oder block display names.
 
         Returns:
             The full workflow task definition.
 
         Example:
-            ```json
+            ```python
+            input_tasks = ["sobloo-s2-l1c-aoiclipped",
+                           "tiling"]
+            ```
+
+            ```python
             input_tasks = ["a2daaab4-196d-4226-a018-a810444dcad1",
                            "4ed70368-d4e1-4462-bef6-14e768049471"]
+            ```
+
+            ```python
+            input_tasks = ["Sentinel-2 L1C MSI AOI clipped",
+                           "Raster Tiling"]
             ```
         """
         full_input_tasks_definition = []
 
         # Get public + custom blocks.
         logging.getLogger("up42.tools").setLevel(logging.CRITICAL)
-        blocks_name_id: Dict = self.get_blocks(basic=True)  # type: ignore
+        blocks: Dict = self.get_blocks(basic=False)  # type: ignore
         logging.getLogger("up42.tools").setLevel(logging.INFO)
-        blocks_id_name = {
-            value: key for key, value in blocks_name_id.items()
-        }  # pylint: disable=
+        block_names = [block["name"] for block in blocks]
+        block_ids = [block["id"] for block in blocks]
+        block_display_names = [block["displayName"] for block in blocks]
+
         for task in input_tasks:
-            if task not in blocks_id_name:
-                raise Exception(
+            if task not in block_names + block_ids + block_display_names:
+                raise ValueError(
                     f"The specified input task {task} does not match any "
                     f"available block."
                 )
+
+        blocks_id_name = {value: key for key, value in blocks_name_id.items()}
 
         first_task = {
             "name": f"{blocks_id_name[input_tasks[0]]}:1",

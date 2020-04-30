@@ -51,6 +51,27 @@ json_workflow_tasks = {
     "error": {},
 }
 
+json_blocks = {
+    "data": [
+        {
+            "id": "4ed70368-d4e1-4462-bef6-14e768049471",
+            "name": "tiling",
+            "displayName": "Raster Tiling",
+        },
+        {
+            "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
+            "name": "sharpening",
+            "displayName": "Sharpening Filter",
+        },
+        {
+            "id": "a2daaab4-196d-4226-a018-a810444dcad1",
+            "name": "sobloo-s2-l1c-aoiclipped",
+            "displayName": "Sentinel-2 L1C MSI AOI clipped",
+        },
+    ],
+    "error": {},
+}
+
 
 def test_workflow_get_info(workflow_mock):
     del workflow_mock.info
@@ -143,6 +164,17 @@ def test_get_workflow_tasks_live(workflow_live):
     assert "sobloo-s2-l1c-aoiclipped:1" in list(workflow_tasks.keys())
 
 
+def test_construct_full_workflow_tasks_dict_unkwown_block_raises(workflow_mock):
+    input_tasks = ["some_block"]
+    with requests_mock.Mocker() as m:
+        url_get_blocks = f"{workflow_mock.auth._endpoint()}/blocks"
+        m.get(
+            url=url_get_blocks, json=json_blocks,
+        )
+        with pytest.raises(ValueError):
+            workflow_mock._construct_full_workflow_tasks_dict(input_tasks=input_tasks)
+
+
 def test_construct_full_workflow_tasks_dict(workflow_mock):
     input_tasks = [
         "a2daaab4-196d-4226-a018-a810444dcad1",
@@ -151,21 +183,7 @@ def test_construct_full_workflow_tasks_dict(workflow_mock):
     with requests_mock.Mocker() as m:
         url_get_blocks = f"{workflow_mock.auth._endpoint()}/blocks"
         m.get(
-            url=url_get_blocks,
-            json={
-                "data": [
-                    {"id": "4ed70368-d4e1-4462-bef6-14e768049471", "name": "tiling"},
-                    {
-                        "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
-                        "name": "sharpening",
-                    },
-                    {
-                        "id": "a2daaab4-196d-4226-a018-a810444dcad1",
-                        "name": "sobloo-s2-l1c-aoiclipped",
-                    },
-                ],
-                "error": {},
-            },
+            url=url_get_blocks, json=json_blocks,
         )
         full_workflow_tasks_dict = workflow_mock._construct_full_workflow_tasks_dict(
             input_tasks=input_tasks
@@ -188,21 +206,7 @@ def test_construct_full_workflow_tasks_dict_from_blockname(workflow_mock):
     with requests_mock.Mocker() as m:
         url_get_blocks = f"{workflow_mock.auth._endpoint()}/blocks"
         m.get(
-            url=url_get_blocks,
-            json={
-                "data": [
-                    {"id": "4ed70368-d4e1-4462-bef6-14e768049471", "name": "tiling"},
-                    {
-                        "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
-                        "name": "sharpening",
-                    },
-                    {
-                        "id": "a2daaab4-196d-4226-a018-a810444dcad1",
-                        "name": "sobloo-s2-l1c-aoiclipped",
-                    },
-                ],
-                "error": {},
-            },
+            url=url_get_blocks, json=json_blocks,
         )
         full_workflow_tasks_dict = workflow_mock._construct_full_workflow_tasks_dict(
             input_tasks=input_tasks
