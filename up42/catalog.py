@@ -24,11 +24,11 @@ supported_sensors = {
         "provider": "oneatlas",
     },
     "spot": {
-        "block": ["oneatlas-spot-fullscene", "oneatlas-spot-aoiclipped",],
+        "blocks": ["oneatlas-spot-fullscene", "oneatlas-spot-aoiclipped",],
         "provider": "oneatlas",
     },
     "sentinel1": {
-        "block": [
+        "blocks": [
             "sobloo-sentinel1-l1c-grd-full",
             "sobloo-sentinel1-l1c-grd-aoiclipped",
             "sobloo-sentinel1-l1c-slc-full",
@@ -174,7 +174,7 @@ class Catalog(Tools):
         logger.info("Searching catalog with: %r", search_paramaters)
         url = f"{self.auth._endpoint()}/catalog/stac/search"
         response_json = self.auth._request(
-            "POST", url, search_paramaters, self.querystring
+            "POST", url, search_paramaters, self.querystring  # TODO
         )
         logger.info("%d results returned.", len(response_json["features"]))
         # UP42 results are always in EPSG 4326
