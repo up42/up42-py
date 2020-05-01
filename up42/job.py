@@ -229,14 +229,13 @@ class Job(Tools):
         )
         logger.info("Uploaded!")
 
-    def map_results(self, show_images=True, name_column: str = None) -> None:
+    def map_results(self, show_images=True, name_column: str = "uid") -> None:
         """
         Displays data.json, and if available, one or multiple results geotiffs.
 
         Args:
             show_images: Shows images if True (default), only features if False.
-            name_column: Name of the column that provides the Feature/Layer name. Defaults to
-                "Feature 1 - id".
+            name_column: Name of the column that provides the Feature/Layer name.
         # TODO: Make generic with scene_id column integrated.
         """
         def _style_function(feature):  # pylint: disable=unused-argument
@@ -263,11 +262,8 @@ class Job(Tools):
         m = folium_base_map(lat=centroid.y, lon=centroid.x,)
 
         for idx, row in df.iterrows():  # type: ignore
-
-            try:
-                layer_name = row[name_column]
-            except KeyError:
-                layer_name = f"Feature {idx+1} - {row.loc['uid']}"
+            feature_name = row.loc[name_column]
+            layer_name = f"Feature {idx+1} - {feature_name}"
             f = folium.GeoJson(
                 row["geometry"],
                 name=layer_name,
@@ -282,8 +278,10 @@ class Job(Tools):
         # Add image to map.
         if show_images:
             dst_crs = "EPSG:4326"
-            results: List[Path] = self.results
-            for idx, raster_fp in enumerate(results):
+            filepaths: List[Path] = self.results
+            feature_names = df[name_column].to_list()
+
+            for idx, (raster_fp, feature_name) in enumerate(zip(filepaths, feature_names)):
                 # TODO: Not ideal, streaming images are webmercator, folium requires wgs 84.0
                 # TODO: Switch to ipyleaflet!
                 # This requires reprojecting on the user pc, not via the api.
@@ -319,13 +317,13 @@ class Job(Tools):
                                 # TODO: What if more bands than 3-4?
                                 dst_array = mem.read()
                                 minx, miny, maxx, maxy = mem.bounds
-
                 dst_array = np.moveaxis(np.stack(dst_array), 0, 2)
+
                 m.add_child(
                     folium.raster_layers.ImageOverlay(
                         dst_array,
                         bounds=[[miny, minx], [maxy, maxx]],  # different order.
-                        name=f"Image - {idx} - {raster_fp}",
+                        name=f"Image {idx+1} - {feature_name}",
                     )
                 )
 
