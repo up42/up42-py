@@ -73,6 +73,20 @@ def initialize_jobtask(jobtask_id, job_id) -> "JobTask":
     )
 
 
+def control_logging(status=False):
+    if not status:
+        logger.info(
+            "Disabling logging! Use up42.set_logging(status=True) to reactivate."
+        )
+    else:
+        logger.info("Enabling logging!")
+    # pylint: disable=expression-not-assigned
+    [
+        setattr(logging.getLogger(name), "disabled", not status)
+        for name in logging.root.manager.loggerDict
+    ]
+
+
 def get_blocks(
     block_type=None, basic: bool = True, as_dataframe=False,
 ):
