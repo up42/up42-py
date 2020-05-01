@@ -73,20 +73,6 @@ def initialize_jobtask(jobtask_id, job_id) -> "JobTask":
     )
 
 
-def control_logging(status=False):
-    if not status:
-        logger.info(
-            "Disabling logging! Use up42.set_logging(status=True) to reactivate."
-        )
-    else:
-        logger.info("Enabling logging!")
-    # pylint: disable=expression-not-assigned
-    [
-        setattr(logging.getLogger(name), "disabled", not status)
-        for name in logging.root.manager.loggerDict
-    ]
-
-
 def get_blocks(
     block_type=None, basic: bool = True, as_dataframe=False,
 ):
@@ -146,3 +132,18 @@ def plot_results(
 ) -> None:
     tools = Tools(auth=_auth)
     tools.plot_results(figsize, filepaths, titles)
+
+
+def settings(log=True):
+    if log:
+        logger.info(
+            "Logging enabled (default) - use up42.settings(log=False) to disable."
+        )
+    else:
+        logger.info("Logging disabled - use up42.settings(log=True) to reactivate.")
+
+    # pylint: disable=expression-not-assigned
+    [
+        setattr(logging.getLogger(name), "disabled", not log)
+        for name in logging.root.manager.loggerDict
+    ]
