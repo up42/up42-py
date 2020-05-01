@@ -262,11 +262,10 @@ class Job(Tools):
             try:
                 layer_name = row[name_column]
             except KeyError:
-                layer_name = f"Layer {index+1}"
-
+                layer_name = f"Feature {index+1} - {row.loc['uid']}"
             f = folium.GeoJson(
                 row["geometry"],
-                name=layer_name,  # ('{}{}'.format(row['dep'], row['dest'])),
+                name=layer_name,
                 style_function=_style_function,
                 highlight_function=_highlight_function,
             )
@@ -283,7 +282,7 @@ class Job(Tools):
         # Same: folium.GeoJson(df, name=name_column, style_function=style_function,
         # highlight_function=highlight_function).add_to(map)
 
-        # TODO: Not ideal, our streaming images are webmercator, folium requires wgs 84.0
+        # TODO: Not ideal, streaming images are webmercator, folium requires wgs 84.0
         # TODO: Switch to ipyleaflet!
         # This requires reprojecting on the user pc, not via the api.
         # Reproject raster and add to map
@@ -327,7 +326,7 @@ class Job(Tools):
             m.add_child(
                 folium.raster_layers.ImageOverlay(
                     dst_array,
-                    bounds=[[miny, minx], [maxy, maxx]],  # andere reihenfolge.
+                    bounds=[[miny, minx], [maxy, maxx]],  # different order.
                     name=f"Image - {idx} - {raster_fp}",
                 )
             )
