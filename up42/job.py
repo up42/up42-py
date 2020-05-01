@@ -229,13 +229,12 @@ class Job(Tools):
         )
         logger.info("Uploaded!")
 
-    def map_results(self, name_column: str = None, info_columns: List = None) -> None:
+    def map_results(self, name_column: str = None) -> None:
         """
-        Displays data.json, and if available, one or multiple results geotiffs
+        Displays data.json, and if available, one or multiple results geotiffs.
 
         name_column: Name of the column that provides the layer name.
-        info_columns: Additional columns that are shown when a feature is
-            clicked.
+        # TODO: Make generic with scene_id column integrated.
         """
         df: GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
         centroid = box(*df.total_bounds).centroid
@@ -269,15 +268,7 @@ class Job(Tools):
                 style_function=_style_function,
                 highlight_function=_highlight_function,
             )
-
-            if not info_columns:
-                folium.Popup(f"{layer_name}").add_to(f)
-            else:
-                if not isinstance(info_columns, list):
-                    raise ValueError("Provide a list!")
-                infos = [f"{row[info_col]}\n" for info_col in info_columns]
-                infos = "".join(infos)  # type: ignore
-                folium.Popup(f"{layer_name}\n{infos}").add_to(f)
+            folium.Popup(f"{layer_name}: {row.drop('geometry', axis=0).to_json()}").add_to(f)
             f.add_to(m)
         # Same: folium.GeoJson(df, name=name_column, style_function=style_function,
         # highlight_function=highlight_function).add_to(map)
