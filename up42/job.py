@@ -11,6 +11,7 @@ import requests
 import requests.exceptions
 from rasterio.io import MemoryFile
 from rasterio.warp import calculate_default_transform, reproject, Resampling
+from shapely.geometry import box
 
 from .auth import Auth
 from .jobtask import JobTask
@@ -237,9 +238,7 @@ class Job(Tools):
             clicked.
         """
         df: GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
-        # TODO: centroid of total_bounds
-        centroid = df.iloc[0].geometry.centroid
-
+        centroid = box(*df.total_bounds).centroid
         m = folium_base_map(lat=centroid.y, lon=centroid.x,)
 
         # Add features from data.json.
