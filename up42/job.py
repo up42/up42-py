@@ -320,8 +320,8 @@ class Job(Tools):
                                     )
 
                                 dst_array = mem.read()
-                                # TODO: Other solution than first 3-4 bands?
-                                dst_array = dst_array[:4, :, :]
+                                # TODO: Other solution than first 3 bands?
+                                dst_array = dst_array[:3, :, :]
                                 dst_array = np.moveaxis(np.stack(dst_array), 0, 2)
 
                                 minx, miny, maxx, maxy = mem.bounds
