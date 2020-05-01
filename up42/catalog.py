@@ -174,7 +174,6 @@ class Catalog(Tools):
         url = f"{self.auth._endpoint()}/catalog/stac/search"
         response_json = self.auth._request("POST", url, search_paramaters)
         logger.info("%d results returned.", len(response_json["features"]))
-        # UP42 results are always in EPSG 4326
         dst_crs = "EPSG:4326"
         df = GeoDataFrame.from_features(response_json, crs=dst_crs)
         if df.empty:
@@ -183,16 +182,17 @@ class Catalog(Tools):
             else:
                 return df.__geo_interface__
 
-        # TODO: Resolve on backend
         # Filter to actual geometries intersecting the aoi (Sobloo search uses a rectangular
         # bounds geometry, can contain scenes that touch the aoi bbox, but not the aoi.
         # So number returned images not consistent with set limit.
+        # TODO: Resolve on backend
         geometry = search_paramaters["intersects"]
         poly = shape(geometry)
         df = df[df.intersects(poly)]
         df = df.reset_index()
 
         # Make scene_id more easily accessible
+        # TODO: Add by default to results, independent of sensor.
         def _get_scene_id(row):
             if row["providerName"] == "oneatlas":
                 row["scene_id"] = row["providerProperties"]["parentIdentifier"]
@@ -202,9 +202,9 @@ class Catalog(Tools):
                 ]
             return row
 
-        # pylint: disable=unnecessary-lambda
-        df = df.apply(lambda row: _get_scene_id(row), axis=1)
-        df.crs = dst_crs  # apply resets crs
+        df = df.apply(_get_scene_id, axis=1)
+        df.crs = dst_crs  # apply resets the crs
+
         if as_dataframe:
             return df
         else:
