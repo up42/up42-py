@@ -238,6 +238,7 @@ class Job(Tools):
             name_column: Name of the column that provides the Feature/Layer name.
         # TODO: Make generic with scene_id column integrated.
         """
+
         def _style_function(feature):  # pylint: disable=unused-argument
             return {
                 "fillColor": "#5288c4",
@@ -270,7 +271,9 @@ class Job(Tools):
                 style_function=_style_function,
                 highlight_function=_highlight_function,
             )
-            folium.Popup(f"{layer_name}: {row.drop('geometry', axis=0).to_json()}").add_to(f)
+            folium.Popup(
+                f"{layer_name}: {row.drop('geometry', axis=0).to_json()}"
+            ).add_to(f)
             f.add_to(m)
             # Same: folium.GeoJson(df, name=name_column, style_function=style_function,
             # highlight_function=highlight_function).add_to(map)
@@ -281,7 +284,9 @@ class Job(Tools):
             filepaths: List[Path] = self.results
             feature_names = df[name_column].to_list()
 
-            for idx, (raster_fp, feature_name) in enumerate(zip(filepaths, feature_names)):
+            for idx, (raster_fp, feature_name) in enumerate(
+                zip(filepaths, feature_names)
+            ):
                 # TODO: Not ideal, streaming images are webmercator, folium requires wgs 84.0
                 # TODO: Switch to ipyleaflet!
                 # This requires reprojecting on the user pc, not via the api.
