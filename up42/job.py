@@ -11,6 +11,7 @@ import requests
 import requests.exceptions
 from rasterio.io import MemoryFile
 from rasterio.warp import calculate_default_transform, reproject, Resampling
+from shapely.geometry import box
 
 from .auth import Auth
 from .jobtask import JobTask
@@ -228,21 +229,16 @@ class Job(Tools):
         )
         logger.info("Uploaded!")
 
-    def map_results(self, name_column: str = None, info_columns: List = None) -> None:
+    def map_results(self, show_images=True, name_column: str = "uid") -> None:
         """
-        Displays data.json, and if available, one or multiple results geotiffs
+        Displays data.json, and if available, one or multiple results geotiffs.
 
-        name_column: Name of the column that provides the layer name.
-        info_columns: Additional columns that are shown when a feature is
-            clicked.
+        Args:
+            show_images: Shows images if True (default), only features if False.
+            name_column: Name of the column that provides the Feature/Layer name.
+        # TODO: Make generic with scene_id column integrated.
         """
-        df: GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
-        # TODO: centroid of total_bounds
-        centroid = df.iloc[0].geometry.centroid
 
-        m = folium_base_map(lat=centroid.y, lon=centroid.x,)
-
-        # Add features from data.json.
         def _style_function(feature):  # pylint: disable=unused-argument
             return {
                 "fillColor": "#5288c4",
@@ -259,79 +255,84 @@ class Job(Tools):
                 "dashArray": "5, 5",
             }
 
-        for index, row in df.iterrows():  # type: ignore
-            try:
-                layer_name = row[name_column]
-            except KeyError:
-                layer_name = f"Layer {index+1}"
+        # Add feature to map.
+        logger.setLevel(logging.CRITICAL)
+        df: GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
+        logger.setLevel(logging.INFO)
+        centroid = box(*df.total_bounds).centroid
+        m = folium_base_map(lat=centroid.y, lon=centroid.x,)
 
+        for idx, row in df.iterrows():  # type: ignore
+            feature_name = row.loc[name_column]
+            layer_name = f"Feature {idx+1} - {feature_name}"
             f = folium.GeoJson(
                 row["geometry"],
-                name=layer_name,  # ('{}{}'.format(row['dep'], row['dest'])),
+                name=layer_name,
                 style_function=_style_function,
                 highlight_function=_highlight_function,
             )
-
-            if not info_columns:
-                folium.Popup(f"{layer_name}").add_to(f)
-            else:
-                if not isinstance(info_columns, list):
-                    raise ValueError("Provide a list!")
-                infos = [f"{row[info_col]}\n" for info_col in info_columns]
-                infos = "".join(infos)  # type: ignore
-                folium.Popup(f"{layer_name}\n{infos}").add_to(f)
+            folium.Popup(
+                f"{layer_name}: {row.drop('geometry', axis=0).to_json()}"
+            ).add_to(f)
             f.add_to(m)
-        # Same: folium.GeoJson(df, name=name_column, style_function=style_function,
-        # highlight_function=highlight_function).add_to(map)
+            # Same: folium.GeoJson(df, name=name_column, style_function=style_function,
+            # highlight_function=highlight_function).add_to(map)
 
-        # TODO: Not ideal, our streaming images are webmercator, folium requires wgs 84.0
-        # TODO: Switch to ipyleaflet!
-        # This requires reprojecting on the user pc, not via the api.
-        # Reproject raster and add to map
-        dst_crs = "EPSG:4326"
-        results: List[Path] = self.results
-        for idx, raster_fp in enumerate(results):
+        # Add image to map.
+        if show_images:
+            dst_crs = "EPSG:4326"
+            filepaths: List[Path] = self.results
+            feature_names = df[name_column].to_list()
 
-            with rasterio.open(raster_fp) as src:
-                dst_profile = src.meta.copy()
-                if src.crs != dst_crs:
-                    transform, width, height = calculate_default_transform(
-                        src.crs, dst_crs, src.width, src.height, *src.bounds
+            for idx, (raster_fp, feature_name) in enumerate(
+                zip(filepaths, feature_names)
+            ):
+                # TODO: Not ideal, streaming images are webmercator, folium requires wgs 84.0
+                # TODO: Switch to ipyleaflet!
+                # This requires reprojecting on the user pc, not via the api.
+                # Reproject raster and add to map
+                with rasterio.open(raster_fp) as src:
+                    dst_profile = src.meta.copy()
+                    if src.crs != dst_crs:
+                        transform, width, height = calculate_default_transform(
+                            src.crs, dst_crs, src.width, src.height, *src.bounds
+                        )
+                        dst_profile.update(
+                            {
+                                "crs": dst_crs,
+                                "transform": transform,
+                                "width": width,
+                                "height": height,
+                            }
+                        )
+
+                        with MemoryFile() as memfile:
+                            with memfile.open(**dst_profile) as mem:
+                                for i in range(1, src.count + 1):
+                                    reproject(
+                                        source=rasterio.band(src, i),
+                                        destination=rasterio.band(mem, i),
+                                        src_transform=src.transform,
+                                        src_crs=src.crs,
+                                        dst_transform=transform,
+                                        dst_crs=dst_crs,
+                                        resampling=Resampling.nearest,
+                                    )
+
+                                dst_array = mem.read()
+                                # TODO: Other solution than first 3 bands?
+                                dst_array = dst_array[:3, :, :]
+                                dst_array = np.moveaxis(np.stack(dst_array), 0, 2)
+
+                                minx, miny, maxx, maxy = mem.bounds
+
+                m.add_child(
+                    folium.raster_layers.ImageOverlay(
+                        dst_array,
+                        bounds=[[miny, minx], [maxy, maxx]],  # different order.
+                        name=f"Image {idx+1} - {feature_name}",
                     )
-                    dst_profile.update(
-                        {
-                            "crs": dst_crs,
-                            "transform": transform,
-                            "width": width,
-                            "height": height,
-                        }
-                    )
-
-                    with MemoryFile() as memfile:
-                        with memfile.open(**dst_profile) as mem:
-                            for i in range(1, src.count + 1):
-                                reproject(
-                                    source=rasterio.band(src, i),
-                                    destination=rasterio.band(mem, i),
-                                    src_transform=src.transform,
-                                    src_crs=src.crs,
-                                    dst_transform=transform,
-                                    dst_crs=dst_crs,
-                                    resampling=Resampling.nearest,
-                                )
-
-                            # TODO: What if more bands than 3-4?
-                            dst_array = mem.read()
-                            minx, miny, maxx, maxy = mem.bounds
-
-            dst_array = np.moveaxis(np.stack(dst_array), 0, 2)
-            m.add_child(
-                folium.raster_layers.ImageOverlay(
-                    dst_array,
-                    bounds=[[miny, minx], [maxy, maxx]],  # andere reihenfolge.
-                    name=f"Image - {idx} - {raster_fp}",
                 )
-            )
 
         # Collapse layer control with too many features.
         if df.shape[0] > 4:  # pylint: disable=simplifiable-if-statement  #type: ignore
