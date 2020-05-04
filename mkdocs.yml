@@ -126,5 +126,5 @@ markdown_extensions:
   - pymdownx.tabbed
 
 google_analytics:
-  - 'UA-XXXXXXXX-X' #add account
+  - 'UA-132885718-1'
   - 'auto'
