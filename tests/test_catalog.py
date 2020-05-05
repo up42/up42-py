@@ -27,7 +27,7 @@ def test_construct_parameters(catalog_mock):
         geometry=mock_search_parameters["intersects"],
         start_date="2014-01-01",
         end_date="2016-12-31",
-        sensors=["pleiades"],
+        sensors=["pleiades", "spot", "sentinel1"],
         max_cloudcover=20,
         sortby="cloudCoverage",
         limit=4,
@@ -105,7 +105,7 @@ def test_download_quicklook(catalog_mock):
             m.get(url, content=open(quicklook_file, "rb").read())
 
             out_paths = catalog_mock.download_quicklooks(
-                [sel_id], output_directory=tempdir
+                image_ids=[sel_id], sensor="pleiades", output_directory=tempdir
             )
 
         assert len(out_paths) == 1
@@ -117,7 +117,9 @@ def test_download_quicklook(catalog_mock):
 def test_download_quicklook_live(catalog_live):
     with tempfile.TemporaryDirectory() as tempdir:
         out_paths = catalog_live.download_quicklooks(
-            ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"], output_directory=tempdir
+            image_ids=["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"],
+            sensor="pleiades",
+            output_directory=tempdir,
         )
         assert len(out_paths) == 1
         assert Path(out_paths[0]).exists()

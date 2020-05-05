@@ -16,7 +16,9 @@
     "query": {
         "cloudCoverage": {"lte": 20},
         "dataBlock": {
-            "in": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-aoiclipped"]
+            "in": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-aoiclipped",
+                   "oneatlas-spot-fullscene", "oneatlas-spot-aoiclipped",
+                   "sobloo-sentinel1-l1c-grd-full", "sobloo-sentinel1-l1c-grd-aoiclipped", "sobloo-sentinel1-l1c-slc-full"]
         }
     },
     "sortby": [{"field": "properties.cloudCoverage", "direction": "desc"}]
