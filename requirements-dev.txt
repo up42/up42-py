@@ -9,7 +9,7 @@ mkdocs-minify-plugin
 mkdocstrings
 black
 requests-mock
-pytest
+pytest==2.5.0
 pytest-pylint
 pytest-sugar
 mypy
