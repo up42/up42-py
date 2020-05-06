@@ -1,7 +1,7 @@
 import requests_mock
 import pytest
 
-from .context import Project, Workflow
+from .context import Project, Workflow, Job
 
 # pylint: disable=unused-import
 from .fixtures import (
@@ -111,6 +111,38 @@ def test_get_workflows_live(project_live):
     workflows = project_live.get_workflows()
     assert isinstance(workflows[0], Workflow)
     assert workflows[0].project_id == project_live.project_id
+
+
+def test_get_jobs(project_mock):
+    job_id = "87c285b4-d69b-42a4-bdc5-6fe6d0ddcbbd"
+    with requests_mock.Mocker() as m:
+        url_jobs = (
+            f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/jobs"
+        )
+        json_jobs = {
+            "data": [{"id": job_id, "status": "SUCCEEDED", "inputs": {}, "error": {},}]
+        }
+        m.get(url=url_jobs, json=json_jobs)
+
+        url_job_info = (
+            f"{project_mock.auth._endpoint()}/projects/"
+            f"{project_mock.project_id}/jobs/{job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
+
+        jobs = project_mock.get_jobs()
+        assert isinstance(jobs, list)
+        assert isinstance(jobs[0], Job)
+        assert jobs[0].job_id == job_id
+
+
+@pytest.mark.skip
+@pytest.mark.live
+def test_get_jobs_live(project_live):
+    # Skip by default as too many jobs in test project, triggers too many job info requests.
+    jobs = project_live.get_jobs()
+    assert isinstance(jobs, list)
+    assert isinstance(jobs[0], Job)
 
 
 def test_get_project_settings(project_mock):

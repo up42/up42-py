@@ -442,7 +442,7 @@ class Workflow(Tools):
 
     def get_jobs(self, return_json: bool = False) -> Union[List["Job"], Dict]:
         """
-        Get all jobs in the specific project as job objects or json.
+        Get all jobs associated with the workflow as job objects or json.
 
         Args:
             return_json: If true, returns the job info jsons instead of job objects.
@@ -453,18 +453,23 @@ class Workflow(Tools):
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = response_json["data"]
+
+        jobs_workflow_json = [
+            j for j in jobs_json if j["workflowId"] == self.workflow_id
+        ]
+
         logger.info(
             "Got %s jobs for workflow %s in project %s.",
-            len(jobs_json),
+            len(jobs_workflow_json),
             self.workflow_id,
             self.project_id,
         )
         if return_json:
-            return jobs_json
+            return jobs_workflow_json
         else:
             jobs = [
                 Job(self.auth, job_id=job["id"], project_id=self.project_id)
-                for job in tqdm(jobs_json)
+                for job in tqdm(jobs_workflow_json)
             ]
             return jobs
 
