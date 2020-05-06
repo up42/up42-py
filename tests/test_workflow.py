@@ -416,7 +416,22 @@ def test_get_jobs(workflow_mock):
             f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs"
         )
         json_jobs = {
-            "data": [{"id": job_id, "status": "SUCCEEDED", "inputs": {}, "error": {},}]
+            "data": [
+                {
+                    "id": job_id,
+                    "status": "SUCCEEDED",
+                    "inputs": {},
+                    "error": {},
+                    "workflowId": "123456",
+                },
+                {
+                    "id": job_id,
+                    "status": "SUCCEEDED",
+                    "inputs": {},
+                    "error": {},
+                    "workflowId": workflow_mock.workflow_id,
+                },
+            ]
         }
         m.get(url=url_jobs, json=json_jobs)
 
@@ -430,6 +445,9 @@ def test_get_jobs(workflow_mock):
         assert isinstance(jobs, list)
         assert isinstance(jobs[0], up42.Job)
         assert jobs[0].job_id == job_id
+        assert (
+            len(jobs) == 1
+        )  # Filters out the job that is not associated with the workflow object
 
 
 @pytest.mark.skip
