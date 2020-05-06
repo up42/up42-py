@@ -450,14 +450,14 @@ def test_get_jobs(workflow_mock):
         )  # Filters out the job that is not associated with the workflow object
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 @pytest.mark.live
 def test_get_jobs_live(workflow_live):
     # Skip by default as too many jobs in test project, triggers too many job info requests.
     jobs = workflow_live.get_jobs()
     assert isinstance(jobs, list)
     assert isinstance(jobs[0], Job)
-    assert all([j["info"]["workflowId"] == workflow_live.workflow_id for j in jobs])
+    assert all([j.info["workflowId"] == workflow_live.workflow_id for j in jobs])
 
 
 # TODO: Resolve

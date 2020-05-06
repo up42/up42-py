@@ -269,4 +269,4 @@ def test_download_result_from_gcs():
             )
             for file in out_files:
                 assert Path(file).exists()
-            assert len(out_files) == 1
+            assert len(out_files) == 2
