@@ -70,19 +70,21 @@ def download_results_from_gcs(
     out_filepaths: List[str] = []
     with tarfile.open(tgz_file) as tar:
         members = tar.getmembers()
-        files = [
-            i for i in members if i.isfile() and str(Path(i.name).name) != "data.json"
-        ]
+        files = [f for f in members if f.isfile()]
         for file in files:
             f = tar.extractfile(file)
             content = f.read()  # type: ignore
-            out_fp = output_directory / f"result_{Path(file.name).name}"
+            out_fp = output_directory / f"{Path(file.name).name}"
             with open(out_fp, "wb") as dst:
                 dst.write(content)
             out_filepaths.append(str(out_fp))
 
-    logger.info("Download successful of %s files %s", len(out_filepaths), out_filepaths)
-
+    logger.info(
+        "Download successful of %s files to output_directory '%s': %s",
+        len(out_filepaths),
+        output_directory,
+        [Path(p).name for p in out_filepaths],
+    )
     return out_filepaths
 
 
