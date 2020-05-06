@@ -5,7 +5,7 @@ import requests_mock
 import shapely
 
 # pylint: disable=unused-import,wrong-import-order
-from .context import Workflow
+from .context import Workflow, Job
 from .fixtures import auth_mock, auth_live, workflow_mock, workflow_live, job_mock
 import up42
 
@@ -375,7 +375,7 @@ def test_run_job(workflow_mock, job_mock):
         )
 
         jb = workflow_mock.run_job(input_parameters_json)
-        assert isinstance(jb, up42.Job)
+        assert isinstance(jb, Job)
         assert jb.job_id == job_mock.job_id
 
 
@@ -387,7 +387,7 @@ def test_test_job_live(workflow_live):
     jb = workflow_live.test_job(
         input_parameters=input_parameters_json, track_status=True
     )
-    assert isinstance(jb, up42.Job)
+    assert isinstance(jb, Job)
     with open(input_parameters_json) as src:
         job_info_params = json.load(src)
         job_info_params.update({"config": {"mode": "DRY_RUN"}})
@@ -402,7 +402,7 @@ def test_run_job_live(workflow_live):
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
     jb = workflow_live.run_job(input_parameters_json, track_status=True)
-    assert isinstance(jb, up42.Job)
+    assert isinstance(jb, Job)
     with open(input_parameters_json) as src:
         assert jb.info["inputs"] == json.load(src)
         assert jb.info["mode"] == "DEFAULT"
@@ -443,20 +443,21 @@ def test_get_jobs(workflow_mock):
 
         jobs = workflow_mock.get_jobs()
         assert isinstance(jobs, list)
-        assert isinstance(jobs[0], up42.Job)
+        assert isinstance(jobs[0], Job)
         assert jobs[0].job_id == job_id
         assert (
             len(jobs) == 1
         )  # Filters out the job that is not associated with the workflow object
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 @pytest.mark.live
 def test_get_jobs_live(workflow_live):
-    # Too many jobs in test project
+    # Skip by default as too many jobs in test project, triggers too many job info requests.
     jobs = workflow_live.get_jobs()
     assert isinstance(jobs, list)
-    assert isinstance(jobs[0], up42.Job)
+    assert isinstance(jobs[0], Job)
+    assert all([j["info"]["workflowId"] == workflow_live.workflow_id for j in jobs])
 
 
 # TODO: Resolve
