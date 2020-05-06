@@ -4,6 +4,7 @@ from typing import Dict, List, Union
 from tqdm import tqdm
 
 from .auth import Auth
+from .job import Job
 from .tools import Tools
 from .utils import get_logger
 from .workflow import Workflow
@@ -18,7 +19,7 @@ class Project(Tools):
         within an UP42 project. Also handles project user settings.
 
         Public Methods:
-            create_workflow, get_workflows, get_project_settings,
+            create_workflow, get_workflows, get_jobs, get_project_settings,
             update_project_settings
         """
         self.auth = auth
@@ -109,6 +110,33 @@ class Project(Tools):
                 for work in tqdm(workflows_json)
             ]
             return workflows
+
+    def get_jobs(self, return_json: bool = False) -> Union[List["Job"], Dict]:
+        """
+        Get all jobs in the project as job objects or json.
+
+        Use Workflow().get_job() to get jobs associated with a specific workflow.
+
+        Args:
+            return_json: If true, returns the job info jsons instead of job objects.
+
+        Returns:
+            All job objects as a list, or alternatively the jobs info as json.
+        """
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
+        response_json = self.auth._request(request_type="GET", url=url)
+        jobs_json = response_json["data"]
+        logger.info(
+            "Got %s jobs in project %s.", len(jobs_json), self.project_id,
+        )
+        if return_json:
+            return jobs_json
+        else:
+            jobs = [
+                Job(self.auth, job_id=job["id"], project_id=self.project_id)
+                for job in tqdm(jobs_json)
+            ]
+            return jobs
 
     def get_project_settings(self) -> List:
         """
