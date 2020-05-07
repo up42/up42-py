@@ -37,6 +37,7 @@ nav:
         - Workflow: reference/workflow.md
         - Job: reference/job.md
         - JobTask: reference/jobtask.md
+        - Catalog: reference/catalog.md
         - Tools: reference/tools.md
     - Examples:
         - Examples: examples/examples-intro.md
