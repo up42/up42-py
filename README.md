@@ -56,7 +56,7 @@ See the **[installation docs](https://up42.github.io/up42-py/installation/)** fo
 
 <br>
 
-## 30-seconds Example
+## 30-second Example
 
 After [authentication](https://up42.github.io/up42-py/authentication/) with the UP42 project, 
 a new workflow is created and filled with tasks ([Sentinel-2 data](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64), 
