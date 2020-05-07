@@ -1,7 +1,7 @@
-# :stopwatch: 30 Seconds Example
+# :stopwatch: 30 Second Example
 
 A new workflow is created and filled with tasks ([Sentinel-2 data](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64), 
-[image sharpening](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e)). 
+[Image Sharpening](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e)). 
 The area of interest and workflow parameters are defined. After running the job, 
 the results are downloaded and visualized.
 
@@ -57,3 +57,7 @@ job = workflow.run_job(input_parameters=input_parameters, track_status=True)
 job.download_results()
 job.plot_results()
 ```
+
+<h1 align="center">
+    <img alt="" src="/assets/vizualisations.jpg">
+</h1>
