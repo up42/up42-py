@@ -97,7 +97,11 @@ job.download_results()
 job.plot_results()
 ```
 
-<br>
+
+<h1 align="center">
+    <img alt="" src="./docs/assets/vizualisations.jpg">
+</h1>
+
 
 ## Support
 
