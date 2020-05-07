@@ -259,14 +259,15 @@ class Job(Tools):
             }
 
         # Add feature to map.
-        logger.setLevel(logging.CRITICAL)
         df: GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
-        logger.setLevel(logging.INFO)
         centroid = box(*df.total_bounds).centroid
         m = folium_base_map(lat=centroid.y, lon=centroid.x,)
 
         for idx, row in df.iterrows():  # type: ignore
-            feature_name = row.loc[name_column]
+            try:
+                feature_name = row.loc[name_column]
+            except KeyError:
+                feature_name = ""
             layer_name = f"Feature {idx+1} - {feature_name}"
             f = folium.GeoJson(
                 row["geometry"],
@@ -282,7 +283,7 @@ class Job(Tools):
             # highlight_function=highlight_function).add_to(map)
 
         # Add image to map.
-        if show_images:
+        if show_images and self.results is not None:
             dst_crs = "EPSG:4326"
             filepaths: List[Path] = self.results
             feature_names = df[name_column].to_list()
