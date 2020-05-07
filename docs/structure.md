@@ -22,6 +22,7 @@ An overview of the the **functionality** of each object
     
         - `.get_workflows()`
         - `.create_workflow()`
+        - `.get_jobs()`
         - `.get_project_settings()`
         - `.update_project_settings()`
         - `.update_project_settings()`
