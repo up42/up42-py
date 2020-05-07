@@ -39,7 +39,7 @@ The package requires Python > 3.6.
 pip install up42-py
 ```
 
-See the **[installation docs](https://up42.github.io/up42-py/installation/)** for all details and **[learn how to get started!](https://up42.github.io/up42-py/01_quickstart/)**
+See the **[installation docs](https://up42.github.io/up42-py/installation/)** for all details and **[learn how to get started!](https://up42.github.io/up42-py/structure/)**
 
 <br>
 
@@ -60,7 +60,7 @@ See the **[installation docs](https://up42.github.io/up42-py/installation/)** fo
 
 After [authentication](https://up42.github.io/up42-py/authentication/) with the UP42 project, 
 a new workflow is created and filled with tasks ([Sentinel-2 data](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64), 
-[image sharpening](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e)). 
+[Image Sharpening](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e)). 
 The area of interest and workflow parameters are defined. After running the job, the results are downloaded and visualized.
 
 ```python
