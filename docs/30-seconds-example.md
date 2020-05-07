@@ -20,9 +20,8 @@ project
 # Add blocks/tasks to the workflow.
 workflow = project.create_workflow(name="30-seconds-workflow", 
                                    use_existing=True)
-blocks = up42.get_blocks(basic=True)
-input_tasks= [blocks['sobloo-s2-l1c-aoiclipped'], 
-              blocks['sharpening']]
+print(up42.get_blocks(basic=True))
+input_tasks= ['sobloo-s2-l1c-aoiclipped', 'sharpening']
 workflow.add_workflow_tasks(input_tasks=input_tasks)
 ```
 
