@@ -23,7 +23,7 @@ def auth_mock():
     with requests_mock.Mocker() as m:
         url_token = "https://project_id123:project_apikey123@api.up42.com/oauth/token"
         m.post(
-            url=url_token, text='{"data":{"accessToken":"token_789"}}',
+            url=url_token, json={"data": {"accessToken": "token_789"}},
         )
         auth = Auth(
             project_id="project_id123",
@@ -48,7 +48,7 @@ def auth_live():
 def project_mock(auth_mock):
     with requests_mock.Mocker() as m:
         url_project_info = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}"
-        m.get(url=url_project_info, text='{"data": {"xyz":789}, "error":{}}')
+        m.get(url=url_project_info, json={"data": {"xyz": 789}, "error": {}})
 
         project = Project(auth=auth_mock, project_id=auth_mock.project_id)
     return project
@@ -69,7 +69,10 @@ def workflow_mock(auth_mock):
             f"{auth_mock.project_id}/workflows/"
             f"{workflow_id}"
         )
-        m.get(url=url_workflow_info, text='{"data": {"xyz":789}, "error":{}}')
+        m.get(
+            url=url_workflow_info,
+            json={"data": {"xyz": 789, "name": "workflow_name_123"}, "error": {}},
+        )
 
         workflow = Workflow(
             auth=auth_mock, workflow_id=workflow_id, project_id=auth_mock.project_id,
@@ -95,7 +98,7 @@ def job_mock(auth_mock):
         url_job_info = (
             f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
         )
-        m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
+        m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
 
         job = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id)
     return job
@@ -121,7 +124,7 @@ def jobtask_mock(auth_mock):
             f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
             f"/tasks/"
         )
-        m.get(url=url_jobtask_info, text='{"data": {"xyz":789}, "error":{}}')
+        m.get(url=url_jobtask_info, json={"data": {"xyz": 789}, "error": {}})
 
         jobtask = JobTask(
             auth=auth_mock,
