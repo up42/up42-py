@@ -360,9 +360,10 @@ def test_construct_parameter_order_ids(workflow_mock):
 
 def test_run_job(workflow_mock, job_mock):
     with requests_mock.Mocker() as m:
+        job_name = f"{workflow_mock.info['name']}_py"
         job_url = (
             f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
-            f"workflows/{workflow_mock.workflow_id}/jobs?name=_py"
+            f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
         )
         m.post(url=job_url, json={"data": {"id": job_mock.job_id}})
         input_parameters_json = (
@@ -401,12 +402,13 @@ def test_run_job_live(workflow_live):
     input_parameters_json = (
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
-    jb = workflow_live.run_job(input_parameters_json, track_status=True)
+    jb = workflow_live.run_job(input_parameters_json, track_status=True, name="aa")
     assert isinstance(jb, Job)
     with open(input_parameters_json) as src:
         assert jb.info["inputs"] == json.load(src)
         assert jb.info["mode"] == "DEFAULT"
     assert jb.get_status() == "SUCCEEDED"
+    assert jb.info["name"] == "aa_py"
 
 
 def test_get_jobs(workflow_mock):
