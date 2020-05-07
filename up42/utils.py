@@ -1,19 +1,24 @@
 import copy
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Tuple
 from pathlib import Path
 import tempfile
 import tarfile
+import warnings
+import math
 
 import folium
 from folium.plugins import Draw
 from geopandas import GeoDataFrame
 import shapely
+import rasterio
+from rasterio.plot import show
 from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 import requests
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
@@ -196,6 +201,64 @@ class DrawFoliumOverride(Draw):
         if self.export:
             figure.header.add_child(Element(export_style), name="export")
             figure.html.add_child(Element(export_button), name="export_button")
+
+
+def _plot_images(
+    plot_file_format: [str],
+    figsize: Tuple[int, int] = (8, 8),
+    filepaths: List[Union[str, Path]] = None,
+    titles: List[str] = None,
+) -> None:
+    """
+    Plots image data (quicklooks or results)
+
+    Args:
+        plot_file_format: List of accepted image file formats e.g. [".tif"]
+        figsize: matplotlib figure size.
+        filepaths: Paths to images to plot. Optional, by default picks up the last
+            downloaded results.
+        titles: Optional list of titles for the subplots.
+
+    """
+    if not isinstance(filepaths, list):
+        filepaths = [filepaths]
+    filepaths = [Path(path) for path in filepaths]
+
+    imagepaths = [
+        path for path in filepaths if str(path.suffix) in plot_file_format  # type: ignore
+    ]
+    if not imagepaths:
+        raise ValueError(
+            f"Only files of the formats {plot_file_format} can " "currently be plotted."
+        )
+
+    if not titles:
+        titles = [Path(fp).stem for fp in imagepaths]
+    if not isinstance(titles, list):
+        titles = [titles]
+
+    if len(imagepaths) < 2:
+        nrows, ncols = 1, 1
+    else:
+        ncols = 3
+        nrows = int(math.ceil(len(imagepaths) / float(ncols)))
+
+    _, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
+    if len(imagepaths) > 1:
+        axs = axs.ravel()
+    else:
+        axs = [axs]
+    for idx, (fp, title) in enumerate(zip(imagepaths, titles)):
+        with rasterio.open(fp) as src:
+            img_array = src.read()[:3, :, :]
+            # TODO: Handle more band configurations.
+            # TODO: add histogram equalization?
+            show(
+                img_array, transform=src.transform, title=title, ax=axs[idx],
+            )
+        axs[idx].set_axis_off()
+    plt.tight_layout()
+    plt.show()
 
 
 def any_vector_to_fc(

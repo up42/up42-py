@@ -132,7 +132,10 @@ class Job(Tools):
         After download, can be plotted via job.plot_quicklooks().
         """
         # Currently only the first/data task produces quicklooks.
+        logger.setLevel(logging.CRITICAL)
         data_task = self.get_jobtasks()[0]
+        logger.setLevel(logging.INFO)
+
         out_paths: List[str] = data_task.download_quicklooks(  # type: ignore
             output_directory=output_directory
         )  # type: ignore
