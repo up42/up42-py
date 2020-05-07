@@ -242,7 +242,9 @@ class Job(Tools):
         # TODO: Make generic with scene_id column integrated.
         """
         if self.results is None:
-            raise ValueError("You first need to download the results via job.download_results()!")
+            raise ValueError(
+                "You first need to download the results via job.download_results()!"
+            )
 
         def _style_function(feature):  # pylint: disable=unused-argument
             return {
@@ -287,7 +289,9 @@ class Job(Tools):
         # Add image to map.
         if show_images and self.results is not None:
             plot_file_format = [".tif"]
-            plottable_images = [path for path in self.results if Path(path).suffix in plot_file_format]
+            plottable_images = [
+                path for path in self.results if Path(path).suffix in plot_file_format
+            ]
 
             if plottable_images:
                 dst_crs = "EPSG:4326"
