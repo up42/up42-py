@@ -1,5 +1,4 @@
 import json
-import math
 from pathlib import Path
 from typing import Tuple, List, Union, Dict
 import warnings
@@ -8,11 +7,10 @@ from geopandas import GeoDataFrame
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
-import rasterio
 import shapely
-from rasterio.plot import show
+import rasterio
 
-from .utils import get_logger, folium_base_map, DrawFoliumOverride
+from .utils import get_logger, folium_base_map, DrawFoliumOverride, _plot_images
 
 try:
     from IPython.display import display
@@ -199,7 +197,10 @@ class Tools:
         plt.show()
 
     def plot_quicklooks(
-        self, figsize: Tuple[int, int] = (8, 8), filepaths: List = None
+        self,
+        figsize: Tuple[int, int] = (8, 8),
+        filepaths: List = None,
+        titles: List[str] = None,
     ) -> None:
         """
         Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
@@ -207,40 +208,26 @@ class Tools:
 
         Args:
             figsize: matplotlib figure size.
+            filepaths: Paths to images to plot. Optional, by default picks up the last
+                downloaded results.
+            titles: List of titles for the subplots, optional.
+
         """
-        # TODO: Remove empty axes & give title option.
         if filepaths is None:
             if self.quicklooks is None:
-                raise ValueError(
-                    "You first need to download the quicklooks via .download_quicklooks()."
-                )
+                raise ValueError("You first need to download the quicklooks!")
             filepaths = self.quicklooks
 
-        if len(filepaths) < 2:
-            nrows, ncols = 1, 1
-        else:
-            ncols = 2
-            nrows = int(math.ceil(len(filepaths) / float(ncols)))
-
+        plot_file_format = [".jpg", ".jpeg", ".png"]
         warnings.filterwarnings(
             "ignore", category=rasterio.errors.NotGeoreferencedWarning
         )
-
-        _, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
-        if len(filepaths) > 1:
-            axs = axs.ravel()
-        else:
-            axs = [axs]
-        for idx, fp in enumerate(filepaths):
-            with rasterio.open(fp) as src:
-                show(
-                    src.read(),
-                    transform=src.transform,
-                    title=Path(fp).stem,
-                    ax=axs[idx],
-                )
-        plt.tight_layout()
-        plt.show()
+        _plot_images(
+            plot_file_format=plot_file_format,
+            figsize=figsize,
+            filepaths=filepaths,
+            titles=titles,
+        )
 
     def plot_results(
         self,
@@ -249,55 +236,26 @@ class Tools:
         titles: List[str] = None,
     ) -> None:
         """
-        Plots the downloaded data.
+        Plots the downloaded results data.
 
         Args:
             figsize: matplotlib figure size.
-            filepaths: Paths to images to plot. Optional, by default picks up the downloaded results.
+            filepaths: Paths to images to plot. Optional, by default picks up the last
+                downloaded results.
+            titles: Optional list of titles for the subplots.
         """
-        # TODO: Handle more bands.
-        # TODO: add histogram equalization? But requires skimage dependency.
         if filepaths is None:
             if self.results is None:
-                raise ValueError("You first need to download the results.")
+                raise ValueError("You first need to download the results!")
             filepaths = self.results
-        if not isinstance(filepaths, list):
-            filepaths = [filepaths]
-        filepaths = [Path(path) for path in filepaths]
 
         plot_file_format = [".tif"]  # TODO: Add other fileformats.
-        imagepaths = [
-            path for path in filepaths if str(path.suffix) in plot_file_format  # type: ignore
-        ]
-        if not imagepaths:
-            raise ValueError(
-                f"Only results of the formats {plot_file_format} can "
-                "currently be plotted."
-            )
-
-        if not titles:
-            titles = [Path(fp).stem for fp in imagepaths]
-
-        if len(imagepaths) < 2:
-            nrows, ncols = 1, 1
-        else:
-            ncols = 3
-            nrows = int(math.ceil(len(imagepaths) / float(ncols)))
-
-        _, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
-        if len(imagepaths) > 1:
-            axs = axs.ravel()
-        else:
-            axs = [axs]
-        for idx, (fp, title) in enumerate(zip(imagepaths, titles)):
-            with rasterio.open(fp) as src:
-                img_array = src.read()
-                show(
-                    img_array, transform=src.transform, title=title, ax=axs[idx],
-                )
-            axs[idx].set_axis_off()
-        plt.tight_layout()
-        plt.show()
+        _plot_images(
+            plot_file_format=plot_file_format,
+            figsize=figsize,
+            filepaths=filepaths,
+            titles=titles,
+        )
 
     def get_blocks(
         self, block_type=None, basic: bool = True, as_dataframe=False,
