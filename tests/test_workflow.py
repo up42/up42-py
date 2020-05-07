@@ -402,13 +402,13 @@ def test_run_job_live(workflow_live):
     input_parameters_json = (
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
-    jb = workflow_live.run_job(input_parameters_json, track_status=True)
+    jb = workflow_live.run_job(input_parameters_json, track_status=True, name="aa")
     assert isinstance(jb, Job)
     with open(input_parameters_json) as src:
         assert jb.info["inputs"] == json.load(src)
         assert jb.info["mode"] == "DEFAULT"
     assert jb.get_status() == "SUCCEEDED"
-    assert jb.info["name"] == workflow_live.info["name"] + "_py"
+    assert jb.info["name"] == "aa_py"
 
 
 def test_get_jobs(workflow_mock):
