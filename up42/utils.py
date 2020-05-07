@@ -4,7 +4,6 @@ from typing import Dict, List, Union, Tuple
 from pathlib import Path
 import tempfile
 import tarfile
-import warnings
 import math
 
 import folium
@@ -204,7 +203,7 @@ class DrawFoliumOverride(Draw):
 
 
 def _plot_images(
-    plot_file_format: [str],
+    plot_file_format: List[str],
     figsize: Tuple[int, int] = (8, 8),
     filepaths: List[Union[str, Path]] = None,
     titles: List[str] = None,
@@ -221,7 +220,7 @@ def _plot_images(
 
     """
     if not isinstance(filepaths, list):
-        filepaths = [filepaths]
+        filepaths = [filepaths]  # type: ignore
     filepaths = [Path(path) for path in filepaths]
 
     imagepaths = [
@@ -235,7 +234,7 @@ def _plot_images(
     if not titles:
         titles = [Path(fp).stem for fp in imagepaths]
     if not isinstance(titles, list):
-        titles = [titles]
+        titles = [titles]  # type: ignore
 
     if len(imagepaths) < 2:
         nrows, ncols = 1, 1
