@@ -241,6 +241,8 @@ class Job(Tools):
             name_column: Name of the column that provides the Feature/Layer name.
         # TODO: Make generic with scene_id column integrated.
         """
+        if self.results is None:
+            raise ValueError("You first need to download the results via job.download_results()!")
 
         def _style_function(feature):  # pylint: disable=unused-argument
             return {
@@ -284,60 +286,66 @@ class Job(Tools):
 
         # Add image to map.
         if show_images and self.results is not None:
-            dst_crs = "EPSG:4326"
-            filepaths: List[Path] = self.results
-            feature_names = df[name_column].to_list()
+            plot_file_format = [".tif"]
+            plottable_images = [path for path in self.results if Path(path).suffix in plot_file_format]
 
-            for idx, (raster_fp, feature_name) in enumerate(
-                zip(filepaths, feature_names)
-            ):
-                # TODO: Not ideal, streaming images are webmercator, folium requires wgs 84.0
-                # TODO: Switch to ipyleaflet!
-                # This requires reprojecting on the user pc, not via the api.
-                # Reproject raster and add to map
-                with rasterio.open(raster_fp) as src:
-                    dst_profile = src.meta.copy()
+            if plottable_images:
+                dst_crs = "EPSG:4326"
+                filepaths: List[Path] = self.results
+                try:
+                    feature_names = df[name_column].to_list()
+                except KeyError:
+                    feature_names = ["" for i in range(df.shape[0])]
+                for idx, (raster_fp, feature_name) in enumerate(
+                    zip(filepaths, feature_names)
+                ):
+                    # TODO: Not ideal, streaming images are webmercator, folium requires wgs 84.0
+                    # TODO: Switch to ipyleaflet!
+                    # This requires reprojecting on the user pc, not via the api.
+                    # Reproject raster and add to map
+                    with rasterio.open(raster_fp) as src:
+                        dst_profile = src.meta.copy()
 
-                    if src.crs == dst_crs:
-                        dst_array = src.read()[:3, :, :]
-                        minx, miny, maxx, maxy = src.bounds
-                    else:
-                        transform, width, height = calculate_default_transform(
-                            src.crs, dst_crs, src.width, src.height, *src.bounds
+                        if src.crs == dst_crs:
+                            dst_array = src.read()[:3, :, :]
+                            minx, miny, maxx, maxy = src.bounds
+                        else:
+                            transform, width, height = calculate_default_transform(
+                                src.crs, dst_crs, src.width, src.height, *src.bounds
+                            )
+                            dst_profile.update(
+                                {
+                                    "crs": dst_crs,
+                                    "transform": transform,
+                                    "width": width,
+                                    "height": height,
+                                }
+                            )
+
+                            with MemoryFile() as memfile:
+                                with memfile.open(**dst_profile) as mem:
+                                    for i in range(1, src.count + 1):
+                                        reproject(
+                                            source=rasterio.band(src, i),
+                                            destination=rasterio.band(mem, i),
+                                            src_transform=src.transform,
+                                            src_crs=src.crs,
+                                            dst_transform=transform,
+                                            dst_crs=dst_crs,
+                                            resampling=Resampling.nearest,
+                                        )
+
+                                    dst_array = mem.read()[:3, :, :]
+                                    minx, miny, maxx, maxy = mem.bounds
+
+                    # TODO: Make band configuration available
+                    m.add_child(
+                        folium.raster_layers.ImageOverlay(
+                            np.moveaxis(np.stack(dst_array), 0, 2),
+                            bounds=[[miny, minx], [maxy, maxx]],  # different order.
+                            name=f"Image {idx+1} - {feature_name}",
                         )
-                        dst_profile.update(
-                            {
-                                "crs": dst_crs,
-                                "transform": transform,
-                                "width": width,
-                                "height": height,
-                            }
-                        )
-
-                        with MemoryFile() as memfile:
-                            with memfile.open(**dst_profile) as mem:
-                                for i in range(1, src.count + 1):
-                                    reproject(
-                                        source=rasterio.band(src, i),
-                                        destination=rasterio.band(mem, i),
-                                        src_transform=src.transform,
-                                        src_crs=src.crs,
-                                        dst_transform=transform,
-                                        dst_crs=dst_crs,
-                                        resampling=Resampling.nearest,
-                                    )
-
-                                dst_array = mem.read()[:3, :, :]
-                                minx, miny, maxx, maxy = mem.bounds
-
-                # TODO: Make band configuration available
-                m.add_child(
-                    folium.raster_layers.ImageOverlay(
-                        np.moveaxis(np.stack(dst_array), 0, 2),
-                        bounds=[[miny, minx], [maxy, maxx]],  # different order.
-                        name=f"Image {idx+1} - {feature_name}",
                     )
-                )
 
         # Collapse layer control with too many features.
         if df.shape[0] > 4:  # pylint: disable=simplifiable-if-statement  #type: ignore
