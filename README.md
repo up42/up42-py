@@ -71,9 +71,8 @@ project = up42.initialize_project()
 
 workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
 # Add blocks/tasks to the workflow.
-blocks = up42.get_blocks(basic=True)
-input_tasks= [blocks['sobloo-s2-l1c-aoiclipped'], 
-              blocks['sharpening']]
+print(up42.get_blocks(basic=True))
+input_tasks= ['sobloo-s2-l1c-aoiclipped', 'sharpening']
 workflow.add_workflow_tasks(input_tasks=input_tasks)
 
 # Define the aoi and input parameters of the workflow to run it.
@@ -95,7 +94,7 @@ print(test_results)
 job = workflow.run_job(input_parameters=input_parameters, track_status=True)
 
 job.download_results()
-job.map_results()
+job.plot_results()
 ```
 
 <br>
