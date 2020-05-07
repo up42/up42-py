@@ -298,7 +298,10 @@ class Job(Tools):
                 with rasterio.open(raster_fp) as src:
                     dst_profile = src.meta.copy()
 
-                    if src.crs != dst_crs:
+                    if src.crs == dst_crs:
+                        dst_array = src.read()[:3, :, :]
+                        minx, miny, maxx, maxy = src.bounds
+                    else:
                         transform, width, height = calculate_default_transform(
                             src.crs, dst_crs, src.width, src.height, *src.bounds
                         )
@@ -327,11 +330,7 @@ class Job(Tools):
                                 dst_array = mem.read()[:3, :, :]
                                 minx, miny, maxx, maxy = mem.bounds
 
-                    else:
-                        dst_array = src.read()[:3, :, :]
-                        minx, miny, maxx, maxy = src.bounds
                 # TODO: Make band configuration available
-                
                 m.add_child(
                     folium.raster_layers.ImageOverlay(
                         np.moveaxis(np.stack(dst_array), 0, 2),
