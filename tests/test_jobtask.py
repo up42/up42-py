@@ -69,7 +69,7 @@ def test_jobtask_download_result(jobtask_mock):
             out_files = jobtask_mock.download_results(output_directory=tempdir)
             for file in out_files:
                 assert Path(file).exists()
-            assert len(out_files) == 1
+            assert len(out_files) == 2
 
 
 @pytest.mark.live
@@ -78,8 +78,9 @@ def test_jobtask_download_result_live(jobtask_live):
         out_files = jobtask_live.download_results(output_directory=tempdir)
         for file in out_files:
             assert Path(file).exists()
-        assert len(out_files) == 1
-        assert Path(out_files[0]).suffix == ".tif"
+        assert len(out_files) == 2
+        assert Path(out_files[0]).name == "data.json"
+        assert Path(out_files[1]).suffix == ".tif"
 
 
 def test_download_quicklook(jobtask_mock):
