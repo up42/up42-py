@@ -27,28 +27,28 @@ You can either create a new workflow, use project.get_workflows() to get all exi
 Example: Sentinel 2 streaming & sharpening filter
 
 <p align="center">
-    <img src="_assets/workflow.png" width="400" align="center">
+    <img src="/assets/workflow.png" width="400" align="center">
 </p>
 
 
 ```python
 # Create a new, empty workflow.
-
-workflow = project.create_workflow(name="30-seconds-workflow", use_existing=False)
+workflow = project.create_workflow(name="30-seconds-workflow", 
+                                   use_existing=True)
 workflow
 ```
 
 
 ```python
 # Add workflow tasks - simple version. See above .get_blocks() result.
-
-input_tasks= ["a2daaab4-196d-4226-a018-a810444dcad1", "4ed70368-d4e1-4462-bef6-14e768049471"]
+input_tasks= ['sobloo-s2-l1c-aoiclipped', 'sharpening']
 workflow.add_workflow_tasks(input_tasks=input_tasks)
 ```
 
 
 ```python
-# Alternative: Add workflow tasks - complex version, gives you more control about the block connections.
+# Alternative: Add workflow tasks - complex version, gives you more control 
+# about the block connections.
 
 input_tasks = [
     {
@@ -69,7 +69,6 @@ workflow.add_workflow_tasks(input_tasks=input_tasks)
 
 ```python
 # Check the added tasks.
-
 workflow.get_workflow_tasks(basic=True)
 ```
 
@@ -89,7 +88,8 @@ workflow
 
 
 ```python
-# Alternative: Directly access the existing workflow the id (has to exist within the accessed project).
+# Alternative: Directly access the existing workflow the id 
+# (has to exist within the accessed project).
 
 UP42_WORKFLOW_ID="7fb2ec8a-45be-41ad-a50f-98ba6b528b98"
 workflow = up42.initialize_workflow(workflow_id=UP42_WORKFLOW_ID)
@@ -119,7 +119,6 @@ aoi.head(1)
 
 ```python
 #aoi = workflow.get_example_aoi(location="Berlin")
-#aoi
 ```
 
 
@@ -163,8 +162,9 @@ input_parameters = {
 
 
 ```python
-input_parameters = workflow.construct_parameters(geometry=aoi, geometry_operation="bbox", limit=1)
-input_parameters
+input_parameters = workflow.construct_parameters(geometry=aoi, 
+                                                 geometry_operation="bbox", 
+                                                 limit=1)
 ```
 
 
@@ -180,8 +180,10 @@ input_parameters
 
 ```python
 # Run a test job to query data availability and check the configuration.
-# With this test query you will not be charged with any data or processing credits, but have a preview of the job result.
-test_job = workflow.test_job(input_parameters=input_parameters, track_status=True)
+# With this test query you will not be charged with any data or processing 
+# credits, but have a preview of the job result.
+test_job = workflow.test_job(input_parameters=input_parameters, 
+                             track_status=True)
 test_results = test_job.get_results_json()
 print(test_results)
 ```
@@ -193,14 +195,13 @@ job = workflow.run_job(input_parameters=input_parameters, track_status=True)
 ```
 
 <p align="center">
-    <img src="_assets/job_running.png" width="700">
+    <img src="/assets/job_running.png" width="700">
 </p>
 
 ## Download & Display results
 
-
 ```python
-# Download job result (default downloads to Desktop). Only works after download is finished.
+# Download job result.
 results_fp = job.download_results()
 ```
 
