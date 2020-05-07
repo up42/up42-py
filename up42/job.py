@@ -296,6 +296,7 @@ class Job(Tools):
                 # Reproject raster and add to map
                 with rasterio.open(raster_fp) as src:
                     dst_profile = src.meta.copy()
+
                     if src.crs != dst_crs:
                         transform, width, height = calculate_default_transform(
                             src.crs, dst_crs, src.width, src.height, *src.bounds
@@ -322,16 +323,17 @@ class Job(Tools):
                                         resampling=Resampling.nearest,
                                     )
 
-                                dst_array = mem.read()
-                                # TODO: Other solution than first 3 bands?
-                                dst_array = dst_array[:3, :, :]
-                                dst_array = np.moveaxis(np.stack(dst_array), 0, 2)
-
+                                dst_array = mem.read()[:3, :, :]
                                 minx, miny, maxx, maxy = mem.bounds
 
+                    else:
+                        dst_array = src.read()[:3, :, :]
+                        minx, miny, maxx, maxy = src.bounds
+                # TODO: Make band configuration available
+                
                 m.add_child(
                     folium.raster_layers.ImageOverlay(
-                        dst_array,
+                        np.moveaxis(np.stack(dst_array), 0, 2),
                         bounds=[[miny, minx], [maxy, maxx]],  # different order.
                         name=f"Image {idx+1} - {feature_name}",
                     )
