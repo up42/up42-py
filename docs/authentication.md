@@ -7,9 +7,8 @@ UP42 servers via your project credentials.
     Log in to [UP42.com](https://console.up42.com) and create a new project or select an existing one.
     In the project's **"Developer" section** you can find the **project_id** and **project_api_key**.
     
-<h1 align="center">
-    <img width="700" src="/assets/auth.png">
-</h1>
+
+![](assets/auth.png)
 
 ## As arguments
 

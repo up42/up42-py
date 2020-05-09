@@ -58,6 +58,4 @@ job.download_results()
 job.plot_results()
 ```
 
-<h1 align="center">
-    <img alt="" src="/assets/vizualisations.jpg">
-</h1>
+![](assets/vizualisations.jpg)
