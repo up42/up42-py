@@ -11,7 +11,7 @@
 <p align="center">
     <a href="https://pypi.org/project/up42-py/" title="up42-py on pypi"><img src="https://img.shields.io/pypi/v/up42-py"></a>
     <img src="./coverage.svg">
-    <a href="https://twitter.com/UP42Official" title="UP42 on Twitter"><img src="https://img.shields.io/twitter/follow/UP42Official.svg?style=social"></a>
+    <a href="https://twitter.com/UP42_" title="UP42 on Twitter"><img src="https://img.shields.io/twitter/follow/UP42Official.svg?style=social"></a>
 </p>
 
 <p align="center">
