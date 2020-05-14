@@ -40,8 +40,9 @@ nav:
         - Catalog: reference/catalog.md
         - Tools: reference/tools.md
     - Examples:
-        - Examples: examples/examples-intro.md
-        - Airport monitoring: examples/airport-monitoring.md
+        - Examples: examples-intro.md
+        - Airport monitoring: examples/airports-parallel.ipynb
+        - Flood mapping: examples/flood_mapping.ipynb
     - Support & FAQ:
         - FAQ: support-faq.md
 
@@ -75,6 +76,14 @@ plugins:
   - search
   - autolinks
   - table-reader
+  - mkdocs-jupyter
+  - exclude:
+      glob:
+        - "*config*.json"
+        - "*cfg*.json"
+        - ".ipynb_checkpoints"
+        - "*examples/project*"
+        - "*examples/guides/*"
   - minify:
       minify_html: false #true
   - mkdocstrings:
