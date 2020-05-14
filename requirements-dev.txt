@@ -6,6 +6,7 @@ pymdown-extensions
 mkdocs-autolinks-plugin
 mkdocs-table-reader-plugin
 mkdocs-minify-plugin
+mkdocs-jupyter
 mkdocstrings
 black
 requests-mock

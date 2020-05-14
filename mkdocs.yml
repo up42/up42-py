@@ -76,6 +76,7 @@ plugins:
   - search
   - autolinks
   - table-reader
+  - mkdocs-jupyter
   - minify:
       minify_html: false #true
   - mkdocstrings:
