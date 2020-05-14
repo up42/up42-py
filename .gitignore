@@ -131,3 +131,4 @@ dmypy.json
 
 config.json
 examples/data
+docs/examples
