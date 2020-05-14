@@ -11,6 +11,8 @@ install[dev]:
 	pip install -r $(SRC)/requirements.txt
 	pip install -e .
 	pip install -r $(SRC)/requirements-dev.txt
+	OUTPUT=$(pwd)
+    ln -s "${OUTPUT}/examples" docs
 
 test:
 	bash test.sh
@@ -22,6 +24,8 @@ e2e:
 	python $(SRC)/tests/e2e.py
 
 gh-pages:
+    OUTPUT=$(pwd)
+    ln -s "${OUTPUT}/examples" docs
 	mkdocs gh-deploy -m "update gh-pages [ci skip]"
 
 package:
