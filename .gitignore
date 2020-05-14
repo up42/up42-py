@@ -136,3 +136,4 @@ config.json
 examples/data
 docs/examples
 /dev
+/examples/project*
