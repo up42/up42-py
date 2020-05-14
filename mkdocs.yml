@@ -77,6 +77,10 @@ plugins:
   - autolinks
   - table-reader
   - mkdocs-jupyter
+  - exclude:
+      glob:
+        - "*config*.json"
+        - "*cfg*.json"
   - minify:
       minify_html: false #true
   - mkdocstrings:
