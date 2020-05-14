@@ -81,6 +81,7 @@ plugins:
       glob:
         - "*config*.json"
         - "*cfg*.json"
+        - ".ipynb_checkpoints"
   - minify:
       minify_html: false #true
   - mkdocstrings:
