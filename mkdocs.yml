@@ -82,6 +82,8 @@ plugins:
         - "*config*.json"
         - "*cfg*.json"
         - ".ipynb_checkpoints"
+        - "*/examples/project*"
+        - "*/examples/guides/*"
   - minify:
       minify_html: false #true
   - mkdocstrings:
