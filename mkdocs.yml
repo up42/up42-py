@@ -40,8 +40,9 @@ nav:
         - Catalog: reference/catalog.md
         - Tools: reference/tools.md
     - Examples:
-        - Examples: examples/examples-intro.md
-        - Airport monitoring: examples/airport-monitoring.md
+        - Examples: examples-intro.md
+        - Airport monitoring: examples/airport-parallel.md
+        - Flood mapping: examples/flood_mapping.md
     - Support & FAQ:
         - FAQ: support-faq.md
 
