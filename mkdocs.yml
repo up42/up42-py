@@ -41,8 +41,8 @@ nav:
         - Tools: reference/tools.md
     - Examples:
         - Examples: examples-intro.md
-        - Airport monitoring: examples/airport-parallel.md
-        - Flood mapping: examples/flood_mapping.md
+        - Airport monitoring: examples/airports-parallel.ipynb
+        - Flood mapping: examples/flood_mapping.ipynb
     - Support & FAQ:
         - FAQ: support-faq.md
 
