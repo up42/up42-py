@@ -11,7 +11,7 @@ install[dev]:
 	pip install -r $(SRC)/requirements.txt
 	pip install -e .
 	pip install -r $(SRC)/requirements-dev.txt
-	ln -s $(PWD)/examples docs
+	unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
 
 test:
 	bash test.sh
@@ -23,11 +23,11 @@ e2e:
 	python $(SRC)/tests/e2e.py
 
 serve:
-	ln -s $(PWD)/examples docs
+	unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
 	mkdocs serve
 
 gh-pages:
-	ln -s $(PWD)/examples docs
+	unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
 	mkdocs gh-deploy -m "update gh-pages [ci skip]"
 
 package:
