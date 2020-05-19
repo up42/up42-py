@@ -7,7 +7,7 @@ This overview of the most important functions repeats the previous 30-seconds-ex
 
 ```python
 import up42
-up42.authenticate(project_id=12345, project_api_key=12345)
+up42.authenticate(project_id="12345", project_api_key="12345")
 #up42.authenticate(cfg_file="config.json")
 
 project = up42.initialize_project()
@@ -24,11 +24,9 @@ up42.get_blocks(basic=True)
 ## Create or access the workflow
 You can either create a new workflow, use project.get_workflows() to get all existing workflows within the project, or access an exisiting workflow directly via its workflow_id.
 
-Example: Sentinel 2 streaming & sharpening filter
+**Example: Sentinel 2 streaming & sharpening filter**
 
-<p align="center">
-    <img src="/assets/workflow.png" width="400" align="center">
-</p>
+![](assets/workflow.png)
 
 
 ```python
@@ -74,11 +72,6 @@ workflow.get_workflow_tasks(basic=True)
 
 
 ```python
-#workflow.get_jobs()
-```
-
-
-```python
 # Alternative: Get all existing workflows within the project.
 
 all_workflows = project.get_workflows()
@@ -88,8 +81,7 @@ workflow
 
 
 ```python
-# Alternative: Directly access the existing workflow the id 
-# (has to exist within the accessed project).
+# Alternative: Directly access an existing workflow within the project by its workflow_id
 
 UP42_WORKFLOW_ID="7fb2ec8a-45be-41ad-a50f-98ba6b528b98"
 workflow = up42.initialize_workflow(workflow_id=UP42_WORKFLOW_ID)
@@ -100,10 +92,10 @@ workflow
 ## Select the aoi
 
 There are multiple ways to select an aoi:  
-- Provide aoi the geometry directly in code as a FeatureCollection, Feature, GeoDataFrame, shapely Polygon or list of bounds coordinates.  
-- Use .draw_aoi() to draw the aoi and export it as a geojson.  
-- Use .read_vector_file() to read a geojson, json, shapefile, kml or wkt file.  
-- Use .get_example_aoi() to read multiple provided sample aois.  
+> - Provide aoi the geometry directly in code as a FeatureCollection, Feature, GeoDataFrame, shapely Polygon or list of bounds coordinates.  
+> - Use .draw_aoi() to draw the aoi and export it as a geojson.  
+> - Use .read_vector_file() to read a geojson, json, shapefile, kml or wkt file.  
+> - Use .get_example_aoi() to read multiple provided sample aois.  
 
 
 ```python
@@ -129,10 +121,10 @@ aoi.head(1)
 ## Select the workflow parameters
 
 There are also multiple ways to construct the workflow input parameters:  
-- Provide the parameters directly in code as a json string.  
-- Use .get_parameters_info() to get a an overview of all potential parameters for the 
+* Provide the parameters directly in code as a json string.  
+* Use .get_parameters_info() to get a an overview of all potential parameters for the 
 selected workflow and information about the parameter defaults and ranges.   
-- Use .get_input_parameters(aoi_type="bbox", aoi_geometry=aoi) to construct the parameters 
+* Use .get_input_parameters(aoi_type="bbox", aoi_geometry=aoi) to construct the parameters 
 with the provided aoi and all default parameters. Selecting the aoi_type is independent 
 from the provided aoi, you can e.g. provide a irregular Polygon and still select aoi_type="bbox", 
 then the bounding box of the polygon will be selected.  
@@ -194,9 +186,7 @@ print(test_results)
 job = workflow.run_job(input_parameters=input_parameters, track_status=True)
 ```
 
-<p align="center">
-    <img src="/assets/job_running.png" width="700">
-</p>
+![](assets/job_running.png)
 
 ## Download & Display results
 
@@ -213,9 +203,4 @@ job.plot_results()
 
 ```python
 job.map_results()
-```
-
-
-```python
-
 ```
