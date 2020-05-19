@@ -7,7 +7,7 @@ This overview of the most important functions repeats the previous 30-seconds-ex
 
 ```python
 import up42
-up42.authenticate(project_id=12345, project_api_key=12345)
+up42.authenticate(project_id="12345", project_api_key="12345")
 #up42.authenticate(cfg_file="config.json")
 
 project = up42.initialize_project()
@@ -24,11 +24,9 @@ up42.get_blocks(basic=True)
 ## Create or access the workflow
 You can either create a new workflow, use project.get_workflows() to get all existing workflows within the project, or access an exisiting workflow directly via its workflow_id.
 
-Example: Sentinel 2 streaming & sharpening filter
-
+**Example: Sentinel 2 streaming & sharpening filter**
 
 ![](assets/workflow.png)
-
 
 
 ```python
@@ -205,9 +203,4 @@ job.plot_results()
 
 ```python
 job.map_results()
-```
-
-
-```python
-
 ```

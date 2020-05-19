@@ -1,5 +1,7 @@
 # :world_map: Catalog Search
 
+## Initialize Catalog
+
 ```python
 import up42
 up42.authenticate(project_id=12345, project_api_key=12345)
@@ -11,14 +13,11 @@ catalog
 
 ## Search scenes in aoi
 
-
 ```python
-#aoi = up42.read_vector_file("data/aoi_washington.geojson", 
-#                           as_dataframe=False)
 aoi = up42.get_example_aoi(location="Berlin", as_dataframe=True)
-aoi
+#aoi = up42.read_vector_file("data/aoi_washington.geojson", 
+#                            as_dataframe=False)
 ```
-
 
 ```python
 search_paramaters = catalog.construct_parameters(geometry=aoi, 
@@ -39,14 +38,12 @@ catalog.plot_coverage(scenes=search_results,
                       legend_column="scene_id")
 ```
 
-## Quicklooks
+## Download & visualize quicklooks
 
 
 ```python
-catalog.download_quicklooks(image_ids=search_results.id.to_list(), sensor="pleiades")
-```
+catalog.download_quicklooks(image_ids=search_results.id.to_list(), 
+                            sensor="pleiades")
 
-
-```python
 catalog.plot_quicklooks(figsize=(20,20))
 ```
