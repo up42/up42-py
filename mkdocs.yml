@@ -41,6 +41,7 @@ nav:
         - Tools: reference/tools.md
     - Examples:
         - Examples: examples-intro.md
+        - Radar processing: examples/radar_processing_1.ipynb
         - Airport monitoring: examples/airports-parallel.ipynb
         - Flood mapping: examples/flood_mapping.ipynb
     - Support & FAQ:
