@@ -132,7 +132,7 @@ class Catalog(Tools):
         )
 
         # TODO: cc also contains nan with sentinel 1 etc. ignore?
-        search_paramaters = {
+        search_parameters = {
             "datetime": datetime,
             "intersects": aoi_geometry,
             "limit": limit,
@@ -140,10 +140,10 @@ class Catalog(Tools):
             "sortby": [{"field": f"properties.{sortby}", "direction": sort_order}],
         }
 
-        return search_paramaters
+        return search_parameters
 
     def search(
-        self, search_paramaters: Dict, as_dataframe: bool = True
+        self, search_parameters: Dict, as_dataframe: bool = True
     ) -> Union[GeoDataFrame, Dict]:
         """
         Searches the catalog for the the search parameters and returns the metadata of
@@ -158,7 +158,7 @@ class Catalog(Tools):
 
         Example:
             ```python
-                search_paramaters={
+                search_parameters={
                     "datetime": "2019-01-01T00:00:00Z/2019-01-15T00:00:00Z",
                     "intersects": {
                         "type": "Polygon",
@@ -170,9 +170,9 @@ class Catalog(Tools):
                     }
             ```
         """
-        logger.info("Searching catalog with: %r", search_paramaters)
+        logger.info("Searching catalog with: %r", search_parameters)
         url = f"{self.auth._endpoint()}/catalog/stac/search"
-        response_json = self.auth._request("POST", url, search_paramaters)
+        response_json = self.auth._request("POST", url, search_parameters)
         logger.info("%d results returned.", len(response_json["features"]))
         dst_crs = "EPSG:4326"
         df = GeoDataFrame.from_features(response_json, crs=dst_crs)
@@ -186,7 +186,7 @@ class Catalog(Tools):
         # bounds geometry, can contain scenes that touch the aoi bbox, but not the aoi.
         # So number returned images not consistent with set limit.
         # TODO: Resolve on backend
-        geometry = search_paramaters["intersects"]
+        geometry = search_parameters["intersects"]
         poly = shape(geometry)
         df = df[df.intersects(poly)]
         df = df.reset_index()

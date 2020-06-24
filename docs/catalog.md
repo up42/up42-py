@@ -20,14 +20,14 @@ aoi = up42.get_example_aoi(location="Berlin", as_dataframe=True)
 ```
 
 ```python
-search_paramaters = catalog.construct_parameters(geometry=aoi, 
+search_parameters = catalog.construct_parameters(geometry=aoi, 
                                                  start_date="2018-01-01",
                                                  end_date="2020-12-31",
                                                  sensors=["pleiades"],
                                                  max_cloudcover=20,
                                                  sortby="cloudCoverage", 
                                                  limit=5)
-search_results = catalog.search(search_paramaters=search_paramaters)
+search_results = catalog.search(search_parameters=search_parameters)
 display(search_results.head())
 ```
 
