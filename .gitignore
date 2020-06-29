@@ -130,4 +130,10 @@ dmypy.json
 .pheasant_cache
 
 config.json
+*config.json
+*/tmp/*
+
 examples/data
+docs/examples
+/dev
+/examples/project*

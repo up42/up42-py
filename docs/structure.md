@@ -18,6 +18,14 @@ An overview of the the **functionality** of each object
 (also see the [code reference](https://up42.github.io/up42-py/reference/project/)):
 
 !!! example "Available Functionality"
+    === "up42"
+        - `.initialize_project()`
+        - `.initalize_workflow()`
+        - `.initalize_job()`
+        - `.initalize_jobtask()`
+        - `.initalize_catalog()`
+       
+    
     === "Project"
     
         - `.get_workflows()`
@@ -25,32 +33,31 @@ An overview of the the **functionality** of each object
         - `.get_jobs()`
         - `.get_project_settings()`
         - `.update_project_settings()`
-        - `.update_project_settings()`
     
     === "Workflow"
 
-        - `.add_workflow_tasks()`
-        - `.get_parameters_info()`
-        - `.construct_parameters()`
         - `.get_jobs()`
         - `.test_job()`
         - `.run_job()`
         - `.get_workflow_tasks()`
+        - `.get_compatible_blocks()
         - `.add_workflow_tasks()`
+        - `.get_parameters_info()`
+        - `.construct_parameters()`
         - `.update_name()`
         - `.delete()`
         
     === "Job"
     
-        - `.get_status()`
-        - `.track_status()`
-        - `.cancel_job()`
-        - `.get_results()`
-        - `.get_logs()`
-        - `.get_quicklooks()`
         - `.download_results()`
         - `.plot_results()`
         - `.map_results()`
+        - `.get_status()`
+        - `.track_status()`
+        - `.cancel_job()`
+        - `.get_results_json()`
+        - `.get_logs()`
+        - `.download_quicklooks()`
         - `.upload_results_to_bucket()`
         - `.get_jobtasks()`
         - `.get_jobtasks_results()`
@@ -59,7 +66,7 @@ An overview of the the **functionality** of each object
     
         - `.get_results_json()`
         - `.download_results()`
-        - `.get_quicklooks()`
+        - `.download_quicklooks()`
 
     === "Catalog"
         - `.construct_parameters()`
@@ -76,7 +83,6 @@ An overview of the the **functionality** of each object
         - `.get_blocks()`
         - `.get_block_details()`
         - `.validate_manifest()`
-        - `.initialize_project()`
         
         
 ## Object Initialization

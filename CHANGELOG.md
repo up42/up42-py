@@ -1,3 +1,6 @@
+## [Version 0.9.1] - 2020-06-25
+- Fixes typo in catalog search parameter
+
 ## [Version 0.9.0] - 2020-05-07
 - Enable block_name and block_display_name for .add_workflow_tasks
 - Replace requirement to specifiy provider by sensor for catalog.download_quicklooks

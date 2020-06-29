@@ -23,7 +23,7 @@ with open(
 
 
 def test_construct_parameters(catalog_mock):
-    search_paramaters = catalog_mock.construct_parameters(
+    search_parameters = catalog_mock.construct_parameters(
         geometry=mock_search_parameters["intersects"],
         start_date="2014-01-01",
         end_date="2016-12-31",
@@ -33,14 +33,14 @@ def test_construct_parameters(catalog_mock):
         limit=4,
         ascending=False,
     )
-    assert isinstance(search_paramaters, dict)
-    assert search_paramaters["datetime"] == mock_search_parameters["datetime"]
-    assert json.dumps(search_paramaters["intersects"]) == json.dumps(
-        search_paramaters["intersects"]
+    assert isinstance(search_parameters, dict)
+    assert search_parameters["datetime"] == mock_search_parameters["datetime"]
+    assert json.dumps(search_parameters["intersects"]) == json.dumps(
+        search_parameters["intersects"]
     )
-    assert search_paramaters["limit"] == mock_search_parameters["limit"]
-    assert search_paramaters["query"] == mock_search_parameters["query"]
-    assert search_paramaters["sortby"] == mock_search_parameters["sortby"]
+    assert search_parameters["limit"] == mock_search_parameters["limit"]
+    assert search_parameters["query"] == mock_search_parameters["query"]
+    assert search_parameters["sortby"] == mock_search_parameters["sortby"]
 
 
 def test_construct_parameters_unsopported_sensor_raises(catalog_mock):
