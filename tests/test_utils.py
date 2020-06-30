@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 import tempfile
+import tarfile
 
 import folium
 import geopandas as gpd
@@ -9,12 +10,14 @@ import pandas as pd
 import pytest
 from shapely.geometry import Point, Polygon, LinearRing
 import requests_mock
+import numpy as np
 
 from .context import (
     folium_base_map,
     any_vector_to_fc,
     fc_to_query_geometry,
     download_results_from_gcs,
+    read_raster_4326,
 )
 
 
@@ -270,3 +273,21 @@ def test_download_result_from_gcs():
             for file in out_files:
                 assert Path(file).exists()
             assert len(out_files) == 2
+
+
+def test_read_raster_4326():
+    fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+
+    with tarfile.open(fp_tgz) as tar:
+        tar.extractall(fp_tgz.parent)
+
+    fp_tif = (
+        fp_tgz.parent
+        / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    )
+
+    dst_array, dst_bounds = read_raster_4326(raster_fp=fp_tif)
+    assert isinstance(dst_array, np.ndarray)
+    assert isinstance(dst_bounds, tuple)
+    expected_4326_bounds = [13.359375, 52.48276179, 13.42531088, 52.52290594]
+    assert np.isclose(np.array(dst_bounds), np.array(expected_4326_bounds)).all()
