@@ -12,12 +12,15 @@ from geopandas import GeoDataFrame
 import shapely
 import rasterio
 from rasterio.plot import show
+from rasterio.io import MemoryFile
+from rasterio.warp import calculate_default_transform, reproject, Resampling
 from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 import requests
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+
 
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
@@ -421,3 +424,52 @@ def fc_to_query_geometry(
             elif squash_multiple_features == "first":
                 query_geometry = fc["features"][0]["geometry"]
     return query_geometry
+
+
+def read_raster_4326(raster_fp) -> Tuple:
+    """
+    Reads the raster array and if not in EPSG 4326, reprojects to it on the fly.
+
+    Args:
+        raster_fp: Raster filepath.
+
+    Returns:
+        Tuple of raster array and bounds in EPSG 4326
+    """
+    dst_crs = "EPSG:4326"
+
+    with rasterio.open(raster_fp) as src:
+        dst_profile = src.meta.copy()
+
+        if src.crs == dst_crs:
+            dst_array = src.read()[:3, :, :]
+        else:
+            transform, width, height = calculate_default_transform(
+                src.crs, dst_crs, src.width, src.height, *src.bounds
+            )
+            dst_profile.update(
+                {
+                    "crs": dst_crs,
+                    "transform": transform,
+                    "width": width,
+                    "height": height,
+                }
+            )
+
+            with MemoryFile() as memfile:
+                with memfile.open(**dst_profile) as mem:
+                    for i in range(1, src.count + 1):
+                        reproject(
+                            source=rasterio.band(src, i),
+                            destination=rasterio.band(mem, i),
+                            src_transform=src.transform,
+                            src_crs=src.crs,
+                            dst_transform=transform,
+                            dst_crs=dst_crs,
+                            resampling=Resampling.nearest,
+                        )
+
+                    dst_array = mem.read()[:3, :, :]
+                    dst_bounds = mem.bounds
+
+    return dst_array, dst_bounds
