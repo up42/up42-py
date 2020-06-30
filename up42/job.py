@@ -13,7 +13,12 @@ from shapely.geometry import box
 from .auth import Auth
 from .jobtask import JobTask
 from .tools import Tools
-from .utils import get_logger, folium_base_map, download_results_from_gcs, read_raster_4326
+from .utils import (
+    get_logger,
+    folium_base_map,
+    download_results_from_gcs,
+    read_raster_4326,
+)
 
 try:
     from IPython.display import display
@@ -282,11 +287,11 @@ class Job(Tools):
             ).add_to(f)
             f.add_to(m)
 
+        # Add image to map.
         plot_file_format = [".tif"]
         raster_filepaths = [
             path for path in self.results if Path(path).suffix in plot_file_format
         ]
-        # Add image to map.
         if show_images and raster_filepaths:
             try:
                 feature_names = df[name_column].to_list()
