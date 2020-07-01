@@ -6,17 +6,19 @@ from typing import Dict, List, Union
 import folium
 from geopandas import GeoDataFrame
 import numpy as np
-import rasterio
 import requests
 import requests.exceptions
-from rasterio.io import MemoryFile
-from rasterio.warp import calculate_default_transform, reproject, Resampling
 from shapely.geometry import box
 
 from .auth import Auth
 from .jobtask import JobTask
 from .tools import Tools
-from .utils import get_logger, folium_base_map, download_results_from_gcs
+from .utils import (
+    get_logger,
+    folium_base_map,
+    download_results_from_gcs,
+    read_raster_4326,
+)
 
 try:
     from IPython.display import display
@@ -263,6 +265,7 @@ class Job(Tools):
             }
 
         # Add feature to map.
+        # TODO: Blocks that have results in separate json file.
         df: GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
         centroid = box(*df.total_bounds).centroid
         m = folium_base_map(lat=centroid.y, lon=centroid.x,)
@@ -283,73 +286,34 @@ class Job(Tools):
                 f"{layer_name}: {row.drop('geometry', axis=0).to_json()}"
             ).add_to(f)
             f.add_to(m)
-            # Same: folium.GeoJson(df, name=name_column, style_function=style_function,
-            # highlight_function=highlight_function).add_to(map)
 
         # Add image to map.
-        if show_images and self.results is not None:
-            plot_file_format = [".tif"]
-            plottable_images = [
-                path for path in self.results if Path(path).suffix in plot_file_format
-            ]
+        plot_file_format = [".tif"]
+        raster_filepaths = [
+            path for path in self.results if Path(path).suffix in plot_file_format
+        ]
+        if show_images and raster_filepaths:
+            try:
+                feature_names = df[name_column].to_list()
+            except KeyError:
+                feature_names = ""
 
-            if plottable_images:
-                dst_crs = "EPSG:4326"
-                filepaths: List[Path] = self.results
-                try:
-                    feature_names = df[name_column].to_list()
-                except KeyError:
-                    feature_names = ["" for i in range(df.shape[0])]
-                for idx, (raster_fp, feature_name) in enumerate(
-                    zip(filepaths, feature_names)
-                ):
-                    # TODO: Not ideal, streaming images are webmercator, folium requires wgs 84.0
-                    # TODO: Switch to ipyleaflet!
-                    # This requires reprojecting on the user pc, not via the api.
-                    # Reproject raster and add to map
-                    with rasterio.open(raster_fp) as src:
-                        dst_profile = src.meta.copy()
+            for idx, (raster_fp, feature_name) in enumerate(
+                zip(raster_filepaths, feature_names)
+            ):
+                # TODO: Not ideal, streaming images are webmercator, folium requires wgs 84.0
+                # TODO: Switch to ipyleaflet!
+                dst_array, dst_bounds = read_raster_4326(raster_fp)
+                minx, miny, maxx, maxy = dst_bounds
 
-                        if src.crs == dst_crs:
-                            dst_array = src.read()[:3, :, :]
-                            minx, miny, maxx, maxy = src.bounds
-                        else:
-                            transform, width, height = calculate_default_transform(
-                                src.crs, dst_crs, src.width, src.height, *src.bounds
-                            )
-                            dst_profile.update(
-                                {
-                                    "crs": dst_crs,
-                                    "transform": transform,
-                                    "width": width,
-                                    "height": height,
-                                }
-                            )
-
-                            with MemoryFile() as memfile:
-                                with memfile.open(**dst_profile) as mem:
-                                    for i in range(1, src.count + 1):
-                                        reproject(
-                                            source=rasterio.band(src, i),
-                                            destination=rasterio.band(mem, i),
-                                            src_transform=src.transform,
-                                            src_crs=src.crs,
-                                            dst_transform=transform,
-                                            dst_crs=dst_crs,
-                                            resampling=Resampling.nearest,
-                                        )
-
-                                    dst_array = mem.read()[:3, :, :]
-                                    minx, miny, maxx, maxy = mem.bounds
-
-                    # TODO: Make band configuration available
-                    m.add_child(
-                        folium.raster_layers.ImageOverlay(
-                            np.moveaxis(np.stack(dst_array), 0, 2),
-                            bounds=[[miny, minx], [maxy, maxx]],  # different order.
-                            name=f"Image {idx+1} - {feature_name}",
-                        )
+                # TODO: Make band configuration available
+                m.add_child(
+                    folium.raster_layers.ImageOverlay(
+                        np.moveaxis(np.stack(dst_array), 0, 2),
+                        bounds=[[miny, minx], [maxy, maxx]],  # different order.
+                        name=f"Image {idx+1} - {feature_name}",
                     )
+                )
 
         # Collapse layer control with too many features.
         if df.shape[0] > 4:  # pylint: disable=simplifiable-if-statement  #type: ignore

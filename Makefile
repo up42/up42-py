@@ -1,7 +1,7 @@
 SRC := .
 
 env:
-	mkvirtualenv --python=$(which python3.7) up42-py
+	mkvirtualenv --python=$(which python3.8) up42-py
 	workon up42-py
 
 install:
