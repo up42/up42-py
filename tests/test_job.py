@@ -1,9 +1,13 @@
 import os
 from pathlib import Path
 import tempfile
+import tarfile
+from unittest.mock import patch
 
 import requests_mock
 import pytest
+import geopandas as gpd
+from folium import Map
 
 # pylint: disable=unused-import
 from .fixtures import auth_mock, auth_live, job_mock, job_live, jobtask_mock
@@ -238,3 +242,20 @@ def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live)
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 490
+
+
+def test_map_results(job_mock):
+    fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+    with tarfile.open(fp_tgz) as tar:
+        tar.extractall(fp_tgz.parent)
+    fp_tif = (
+        fp_tgz.parent
+        / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    )
+    fp_data_json = fp_tgz.parent / "output/data.json"
+    df = gpd.read_file(fp_data_json)
+
+    job_mock.results = [str(fp_tif), str(fp_data_json)]
+    with patch.object(job_mock, "get_results_json", return_value=df):
+        map_object = job_mock.map_results()
+    assert isinstance(map_object, Map)
