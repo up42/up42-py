@@ -12,7 +12,6 @@ from up42.utils import (
     any_vector_to_fc,
     fc_to_query_geometry,
     download_results_from_gcs,
-    read_raster_4326,
 )
 from up42.auth import Auth
 from up42.project import Project
