@@ -9,6 +9,8 @@ import numpy as np
 import requests
 import requests.exceptions
 from shapely.geometry import box
+from rasterio.vrt import WarpedVRT
+import rasterio
 
 from .auth import Auth
 from .jobtask import JobTask
@@ -17,7 +19,6 @@ from .utils import (
     get_logger,
     folium_base_map,
     download_results_from_gcs,
-    read_raster_4326,
 )
 
 try:
@@ -301,12 +302,13 @@ class Job(Tools):
             for idx, (raster_fp, feature_name) in enumerate(
                 zip(raster_filepaths, feature_names)
             ):
-                # TODO: Not ideal, streaming images are webmercator, folium requires wgs 84.0
-                # TODO: Switch to ipyleaflet!
-                dst_array, dst_bounds = read_raster_4326(raster_fp)
-                minx, miny, maxx, maxy = dst_bounds
+                # Folium requires 4326, streaming blocks are 3857
+                with rasterio.open(raster_fp) as src:
+                    with WarpedVRT(src, crs="EPSG:4326") as vrt:
+                        # TODO: Make band configuration available
+                        dst_array = vrt.read()[:3, :, :]
+                        minx, miny, maxx, maxy = vrt.bounds
 
-                # TODO: Make band configuration available
                 m.add_child(
                     folium.raster_layers.ImageOverlay(
                         np.moveaxis(np.stack(dst_array), 0, 2),
