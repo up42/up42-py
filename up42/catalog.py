@@ -93,7 +93,7 @@ class Catalog(Tools):
                 List, GeoDataFrame, Point, Polygon.
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
-            sensors: The satellite sensor(s) to search for, one or multiple of
+            sensors: The satellite sensors to search for, one or multiple of
                 ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p"]
             limit: The maximum number of search results to return.
             max_cloudcover: Maximum cloudcover % - 100 will return all scenes, 8.4 will return all
@@ -150,7 +150,7 @@ class Catalog(Tools):
         the matching scenes.
 
         Args:
-            search_params: The catalog search parameters, see example.
+            search_parameters: The catalog search parameters, see example.
             as_dataframe: return type, GeoDataFrame if True (default), FeatureCollection if False.
 
         Returns:
@@ -222,8 +222,8 @@ class Catalog(Tools):
 
         Args:
             image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
-            sensors: The satellite sensor(s) to search for, one of
-                "pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p".
+            sensor: The satellite sensor of the image_ids, one of "pleiades", "spot",
+                "sentinel1", "sentinel2", "sentinel3", "sentinel5p".
             output_directory: The file output directory, defaults to the current working
                 directory.
 
