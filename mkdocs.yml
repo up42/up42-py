@@ -34,7 +34,7 @@ nav:
       - Detailed Example: detailed-example.md
       - Command Line Interface: cli.md
     - Examples:
-        - Examples: examples-introduction.md
+        - Examples: examples-intro.md
         - Radar processing: examples/radar_processing_1.ipynb
         - Airport monitoring: examples/airports-parallel.ipynb
         - Flood mapping: examples/flood_mapping.ipynb
