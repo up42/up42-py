@@ -1,5 +1,5 @@
 ## [Version 0.9.2] - 2020-07-04
-- Fix inconsistency with `.map_result` not selecting the image to plot correctly
+- Fix inconsistency with `job.map_results` selecting the json instead of the image
 
 ## [Version 0.9.1] - 2020-06-25
 - Fixes typo in catalog search parameters
