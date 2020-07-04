@@ -45,6 +45,7 @@ nav:
         - JobTask: reference/jobtask.md
         - Catalog: reference/catalog.md
         - Tools: reference/tools.md
+        - CLI: reference/cli.md
     -  Release Notes:
         - Release Notes: CHANGELOG.md
     - FAQ:
@@ -138,6 +139,7 @@ markdown_extensions:
       custom_checkbox: true
   - pymdownx.tilde
   - pymdownx.tabbed
+  - mkdocs-click
 
 google_analytics:
   - 'UA-132885718-1'
