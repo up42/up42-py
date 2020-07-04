@@ -45,7 +45,7 @@ nav:
         - JobTask: reference/jobtask.md
         - Catalog: reference/catalog.md
         - Tools: reference/tools.md
-        - CLI: reference/cli.md
+        - Command Line Interface (CLI): reference/cli.md
     -  Release Notes:
         - Release Notes: CHANGELOG.md
     - FAQ:
