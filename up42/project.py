@@ -17,10 +17,6 @@ class Project(Tools):
         """
         The Project class can query all available workflows and spawn new workflows
         within an UP42 project. Also handles project user settings.
-
-        Public Methods:
-            create_workflow, get_workflows, get_jobs, get_project_settings,
-            update_project_settings
         """
         self.auth = auth
         self.project_id = project_id

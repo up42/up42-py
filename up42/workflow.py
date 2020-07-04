@@ -24,10 +24,6 @@ class Workflow(Tools):
         The Workflow class can query all available and spawn new jobs for
         an UP42 Workflow and helps to find and set the the workflow tasks, parameters
         and aoi.
-
-        Public Methods:
-            get_compatible_blocks, get_workflow_tasks, add_workflow_tasks, get_parameters_info,
-            construct_parameters, test_job, run_job, get_jobs, update_name, delete
         """
         self.auth = auth
         self.project_id = project_id

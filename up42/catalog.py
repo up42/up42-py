@@ -52,11 +52,9 @@ supported_sensors = {
 # pylint: disable=duplicate-code
 class Catalog(Tools):
     def __init__(self, auth: Auth):
-        """The Catalog class enables access to the UP42 catalog search. You can search
-        for satellite image scenes for different sensors and criteria like cloud cover etc.
-
-        Public Methods:
-            construct_parameters, search, download_quicklooks
+        """
+        The Catalog class enables access to the UP42 catalog search. You can search
+        for satellite image scenes for different sensors and criteria like cloud cover etc.å
         """
         self.auth = auth
         self.quicklooks = None

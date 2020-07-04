@@ -36,13 +36,9 @@ class Job(Tools):
     def __init__(
         self, auth: Auth, project_id: str, job_id: str, order_ids: List[str] = None,
     ):
-        """The Job class provides access to the results, parameters and tasks of UP42
+        """
+        The Job class provides access to the results, parameters and tasks of UP42
         Jobs (Workflows that have been run as Jobs).
-
-        Public Methods:
-            get_status, track_status, cancel_job, download_quicklooks, get_results_json
-            download_results, upload_results_to_bucket, map_results,
-            get_logs, get_jobtasks, get_jobtasks_results_json
         """
         self.auth = auth
         self.project_id = project_id
