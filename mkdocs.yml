@@ -24,7 +24,7 @@ extra:
 ## Page tree
 nav:
     - Home: index.md
-    - Guides:
+    - Getting Started:
       - Introduction: introduction.md
       - Installation: installation.md
       - Authentication: authentication.md
@@ -32,12 +32,14 @@ nav:
       - 30 Second Example: 30-second-example.md
       - Catalog Search: catalog.md
       - Detailed Example: detailed-example.md
-      - Command Line Interface: cli.md
     - Examples:
         - Examples: examples-intro.md
         - Radar processing: examples/radar_processing_1.ipynb
         - Airport monitoring: examples/airports-parallel.ipynb
         - Flood mapping: examples/flood_mapping.ipynb
+    - CLI:
+        - Command Line Interface (CLI): cli.md
+        - Command Reference: reference/cli.md
     - Code Reference:
         - Project: reference/project.md
         - Workflow: reference/workflow.md
@@ -45,9 +47,9 @@ nav:
         - JobTask: reference/jobtask.md
         - Catalog: reference/catalog.md
         - Tools: reference/tools.md
-        - Command Line Interface (CLI): reference/cli.md
-    -  Release Notes:
-        - Release Notes: CHANGELOG.md
+        - CLI: reference/cli.md
+    -  Releases:
+        - Releases: CHANGELOG.md
     - FAQ:
         - FAQ: support-faq.md
 
@@ -89,8 +91,8 @@ plugins:
         - ".ipynb_checkpoints"
         - "*examples/project*"
         - "*examples/guides/*"
-  - minify:
-      minify_html: false #true
+  #- minify:
+  #    minify_html: false
   - mkdocstrings:
       default_handler: python
       handlers:
@@ -99,6 +101,7 @@ plugins:
             show_source: true
       watch:
         - src/my_library
+  #- pdf-export
 
 ## Custom theme additions
 extra_javascript:
