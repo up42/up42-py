@@ -44,7 +44,6 @@ nav:
         - JobTask: reference/jobtask.md
         - Catalog: reference/catalog.md
         - Tools: reference/tools.md
-
     -  FAQ & Releases:
         - FAQ: support-faq.md
         - Release notes: CHANGELOG.md
