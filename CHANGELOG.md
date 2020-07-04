@@ -1,3 +1,5 @@
+# :calendar: Release notes
+
 ## Upgrading
 
 To upgrade to the latest version of `up42-py` use `pip`:

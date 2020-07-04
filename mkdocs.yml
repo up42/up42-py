@@ -32,6 +32,11 @@ nav:
       - Typical Usage: typical-usage.md
       - Catalog Search: catalog.md
       - Command Line Interface: cli.md
+    - Examples:
+        - Examples: examples-intro.md
+        - Radar processing: examples/radar_processing_1.ipynb
+        - Airport monitoring: examples/airports-parallel.ipynb
+        - Flood mapping: examples/flood_mapping.ipynb
     - Code Reference:
         - Project: reference/project.md
         - Workflow: reference/workflow.md
@@ -39,13 +44,10 @@ nav:
         - JobTask: reference/jobtask.md
         - Catalog: reference/catalog.md
         - Tools: reference/tools.md
-    - Examples:
-        - Examples: examples-intro.md
-        - Radar processing: examples/radar_processing_1.ipynb
-        - Airport monitoring: examples/airports-parallel.ipynb
-        - Flood mapping: examples/flood_mapping.ipynb
-    - Support & FAQ:
+
+    -  FAQ & Releases:
         - FAQ: support-faq.md
+        - Release notes: CHANGELOG.md
 
 ## Configuration
 theme:

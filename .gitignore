@@ -135,5 +135,6 @@ config.json
 
 examples/data
 docs/examples
+docs/CHANGELOG.md
 /dev
 /examples/project*
