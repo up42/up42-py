@@ -20,12 +20,14 @@ extra:
       link: https://twitter.com/up42_
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/company/up42/
+    - icon: fontawesome/solid/envelope
+      link: mailto:support@up42.com
 
 ## Page tree
 nav:
     - Home: index.md
     - Getting Started:
-      - Overview: introduction.md
+      - Overview: overview.md
       - Installation: installation.md
       - Authentication: authentication.md
       - Structure: structure.md

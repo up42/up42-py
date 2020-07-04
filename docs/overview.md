@@ -1,8 +1,6 @@
-# Introduction
-
-**Python SDK for UP42, the geospatial marketplace and developer platform.**
-
 ![](assets/github-banner-3.jpg)
+
+<center>**Python SDK for UP42, the geospatial marketplace and developer platform.**</center>
 
 <p align="center">
     <a href="https://pypi.org/project/up42-py/" title="up42-py on pypi"><img src="https://img.shields.io/pypi/v/up42-py?color=brightgreen"></a>
