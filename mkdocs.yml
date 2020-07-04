@@ -25,15 +25,16 @@ extra:
 nav:
     - Home: index.md
     - Guides:
+      - Introduction: introduction.md
       - Installation: installation.md
       - Authentication: authentication.md
       - Structure: structure.md
       - 30 Second Example: 30-second-example.md
-      - Typical Usage: typical-usage.md
       - Catalog Search: catalog.md
+      - Detailed Example: detailed-example.md
       - Command Line Interface: cli.md
     - Examples:
-        - Examples: examples-intro.md
+        - Examples: examples-introduction.md
         - Radar processing: examples/radar_processing_1.ipynb
         - Airport monitoring: examples/airports-parallel.ipynb
         - Flood mapping: examples/flood_mapping.ipynb
@@ -44,9 +45,10 @@ nav:
         - JobTask: reference/jobtask.md
         - Catalog: reference/catalog.md
         - Tools: reference/tools.md
-    -  FAQ & Releases:
+    -  Release Notes:
+        - Release Notes: CHANGELOG.md
+    - FAQ:
         - FAQ: support-faq.md
-        - Release notes: CHANGELOG.md
 
 ## Configuration
 theme:

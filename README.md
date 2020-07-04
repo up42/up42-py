@@ -17,6 +17,7 @@
       <a href="http://www.up42.com">UP42.com</a> &nbsp; • &nbsp;
       <a href="#support">Support</a>
     </b>
+</p>
 
 ## Highlights
 - Python package for easy access to **[UP42's](http://www.up42.com)** **geospatial datasets** & **processing workflows**
@@ -52,7 +53,7 @@ pip install up42-py
 
 ## 30-second Example
 
-![eo-learn-workflow0illustration](docs/assets/vizualisations.jpg)
+![](docs/assets/vizualisations.jpg)
 
 After [authentication](https://up42.github.io/up42-py/authentication/) with the UP42 project, 
 a new workflow is created and filled with tasks ([Sentinel-2 data](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64), 
