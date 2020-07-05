@@ -52,8 +52,8 @@ nav:
         - CLI: reference/cli.md
     -  Releases:
         - Releases: CHANGELOG.md
-    - FAQ:
-        - FAQ: support-faq.md
+    - FAQ & Support:
+        - FAQ & Support: support-faq.md
 
 ## Configuration
 theme:
