@@ -27,11 +27,10 @@ extra:
 nav:
     - Home: index.md
     - Getting Started:
-      - Overview: overview.md
+      - 30 Second Example: 30-second-example.md
       - Installation: installation.md
       - Authentication: authentication.md
       - Structure: structure.md
-      - 30 Second Example: 30-second-example.md
       - Catalog Search: catalog.md
       - Detailed Example: detailed-example.md
     - Examples:

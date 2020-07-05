@@ -1,11 +1,15 @@
 # :stopwatch: 30 Second Example
 
-A new workflow is created and filled with tasks ([Sentinel-2 data](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64), 
-[Image Sharpening](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e)). 
-The area of interest and workflow parameters are defined. After running the job, 
-the results are downloaded and visualized.
+The UP42 Python package uses six object classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask**; **Catalog** & **Tools**
 
 ![](assets/vizualisations.jpg)
+
+<br>
+
+A **new workflow** consisting of [**Sentinel-2 data**](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64), 
+and [**Image Sharpening**](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e) is created.
+The area of interest and workflow parameters are defined. After **running the job**, 
+the results are **downloaded** and visualized.
 
 ```python
 import up42
