@@ -15,7 +15,7 @@
 ## Functionality
 
 An overview of the the **functionality** of each object 
-(also see the [code reference](https://up42.github.io/up42-py/reference/project/)):
+(also see the [**code reference**](https://up42.github.io/up42-py/reference/project/)):
 
 !!! example "Available Functionality"
     === "up42"
@@ -87,14 +87,13 @@ An overview of the the **functionality** of each object
         
 ## Object Initialization
 
-Here is how **initialize** each object directly, i.e. when it already exists on UP42 and 
-you want to directly access it:
+If a workflow etc. already exists on UP42, you can **initialize** and access it directly using its `id`:
 
 !!! example "Initialize Object"
     === "Project"
     
         ```python
-        up42.authenticate(project_id="123", project_api_key="456")
+        up42.authenticate(project_id="123", project_api_key="456")`
         
         project = up42.initialize_project()
         ```
