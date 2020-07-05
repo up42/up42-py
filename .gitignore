@@ -134,6 +134,8 @@ config.json
 */tmp/*
 
 examples/data
+examples/*/project_*
+output/
 docs/examples
 docs/CHANGELOG.md
 /dev
