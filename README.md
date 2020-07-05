@@ -24,7 +24,6 @@
 - For geospatial **analysis** & **product builders**!
 - Interactive maps & **visualization**, ideal with Jupyter notebooks  
 - Command Line Interface (**CLI**)
-- Developer tools for UP42 custom blocks (coming soon)
 
 
 <img align="right" href="https://up42.github.io/up42-py/" src="docs/assets/docs.png" alt="" height="200"/>
@@ -41,10 +40,7 @@ pip install up42-py
 
 ## Overview
 
-- The UP42 Python SDK uses six object classes, representing the **hierarchical structure of UP42**:
-    - **Project > Workflow > Job > JobTask**
-    - **Catalog**
-    - **Tools**
+- The UP42 Python SDK uses six object classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask**; **Catalog** & **Tools**
 - Each object can **spawn elements of one level below**, e.g.
     - `project = up42.initialize_project()`
     - `workflow = Project().create_workflow()`
@@ -96,4 +92,4 @@ job.plot_results()
 
 ## Support
 
-For any kind of issues or suggestions please contact us via Email **[support@up42.com](mailto:support@up42.com)** or open a **[github issue](https://github.com/up42/up42-py/issues)**.
+For any kind of issues or suggestions please see the [documentation](https://up42.github.io/up42-py/), open a **[github issue](https://github.com/up42/up42-py/issues)** or contact us via Email **[support@up42.com](mailto:support@up42.com)**

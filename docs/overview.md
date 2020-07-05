@@ -1,35 +1,14 @@
 ![](assets/github-banner-3.jpg)
 
-<center>**Python SDK for UP42, the geospatial marketplace and developer platform.**</center>
-
-<p align="center">
-    <a href="https://pypi.org/project/up42-py/" title="up42-py on pypi"><img src="https://img.shields.io/pypi/v/up42-py?color=brightgreen"></a>
-    <img src="./coverage.svg">
-    <a href="https://twitter.com/UP42_" title="UP42 on Twitter"><img src="https://img.shields.io/twitter/follow/UP42_.svg?style=social"></a>
-</p>
-
-<p align="center">
-    <b>
-      <a href="https://up42.github.io/up42-py/">Documentation</a> &nbsp; • &nbsp;
-      <a href="http://www.up42.com">UP42.com</a> &nbsp; • &nbsp;
-      <a href="#support">Support</a>
-    </b>
-</p>
-
 ## Highlights
 - Python package for easy access to **[UP42's](http://www.up42.com)** **geospatial datasets** & **processing workflows**
 - For geospatial **analysis** & **product builders**!
 - Interactive maps & **visualization**, ideal with Jupyter notebooks  
 - Command Line Interface (**CLI**)
-- Developer tools for UP42 custom blocks (coming soon)
 
+![](assets/vizualisations.jpg)
 
-## Overview
-
-- The UP42 Python SDK uses six object classes, representing the **hierarchical structure of UP42**:
-    - **Project > Workflow > Job > JobTask**
-    - **Catalog**
-    - **Tools**
+- The UP42 Python SDK uses six object classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask**; **Catalog** & **Tools**
 - Each object can **spawn elements of one level below**, e.g.
     - `project = up42.initialize_project()`
     - `workflow = Project().create_workflow()`
@@ -37,8 +16,6 @@
 
 
 ## 30-second Example
-
-![](assets/vizualisations.jpg)
 
 After [authentication](https://up42.github.io/up42-py/authentication/) with the UP42 project, 
 a new workflow is created and filled with tasks ([Sentinel-2 data](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64), 
