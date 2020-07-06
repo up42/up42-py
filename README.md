@@ -38,37 +38,31 @@ The package requires Python > 3.6.
 pip install up42-py
 ```
 
-## Overview
-
-- The UP42 Python SDK uses six object classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask**; **Catalog** & **Tools**
-- Each object can **spawn elements of one level below**, e.g.
-    - `project = up42.initialize_project()`
-    - `workflow = Project().create_workflow()`
-    - `job = workflow.run_job()`
-
-
 ## 30-second Example
+
+The UP42 Python package uses six classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask** and **Catalog** & **Tools**
 
 ![](docs/assets/vizualisations.jpg)
 
-After [authentication](https://up42.github.io/up42-py/authentication/) with the UP42 project, 
-a new workflow is created and filled with tasks ([Sentinel-2 data](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64), 
-[Image Sharpening](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e)). 
-The area of interest and workflow parameters are defined. After running the job, the results are downloaded and visualized.
+A **new workflow** consisting of [**Sentinel-2 data**](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64)
+and [**Image Sharpening**](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e) is created.
+The area of interest and workflow parameters are defined. After **running the job**, 
+the results are **downloaded** and visualized.
 
 ```python
 import up42
+up42.authenticate(project_id="12345", project_api_key="12345")
+# up42.authenticate(cfg_file="config.json")
 
-up42.authenticate(project_id="123", project_api_key="456")
 project = up42.initialize_project()
-
 workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
-# Add blocks/tasks to the workflow.
+
+# Add data and processing blocks to the workflow.
 print(up42.get_blocks(basic=True))
-input_tasks= ['sobloo-s2-l1c-aoiclipped', 'sharpening']
+input_tasks = ['sobloo-s2-l1c-aoiclipped', 'sharpening']
 workflow.add_workflow_tasks(input_tasks=input_tasks)
 
-# Define the aoi and input parameters of the workflow to run it.
+# Define the aoi and input parameters of the workflow.
 aoi = workflow.get_example_aoi(as_dataframe=True)
 #aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
 input_parameters = workflow.construct_parameters(geometry=aoi, 
@@ -78,7 +72,7 @@ input_parameters = workflow.construct_parameters(geometry=aoi,
                                                  limit=1)
 input_parameters["sobloo-s2-l1c-aoiclipped:1"].update({"max_cloud_cover":60})
 
-# Run a test job to query data availability and check the configuration.
+# Run a test job to check data availability and configuration.
 test_job = workflow.test_job(input_parameters=input_parameters, track_status=True)
 test_results = test_job.get_results_json()
 print(test_results)
