@@ -16,12 +16,10 @@ class JobTask(Tools):
     def __init__(
         self, auth: Auth, project_id: str, job_id: str, jobtask_id: str,
     ):
-        """The JobTask class provides access to the results and parameters of single
+        """
+        The JobTask class provides access to the results and parameters of single
         Tasks of UP42 Jobs (each Job contains one or multiple Jobtasks, one for each
         block in the workflow).
-
-        Public Methods:
-            get_results_json, download_results, download_quicklooks
         """
         self.auth = auth
         self.project_id = project_id

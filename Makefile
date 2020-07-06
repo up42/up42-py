@@ -24,10 +24,12 @@ e2e:
 
 serve:
 	unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
+	unlink $(PWD)/docs/CHANGELOG.md; ln -s $(PWD)/CHANGELOG.md docs
 	mkdocs serve
 
 gh-pages:
 	unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
+	unlink $(PWD)/docs/CHANGELOG.md; ln -s $(PWD)/CHANGELOG.md docs
 	mkdocs gh-deploy -m "update gh-pages [ci skip]"
 
 package:

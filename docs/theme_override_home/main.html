@@ -1,3 +1,5 @@
+<!-- Elements added to main will be displayed on all pages -->
+
 {% extends "base.html" %}
 {% block tabs %}
   {{ super() }}
@@ -5,4 +7,10 @@
     .md-header{position:initial; padding-top: 0.4rem;}
     .md-tabs{position:initial; padding-top: 0.4rem;}
   </style>
+{% endblock %}
+{% block announce %}
+  <style>.md-announce a,.md-announce a:focus,.md-announce a:hover{color:currentColor}.md-announce strong{white-space:nowrap}.md-announce .twitter{margin-left:.2em;color:#00acee}</style>
+    <a href="https://up42.github.io/up42-py/release-notes/"><strong>New:</strong> Find recent changes & new features in the 📅
+      <strong>Release Notes</strong>!
+    </a>
 {% endblock %}

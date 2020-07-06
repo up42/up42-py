@@ -84,7 +84,7 @@ After running the command to persist the workflow you can get the workflow tasks
 up42 workflow get-workflow-tasks
 ```
 
-You can also add workflow tasks to the workflow via a json file (see [typical usage](typical-usage.md) for an example):
+You can also add workflow tasks to the workflow via a json file (see [typical usage](detailed-example.md) for an example):
 ```bash
 up42 workflow add-workflow-tasks new_workflow_tasks.json
 ```
@@ -94,7 +94,7 @@ up42 workflow add-workflow-tasks new_workflow_tasks.json
 up42 job -h
 ```
 
-First create and run a new test job with parameters defined in a json file (see [typical usage](typical-usage.md) for an example):
+First create and run a new test job with parameters defined in a json file (see [typical usage](detailed-example.md) for an example):
 ```bash
 up42 workflow test-job input_parameters.json --track
 ```

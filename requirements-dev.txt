@@ -5,9 +5,9 @@ pygments
 pymdown-extensions
 mkdocs-autolinks-plugin
 mkdocs-table-reader-plugin
-mkdocs-minify-plugin
 mkdocs-jupyter
 mkdocs-exclude
+mkdocs-click
 mkdocstrings
 black
 requests-mock
