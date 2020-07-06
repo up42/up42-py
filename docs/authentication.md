@@ -1,7 +1,6 @@
 # :key: Authentication
 
-Authenticate with the UP42 servers via your project credentials, provided as function 
-arguments or in a configuration file.
+To create and run workflow you first need to authenticate with **UP42** via your **project credentials**.
 
 ## Get your Project credentials
 

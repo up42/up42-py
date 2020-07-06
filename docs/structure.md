@@ -14,7 +14,7 @@
 
 ## Functionality
 
-An overview of the the **functionality** of each object 
+An overview of the **functionality** of each object 
 (also see the [**code reference**](https://up42.github.io/up42-py/reference/project/)):
 
 !!! example "Available Functionality"

@@ -1,5 +1,10 @@
 # :world_map: Catalog Search
 
+**Check data availability & download image preview quicklooks** via the catalog search. 
+You can filter by various parameters e.g. time period, area of interest, cloud cover etc.
+
+Currently the following sensors are supported: **Pleiades, Spot, Sentinel1, Sentinel2, Sentinel3, Sentinel5p**.
+  
 ## Initialize Catalog
 
 ```python
@@ -8,7 +13,6 @@ up42.authenticate(project_id=12345, project_api_key=12345)
 up42.authenticate(cfg_file="config.json")
 
 catalog = up42.initialize_catalog()
-catalog
 ```
 
 ## Search scenes in aoi
