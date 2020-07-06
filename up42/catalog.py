@@ -54,7 +54,7 @@ class Catalog(Tools):
     def __init__(self, auth: Auth):
         """
         The Catalog class enables access to the UP42 catalog search. You can search
-        for satellite image scenes for different sensors and criteria like cloud cover etc.å
+        for satellite image scenes for different sensors and criteria like cloud cover etc.
         """
         self.auth = auth
         self.quicklooks = None

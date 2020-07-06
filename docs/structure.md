@@ -93,7 +93,7 @@ If a workflow etc. already exists on UP42, you can **initialize** and access it 
     === "Project"
     
         ```python
-        up42.authenticate(project_id="123", project_api_key="456")`
+        up42.authenticate(project_id="123", project_api_key="456")
         
         project = up42.initialize_project()
         ```

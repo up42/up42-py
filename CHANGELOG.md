@@ -23,7 +23,7 @@ pip show up42-py
 
 ### [0.9.0](https://pypi.org/project/up42-py/) (2020-05-07)
 - Enable block_name and block_display_name for `workflow.add_workflow_tasks`
-- Replace requirement to specifiy provider by sensor for `catalog.download_quicklooks`
+- Replace requirement to specify provider by sensor for `catalog.download_quicklooks`
 - Add option to disable logging in `up42.settings`
 - Add `project.get_jobs` and limit `workflow.get_jobs` to jobs in the workflow.
 - Fix download of all output files

@@ -37,5 +37,5 @@ import up42
 
 ## Development installation
 
-The development installation is only necessary if you want to contribute to up42-py or the documentation.
+The development installation is only necessary if you want to contribute to up42-py or its documentation.
 Please see the [developer readme](https://github.com/up42/up42-py/blob/master/README-dev.md) for the full installation instructions and further information.
