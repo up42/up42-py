@@ -21,6 +21,7 @@
 
 ## Highlights
 - Python package for easy access to **[UP42's](http://www.up42.com)** **geospatial datasets** & **processing workflows**
+- Use UP42 functionality together with your preffered Python libraries!
 - For geospatial **analysis** & **product builders**!
 - Interactive maps & **visualization**, ideal with Jupyter notebooks  
 - Command Line Interface (**CLI**)
@@ -38,11 +39,14 @@ The package requires Python > 3.6.
 pip install up42-py
 ```
 
+<br>
+
 ## 30-second Example
 
 The UP42 Python package uses six classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask** and **Catalog** & **Tools**
 
 ![](docs/assets/vizualisations.jpg)
+
 
 A **new workflow** consisting of [**Sentinel-2 data**](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64)
 and [**Image Sharpening**](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e) is created.
@@ -86,4 +90,4 @@ job.plot_results()
 
 ## Support
 
-For any kind of issues or suggestions please see the [documentation](https://up42.github.io/up42-py/), open a **[github issue](https://github.com/up42/up42-py/issues)** or contact us via Email **[support@up42.com](mailto:support@up42.com)**
+For any kind of issues or suggestions please see the [**documentation**](https://up42.github.io/up42-py/), open a **[github issue](https://github.com/up42/up42-py/issues)** or contact us via Email **[support@up42.com](mailto:support@up42.com)**
