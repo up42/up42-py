@@ -5,6 +5,15 @@
 {{ super() }}
 <style>
 
+    .md-main {
+        flex-grow: 0
+    }
+
+    .md-main__inner {
+        display: flex;
+        height: 100%;
+    }
+
     .tx-container {
         padding-top: .0rem;
         background: linear-gradient(to bottom, var(--md-primary-fg-color), hsla(160deg,47%,55%,1) 99%,#fff 99%)
@@ -12,7 +21,8 @@
 
     .tx-hero {
         margin: 32px 2.8rem;
-        color: var(--md-primary-bg-color)
+        color: var(--md-primary-bg-color);
+        justify-content: center;
     }
 
     .tx-hero h1 {
@@ -27,10 +37,10 @@
     }
 
     .tx-hero__image{
-        width:18rem;
+        width:17rem;
+        height:17rem;
         order:1;
-        margin-right: 8.0rem;
-        margin-left: 2.0rem;
+        padding-right: 2.5rem;
     }
 
     .tx-hero .md-button {
@@ -108,14 +118,16 @@
         .tx-hero {
             display: flex;
             align-items: center
+            justify-content: center
         }
 
         .tx-hero__content {
             max-width: 22rem;
             margin-top: 3.5rem;
-            margin-right: 0.0rem;
             margin-bottom: 3.5rem;
-            margin-left: 1rem
+            margin-left: 1.0rem;
+            margin-right: 4.0rem;
+            align-items: center;
             align-items: center
         }
     }
@@ -198,7 +210,11 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
-        padding: 1.2rem;
+        margin-top: 1.0rem;
+    }
+
+    .md-footer-social {
+        padding-top: 20px;
     }
 
 
