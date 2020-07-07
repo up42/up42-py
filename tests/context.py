@@ -17,6 +17,7 @@ from up42.auth import Auth
 from up42.project import Project
 from up42.workflow import Workflow
 from up42.job import Job
+from up42.jobcollection import JobCollection
 from up42.jobtask import JobTask
 from up42.catalog import Catalog
 from up42.__init__ import (
