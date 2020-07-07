@@ -345,6 +345,24 @@ class Workflow(Tools):
                 input_parameters[data_block_name][geometry_operation] = aoi_feature
         return input_parameters
 
+    def mapping_to_parameters(
+        self, geometries: List[Feature], time_series: List[str]
+    ) -> List[dict]:
+        result_params = []
+        for geo in geometries:
+            # TODO: Fix time_series handling
+            for time in time_series:
+                result_params.append(
+                    self.construct_parameters(
+                        geometry=geo,
+                        geometry_operation="intersects",
+                        start_date=time,
+                        end_date=time,
+                    )
+                )
+
+        return result_params
+
     def _helper_run_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,

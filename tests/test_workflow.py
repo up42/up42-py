@@ -3,6 +3,7 @@ import json
 import pytest
 import requests_mock
 import shapely
+from geojson import Feature
 
 # pylint: disable=unused-import,wrong-import-order
 from .context import Workflow, Job
@@ -372,6 +373,25 @@ def test_construct_parameter_order_ids(workflow_mock):
         "sobloo-s2-l1c-aoiclipped:1": {"order_ids": ["8472712912"]},
         "tiling:1": {"tile_width": 768},
     }
+
+
+def test_mapping_to_params(workflow_mock):
+    url_workflow_tasks = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks"
+    )
+    with requests_mock.Mocker() as m:
+        m.get(url=url_workflow_tasks, json=json_workflow_tasks)
+
+        parameters_list = workflow_mock.mapping_to_parameters(
+            geometries=[
+                Feature(geometry=shapely.geometry.point.Point(1, 3)),
+                Feature(geometry=shapely.geometry.point.Point(1, 5)),
+            ],
+            time_series=["2014-01-01T00:00:00Z/2016-12-31T00:00:00Z"],
+        )
+    assert isinstance(parameters_list, list)
+    assert len(parameters_list) == 2
 
 
 def test_run_job(workflow_mock, job_mock):
