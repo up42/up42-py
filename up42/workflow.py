@@ -2,7 +2,7 @@ import json
 import logging
 from collections import Counter
 from pathlib import Path
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Union, Optional, Tuple
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
@@ -346,18 +346,34 @@ class Workflow(Tools):
         return input_parameters
 
     def mapping_to_parameters(
-        self, geometries: List[Feature], time_series: List[str]
+        self,
+        geometries: List[
+            Union[
+                Dict,
+                Feature,
+                FeatureCollection,
+                geojson_Polygon,
+                List,
+                GeoDataFrame,
+                Polygon,
+                Point,
+            ]
+        ],
+        time_series: List[Tuple[str, str]],
+        limit_per_job: int = 1,
+        geometry_operation: str = "intersects",
     ) -> List[dict]:
         result_params = []
         for geo in geometries:
             # TODO: Fix time_series handling
-            for time in time_series:
+            for start_date, end_date in time_series:
                 result_params.append(
                     self.construct_parameters(
                         geometry=geo,
-                        geometry_operation="intersects",
-                        start_date=time,
-                        end_date=time,
+                        geometry_operation=geometry_operation,
+                        start_date=start_date,
+                        end_date=end_date,
+                        limit=limit_per_job,
                     )
                 )
 

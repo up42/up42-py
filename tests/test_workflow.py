@@ -388,10 +388,18 @@ def test_mapping_to_params(workflow_mock):
                 Feature(geometry=shapely.geometry.point.Point(1, 3)),
                 Feature(geometry=shapely.geometry.point.Point(1, 5)),
             ],
-            time_series=["2014-01-01T00:00:00Z/2016-12-31T00:00:00Z"],
+            time_series=[("2014-01-01", "2016-12-31")],
         )
     assert isinstance(parameters_list, list)
     assert len(parameters_list) == 2
+    assert parameters_list[0] == {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "time": "2014-01-01T00:00:00Z/2016-12-31T00:00:00Z",
+            "limit": 1,
+            "intersects": {"coordinates": (1.0, 3.0), "type": "Point"},
+        },
+        "tiling:1": {"tile_width": 768},
+    }
 
 
 def test_run_job(workflow_mock, job_mock):
