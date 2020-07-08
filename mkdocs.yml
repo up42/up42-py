@@ -148,6 +148,8 @@ markdown_extensions:
   - pymdownx.tilde
   - pymdownx.tabbed
   - mkdocs-click
+  - markdown_blockdiag:
+      format: png
 
 google_analytics:
   - 'UA-132885718-1'
