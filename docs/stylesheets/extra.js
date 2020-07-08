@@ -1,7 +1,6 @@
 
-/**
 
-// Table of contents always expanded
+// Left table of contents always expanded
 document.addEventListener("DOMContentLoaded", function() {
     load_navpane();
 });
@@ -29,7 +28,6 @@ function load_navpane() {
        nav.item(i).checked = true;
     }
 }
-**/
 
 
 // Open links externally.

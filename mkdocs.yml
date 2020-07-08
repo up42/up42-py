@@ -33,12 +33,13 @@ nav:
       - Structure: structure.md
       - Catalog Search: catalog.md
       - Detailed Example: detailed-example.md
-      - Preconfigured Workflows: preconfigured-workflows.md
     - Examples:
-        - Examples: examples-intro.md
-        - Radar processing: examples/radar_processing_1.ipynb
-        - Airport monitoring: examples/airports-parallel.ipynb
-        - Flood mapping: examples/flood_mapping.ipynb
+        - Overiew: examples-overview.md
+        - Workflows: preconfigured-workflows.md
+        - Usecases:
+          - Radar processing: examples/radar_processing_1.ipynb
+          - Airport monitoring: examples/airports-parallel.ipynb
+          - Flood mapping: examples/flood_mapping.ipynb
     - CLI:
         - Command Line Interface (CLI): cli.md
         - Command Reference: reference/cli.md
