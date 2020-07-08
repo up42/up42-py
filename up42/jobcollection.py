@@ -12,8 +12,8 @@ logger = get_logger(__name__)
 class JobCollection(Tools):
     def __init__(self, auth: Auth, project_id: str, jobs: List[Job]):
         """
-        The JobCollection class provides facilities for creating job parameters,
-        running multiple jobs in parallel and merging job results.
+        The JobCollection class provides facilities for downloading and merging
+        multiple jobs results.
         """
         self.auth = auth
         self.project_id = project_id
