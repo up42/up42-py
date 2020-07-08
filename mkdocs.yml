@@ -45,6 +45,7 @@ nav:
         - Project: reference/project.md
         - Workflow: reference/workflow.md
         - Job: reference/job.md
+        - JobCollection: reference/jobcollection.md
         - JobTask: reference/jobtask.md
         - Catalog: reference/catalog.md
         - Tools: reference/tools.md
