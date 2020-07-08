@@ -401,6 +401,26 @@ def test_mapping_to_params(workflow_mock):
         "tiling:1": {"tile_width": 768},
     }
 
+    with requests_mock.Mocker() as m:
+        m.get(url=url_workflow_tasks, json=json_workflow_tasks)
+
+        parameters_list = workflow_mock.mapping_to_parameters(
+            geometries=[
+                shapely.geometry.point.Point(1, 3),
+                shapely.geometry.point.Point(1, 5),
+            ],
+            time_series=[("2014-01-01", "2016-12-31")],
+            geometry_operation="bbox",
+        )
+    assert parameters_list[0] == {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "time": "2014-01-01T00:00:00Z/2016-12-31T00:00:00Z",
+            "limit": 1,
+            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
+        },
+        "tiling:1": {"tile_width": 768},
+    }
+
 
 def test_run_job(workflow_mock, job_mock):
     with requests_mock.Mocker() as m:
