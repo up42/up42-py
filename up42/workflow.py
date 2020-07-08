@@ -351,10 +351,7 @@ class Workflow(Tools):
             Union[
                 Dict,
                 Feature,
-                FeatureCollection,
                 geojson_Polygon,
-                List,
-                GeoDataFrame,
                 Polygon,
                 Point,
             ]
