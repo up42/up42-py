@@ -33,6 +33,7 @@ nav:
       - Structure: structure.md
       - Catalog Search: catalog.md
       - Detailed Example: detailed-example.md
+      - Preconfigured Workflows: preconfigured-workflows.md
     - Examples:
         - Examples: examples-intro.md
         - Radar processing: examples/radar_processing_1.ipynb
