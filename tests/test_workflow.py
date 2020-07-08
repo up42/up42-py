@@ -388,7 +388,7 @@ def test_mapping_to_params(workflow_mock):
                 Feature(geometry=shapely.geometry.point.Point(1, 3)),
                 Feature(geometry=shapely.geometry.point.Point(1, 5)),
             ],
-            time_series=[("2014-01-01", "2016-12-31")],
+            interval_dates=[("2014-01-01", "2016-12-31")],
         )
     assert isinstance(parameters_list, list)
     assert len(parameters_list) == 2
@@ -409,7 +409,7 @@ def test_mapping_to_params(workflow_mock):
                 shapely.geometry.point.Point(1, 3),
                 shapely.geometry.point.Point(1, 5),
             ],
-            time_series=[("2014-01-01", "2016-12-31")],
+            interval_dates=[("2014-01-01", "2016-12-31")],
             geometry_operation="bbox",
         )
     assert parameters_list[0] == {

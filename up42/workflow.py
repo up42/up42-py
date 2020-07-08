@@ -347,23 +347,29 @@ class Workflow(Tools):
 
     def mapping_to_parameters(
         self,
-        geometries: List[
-            Union[
-                Dict,
-                Feature,
-                geojson_Polygon,
-                Polygon,
-                Point,
-            ]
-        ],
-        time_series: List[Tuple[str, str]],
+        geometries: List[Union[Dict, Feature, geojson_Polygon, Polygon, Point,]],
+        interval_dates: List[Tuple[str, str]],
         limit_per_job: int = 1,
         geometry_operation: str = "intersects",
     ) -> List[dict]:
+        """"
+        Maps a list of geometries and a list of time series into a list
+        of input parameters of a workflow. If you pass 2 geometries and 1 time
+        interval this will result in 2 x 1 input parameters.
+
+        Args:
+            geometries: List of unit geometries to map with times.
+            interval_dates: List of tuples of start and end dates,
+                i.e. `("2014-01-01","2015-01-01")`
+            limit_per_job: Limit passed to be passed to each individual job parameter.
+            geometry_operation: Geometry operation to be passed to each job parameter.
+
+        Returns:
+            List of dictionary of constructed input parameters.
+        """
         result_params = []
         for geo in geometries:
-            # TODO: Fix time_series handling
-            for start_date, end_date in time_series:
+            for start_date, end_date in interval_dates:
                 result_params.append(
                     self.construct_parameters(
                         geometry=geo,
