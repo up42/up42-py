@@ -352,7 +352,7 @@ class Workflow(Tools):
         limit_per_job: int = 1,
         geometry_operation: str = "intersects",
     ) -> List[dict]:
-        """"
+        """
         Maps a list of geometries and a list of time series into a list
         of input parameters of a workflow. If you pass 2 geometries and 1 time
         interval this will result in 2 x 1 input parameters.
