@@ -412,6 +412,7 @@ def test_construct_parameters_parallel(workflow_mock):
             interval_dates=[("2014-01-01", "2016-12-31")],
             geometry_operation="bbox",
         )
+    assert len(parameters_list) == 2
     assert parameters_list[0] == {
         "sobloo-s2-l1c-aoiclipped:1": {
             "time": "2014-01-01T00:00:00Z/2016-12-31T00:00:00Z",
@@ -420,6 +421,31 @@ def test_construct_parameters_parallel(workflow_mock):
         },
         "tiling:1": {"tile_width": 768},
     }
+    with requests_mock.Mocker() as m:
+        m.get(url=url_workflow_tasks, json=json_workflow_tasks)
+
+        parameters_list = workflow_mock.construct_parameters_parallel(
+            geometries=[
+                shapely.geometry.point.Point(1, 3),
+                shapely.geometry.point.Point(1, 5),
+            ],
+            interval_dates=[("2014-01-01", "2016-12-31"), ("2017-01-01", "2019-12-31")],
+            geometry_operation="bbox",
+        )
+    assert len(parameters_list) == 4
+    assert parameters_list[0] == {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "time": "2014-01-01T00:00:00Z/2016-12-31T00:00:00Z",
+            "limit": 1,
+            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
+        },
+        "tiling:1": {"tile_width": 768},
+    }
+
+    with requests_mock.Mocker() as m:
+        m.get(url=url_workflow_tasks, json=json_workflow_tasks)
+        with pytest.raises(ValueError):
+            workflow_mock.construct_parameters_parallel(geometries=None)
 
 
 def test_construct_parameters_parallel_scene_ids(workflow_mock):
@@ -433,6 +459,7 @@ def test_construct_parameters_parallel_scene_ids(workflow_mock):
         parameters_list = workflow_mock.construct_parameters_parallel(
             scene_ids=["S2abc", "S2123"]
         )
+    assert len(parameters_list) == 2
     assert parameters_list[0] == {
         "sobloo-s2-l1c-aoiclipped:1": {"scene_ids": ["S2abc"]},
         "tiling:1": {"tile_width": 768},

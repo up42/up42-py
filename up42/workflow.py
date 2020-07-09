@@ -364,7 +364,8 @@ class Workflow(Tools):
             geometries: List of unit geometries to map with times.
             interval_dates: List of tuples of start and end dates,
                 i.e. `("2014-01-01","2015-01-01")`.
-            scene_ids: List of scene ids. Will be mapped 1:1 to each job. All other arguments are ignored.
+            scene_ids: List of scene ids. Will be mapped 1:1 to each job.
+                All other arguments are ignored except geometries if passed.
             limit_per_job: Limit passed to be passed to each individual job parameter.
             geometry_operation: Geometry operation to be passed to each job parameter.
 
@@ -372,13 +373,19 @@ class Workflow(Tools):
             List of dictionary of constructed input parameters.
         """
         result_params = []
-        if scene_ids is not None:
-            for scene_id in scene_ids:
-                result_params.append(
-                    self.construct_parameters(geometry=None, scene_ids=[scene_id],)
-                )
-
-        elif geometries is not None and interval_dates is not None:
+        # scene_ids mapped to geometries
+        if scene_ids is not None and geometries is not None:
+            for geo in geometries:
+                for scene_id in scene_ids:
+                    result_params.append(
+                        self.construct_parameters(
+                            geometry=geo,
+                            scene_ids=[scene_id],
+                            geometry_operation=geometry_operation,
+                        )
+                    )
+        # interval_dates mapped to geometries
+        elif interval_dates is not None and geometries is not None:
             for geo in geometries:
                 for start_date, end_date in interval_dates:
                     result_params.append(
@@ -390,9 +397,16 @@ class Workflow(Tools):
                             limit=limit_per_job,
                         )
                     )
+        # only scene_ids
+        elif scene_ids is not None:
+            for scene_id in scene_ids:
+                result_params.append(
+                    self.construct_parameters(geometry=None, scene_ids=[scene_id],)
+                )
         else:
             raise ValueError(
-                "Please provides geometies and time_interval or scene_ids."
+                "Please provides geometries and scene_ids, geometries"
+                "and time_interval or scene_ids."
             )
 
         return result_params
