@@ -322,6 +322,7 @@ class Workflow(Tools):
         else:
             if limit is not None:
                 input_parameters[data_block_name]["limit"] = limit
+
             if scene_ids is not None:
                 if not isinstance(scene_ids, list):
                     scene_ids = [scene_ids]
@@ -332,14 +333,16 @@ class Workflow(Tools):
             elif start_date is not None and end_date is not None:
                 datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
                 input_parameters[data_block_name]["time"] = datetime
-            aoi_fc = any_vector_to_fc(vector=geometry,)
-            aoi_feature = fc_to_query_geometry(
-                fc=aoi_fc,
-                geometry_operation=geometry_operation,  # type: ignore
-                squash_multiple_features=handle_multiple_features,
-            )
 
-            input_parameters[data_block_name][geometry_operation] = aoi_feature
+            if geometry is not None:
+                aoi_fc = any_vector_to_fc(vector=geometry,)
+                aoi_feature = fc_to_query_geometry(
+                    fc=aoi_fc,
+                    geometry_operation=geometry_operation,  # type: ignore
+                    squash_multiple_features=handle_multiple_features,
+                )
+
+                input_parameters[data_block_name][geometry_operation] = aoi_feature
         return input_parameters
 
     def _helper_run_job(
