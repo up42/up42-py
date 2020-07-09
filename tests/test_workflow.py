@@ -461,7 +461,7 @@ def test_construct_parameters_parallel_scene_ids(workflow_mock):
         )
     assert len(parameters_list) == 2
     assert parameters_list[0] == {
-        "sobloo-s2-l1c-aoiclipped:1": {"scene_ids": ["S2abc"]},
+        "sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1},
         "tiling:1": {"tile_width": 768},
     }
 
