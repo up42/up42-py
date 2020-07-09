@@ -342,6 +342,22 @@ def test_construct_parameter_scene_ids(workflow_mock):
     }
 
 
+def test_construct_parameter_only_ids(workflow_mock):
+    url_workflow_tasks = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks"
+    )
+    with requests_mock.Mocker() as m:
+        m.get(url=url_workflow_tasks, json=json_workflow_tasks)
+
+        parameters = workflow_mock.construct_parameters(scene_ids=["s2_123223"],)
+    assert isinstance(parameters, dict)
+    assert parameters == {
+        "sobloo-s2-l1c-aoiclipped:1": {"ids": ["s2_123223"], "limit": 1},
+        "tiling:1": {"tile_width": 768},
+    }
+
+
 def test_construct_parameter_order_ids(workflow_mock):
     url_workflow_tasks = (
         f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
