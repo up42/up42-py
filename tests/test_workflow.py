@@ -422,6 +422,23 @@ def test_construct_parameters_parallel(workflow_mock):
     }
 
 
+def test_construct_parameters_parallel_scene_ids(workflow_mock):
+    url_workflow_tasks = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks"
+    )
+    with requests_mock.Mocker() as m:
+        m.get(url=url_workflow_tasks, json=json_workflow_tasks)
+
+        parameters_list = workflow_mock.construct_parameters_parallel(
+            scene_ids=["S2abc", "S2123"]
+        )
+    assert parameters_list[0] == {
+        "sobloo-s2-l1c-aoiclipped:1": {"scene_ids": ["S2abc"]},
+        "tiling:1": {"tile_width": 768},
+    }
+
+
 def test_run_job(workflow_mock, job_mock):
     with requests_mock.Mocker() as m:
         job_name = f"{workflow_mock.info['name']}_py"

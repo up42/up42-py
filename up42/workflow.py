@@ -351,6 +351,7 @@ class Workflow(Tools):
             List[Union[Dict, Feature, geojson_Polygon, Polygon, Point,]]
         ] = None,
         interval_dates: Optional[List[Tuple[str, str]]] = None,
+        scene_ids: Optional[List] = None,
         limit_per_job: int = 1,
         geometry_operation: str = "intersects",
     ) -> List[dict]:
@@ -362,7 +363,8 @@ class Workflow(Tools):
         Args:
             geometries: List of unit geometries to map with times.
             interval_dates: List of tuples of start and end dates,
-                i.e. `("2014-01-01","2015-01-01")`
+                i.e. `("2014-01-01","2015-01-01")`.
+            scene_ids: List of scene ids. Will be mapped 1:1 to each job. All other arguments are ignored.
             limit_per_job: Limit passed to be passed to each individual job parameter.
             geometry_operation: Geometry operation to be passed to each job parameter.
 
@@ -370,17 +372,28 @@ class Workflow(Tools):
             List of dictionary of constructed input parameters.
         """
         result_params = []
-        for geo in geometries:
-            for start_date, end_date in interval_dates:
+        if scene_ids is not None:
+            for scene_id in scene_ids:
                 result_params.append(
-                    self.construct_parameters(
-                        geometry=geo,
-                        geometry_operation=geometry_operation,
-                        start_date=start_date,
-                        end_date=end_date,
-                        limit=limit_per_job,
-                    )
+                    self.construct_parameters(geometry=None, scene_ids=[scene_id],)
                 )
+
+        elif geometries is not None and interval_dates is not None:
+            for geo in geometries:
+                for start_date, end_date in interval_dates:
+                    result_params.append(
+                        self.construct_parameters(
+                            geometry=geo,
+                            geometry_operation=geometry_operation,
+                            start_date=start_date,
+                            end_date=end_date,
+                            limit=limit_per_job,
+                        )
+                    )
+        else:
+            raise ValueError(
+                "Please provides geometies and time_interval or scene_ids."
+            )
 
         return result_params
 
