@@ -345,10 +345,12 @@ class Workflow(Tools):
                 input_parameters[data_block_name][geometry_operation] = aoi_feature
         return input_parameters
 
-    def mapping_to_parameters(
+    def construct_parameters_parallel(
         self,
-        geometries: List[Union[Dict, Feature, geojson_Polygon, Polygon, Point,]],
-        interval_dates: List[Tuple[str, str]],
+        geometries: Optional[
+            List[Union[Dict, Feature, geojson_Polygon, Polygon, Point,]]
+        ] = None,
+        interval_dates: Optional[List[Tuple[str, str]]] = None,
         limit_per_job: int = 1,
         geometry_operation: str = "intersects",
     ) -> List[dict]:

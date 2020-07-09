@@ -375,7 +375,7 @@ def test_construct_parameter_order_ids(workflow_mock):
     }
 
 
-def test_mapping_to_params(workflow_mock):
+def test_construct_parameters_parallel(workflow_mock):
     url_workflow_tasks = (
         f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
         f"{workflow_mock.workflow_id}/tasks"
@@ -383,7 +383,7 @@ def test_mapping_to_params(workflow_mock):
     with requests_mock.Mocker() as m:
         m.get(url=url_workflow_tasks, json=json_workflow_tasks)
 
-        parameters_list = workflow_mock.mapping_to_parameters(
+        parameters_list = workflow_mock.construct_parameters_parallel(
             geometries=[
                 Feature(geometry=shapely.geometry.point.Point(1, 3)),
                 Feature(geometry=shapely.geometry.point.Point(1, 5)),
@@ -404,7 +404,7 @@ def test_mapping_to_params(workflow_mock):
     with requests_mock.Mocker() as m:
         m.get(url=url_workflow_tasks, json=json_workflow_tasks)
 
-        parameters_list = workflow_mock.mapping_to_parameters(
+        parameters_list = workflow_mock.construct_parameters_parallel(
             geometries=[
                 shapely.geometry.point.Point(1, 3),
                 shapely.geometry.point.Point(1, 5),
