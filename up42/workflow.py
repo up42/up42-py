@@ -2,7 +2,7 @@ import json
 import logging
 from collections import Counter
 from pathlib import Path
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Union, Optional, Tuple
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
@@ -344,6 +344,72 @@ class Workflow(Tools):
 
                 input_parameters[data_block_name][geometry_operation] = aoi_feature
         return input_parameters
+
+    def construct_parameters_parallel(
+        self,
+        geometries: Optional[
+            List[Union[Dict, Feature, geojson_Polygon, Polygon, Point,]]
+        ] = None,
+        interval_dates: Optional[List[Tuple[str, str]]] = None,
+        scene_ids: Optional[List] = None,
+        limit_per_job: int = 1,
+        geometry_operation: str = "intersects",
+    ) -> List[dict]:
+        """
+        Maps a list of geometries and a list of time series into a list
+        of input parameters of a workflow. If you pass 2 geometries and 1 time
+        interval this will result in 2 x 1 input parameters.
+
+        Args:
+            geometries: List of unit geometries to map with times.
+            interval_dates: List of tuples of start and end dates,
+                i.e. `("2014-01-01","2015-01-01")`.
+            scene_ids: List of scene ids. Will be mapped 1:1 to each job.
+                All other arguments are ignored except geometries if passed.
+            limit_per_job: Limit passed to be passed to each individual job parameter.
+            geometry_operation: Geometry operation to be passed to each job parameter.
+
+        Returns:
+            List of dictionary of constructed input parameters.
+        """
+        result_params = []
+        # scene_ids mapped to geometries
+        if scene_ids is not None and geometries is not None:
+            for geo in geometries:
+                for scene_id in scene_ids:
+                    result_params.append(
+                        self.construct_parameters(
+                            geometry=geo,
+                            scene_ids=[scene_id],
+                            geometry_operation=geometry_operation,
+                        )
+                    )
+        # interval_dates mapped to geometries
+        elif interval_dates is not None and geometries is not None:
+            for geo in geometries:
+                for start_date, end_date in interval_dates:
+                    result_params.append(
+                        self.construct_parameters(
+                            geometry=geo,
+                            geometry_operation=geometry_operation,
+                            start_date=start_date,
+                            end_date=end_date,
+                            limit=limit_per_job,
+                        )
+                    )
+        # only scene_ids
+        elif scene_ids is not None:
+            for scene_id in scene_ids:
+                result_params.append(
+                    self.construct_parameters(geometry=None, scene_ids=[scene_id],)
+                )
+        else:
+            raise ValueError(
+                "Please provides geometries and scene_ids, geometries"
+                "and time_interval or scene_ids."
+            )
+
+        return result_params
 
     def _helper_run_job(
         self,
