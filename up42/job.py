@@ -5,6 +5,7 @@ from typing import Dict, List, Union
 
 import folium
 from geopandas import GeoDataFrame
+import geopandas as gpd
 import numpy as np
 import requests
 import requests.exceptions
@@ -261,9 +262,15 @@ class Job(Tools):
                 "dashArray": "5, 5",
             }
 
-        # Add feature to map.
-        # TODO: Blocks that have results in separate json file.
-        df: GeoDataFrame = self.get_results_json(as_dataframe=True)  # type: ignore
+        # Add features to map.
+        # Some blocks store vector results in an additional geojson.
+        json_fp = [fp for fp in self.results if fp.endswith(".geojson")]
+        if json_fp:
+            json_fp = json_fp[0]
+        else:
+            json_fp = [fp for fp in self.results if fp.endswith(".json")]
+        df: GeoDataFrame = gpd.read_file(json_fp)
+
         centroid = box(*df.total_bounds).centroid
         m = folium_base_map(lat=centroid.y, lon=centroid.x,)
 
