@@ -229,7 +229,7 @@ def _plot_images(
     ]
     if not imagepaths:
         raise ValueError(
-            f"Only files of the formats {plot_file_format} can " "currently be plotted."
+            f"This function only plots files of format {plot_file_format}."
         )
 
     if not titles:

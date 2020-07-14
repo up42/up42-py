@@ -238,9 +238,10 @@ class Job(Tools):
 
         Args:
             show_images: Shows images if True (default), only features if False.
-            name_column: Name of the column that provides the Feature/Layer name.
-        # TODO: Make generic with scene_id column integrated.
+            name_column: Name of the feature property that provides the Feature/Layer name.
         """
+        # TODO: Make generic with scene_id column integrated.
+        # TODO: Add way to also display data block image together with processing output vectors
         if self.results is None:
             raise ValueError(
                 "You first need to download the results via job.download_results()!"
@@ -263,12 +264,12 @@ class Job(Tools):
             }
 
         # Add features to map.
-        # Some blocks store vector results in an additional geojson.
+        # Some blocks store vector results in an additional geojson file.
         json_fp = [fp for fp in self.results if fp.endswith(".geojson")]
         if json_fp:
             json_fp = json_fp[0]
         else:
-            json_fp = [fp for fp in self.results if fp.endswith(".json")]
+            json_fp = [fp for fp in self.results if fp.endswith(".json")][0]
         df: GeoDataFrame = gpd.read_file(json_fp)
 
         centroid = box(*df.total_bounds).centroid
