@@ -2,11 +2,10 @@ import os
 from pathlib import Path
 import tempfile
 import tarfile
-from unittest.mock import patch
+from shutil import copyfile
 
 import requests_mock
 import pytest
-import geopandas as gpd
 from folium import Map
 
 # pylint: disable=unused-import
@@ -253,9 +252,24 @@ def test_map_results(job_mock):
         / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
     )
     fp_data_json = fp_tgz.parent / "output/data.json"
-    df = gpd.read_file(fp_data_json)
 
     job_mock.results = [str(fp_tif), str(fp_data_json)]
-    with patch.object(job_mock, "get_results_json", return_value=df):
-        map_object = job_mock.map_results()
+    map_object = job_mock.map_results()
+    assert isinstance(map_object, Map)
+
+
+def test_map_results_additional_geojson(job_mock):
+    fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+    with tarfile.open(fp_tgz) as tar:
+        tar.extractall(fp_tgz.parent)
+    fp_tif = (
+        fp_tgz.parent
+        / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    )
+    fp_data_json = fp_tgz.parent / "output/data.json"
+    fp_data_geojson = fp_tgz.parent / "output/additional_vector_file.geojson"
+    copyfile(fp_data_json, fp_data_geojson)
+
+    job_mock.results = [str(fp_tif), str(fp_data_json), str(fp_data_geojson)]
+    map_object = job_mock.map_results()
     assert isinstance(map_object, Map)
