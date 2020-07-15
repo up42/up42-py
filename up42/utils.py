@@ -328,6 +328,7 @@ def any_vector_to_fc(
             if df.crs.to_string() != "EPSG:4326":
                 df = df.to_crs(epsg=4326)
 
+    df.geometry = df.geometry.buffer(0)
     if as_dataframe:
         return df
     else:
