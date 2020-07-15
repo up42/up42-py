@@ -19,6 +19,7 @@ from .utils import (
     get_logger,
     folium_base_map,
     download_results_from_gcs,
+    download_results_from_gcs_without_unpacking,
 )
 
 try:
@@ -175,7 +176,7 @@ class Job(Tools):
         return download_url
 
     def download_results(
-        self, output_directory: Union[str, Path, None] = None,
+        self, output_directory: Union[str, Path, None] = None, unpacking: bool = True
     ) -> List[str]:
         """
         Downloads and unpacks the job results.
@@ -200,9 +201,14 @@ class Job(Tools):
         logger.info("Download directory: %s", str(output_directory))
 
         download_url = self._get_download_url()
-        out_filepaths = download_results_from_gcs(
-            download_url=download_url, output_directory=output_directory,
-        )
+        if unpacking:
+            out_filepaths = download_results_from_gcs(
+                download_url=download_url, output_directory=output_directory,
+            )
+        else:
+            out_filepaths = download_results_from_gcs_without_unpacking(
+                download_url=download_url, output_directory=output_directory,
+            )
 
         self.results = out_filepaths
         return out_filepaths
