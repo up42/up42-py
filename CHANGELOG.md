@@ -15,6 +15,9 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.9.3](https://pypi.org/project/up42-py/) (2020-07-15)
+- Add support for secondary geojson file to `job.map_results`
+
 ### [0.9.2](https://pypi.org/project/up42-py/) (2020-07-04)
 - Fix inconsistency with `job.map_results` selecting the json instead of the image
 
