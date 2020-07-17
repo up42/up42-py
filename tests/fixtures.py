@@ -121,6 +121,13 @@ def jobcollection_mock(auth_mock, job_mock):
 
 
 @pytest.fixture()
+def jobcollection_live(auth_live, jobs_live):
+    return JobCollection(
+        auth=auth_live, project_id=auth_live.project_id, jobs=jobs_live
+    )
+
+
+@pytest.fixture()
 def job_live(auth_live):
     job = Job(
         auth=auth_live,
@@ -128,6 +135,23 @@ def job_live(auth_live):
         job_id=os.getenv("TEST_UP42_JOB_ID"),
     )
     return job
+
+
+@pytest.fixture()
+def jobs_live(auth_live):
+    job_1 = Job(
+        auth=auth_live,
+        project_id=auth_live.project_id,
+        job_id=os.getenv("TEST_UP42_JOB_ID"),
+    )
+
+    job_2 = Job(
+        auth=auth_live,
+        project_id=auth_live.project_id,
+        job_id=os.getenv("TEST_UP42_JOB_ID_2"),
+    )
+
+    return [job_1, job_2]
 
 
 @pytest.fixture()
