@@ -179,11 +179,13 @@ class Job(Tools):
         self, output_directory: Union[str, Path, None] = None, unpacking: bool = True
     ) -> List[str]:
         """
-        Downloads and unpacks the job results.
+        Downloads the job results. Unpacking the final will happen as default. However
+        please note in the case of exotic formats like SAFE or DIMAP, the final result should not be unpacked.
 
         Args:
             output_directory: The file output directory, defaults to the current working
                 directory.
+            unpacking: By default the final result which is in TAR archive format will be unpacked.
 
         Returns:
             List of the downloaded results' filepaths.
