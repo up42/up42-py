@@ -1,12 +1,19 @@
 from pathlib import Path
 import json
+import copy
+
+# pylint: disable=unused-import
+from unittest.mock import Mock, patch
+import unittest.mock as mock
+
 import pytest
 import requests_mock
+import requests
 import shapely
 from geojson import Feature
 
 # pylint: disable=unused-import,wrong-import-order
-from .context import Workflow, Job
+from .context import Workflow, Job, JobCollection
 from .fixtures import auth_mock, auth_live, workflow_mock, workflow_live, job_mock
 import up42
 
@@ -486,6 +493,89 @@ def test_run_job(workflow_mock, job_mock):
         jb = workflow_mock.run_job(input_parameters_json)
         assert isinstance(jb, Job)
         assert jb.job_id == job_mock.job_id
+
+
+def test_test_parallel_job():
+    # mock_post.side_effect = [{"data": {"id": 1234}}, {"data": {"id": 5678}}]
+    # mock_get.side_effect = [{"data": {"status": "SUCCEEDED"}}, {"data": {"status": "SUCCEEDED"}}]
+    #
+    # input_parameters_list = [{
+    #     "sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}
+    # }, {
+    #     "sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2def"], "limit": 1}
+    # }]
+    #
+    # jb = workflow_mock.test_parallel_job(input_parameters_list)
+    # assert isinstance(jb, JobCollection)
+    # assert jb.project_id == job_mock.project_id
+    # assert jb.jobs ==
+    pass
+
+
+@pytest.mark.live
+def test_test_parallel_job_live(workflow_live):
+    input_parameters_list = [
+        {
+            "sobloo-s2-l1c-aoiclipped:1": {
+                "time": "2019-01-01T00:00:00Z/2020-12-31T00:00:00Z",
+                "limit": 1,
+                "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
+            },
+            "tiling:1": {"tile_width": 768, "tile_height": 768},
+        },
+        {
+            "sobloo-s2-l1c-aoiclipped:1": {
+                "time": "2019-12-01T00:00:00Z/2020-12-31T00:00:00Z",
+                "limit": 1,
+                "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
+            },
+            "tiling:1": {"tile_width": 768, "tile_height": 768},
+        },
+    ]
+
+    jb = workflow_live.test_parallel_job(input_parameters_list=input_parameters_list)
+    assert isinstance(jb, JobCollection)
+
+    input_parameters_list = copy.deepcopy(input_parameters_list)
+    for input_parameters in input_parameters_list:
+        input_parameters.update({"config": {"mode": "DRY_RUN"}})
+    for index, job in enumerate(jb.jobs):
+        assert job.get_status() == "SUCCEEDED"
+        assert job.info["inputs"] == input_parameters_list[index]
+        assert job.info["mode"] == "DRY_RUN"
+
+
+def test_run_parallel_job():
+    pass
+
+
+@pytest.mark.live
+def test_run_parallel_job_live(workflow_live):
+    input_parameters_list = [
+        {
+            "sobloo-s2-l1c-aoiclipped:1": {
+                "time": "2019-01-01T00:00:00Z/2020-12-31T00:00:00Z",
+                "limit": 1,
+                "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
+            },
+            "tiling:1": {"tile_width": 768, "tile_height": 768},
+        },
+        {
+            "sobloo-s2-l1c-aoiclipped:1": {
+                "time": "2019-12-01T00:00:00Z/2020-12-31T00:00:00Z",
+                "limit": 1,
+                "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
+            },
+            "tiling:1": {"tile_width": 768, "tile_height": 768},
+        },
+    ]
+
+    jb = workflow_live.run_parallel_job(input_parameters_list=input_parameters_list)
+    assert isinstance(jb, JobCollection)
+    for index, job in enumerate(jb.jobs):
+        assert job.get_status() == "SUCCEEDED"
+        assert job.info["inputs"] == input_parameters_list[index]
+        assert job.info["mode"] == "DEFAULT"
 
 
 @pytest.mark.live
