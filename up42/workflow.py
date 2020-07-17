@@ -1,5 +1,6 @@
 import json
 import logging
+import copy
 from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Union, Optional, Tuple
@@ -12,6 +13,7 @@ from tqdm import tqdm
 
 from .auth import Auth
 from .job import Job
+from .jobcollection import JobCollection
 from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
@@ -468,6 +470,82 @@ class Workflow(Tools):
             job.track_status()
         return job
 
+    def _helper_run_parallel_job(
+        self,
+        input_parameters_list: List[Dict] = None,
+        max_concurrent_jobs: int = 10,
+        test_job=False,
+        name: str = None,
+    ) -> "JobCollection":
+        """
+        Helper function to create and run parallel real or test jobs.
+
+        Args:
+            input_parameters_list: List of dictionary of input parameters.
+            max_concurrent_jobs: Maximum number of parallel jobs that can be triggered.
+            test_job: If set, runs a test query (search for available imagery based on your data parameters).
+            name: The job name. Optional, by default the workflow name is assigned.
+
+        Returns:
+            The spawned real or test job object.
+        """
+        if input_parameters_list is None:
+            raise ValueError(
+                "Select the job_parameters, use workflow.construct_parallel_parameters()!"
+            )
+
+        if test_job:
+            input_parameters_list = copy.deepcopy(input_parameters_list)
+            for input_parameters in input_parameters_list:
+                input_parameters.update({"config": {"mode": "DRY_RUN"}})  # type: ignore
+                logger.info("+++++++++++++++++++++++++++++++++")
+                logger.info("Running this job as Test Query...")
+                logger.info("+++++++++++++++++++++++++++++++++")
+
+        job_list = []
+        n = 0
+        # First take the first 10 input_parameters
+        ten_selected_input_parameters = input_parameters_list[
+            n : n + max_concurrent_jobs
+        ]
+        while ten_selected_input_parameters:
+            # As long as there are items in input_parameters_list, we will take 10 of them
+            # for each iteration of running parallel jobs. This number 10 coincide with max
+            # number of max_concurrent_jobs which can be set in the project setting.
+            for input_parameters in ten_selected_input_parameters:
+                logger.info("Selected input_parameters: %s.", input_parameters)
+
+                if name is None:
+                    name = self.info["name"]
+                    name = f"{name}_py"  # Temporary recognition of python API usage.
+                url = (
+                    f"{self.auth._endpoint()}/projects/{self.project_id}/"
+                    f"workflows/{self.workflow_id}/jobs?name={name}"
+                )
+                response_json = self.auth._request(
+                    request_type="POST", url=url, data=input_parameters
+                )
+                job_json = response_json["data"]
+                logger.info("Created and running new job: %s.", job_json["id"])
+                job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
+                job_list.append(job)
+
+            # Track status until the last job is finished. As long as all 10 jobs are still running,
+            # the next 10 jobs will not be triggered.
+            for job in job_list[n : n + max_concurrent_jobs]:
+                job.track_status(report_time=20)
+
+            n += max_concurrent_jobs
+            ten_selected_input_parameters = input_parameters_list[
+                n : n + max_concurrent_jobs
+            ]
+
+        job_collection = JobCollection(
+            self.auth, project_id=self.project_id, jobs=job_list
+        )
+
+        return job_collection
+
     def test_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,
@@ -494,6 +572,28 @@ class Workflow(Tools):
             name=name,
         )
 
+    def test_parallel_job(
+        self, input_parameters_list: List[Dict] = None, name: str = None,
+    ) -> "JobCollection":
+        """
+        Create and run test jobs (Test Query) in parallel. With this test query you will not be
+        charged with any data or processing credits, but have a preview of the job result.
+
+        Args:
+            input_parameters_list: List of dictionary of input parameters
+            name: The job name. Optional, by default the workflow name is assigned.
+
+        Returns:
+            The spawned test job object.
+        """
+        # TODO: Is it possible to have more than 10 concurrent jobs?
+        return self._helper_run_parallel_job(
+            input_parameters_list=input_parameters_list,
+            max_concurrent_jobs=10,
+            test_job=True,
+            name=name,
+        )
+
     def run_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,
@@ -514,6 +614,25 @@ class Workflow(Tools):
         """
         return self._helper_run_job(
             input_parameters=input_parameters, track_status=track_status, name=name
+        )
+
+    def run_parallel_job(
+        self, input_parameters_list: List[Dict] = None, name: str = None,
+    ) -> "JobCollection":
+        """
+        Create and run jobs in parallel.
+
+        Args:
+            input_parameters_list: List of dictionary of input parameters
+            name: The job name. Optional, by default the workflow name is assigned.
+
+        Returns:
+            The spawned test job object.
+        """
+        return self._helper_run_parallel_job(
+            input_parameters_list=input_parameters_list,
+            max_concurrent_jobs=10,
+            name=name,
         )
 
     def get_jobs(self, return_json: bool = False) -> Union[List["Job"], Dict]:
