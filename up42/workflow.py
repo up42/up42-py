@@ -659,6 +659,8 @@ class Workflow(Tools):
         Returns:
             All job objects as a list, or alternatively the jobs info as json.
         """
+        # TODO: Need to return a JobCollection objects instead of list
+
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = response_json["data"]
