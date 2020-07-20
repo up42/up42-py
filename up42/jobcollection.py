@@ -23,7 +23,11 @@ class JobCollection(Tools):
         self.auth = auth
         self.project_id = project_id
         self.jobs = jobs
-        self.jobs_id = self._jobs_id()
+        if jobs is not None:
+            self.jobs_id = [job.job_id for job in jobs]
+        else:
+            self.jobs_id = None
+        # self.jobs_id = self._jobs_id()
 
     def __repr__(self):
         return (
