@@ -27,7 +27,6 @@ class JobCollection(Tools):
             self.jobs_id = [job.job_id for job in jobs]
         else:
             self.jobs_id = None
-        # self.jobs_id = self._jobs_id()
 
     def __repr__(self):
         return (
@@ -37,14 +36,6 @@ class JobCollection(Tools):
 
     # TODO: Maybe add _jobs_info method?
     # TODO: Maybe add _jobs_status method?
-
-    def _jobs_id(self):
-        jobs_id = []
-        for job in self.jobs:
-            jobs_id.append(job.job_id)
-
-        self.jobs_id = jobs_id
-        return self.jobs_id
 
     def _get_download_url(self, job_id) -> str:
         url = (
