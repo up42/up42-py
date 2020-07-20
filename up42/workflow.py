@@ -470,7 +470,7 @@ class Workflow(Tools):
             job.track_status()
         return job
 
-    def _helper_run_parallel_job(
+    def _helper_run_parallel_jobs(
         self,
         input_parameters_list: List[Dict] = None,
         max_concurrent_jobs: int = 10,
@@ -491,7 +491,8 @@ class Workflow(Tools):
         """
         if input_parameters_list is None:
             raise ValueError(
-                "Select the job_parameters, use workflow.construct_parallel_parameters()!"
+                "Provide the job parameters via `input_parameters_list`."
+                " You can use workflow.construct_parallel_parameters()!"
             )
 
         if test_job:
@@ -502,18 +503,25 @@ class Workflow(Tools):
                 logger.info("Running this job as Test Query...")
                 logger.info("+++++++++++++++++++++++++++++++++")
 
-        job_list = []
+        jobs_list = []
         n = 0
-        # First take the first 10 input_parameters
+        # Run all jobs in parallel batches of the max_concurrent_jobs (max. 10.)
+        # batches = (len(input_parameters_list) - 1) // max_concurrent_jobs + 1
         ten_selected_input_parameters = input_parameters_list[
             n : n + max_concurrent_jobs
         ]
+        # for i in range(batches):
+        #     batch_jobs = []
+        #     params_batch = input_parameters_list[
+        #         i * max_concurrent_jobs : (i + 1) * max_concurrent_jobs
+        #     ]
         while ten_selected_input_parameters:
             # As long as there are items in input_parameters_list, we will take 10 of them
             # for each iteration of running parallel jobs. This number 10 coincide with max
             # number of max_concurrent_jobs which can be set in the project setting.
-            for input_parameters in ten_selected_input_parameters:
-                logger.info("Selected input_parameters: %s.", input_parameters)
+            # for params in params_batch:
+            for params in ten_selected_input_parameters:
+                logger.info("Selected input_parameters: %s.", params)
 
                 if name is None:
                     name = self.info["name"]
@@ -523,17 +531,23 @@ class Workflow(Tools):
                     f"workflows/{self.workflow_id}/jobs?name={name}"
                 )
                 response_json = self.auth._request(
-                    request_type="POST", url=url, data=input_parameters
+                    request_type="POST", url=url, data=params
                 )
                 job_json = response_json["data"]
                 logger.info("Created and running new job: %s.", job_json["id"])
                 job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
-                job_list.append(job)
+                # batch_jobs.append(job)
+                jobs_list.append(job)
 
             # Track status until the last job is finished. As long as all 10 jobs are still running,
             # the next 10 jobs will not be triggered.
-            for job in job_list[n : n + max_concurrent_jobs]:
+            for job in jobs_list[n : n + max_concurrent_jobs]:
                 job.track_status(report_time=20)
+
+            # Track until all jobs in the batch are finished.
+            # for job in batch_jobs:
+            #     job.track_status(report_time=20)
+            # jobs_list.extend(batch_jobs)
 
             n += max_concurrent_jobs
             ten_selected_input_parameters = input_parameters_list[
@@ -541,7 +555,7 @@ class Workflow(Tools):
             ]
 
         job_collection = JobCollection(
-            self.auth, project_id=self.project_id, jobs=job_list
+            self.auth, project_id=self.project_id, jobs=jobs_list
         )
 
         return job_collection
@@ -572,7 +586,7 @@ class Workflow(Tools):
             name=name,
         )
 
-    def test_parallel_job(
+    def test_jobs_parallel(
         self, input_parameters_list: List[Dict] = None, name: str = None,
     ) -> "JobCollection":
         """
@@ -584,10 +598,10 @@ class Workflow(Tools):
             name: The job name. Optional, by default the workflow name is assigned.
 
         Returns:
-            The spawned test job object.
+            The spawned test jobcollection object.
         """
         # TODO: Is it possible to have more than 10 concurrent jobs?
-        return self._helper_run_parallel_job(
+        return self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
             max_concurrent_jobs=10,
             test_job=True,
@@ -616,7 +630,7 @@ class Workflow(Tools):
             input_parameters=input_parameters, track_status=track_status, name=name
         )
 
-    def run_parallel_job(
+    def run_jobs_parallel(
         self, input_parameters_list: List[Dict] = None, name: str = None,
     ) -> "JobCollection":
         """
@@ -627,9 +641,9 @@ class Workflow(Tools):
             name: The job name. Optional, by default the workflow name is assigned.
 
         Returns:
-            The spawned test job object.
+            The spawned test jobcollection object.
         """
-        return self._helper_run_parallel_job(
+        return self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
             max_concurrent_jobs=10,
             name=name,
