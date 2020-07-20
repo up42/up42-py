@@ -14,7 +14,14 @@ from geojson import Feature
 
 # pylint: disable=unused-import,wrong-import-order
 from .context import Workflow, Job, JobCollection
-from .fixtures import auth_mock, auth_live, workflow_mock, workflow_live, job_mock
+from .fixtures import (
+    auth_mock,
+    auth_live,
+    workflow_mock,
+    workflow_live,
+    job_mock,
+    jobcollection_mock,
+)
 import up42
 
 
@@ -495,25 +502,69 @@ def test_run_job(workflow_mock, job_mock):
         assert jb.job_id == job_mock.job_id
 
 
-def test_test_parallel_job():
-    # mock_post.side_effect = [{"data": {"id": 1234}}, {"data": {"id": 5678}}]
-    # mock_get.side_effect = [{"data": {"status": "SUCCEEDED"}}, {"data": {"status": "SUCCEEDED"}}]
-    #
-    # input_parameters_list = [{
-    #     "sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}
-    # }, {
-    #     "sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2def"], "limit": 1}
-    # }]
-    #
-    # jb = workflow_mock.test_parallel_job(input_parameters_list)
-    # assert isinstance(jb, JobCollection)
-    # assert jb.project_id == job_mock.project_id
-    # assert jb.jobs ==
-    pass
+def test_helper_run_parallel_jobs_dry_run(auth_mock, workflow_mock, monkeypatch):
+    # pylint: disable=dangerous-default-value
+    input_parameters_list = [
+        {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
+        {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2def"], "limit": 1}},
+    ]
+
+    example_response = {
+        "error": None,
+        "data": {"id": "jobid_123", "status": "SUCCEEDED", "mode": "DRY_RUN"},
+    }
+
+    def _mock_endpoint():
+        return "http://example"
+
+    def _mock_dict(request_type, url, data=input_parameters_list):
+        del request_type, url, data
+        return example_response
+
+    monkeypatch.setattr(auth_mock, "_endpoint", _mock_endpoint)
+    monkeypatch.setattr(auth_mock, "_request", _mock_dict)
+
+    jb = workflow_mock._helper_run_parallel_jobs(
+        input_parameters_list, max_concurrent_jobs=2, test_job=True
+    )
+    assert isinstance(jb, JobCollection)
+    assert len(jb.jobs) == 2
+    for job in jb.jobs:
+        assert job.info["mode"] == "DRY_RUN"
+
+
+def test_helper_run_parallel_jobs_default(auth_mock, workflow_mock, monkeypatch):
+    # pylint: disable=dangerous-default-value
+    input_parameters_list = [
+        {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
+        {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2def"], "limit": 1}},
+    ]
+    example_response = {
+        "error": None,
+        "data": {"id": "jobid_123", "status": "SUCCEEDED", "mode": "DEFAULT"},
+    }
+
+    def _mock_endpoint():
+        return "http://example"
+
+    def _mock_dict(request_type, url, data=input_parameters_list):
+        del request_type, url, data
+        return example_response
+
+    monkeypatch.setattr(auth_mock, "_endpoint", _mock_endpoint)
+    monkeypatch.setattr(auth_mock, "_request", _mock_dict)
+
+    jb = workflow_mock._helper_run_parallel_jobs(
+        input_parameters_list, max_concurrent_jobs=2
+    )
+    assert isinstance(jb, JobCollection)
+    assert len(jb.jobs) == 2
+    for job in jb.jobs:
+        assert job.info["mode"] == "DEFAULT"
 
 
 @pytest.mark.live
-def test_test_parallel_job_live(workflow_live):
+def test_test_jobs_parallel_live(workflow_live):
     input_parameters_list = [
         {
             "sobloo-s2-l1c-aoiclipped:1": {
@@ -533,7 +584,7 @@ def test_test_parallel_job_live(workflow_live):
         },
     ]
 
-    jb = workflow_live.test_parallel_job(input_parameters_list=input_parameters_list)
+    jb = workflow_live.test_jobs_parallel(input_parameters_list=input_parameters_list)
     assert isinstance(jb, JobCollection)
 
     input_parameters_list = copy.deepcopy(input_parameters_list)
@@ -545,12 +596,8 @@ def test_test_parallel_job_live(workflow_live):
         assert job.info["mode"] == "DRY_RUN"
 
 
-def test_run_parallel_job():
-    pass
-
-
 @pytest.mark.live
-def test_run_parallel_job_live(workflow_live):
+def test_run_jobs_parallel_live(workflow_live):
     input_parameters_list = [
         {
             "sobloo-s2-l1c-aoiclipped:1": {
@@ -570,7 +617,7 @@ def test_run_parallel_job_live(workflow_live):
         },
     ]
 
-    jb = workflow_live.run_parallel_job(input_parameters_list=input_parameters_list)
+    jb = workflow_live.run_jobs_parallel(input_parameters_list=input_parameters_list)
     assert isinstance(jb, JobCollection)
     for index, job in enumerate(jb.jobs):
         assert job.get_status() == "SUCCEEDED"
