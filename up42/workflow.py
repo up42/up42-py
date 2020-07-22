@@ -3,6 +3,7 @@ import logging
 import copy
 from collections import Counter
 from pathlib import Path
+from itertools import zip_longest
 from typing import Dict, List, Union, Optional, Tuple
 
 from geopandas import GeoDataFrame
@@ -503,29 +504,24 @@ class Workflow(Tools):
                 logger.info("Running this job as Test Query...")
                 logger.info("+++++++++++++++++++++++++++++++++")
 
+        def grouper(iterable, n, fillvalue=None):
+            args = [iter(iterable)] * n
+            return zip_longest(*args, fillvalue=fillvalue)
+
         jobs_list = []
-        n = 0
+        job_nr = 0
         # Run all jobs in parallel batches of the max_concurrent_jobs (max. 10.)
-        # batches = (len(input_parameters_list) - 1) // max_concurrent_jobs + 1
-        ten_selected_input_parameters = input_parameters_list[
-            n : n + max_concurrent_jobs
-        ]
-        # for i in range(batches):
-        #     batch_jobs = []
-        #     params_batch = input_parameters_list[
-        #         i * max_concurrent_jobs : (i + 1) * max_concurrent_jobs
-        #     ]
-        while ten_selected_input_parameters:
-            # As long as there are items in input_parameters_list, we will take 10 of them
-            # for each iteration of running parallel jobs. This number 10 coincide with max
-            # number of max_concurrent_jobs which can be set in the project setting.
-            # for params in params_batch:
-            for params in ten_selected_input_parameters:
+        batches = grouper(input_parameters_list, max_concurrent_jobs)
+        for batch in batches:
+            batch_list = [x for x in batch if x]
+            batch_jobs = []
+            # for params in ten_selected_input_parameters:
+            for params in batch_list:
                 logger.info("Selected input_parameters: %s.", params)
 
                 if name is None:
                     name = self.info["name"]
-                    name = f"{name}_py"  # Temporary recognition of python API usage.
+                    name = f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
                 url = (
                     f"{self.auth._endpoint()}/projects/{self.project_id}/"
                     f"workflows/{self.workflow_id}/jobs?name={name}"
@@ -536,23 +532,13 @@ class Workflow(Tools):
                 job_json = response_json["data"]
                 logger.info("Created and running new job: %s.", job_json["id"])
                 job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
-                # batch_jobs.append(job)
-                jobs_list.append(job)
-
-            # Track status until the last job is finished. As long as all 10 jobs are still running,
-            # the next 10 jobs will not be triggered.
-            for job in jobs_list[n : n + max_concurrent_jobs]:
-                job.track_status(report_time=20)
+                batch_jobs.append(job)
+                job_nr += 1
 
             # Track until all jobs in the batch are finished.
-            # for job in batch_jobs:
-            #     job.track_status(report_time=20)
-            # jobs_list.extend(batch_jobs)
-
-            n += max_concurrent_jobs
-            ten_selected_input_parameters = input_parameters_list[
-                n : n + max_concurrent_jobs
-            ]
+            for job in batch_jobs:
+                job.track_status(report_time=20)
+            jobs_list.extend(batch_jobs)
 
         job_collection = JobCollection(
             self.auth, project_id=self.project_id, jobs=jobs_list
