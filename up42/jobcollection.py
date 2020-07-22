@@ -46,7 +46,7 @@ class JobCollection(Tools):
         download_url = response_json["data"]["url"]
         return download_url
 
-    def download_parallel_results(
+    def download_results(
         self, output_directory: Union[str, Path, None] = None, unpacking: bool = True
     ) -> Dict[str, List[str]]:
         """

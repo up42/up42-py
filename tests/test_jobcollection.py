@@ -21,7 +21,7 @@ def test_jobcollection(jobcollection_mock):
 @pytest.mark.live
 def test_job_download_result_live(jobcollection_live):
     with tempfile.TemporaryDirectory() as tempdir:
-        out_files_dict = jobcollection_live.download_parallel_results(Path(tempdir))
+        out_files_dict = jobcollection_live.download_results(Path(tempdir))
         jobid_1, jobid_2 = jobcollection_live.jobs_id
         for _, value in out_files_dict.items():
             for p in value:
