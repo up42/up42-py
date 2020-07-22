@@ -3,7 +3,6 @@ import logging
 import copy
 from collections import Counter
 from pathlib import Path
-from itertools import zip_longest
 from typing import Dict, List, Union, Optional, Tuple
 
 from geopandas import GeoDataFrame
@@ -504,24 +503,25 @@ class Workflow(Tools):
                 logger.info("Running this job as Test Query...")
                 logger.info("+++++++++++++++++++++++++++++++++")
 
-        def grouper(iterable, n, fillvalue=None):
-            args = [iter(iterable)] * n
-            return zip_longest(*args, fillvalue=fillvalue)
-
         jobs_list = []
         job_nr = 0
         # Run all jobs in parallel batches of the max_concurrent_jobs (max. 10.)
-        batches = grouper(input_parameters_list, max_concurrent_jobs)
+        batches = [
+            input_parameters_list[pos : pos + max_concurrent_jobs]
+            for pos in range(0, len(input_parameters_list), max_concurrent_jobs)
+        ]
         for batch in batches:
-            batch_list = [x for x in batch if x]
             batch_jobs = []
             # for params in ten_selected_input_parameters:
-            for params in batch_list:
+            for params in batch:
                 logger.info("Selected input_parameters: %s.", params)
 
                 if name is None:
                     name = self.info["name"]
-                    name = f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
+                name = (
+                    f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
+                )
+
                 url = (
                     f"{self.auth._endpoint()}/projects/{self.project_id}/"
                     f"workflows/{self.workflow_id}/jobs?name={name}"
