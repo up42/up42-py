@@ -245,7 +245,7 @@ class DrawFoliumOverride(Draw):
 
 def _plot_images(
     plot_file_format: List[str],
-    figsize: Tuple[int, int] = (8, 8),
+    figsize: Tuple[int, int] = (12, 12),
     filepaths: List[Union[str, Path]] = None,
     titles: List[str] = None,
 ) -> None:
@@ -288,6 +288,7 @@ def _plot_images(
         axs = axs.ravel()
     else:
         axs = [axs]
+
     for idx, (fp, title) in enumerate(zip(imagepaths, titles)):
         with rasterio.open(fp) as src:
             img_array = src.read()[:3, :, :]
@@ -296,9 +297,9 @@ def _plot_images(
             show(
                 img_array, transform=src.transform, title=title, ax=axs[idx],
             )
-    # Deactivate empty axes
-    for i in range(len(imagepaths), len(axs)):
-        axs[i].set_axis_off()
+        axs[idx].set_axis_off()
+
+    plt.axis('off')
     plt.tight_layout()
     plt.show()
 

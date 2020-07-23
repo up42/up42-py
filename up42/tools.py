@@ -228,7 +228,7 @@ class Tools:
 
     def plot_results(
         self,
-        figsize: Tuple[int, int] = (8, 8),
+        figsize: Tuple[int, int] = (12, 12),
         filepaths: List[Union[str, Path]] = None,
         titles: List[str] = None,
     ) -> None:
