@@ -130,19 +130,19 @@ def test_get_jobs(project_mock):
         )
         m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
 
-        jobs = project_mock.get_jobs()
-        assert isinstance(jobs, list)
-        assert isinstance(jobs[0], Job)
-        assert jobs[0].job_id == job_id
+        jobcollection = project_mock.get_jobs()
+        assert isinstance(jobcollection.jobs, list)
+        assert isinstance(jobcollection.jobs[0], Job)
+        assert jobcollection.jobs[0].job_id == job_id
 
 
 @pytest.mark.skip
 @pytest.mark.live
 def test_get_jobs_live(project_live):
     # Skip by default as too many jobs in test project, triggers too many job info requests.
-    jobs = project_live.get_jobs()
-    assert isinstance(jobs, list)
-    assert isinstance(jobs[0], Job)
+    jobcollection = project_live.get_jobs()
+    assert isinstance(jobcollection.jobs, list)
+    assert isinstance(jobcollection.jobs[0], Job)
 
 
 def test_get_project_settings(project_mock):
