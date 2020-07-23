@@ -379,26 +379,26 @@ class Workflow(Tools):
         if scene_ids is not None and geometries is not None:
             for geo in geometries:
                 for scene_id in scene_ids:
-                    result_params.append(
-                        self.construct_parameters(
-                            geometry=geo,
-                            scene_ids=[scene_id],
-                            geometry_operation=geometry_operation,
-                        )
+                    params = self.construct_parameters(
+                        geometry=geo,
+                        scene_ids=[scene_id],
+                        geometry_operation=geometry_operation,
                     )
+                    result_params.append(params)
+
         # interval_dates mapped to geometries
         elif interval_dates is not None and geometries is not None:
             for geo in geometries:
                 for start_date, end_date in interval_dates:
-                    result_params.append(
-                        self.construct_parameters(
-                            geometry=geo,
-                            geometry_operation=geometry_operation,
-                            start_date=start_date,
-                            end_date=end_date,
-                            limit=limit_per_job,
-                        )
+                    params = self.construct_parameters(
+                        geometry=geo,
+                        geometry_operation=geometry_operation,
+                        start_date=start_date,
+                        end_date=end_date,
+                        limit=limit_per_job,
                     )
+                    result_params.append(params)
+
         # only scene_ids
         elif scene_ids is not None:
             for scene_id in scene_ids:

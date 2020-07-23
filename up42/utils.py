@@ -341,6 +341,7 @@ def any_vector_to_fc(
             if vector["type"] == "FeatureCollection":
                 df = GeoDataFrame.from_features(vector, crs=4326)
             elif vector["type"] == "Feature":
+                # TODO: Handle point features?
                 df = GeoDataFrame.from_features(FeatureCollection([vector]), crs=4326)
             elif vector["type"] == "Polygon":  # Geojson geometry
                 df = GeoDataFrame.from_features(
