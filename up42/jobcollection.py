@@ -66,9 +66,9 @@ class JobCollection(Tools):
 
         out_filepaths = {}
         for job in self.jobs:
-            output_directory = output_directory / f"job_{job.job_id}"
+            out_dir = output_directory / f"job_{job.job_id}"
             out_filepaths_job = job.download_results(
-                output_directory=output_directory, unpacking=unpacking
+                output_directory=out_dir, unpacking=unpacking
             )
             out_filepaths[job.job_id] = out_filepaths_job
 

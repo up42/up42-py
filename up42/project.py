@@ -121,6 +121,7 @@ class Project(Tools):
         Returns:
             All job objects in a JobCollection, or alternatively the jobs info as json.
         """
+        # TODO: Add selection for test/real job.
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = response_json["data"]

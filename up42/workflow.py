@@ -374,6 +374,8 @@ class Workflow(Tools):
         Returns:
             List of dictionary of constructed input parameters.
         """
+        # TODO: Make list if single argument is given.
+        # TODO: Rename arguments
         result_params = []
         # scene_ids mapped to geometries
         if scene_ids is not None and geometries is not None:
@@ -629,13 +631,14 @@ class Workflow(Tools):
         Returns:
             The spawned test jobcollection object.
         """
-        return self._helper_run_parallel_jobs(
+        jobcollection = self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
             max_concurrent_jobs=10,
             name=name,
         )
+        return jobcollection
 
-    def get_jobs(self, return_json: bool = False) -> Union[JobCollection, Dict]:
+    def get_jobs(self, return_json: bool = False) -> Union[JobCollection, List[Dict]]:
         """
         Get all jobs associated with the workflow as a JobCollection or json.
 
@@ -645,6 +648,7 @@ class Workflow(Tools):
         Returns:
             A JobCollection, or alternatively the jobs info as json.
         """
+        # TODO: Add selection for test/real job.
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = response_json["data"]
