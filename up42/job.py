@@ -20,6 +20,7 @@ from .utils import (
     get_logger,
     folium_base_map,
     download_results_from_gcs,
+    download_results_from_gcs_without_unpacking,
 )
 
 try:
@@ -176,14 +177,16 @@ class Job(Tools):
         return download_url
 
     def download_results(
-        self, output_directory: Union[str, Path, None] = None,
+        self, output_directory: Union[str, Path, None] = None, unpacking: bool = True
     ) -> List[str]:
         """
-        Downloads and unpacks the job results.
+        Downloads the job results. Unpacking the final file will happen as default. However
+        please note in the case of exotic formats like SAFE or DIMAP, the final result should not be unpacked.
 
         Args:
             output_directory: The file output directory, defaults to the current working
                 directory.
+            unpacking: By default the final result which is in TAR archive format will be unpacked.
 
         Returns:
             List of the downloaded results' filepaths.
@@ -201,9 +204,14 @@ class Job(Tools):
         logger.info("Download directory: %s", str(output_directory))
 
         download_url = self._get_download_url()
-        out_filepaths = download_results_from_gcs(
-            download_url=download_url, output_directory=output_directory,
-        )
+        if unpacking:
+            out_filepaths = download_results_from_gcs(
+                download_url=download_url, output_directory=output_directory,
+            )
+        else:
+            out_filepaths = download_results_from_gcs_without_unpacking(
+                download_url=download_url, output_directory=output_directory,
+            )
 
         self.results = out_filepaths
         return out_filepaths

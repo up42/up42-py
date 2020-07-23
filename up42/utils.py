@@ -93,6 +93,46 @@ def download_results_from_gcs(
     return out_filepaths
 
 
+def download_results_from_gcs_without_unpacking(
+    download_url: str, output_directory: Union[str, Path]
+) -> List[str]:
+    """
+    General download function for results of job and jobtask from cloud storage
+    provider.
+
+    Args:
+        download_url: The signed gcs url to download.
+        output_directory: The file output directory, defaults to the current working
+            directory.
+    """
+    output_directory = Path(output_directory)
+
+    # Download
+    out_filepaths: List[str] = []
+    out_fp = Path().joinpath(output_directory, "output.tgz")
+    with open(out_fp, "wb") as dst:
+        try:
+            r = requests.get(download_url)
+            r.raise_for_status()
+            for chunk in tqdm(r.iter_content(chunk_size=1024)):
+                if chunk:  # filter out keep-alive new chunks
+                    dst.write(chunk)
+            out_filepaths.append(str(out_fp))
+        except requests.exceptions.HTTPError as err:
+            logger.debug("Connection error, please try again! %s", err)
+            raise requests.exceptions.HTTPError(
+                f"Connection error, please try again! {err}"
+            )
+
+    logger.info(
+        "Download successful of %s files to output_directory '%s': %s",
+        len(out_filepaths),
+        output_directory,
+        [Path(p).name for p in out_filepaths],
+    )
+    return out_filepaths
+
+
 def folium_base_map(
     lat: float = 52.49190032214706,
     lon: float = 13.39117252959244,

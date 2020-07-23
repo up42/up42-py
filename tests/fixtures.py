@@ -3,7 +3,16 @@ import os
 import pytest
 import requests_mock
 
-from .context import Auth, Project, Workflow, Job, JobTask, Tools, Catalog
+from .context import (
+    Auth,
+    Project,
+    Workflow,
+    Job,
+    JobCollection,
+    JobTask,
+    Tools,
+    Catalog,
+)
 
 # TODO: Use patch.dict instead of 2 fictures?
 @pytest.fixture()
@@ -105,6 +114,20 @@ def job_mock(auth_mock):
 
 
 @pytest.fixture()
+def jobcollection_mock(auth_mock, job_mock):
+    return JobCollection(
+        auth=auth_mock, project_id=auth_mock.project_id, jobs=[job_mock]
+    )
+
+
+@pytest.fixture()
+def jobcollection_live(auth_live, jobs_live):
+    return JobCollection(
+        auth=auth_live, project_id=auth_live.project_id, jobs=jobs_live
+    )
+
+
+@pytest.fixture()
 def job_live(auth_live):
     job = Job(
         auth=auth_live,
@@ -112,6 +135,23 @@ def job_live(auth_live):
         job_id=os.getenv("TEST_UP42_JOB_ID"),
     )
     return job
+
+
+@pytest.fixture()
+def jobs_live(auth_live):
+    job_1 = Job(
+        auth=auth_live,
+        project_id=auth_live.project_id,
+        job_id=os.getenv("TEST_UP42_JOB_ID"),
+    )
+
+    job_2 = Job(
+        auth=auth_live,
+        project_id=auth_live.project_id,
+        job_id=os.getenv("TEST_UP42_JOB_ID_2"),
+    )
+
+    return [job_1, job_2]
 
 
 @pytest.fixture()

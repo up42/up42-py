@@ -1,8 +1,9 @@
 import json
 import logging
+import copy
 from collections import Counter
 from pathlib import Path
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Union, Optional, Tuple
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
@@ -12,6 +13,7 @@ from tqdm import tqdm
 
 from .auth import Auth
 from .job import Job
+from .jobcollection import JobCollection
 from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
@@ -322,6 +324,7 @@ class Workflow(Tools):
         else:
             if limit is not None:
                 input_parameters[data_block_name]["limit"] = limit
+
             if scene_ids is not None:
                 if not isinstance(scene_ids, list):
                     scene_ids = [scene_ids]
@@ -332,15 +335,83 @@ class Workflow(Tools):
             elif start_date is not None and end_date is not None:
                 datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
                 input_parameters[data_block_name]["time"] = datetime
-            aoi_fc = any_vector_to_fc(vector=geometry,)
-            aoi_feature = fc_to_query_geometry(
-                fc=aoi_fc,
-                geometry_operation=geometry_operation,  # type: ignore
-                squash_multiple_features=handle_multiple_features,
+
+            if geometry is not None:
+                aoi_fc = any_vector_to_fc(vector=geometry,)
+                aoi_feature = fc_to_query_geometry(
+                    fc=aoi_fc,
+                    geometry_operation=geometry_operation,  # type: ignore
+                    squash_multiple_features=handle_multiple_features,
+                )
+
+                input_parameters[data_block_name][geometry_operation] = aoi_feature
+        return input_parameters
+
+    def construct_parameters_parallel(
+        self,
+        geometries: Optional[
+            List[Union[Dict, Feature, geojson_Polygon, Polygon, Point,]]
+        ] = None,
+        interval_dates: Optional[List[Tuple[str, str]]] = None,
+        scene_ids: Optional[List] = None,
+        limit_per_job: int = 1,
+        geometry_operation: str = "intersects",
+    ) -> List[dict]:
+        """
+        Maps a list of geometries and a list of time series into a list
+        of input parameters of a workflow. If you pass 2 geometries and 1 time
+        interval this will result in 2 x 1 input parameters.
+
+        Args:
+            geometries: List of unit geometries to map with times.
+            interval_dates: List of tuples of start and end dates,
+                i.e. `("2014-01-01","2015-01-01")`.
+            scene_ids: List of scene ids. Will be mapped 1:1 to each job.
+                All other arguments are ignored except geometries if passed.
+            limit_per_job: Limit passed to be passed to each individual job parameter.
+            geometry_operation: Geometry operation to be passed to each job parameter.
+
+        Returns:
+            List of dictionary of constructed input parameters.
+        """
+        result_params = []
+        # scene_ids mapped to geometries
+        if scene_ids is not None and geometries is not None:
+            for geo in geometries:
+                for scene_id in scene_ids:
+                    result_params.append(
+                        self.construct_parameters(
+                            geometry=geo,
+                            scene_ids=[scene_id],
+                            geometry_operation=geometry_operation,
+                        )
+                    )
+        # interval_dates mapped to geometries
+        elif interval_dates is not None and geometries is not None:
+            for geo in geometries:
+                for start_date, end_date in interval_dates:
+                    result_params.append(
+                        self.construct_parameters(
+                            geometry=geo,
+                            geometry_operation=geometry_operation,
+                            start_date=start_date,
+                            end_date=end_date,
+                            limit=limit_per_job,
+                        )
+                    )
+        # only scene_ids
+        elif scene_ids is not None:
+            for scene_id in scene_ids:
+                result_params.append(
+                    self.construct_parameters(geometry=None, scene_ids=[scene_id],)
+                )
+        else:
+            raise ValueError(
+                "Please provides geometries and scene_ids, geometries"
+                "and time_interval or scene_ids."
             )
 
-            input_parameters[data_block_name][geometry_operation] = aoi_feature
-        return input_parameters
+        return result_params
 
     def _helper_run_job(
         self,
@@ -399,6 +470,82 @@ class Workflow(Tools):
             job.track_status()
         return job
 
+    def _helper_run_parallel_jobs(
+        self,
+        input_parameters_list: List[Dict] = None,
+        max_concurrent_jobs: int = 10,
+        test_job=False,
+        name: str = None,
+    ) -> "JobCollection":
+        """
+        Helper function to create and run parallel real or test jobs.
+
+        Args:
+            input_parameters_list: List of dictionary of input parameters.
+            max_concurrent_jobs: Maximum number of parallel jobs that can be triggered.
+            test_job: If set, runs a test query (search for available imagery based on your data parameters).
+            name: The job name. Optional, by default the workflow name is assigned.
+
+        Returns:
+            The spawned real or test job object.
+        """
+        if input_parameters_list is None:
+            raise ValueError(
+                "Provide the job parameters via `input_parameters_list`."
+                " You can use workflow.construct_parallel_parameters()!"
+            )
+
+        if test_job:
+            input_parameters_list = copy.deepcopy(input_parameters_list)
+            for input_parameters in input_parameters_list:
+                input_parameters.update({"config": {"mode": "DRY_RUN"}})  # type: ignore
+                logger.info("+++++++++++++++++++++++++++++++++")
+                logger.info("Running this job as Test Query...")
+                logger.info("+++++++++++++++++++++++++++++++++")
+
+        jobs_list = []
+        job_nr = 0
+        # Run all jobs in parallel batches of the max_concurrent_jobs (max. 10.)
+        batches = [
+            input_parameters_list[pos : pos + max_concurrent_jobs]
+            for pos in range(0, len(input_parameters_list), max_concurrent_jobs)
+        ]
+        for batch in batches:
+            batch_jobs = []
+            # for params in ten_selected_input_parameters:
+            for params in batch:
+                logger.info("Selected input_parameters: %s.", params)
+
+                if name is None:
+                    name = self.info["name"]
+                name = (
+                    f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
+                )
+
+                url = (
+                    f"{self.auth._endpoint()}/projects/{self.project_id}/"
+                    f"workflows/{self.workflow_id}/jobs?name={name}"
+                )
+                response_json = self.auth._request(
+                    request_type="POST", url=url, data=params
+                )
+                job_json = response_json["data"]
+                logger.info("Created and running new job: %s.", job_json["id"])
+                job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
+                batch_jobs.append(job)
+                job_nr += 1
+
+            # Track until all jobs in the batch are finished.
+            for job in batch_jobs:
+                job.track_status(report_time=20)
+            jobs_list.extend(batch_jobs)
+
+        job_collection = JobCollection(
+            self.auth, project_id=self.project_id, jobs=jobs_list
+        )
+
+        return job_collection
+
     def test_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,
@@ -425,6 +572,28 @@ class Workflow(Tools):
             name=name,
         )
 
+    def test_jobs_parallel(
+        self, input_parameters_list: List[Dict] = None, name: str = None,
+    ) -> "JobCollection":
+        """
+        Create and run test jobs (Test Query) in parallel. With this test query you will not be
+        charged with any data or processing credits, but have a preview of the job result.
+
+        Args:
+            input_parameters_list: List of dictionary of input parameters
+            name: The job name. Optional, by default the workflow name is assigned.
+
+        Returns:
+            The spawned test jobcollection object.
+        """
+        # TODO: Is it possible to have more than 10 concurrent jobs?
+        return self._helper_run_parallel_jobs(
+            input_parameters_list=input_parameters_list,
+            max_concurrent_jobs=10,
+            test_job=True,
+            name=name,
+        )
+
     def run_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,
@@ -447,6 +616,25 @@ class Workflow(Tools):
             input_parameters=input_parameters, track_status=track_status, name=name
         )
 
+    def run_jobs_parallel(
+        self, input_parameters_list: List[Dict] = None, name: str = None,
+    ) -> "JobCollection":
+        """
+        Create and run jobs in parallel.
+
+        Args:
+            input_parameters_list: List of dictionary of input parameters
+            name: The job name. Optional, by default the workflow name is assigned.
+
+        Returns:
+            The spawned test jobcollection object.
+        """
+        return self._helper_run_parallel_jobs(
+            input_parameters_list=input_parameters_list,
+            max_concurrent_jobs=10,
+            name=name,
+        )
+
     def get_jobs(self, return_json: bool = False) -> Union[List["Job"], Dict]:
         """
         Get all jobs associated with the workflow as job objects or json.
@@ -457,6 +645,8 @@ class Workflow(Tools):
         Returns:
             All job objects as a list, or alternatively the jobs info as json.
         """
+        # TODO: Need to return a JobCollection objects instead of list
+
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = response_json["data"]
