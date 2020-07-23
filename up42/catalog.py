@@ -78,7 +78,7 @@ class Catalog(Tools):
             "sentinel3",
             "sentinel5p",
         ],
-        limit: int = 1,
+        limit: int = 10,
         max_cloudcover: float = 100,
         sortby: str = "cloudCoverage",
         ascending: bool = True,
@@ -93,7 +93,7 @@ class Catalog(Tools):
             end_date: Query period ending day, format "2020-01-01".
             sensors: The satellite sensors to search for, one or multiple of
                 ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p"]
-            limit: The maximum number of search results to return.
+            limit: The maximum number of search results to return (1-max.500).
             max_cloudcover: Maximum cloudcover % - 100 will return all scenes, 8.4 will return all
                 scenes with 8.4 or less cloudcover.
             sortby: The property to sort by, "cloudCoverage", "acquisitionDate",
@@ -163,7 +163,7 @@ class Catalog(Tools):
                         "coordinates": [[[13.32113746,52.73971768],[13.15981158,52.2092959],
                         [13.62204483,52.15632025],[13.78859517,52.68655119],[13.32113746,
                         52.73971768]]]},
-                    "limit": 1,
+                    "limit": 10,
                     "sortby": [{"field" : "properties.cloudCoverage","direction" : "asc"}]
                     }
             ```

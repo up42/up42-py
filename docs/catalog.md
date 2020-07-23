@@ -9,7 +9,7 @@ Currently the following sensors are supported: **Pleiades, Spot, Sentinel1, Sent
 
 ```python
 import up42
-up42.authenticate(project_id=12345, project_api_key=12345)
+up42.authenticate(project_id="123", project_api_key="456")
 up42.authenticate(cfg_file="config.json")
 
 catalog = up42.initialize_catalog()
@@ -30,7 +30,7 @@ search_parameters = catalog.construct_parameters(geometry=aoi,
                                                  sensors=["pleiades"],
                                                  max_cloudcover=20,
                                                  sortby="cloudCoverage", 
-                                                 limit=5)
+                                                 limit=10)
 search_results = catalog.search(search_parameters=search_parameters)
 display(search_results.head())
 ```

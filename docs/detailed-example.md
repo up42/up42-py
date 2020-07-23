@@ -7,7 +7,7 @@ This overview of the most important functions repeats the previous 30-seconds-ex
 
 ```python
 import up42
-up42.authenticate(project_id="12345", project_api_key="12345")
+up42.authenticate(project_id="123", project_api_key="456")
 #up42.authenticate(cfg_file="config.json")
 
 project = up42.initialize_project()
