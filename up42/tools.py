@@ -248,7 +248,7 @@ class Tools:
             # Unpack results path dict in case of jobcollection.
             if isinstance(filepaths, dict):
                 filepaths = [
-                    item for sublist in list(filepaths.values()) for item in sublist
+                    item for sublist in list(filepaths.values()) for item in sublist  # type: ignore
                 ]
 
         plot_file_format = [".tif"]  # TODO: Add other fileformats.
