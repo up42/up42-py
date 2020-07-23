@@ -245,6 +245,9 @@ class Tools:
             if self.results is None:
                 raise ValueError("You first need to download the results!")
             filepaths = self.results
+            # Flatten jobcollection results dictionary.
+            if isinstance(filepaths, dict):
+                filepaths = [item for sublist in list(filepaths.values()) for item in sublist]
 
         plot_file_format = [".tif"]  # TODO: Add other fileformats.
         _plot_images(
