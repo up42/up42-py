@@ -505,6 +505,9 @@ class Workflow(Tools):
                 logger.info("Running this job as Test Query...")
                 logger.info("+++++++++++++++++++++++++++++++++")
 
+        if name is None:
+            name = self.info["name"]
+
         jobs_list = []
         job_nr = 0
         # Run all jobs in parallel batches of the max_concurrent_jobs (max. 10.)
@@ -518,15 +521,13 @@ class Workflow(Tools):
             for params in batch:
                 logger.info("Selected input_parameters: %s.", params)
 
-                if name is None:
-                    name = self.info["name"]
-                name = (
+                job_name = (
                     f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
                 )
 
                 url = (
                     f"{self.auth._endpoint()}/projects/{self.project_id}/"
-                    f"workflows/{self.workflow_id}/jobs?name={name}"
+                    f"workflows/{self.workflow_id}/jobs?name={job_name}"
                 )
                 response_json = self.auth._request(
                     request_type="POST", url=url, data=params
