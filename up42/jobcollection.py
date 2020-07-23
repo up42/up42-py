@@ -30,6 +30,8 @@ class JobCollection(Tools):
             f"auth={self.auth})"
         )
 
+    # TODO: Make class subscriptable.
+
     # TODO: Maybe add _jobs_info method?
     # TODO: Maybe add _jobs_status method?
 

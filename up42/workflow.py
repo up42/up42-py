@@ -635,18 +635,16 @@ class Workflow(Tools):
             name=name,
         )
 
-    def get_jobs(self, return_json: bool = False) -> Union[List["Job"], Dict]:
+    def get_jobs(self, return_json: bool = False) -> Union[JobCollection, Dict]:
         """
-        Get all jobs associated with the workflow as job objects or json.
+        Get all jobs associated with the workflow as a JobCollection or json.
 
         Args:
-            return_json: If true, returns the job info jsons instead of job objects.
+            return_json: If true, returns the job info jsons instead of a JobCollection.
 
         Returns:
-            All job objects as a list, or alternatively the jobs info as json.
+            A JobCollection, or alternatively the jobs info as json.
         """
-        # TODO: Need to return a JobCollection objects instead of list
-
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = response_json["data"]
@@ -668,7 +666,10 @@ class Workflow(Tools):
                 Job(self.auth, job_id=job["id"], project_id=self.project_id)
                 for job in tqdm(jobs_workflow_json)
             ]
-            return jobs
+            jobcollection = JobCollection(
+                auth=self.auth, project_id=self.project_id, jobs=jobs
+            )
+            return jobcollection
 
     def update_name(self, name: str = None, description: str = None) -> None:
         """

@@ -674,12 +674,12 @@ def test_get_jobs(workflow_mock):
         )
         m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
 
-        jobs = workflow_mock.get_jobs()
-        assert isinstance(jobs, list)
-        assert isinstance(jobs[0], Job)
-        assert jobs[0].job_id == job_id
+        jobcollection = workflow_mock.get_jobs()
+        assert isinstance(jobcollection, JobCollection)
+        assert isinstance(jobcollection.jobs[0], Job)
+        assert jobcollection.jobs[0].job_id == job_id
         assert (
-            len(jobs) == 1
+            len(jobcollection.jobs) == 1
         )  # Filters out the job that is not associated with the workflow object
 
 
@@ -687,10 +687,12 @@ def test_get_jobs(workflow_mock):
 @pytest.mark.live
 def test_get_jobs_live(workflow_live):
     # Skip by default as too many jobs in test project, triggers too many job info requests.
-    jobs = workflow_live.get_jobs()
-    assert isinstance(jobs, list)
-    assert isinstance(jobs[0], Job)
-    assert all([j.info["workflowId"] == workflow_live.workflow_id for j in jobs])
+    jobcollection = workflow_live.get_jobs()
+    assert isinstance(jobcollection, list)
+    assert isinstance(jobcollection.jobs[0], Job)
+    assert all(
+        [j.info["workflowId"] == workflow_live.workflow_id for j in jobcollection.jobs]
+    )
 
 
 # TODO: Resolve
