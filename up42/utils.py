@@ -296,7 +296,9 @@ def _plot_images(
             show(
                 img_array, transform=src.transform, title=title, ax=axs[idx],
             )
-        axs[idx].set_axis_off()
+    # Deactivate empty axes
+    for i in range(len(imagepaths), len(axs)):
+        axs[i].set_axis_off()
     plt.tight_layout()
     plt.show()
 
