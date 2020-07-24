@@ -245,7 +245,7 @@ class DrawFoliumOverride(Draw):
 
 def _plot_images(
     plot_file_format: List[str],
-    figsize: Tuple[int, int] = (12, 12),
+    figsize: Tuple[int, int] = (14, 8),
     filepaths: List[Union[str, Path]] = None,
     titles: List[str] = None,
 ) -> None:
@@ -295,11 +295,14 @@ def _plot_images(
             # TODO: Handle more band configurations.
             # TODO: add histogram equalization?
             show(
-                img_array, transform=src.transform, title=title, ax=axs[idx],
+                img_array,
+                transform=src.transform,
+                title=title,
+                ax=axs[idx],
+                aspect="auto",
             )
         axs[idx].set_axis_off()
-
-    plt.axis('off')
+    plt.axis("off")
     plt.tight_layout()
     plt.show()
 
