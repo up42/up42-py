@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 from .auth import Auth
 from .job import Job
+from .jobcollection import JobCollection
 from .tools import Tools
 from .utils import get_logger
 from .workflow import Workflow
@@ -107,18 +108,20 @@ class Project(Tools):
             ]
             return workflows
 
-    def get_jobs(self, return_json: bool = False) -> Union[List["Job"], Dict]:
+    def get_jobs(self, return_json: bool = False) -> Union[JobCollection, Dict]:
         """
-        Get all jobs in the project as job objects or json.
+        Get all jobs in the project as a JobCollection or json.
 
-        Use Workflow().get_job() to get jobs associated with a specific workflow.
+        Use Workflow().get_job() to get a JobCollection with jobs associated with a
+        specific workflow.
 
         Args:
-            return_json: If true, returns the job info jsons instead of job objects.
+            return_json: If true, returns the job info jsons instead of JobCollection.
 
         Returns:
-            All job objects as a list, or alternatively the jobs info as json.
+            All job objects in a JobCollection, or alternatively the jobs info as json.
         """
+        # TODO: Add selection for test/real job.
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = response_json["data"]
@@ -132,7 +135,10 @@ class Project(Tools):
                 Job(self.auth, job_id=job["id"], project_id=self.project_id)
                 for job in tqdm(jobs_json)
             ]
-            return jobs
+            jobcollection = JobCollection(
+                auth=self.auth, project_id=self.project_id, jobs=jobs
+            )
+            return jobcollection
 
     def get_project_settings(self) -> List:
         """

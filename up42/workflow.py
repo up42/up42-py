@@ -374,6 +374,8 @@ class Workflow(Tools):
         Returns:
             List of dictionary of constructed input parameters.
         """
+        # TODO: Make list if single argument is given.
+        # TODO: Rename arguments
         result_params = []
         # scene_ids mapped to geometries
         if scene_ids is not None and geometries is not None:
@@ -503,6 +505,9 @@ class Workflow(Tools):
                 logger.info("Running this job as Test Query...")
                 logger.info("+++++++++++++++++++++++++++++++++")
 
+        if name is None:
+            name = self.info["name"]
+
         jobs_list = []
         job_nr = 0
         # Run all jobs in parallel batches of the max_concurrent_jobs (max. 10.)
@@ -516,15 +521,13 @@ class Workflow(Tools):
             for params in batch:
                 logger.info("Selected input_parameters: %s.", params)
 
-                if name is None:
-                    name = self.info["name"]
-                name = (
+                job_name = (
                     f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
                 )
 
                 url = (
                     f"{self.auth._endpoint()}/projects/{self.project_id}/"
-                    f"workflows/{self.workflow_id}/jobs?name={name}"
+                    f"workflows/{self.workflow_id}/jobs?name={job_name}"
                 )
                 response_json = self.auth._request(
                     request_type="POST", url=url, data=params
@@ -629,24 +632,24 @@ class Workflow(Tools):
         Returns:
             The spawned test jobcollection object.
         """
-        return self._helper_run_parallel_jobs(
+        jobcollection = self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
             max_concurrent_jobs=10,
             name=name,
         )
+        return jobcollection
 
-    def get_jobs(self, return_json: bool = False) -> Union[List["Job"], Dict]:
+    def get_jobs(self, return_json: bool = False) -> Union[JobCollection, List[Dict]]:
         """
-        Get all jobs associated with the workflow as job objects or json.
+        Get all jobs associated with the workflow as a JobCollection or json.
 
         Args:
-            return_json: If true, returns the job info jsons instead of job objects.
+            return_json: If true, returns the job info jsons instead of a JobCollection.
 
         Returns:
-            All job objects as a list, or alternatively the jobs info as json.
+            A JobCollection, or alternatively the jobs info as json.
         """
-        # TODO: Need to return a JobCollection objects instead of list
-
+        # TODO: Add selection for test/real job.
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = response_json["data"]
@@ -668,7 +671,10 @@ class Workflow(Tools):
                 Job(self.auth, job_id=job["id"], project_id=self.project_id)
                 for job in tqdm(jobs_workflow_json)
             ]
-            return jobs
+            jobcollection = JobCollection(
+                auth=self.auth, project_id=self.project_id, jobs=jobs
+            )
+            return jobcollection
 
     def update_name(self, name: str = None, description: str = None) -> None:
         """

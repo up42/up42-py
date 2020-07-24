@@ -5,11 +5,7 @@ from .auth import Auth
 from .job import Job
 from .tools import Tools
 
-from .utils import (
-    get_logger,
-    download_results_from_gcs,
-    download_results_from_gcs_without_unpacking,
-)
+from .utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -33,6 +29,8 @@ class JobCollection(Tools):
             f"JobCollection(jobs={self.jobs}, project_id={self.project_id}, "
             f"auth={self.auth})"
         )
+
+    # TODO: Make class subscriptable.
 
     # TODO: Maybe add _jobs_info method?
     # TODO: Maybe add _jobs_status method?
@@ -59,7 +57,7 @@ class JobCollection(Tools):
             unpacking: By default the final result which is in TAR archive format will be unpacked.
 
         Returns:
-            List of the downloaded results' filepaths.
+            Dict of the job_ids and jobs' downloaded results filepaths.
         """
         if output_directory is None:
             output_directory = Path.cwd() / f"project_{self.auth.project_id}"
@@ -67,23 +65,12 @@ class JobCollection(Tools):
             output_directory = Path(output_directory)
 
         out_filepaths = {}
-        for job_id in self.jobs_id:
-            # TODO: Overwrite argument
-            logger.info("Downloading results of job %s", job_id)
-
-            output_directory_id = output_directory / f"job_{job_id}"
-            output_directory_id.mkdir(parents=True, exist_ok=True)
-            logger.info("Download directory: %s", str(output_directory_id))
-
-            download_url = self._get_download_url(job_id)
-            if unpacking:
-                out_filepaths[job_id] = download_results_from_gcs(
-                    download_url=download_url, output_directory=output_directory_id,
-                )
-            else:
-                out_filepaths[job_id] = download_results_from_gcs_without_unpacking(
-                    download_url=download_url, output_directory=output_directory_id,
-                )
+        for job in self.jobs:
+            out_dir = output_directory / f"job_{job.job_id}"
+            out_filepaths_job = job.download_results(
+                output_directory=out_dir, unpacking=unpacking
+            )
+            out_filepaths[job.job_id] = out_filepaths_job
 
         self.results = out_filepaths
         return out_filepaths
