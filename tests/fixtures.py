@@ -114,9 +114,37 @@ def job_mock(auth_mock):
 
 
 @pytest.fixture()
+def jobs_mock(auth_mock):
+    with requests_mock.Mocker() as m:
+        job_id = "jobid_123"
+        url_job_info = (
+            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
+
+        job1 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id)
+
+        job_id = "jobid_456"
+        url_job_info = (
+            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
+
+        job2 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id)
+    return [job1, job2]
+
+
+@pytest.fixture()
 def jobcollection_mock(auth_mock, job_mock):
     return JobCollection(
         auth=auth_mock, project_id=auth_mock.project_id, jobs=[job_mock]
+    )
+
+
+@pytest.fixture()
+def jobcollection_multiple_mock(auth_mock, jobs_mock):
+    return JobCollection(
+        auth=auth_mock, project_id=auth_mock.project_id, jobs=jobs_mock
     )
 
 

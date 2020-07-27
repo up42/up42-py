@@ -8,7 +8,9 @@ import requests_mock
 from .fixtures import (
     auth_mock,
     job_mock,
+    jobs_mock,
     jobcollection_mock,
+    jobcollection_multiple_mock,
     auth_live,
     jobs_live,
     jobcollection_live,
@@ -17,6 +19,10 @@ from .fixtures import (
 
 def test_jobcollection(jobcollection_mock):
     assert len(jobcollection_mock.jobs) == 1
+
+
+def test_jobcollection_multiple(jobcollection_multiple_mock):
+    assert len(jobcollection_multiple_mock.jobs) == 2
 
 
 def test_jobcollection_download_result(jobcollection_mock):
