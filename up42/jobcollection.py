@@ -35,15 +35,6 @@ class JobCollection(Tools):
     # TODO: Maybe add _jobs_info method?
     # TODO: Maybe add _jobs_status method?
 
-    def _get_download_url(self, job_id) -> str:
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{job_id}"
-            f"/downloads/results/"
-        )
-        response_json = self.auth._request(request_type="GET", url=url)
-        download_url = response_json["data"]["url"]
-        return download_url
-
     def download_results(
         self, output_directory: Union[str, Path, None] = None, unpacking: bool = True
     ) -> Dict[str, List[str]]:
