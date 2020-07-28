@@ -203,6 +203,30 @@ def test_job_download_result(job_mock):
             assert len(out_files) == 2
 
 
+def test_job_download_result_nounpacking(job_mock):
+    with requests_mock.Mocker() as m:
+        download_url = "http://up42.api.com/abcdef"
+        url_download_result = (
+            f"{job_mock.auth._endpoint()}/projects/"
+            f"{job_mock.project_id}/jobs/{job_mock.job_id}/downloads/results/"
+        )
+        m.get(url_download_result, json={"data": {"url": download_url}, "error": {}})
+
+        out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+        out_tgz_file = open(out_tgz, "rb")
+        m.get(
+            url=download_url,
+            content=out_tgz_file.read(),
+            headers={"x-goog-stored-content-length": "163"},
+        )
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            out_files = job_mock.download_results(tempdir, unpacking=False)
+            for file in out_files:
+                assert Path(file).exists()
+            assert len(out_files) == 1
+
+
 @pytest.mark.live
 def test_job_download_result_live(job_live):
     with tempfile.TemporaryDirectory() as tempdir:
