@@ -250,9 +250,9 @@ def test_job_download_result_no_tiff_live(auth_live):
         )
         out_files = job.download_results(Path(tempdir))
         assert Path(out_files[0]).exists()
-        assert Path(out_files[0]).suffix == ".nc"
         assert Path(out_files[1]).exists()
-        assert Path(out_files[1]).name == "data.json"
+        assert any(".nc" in s for s in out_files)
+        assert any("data.json" in s for s in out_files)
         assert len(out_files) == 2
 
 
