@@ -1,5 +1,6 @@
 from pathlib import Path
 import tempfile
+import geojson
 
 import pytest
 import requests_mock
@@ -43,16 +44,60 @@ def test_jobcollection_download_result(jobcollection_mock):
         )
 
         with tempfile.TemporaryDirectory() as tempdir:
-            out_dict = jobcollection_mock.download_results(tempdir)
+            out_dict = jobcollection_mock.download_results(tempdir, merge=False)
             for job_id in out_dict:
                 assert Path(out_dict[job_id][0]).exists()
                 assert len(out_dict[job_id]) == 2
 
 
+def test_jobcollection_download_result_merged(jobcollection_multiple_mock):
+    with requests_mock.Mocker() as m:
+        download_url = "http://up42.api.com/abcdef"
+        url_download_result_1 = (
+            f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
+            f"{jobcollection_multiple_mock.project_id}/jobs/{jobcollection_multiple_mock.jobs_id[0]}/downloads/results/"
+        )
+        url_download_result_2 = (
+            f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
+            f"{jobcollection_multiple_mock.project_id}/jobs/{jobcollection_multiple_mock.jobs_id[1]}/downloads/results/"
+        )
+        m.get(url_download_result_1, json={"data": {"url": download_url}, "error": {}})
+        m.get(url_download_result_2, json={"data": {"url": download_url}, "error": {}})
+
+        out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+        out_tgz_file = open(out_tgz, "rb")
+        m.get(
+            url=download_url,
+            content=out_tgz_file.read(),
+            headers={"x-goog-stored-content-length": "163"},
+        )
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            out_dict = jobcollection_multiple_mock.download_results(tempdir, merge=True)
+            print(out_dict)
+            assert len(out_dict) == 3
+            assert Path(out_dict["merged_result"][0]).exists()
+            assert len(out_dict["merged_result"]) == 1
+            for job_id in out_dict:
+                if job_id not in "merged_result":
+                    assert Path(out_dict[job_id][0]).exists()
+                    assert len(out_dict[job_id]) == 2
+
+            with open(out_dict["merged_result"][0]) as src:
+                merged_data_json = geojson.load(src)
+                print(merged_data_json)
+                assert len(merged_data_json.features) == 2
+                assert merged_data_json.features[0].properties["job_id"] == "jobid_123"
+                assert (
+                    "jobid_123"
+                    in merged_data_json.features[0].properties["up42.data_path"]
+                )
+                assert (tempdir / Path(merged_data_json.features[0].properties["up42.data_path"])).exists()
+
 @pytest.mark.live
 def test_jobcollection_download_result_live(jobcollection_live):
     with tempfile.TemporaryDirectory() as tempdir:
-        out_files_dict = jobcollection_live.download_results(Path(tempdir))
+        out_files_dict = jobcollection_live.download_results(Path(tempdir), merge=False)
         jobid_1, jobid_2 = jobcollection_live.jobs_id
         for _, value in out_files_dict.items():
             for p in value:
