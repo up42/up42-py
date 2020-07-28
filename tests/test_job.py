@@ -256,6 +256,23 @@ def test_job_download_result_no_tiff_live(auth_live):
         assert len(out_files) == 2
 
 
+@pytest.mark.live
+def test_job_download_result_dimap_live(auth_live):
+    with tempfile.TemporaryDirectory() as tempdir:
+        job = up42.Job(
+            auth=auth_live,
+            project_id=auth_live.project_id,
+            job_id=os.getenv("TEST_UP42_JOB_ID_DIMAP_FILE"),
+        )
+        out_files = job.download_results(Path(tempdir))
+        print(out_files)
+        assert Path(out_files[0]).exists()
+        assert Path(out_files[20]).exists()
+        assert Path(out_files[1]).exists()
+        assert Path(out_files[1]).name == "data.json"
+        assert len(out_files) == 44
+
+
 @pytest.mark.skip
 @pytest.mark.live
 def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live):
