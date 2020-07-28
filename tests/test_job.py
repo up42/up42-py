@@ -198,9 +198,13 @@ def test_job_download_result(job_mock):
 
         with tempfile.TemporaryDirectory() as tempdir:
             out_files = job_mock.download_results(tempdir)
-            for file in out_files:
-                assert Path(file).exists()
-            assert len(out_files) == 2
+            out_paths = [Path(p) for p in out_files]
+            for path in out_paths:
+                assert path.exists()
+            assert len(out_paths) == 2
+            assert out_paths[0].name == "data.json"
+            assert out_paths[1].parent.exists()
+            assert out_paths[1].parent.is_dir()
 
 
 def test_job_download_result_nounpacking(job_mock):
