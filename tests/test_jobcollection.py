@@ -92,7 +92,11 @@ def test_jobcollection_download_result_merged(jobcollection_multiple_mock):
                     "jobid_123"
                     in merged_data_json.features[0].properties["up42.data_path"]
                 )
-                assert (tempdir / Path(merged_data_json.features[0].properties["up42.data_path"])).exists()
+                assert (
+                    tempdir
+                    / Path(merged_data_json.features[0].properties["up42.data_path"])
+                ).exists()
+
 
 @pytest.mark.live
 def test_jobcollection_download_result_live(jobcollection_live):
