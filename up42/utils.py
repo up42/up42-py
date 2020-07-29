@@ -76,12 +76,8 @@ def download_results_from_gcs(
         tar.extractall(path=output_directory)
         output_folder_path = output_directory / "output"
         for src_path in output_directory.glob("output/**/*"):
-            # Try except block to exclude top level directories
-            try:
-                dst_path = output_directory / src_path.relative_to(output_folder_path)
-                shutil.move(str(src_path), str(dst_path))
-            except ValueError:
-                pass
+            dst_path = output_directory / src_path.relative_to(output_folder_path)
+            shutil.move(str(src_path), str(dst_path))
         out_filepaths = [str(x) for x in output_directory.glob("**/*") if x.is_file()]
 
     logger.info(
