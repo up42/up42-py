@@ -12,6 +12,7 @@ from .utils import get_logger
 
 logger = get_logger(__name__)
 
+
 class JobCollection(Tools):
     def __init__(self, auth: Auth, project_id: str, jobs: List[Job]):
         """
