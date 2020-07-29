@@ -75,7 +75,7 @@ def download_results_from_gcs(
     with tarfile.open(tgz_file) as tar:
         tar.extractall(path=output_directory)
         output_folder_path = output_directory / "output"
-        for src_path in output_directory.glob("output/**/*"):
+        for src_path in output_folder_path.glob("**/*"):
             dst_path = output_directory / src_path.relative_to(output_folder_path)
             shutil.move(str(src_path), str(dst_path))
         out_filepaths = [str(x) for x in output_directory.glob("**/*") if x.is_file()]
