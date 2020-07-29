@@ -93,13 +93,18 @@ class JobCollection(Tools):
         else:
             output_directory = Path(output_directory)
 
-        out_filepaths = {}
-        for job in self.jobs:
+        def download_results_worker(job, output_directory, unpacking):
             out_dir = output_directory / f"job_{job.job_id}"
             out_filepaths_job = job.download_results(
                 output_directory=out_dir, unpacking=unpacking
             )
-            out_filepaths[job.job_id] = out_filepaths_job
+            return out_filepaths_job
+
+        out_filepaths = self._jobs_iterator(
+            download_results_worker,
+            output_directory=output_directory,
+            unpacking=unpacking,
+        )
 
         if merge:
             merged_data_json = output_directory / "data.json"
