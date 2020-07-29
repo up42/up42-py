@@ -78,7 +78,7 @@ class JobCollection(Tools):
                 out_features = []
                 for job_id in out_filepaths:
                     all_files = out_filepaths[job_id]
-                    data_json = [d for d in all_files if d.endswith("data.json")][0]
+                    data_json = [d for d in all_files if Path(d).name == "data.json"][0]
                     with open(data_json) as src:
                         data_json_fc = geojson.load(src)
                         for feat in data_json_fc.features:
