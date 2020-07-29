@@ -26,7 +26,7 @@ def test_jobcollection_multiple(jobcollection_multiple_mock):
     assert len(jobcollection_multiple_mock.jobs) == 2
 
 
-def test_jobcollection_download_result(jobcollection_single_mock):
+def test_jobcollection_download_results(jobcollection_single_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"
         url_download_result = (
@@ -50,7 +50,7 @@ def test_jobcollection_download_result(jobcollection_single_mock):
                 assert len(out_dict[job_id]) == 2
 
 
-def test_jobcollection_download_result_merged(jobcollection_multiple_mock):
+def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"
         url_download_result_1 = (
@@ -99,7 +99,7 @@ def test_jobcollection_download_result_merged(jobcollection_multiple_mock):
 
 
 @pytest.mark.live
-def test_jobcollection_download_result_live(jobcollection_live):
+def test_jobcollection_download_results_live(jobcollection_live):
     with tempfile.TemporaryDirectory() as tempdir:
         out_files_dict = jobcollection_live.download_results(Path(tempdir), merge=False)
         jobid_1, jobid_2 = jobcollection_live.jobs_id
