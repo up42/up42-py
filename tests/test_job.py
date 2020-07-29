@@ -198,9 +198,37 @@ def test_job_download_result(job_mock):
 
         with tempfile.TemporaryDirectory() as tempdir:
             out_files = job_mock.download_results(tempdir)
+            out_paths = [Path(p) for p in out_files]
+            for path in out_paths:
+                assert path.exists()
+            assert len(out_paths) == 2
+            assert out_paths[0].name == "data.json"
+            assert out_paths[1].parent.exists()
+            assert out_paths[1].parent.is_dir()
+
+
+def test_job_download_result_nounpacking(job_mock):
+    with requests_mock.Mocker() as m:
+        download_url = "http://up42.api.com/abcdef"
+        url_download_result = (
+            f"{job_mock.auth._endpoint()}/projects/"
+            f"{job_mock.project_id}/jobs/{job_mock.job_id}/downloads/results/"
+        )
+        m.get(url_download_result, json={"data": {"url": download_url}, "error": {}})
+
+        out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+        out_tgz_file = open(out_tgz, "rb")
+        m.get(
+            url=download_url,
+            content=out_tgz_file.read(),
+            headers={"x-goog-stored-content-length": "163"},
+        )
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            out_files = job_mock.download_results(tempdir, unpacking=False)
             for file in out_files:
                 assert Path(file).exists()
-            assert len(out_files) == 2
+            assert len(out_files) == 1
 
 
 @pytest.mark.live
@@ -222,10 +250,27 @@ def test_job_download_result_no_tiff_live(auth_live):
         )
         out_files = job.download_results(Path(tempdir))
         assert Path(out_files[0]).exists()
-        assert Path(out_files[0]).suffix == ".nc"
+        assert Path(out_files[1]).exists()
+        assert any(".nc" in s for s in out_files)
+        assert any("data.json" in s for s in out_files)
+        assert len(out_files) == 2
+
+
+@pytest.mark.live
+def test_job_download_result_dimap_live(auth_live):
+    with tempfile.TemporaryDirectory() as tempdir:
+        job = up42.Job(
+            auth=auth_live,
+            project_id=auth_live.project_id,
+            job_id=os.getenv("TEST_UP42_JOB_ID_DIMAP_FILE"),
+        )
+        out_files = job.download_results(Path(tempdir))
+        print(out_files)
+        assert Path(out_files[0]).exists()
+        assert Path(out_files[20]).exists()
         assert Path(out_files[1]).exists()
         assert Path(out_files[1]).name == "data.json"
-        assert len(out_files) == 2
+        assert len(out_files) == 44
 
 
 @pytest.mark.skip

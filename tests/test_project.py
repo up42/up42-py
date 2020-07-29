@@ -174,4 +174,5 @@ def test_get_project_settings_live(project_live):
     project_settings = project_live.get_project_settings()
     assert isinstance(project_settings, list)
     assert len(project_settings) == 3
-    assert project_settings[0]["name"] == "MAX_CONCURRENT_JOBS"
+    project_settings_dict = {item["name"]: item for item in project_settings}
+    assert "MAX_CONCURRENT_JOBS" in project_settings_dict.keys()

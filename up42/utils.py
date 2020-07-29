@@ -2,6 +2,7 @@ import copy
 import logging
 from typing import Dict, List, Union, Tuple
 from pathlib import Path
+import shutil
 import tempfile
 import tarfile
 import math
@@ -71,18 +72,13 @@ def download_results_from_gcs(
                 f"Connection error, please try again! {err}"
             )
 
-    # Unpack and exclude data.json
-    out_filepaths: List[str] = []
     with tarfile.open(tgz_file) as tar:
-        members = tar.getmembers()
-        files = [f for f in members if f.isfile()]
-        for file in files:
-            f = tar.extractfile(file)
-            content = f.read()  # type: ignore
-            out_fp = output_directory / f"{Path(file.name).name}"
-            with open(out_fp, "wb") as dst:
-                dst.write(content)
-            out_filepaths.append(str(out_fp))
+        tar.extractall(path=output_directory)
+        output_folder_path = output_directory / "output"
+        for src_path in output_folder_path.glob("**/*"):
+            dst_path = output_directory / src_path.relative_to(output_folder_path)
+            shutil.move(str(src_path), str(dst_path))
+        out_filepaths = [str(x) for x in output_directory.glob("**/*") if x.is_file()]
 
     logger.info(
         "Download successful of %s files to output_directory '%s': %s",

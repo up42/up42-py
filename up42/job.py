@@ -180,8 +180,7 @@ class Job(Tools):
         self, output_directory: Union[str, Path, None] = None, unpacking: bool = True
     ) -> List[str]:
         """
-        Downloads the job results. Unpacking the final file will happen as default. However
-        please note in the case of exotic formats like SAFE or DIMAP, the final result should not be unpacked.
+        Downloads the job results. Unpacking the final file will happen as default.
 
         Args:
             output_directory: The file output directory, defaults to the current working
