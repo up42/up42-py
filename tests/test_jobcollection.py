@@ -40,6 +40,35 @@ def test_job_iterator(jobcollection_multiple_mock):
     assert len(res) == 2
     assert res["jobid_123"] == 5
     assert res["jobid_456"] == 5
+
+
+def test_jobcollection_get_jobs_info(jobcollection_single_mock):
+    with requests_mock.Mocker() as m:
+        url_job_info = (
+            f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        )
+        m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
+
+        info = jobcollection_single_mock.get_jobs_info()
+    assert isinstance(info, dict)
+    assert info[jobcollection_single_mock[0].job_id] == {"xyz": 789}
+
+
+@pytest.mark.parametrize("status", ["NOT STARTED", "PENDING", "RUNNING"])
+def test_jobcollection_get_jobs_status(jobcollection_single_mock, status):
+    with requests_mock.Mocker() as m:
+        url_job_info = (
+            f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+
+        job_statuses = jobcollection_single_mock.get_jobs_status()
+    assert isinstance(job_statuses, dict)
+    assert job_statuses[jobcollection_single_mock[0].job_id] == status
+
+
 def test_jobcollection_download_results(jobcollection_single_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"

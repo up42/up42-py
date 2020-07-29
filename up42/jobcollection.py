@@ -36,8 +36,6 @@ class JobCollection(Tools):
     def __getitem__(self, index: int) -> Job:
         return self.jobs[index]
 
-    # TODO: Maybe add _jobs_info method?
-    # TODO: Maybe add _jobs_status method?
     def _jobs_iterator(self, worker: Callable, **kwargs) -> Dict[str, Any]:
         """Helper function to apply `worker` on all jobs in the collection.
         `worker` needs to accept `Job` as first argument. For example, a
@@ -50,6 +48,24 @@ class JobCollection(Tools):
         for job in self.jobs:
             out_dict[job.job_id] = worker(job, **kwargs)
         return out_dict
+
+    def get_jobs_info(self) -> Dict[str, Dict]:
+        """
+        Gets the jobs information.
+
+        Returns:
+            A dictionary with key being the job_id and value the job information.
+        """
+        return self._jobs_iterator(lambda job: job._get_info())
+
+    def get_jobs_status(self) -> Dict[str, str]:
+        """
+        Gets the jobs status.
+
+        Returns:
+            A dictionary with key being the job_id and value the job status.
+        """
+        return self._jobs_iterator(lambda job: job.get_status())
 
     def download_results(
         self,
