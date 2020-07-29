@@ -36,6 +36,10 @@ class JobCollection(Tools):
     def __getitem__(self, index: int) -> Job:
         return self.jobs[index]
 
+    def __iter__(self):
+        for job in self.jobs:
+            yield job
+
     def _jobs_iterator(self, worker: Callable, **kwargs) -> Dict[str, Any]:
         """
         Helper function to apply `worker` on all jobs in the collection.

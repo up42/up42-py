@@ -145,6 +145,11 @@ def test_jobcollection_subscripted(jobcollection_single_mock):
     assert jobcollection_single_mock[0].job_id == "jobid_123"
 
 
+def test_jobcollection_iterator(jobcollection_multiple_mock):
+    for job in jobcollection_multiple_mock:
+        assert isinstance(job, Job)
+
+
 @pytest.mark.live
 def test_jobcollection_download_results_live(jobcollection_live):
     with tempfile.TemporaryDirectory() as tmpdir:
