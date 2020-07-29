@@ -36,12 +36,12 @@ def test_jobcollection_download_results(jobcollection_single_mock):
         m.get(url_download_result, json={"data": {"url": download_url}, "error": {}})
 
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-        out_tgz_file = open(out_tgz, "rb")
-        m.get(
-            url=download_url,
-            content=out_tgz_file.read(),
-            headers={"x-goog-stored-content-length": "163"},
-        )
+        with open(out_tgz, "rb") as out_tgz_file:
+            m.get(
+                url=download_url,
+                content=out_tgz_file.read(),
+                headers={"x-goog-stored-content-length": "163"},
+            )
 
         with tempfile.TemporaryDirectory() as tempdir:
             out_dict = jobcollection_single_mock.download_results(tempdir, merge=False)
@@ -65,12 +65,12 @@ def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
         m.get(url_download_result_2, json={"data": {"url": download_url}, "error": {}})
 
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-        out_tgz_file = open(out_tgz, "rb")
-        m.get(
-            url=download_url,
-            content=out_tgz_file.read(),
-            headers={"x-goog-stored-content-length": "163"},
-        )
+        with open(out_tgz, "rb") as out_tgz_file:
+            m.get(
+                url=download_url,
+                content=out_tgz_file.read(),
+                headers={"x-goog-stored-content-length": "163"},
+            )
 
         with tempfile.TemporaryDirectory() as tempdir:
             out_dict = jobcollection_multiple_mock.download_results(tempdir, merge=True)
