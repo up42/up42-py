@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Callable, Any
 from pathlib import Path
 
 import geojson
@@ -38,6 +38,18 @@ class JobCollection(Tools):
 
     # TODO: Maybe add _jobs_info method?
     # TODO: Maybe add _jobs_status method?
+    def _jobs_iterator(self, worker: Callable, **kwargs) -> Dict[str, Any]:
+        """Helper function to apply `worker` on all jobs in the collection.
+        `worker` needs to accept `Job` as first argument. For example, a
+        lambda function that returns the job info:
+        ```python
+        self._jobs_iterator(lambda job: job._get_info())
+        ```
+        """
+        out_dict = {}
+        for job in self.jobs:
+            out_dict[job.job_id] = worker(job, **kwargs)
+        return out_dict
 
     def download_results(
         self,

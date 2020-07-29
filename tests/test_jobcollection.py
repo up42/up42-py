@@ -28,6 +28,18 @@ def test_jobcollection_multiple(jobcollection_multiple_mock):
     assert len(jobcollection_multiple_mock.jobs) == 2
 
 
+def test_job_iterator(jobcollection_multiple_mock):
+    worker = lambda job: 1
+    res = jobcollection_multiple_mock._jobs_iterator(worker)
+    assert len(res) == 2
+    assert res["jobid_123"] == 1
+    assert res["jobid_456"] == 1
+
+    worker = lambda job, add: add
+    res = jobcollection_multiple_mock._jobs_iterator(worker, add=5)
+    assert len(res) == 2
+    assert res["jobid_123"] == 5
+    assert res["jobid_456"] == 5
 def test_jobcollection_download_results(jobcollection_single_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"
