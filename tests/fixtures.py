@@ -135,7 +135,7 @@ def jobs_mock(auth_mock):
 
 
 @pytest.fixture()
-def jobcollection_mock(auth_mock, job_mock):
+def jobcollection_single_mock(auth_mock, job_mock):
     return JobCollection(
         auth=auth_mock, project_id=auth_mock.project_id, jobs=[job_mock]
     )

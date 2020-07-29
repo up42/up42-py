@@ -10,7 +10,7 @@ from .fixtures import (
     auth_mock,
     job_mock,
     jobs_mock,
-    jobcollection_mock,
+    jobcollection_single_mock,
     jobcollection_multiple_mock,
     auth_live,
     jobs_live,
@@ -18,20 +18,20 @@ from .fixtures import (
 )
 
 
-def test_jobcollection(jobcollection_mock):
-    assert len(jobcollection_mock.jobs) == 1
+def test_jobcollection(jobcollection_single_mock):
+    assert len(jobcollection_single_mock.jobs) == 1
 
 
 def test_jobcollection_multiple(jobcollection_multiple_mock):
     assert len(jobcollection_multiple_mock.jobs) == 2
 
 
-def test_jobcollection_download_result(jobcollection_mock):
+def test_jobcollection_download_result(jobcollection_single_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"
         url_download_result = (
-            f"{jobcollection_mock.auth._endpoint()}/projects/"
-            f"{jobcollection_mock.project_id}/jobs/{jobcollection_mock.jobs_id[0]}/downloads/results/"
+            f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock.jobs_id[0]}/downloads/results/"
         )
         m.get(url_download_result, json={"data": {"url": download_url}, "error": {}})
 
@@ -44,7 +44,7 @@ def test_jobcollection_download_result(jobcollection_mock):
         )
 
         with tempfile.TemporaryDirectory() as tempdir:
-            out_dict = jobcollection_mock.download_results(tempdir, merge=False)
+            out_dict = jobcollection_single_mock.download_results(tempdir, merge=False)
             for job_id in out_dict:
                 assert Path(out_dict[job_id][0]).exists()
                 assert len(out_dict[job_id]) == 2

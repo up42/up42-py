@@ -19,7 +19,7 @@ from .fixtures import (
     workflow_mock,
     workflow_live,
     job_mock,
-    jobcollection_mock,
+    jobcollection_single_mock,
 )
 import up42
 
