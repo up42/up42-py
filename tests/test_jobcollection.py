@@ -53,16 +53,15 @@ def test_jobcollection_download_results(jobcollection_single_mock):
 def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"
-        url_download_result_1 = (
-            f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
-            f"{jobcollection_multiple_mock.project_id}/jobs/{jobcollection_multiple_mock.jobs_id[0]}/downloads/results/"
-        )
-        url_download_result_2 = (
-            f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
-            f"{jobcollection_multiple_mock.project_id}/jobs/{jobcollection_multiple_mock.jobs_id[1]}/downloads/results/"
-        )
-        m.get(url_download_result_1, json={"data": {"url": download_url}, "error": {}})
-        m.get(url_download_result_2, json={"data": {"url": download_url}, "error": {}})
+
+        for job in jobcollection_multiple_mock.jobs:
+            url_download_result = (
+                f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
+                f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}/downloads/results/"
+            )
+            m.get(
+                url_download_result, json={"data": {"url": download_url}, "error": {}}
+            )
 
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         with open(out_tgz, "rb") as out_tgz_file:
