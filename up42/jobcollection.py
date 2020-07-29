@@ -33,7 +33,8 @@ class JobCollection(Tools):
             f"auth={self.auth})"
         )
 
-    # TODO: Make class subscriptable.
+    def __getitem__(self, index: int) -> Job:
+        return self.jobs[index]
 
     # TODO: Maybe add _jobs_info method?
     # TODO: Maybe add _jobs_status method?

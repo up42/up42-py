@@ -5,6 +5,8 @@ import geojson
 import pytest
 import requests_mock
 
+from .context import Job
+
 # pylint: disable=unused-import,wrong-import-order
 from .fixtures import (
     auth_mock,
@@ -95,6 +97,11 @@ def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
                     tmpdir
                     / Path(merged_data_json.features[0].properties["up42.data_path"])
                 ).exists()
+
+
+def test_jobcollection_subscripted(jobcollection_single_mock):
+    assert isinstance(jobcollection_single_mock[0], Job)
+    assert jobcollection_single_mock[0].job_id == "jobid_123"
 
 
 @pytest.mark.live
