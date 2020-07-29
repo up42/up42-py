@@ -139,29 +139,5 @@ class JobCollection(Tools):
 
             out_filepaths["merged_result"] = [str(merged_data_json)]
 
-        if merge:
-            merged_data_json = output_directory / "data.json"
-            with open(merged_data_json, "w") as dst:
-                out_features = []
-                for job_id in out_filepaths:
-                    all_files = out_filepaths[job_id]
-                    data_json = [d for d in all_files if Path(d).name == "data.json"][0]
-                    with open(data_json) as src:
-                        data_json_fc = geojson.load(src)
-                        for feat in data_json_fc.features:
-                            feat.properties["job_id"] = job_id
-                            try:
-                                feat.properties[
-                                    "up42.data_path"
-                                ] = f"job_{job_id}/{feat.properties['up42.data_path']}"
-                            except KeyError:
-                                logger.warning(
-                                    "data.json does not contain up42.data_path, skipping..."
-                                )
-                            out_features.append(feat)
-                geojson.dump(FeatureCollection(out_features), dst)
-
-            out_filepaths["merged_result"] = [str(merged_data_json)]
-
         self.results = out_filepaths
         return out_filepaths
