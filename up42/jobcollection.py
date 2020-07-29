@@ -12,7 +12,6 @@ from .utils import get_logger
 
 logger = get_logger(__name__)
 
-# pylint: disable=duplicate-code
 class JobCollection(Tools):
     def __init__(self, auth: Auth, project_id: str, jobs: List[Job]):
         """
