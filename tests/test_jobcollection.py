@@ -43,8 +43,8 @@ def test_jobcollection_download_results(jobcollection_single_mock):
                 headers={"x-goog-stored-content-length": "163"},
             )
 
-        with tempfile.TemporaryDirectory() as tempdir:
-            out_dict = jobcollection_single_mock.download_results(tempdir, merge=False)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            out_dict = jobcollection_single_mock.download_results(tmpdir, merge=False)
             for job_id in out_dict:
                 assert Path(out_dict[job_id][0]).exists()
                 assert len(out_dict[job_id]) == 2
@@ -72,8 +72,8 @@ def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
                 headers={"x-goog-stored-content-length": "163"},
             )
 
-        with tempfile.TemporaryDirectory() as tempdir:
-            out_dict = jobcollection_multiple_mock.download_results(tempdir, merge=True)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            out_dict = jobcollection_multiple_mock.download_results(tmpdir, merge=True)
             print(out_dict)
             assert len(out_dict) == 3
             assert Path(out_dict["merged_result"][0]).exists()
@@ -93,15 +93,15 @@ def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
                     in merged_data_json.features[0].properties["up42.data_path"]
                 )
                 assert (
-                    tempdir
+                    tmpdir
                     / Path(merged_data_json.features[0].properties["up42.data_path"])
                 ).exists()
 
 
 @pytest.mark.live
 def test_jobcollection_download_results_live(jobcollection_live):
-    with tempfile.TemporaryDirectory() as tempdir:
-        out_files_dict = jobcollection_live.download_results(Path(tempdir), merge=False)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_files_dict = jobcollection_live.download_results(Path(tmpdir), merge=False)
         jobid_1, jobid_2 = jobcollection_live.jobs_id
         for _, value in out_files_dict.items():
             for p in value:
