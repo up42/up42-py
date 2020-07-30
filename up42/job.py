@@ -105,6 +105,7 @@ class Job(Tools):
             status = self.get_status()
             logger.setLevel(logging.INFO)
 
+            # TODO: Add statuses as constants (maybe objects?)
             if status in ["NOT STARTED", "PENDING", "RUNNING"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info("Job is %s! - %s", status, self.job_id)

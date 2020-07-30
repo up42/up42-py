@@ -95,6 +95,8 @@ class JobCollection(Tools):
         """
         return self.apply(lambda job: job.get_status(), only_succeeded=False)
 
+    # TODO: Add method to get logs of failed jobs
+
     def download_results(
         self,
         output_directory: Union[str, Path, None] = None,
