@@ -80,6 +80,7 @@ class Job(Tools):
 
     @property
     def is_succeeded(self):
+        """Gets True if the job succeeded, False otherwise"""
         return self.get_status() == "SUCCEEDED"
 
     def track_status(self, report_time: int = 30) -> str:
