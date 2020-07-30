@@ -560,7 +560,10 @@ def test_helper_run_parallel_jobs_all_fails(workflow_mock, jobtask_mock):
         )
         assert isinstance(jb, JobCollection)
         assert len(jb.jobs) == 2
-        assert jb.get_jobs_status().values == ["FAILED", "FAILED"]
+        assert jb.get_jobs_status() == {
+            "workflow_name_123_0_py": "FAILED",
+            "workflow_name_123_1_py": "FAILED",
+        }
 
 
 def test_helper_run_parallel_jobs_one_fails(workflow_mock, jobtask_mock):
@@ -609,7 +612,10 @@ def test_helper_run_parallel_jobs_one_fails(workflow_mock, jobtask_mock):
         )
         assert isinstance(jb, JobCollection)
         assert len(jb.jobs) == 2
-        assert jb.get_jobs_status().values == ["SUCCEEDED", "FAILED"]
+        assert jb.get_jobs_status() == {
+            "workflow_name_123_0_py": "SUCCEEDED",
+            "workflow_name_123_1_py": "FAILED",
+        }
 
 
 def test_helper_run_parallel_jobs_default(auth_mock, workflow_mock, monkeypatch):
