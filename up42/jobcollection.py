@@ -51,6 +51,11 @@ class JobCollection(Tools):
         self.apply(lambda job: job._get_info())
         ```
 
+        Args:
+            worker: A function to apply on all jobs in the collection.
+            only_succeeded: Only apply to succeeded jobs (default is `True`).
+            kwargs: additional keyword arguments to pass to `worker`.
+            
         Returns:
             Dictionary where the key is the job id and the value the return
             of `worker`.
