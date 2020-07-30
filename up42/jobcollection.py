@@ -40,7 +40,9 @@ class JobCollection(Tools):
         for job in self.jobs:
             yield job
 
-    def _jobs_iterator(self, worker: Callable, **kwargs) -> Dict[str, Any]:
+    def _jobs_iterator(
+        self, worker: Callable, only_succeeded: bool = True, **kwargs
+    ) -> Dict[str, Any]:
         """
         Helper function to apply `worker` on all jobs in the collection.
         `worker` needs to accept `Job` as first argument. For example, a
@@ -55,7 +57,11 @@ class JobCollection(Tools):
         """
         out_dict = {}
         for job in self.jobs:
-            out_dict[job.job_id] = worker(job, **kwargs)
+            if only_succeeded:
+                if job.is_succeeded:
+                    out_dict[job.job_id] = worker(job, **kwargs)
+            else:
+                out_dict[job.job_id] = worker(job, **kwargs)
         return out_dict
 
     def get_jobs_info(self) -> Dict[str, Dict]:
@@ -65,7 +71,7 @@ class JobCollection(Tools):
         Returns:
             A dictionary with key being the job_id and value the job information.
         """
-        return self._jobs_iterator(lambda job: job._get_info())
+        return self._jobs_iterator(lambda job: job._get_info(), only_succeeded=False)
 
     def get_jobs_status(self) -> Dict[str, str]:
         """
@@ -74,7 +80,7 @@ class JobCollection(Tools):
         Returns:
             A dictionary with key being the job_id and value the job status.
         """
-        return self._jobs_iterator(lambda job: job.get_status())
+        return self._jobs_iterator(lambda job: job.get_status(), only_succeeded=False)
 
     def download_results(
         self,

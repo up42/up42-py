@@ -30,15 +30,33 @@ def test_jobcollection_multiple(jobcollection_multiple_mock):
 
 def test_job_iterator(jobcollection_multiple_mock):
     worker = lambda job: 1
-    res = jobcollection_multiple_mock._jobs_iterator(worker)
+    res = jobcollection_multiple_mock._jobs_iterator(worker, only_succeeded=False)
     assert len(res) == 2
     assert res["jobid_123"] == 1
     assert res["jobid_456"] == 1
 
     worker = lambda job, add: add
-    res = jobcollection_multiple_mock._jobs_iterator(worker, add=5)
+    res = jobcollection_multiple_mock._jobs_iterator(
+        worker, add=5, only_succeeded=False
+    )
     assert len(res) == 2
     assert res["jobid_123"] == 5
+    assert res["jobid_456"] == 5
+
+    worker = lambda job, add: add
+    with requests_mock.Mocker() as m:
+        status = ["FAILED", "SUCCEEDED"]
+        for i, job in enumerate(jobcollection_multiple_mock):
+            url_job_info = (
+                f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
+                f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
+            )
+            m.get(url=url_job_info, json={"data": {"status": status[i]}, "error": {}})
+
+        res = jobcollection_multiple_mock._jobs_iterator(
+            worker, add=5, only_succeeded=True
+        )
+    assert len(res) == 1
     assert res["jobid_456"] == 5
 
 
@@ -74,9 +92,15 @@ def test_jobcollection_download_results(jobcollection_single_mock):
         download_url = "http://up42.api.com/abcdef"
         url_download_result = (
             f"{jobcollection_single_mock.auth._endpoint()}/projects/"
-            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock.jobs_id[0]}/downloads/results/"
+            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}/downloads/results/"
         )
         m.get(url_download_result, json={"data": {"url": download_url}, "error": {}})
+
+        url_job_info = (
+            f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"status": "SUCCEEDED"}, "error": {}})
 
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         with open(out_tgz, "rb") as out_tgz_file:
@@ -93,6 +117,18 @@ def test_jobcollection_download_results(jobcollection_single_mock):
                 assert len(out_dict[job_id]) == 2
 
 
+def test_jobcollection_download_results_failed(jobcollection_single_mock):
+    with requests_mock.Mocker() as m:
+        url_job_info = (
+            f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"status": "FAILED"}, "error": {}})
+        with tempfile.TemporaryDirectory() as tmpdir:
+            out_dict = jobcollection_single_mock.download_results(tmpdir, merge=False)
+            assert not out_dict
+
+
 def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"
@@ -105,6 +141,12 @@ def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
             m.get(
                 url_download_result, json={"data": {"url": download_url}, "error": {}}
             )
+
+            url_job_info = (
+                f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
+                f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
+            )
+            m.get(url=url_job_info, json={"data": {"status": "SUCCEEDED"}, "error": {}})
 
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         with open(out_tgz, "rb") as out_tgz_file:
