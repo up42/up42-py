@@ -14,6 +14,7 @@ from .fixtures import (
     jobs_mock,
     jobcollection_single_mock,
     jobcollection_multiple_mock,
+    jobcollection_empty_mock,
     auth_live,
     jobs_live,
     jobcollection_live,
@@ -28,7 +29,7 @@ def test_jobcollection_multiple(jobcollection_multiple_mock):
     assert len(jobcollection_multiple_mock.jobs) == 2
 
 
-def test_job_iterator(jobcollection_multiple_mock):
+def test_job_iterator(jobcollection_multiple_mock, jobcollection_empty_mock):
     worker = lambda job: 1
     res = jobcollection_multiple_mock.apply(worker, only_succeeded=False)
     assert len(res) == 2
@@ -41,7 +42,6 @@ def test_job_iterator(jobcollection_multiple_mock):
     assert res["jobid_123"] == 5
     assert res["jobid_456"] == 5
 
-    worker = lambda job, add: add
     with requests_mock.Mocker() as m:
         status = ["FAILED", "SUCCEEDED"]
         for i, job in enumerate(jobcollection_multiple_mock):
@@ -54,6 +54,13 @@ def test_job_iterator(jobcollection_multiple_mock):
         res = jobcollection_multiple_mock.apply(worker, add=5, only_succeeded=True)
     assert len(res) == 1
     assert res["jobid_456"] == 5
+
+    with pytest.raises(ValueError) as e:
+        jobcollection_empty_mock.apply(worker, add=5, only_succeeded=True)
+        assert (
+            str(e)
+            == "This is an empty JobCollection. Cannot apply over an empty job list."
+        )
 
 
 def test_jobcollection_get_jobs_info(jobcollection_single_mock):
@@ -121,8 +128,12 @@ def test_jobcollection_download_results_failed(jobcollection_single_mock):
         )
         m.get(url=url_job_info, json={"data": {"status": "FAILED"}, "error": {}})
         with tempfile.TemporaryDirectory() as tmpdir:
-            out_dict = jobcollection_single_mock.download_results(tmpdir, merge=False)
-            assert not out_dict
+            with pytest.raises(ValueError) as e:
+                jobcollection_single_mock.download_results(tmpdir, merge=False)
+                assert (
+                    str(e)
+                    == "All jobs have failed! Cannot apply over an empty succeeded job list."
+                )
 
 
 def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
