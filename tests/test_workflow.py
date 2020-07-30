@@ -20,6 +20,7 @@ from .fixtures import (
     workflow_live,
     job_mock,
     jobcollection_single_mock,
+    jobtask_mock,
 )
 import up42
 
@@ -517,6 +518,98 @@ def test_helper_run_parallel_jobs_dry_run(auth_mock, workflow_mock, monkeypatch)
     assert len(jb.jobs) == 2
     for job in jb.jobs:
         assert job.info["mode"] == "DRY_RUN"
+
+
+def test_helper_run_parallel_jobs_all_fails(workflow_mock, jobtask_mock):
+    # pylint: disable=dangerous-default-value
+    input_parameters_list = [
+        {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
+        {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2def"], "limit": 1}},
+    ]
+
+    response_failed = {
+        "error": None,
+        "data": {"id": "jobid_123", "status": "FAILED", "mode": "DRY_RUN"},
+    }
+    with requests_mock.Mocker() as m:
+        for i, _ in enumerate(input_parameters_list):
+            job_name = f"{workflow_mock.info['name']}_{i}_py"
+            job_url = (
+                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
+            )
+            m.post(url=job_url, json={"data": {"id": job_name}})
+            m.get(
+                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"jobs/{job_name}",
+                json=response_failed,
+            )
+            url_job_tasks = (
+                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/{job_name}"
+                f"/tasks/"
+            )
+            m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
+            url_log = (
+                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/"
+                f"{job_name}/tasks/{jobtask_mock.jobtask_id}/logs"
+            )
+            m.get(url_log, json="")
+
+        jb = workflow_mock._helper_run_parallel_jobs(
+            input_parameters_list, max_concurrent_jobs=2, test_job=True
+        )
+        assert isinstance(jb, JobCollection)
+        assert len(jb.jobs) == 2
+        assert jb.get_jobs_status().values == ["FAILED", "FAILED"]
+
+
+def test_helper_run_parallel_jobs_one_fails(workflow_mock, jobtask_mock):
+    input_parameters_list = [
+        {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
+        {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2def"], "limit": 1}},
+    ]
+
+    responses = [
+        {
+            "error": None,
+            "data": {"id": "jobid_123", "status": "SUCCEEDED", "mode": "DRY_RUN"},
+        },
+        {
+            "error": None,
+            "data": {"id": "jobid_123", "status": "FAILED", "mode": "DRY_RUN"},
+        },
+    ]
+
+    with requests_mock.Mocker() as m:
+        for i, _ in enumerate(input_parameters_list):
+            job_name = f"{workflow_mock.info['name']}_{i}_py"
+            job_url = (
+                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
+            )
+            m.post(url=job_url, json={"data": {"id": job_name}})
+            m.get(
+                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"jobs/{job_name}",
+                json=responses[i],
+            )
+            url_job_tasks = (
+                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/{job_name}"
+                f"/tasks/"
+            )
+            m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
+            url_log = (
+                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/"
+                f"{job_name}/tasks/{jobtask_mock.jobtask_id}/logs"
+            )
+            m.get(url_log, json="")
+
+        jb = workflow_mock._helper_run_parallel_jobs(
+            input_parameters_list, max_concurrent_jobs=2, test_job=True
+        )
+        assert isinstance(jb, JobCollection)
+        assert len(jb.jobs) == 2
+        assert jb.get_jobs_status().values == ["SUCCEEDED", "FAILED"]
 
 
 def test_helper_run_parallel_jobs_default(auth_mock, workflow_mock, monkeypatch):
