@@ -30,15 +30,13 @@ def test_jobcollection_multiple(jobcollection_multiple_mock):
 
 def test_job_iterator(jobcollection_multiple_mock):
     worker = lambda job: 1
-    res = jobcollection_multiple_mock._jobs_iterator(worker, only_succeeded=False)
+    res = jobcollection_multiple_mock.apply(worker, only_succeeded=False)
     assert len(res) == 2
     assert res["jobid_123"] == 1
     assert res["jobid_456"] == 1
 
     worker = lambda job, add: add
-    res = jobcollection_multiple_mock._jobs_iterator(
-        worker, add=5, only_succeeded=False
-    )
+    res = jobcollection_multiple_mock.apply(worker, add=5, only_succeeded=False)
     assert len(res) == 2
     assert res["jobid_123"] == 5
     assert res["jobid_456"] == 5
@@ -53,9 +51,7 @@ def test_job_iterator(jobcollection_multiple_mock):
             )
             m.get(url=url_job_info, json={"data": {"status": status[i]}, "error": {}})
 
-        res = jobcollection_multiple_mock._jobs_iterator(
-            worker, add=5, only_succeeded=True
-        )
+        res = jobcollection_multiple_mock.apply(worker, add=5, only_succeeded=True)
     assert len(res) == 1
     assert res["jobid_456"] == 5
 

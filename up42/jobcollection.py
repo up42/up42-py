@@ -40,7 +40,7 @@ class JobCollection(Tools):
         for job in self.jobs:
             yield job
 
-    def _jobs_iterator(
+    def apply(
         self, worker: Callable, only_succeeded: bool = True, **kwargs
     ) -> Dict[str, Any]:
         """
@@ -48,7 +48,7 @@ class JobCollection(Tools):
         `worker` needs to accept `Job` as first argument. For example, a
         lambda function that returns the job info:
         ```python
-        self._jobs_iterator(lambda job: job._get_info())
+        self.apply(lambda job: job._get_info())
         ```
 
         Returns:
@@ -71,7 +71,7 @@ class JobCollection(Tools):
         Returns:
             A dictionary with key being the job_id and value the job information.
         """
-        return self._jobs_iterator(lambda job: job._get_info(), only_succeeded=False)
+        return self.apply(lambda job: job._get_info(), only_succeeded=False)
 
     def get_jobs_status(self) -> Dict[str, str]:
         """
@@ -80,7 +80,7 @@ class JobCollection(Tools):
         Returns:
             A dictionary with key being the job_id and value the job status.
         """
-        return self._jobs_iterator(lambda job: job.get_status(), only_succeeded=False)
+        return self.apply(lambda job: job.get_status(), only_succeeded=False)
 
     def download_results(
         self,
@@ -115,7 +115,7 @@ class JobCollection(Tools):
             )
             return out_filepaths_job
 
-        out_filepaths = self._jobs_iterator(
+        out_filepaths = self.apply(
             download_results_worker,
             output_directory=output_directory,
             unpacking=unpacking,
