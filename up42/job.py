@@ -78,6 +78,10 @@ class Job(Tools):
         logger.info("Job is %s", status)
         return status
 
+    @property
+    def is_succeeded(self):
+        return self.get_status() == "SUCCEEDED"
+
     def track_status(self, report_time: int = 30) -> str:
         """
         Continuously gets the job status until job has finished or failed.
