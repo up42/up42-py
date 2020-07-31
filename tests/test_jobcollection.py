@@ -5,6 +5,8 @@ import geojson
 import pytest
 import requests_mock
 
+from .context import Job
+
 # pylint: disable=unused-import,wrong-import-order
 from .fixtures import (
     auth_mock,
@@ -12,6 +14,7 @@ from .fixtures import (
     jobs_mock,
     jobcollection_single_mock,
     jobcollection_multiple_mock,
+    jobcollection_empty_mock,
     auth_live,
     jobs_live,
     jobcollection_live,
@@ -26,14 +29,81 @@ def test_jobcollection_multiple(jobcollection_multiple_mock):
     assert len(jobcollection_multiple_mock.jobs) == 2
 
 
+def test_job_iterator(jobcollection_multiple_mock, jobcollection_empty_mock):
+    worker = lambda job: 1
+    res = jobcollection_multiple_mock.apply(worker, only_succeeded=False)
+    assert len(res) == 2
+    assert res["jobid_123"] == 1
+    assert res["jobid_456"] == 1
+
+    worker = lambda job, add: add
+    res = jobcollection_multiple_mock.apply(worker, add=5, only_succeeded=False)
+    assert len(res) == 2
+    assert res["jobid_123"] == 5
+    assert res["jobid_456"] == 5
+
+    with requests_mock.Mocker() as m:
+        status = ["FAILED", "SUCCEEDED"]
+        for i, job in enumerate(jobcollection_multiple_mock):
+            url_job_info = (
+                f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
+                f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
+            )
+            m.get(url=url_job_info, json={"data": {"status": status[i]}, "error": {}})
+
+        res = jobcollection_multiple_mock.apply(worker, add=5, only_succeeded=True)
+    assert len(res) == 1
+    assert res["jobid_456"] == 5
+
+    with pytest.raises(ValueError) as e:
+        jobcollection_empty_mock.apply(worker, add=5, only_succeeded=True)
+        assert (
+            str(e)
+            == "This is an empty JobCollection. Cannot apply over an empty job list."
+        )
+
+
+def test_jobcollection_get_jobs_info(jobcollection_single_mock):
+    with requests_mock.Mocker() as m:
+        url_job_info = (
+            f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        )
+        m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
+
+        info = jobcollection_single_mock.get_jobs_info()
+    assert isinstance(info, dict)
+    assert info[jobcollection_single_mock[0].job_id] == {"xyz": 789}
+
+
+@pytest.mark.parametrize("status", ["NOT STARTED", "PENDING", "RUNNING"])
+def test_jobcollection_get_jobs_status(jobcollection_single_mock, status):
+    with requests_mock.Mocker() as m:
+        url_job_info = (
+            f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+
+        job_statuses = jobcollection_single_mock.get_jobs_status()
+    assert isinstance(job_statuses, dict)
+    assert job_statuses[jobcollection_single_mock[0].job_id] == status
+
+
 def test_jobcollection_download_results(jobcollection_single_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"
         url_download_result = (
             f"{jobcollection_single_mock.auth._endpoint()}/projects/"
-            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock.jobs_id[0]}/downloads/results/"
+            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}/downloads/results/"
         )
         m.get(url_download_result, json={"data": {"url": download_url}, "error": {}})
+
+        url_job_info = (
+            f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"status": "SUCCEEDED"}, "error": {}})
 
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         with open(out_tgz, "rb") as out_tgz_file:
@@ -50,6 +120,22 @@ def test_jobcollection_download_results(jobcollection_single_mock):
                 assert len(out_dict[job_id]) == 2
 
 
+def test_jobcollection_download_results_failed(jobcollection_single_mock):
+    with requests_mock.Mocker() as m:
+        url_job_info = (
+            f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+            f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"status": "FAILED"}, "error": {}})
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with pytest.raises(ValueError) as e:
+                jobcollection_single_mock.download_results(tmpdir, merge=False)
+                assert (
+                    str(e)
+                    == "All jobs have failed! Cannot apply over an empty succeeded job list."
+                )
+
+
 def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
     with requests_mock.Mocker() as m:
         download_url = "http://up42.api.com/abcdef"
@@ -62,6 +148,12 @@ def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
             m.get(
                 url_download_result, json={"data": {"url": download_url}, "error": {}}
             )
+
+            url_job_info = (
+                f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
+                f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
+            )
+            m.get(url=url_job_info, json={"data": {"status": "SUCCEEDED"}, "error": {}})
 
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         with open(out_tgz, "rb") as out_tgz_file:
@@ -95,6 +187,16 @@ def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
                     tmpdir
                     / Path(merged_data_json.features[0].properties["up42.data_path"])
                 ).exists()
+
+
+def test_jobcollection_subscripted(jobcollection_single_mock):
+    assert isinstance(jobcollection_single_mock[0], Job)
+    assert jobcollection_single_mock[0].job_id == "jobid_123"
+
+
+def test_jobcollection_iterator(jobcollection_multiple_mock):
+    for job in jobcollection_multiple_mock:
+        assert isinstance(job, Job)
 
 
 @pytest.mark.live

@@ -78,6 +78,11 @@ class Job(Tools):
         logger.info("Job is %s", status)
         return status
 
+    @property
+    def is_succeeded(self):
+        """Gets True if the job succeeded, False otherwise"""
+        return self.get_status() == "SUCCEEDED"
+
     def track_status(self, report_time: int = 30) -> str:
         """
         Continuously gets the job status until job has finished or failed.
@@ -100,6 +105,7 @@ class Job(Tools):
             status = self.get_status()
             logger.setLevel(logging.INFO)
 
+            # TODO: Add statuses as constants (maybe objects?)
             if status in ["NOT STARTED", "PENDING", "RUNNING"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info("Job is %s! - %s", status, self.job_id)

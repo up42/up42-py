@@ -45,6 +45,31 @@ def test_get_status(job_mock, status):
     assert job_status == status
 
 
+# pylint: disable=unused-argument
+@pytest.mark.parametrize(
+    "status,expected",
+    [
+        ("NOT STARTED", False),
+        ("PENDING", False),
+        ("RUNNING", False),
+        ("FAILED", False),
+        ("SUCCEEDED", True),
+    ],
+)
+def test_is_succeeded(job_mock, status, expected):
+    del job_mock.info
+
+    with requests_mock.Mocker() as m:
+        url_job_info = (
+            f"{job_mock.auth._endpoint()}/projects/"
+            f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+        )
+        m.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+
+        job_is_succeeded = job_mock.is_succeeded
+    assert job_is_succeeded == expected
+
+
 @pytest.mark.parametrize("status", ["SUCCEEDED"])
 def test_track_status_pass(job_mock, status):
     del job_mock.info

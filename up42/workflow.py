@@ -540,7 +540,13 @@ class Workflow(Tools):
 
             # Track until all jobs in the batch are finished.
             for job in batch_jobs:
-                job.track_status(report_time=20)
+                try:
+                    job.track_status(report_time=20)
+                except ValueError as e:
+                    if str(e) == "Job has failed! See the above log.":
+                        logger.warning("Skipping failed job...")
+                    else:
+                        raise
             jobs_list.extend(batch_jobs)
 
         job_collection = JobCollection(
