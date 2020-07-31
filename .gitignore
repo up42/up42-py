@@ -132,6 +132,7 @@ dmypy.json
 config.json
 *config.json
 */tmp/*
+/examples/result*
 
 examples/data
 examples/*/project_*
