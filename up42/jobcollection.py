@@ -59,6 +59,11 @@ class JobCollection(Tools):
             Dictionary where the key is the job id and the value the return
             of `worker`.
         """
+        if not self.jobs:
+            raise ValueError(
+                "This is an empty JobCollection. Cannot apply over an empty job list."
+            )
+
         out_dict = {}
         for job in self.jobs:
             if only_succeeded:
@@ -66,15 +71,12 @@ class JobCollection(Tools):
                     out_dict[job.job_id] = worker(job, **kwargs)
             else:
                 out_dict[job.job_id] = worker(job, **kwargs)
+
         if not out_dict:
-            if self.jobs:
-                raise ValueError(
-                    "All jobs have failed! Cannot apply over an empty succeeded job list."
-                )
-            if not self.jobs:
-                raise ValueError(
-                    "This is an empty JobCollection. Cannot apply over an empty job list."
-                )
+            raise ValueError(
+                "All jobs have failed! Cannot apply over an empty succeeded job list."
+            )
+
         return out_dict
 
     def get_jobs_info(self) -> Dict[str, Dict]:
