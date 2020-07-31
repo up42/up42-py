@@ -134,7 +134,6 @@ config.json
 */tmp/*
 /examples/result*
 
-examples/data
 examples/*/project_*
 output/
 docs/examples
