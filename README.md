@@ -1,4 +1,3 @@
-
 <p align="center">
     <strong>Python SDK for UP42, the geospatial marketplace and developer platform.</strong>
 </p>
@@ -6,6 +5,7 @@
 ![](docs/assets/github-banner-3.jpg)
 
 <p align="center">
+    <a href="https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides" title="Binder"><img src="https://mybinder.org/badge_logo.svg"></a>
     <a href="https://pypi.org/project/up42-py/" title="up42-py on pypi"><img src="https://img.shields.io/pypi/v/up42-py?color=brightgreen"></a>
     <img src="./coverage.svg">
     <a href="https://twitter.com/UP42_" title="UP42 on Twitter"><img src="https://img.shields.io/twitter/follow/UP42_.svg?style=social"></a>
@@ -52,6 +52,8 @@ A **new workflow** consisting of [**Sentinel-2 data**](https://marketplace.up42.
 and [**Image Sharpening**](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e) is created.
 The area of interest and workflow parameters are defined. After **running the job**, 
 the results are **downloaded** and visualized.
+
+Try this example without installation! [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
 
 ```python
 import up42

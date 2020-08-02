@@ -1,5 +1,7 @@
 # :world_map: Catalog Search
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Fcatalog.ipynb)
+
 **Check data availability & download image preview quicklooks** via the catalog search. 
 You can filter by various parameters e.g. time period, area of interest, cloud cover etc.
 
