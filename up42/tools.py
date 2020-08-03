@@ -340,6 +340,16 @@ class Tools:
         else:
             return details_json
 
+    def get_workflow_templates(self, basic: bool = True):
+        fp_templates = f"{str(Path(__file__).resolve().parent)}/data/workflow_templates.json"
+        with open(fp_templates) as f:
+            templates = json.load(f)
+
+        if basic:
+            templates = {k:list(v.keys()) for k,v in templates.items()}
+
+        return templates
+
     def validate_manifest(self, path_or_json: Union[str, Path, Dict]) -> Dict:
         """
         Validates the block manifest, input either manifest json string or filepath.

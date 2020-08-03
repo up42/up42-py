@@ -85,6 +85,11 @@ def get_block_details(block_id: str, as_dataframe=False) -> Dict:
     return tools.get_block_details(block_id, as_dataframe)
 
 
+def get_workflow_templates(basic: bool = True):
+    tools = Tools(auth=_auth)
+    return tools.get_workflow_templates(basic=basic)
+
+
 def validate_manifest(path_or_json: Union[str, Path, Dict]) -> Dict:
     tools = Tools(auth=_auth)
     return tools.validate_manifest(path_or_json)
