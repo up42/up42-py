@@ -1,51 +1,65 @@
 {
   "ship-identification": {
-      "oneatlas-spot-aoiclipped:1": {
-        "ids": null,
-        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
-        "limit": 1,
-        "bbox": {},
-        "zoom_level": 17,
-        "time_series": null,
-        "max_cloud_cover": 100,
-        "panchromatic_band": false
-      },
-      "tiling:1": {
-        "nodata": null,
-        "tile_width": 768,
-        "tile_height": 768,
-        "match_extents": false,
-        "output_prefix": "",
-        "augmentation_factor": 1,
-        "discard_empty_tiles": true
-      },
-      "ship-detection:1": {},
-      "ship-identification:1": {
-        "minutes": 15
-      }
+    "oneatlas-spot-aoiclipped:1": {
+      "ids": null,
+      "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+      "limit": 1,
+      "bbox": {},
+      "zoom_level": 17,
+      "time_series": null,
+      "max_cloud_cover": 100,
+      "panchromatic_band": false
     },
-    "ship-detection": {
-      "oneatlas-spot-aoiclipped:1": {
-        "ids": null,
-        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
-        "limit": 1,
-        "bbox": {},
-        "zoom_level": 17,
-        "time_series": null,
-        "max_cloud_cover": 100,
-        "panchromatic_band": false
-      },
-      "tiling:1": {
-        "nodata": null,
-        "tile_width": 768,
-        "tile_height": 768,
-        "match_extents": false,
-        "output_prefix": "",
-        "augmentation_factor": 1,
-        "discard_empty_tiles": true
-      },
-      "ship-detection:1": {}
+    "tiling:1": {
+      "nodata": null,
+      "tile_width": 768,
+      "tile_height": 768,
+      "match_extents": false,
+      "output_prefix": "",
+      "augmentation_factor": 1,
+      "discard_empty_tiles": true
     },
-  "car-detection-template": {},
-  "abc": {}
+    "ship-detection:1": {},
+    "ship-identification:1": {
+      "minutes": 15
+    }
+  },
+  "ship-detection": {
+    "oneatlas-spot-aoiclipped:1": {
+      "ids": null,
+      "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+      "limit": 1,
+      "bbox": {},
+      "zoom_level": 17,
+      "time_series": null,
+      "max_cloud_cover": 100,
+      "panchromatic_band": false
+    },
+    "tiling:1": {
+      "nodata": null,
+      "tile_width": 768,
+      "tile_height": 768,
+      "match_extents": false,
+      "output_prefix": "",
+      "augmentation_factor": 1,
+      "discard_empty_tiles": true
+    },
+    "ship-detection:1": {}
+  },
+  "landcover": {},
+  "car-detection": {},
+  "truck-detection": {},
+  "aircraft-detection": {},
+  "sharpening": {
+    "sobloo-s2-l1c-aoiclipped:1": {
+      "bbox": {},
+      "time": "2018-01-01T00:00:00Z/2020-12-31T00:00:00Z",
+      "limit": 1,
+      "zoom_level": 14,
+      "max_cloud_cover": 100
+    },
+    "sharpening:1": {
+      "strength": "medium"
+    }
+  }
 }

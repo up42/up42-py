@@ -176,7 +176,9 @@ class Workflow(Tools):
             previous_task_name = next_task["name"]
         return full_input_tasks_definition
 
-    def add_workflow_tasks(self, input_tasks: Union[List[str], List[Dict]]) -> None:
+    def add_workflow_tasks(
+        self, input_tasks: Union[List[str], List[Dict]], return_parameters: bool = True
+    ):
         """
         Adds or overwrites workflow tasks in a workflow on UP42.
 
@@ -184,6 +186,10 @@ class Workflow(Tools):
             input_tasks: The input tasks, specifying the blocks. Can be a list of the
                 block ids, block names or block display names (The name shown on the
                 [marketplace](https://marketplace.up42.com).
+            return_parameters: Returns default workflow parameters if True (default).
+
+        Returns:
+            Optional: Default workflow parameters.
 
         !!! Info
             Using block ids specifies a specific version of the block that will be added
@@ -229,7 +235,45 @@ class Workflow(Tools):
             f"{self.workflow_id}/tasks/"
         )
         self.auth._request(request_type="POST", url=url, data=input_tasks)
-        logger.info("Added tasks to workflow: %r", input_tasks)
+        logger.info(f"Added tasks to workflow: {input_tasks}")
+
+        if return_parameters:
+            default_parameters = self._get_default_parameters()
+            logger.info(f"Returning default workflow parameters: {default_parameters}")
+            return default_parameters
+
+    def add_template(self, template_name: str, return_parameters: bool = True):
+        """
+        Adds workflow template tasks to workflow.
+
+        Args:
+            template: The template name. Get via up42.get_templates().
+
+        Returns:
+            Optional: Default workflow parameters.
+        """
+        # TODO: Rename add_workflow_template?
+        # TODO: Blocks not available on staging!
+        templates = self.get_templates(basic=True)
+        if not template_name in list(templates.keys()):
+            raise ValueError(
+                "The selected template is not available, please use up42.get_templates()."
+            )
+
+        input_tasks = templates[template_name]
+        logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
+        self.add_workflow_tasks(input_tasks=input_tasks, return_parameters=False)
+        logging.getLogger("up42.workflow").setLevel(logging.INFO)
+        logger.info(
+            f"Add template {template_name} to workflow containing tasks: {input_tasks}"
+        )
+
+        if return_parameters:
+            template_parameters = self.get_templates(basic=False)[template_name]
+            logger.info(
+                f"Returning template workflow parameters of template {template_name}: {template_parameters}"
+            )
+            return template_parameters
 
     def get_parameters_info(self) -> Dict:
         """
@@ -252,6 +296,7 @@ class Workflow(Tools):
         Gets the default parameters for the workflow that can be directly used to
         run a job. Excludes geometry operation and geometry of the data block.
         """
+        # TODO: Include bbox etc. as {}
         default_workflow_parameters = {}
 
         logger.setLevel(logging.CRITICAL)
