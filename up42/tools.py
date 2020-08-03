@@ -315,6 +315,14 @@ class Tools:
             else:
                 return blocks_json
 
+    def get_templates(self, basic: bool = True):
+        fp_templates = f"{str(Path(__file__).resolve().parent)}/data/templates.json"
+        with open(fp_templates) as f:
+            templates = json.load(f)
+        if basic:
+            templates = {k:list(v.keys()) for k,v in templates.items()}
+        return templates
+
     def get_block_details(self, block_id: str, as_dataframe=False) -> Dict:
         """
         Gets the detailed information about a specific public block from
@@ -339,16 +347,6 @@ class Tools:
             return pd.DataFrame.from_dict(details_json, orient="index").transpose()
         else:
             return details_json
-
-    def get_workflow_templates(self, basic: bool = True):
-        fp_templates = f"{str(Path(__file__).resolve().parent)}/data/workflow_templates.json"
-        with open(fp_templates) as f:
-            templates = json.load(f)
-
-        if basic:
-            templates = {k:list(v.keys()) for k,v in templates.items()}
-
-        return templates
 
     def validate_manifest(self, path_or_json: Union[str, Path, Dict]) -> Dict:
         """

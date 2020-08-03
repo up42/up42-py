@@ -80,14 +80,14 @@ def get_blocks(
     return tools.get_blocks(block_type, basic, as_dataframe)
 
 
+def get_templates(basic: bool = True):
+    tools = Tools(auth=_auth)
+    return tools.get_templates(basic=basic)
+
+
 def get_block_details(block_id: str, as_dataframe=False) -> Dict:
     tools = Tools(auth=_auth)
     return tools.get_block_details(block_id, as_dataframe)
-
-
-def get_workflow_templates(basic: bool = True):
-    tools = Tools(auth=_auth)
-    return tools.get_workflow_templates(basic=basic)
 
 
 def validate_manifest(path_or_json: Union[str, Path, Dict]) -> Dict:
