@@ -162,6 +162,24 @@ def test_get_block_details_live(tools_live):
     assert "createdAt" in details
 
 
+def test_get_templates(tools_mock):
+    templates = tools_mock.get_templates(basic=True)
+    assert isinstance(templates, dict)
+    assert len(templates["ship-identification"]) == 4
+    assert templates["ship-identification"] == [
+        "oneatlas-spot-aoiclipped",
+        "tiling",
+        "ship-detection",
+        "ship-identification",
+    ]
+
+
+def test_get_templates_not_basic(tools_mock):
+    templates = tools_mock.get_templates(basic=False)
+    assert isinstance(templates["ship-identification"], dict)
+    assert len(templates["ship-identification"]["oneatlas-spot-aoiclipped:1"]) == 8
+
+
 def test_validate_manifest(tools_mock):
     fp = Path(__file__).resolve().parent / "mock_data/manifest.json"
     with requests_mock.Mocker() as m:
