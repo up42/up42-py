@@ -623,7 +623,7 @@ def test_helper_run_parallel_jobs_default(auth_mock, workflow_mock, monkeypatch)
     input_parameters_list = [
         {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
         {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2def"], "limit": 1}},
-    ] * 10
+    ] * 6
     example_response = {
         "error": None,
         "data": {"id": "jobid_123", "status": "SUCCEEDED", "mode": "DEFAULT"},
@@ -643,7 +643,7 @@ def test_helper_run_parallel_jobs_default(auth_mock, workflow_mock, monkeypatch)
         input_parameters_list, max_concurrent_jobs=10
     )
     assert isinstance(jb, JobCollection)
-    assert len(jb.jobs) == 20
+    assert len(jb.jobs) == 12
     for job in jb.jobs:
         assert job.info["mode"] == "DEFAULT"
 
