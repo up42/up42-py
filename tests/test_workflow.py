@@ -3,13 +3,11 @@ import json
 import copy
 
 # pylint: disable=unused-import
-from unittest.mock import Mock, patch
-import unittest.mock as mock
+from unittest.mock import patch
 
 import pytest
 import requests_mock
 import shapely
-from geojson import Feature
 
 # pylint: disable=unused-import,wrong-import-order
 from .context import Workflow, Job, JobCollection
@@ -254,6 +252,20 @@ def test_add_workflow_tasks_simple_not_existing_block_id_raises_live(workflow_li
     input_tasks_simple = ["12345"]
     with pytest.raises(Exception):
         workflow_live.add_workflow_tasks(input_tasks_simple)
+
+
+def test_add_template(workflow_mock):
+    with patch.object(workflow_mock, "add_workflow_tasks", return_value=None):
+        parameters = workflow_mock.add_template(
+            template_name="ship-identification", return_parameters=True
+        )
+    assert isinstance(parameters, dict)
+    assert len(parameters) == 4
+
+
+def test_add_template_not_existing_raises(workflow_mock):
+    with pytest.raises(Exception):
+        workflow_mock.add_template(template_name="non-existent-template")
 
 
 def test_get_parameter_info(workflow_mock):
