@@ -35,7 +35,7 @@ nav:
       - Detailed Example: detailed-example.md
     - Examples:
         - Overiew: examples-overview.md
-        - Workflows: preconfigured-workflows.md
+        - Workflows: templates.md
         - Usecases:
           - Radar processing: examples/radar_processing_1.ipynb
           - Airport monitoring: examples/airports-parallel.ipynb
