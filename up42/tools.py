@@ -298,6 +298,8 @@ class Tools:
             ]
         else:
             blocks_json = public_blocks_json
+        # Sort alphabetically
+        blocks_json = sorted(blocks_json, key=lambda k: k['name']) #TODO: Sorted API Response by backend.
 
         if basic:
             logger.info(
@@ -319,8 +321,9 @@ class Tools:
         fp_templates = f"{str(Path(__file__).resolve().parent)}/data/templates.json"
         with open(fp_templates) as f:
             templates = json.load(f)
+            templates = dict(sorted(templates.items())) #sort alphabetically
         if basic:
-            templates = {k:list(v.keys()) for k,v in templates.items()}
+            templates = {k: [x[:-2] for x in v.keys()] for k, v in templates.items()}
         return templates
 
     def get_block_details(self, block_id: str, as_dataframe=False) -> Dict:
