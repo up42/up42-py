@@ -1,5 +1,7 @@
 # :stopwatch: 30 Second Example
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
+
 The UP42 Python package uses six classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask** and **Catalog** & **Tools**
 
 ![](assets/vizualisations.jpg)

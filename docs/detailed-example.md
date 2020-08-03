@@ -1,5 +1,7 @@
 # :national_park: Detailed Example
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Ftypical-usage.ipynb)
+
 This overview of the most important functions repeats the previous 30-seconds-example, but in more detail and shows additional functionality and alternative steps.
 
 ## Authenticate & access project
