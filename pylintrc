@@ -18,7 +18,11 @@ disable=
     redefined-outer-name,
     too-many-instance-attributes,
     fixme,
+    duplicate-code,
+    logging-fstring-interpolation,
+    logging-format-interpolation,
     not-callable
+
 [FORMAT]
 max-line-length=120
 single-line-if-stmt=yes
