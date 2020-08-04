@@ -19,7 +19,8 @@ workflow.add_template(template_name="ship-identification")
 
 ### Ship-Identification
 
-<img align="left" src="https://metadata.up42.com/54217695-73f4-4528-a575-a429e9af6568/Block_Thumbnail_Ship_Identification1590606665498.png" alt="" width="150"/>
+<img align="left" src="https://metadata.up42.com/54217695-73f4-4528-a575-a429e9af6568/Block_Thumbnail_Ship_Identification1590606665498.png" alt="" width="150" style="margin:5px; padding:5px"/>
+Fuses AIS properties with the ship detection block output geometries.
 
 blockdiag {
    fontsize=10
@@ -34,16 +35,16 @@ blockdiag {
 
 ### Ship-Detection
 
-<img align="left" src="https://metadata.up42.com/54217695-73f4-4528-a575-a429e9af6568/Block_Thumbnail_Ship_Identification1590606665498.png" alt="" width="150"/>
+<img align="left" src="https://metadata.up42.com/OneAtlas/Ship_Detection/0_Ship_Detection_Avatar.png" alt="" width="150" style="margin:5px; padding:5px"/>
+Ships at sea Detection detects ships in SPOT images from the SPOT 6/7 Streaming Block.
 
 blockdiag {
    fontsize=10
    
-   A -> B -> C -> D;
+   A -> B -> C;
    
    A[label="Spot", numbered = 1];
    B[label="Tiling", numbered = 2];
    C[label="Ship-Detection", numbered = 3];
-   D[label="Ship-Identification", numbered = 4];
 }
 
