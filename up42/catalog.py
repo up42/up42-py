@@ -12,11 +12,9 @@ from .auth import Auth
 from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
+
 logger = get_logger(__name__)
 
-
-# TODO: Midterm add catalog results class? Scenes() etc. that also as feedback to workflow input.
-# Scenes() would be dataframe with quicklook preview images in it.
 
 supported_sensors = {
     "pleiades": {
@@ -54,7 +52,8 @@ class Catalog(Tools):
     def __init__(self, auth: Auth):
         """
         The Catalog class enables access to the UP42 catalog search. You can search
-        for satellite image scenes for different sensors and criteria like cloud cover etc.
+        for satellite image scenes (for different sensors and criteria like cloud cover),
+        plot the scene coverage and download and plot the scene quicklooks.
         """
         self.auth = auth
         self.quicklooks = None

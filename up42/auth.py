@@ -69,7 +69,7 @@ class Auth(Tools):
 
     def _find_credentials(self) -> None:
         """
-        Sources the project credentials from a provided config file and error handling
+        Sources the project credentials from a provided config file, error handling
         if no credentials are provided in arguments or config file.
         """
         if self.project_id is None or self.project_api_key is None:
