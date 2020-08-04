@@ -34,8 +34,8 @@ nav:
       - Catalog Search: catalog.md
       - Detailed Example: detailed-example.md
     - Examples:
-        - Overiew: examples-overview.md
-        - Workflows: templates.md
+        - Overview: examples-overview.md
+        - Templates: templates.md
         - Usecases:
           - Radar processing: examples/radar_processing_1.ipynb
           - Airport monitoring: examples/airports-parallel.ipynb
