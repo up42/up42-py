@@ -23,7 +23,12 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 _auth = None
 
 
-def authenticate(cfg_file=None, project_id=None, project_api_key=None, **kwargs):
+def authenticate(
+    cfg_file: Union[str, Path] = None,
+    project_id: str = None,
+    project_api_key: str = None,
+    **kwargs
+):
     global _auth  # pylint: disable=global-statement
     _auth = Auth(
         cfg_file=cfg_file,
