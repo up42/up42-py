@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Union, List, Optional
+from typing import Dict, Union, List
 
 from geopandas import GeoDataFrame
 from shapely.geometry import shape
@@ -209,7 +209,7 @@ class Catalog(Tools):
         self,
         image_ids: List[str],
         sensor: str,
-        output_directory: Optional[Union[str, Path]] = None,
+        output_directory: Union[str, Path] = None,
     ) -> List[str]:
         """
         Gets the quicklooks of scenes from a single sensor. After download, can

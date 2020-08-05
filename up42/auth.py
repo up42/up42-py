@@ -189,7 +189,7 @@ class Auth(Tools):
         data: Union[Dict, List] = {},
         querystring: Dict = {},
         return_text: bool = True,
-    ) -> Union[str, requests.Response]:
+    ) -> Union[str, Dict, requests.Response]:
         """
         Handles retrying the request and automatically gets a new token if the old
         is invalid.

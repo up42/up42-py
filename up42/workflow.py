@@ -3,7 +3,7 @@ import logging
 import copy
 from collections import Counter
 from pathlib import Path
-from typing import Dict, List, Union, Optional, Tuple
+from typing import Dict, List, Union, Tuple
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
@@ -272,19 +272,17 @@ class Workflow(Tools):
 
     def construct_parameters(
         self,
-        geometry: Optional[
-            Union[
-                Dict,
-                Feature,
-                FeatureCollection,
-                geojson_Polygon,
-                List,
-                GeoDataFrame,
-                Polygon,
-                Point,
-            ]
+        geometry: Union[
+            Dict,
+            Feature,
+            FeatureCollection,
+            geojson_Polygon,
+            List,
+            GeoDataFrame,
+            Polygon,
+            Point,
         ] = None,
-        geometry_operation: Optional[str] = None,
+        geometry_operation: str = None,
         handle_multiple_features: str = "footprint",
         start_date: str = None,  # TODO: Other format? More time options?
         end_date: str = None,
@@ -349,11 +347,9 @@ class Workflow(Tools):
 
     def construct_parameters_parallel(
         self,
-        geometries: Optional[
-            List[Union[Dict, Feature, geojson_Polygon, Polygon, Point,]]
-        ] = None,
-        interval_dates: Optional[List[Tuple[str, str]]] = None,
-        scene_ids: Optional[List] = None,
+        geometries: List[Union[Dict, Feature, geojson_Polygon, Polygon, Point,]] = None,
+        interval_dates: List[Tuple[str, str]] = None,
+        scene_ids: List = None,
         limit_per_job: int = 1,
         geometry_operation: str = "intersects",
     ) -> List[dict]:
