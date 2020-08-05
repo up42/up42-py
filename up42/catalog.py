@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Union, List
+from typing import Dict, Union, List, Optional
 
 from geopandas import GeoDataFrame
 from shapely.geometry import shape
@@ -210,14 +210,15 @@ class Catalog(Tools):
         self,
         image_ids: List[str],
         sensor: str,
-        output_directory: Union[str, Path, None] = None,
+        output_directory: Optional[Union[str, Path]] = None,
     ) -> List[str]:
         """
         Gets the quicklooks of scenes from a single sensor. After download, can
         be plotted via catalog.plot_quicklooks().
 
         Args:
-            image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
+            image_ids: List of provider image_ids e.g. ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"].
+                Access the search results id column via `list(search_results.id)`.
             sensor: The satellite sensor of the image_ids, one of "pleiades", "spot",
                 "sentinel1", "sentinel2", "sentinel3", "sentinel5p".
             output_directory: The file output directory, defaults to the current working
