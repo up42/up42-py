@@ -162,7 +162,7 @@ class Catalog(Tools):
                         [13.62204483,52.15632025],[13.78859517,52.68655119],[13.32113746,
                         52.73971768]]]},
                     "limit": 10,
-                    "sortby": [{"field" : "properties.cloudCoverage","direction" : "asc"}]
+                    "sortby": [{"field" : "properties.acquisitionDate", "direction" : "asc"}]
                     }
             ```
         """
@@ -185,10 +185,9 @@ class Catalog(Tools):
         geometry = search_parameters["intersects"]
         poly = shape(geometry)
         df = df[df.intersects(poly)]
-        df = df.reset_index()
+        df = df.reset_index(drop=True)
 
         # Make scene_id more easily accessible
-        # TODO: Add by default to results, independent of sensor.
         def _get_scene_id(row):
             if row["providerName"] == "oneatlas":
                 row["scene_id"] = row["providerProperties"]["parentIdentifier"]
