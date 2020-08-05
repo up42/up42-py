@@ -79,7 +79,7 @@ class Catalog(Tools):
         ],
         limit: int = 10,
         max_cloudcover: float = 100,
-        sortby: str = "cloudCoverage",
+        sortby: str = "acquisitionDate",
         ascending: bool = True,
     ) -> Dict:
         """
