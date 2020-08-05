@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from time import sleep
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 import folium
 from geopandas import GeoDataFrame
@@ -349,7 +349,7 @@ class Job(Tools):
             )
             return m
 
-    def get_logs(self, as_print: bool = True, as_return: bool = False):
+    def get_logs(self, as_print: bool = True, as_return: bool = False) -> Optional[Dict]:
         """
         Convenience function to print or return the logs of all job tasks.
 
