@@ -3,7 +3,7 @@ import logging
 import copy
 from collections import Counter
 from pathlib import Path
-from typing import Dict, List, Union, Optional, Tuple
+from typing import Dict, List, Union, Tuple
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
@@ -23,9 +23,8 @@ logger = get_logger(__name__)
 class Workflow(Tools):
     def __init__(self, auth: Auth, project_id: str, workflow_id: str):
         """
-        The Workflow class can query all available and spawn new jobs for
-        an UP42 Workflow and helps to find and set the the workflow tasks, parameters
-        and aoi.
+        The Workflow class can query all available and spawn new jobs for an UP42
+        Workflow and helps to find and set the the workflow tasks, parameters and aoi.
         """
         self.auth = auth
         self.project_id = project_id
@@ -64,7 +63,6 @@ class Workflow(Tools):
         )
         response_json = self.auth._request(request_type="GET", url=url)
         compatible_blocks = response_json["data"]["blocks"]
-        # TODO: Plot diagram of current workflow in green, attachable blocks in red.
         compatible_blocks = {
             block["name"]: block["blockId"] for block in compatible_blocks
         }
@@ -86,7 +84,7 @@ class Workflow(Tools):
         )
         response_json = self.auth._request(request_type="GET", url=url)
         tasks = response_json["data"]
-        logger.info("Got %s tasks/blocks in workflow %s.", len(tasks), self.workflow_id)
+        logger.info(f"Got {len(tasks)} tasks/blocks in workflow {self.workflow_id}.")
 
         if basic:
             return {task["name"]: task["id"] for task in tasks}
@@ -277,8 +275,8 @@ class Workflow(Tools):
 
     def get_parameters_info(self) -> Dict:
         """
-        Gets infos about the workflow parameters of each block in the workflow to
-        make it easy to construct the desired parameters.
+        Gets infos about the workflow parameters of each block in the current workflow
+        to make it easy to construct the desired parameters.
 
         Returns:
             Workflow parameters info json.
@@ -317,21 +315,19 @@ class Workflow(Tools):
 
     def construct_parameters(
         self,
-        geometry: Optional[
-            Union[
-                Dict,
-                Feature,
-                FeatureCollection,
-                geojson_Polygon,
-                List,
-                GeoDataFrame,
-                Polygon,
-                Point,
-            ]
+        geometry: Union[
+            Dict,
+            Feature,
+            FeatureCollection,
+            geojson_Polygon,
+            List,
+            GeoDataFrame,
+            Polygon,
+            Point,
         ] = None,
-        geometry_operation: Optional[str] = None,
+        geometry_operation: str = None,
         handle_multiple_features: str = "footprint",
-        start_date: str = None,  # TODO: Other format? More time options?
+        start_date: str = None,
         end_date: str = None,
         limit: int = None,
         scene_ids: List = None,
@@ -357,14 +353,12 @@ class Workflow(Tools):
         Returns:
             Dictionary of constructed input parameters.
         """
-        # TODO: Add ipy slide widget option? One for each block.
         input_parameters = self._get_default_parameters()
         data_block_name = list(input_parameters.keys())[0]
 
         if order_ids is not None:
             # Needs to be handled in this function(not run_job) as it is only
             # relevant for the data block.
-            # TODO: Check for order-id correct schema, should be handled on backend?
             input_parameters[data_block_name] = {"order_ids": order_ids}
         else:
             if limit is not None:
@@ -376,7 +370,6 @@ class Workflow(Tools):
                 input_parameters[data_block_name]["ids"] = scene_ids
                 input_parameters[data_block_name]["limit"] = len(scene_ids)
                 input_parameters[data_block_name].pop("time")
-                # TODO: In case of ids remove all non-relevant parameters. Cleaner.
             elif start_date is not None and end_date is not None:
                 datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
                 input_parameters[data_block_name]["time"] = datetime
@@ -394,11 +387,9 @@ class Workflow(Tools):
 
     def construct_parameters_parallel(
         self,
-        geometries: Optional[
-            List[Union[Dict, Feature, geojson_Polygon, Polygon, Point,]]
-        ] = None,
-        interval_dates: Optional[List[Tuple[str, str]]] = None,
-        scene_ids: Optional[List] = None,
+        geometries: List[Union[Dict, Feature, geojson_Polygon, Polygon, Point,]] = None,
+        interval_dates: List[Tuple[str, str]] = None,
+        scene_ids: List = None,
         limit_per_job: int = 1,
         geometry_operation: str = "intersects",
     ) -> List[dict]:
@@ -419,7 +410,6 @@ class Workflow(Tools):
         Returns:
             List of dictionary of constructed input parameters.
         """
-        # TODO: Make list if single argument is given.
         # TODO: Rename arguments
         result_params = []
         # scene_ids mapped to geometries
@@ -497,7 +487,7 @@ class Workflow(Tools):
             logger.info("Running this job as Test Query...")
             logger.info("+++++++++++++++++++++++++++++++++")
 
-        logger.info("Selected input_parameters: %s.", input_parameters)
+        logger.info(f"Selected input_parameters: {input_parameters}")
 
         if name is None:
             name = self.info["name"]
@@ -510,7 +500,7 @@ class Workflow(Tools):
             request_type="POST", url=url, data=input_parameters
         )
         job_json = response_json["data"]
-        logger.info("Created and running new job: %s.", job_json["id"])
+        logger.info(f"Created and running new job: {job_json['id']}.")
         job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
 
         if track_status:
@@ -521,7 +511,7 @@ class Workflow(Tools):
         self,
         input_parameters_list: List[Dict] = None,
         max_concurrent_jobs: int = 10,
-        test_job=False,
+        test_job: bool = False,
         name: str = None,
     ) -> "JobCollection":
         """
@@ -564,7 +554,7 @@ class Workflow(Tools):
             batch_jobs = []
             # for params in ten_selected_input_parameters:
             for params in batch:
-                logger.info("Selected input_parameters: %s.", params)
+                logger.info(f"Selected input_parameters: {params}.")
 
                 job_name = (
                     f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
@@ -578,7 +568,7 @@ class Workflow(Tools):
                     request_type="POST", url=url, data=params
                 )
                 job_json = response_json["data"]
-                logger.info("Created and running new job: %s.", job_json["id"])
+                logger.info(f"Created and running new job: {job_json['id']}")
                 job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
                 batch_jobs.append(job)
                 job_nr += 1
@@ -597,7 +587,6 @@ class Workflow(Tools):
         job_collection = JobCollection(
             self.auth, project_id=self.project_id, jobs=jobs_list
         )
-
         return job_collection
 
     def test_job(
@@ -640,7 +629,6 @@ class Workflow(Tools):
         Returns:
             The spawned test jobcollection object.
         """
-        # TODO: Is it possible to have more than 10 concurrent jobs?
         return self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
             max_concurrent_jobs=10,
@@ -700,7 +688,6 @@ class Workflow(Tools):
         Returns:
             A JobCollection, or alternatively the jobs info as json.
         """
-        # TODO: Add selection for test/real job.
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = response_json["data"]
@@ -710,10 +697,8 @@ class Workflow(Tools):
         ]
 
         logger.info(
-            "Got %s jobs for workflow %s in project %s.",
-            len(jobs_workflow_json),
-            self.workflow_id,
-            self.project_id,
+            f"Got {len(jobs_workflow_json)} jobs for workflow "
+            f"{self.workflow_id} in project {self.project_id}."
         )
         if return_json:
             return jobs_workflow_json
@@ -741,7 +726,7 @@ class Workflow(Tools):
             f"{self.workflow_id}"
         )
         self.auth._request(request_type="PUT", url=url, data=properties_to_update)
-        logger.info("Updated workflow name: %r", properties_to_update)
+        logger.info(f"Updated workflow name: {properties_to_update}")
 
     def delete(self) -> None:
         """
@@ -752,5 +737,5 @@ class Workflow(Tools):
             f"{self.workflow_id}"
         )
         self.auth._request(request_type="DELETE", url=url, return_text=False)
-        logger.info("Successfully deleted workflow: %s", self.workflow_id)
+        logger.info(f"Successfully deleted workflow: {self.workflow_id}")
         del self

@@ -19,9 +19,6 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"], show_default=True)
 # To activate bash autocompletion
 # eval "$(_UP42_COMPLETE=source_bash up42)"
 
-# For usage of fstrings
-# pylint: disable=logging-format-interpolation
-
 
 def pprint_json(obj, indent=2):
     return "\n" + json.dumps(obj, indent=indent, sort_keys=True)

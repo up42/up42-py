@@ -66,9 +66,7 @@ class Project(Tools):
             if matching_workflows:
                 existing_workflow = matching_workflows[0]
                 logger.info(
-                    "Using existing workflow: %s, %s.",
-                    name,
-                    existing_workflow.workflow_id,
+                    f"Using existing workflow: {name} - {existing_workflow.workflow_id}"
                 )
                 return existing_workflow
 
@@ -76,7 +74,7 @@ class Project(Tools):
         payload = {"name": name, "description": description}
         response_json = self.auth._request(request_type="POST", url=url, data=payload)
         workflow_id = response_json["data"]["id"]
-        logger.info("Created new workflow: %s.", workflow_id)
+        logger.info(f"Created new workflow: {workflow_id}")
         workflow = Workflow(
             self.auth, project_id=self.project_id, workflow_id=workflow_id
         )
@@ -96,7 +94,7 @@ class Project(Tools):
         response_json = self.auth._request(request_type="GET", url=url)
         workflows_json = response_json["data"]
         logger.info(
-            "Got %s workflows for project %s.", len(workflows_json), self.project_id
+            f"Got {len(workflows_json)} workflows for project {self.project_id}."
         )
 
         if return_json:
@@ -121,13 +119,10 @@ class Project(Tools):
         Returns:
             All job objects in a JobCollection, or alternatively the jobs info as json.
         """
-        # TODO: Add selection for test/real job.
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = response_json["data"]
-        logger.info(
-            "Got %s jobs in project %s.", len(jobs_json), self.project_id,
-        )
+        logger.info(f"Got {len(jobs_json)} jobs in project {self.project_id}.")
         if return_json:
             return jobs_json
         else:
@@ -182,4 +177,4 @@ class Project(Tools):
             },
         ]
         self.auth._request(request_type="PUT", url=url, data=payload)
-        logger.info("Updated project settings: %s", payload)
+        logger.info(f"Updated project settings: {payload}")
