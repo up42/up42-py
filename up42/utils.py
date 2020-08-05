@@ -21,7 +21,8 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 
-LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+# truncate log messages > 2000 characters (e.g. huge geometries)
+LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message).2000s"
 
 
 def get_logger(name, level=logging.INFO):
