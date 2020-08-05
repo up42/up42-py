@@ -135,7 +135,7 @@ class Project(Tools):
             )
             return jobcollection
 
-    def get_project_settings(self) -> List:
+    def get_project_settings(self) -> List[Dict[str, str]]:
         """
         Gets the project settings.
 
@@ -150,9 +150,8 @@ class Project(Tools):
     @property
     def max_concurrent_jobs(self) -> int:
         project_settings = self.get_project_settings()
-        print(project_settings)
-        project_settings = {d["name"]: int(d["value"]) for d in project_settings}
-        return project_settings["MAX_CONCURRENT_JOBS"]
+        project_settings_dict = {d["name"]: int(d["value"]) for d in project_settings}
+        return project_settings_dict["MAX_CONCURRENT_JOBS"]
 
     def update_project_settings(
         self,
