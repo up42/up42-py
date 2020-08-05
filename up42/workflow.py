@@ -511,11 +511,9 @@ class Workflow(Tools):
 
         if max_concurrent_jobs > p.max_concurrent_jobs:
             logger.error(
-                "Maximum concurrent jobs %d greater"
-                "than project settings %d."
-                "Use project.update_project_settings to change this value.",
-                max_concurrent_jobs,
-                p.max_concurrent_jobs,
+                f"Maximum concurrent jobs {max_concurrent_jobs} greater"
+                f"than project settings {p.max_concurrent_jobs}."
+                "Use project.update_project_settings to change this value."
             )
             raise ValueError("Too many concurrent jobs!")
 
