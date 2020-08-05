@@ -387,8 +387,10 @@ class Job(Tools):
                 print("----------------------------------------------------------")
                 print(f"JobTask {idx+1} with jobtask_id {jobtask_id}:\n")
                 print(response_json)
-            if as_return:
-                return job_logs
+        if as_return:
+            return job_logs
+        else:
+            return None
 
     def get_jobtasks(
         self, return_json: bool = False

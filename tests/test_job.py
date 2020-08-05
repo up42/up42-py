@@ -170,6 +170,7 @@ def test_get_logs(job_mock, jobtask_mock):
         )
         m.get(url_log, json="")
         assert job_mock.get_logs(as_return=True)[jobtask_mock.jobtask_id] == ""
+        assert not job_mock.get_logs()
 
 
 def test_get_jobtasks(job_mock, jobtask_mock):
