@@ -13,10 +13,10 @@ from shapely.geometry import box
 from rasterio.vrt import WarpedVRT
 import rasterio
 
-from .auth import Auth
-from .jobtask import JobTask
-from .tools import Tools
-from .utils import (
+from up42.auth import Auth
+from up42.jobtask import JobTask
+from up42.tools import Tools
+from up42.utils import (
     get_logger,
     folium_base_map,
     download_results_from_gcs,

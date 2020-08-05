@@ -3,12 +3,12 @@ from typing import Dict, List, Union
 
 from tqdm import tqdm
 
-from .auth import Auth
-from .job import Job
-from .jobcollection import JobCollection
-from .tools import Tools
-from .utils import get_logger
-from .workflow import Workflow
+from up42.auth import Auth
+from up42.job import Job
+from up42.jobcollection import JobCollection
+from up42.tools import Tools
+from up42.utils import get_logger
+from up42.workflow import Workflow
 
 logger = get_logger(__name__)
 

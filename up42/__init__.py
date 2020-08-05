@@ -7,14 +7,14 @@ from geojson import FeatureCollection
 from geopandas import GeoDataFrame
 
 # pylint: disable=wrong-import-position
-from .tools import Tools
-from .auth import Auth
-from .project import Project
-from .workflow import Workflow
-from .job import Job
-from .jobtask import JobTask
-from .catalog import Catalog
-from .utils import get_logger
+from tools import Tools
+from auth import Auth
+from project import Project
+from workflow import Workflow
+from job import Job
+from jobtask import JobTask
+from catalog import Catalog
+from utils import get_logger
 
 logger = get_logger(__name__, level=logging.INFO)
 

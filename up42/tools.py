@@ -10,7 +10,7 @@ import pandas as pd
 import shapely
 import rasterio
 
-from .utils import get_logger, folium_base_map, DrawFoliumOverride, _plot_images
+from up42.utils import get_logger, folium_base_map, DrawFoliumOverride, _plot_images
 
 try:
     from IPython.display import display

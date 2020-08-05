@@ -11,8 +11,8 @@ from tenacity import (
     retry_if_exception_type,
 )
 
-from .tools import Tools
-from .utils import get_logger
+from up42.tools import Tools
+from up42.utils import get_logger
 
 logger = get_logger(__name__)
 

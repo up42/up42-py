@@ -11,11 +11,11 @@ from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 from tqdm import tqdm
 
-from .auth import Auth
-from .job import Job
-from .jobcollection import JobCollection
-from .tools import Tools
-from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
+from up42.auth import Auth
+from up42.job import Job
+from up42.jobcollection import JobCollection
+from up42.tools import Tools
+from up42.utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__)
 
