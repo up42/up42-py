@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from time import sleep
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 import folium
 from geopandas import GeoDataFrame
@@ -194,7 +194,6 @@ class Job(Tools):
         Returns:
             List of the downloaded results' filepaths.
         """
-        # TODO: Overwrite argument
         logger.info(f"Downloading results of job {self.job_id}")
 
         if output_directory is None:
@@ -222,7 +221,9 @@ class Job(Tools):
     def upload_results_to_bucket(
         self, gs_client, bucket, folder, extension: str = ".tgz", version: str = "v0"
     ) -> None:
-        """Uploads the results to a custom google cloud storage bucket."""
+        """
+        Uploads the results of a job directly to a custom google cloud storage bucket.
+        """
         download_url = self._get_download_url()
         r = requests.get(download_url)
 
@@ -252,8 +253,6 @@ class Job(Tools):
             show_images: Shows images if True (default), only features if False.
             name_column: Name of the feature property that provides the Feature/Layer name.
         """
-        # TODO: Make generic with scene_id column integrated.
-        # TODO: Add way to also display data block image together with processing output vectors
         if self.results is None:
             raise ValueError(
                 "You first need to download the results via job.download_results()!"

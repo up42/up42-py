@@ -91,7 +91,6 @@ class JobTask(Tools):
         Returns:
             List of the downloaded results' filepaths.
         """
-        # TODO: Overwrite argument
         logger.info(f"Downloading results of jobtask {self.jobtask_id}")
 
         if output_directory is None:

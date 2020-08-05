@@ -73,9 +73,7 @@ class Tools:
             df = df.to_crs(epsg=4326)
         df.geometry = df.geometry.buffer(0)
         # TODO: Explode multipolygons (if neccessary as union in aoi anyway most often).
-
         # TODO: Have both bboxes for each feature and overall?
-
         if as_dataframe:
             return df
         else:
@@ -106,7 +104,7 @@ class Tools:
             )
         else:
             raise ValueError(
-                "Please select one of 'Berlin' or 'Washington' as the " "location!"
+                "Please select one of 'Berlin' or 'Washington' as the location!"
             )
 
         if as_dataframe:
