@@ -119,11 +119,7 @@ class Catalog(Tools):
             squash_multiple_features="footprint",
         )
 
-        if ascending:
-            sort_order = "asc"
-        else:
-            sort_order = "desc"
-
+        sort_order = "asc" if ascending else "desc"
         query_filters = {"dataBlock": {"in": block_filters}}
         if sensors != ["sentinel1"]:
             query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
