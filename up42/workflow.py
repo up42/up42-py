@@ -501,7 +501,10 @@ class Workflow(Tools):
         jobs_list = []
         job_nr = 0
 
-        p = Project(self.auth, self.project_id)
+        # Avoids circular dependencies
+        import project  # pylint: disable=import-outside-toplevel
+
+        p = project.Project(self.auth, self.project_id)
 
         if max_concurrent_jobs > p.max_concurrent_jobs:
             logger.error(
