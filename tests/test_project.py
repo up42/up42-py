@@ -9,6 +9,7 @@ from .fixtures import (
     auth_live,
     project_mock,
     project_live,
+    project_max_concurrent_jobs,
 )
 
 
@@ -169,6 +170,12 @@ def test_get_project_settings(project_mock):
     assert project_settings[0]["name"] == "MAX_CONCURRENT_JOBS"
 
 
+def test_max_concurrent_jobs(project_mock, project_max_concurrent_jobs):
+    with project_max_concurrent_jobs(5):
+        max_concurrent_jobs = project_mock.max_concurrent_jobs
+    assert max_concurrent_jobs == 5
+
+
 @pytest.mark.live
 def test_get_project_settings_live(project_live):
     project_settings = project_live.get_project_settings()
@@ -176,3 +183,9 @@ def test_get_project_settings_live(project_live):
     assert len(project_settings) == 3
     project_settings_dict = {item["name"]: item for item in project_settings}
     assert "MAX_CONCURRENT_JOBS" in project_settings_dict.keys()
+
+
+@pytest.mark.live
+def test_max_concurrent_jobs_live(project_live):
+    max_concurrent_jobs = project_live.max_concurrent_jobs
+    assert max_concurrent_jobs == 10

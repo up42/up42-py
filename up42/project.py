@@ -147,6 +147,13 @@ class Project(Tools):
         project_settings = response_json["data"]
         return project_settings
 
+    @property
+    def max_concurrent_jobs(self) -> int:
+        project_settings = self.get_project_settings()
+        print(project_settings)
+        project_settings = {d["name"]: int(d["value"]) for d in project_settings}
+        return project_settings["MAX_CONCURRENT_JOBS"]
+
     def update_project_settings(
         self,
         max_aoi_size: int = None,
