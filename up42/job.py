@@ -47,15 +47,14 @@ class Job(Tools):
         self.job_id = job_id
         self.quicklooks = None
         self.results = None
-        if order_ids is None:
-            self.order_ids = [""]
+        self.order_ids = order_ids
         if self.auth.get_info:
             self.info = self._get_info()
 
     def __repr__(self):
         return (
             f"Job(job_id={self.job_id}, project_id={self.project_id}, "
-            f"order_ids={str(self.order_ids)}, auth={self.auth}, info={self.info})"
+            f"order_ids={self.order_ids}, auth={self.auth}, info={self.info})"
         )
 
     def _get_info(self):
@@ -70,7 +69,8 @@ class Job(Tools):
         Gets the job status.
 
         Returns:
-            The job status.
+            The job status, one of "SUCCEEDED", "NOT STARTED", "PENDING", "RUNNING",
+            "CANCELLED", "CANCELLING", "FAILED", "ERROR"
         """
         info = self._get_info()
         status = info["status"]
@@ -226,7 +226,7 @@ class Job(Tools):
         download_url = self._get_download_url()
         r = requests.get(download_url)
 
-        if self.order_ids != [""]:
+        if self.order_ids is not None:
             blob = bucket.blob(
                 str(Path(version) / Path(folder) / Path(self.order_ids[0] + extension))
             )
