@@ -500,6 +500,19 @@ class Workflow(Tools):
 
         jobs_list = []
         job_nr = 0
+
+        p = Project(self.auth, self.project_id)
+
+        if max_concurrent_jobs > p.max_concurrent_jobs:
+            logger.error(
+                "Maximum concurrent jobs %d greater"
+                "than project settings %d."
+                "Use project.update_project_settings to change this value.",
+                max_concurrent_jobs,
+                p.max_concurrent_jobs,
+            )
+            raise ValueError("Too many concurrent jobs!")
+
         # Run all jobs in parallel batches of the max_concurrent_jobs (max. 10.)
         batches = [
             input_parameters_list[pos : pos + max_concurrent_jobs]
