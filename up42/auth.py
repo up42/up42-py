@@ -39,8 +39,8 @@ class Auth(Tools):
             project_api_key: The project-specific API key.
         """
         self.cfg_file = cfg_file
-        self.project_id = str(project_id)
-        self.project_api_key = str(project_api_key)
+        self.project_id = project_id
+        self.project_api_key = project_api_key
 
         try:
             self.env: str = kwargs["env"]
