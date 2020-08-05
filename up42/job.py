@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from time import sleep
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Union
 
 import folium
 from geopandas import GeoDataFrame
