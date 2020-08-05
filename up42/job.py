@@ -349,7 +349,9 @@ class Job(Tools):
             )
             return m
 
-    def get_logs(self, as_print: bool = True, as_return: bool = False) -> Optional[Dict]:
+    def get_logs(
+        self, as_print: bool = True, as_return: bool = False
+    ) -> Optional[Dict]:
         """
         Convenience function to print or return the logs of all job tasks.
 

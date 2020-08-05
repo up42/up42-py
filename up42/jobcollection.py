@@ -4,9 +4,9 @@ from pathlib import Path
 import geojson
 from geojson import FeatureCollection
 
-from auth import Auth
-from job import Job
-from tools import Tools
+from up42.auth import Auth
+from up42.job import Job
+from up42.tools import Tools
 
 from up42.utils import get_logger
 
