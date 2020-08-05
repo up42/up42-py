@@ -478,6 +478,9 @@ class Workflow(Tools):
             test_job: If set, runs a test query (search for available imagery based on your data parameters).
             name: The job name. Optional, by default the workflow name is assigned.
 
+        Raises:
+            ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
+
         Returns:
             The spawned real or test job object.
         """
@@ -587,7 +590,10 @@ class Workflow(Tools):
         )
 
     def test_jobs_parallel(
-        self, input_parameters_list: List[Dict] = None, name: str = None,
+        self,
+        input_parameters_list: List[Dict] = None,
+        name: str = None,
+        max_concurrent_jobs: int = 10,
     ) -> "JobCollection":
         """
         Create and run test jobs (Test Query) in parallel. With this test query you will not be
@@ -596,13 +602,15 @@ class Workflow(Tools):
         Args:
             input_parameters_list: List of dictionary of input parameters
             name: The job name. Optional, by default the workflow name is assigned.
+            max_concurrent_jobs: The maximum number of jobs to run in parallel.
+                This is defined in the project settings.
 
         Returns:
             The spawned test jobcollection object.
         """
         return self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
-            max_concurrent_jobs=10,
+            max_concurrent_jobs=max_concurrent_jobs,
             test_job=True,
             name=name,
         )
@@ -630,7 +638,10 @@ class Workflow(Tools):
         )
 
     def run_jobs_parallel(
-        self, input_parameters_list: List[Dict] = None, name: str = None,
+        self,
+        input_parameters_list: List[Dict] = None,
+        name: str = None,
+        max_concurrent_jobs: int = 10,
     ) -> "JobCollection":
         """
         Create and run jobs in parallel.
@@ -638,13 +649,14 @@ class Workflow(Tools):
         Args:
             input_parameters_list: List of dictionary of input parameters
             name: The job name. Optional, by default the workflow name is assigned.
+            max_concurrent_jobs: The maximum number of jobs to run in parallel. This is defined in the project settings.
 
         Returns:
             The spawned test jobcollection object.
         """
         jobcollection = self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
-            max_concurrent_jobs=10,
+            max_concurrent_jobs=max_concurrent_jobs,
             name=name,
         )
         return jobcollection
