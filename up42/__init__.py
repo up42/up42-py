@@ -27,14 +27,14 @@ def authenticate(
     cfg_file: Union[str, Path] = None,
     project_id: str = None,
     project_api_key: str = None,
-    **kwargs
+    **kwargs,
 ):
     global _auth  # pylint: disable=global-statement
     _auth = Auth(
         cfg_file=cfg_file,
         project_id=project_id,
         project_api_key=project_api_key,
-        **kwargs
+        **kwargs,
     )
 
 
@@ -42,7 +42,7 @@ def initialize_project() -> "Project":
     """Directly returns the correct Project object (has to exist on UP42)."""
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    logger.info("Working on Project with project_id %s", _auth.project_id)
+    logger.info(f"Working on Project with project_id {_auth.project_id}")
     return Project(auth=_auth, project_id=_auth.project_id)
 
 

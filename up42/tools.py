@@ -95,7 +95,7 @@ class Tools:
         Returns:
             Feature collection json with the selected aoi.
         """
-        logger.info("Getting small example aoi in %s.", location)
+        logger.info(f"Getting small example aoi in location '{location}'.")
         if location == "Berlin":
             example_aoi = self.read_vector_file(
                 f"{str(Path(__file__).resolve().parent)}/data/aoi_berlin.geojson"

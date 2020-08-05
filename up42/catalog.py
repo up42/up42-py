@@ -12,7 +12,6 @@ from .auth import Auth
 from .tools import Tools
 from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
-
 logger = get_logger(__name__)
 
 
@@ -234,7 +233,8 @@ class Catalog(Tools):
             )
         provider = supported_sensors[sensor]["provider"]
         logger.info(
-            "Getting quicklooks from provider %s for image_ids: %s", provider, image_ids
+            f"Getting quicklooks from provider {provider} for image_ids: "
+            f"{image_ids}"
         )
 
         if output_directory is None:
@@ -244,7 +244,7 @@ class Catalog(Tools):
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info("Download directory: %s", str(output_directory))
+        logger.info(f"Download directory: {str(output_directory)}")
 
         if isinstance(image_ids, str):
             image_ids = [image_ids]

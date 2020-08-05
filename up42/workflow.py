@@ -86,7 +86,7 @@ class Workflow(Tools):
         )
         response_json = self.auth._request(request_type="GET", url=url)
         tasks = response_json["data"]
-        logger.info("Got %s tasks/blocks in workflow %s.", len(tasks), self.workflow_id)
+        logger.info(f"Got {len(tasks)} tasks/blocks in workflow {self.workflow_id}.")
 
         if basic:
             return {task["name"]: task["id"] for task in tasks}
@@ -452,7 +452,7 @@ class Workflow(Tools):
             logger.info("Running this job as Test Query...")
             logger.info("+++++++++++++++++++++++++++++++++")
 
-        logger.info("Selected input_parameters: %s.", input_parameters)
+        logger.info(f"Selected input_parameters: {input_parameters}")
 
         if name is None:
             name = self.info["name"]
@@ -465,7 +465,7 @@ class Workflow(Tools):
             request_type="POST", url=url, data=input_parameters
         )
         job_json = response_json["data"]
-        logger.info("Created and running new job: %s.", job_json["id"])
+        logger.info(f"Created and running new job: {job_json['id']}.")
         job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
 
         if track_status:
@@ -519,7 +519,7 @@ class Workflow(Tools):
             batch_jobs = []
             # for params in ten_selected_input_parameters:
             for params in batch:
-                logger.info("Selected input_parameters: %s.", params)
+                logger.info(f"Selected input_parameters: {params}.")
 
                 job_name = (
                     f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
@@ -533,7 +533,7 @@ class Workflow(Tools):
                     request_type="POST", url=url, data=params
                 )
                 job_json = response_json["data"]
-                logger.info("Created and running new job: %s.", job_json["id"])
+                logger.info(f"Created and running new job: {job_json['id']}")
                 job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
                 batch_jobs.append(job)
                 job_nr += 1
@@ -665,10 +665,8 @@ class Workflow(Tools):
         ]
 
         logger.info(
-            "Got %s jobs for workflow %s in project %s.",
-            len(jobs_workflow_json),
-            self.workflow_id,
-            self.project_id,
+            f"Got {len(jobs_workflow_json)} jobs for workflow "
+            f"{self.workflow_id} in project {self.project_id}."
         )
         if return_json:
             return jobs_workflow_json
@@ -707,5 +705,5 @@ class Workflow(Tools):
             f"{self.workflow_id}"
         )
         self.auth._request(request_type="DELETE", url=url, return_text=False)
-        logger.info("Successfully deleted workflow: %s", self.workflow_id)
+        logger.info(f"Successfully deleted workflow: {self.workflow_id}")
         del self

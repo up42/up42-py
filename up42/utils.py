@@ -68,7 +68,7 @@ def download_results_from_gcs(
                 if chunk:  # filter out keep-alive new chunks
                     dst_tgz.write(chunk)
         except requests.exceptions.HTTPError as err:
-            logger.debug("Connection error, please try again! %s", err)
+            logger.debug(f"Connection error, please try again! {err}")
             raise requests.exceptions.HTTPError(
                 f"Connection error, please try again! {err}"
             )
@@ -82,10 +82,8 @@ def download_results_from_gcs(
         out_filepaths = [str(x) for x in output_directory.glob("**/*") if x.is_file()]
 
     logger.info(
-        "Download successful of %s files to output_directory '%s': %s",
-        len(out_filepaths),
-        output_directory,
-        [Path(p).name for p in out_filepaths],
+        f"Download successful of {len(out_filepaths)} files to output_directory "
+        f"'{output_directory}': {[Path(p).name for p in out_filepaths]}"
     )
     return out_filepaths
 
@@ -116,16 +114,14 @@ def download_results_from_gcs_without_unpacking(
                     dst.write(chunk)
             out_filepaths.append(str(out_fp))
         except requests.exceptions.HTTPError as err:
-            logger.debug("Connection error, please try again! %s", err)
+            logger.debug(f"Connection error, please try again! {err}")
             raise requests.exceptions.HTTPError(
                 f"Connection error, please try again! {err}"
             )
 
     logger.info(
-        "Download successful of %s files to output_directory '%s': %s",
-        len(out_filepaths),
-        output_directory,
-        [Path(p).name for p in out_filepaths],
+        f"Download successful of {len(out_filepaths)} files to output_directory"
+        f" '{output_directory}': {[Path(p).name for p in out_filepaths]}"
     )
     return out_filepaths
 
@@ -438,9 +434,8 @@ def fc_to_query_geometry(
     # geometry via handle_multiple_features method.
     else:
         logger.info(
-            "The provided geometry contains multiple geometries, the %s feature is "
-            "taken instead.",
-            squash_multiple_features,
+            f"The provided geometry contains multiple geometries, "
+            f"the {squash_multiple_features} feature is taken instead."
         )
         if geometry_operation == "bbox":
             if squash_multiple_features == "union":
