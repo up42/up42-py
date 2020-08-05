@@ -126,8 +126,8 @@ class Catalog(Tools):
             sort_order = "desc"
 
         query_filters = {"dataBlock": {"in": block_filters}}
-        if not sensors == ["sentinel1"]:
-            query_filters["cloudCoverage"] = {"lte": max_cloudcover}
+        if sensors != ["sentinel1"]:
+            query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
 
         search_parameters = {
             "datetime": datetime,
@@ -197,6 +197,7 @@ class Catalog(Tools):
                 ]
             return row
 
+        # Search result dataframe can contain scenes of multiple sensors, need to apply row by row.
         df = df.apply(_get_scene_id, axis=1)
         df.crs = dst_crs  # apply resets the crs
 
