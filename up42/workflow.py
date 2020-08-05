@@ -478,11 +478,11 @@ class Workflow(Tools):
             test_job: If set, runs a test query (search for available imagery based on your data parameters).
             name: The job name. Optional, by default the workflow name is assigned.
 
-        Raises:
-            ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
-
         Returns:
             The spawned real or test job object.
+
+        Raises:
+            ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
         if input_parameters_list is None:
             raise ValueError(
@@ -606,7 +606,10 @@ class Workflow(Tools):
                 This is defined in the project settings.
 
         Returns:
-            The spawned test jobcollection object.
+            The spawned test JobCollection object.
+
+        Raises:
+            ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
         return self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
@@ -652,7 +655,10 @@ class Workflow(Tools):
             max_concurrent_jobs: The maximum number of jobs to run in parallel. This is defined in the project settings.
 
         Returns:
-            The spawned test jobcollection object.
+            The spawned JobCollection object.
+
+        Raises:
+            ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
         jobcollection = self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
