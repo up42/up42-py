@@ -229,7 +229,7 @@ class Workflow(Tools):
             f"{self.workflow_id}/tasks/"
         )
         self.auth._request(request_type="POST", url=url, data=input_tasks)
-        logger.info("Added tasks to workflow: %r", input_tasks)
+        logger.info(f"Added tasks to workflow: {input_tasks}")
 
     def get_parameters_info(self) -> Dict:
         """
@@ -696,7 +696,7 @@ class Workflow(Tools):
             f"{self.workflow_id}"
         )
         self.auth._request(request_type="PUT", url=url, data=properties_to_update)
-        logger.info("Updated workflow name: %r", properties_to_update)
+        logger.info(f"Updated workflow name: {properties_to_update}")
 
     def delete(self) -> None:
         """

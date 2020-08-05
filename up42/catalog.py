@@ -93,10 +93,10 @@ class Catalog(Tools):
             sensors: The satellite sensors to search for, one or multiple of
                 ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p"]
             limit: The maximum number of search results to return (1-max.500).
-            max_cloudcover: Maximum cloudcover % - 100 will return all scenes, 8.4 will return all
-                scenes with 8.4 or less cloudcover.
+            max_cloudcover: Maximum cloudcover % - e.g. 100 will return all scenes,
+                8.4 will return all scenes with 8.4 or less cloudcover.
             sortby: The property to sort by, "cloudCoverage", "acquisitionDate",
-                "acquisitionIdentifier", "incidenceAngle", "snowCover"
+                "acquisitionIdentifier", "incidenceAngle", "snowCover".
             ascending: Ascending sort order by default, descending if False.
 
         Returns:
@@ -167,10 +167,10 @@ class Catalog(Tools):
                     }
             ```
         """
-        logger.info("Searching catalog with: %r", search_parameters)
+        logger.info(f"Searching catalog with search_parameters: {search_parameters}")
         url = f"{self.auth._endpoint()}/catalog/stac/search"
         response_json = self.auth._request("POST", url, search_parameters)
-        logger.info("%d results returned.", len(response_json["features"]))
+        logger.info(f"{len(response_json['features'])} results returned.")
         dst_crs = "EPSG:4326"
         df = GeoDataFrame.from_features(response_json, crs=dst_crs)
         if df.empty:
