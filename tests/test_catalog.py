@@ -74,7 +74,6 @@ def test_search_live(catalog_live):
     assert isinstance(search_results, gpd.GeoDataFrame)
     assert search_results.shape == (4, 9)
     assert list(search_results.columns) == [
-        "index",
         "geometry",
         "id",
         "acquisitionDate",
