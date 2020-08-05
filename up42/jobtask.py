@@ -61,7 +61,7 @@ class JobTask(Tools):
             f"/tasks/{self.jobtask_id}/outputs/data-json/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
-        logger.info("Retrieved %s features.", len(response_json["features"]))
+        logger.info(f"Retrieved {len(response_json['features'])} features.")
 
         if as_dataframe:
             # UP42 results are always in EPSG 4326
@@ -91,8 +91,7 @@ class JobTask(Tools):
         Returns:
             List of the downloaded results' filepaths.
         """
-        # TODO: Overwrite argument
-        logger.info("Downloading results of jobtask %s", self.jobtask_id)
+        logger.info(f"Downloading results of jobtask {self.jobtask_id}")
 
         if output_directory is None:
             output_directory = (
@@ -101,7 +100,7 @@ class JobTask(Tools):
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info("Download directory: %s", str(output_directory))
+        logger.info(f"Download directory: {str(output_directory)}")
 
         download_url = self._get_download_url()
         out_filepaths = download_results_from_gcs(
@@ -133,7 +132,7 @@ class JobTask(Tools):
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info("Download directory: %s", str(output_directory))
+        logger.info(f"Download directory: {str(output_directory)}")
 
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"

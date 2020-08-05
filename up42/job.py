@@ -47,15 +47,14 @@ class Job(Tools):
         self.job_id = job_id
         self.quicklooks = None
         self.results = None
-        if order_ids is None:
-            self.order_ids = [""]
+        self.order_ids = order_ids
         if self.auth.get_info:
             self.info = self._get_info()
 
     def __repr__(self):
         return (
             f"Job(job_id={self.job_id}, project_id={self.project_id}, "
-            f"order_ids={str(self.order_ids)}, auth={self.auth}, info={self.info})"
+            f"order_ids={self.order_ids}, auth={self.auth}, info={self.info})"
         )
 
     def _get_info(self):
@@ -70,12 +69,12 @@ class Job(Tools):
         Gets the job status.
 
         Returns:
-            The job status.
+            The job status, one of "SUCCEEDED", "NOT STARTED", "PENDING", "RUNNING",
+            "CANCELLED", "CANCELLING", "FAILED", "ERROR"
         """
-        # logger.info("Getting job status: %s", self.job_id)
         info = self._get_info()
         status = info["status"]
-        logger.info("Job is %s", status)
+        logger.info(f"Job is {status}")
         return status
 
     @property
@@ -94,8 +93,7 @@ class Job(Tools):
             report_time: The intervall (in seconds) when to query the job status.
         """
         logger.info(
-            "Tracking job status continuously, reporting every %s seconds...",
-            report_time,
+            f"Tracking job status continuously, reporting every {report_time} seconds...",
         )
         status = "NOT STARTED"
         time_asleep = 0
@@ -108,16 +106,16 @@ class Job(Tools):
             # TODO: Add statuses as constants (maybe objects?)
             if status in ["NOT STARTED", "PENDING", "RUNNING"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
-                    logger.info("Job is %s! - %s", status, self.job_id)
+                    logger.info(f"Job is {status}! - {self.job_id}")
             elif status in ["FAILED", "ERROR"]:
-                logger.info("Job is %s! - %s - Printing logs ...", status, self.job_id)
+                logger.info(f"Job is {status}! - {self.job_id} - Printing logs ...")
                 self.get_logs(as_print=True)
                 raise ValueError("Job has failed! See the above log.")
             elif status in ["CANCELLED", "CANCELLING"]:
-                logger.info("Job is %s! - %s", status, self.job_id)
+                logger.info(f"Job is {status}! - {self.job_id}")
                 raise ValueError("Job has been cancelled!")
             elif status == "SUCCEEDED":
-                logger.info("Job finished successfully! - %s", self.job_id)
+                logger.info(f"Job finished successfully! - {self.job_id}")
 
             sleep(5)
             time_asleep += 5
@@ -128,7 +126,7 @@ class Job(Tools):
         """Cancels a pending or running job."""
         url = f"{self.auth._endpoint()}/jobs/{self.job_id}/cancel/"
         self.auth._request(request_type="POST", url=url)
-        logger.info("Job canceled: %s", self.job_id)
+        logger.info(f"Job canceled: {self.job_id}")
 
     def download_quicklooks(
         self, output_directory: Union[str, Path, None] = None
@@ -164,7 +162,7 @@ class Job(Tools):
             f"/outputs/data-json/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
-        logger.info("Retrieved %s features.", len(response_json["features"]))
+        logger.info(f"Retrieved {len(response_json['features'])} features.")
 
         if as_dataframe:
             # UP42 results are always in EPSG 4326
@@ -196,8 +194,7 @@ class Job(Tools):
         Returns:
             List of the downloaded results' filepaths.
         """
-        # TODO: Overwrite argument
-        logger.info("Downloading results of job %s", self.job_id)
+        logger.info(f"Downloading results of job {self.job_id}")
 
         if output_directory is None:
             output_directory = (
@@ -206,7 +203,7 @@ class Job(Tools):
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info("Download directory: %s", str(output_directory))
+        logger.info(f"Download directory: {str(output_directory)}")
 
         download_url = self._get_download_url()
         if unpacking:
@@ -224,22 +221,25 @@ class Job(Tools):
     def upload_results_to_bucket(
         self, gs_client, bucket, folder, extension: str = ".tgz", version: str = "v0"
     ) -> None:
-        """Uploads the results to a custom google cloud storage bucket."""
+        """
+        Uploads the results of a job directly to a custom google cloud storage bucket.
+        """
         download_url = self._get_download_url()
         r = requests.get(download_url)
 
-        if self.order_ids != [""]:
+        if self.order_ids is not None:
             blob = bucket.blob(
                 str(Path(version) / Path(folder) / Path(self.order_ids[0] + extension))
             )
             logger.info(
-                "Upload job %s results with order_ids to %s...", self.job_id, blob.name
+                f"Upload job {self.job_id} results with order_ids to "
+                f"{blob.name} ..."
             )
         else:
             blob = bucket.blob(
                 str(Path(version) / Path(folder) / Path(self.job_id + extension))
             )
-            logger.info("Upload job %s results to %s...", self.job_id, blob.name)
+            logger.info(f"Upload job {self.job_id} results to {blob.name} ...")
         blob.upload_from_string(
             data=r.content, content_type="application/octet-stream", client=gs_client,
         )
@@ -253,8 +253,6 @@ class Job(Tools):
             show_images: Shows images if True (default), only features if False.
             name_column: Name of the feature property that provides the Feature/Layer name.
         """
-        # TODO: Make generic with scene_id column integrated.
-        # TODO: Add way to also display data block image together with processing output vectors
         if self.results is None:
             raise ValueError(
                 "You first need to download the results via job.download_results()!"
@@ -362,14 +360,12 @@ class Job(Tools):
         Returns:
             The log strings (only if as_return was selected).
         """
+        job_logs = {}
+
         jobtasks: List[Dict] = self.get_jobtasks(return_json=True)  # type: ignore
         jobtasks_ids = [task["id"] for task in jobtasks]
 
-        logger.info(
-            "Getting logs for %s job tasks: %s", len(jobtasks_ids), jobtasks_ids
-        )
-        job_logs = {}
-
+        logger.info(f"Getting logs for {len(jobtasks_ids)} job tasks: {jobtasks_ids}")
         if as_print:
             print(
                 f"Printing logs of {len(jobtasks_ids)} JobTasks in Job with job_id "
@@ -408,7 +404,7 @@ class Job(Tools):
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
             f"/tasks/"
         )
-        logger.info("Getting job tasks: %s", self.job_id)
+        logger.info(f"Getting job tasks: {self.job_id}")
         response_json = self.auth._request(request_type="GET", url=url)
         jobtasks_json: List[Dict] = response_json["data"]
 

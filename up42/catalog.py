@@ -15,9 +15,6 @@ from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 logger = get_logger(__name__)
 
 
-# TODO: Midterm add catalog results class? Scenes() etc. that also as feedback to workflow input.
-# Scenes() would be dataframe with quicklook preview images in it.
-
 supported_sensors = {
     "pleiades": {
         "blocks": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-aoiclipped",],
@@ -54,7 +51,8 @@ class Catalog(Tools):
     def __init__(self, auth: Auth):
         """
         The Catalog class enables access to the UP42 catalog search. You can search
-        for satellite image scenes for different sensors and criteria like cloud cover etc.
+        for satellite image scenes (for different sensors and criteria like cloud cover),
+        plot the scene coverage and download and plot the scene quicklooks.
         """
         self.auth = auth
         self.quicklooks = None
@@ -80,7 +78,7 @@ class Catalog(Tools):
         ],
         limit: int = 10,
         max_cloudcover: float = 100,
-        sortby: str = "cloudCoverage",
+        sortby: str = "acquisitionDate",
         ascending: bool = True,
     ) -> Dict:
         """
@@ -94,10 +92,11 @@ class Catalog(Tools):
             sensors: The satellite sensors to search for, one or multiple of
                 ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p"]
             limit: The maximum number of search results to return (1-max.500).
-            max_cloudcover: Maximum cloudcover % - 100 will return all scenes, 8.4 will return all
-                scenes with 8.4 or less cloudcover.
+            max_cloudcover: Maximum cloudcover % - e.g. 100 will return all scenes,
+                8.4 will return all scenes with 8.4 or less cloudcover.
+                Ignored for sensors that have no cloudcover (e.g. sentinel1).
             sortby: The property to sort by, "cloudCoverage", "acquisitionDate",
-                "acquisitionIdentifier", "incidenceAngle", "snowCover"
+                "acquisitionIdentifier", "incidenceAngle", "snowCover".
             ascending: Ascending sort order by default, descending if False.
 
         Returns:
@@ -112,15 +111,6 @@ class Catalog(Tools):
                     f"{list(supported_sensors.keys())}"
                 )
             block_filters.extend(supported_sensors[sensor]["blocks"])
-        query_filters = {
-            "cloudCoverage": {"lte": max_cloudcover},
-            "dataBlock": {"in": block_filters},
-        }
-
-        if ascending:
-            sort_order = "asc"
-        else:
-            sort_order = "desc"
 
         aoi_fc = any_vector_to_fc(vector=geometry,)
         aoi_geometry = fc_to_query_geometry(
@@ -129,7 +119,11 @@ class Catalog(Tools):
             squash_multiple_features="footprint",
         )
 
-        # TODO: cc also contains nan with sentinel 1 etc. ignore?
+        sort_order = "asc" if ascending else "desc"
+        query_filters = {"dataBlock": {"in": block_filters}}
+        if sensors != ["sentinel1"]:
+            query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
+
         search_parameters = {
             "datetime": datetime,
             "intersects": aoi_geometry,
@@ -137,7 +131,6 @@ class Catalog(Tools):
             "query": query_filters,
             "sortby": [{"field": f"properties.{sortby}", "direction": sort_order}],
         }
-
         return search_parameters
 
     def search(
@@ -164,14 +157,14 @@ class Catalog(Tools):
                         [13.62204483,52.15632025],[13.78859517,52.68655119],[13.32113746,
                         52.73971768]]]},
                     "limit": 10,
-                    "sortby": [{"field" : "properties.cloudCoverage","direction" : "asc"}]
+                    "sortby": [{"field" : "properties.acquisitionDate", "direction" : "asc"}]
                     }
             ```
         """
-        logger.info("Searching catalog with: %r", search_parameters)
+        logger.info(f"Searching catalog with search_parameters: {search_parameters}")
         url = f"{self.auth._endpoint()}/catalog/stac/search"
         response_json = self.auth._request("POST", url, search_parameters)
-        logger.info("%d results returned.", len(response_json["features"]))
+        logger.info(f"{len(response_json['features'])} results returned.")
         dst_crs = "EPSG:4326"
         df = GeoDataFrame.from_features(response_json, crs=dst_crs)
         if df.empty:
@@ -187,10 +180,9 @@ class Catalog(Tools):
         geometry = search_parameters["intersects"]
         poly = shape(geometry)
         df = df[df.intersects(poly)]
-        df = df.reset_index()
+        df = df.reset_index(drop=True)
 
         # Make scene_id more easily accessible
-        # TODO: Add by default to results, independent of sensor.
         def _get_scene_id(row):
             if row["providerName"] == "oneatlas":
                 row["scene_id"] = row["providerProperties"]["parentIdentifier"]
@@ -200,6 +192,7 @@ class Catalog(Tools):
                 ]
             return row
 
+        # Search result dataframe can contain scenes of multiple sensors, need to apply row by row.
         df = df.apply(_get_scene_id, axis=1)
         df.crs = dst_crs  # apply resets the crs
 
@@ -212,14 +205,15 @@ class Catalog(Tools):
         self,
         image_ids: List[str],
         sensor: str,
-        output_directory: Union[str, Path, None] = None,
+        output_directory: Union[str, Path] = None,
     ) -> List[str]:
         """
         Gets the quicklooks of scenes from a single sensor. After download, can
         be plotted via catalog.plot_quicklooks().
 
         Args:
-            image_ids: provider image_id in the form "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
+            image_ids: List of provider image_ids e.g. ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"].
+                Access the search results id column via `list(search_results.id)`.
             sensor: The satellite sensor of the image_ids, one of "pleiades", "spot",
                 "sentinel1", "sentinel2", "sentinel3", "sentinel5p".
             output_directory: The file output directory, defaults to the current working
@@ -235,7 +229,8 @@ class Catalog(Tools):
             )
         provider = supported_sensors[sensor]["provider"]
         logger.info(
-            "Getting quicklooks from provider %s for image_ids: %s", provider, image_ids
+            f"Getting quicklooks from provider {provider} for image_ids: "
+            f"{image_ids}"
         )
 
         if output_directory is None:
@@ -245,7 +240,7 @@ class Catalog(Tools):
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info("Download directory: %s", str(output_directory))
+        logger.info(f"Download directory: {str(output_directory)}")
 
         if isinstance(image_ids, str):
             image_ids = [image_ids]

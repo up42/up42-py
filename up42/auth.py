@@ -39,8 +39,8 @@ class Auth(Tools):
             project_api_key: The project-specific API key.
         """
         self.cfg_file = cfg_file
-        self.project_id = project_id
-        self.project_api_key = project_api_key
+        self.project_id = str(project_id)
+        self.project_api_key = str(project_api_key)
 
         try:
             self.env: str = kwargs["env"]
@@ -69,7 +69,7 @@ class Auth(Tools):
 
     def _find_credentials(self) -> None:
         """
-        Sources the project credentials from a provided config file and error handling
+        Sources the project credentials from a provided config file, error handling
         if no credentials are provided in arguments or config file.
         """
         if self.project_id is None or self.project_api_key is None:
@@ -189,7 +189,7 @@ class Auth(Tools):
         data: Union[Dict, List] = {},
         querystring: Dict = {},
         return_text: bool = True,
-    ) -> Union[str, requests.Response]:
+    ) -> Union[str, Dict, requests.Response]:
         """
         Handles retrying the request and automatically gets a new token if the old
         is invalid.
