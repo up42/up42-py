@@ -129,7 +129,6 @@ class Catalog(Tools):
         if not sensors == ["sentinel1"]:
             query_filters["cloudCoverage"] = {"lte": max_cloudcover}
 
-        # TODO: cc also contains nan with sentinel 1 etc. ignore?
         search_parameters = {
             "datetime": datetime,
             "intersects": aoi_geometry,
