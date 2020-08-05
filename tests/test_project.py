@@ -188,4 +188,4 @@ def test_get_project_settings_live(project_live):
 @pytest.mark.live
 def test_max_concurrent_jobs_live(project_live):
     max_concurrent_jobs = project_live.max_concurrent_jobs
-    assert max_concurrent_jobs == 10
+    assert max_concurrent_jobs == 100
