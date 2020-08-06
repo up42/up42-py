@@ -11,11 +11,11 @@ from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 from tqdm import tqdm
 
-from .auth import Auth
-from .job import Job
-from .jobcollection import JobCollection
-from .tools import Tools
-from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
+from up42.auth import Auth
+from up42.job import Job
+from up42.jobcollection import JobCollection
+from up42.tools import Tools
+from up42.utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__)
 
@@ -480,6 +480,9 @@ class Workflow(Tools):
 
         Returns:
             The spawned real or test job object.
+
+        Raises:
+            ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
         if input_parameters_list is None:
             raise ValueError(
@@ -500,6 +503,15 @@ class Workflow(Tools):
 
         jobs_list = []
         job_nr = 0
+
+        if max_concurrent_jobs > self.max_concurrent_jobs:
+            logger.error(
+                f"Maximum concurrent jobs {max_concurrent_jobs} greater "
+                f"than project settings {self.max_concurrent_jobs}. "
+                "Use project.update_project_settings to change this value."
+            )
+            raise ValueError("Too many concurrent jobs!")
+
         # Run all jobs in parallel batches of the max_concurrent_jobs (max. 10.)
         batches = [
             input_parameters_list[pos : pos + max_concurrent_jobs]
@@ -571,7 +583,10 @@ class Workflow(Tools):
         )
 
     def test_jobs_parallel(
-        self, input_parameters_list: List[Dict] = None, name: str = None,
+        self,
+        input_parameters_list: List[Dict] = None,
+        name: str = None,
+        max_concurrent_jobs: int = 10,
     ) -> "JobCollection":
         """
         Create and run test jobs (Test Query) in parallel. With this test query you will not be
@@ -580,13 +595,18 @@ class Workflow(Tools):
         Args:
             input_parameters_list: List of dictionary of input parameters
             name: The job name. Optional, by default the workflow name is assigned.
+            max_concurrent_jobs: The maximum number of jobs to run in parallel.
+                This is defined in the project settings.
 
         Returns:
-            The spawned test jobcollection object.
+            The spawned test JobCollection object.
+
+        Raises:
+            ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
         return self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
-            max_concurrent_jobs=10,
+            max_concurrent_jobs=max_concurrent_jobs,
             test_job=True,
             name=name,
         )
@@ -614,7 +634,10 @@ class Workflow(Tools):
         )
 
     def run_jobs_parallel(
-        self, input_parameters_list: List[Dict] = None, name: str = None,
+        self,
+        input_parameters_list: List[Dict] = None,
+        name: str = None,
+        max_concurrent_jobs: int = 10,
     ) -> "JobCollection":
         """
         Create and run jobs in parallel.
@@ -622,13 +645,17 @@ class Workflow(Tools):
         Args:
             input_parameters_list: List of dictionary of input parameters
             name: The job name. Optional, by default the workflow name is assigned.
+            max_concurrent_jobs: The maximum number of jobs to run in parallel. This is defined in the project settings.
 
         Returns:
-            The spawned test jobcollection object.
+            The spawned JobCollection object.
+
+        Raises:
+            ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
         jobcollection = self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
-            max_concurrent_jobs=10,
+            max_concurrent_jobs=max_concurrent_jobs,
             name=name,
         )
         return jobcollection
@@ -694,3 +721,12 @@ class Workflow(Tools):
         self.auth._request(request_type="DELETE", url=url, return_text=False)
         logger.info(f"Successfully deleted workflow: {self.workflow_id}")
         del self
+
+    @property
+    def max_concurrent_jobs(self) -> int:
+        """Gets the maximum number of concurrent jobs allowed by the project settings."""
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
+        response_json = self.auth._request(request_type="GET", url=url)
+        project_settings = response_json["data"]
+        project_settings_dict = {d["name"]: int(d["value"]) for d in project_settings}
+        return project_settings_dict["MAX_CONCURRENT_JOBS"]

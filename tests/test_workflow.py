@@ -21,6 +21,8 @@ from .fixtures import (
     job_mock,
     jobcollection_single_mock,
     jobtask_mock,
+    project_mock,
+    project_max_concurrent_jobs,
 )
 import up42
 
@@ -489,7 +491,7 @@ def test_run_job(workflow_mock, job_mock):
         assert jb.job_id == job_mock.job_id
 
 
-def test_helper_run_parallel_jobs_dry_run(auth_mock, workflow_mock, monkeypatch):
+def test_helper_run_parallel_jobs_dry_run(workflow_mock, project_max_concurrent_jobs):
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
@@ -501,26 +503,33 @@ def test_helper_run_parallel_jobs_dry_run(auth_mock, workflow_mock, monkeypatch)
         "data": {"id": "jobid_123", "status": "SUCCEEDED", "mode": "DRY_RUN"},
     }
 
-    def _mock_endpoint():
-        return "http://example"
+    with project_max_concurrent_jobs(10) as m:
+        for i, _ in enumerate(input_parameters_list):
+            job_name = f"{workflow_mock.info['name']}_{i}_py"
+            job_url = (
+                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
+            )
+            print(job_url)
+            m.post(url=job_url, json={"data": {"id": job_name}})
+            m.get(
+                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"jobs/{job_name}",
+                json=example_response,
+            )
 
-    def _mock_dict(request_type, url, data=input_parameters_list):
-        del request_type, url, data
-        return example_response
-
-    monkeypatch.setattr(auth_mock, "_endpoint", _mock_endpoint)
-    monkeypatch.setattr(auth_mock, "_request", _mock_dict)
-
-    jb = workflow_mock._helper_run_parallel_jobs(
-        input_parameters_list, max_concurrent_jobs=2, test_job=True
-    )
+        jb = workflow_mock._helper_run_parallel_jobs(
+            input_parameters_list, max_concurrent_jobs=2, test_job=True
+        )
     assert isinstance(jb, JobCollection)
     assert len(jb.jobs) == 2
     for job in jb.jobs:
         assert job.info["mode"] == "DRY_RUN"
 
 
-def test_helper_run_parallel_jobs_all_fails(workflow_mock, jobtask_mock):
+def test_helper_run_parallel_jobs_all_fails(
+    workflow_mock, jobtask_mock, project_max_concurrent_jobs
+):
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
@@ -531,7 +540,7 @@ def test_helper_run_parallel_jobs_all_fails(workflow_mock, jobtask_mock):
         "error": None,
         "data": {"id": "jobid_123", "status": "FAILED", "mode": "DRY_RUN"},
     }
-    with requests_mock.Mocker() as m:
+    with project_max_concurrent_jobs(10) as m:
         for i, _ in enumerate(input_parameters_list):
             job_name = f"{workflow_mock.info['name']}_{i}_py"
             job_url = (
@@ -566,7 +575,9 @@ def test_helper_run_parallel_jobs_all_fails(workflow_mock, jobtask_mock):
         }
 
 
-def test_helper_run_parallel_jobs_one_fails(workflow_mock, jobtask_mock):
+def test_helper_run_parallel_jobs_one_fails(
+    workflow_mock, jobtask_mock, project_max_concurrent_jobs
+):
     input_parameters_list = [
         {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
         {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2def"], "limit": 1}},
@@ -583,7 +594,7 @@ def test_helper_run_parallel_jobs_one_fails(workflow_mock, jobtask_mock):
         },
     ]
 
-    with requests_mock.Mocker() as m:
+    with project_max_concurrent_jobs(10) as m:
         for i, _ in enumerate(input_parameters_list):
             job_name = f"{workflow_mock.info['name']}_{i}_py"
             job_url = (
@@ -618,7 +629,7 @@ def test_helper_run_parallel_jobs_one_fails(workflow_mock, jobtask_mock):
         }
 
 
-def test_helper_run_parallel_jobs_default(auth_mock, workflow_mock, monkeypatch):
+def test_helper_run_parallel_jobs_default(workflow_mock, project_max_concurrent_jobs):
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
@@ -629,23 +640,60 @@ def test_helper_run_parallel_jobs_default(auth_mock, workflow_mock, monkeypatch)
         "data": {"id": "jobid_123", "status": "SUCCEEDED", "mode": "DEFAULT"},
     }
 
-    def _mock_endpoint():
-        return "http://example"
+    with project_max_concurrent_jobs(10) as m:
+        for i, _ in enumerate(input_parameters_list):
+            job_name = f"{workflow_mock.info['name']}_{i}_py"
+            job_url = (
+                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
+            )
+            m.post(url=job_url, json={"data": {"id": job_name}})
+            m.get(
+                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"jobs/{job_name}",
+                json=example_response,
+            )
 
-    def _mock_dict(request_type, url, data=input_parameters_list):
-        del request_type, url, data
-        return example_response
-
-    monkeypatch.setattr(auth_mock, "_endpoint", _mock_endpoint)
-    monkeypatch.setattr(auth_mock, "_request", _mock_dict)
-
-    jb = workflow_mock._helper_run_parallel_jobs(
-        input_parameters_list, max_concurrent_jobs=10
-    )
+        jb = workflow_mock._helper_run_parallel_jobs(
+            input_parameters_list, max_concurrent_jobs=10
+        )
     assert isinstance(jb, JobCollection)
     assert len(jb.jobs) == 20
     for job in jb.jobs:
         assert job.info["mode"] == "DEFAULT"
+
+
+def test_helper_run_parallel_jobs_fail_concurrent_jobs(
+    workflow_mock, project_max_concurrent_jobs
+):
+    # pylint: disable=dangerous-default-value
+    input_parameters_list = [
+        {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
+        {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2def"], "limit": 1}},
+    ] * 10
+    example_response = {
+        "error": None,
+        "data": {"id": "jobid_123", "status": "SUCCEEDED", "mode": "DEFAULT"},
+    }
+
+    with project_max_concurrent_jobs(1) as m:
+        for i, _ in enumerate(input_parameters_list):
+            job_name = f"{workflow_mock.info['name']}_{i}_py"
+            job_url = (
+                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
+            )
+            m.post(url=job_url, json={"data": {"id": job_name}})
+            m.get(
+                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"jobs/{job_name}",
+                json=example_response,
+            )
+
+        with pytest.raises(ValueError):
+            workflow_mock._helper_run_parallel_jobs(
+                input_parameters_list, max_concurrent_jobs=10
+            )
 
 
 @pytest.mark.live
