@@ -201,23 +201,24 @@ class Workflow(Tools):
             ```python
             input_tasks = ["Sentinel-2 L1C MSI AOI clipped",
                            "Raster Tiling"]
-
-
-        Optional: The input_tasks can also be provided as the full, detailed workflow task
-        definition (dict of block id, block name and parent block name). Always use :1
-        to be able to identify the order when two times the same workflow task is used.
-        The name is arbitrary, but best use the block name.
-
-        Example:
-            ```python
-            input_tasks_full = [{'name': 'sobloo-s2-l1c-aoiclipped:1',
-                                 'parentName': None,
-                                 'blockId': 'a2daaab4-196d-4226-a018-a810444dcad1'},
-                                {'name': 'sharpening:1',
-                                 'parentName': 'sobloo-s2-l1c-aoiclipped',
-                                 'blockId': '4ed70368-d4e1-4462-bef6-14e768049471'}]
             ```
         """
+        # Relevant when non-linear workflows are introduced:
+        # Optional:
+        #     The input_tasks can also be provided as the full, detailed workflow task
+        #     definition (dict of block id, block name and parent block name). Always use :1
+        #     to be able to identify the order when two times the same workflow task is used.
+        #     The name is arbitrary, but best use the block name.
+        #
+        # Example:
+        #     ```python
+        #     input_tasks_full = [{'name': 'sobloo-s2-l1c-aoiclipped:1',
+        #                          'parentName': None,
+        #                          'blockId': 'a2daaab4-196d-4226-a018-a810444dcad1'},
+        #                         {'name': 'sharpening:1',
+        #                          'parentName': 'sobloo-s2-l1c-aoiclipped',
+        #                          'blockId': '4ed70368-d4e1-4462-bef6-14e768049471'}]
+
         # Construct proper task definition from simplified input.
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
