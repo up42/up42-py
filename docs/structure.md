@@ -29,23 +29,23 @@ An overview of the **functionality** of each object
     
     === "Project"
     
-        - `.get_workflows()`
         - `.create_workflow()`
+        - `.get_workflows()`
         - `.get_jobs()`
         - `.get_project_settings()`
         - `.update_project_settings()`
     
     === "Workflow"
-
-        - `.get_jobs()`
+        
+        - `.add_workflow_tasks()`
+        - `.construct_parameters()`
         - `.test_job()`
         - `.run_job()`
+        - `.construct_parameters_parallel()
         - `.test_jobs_parallel()`
         - `.run_jobs_parallel()`
-        - `.construct_parameters()`
-        - `.construct_parameters_parallel()
+        - `.get_jobs()`
         - `.get_workflow_tasks()`
-        - `.add_workflow_tasks()`
         - `.get_compatible_blocks()
         - `.get_parameters_info()`
         - `.update_name()`
@@ -85,14 +85,14 @@ An overview of the **functionality** of each object
         - `.download_quicklooks()`
         
     === "Tools"
+        - `.get_blocks()`
+        - `.get_block_details()`
         - `.read_vector_file()`
         - `.get_example_aoi()`
         - `.draw_aoi()`
         - `.plot_coverage()`
         - `.plot_quicklooks()`
         - `.plot_results()`
-        - `.get_blocks()`
-        - `.get_block_details()`
         - `.validate_manifest()`
         
         
