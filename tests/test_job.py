@@ -9,8 +9,8 @@ import pytest
 from folium import Map
 
 # pylint: disable=unused-import
+from .context import Job, JobTask
 from .fixtures import auth_mock, auth_live, job_mock, job_live, jobtask_mock
-import up42  # pylint: disable=wrong-import-order
 
 
 def test_job_get_info(job_mock):
@@ -24,7 +24,7 @@ def test_job_get_info(job_mock):
         m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
 
         info = job_mock._get_info()
-    assert isinstance(job_mock, up42.Job)
+    assert isinstance(job_mock, Job)
     assert info["xyz"] == 789
     assert job_mock.info["xyz"] == 789
 
@@ -170,6 +170,7 @@ def test_get_logs(job_mock, jobtask_mock):
         )
         m.get(url_log, json="")
         assert job_mock.get_logs(as_return=True)[jobtask_mock.jobtask_id] == ""
+        assert not job_mock.get_logs()
 
 
 def test_get_jobtasks(job_mock, jobtask_mock):
@@ -180,7 +181,7 @@ def test_get_jobtasks(job_mock, jobtask_mock):
         )
         m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
         job_tasks = job_mock.get_jobtasks()
-        assert isinstance(job_tasks[0], up42.JobTask)
+        assert isinstance(job_tasks[0], JobTask)
         assert job_tasks[0].jobtask_id == jobtask_mock.jobtask_id
 
 
@@ -268,7 +269,7 @@ def test_job_download_result_live(job_live):
 @pytest.mark.live
 def test_job_download_result_no_tiff_live(auth_live):
     with tempfile.TemporaryDirectory() as tempdir:
-        job = up42.Job(
+        job = Job(
             auth=auth_live,
             project_id=auth_live.project_id,
             job_id=os.getenv("TEST_UP42_JOB_ID_NC_FILE"),
@@ -284,7 +285,7 @@ def test_job_download_result_no_tiff_live(auth_live):
 @pytest.mark.live
 def test_job_download_result_dimap_live(auth_live):
     with tempfile.TemporaryDirectory() as tempdir:
-        job = up42.Job(
+        job = Job(
             auth=auth_live,
             project_id=auth_live.project_id,
             job_id=os.getenv("TEST_UP42_JOB_ID_DIMAP_FILE"),
@@ -301,7 +302,7 @@ def test_job_download_result_dimap_live(auth_live):
 @pytest.mark.skip
 @pytest.mark.live
 def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live):
-    job = up42.Job(
+    job = Job(
         auth=auth_live,
         project_id=auth_live.project_id,
         job_id="30f82b44-1505-4773-ab23-31fa61ba9b4c",

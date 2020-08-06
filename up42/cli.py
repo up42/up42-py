@@ -4,13 +4,13 @@ from pathlib import Path
 from datetime import datetime, timedelta
 import click
 
-from .auth import Auth
-from .tools import Tools
-from .project import Project
-from .workflow import Workflow
-from .job import Job
-from .catalog import Catalog
-from .utils import get_logger
+from up42.auth import Auth
+from up42.tools import Tools
+from up42.project import Project
+from up42.workflow import Workflow
+from up42.job import Job
+from up42.catalog import Catalog
+from up42.utils import get_logger
 
 logger = get_logger(__name__)
 

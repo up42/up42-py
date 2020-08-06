@@ -3,12 +3,12 @@ from typing import Dict, List, Union
 
 from tqdm import tqdm
 
-from .auth import Auth
-from .job import Job
-from .jobcollection import JobCollection
-from .tools import Tools
-from .utils import get_logger
-from .workflow import Workflow
+from up42.auth import Auth
+from up42.job import Job
+from up42.jobcollection import JobCollection
+from up42.tools import Tools
+from up42.utils import get_logger
+from up42.workflow import Workflow
 
 logger = get_logger(__name__)
 
@@ -135,7 +135,7 @@ class Project(Tools):
             )
             return jobcollection
 
-    def get_project_settings(self) -> List:
+    def get_project_settings(self) -> List[Dict[str, str]]:
         """
         Gets the project settings.
 
@@ -146,6 +146,13 @@ class Project(Tools):
         response_json = self.auth._request(request_type="GET", url=url)
         project_settings = response_json["data"]
         return project_settings
+
+    @property
+    def max_concurrent_jobs(self) -> int:
+        """Gets the maximum number of concurrent jobs allowed by the project settings."""
+        project_settings = self.get_project_settings()
+        project_settings_dict = {d["name"]: int(d["value"]) for d in project_settings}
+        return project_settings_dict["MAX_CONCURRENT_JOBS"]
 
     def update_project_settings(
         self,

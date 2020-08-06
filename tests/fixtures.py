@@ -237,3 +237,31 @@ def catalog_mock(auth_mock):
 @pytest.fixture()
 def catalog_live(auth_live):
     return Catalog(auth=auth_live)
+
+
+@pytest.fixture()
+def project_max_concurrent_jobs(project_mock):
+    def _project_max_concurrent_jobs(maximum=5):
+        m = requests_mock.Mocker()
+        url_project_info = (
+            f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}"
+        )
+        m.get(url=url_project_info, json={"data": {"xyz": 789}, "error": {}})
+        url_project_settings = (
+            f"{project_mock.auth._endpoint()}/projects"
+            f"/{project_mock.project_id}/settings"
+        )
+        m.get(
+            url=url_project_settings,
+            json={
+                "data": [
+                    {"name": "MAX_CONCURRENT_JOBS", "value": str(maximum)},
+                    {"name": "MAX_AOI_SIZE", "value": "1000"},
+                    {"name": "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE", "value": "200"},
+                ],
+                "error": {},
+            },
+        )
+        return m
+
+    return _project_max_concurrent_jobs

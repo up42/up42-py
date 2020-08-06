@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from time import sleep
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 import folium
 from geopandas import GeoDataFrame
@@ -13,10 +13,10 @@ from shapely.geometry import box
 from rasterio.vrt import WarpedVRT
 import rasterio
 
-from .auth import Auth
-from .jobtask import JobTask
-from .tools import Tools
-from .utils import (
+from up42.auth import Auth
+from up42.jobtask import JobTask
+from up42.tools import Tools
+from up42.utils import (
     get_logger,
     folium_base_map,
     download_results_from_gcs,
@@ -349,7 +349,9 @@ class Job(Tools):
             )
             return m
 
-    def get_logs(self, as_print: bool = True, as_return: bool = False):
+    def get_logs(
+        self, as_print: bool = True, as_return: bool = False
+    ) -> Optional[Dict]:
         """
         Convenience function to print or return the logs of all job tasks.
 
@@ -385,8 +387,10 @@ class Job(Tools):
                 print("----------------------------------------------------------")
                 print(f"JobTask {idx+1} with jobtask_id {jobtask_id}:\n")
                 print(response_json)
-            if as_return:
-                return job_logs
+        if as_return:
+            return job_logs
+        else:
+            return None
 
     def get_jobtasks(
         self, return_json: bool = False

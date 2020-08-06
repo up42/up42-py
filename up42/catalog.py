@@ -8,9 +8,9 @@ from geojson import Feature, FeatureCollection
 from requests.exceptions import HTTPError
 from tqdm import tqdm
 
-from .auth import Auth
-from .tools import Tools
-from .utils import get_logger, any_vector_to_fc, fc_to_query_geometry
+from up42.auth import Auth
+from up42.tools import Tools
+from up42.utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__)
 
