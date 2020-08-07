@@ -2,8 +2,9 @@
 
 ## Hierachy
 
-- The Python SDK uses six object classes, representing the **hierarchical structure of UP42**:
+- The Python SDK uses seven object classes, representing the **hierarchical structure of UP42**:
     - **Project > Workflow > Job > JobTask**
+    - **JobCollection**
     - **Catalog**
     - **Tools**
 - Each object can **spawn elements of one level below**, e.g.
@@ -28,22 +29,25 @@ An overview of the **functionality** of each object
     
     === "Project"
     
-        - `.get_workflows()`
         - `.create_workflow()`
+        - `.get_workflows()`
         - `.get_jobs()`
         - `.get_project_settings()`
         - `.update_project_settings()`
     
     === "Workflow"
-
-        - `.get_jobs()`
+        
+        - `.add_workflow_tasks()`
+        - `.construct_parameters()`
         - `.test_job()`
         - `.run_job()`
+        - `.construct_parameters_parallel()
+        - `.test_jobs_parallel()`
+        - `.run_jobs_parallel()`
+        - `.get_jobs()`
         - `.get_workflow_tasks()`
         - `.get_compatible_blocks()
-        - `.add_workflow_tasks()`
         - `.get_parameters_info()`
-        - `.construct_parameters()`
         - `.update_name()`
         - `.delete()`
         
@@ -60,28 +64,35 @@ An overview of the **functionality** of each object
         - `.download_quicklooks()`
         - `.upload_results_to_bucket()`
         - `.get_jobtasks()`
-        - `.get_jobtasks_results()`
+        - `.get_jobtasks_results_json()`
         
     === "JobTask"
     
         - `.get_results_json()`
         - `.download_results()`
         - `.download_quicklooks()`
-
+        
+    === "JobCollection"
+    
+        - `.download_results()`
+        - `.get_jobs_infos()`
+        - `.get_jobs_status()`
+        - `.apply()`
+        
     === "Catalog"
         - `.construct_parameters()`
         - `.search()`
         - `.download_quicklooks()`
         
     === "Tools"
+        - `.get_blocks()`
+        - `.get_block_details()`
         - `.read_vector_file()`
         - `.get_example_aoi()`
         - `.draw_aoi()`
         - `.plot_coverage()`
         - `.plot_quicklooks()`
         - `.plot_results()`
-        - `.get_blocks()`
-        - `.get_block_details()`
         - `.validate_manifest()`
         
         
