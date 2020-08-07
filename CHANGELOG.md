@@ -18,7 +18,7 @@ pip show up42-py
 ### [0.10.0](https://pypi.org/project/up42-py/) (2020-08-07)
 - Add parallel jobs feature. Allows running jobs for multiple geometries, scene_ids or
  timeperiods in parallel. Adds `workflow.construct_parameters_parallel`, 
- `workflow.test_job_parallel`, `workflow.run_job_parallel` and the new`JobCollection` object.
+ `workflow.test_job_parallel`, `workflow.run_job_parallel` and the new `JobCollection` object.
 - Adjusts `workflow.get_jobs` and `project.get_jobs` to return JobCollections.
 - Adjusts airports-parallel example notebook to use the parallel jobs feature.
 - Adjusts flood mapping example notebook to use OSM block.
