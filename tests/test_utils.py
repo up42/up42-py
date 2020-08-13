@@ -161,7 +161,9 @@ def test_fc_to_query_geometry_multiple_intersects_union_default():
     )
     with open(fp) as json_file:
         fc = json.load(json_file)
-    query_geometry = fc_to_query_geometry(fc=fc, geometry_operation="intersects")
+    query_geometry = fc_to_query_geometry(
+        fc=fc, geometry_operation="intersects", squash_multiple_features="union"
+    )
     assert isinstance(query_geometry, dict)
 
     # TODO: Reduce coordinate precision.
@@ -202,7 +204,9 @@ def test_fc_to_query_geometry_multiple_bbox_union_default():
     )
     with open(fp) as json_file:
         fc = json.load(json_file)
-    query_geometry = fc_to_query_geometry(fc=fc, geometry_operation="bbox")
+    query_geometry = fc_to_query_geometry(
+        fc=fc, geometry_operation="bbox", squash_multiple_features="union"
+    )
     assert isinstance(query_geometry, list)
     assert len(query_geometry) == 4
     assert query_geometry == [-17.66426739, 14.60807946, -17.1360538, 14.99399093]
