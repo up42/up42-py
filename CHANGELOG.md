@@ -15,6 +15,11 @@ pip show up42-py
 ```
 
 ## Versions
+
+### [0.10.1](https://pypi.org/project/up42-py/) (2020-08-13)
+- Hotfix: Fixes usage of multiple features as the input geometry. 
+
+
 ### [0.10.0](https://pypi.org/project/up42-py/) (2020-08-07)
 - Add parallel jobs feature. Allows running jobs for multiple geometries, scene_ids or
  timeperiods in parallel. Adds `workflow.construct_parameters_parallel`, 
