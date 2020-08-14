@@ -116,7 +116,7 @@ class Catalog(Tools):
         aoi_geometry = fc_to_query_geometry(
             fc=aoi_fc,
             geometry_operation="intersects",
-            squash_multiple_features="footprint",
+            squash_multiple_features="union",
         )
 
         sort_order = "asc" if ascending else "desc"

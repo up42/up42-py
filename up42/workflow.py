@@ -282,7 +282,7 @@ class Workflow(Tools):
             Point,
         ] = None,
         geometry_operation: str = None,
-        handle_multiple_features: str = "footprint",
+        handle_multiple_features: str = "union",
         start_date: str = None,
         end_date: str = None,
         limit: int = None,
