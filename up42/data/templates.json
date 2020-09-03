@@ -1,65 +1,309 @@
 {
-  "ship-identification": {
-    "oneatlas-spot-aoiclipped:1": {
-      "ids": null,
-      "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
-      "limit": 1,
-      "bbox": {},
-      "zoom_level": 17,
-      "time_series": null,
-      "max_cloud_cover": 100,
-      "panchromatic_band": false
-    },
-    "tiling:1": {
-      "nodata": null,
-      "tile_width": 768,
-      "tile_height": 768,
-      "match_extents": false,
-      "output_prefix": "",
-      "augmentation_factor": 1,
-      "discard_empty_tiles": true
-    },
-    "ship-detection:1": {},
-    "ship-identification:1": {
-      "minutes": 15
+  "ndvi-pleiades": {
+    "display-name": "NDVI Pleiades",
+    "caption-image": "",
+    "authors": ["UP42", "Airbus"],
+    "workflow": {
+      "oneatlas-pleiades-fullscene:1": {
+        "ids": null,
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+        "limit": 1,
+        "order_ids": null,
+        "time_series": null,
+        "max_cloud_cover": 100,
+        "intersects": null
+      },
+      "pansharpen:1": {
+        "bbox": null,
+        "method": "SFIM",
+        "contains": null,
+        "intersects": null,
+        "clip_to_aoi": false,
+        "include_pan": false
+      },
+      "ndvi:1": {
+        "output_original_raster": false
+      }
     }
   },
-  "ship-detection": {
-    "oneatlas-spot-aoiclipped:1": {
-      "ids": null,
-      "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
-      "limit": 1,
-      "bbox": {},
-      "zoom_level": 17,
-      "time_series": null,
-      "max_cloud_cover": 100,
-      "panchromatic_band": false
-    },
-    "tiling:1": {
-      "nodata": null,
-      "tile_width": 768,
-      "tile_height": 768,
-      "match_extents": false,
-      "output_prefix": "",
-      "augmentation_factor": 1,
-      "discard_empty_tiles": true
-    },
-    "ship-detection:1": {}
+  "kmeans-sentinel1": {
+    "display-name": "K-Means Clustering Sentinel-1",
+    "caption-image": "",
+    "authors": ["UP42", "Sobloo"],
+    "workflow": {
+      "sobloo-s1-grd-fullscene:1": {
+        "ids": null,
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+        "limit": 1,
+        "time_series": null,
+        "orbit_direction": null,
+        "acquisition_mode": null,
+        "intersects": null
+      },
+      "snap-polarimetric:1": {
+        "bbox": null,
+        "mask": null,
+        "contains": null,
+        "intersects": null,
+        "clip_to_aoi": false,
+        "tcorrection": true,
+        "linear_to_db": true,
+        "polarisations": [
+          "VV"
+        ],
+        "speckle_filter": true,
+        "calibration_band": [
+          "sigma"
+        ]
+      },
+      "kmeans-clustering:1": {
+        "n_clusters": 6,
+        "n_iterations": 10,
+        "n_sieve_pixels": 64
+      }
+    }
   },
-  "landcover": {},
-  "car-detection": {},
-  "truck-detection": {},
-  "aircraft-detection": {},
-  "sharpening": {
-    "sobloo-s2-l1c-aoiclipped:1": {
-      "bbox": {},
-      "time": "2018-01-01T00:00:00Z/2020-12-31T00:00:00Z",
-      "limit": 1,
-      "zoom_level": 14,
-      "max_cloud_cover": 100
-    },
-    "sharpening:1": {
-      "strength": "medium"
+  "superresolution-sentinel2": {
+    "display-name": "Super-resolution Sentinel2",
+    "caption-image": "",
+    "authors": ["UP42", "Sobloo"],
+    "workflow": {
+      "sobloo-s2-l1c-fullscene:1": {
+        "ids": null,
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+        "limit": 1,
+        "time_series": null,
+        "max_cloud_cover": 100,
+        "intersects": null
+      },
+      "s2-superresolution:1": {
+        "bbox": null,
+        "contains": null,
+        "intersects": null,
+        "clip_to_aoi": false,
+        "copy_original_bands": true
+      },
+      "sharpening:1": {
+        "strength": "medium"
+      }
+    }
+  },
+  "shipdetection-sentinel1": {
+    "display-name": "Ship Detection Sentinel-1",
+    "caption-image": "",
+    "authors": ["Sobloo", "Osir.io"],
+    "workflow": {
+      "sobloo-s1-grd-fullscene:1": {
+        "ids": null,
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+        "limit": 1,
+        "time_series": null,
+        "orbit_direction": null,
+        "acquisition_mode": null,
+        "intersects": null
+      },
+      "snapship:1": {
+        "bbox": null,
+        "maxsize": 500,
+        "minsize": 30,
+        "contains": null,
+        "intersects": null
+      }
+    }
+  },
+  "fertilizationzoning-sentinel2": {
+    "display-name": "Fertilization Mapping Sentinel-2",
+    "caption-image": "",
+    "authors": ["Sobloo", "Vultus"],
+    "workflow": {
+      "sentinelhub-s2-aoiclipped:1": {
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+        "limit": 1,
+        "zoom_level": 14,
+        "time_series": null,
+        "intersects": null
+      },
+      "fertilization-zoning-map:1": {
+        "intersects": null
+      }
+    }
+  },
+  "superresolution-pleiades": {
+    "display-name": "Superresolution Pleiades",
+    "caption-image": "",
+    "authors": ["UP42", "OneAtlas"],
+    "workflow": {
+      "oneatlas-pleiades-fullscene:1": {
+        "ids": null,
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+        "limit": 1,
+        "order_ids": null,
+        "time_series": null,
+        "max_cloud_cover": 100,
+        "intersects": null
+      },
+      "pansharpen:1": {
+        "bbox": null,
+        "method": "SFIM",
+        "contains": null,
+        "intersects": null,
+        "clip_to_aoi": false,
+        "include_pan": false
+      },
+      "superresolution:1": {
+        "model": "SRCNN"
+      }
+    }
+  },
+  "sentinel5p-lvl3": {
+    "display-name": "Sentinel-5P Level-3 Product",
+    "caption-image": "",
+    "authors": ["UP42", "Sobloo"],
+    "workflow": {
+      "sobloo-s5p:1": {
+        "ids": null,
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+        "limit": 1,
+        "time_series": null,
+        "imagery_layer": "L2__CH4___",
+        "intersects": null
+      },
+      "s5p-lvl3:1": {
+        "min_quality_threshold": 50,
+        "include_ancillary_bands": false
+      },
+      "data-conversion-netcdf:1": {}
+    }
+  },
+  "landcover-spot": {
+    "display-name": "Landcover Classification Spot",
+    "caption-image": "",
+    "authors": ["UP42", "OneAtlas"],
+    "workflow": {
+      "oneatlas-spot-fullscene:1": {
+        "ids": null,
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+        "limit": 1,
+        "order_ids": null,
+        "time_series": null,
+        "max_cloud_cover": 100,
+        "intersects": null
+      },
+      "pansharpen:1": {
+        "bbox": null,
+        "method": "SFIM",
+        "contains": null,
+        "intersects": null,
+        "clip_to_aoi": false,
+        "include_pan": false
+      },
+      "superresolution:1": {
+        "model": "SRCNN"
+      },
+      "landcover:1": {}
+    }
+  },
+  "viewshed-worlddem": {
+    "display-name": "Viewshed Processing WorldDEM",
+    "caption-image": "",
+    "authors": ["Airbus", "OneAtlas"],
+    "workflow": {
+      "platforms-up42-wd90-datablock:1": {
+        "intersects": null
+      },
+      "platforms-up42-viewshed-processingblock:1": {
+        "target_height": 10,
+        "observer_height": 2,
+        "observer_coordinate": {}
+      }
+    }
+  },
+  "shipdetection-spot": {
+    "display-name": "Ship Detection Spot",
+    "caption-image": "",
+    "authors": ["UP42", "OneAtlas", "Airbus"],
+    "workflow": {
+      "oneatlas-spot-aoiclipped:1": {
+        "ids": null,
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+        "limit": 1,
+        "bbox": {},
+        "zoom_level": 17,
+        "time_series": null,
+        "max_cloud_cover": 100,
+        "panchromatic_band": false
+      },
+      "tiling:1": {
+        "nodata": null,
+        "tile_width": 768,
+        "tile_height": 768,
+        "match_extents": false,
+        "output_prefix": "",
+        "augmentation_factor": 1,
+        "discard_empty_tiles": true
+      },
+      "ship-detection:1": {}
+    }
+  },
+  "shipidentification-spot": {
+    "display-name": "Ship Identification Spot",
+    "caption-image": "",
+    "authors": ["UP42", "OneAtlas", "Airbus"],
+    "workflow": {
+      "oneatlas-spot-aoiclipped:1": {
+        "ids": null,
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+        "limit": 1,
+        "bbox": {},
+        "zoom_level": 17,
+        "time_series": null,
+        "max_cloud_cover": 100,
+        "panchromatic_band": false
+      },
+      "tiling:1": {
+        "nodata": null,
+        "tile_width": 768,
+        "tile_height": 768,
+        "match_extents": false,
+        "output_prefix": "",
+        "augmentation_factor": 1,
+        "discard_empty_tiles": true
+      },
+      "ship-detection:1": {},
+      "ship-identification:1": {
+        "minutes": 15
+      }
+    }
+  },
+  "cardetection-spot": {
+    "display-name": "Car Detection Pleiades",
+    "caption-image": "",
+    "authors": [
+      "UP42",
+      "Orbital Insight",
+      "Airbus"
+    ],
+    "workflow": {
+      "oneatlas-pleiades-aoiclipped:1": {
+        "ids": null,
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+        "limit": 1,
+        "zoom_level": 18,
+        "time_series": null,
+        "max_cloud_cover": 100,
+        "panchromatic_band": false,
+        "intersects": null
+      },
+      "tiling:1": {
+        "nodata": null,
+        "tile_width": 1232,
+        "tile_height": 1232,
+        "match_extents": false,
+        "output_prefix": "",
+        "augmentation_factor": 1,
+        "discard_empty_tiles": true
+      },
+      "orbital_pleiades_cars:1": {}
     }
   }
 }
