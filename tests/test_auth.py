@@ -64,7 +64,8 @@ def test_get_token_project(auth_mock_no_request):
             f"{auth_mock_no_request.env}/oauth/token"
         )
         m.post(
-            url=url_token, text='{"data":{"accessToken":"token_789"}}',
+            url=url_token,
+            text='{"data":{"accessToken":"token_789"}}',
         )
         auth_mock_no_request._get_token_project()
     assert auth_mock_no_request.token == "token_789"
@@ -115,7 +116,8 @@ def test_request_with_retry(auth_mock):
         # Retry contains getting a new token, needs to be mocked separately.
         url_token = f"https://{auth_mock.project_id}:{auth_mock.project_api_key}@api.up42.{auth_mock.env}/oauth/token"
         m.post(
-            url=url_token, text='{"data":{"accessToken":"token_123"}}',
+            url=url_token,
+            text='{"data":{"accessToken":"token_123"}}',
         )
 
         m.get(url="http://test.com", text='{"data": {"xyz":789}, "error":{}}')

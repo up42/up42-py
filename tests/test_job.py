@@ -196,7 +196,13 @@ def test_get_jobtasks_result_json(job_mock, jobtask_mock):
             f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
             f"/tasks/{jobtask_mock.jobtask_id}/outputs/data-json"
         )
-        m.get(url, json={"type": "FeatureCollection", "features": [],})
+        m.get(
+            url,
+            json={
+                "type": "FeatureCollection",
+                "features": [],
+            },
+        )
         res = job_mock.get_jobtasks_results_json()
         assert len(res) == 1
         assert res[jobtask_mock.jobtask_id] == {

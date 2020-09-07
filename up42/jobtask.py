@@ -14,7 +14,11 @@ logger = get_logger(__name__)
 # pylint: disable=duplicate-code
 class JobTask(Tools):
     def __init__(
-        self, auth: Auth, project_id: str, job_id: str, jobtask_id: str,
+        self,
+        auth: Auth,
+        project_id: str,
+        job_id: str,
+        jobtask_id: str,
     ):
         """
         The JobTask class provides access to the results and parameters of single
@@ -104,14 +108,16 @@ class JobTask(Tools):
 
         download_url = self._get_download_url()
         out_filepaths = download_results_from_gcs(
-            download_url=download_url, output_directory=output_directory,
+            download_url=download_url,
+            output_directory=output_directory,
         )
 
         self.results = out_filepaths
         return out_filepaths
 
     def download_quicklooks(
-        self, output_directory: Union[str, Path, None] = None,
+        self,
+        output_directory: Union[str, Path, None] = None,
     ) -> List[str]:
         """
         Downloads quicklooks of the job task to disk.

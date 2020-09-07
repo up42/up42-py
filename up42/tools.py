@@ -257,7 +257,10 @@ class Tools:
         )
 
     def get_blocks(
-        self, block_type=None, basic: bool = True, as_dataframe=False,
+        self,
+        block_type=None,
+        basic: bool = True,
+        as_dataframe=False,
     ) -> Union[List[Dict], Dict]:
         """
         Gets a list of all public blocks on the marketplace.

@@ -17,11 +17,17 @@ logger = get_logger(__name__)
 
 supported_sensors = {
     "pleiades": {
-        "blocks": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-aoiclipped",],
+        "blocks": [
+            "oneatlas-pleiades-fullscene",
+            "oneatlas-pleiades-aoiclipped",
+        ],
         "provider": "oneatlas",
     },
     "spot": {
-        "blocks": ["oneatlas-spot-fullscene", "oneatlas-spot-aoiclipped",],
+        "blocks": [
+            "oneatlas-spot-fullscene",
+            "oneatlas-spot-aoiclipped",
+        ],
         "provider": "oneatlas",
     },
     "sentinel1": {
@@ -41,7 +47,9 @@ supported_sensors = {
     },
     "sentinel3": {"blocks": ["sobloo-sentinel3-full"], "provider": "sobloo-image"},
     "sentinel5p": {
-        "blocks": ["sobloo-sentinel5-preview-full",],
+        "blocks": [
+            "sobloo-sentinel5-preview-full",
+        ],
         "provider": "sobloo-image",
     },
 }
@@ -64,7 +72,13 @@ class Catalog(Tools):
     @staticmethod
     def construct_parameters(
         geometry: Union[
-            Dict, Feature, FeatureCollection, List, GeoDataFrame, Point, Polygon,
+            Dict,
+            Feature,
+            FeatureCollection,
+            List,
+            GeoDataFrame,
+            Point,
+            Polygon,
         ],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
@@ -112,7 +126,9 @@ class Catalog(Tools):
                 )
             block_filters.extend(supported_sensors[sensor]["blocks"])
 
-        aoi_fc = any_vector_to_fc(vector=geometry,)
+        aoi_fc = any_vector_to_fc(
+            vector=geometry,
+        )
         aoi_geometry = fc_to_query_geometry(
             fc=aoi_fc,
             geometry_operation="intersects",
