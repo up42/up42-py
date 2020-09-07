@@ -231,7 +231,7 @@ class Tools:
         filepaths: List = None,
         name_column: str = "id",
         save_html: Path = None
-    ) -> None:
+    ):
         """
         Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
         respective object, e.g. job, catalog).
