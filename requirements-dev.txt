@@ -1,6 +1,6 @@
 mkdocs
 mkdocs-material
-pandoc
+pandoc==2.0.a4
 pygments
 pymdown-extensions
 mkdocs-autolinks-plugin
