@@ -3,15 +3,10 @@ from pathlib import Path
 from time import sleep
 from typing import Dict, List, Union, Optional
 
-import folium
 from geopandas import GeoDataFrame
 import geopandas as gpd
-import numpy as np
 import requests
 import requests.exceptions
-from shapely.geometry import box
-from rasterio.vrt import WarpedVRT
-import rasterio
 
 from up42.auth import Auth
 from up42.jobtask import JobTask
@@ -22,13 +17,6 @@ from up42.utils import (
     download_results_from_gcs,
     download_results_from_gcs_without_unpacking,
 )
-
-try:
-    from IPython.display import display
-    from IPython import get_ipython
-except ImportError:
-    # No Ipython installed, Installed but run in shell
-    pass
 
 logger = get_logger(__name__)
 
@@ -245,13 +233,14 @@ class Job(Tools):
         )
         logger.info("Uploaded!")
 
-    def map_results(self, save_html=None):
+    def map_results(self, show_images: bool = True, name_column: str = "uid", save_html=None):
         """
         Displays data.json, and if available, one or multiple results geotiffs.
 
         Args:
             show_images: Shows images if True (default), only features if False.
             name_column: Name of the feature property that provides the Feature/Layer name.
+            save_html: The path for saving folium map as html file.
         """
         if self.results is None:
             raise ValueError(
@@ -271,7 +260,7 @@ class Job(Tools):
 
         # Add image to map.
         m = _map_images(plot_file_format=plot_file_format, result_df=df, aoi=None, filepaths=self.results,
-                        show_images=True, show_features=True, name_column="uid", save_html=save_html)
+                        show_images=show_images, show_features=True, name_column=name_column, save_html=save_html)
 
         return m
 

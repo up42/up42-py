@@ -9,13 +9,11 @@ import math
 
 import folium
 from folium.plugins import Draw
-import geopandas as gpd
 from geopandas import GeoDataFrame
 import numpy as np
 import shapely
 import rasterio
 from rasterio.plot import show
-from rasterio.crs import CRS
 from shapely.geometry import Point, Polygon, box
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
