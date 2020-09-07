@@ -18,7 +18,7 @@ from up42.jobtask import JobTask
 from up42.tools import Tools
 from up42.utils import (
     get_logger,
-    folium_base_map,
+    _map_images,
     download_results_from_gcs,
     download_results_from_gcs_without_unpacking,
 )
@@ -245,7 +245,7 @@ class Job(Tools):
         )
         logger.info("Uploaded!")
 
-    def map_results(self, show_images=True, name_column: str = "uid") -> None:
+    def map_results(self, save_html=None):
         """
         Displays data.json, and if available, one or multiple results geotiffs.
 
@@ -258,22 +258,6 @@ class Job(Tools):
                 "You first need to download the results via job.download_results()!"
             )
 
-        def _style_function(feature):  # pylint: disable=unused-argument
-            return {
-                "fillColor": "#5288c4",
-                "color": "blue",
-                "weight": 2.5,
-                "dashArray": "5, 5",
-            }
-
-        def _highlight_function(feature):  # pylint: disable=unused-argument
-            return {
-                "fillColor": "#ffaf00",
-                "color": "red",
-                "weight": 3.5,
-                "dashArray": "5, 5",
-            }
-
         # Add features to map.
         # Some blocks store vector results in an additional geojson file.
         json_fp = [fp for fp in self.results if fp.endswith(".geojson")]
@@ -283,71 +267,13 @@ class Job(Tools):
             json_fp = [fp for fp in self.results if fp.endswith(".json")][0]
         df: GeoDataFrame = gpd.read_file(json_fp)
 
-        centroid = box(*df.total_bounds).centroid
-        m = folium_base_map(lat=centroid.y, lon=centroid.x,)
-
-        for idx, row in df.iterrows():  # type: ignore
-            try:
-                feature_name = row.loc[name_column]
-            except KeyError:
-                feature_name = ""
-            layer_name = f"Feature {idx+1} - {feature_name}"
-            f = folium.GeoJson(
-                row["geometry"],
-                name=layer_name,
-                style_function=_style_function,
-                highlight_function=_highlight_function,
-            )
-            folium.Popup(
-                f"{layer_name}: {row.drop('geometry', axis=0).to_json()}"
-            ).add_to(f)
-            f.add_to(m)
+        plot_file_format = [".tif"]
 
         # Add image to map.
-        plot_file_format = [".tif"]
-        raster_filepaths = [
-            path for path in self.results if Path(path).suffix in plot_file_format
-        ]
-        if show_images and raster_filepaths:
-            try:
-                feature_names = df[name_column].to_list()
-            except KeyError:
-                feature_names = ""
+        m = _map_images(plot_file_format=plot_file_format, result_df=df, aoi=None, filepaths=self.results,
+                        show_images=True, show_features=True, name_column="uid", save_html=save_html)
 
-            for idx, (raster_fp, feature_name) in enumerate(
-                zip(raster_filepaths, feature_names)
-            ):
-                # Folium requires 4326, streaming blocks are 3857
-                with rasterio.open(raster_fp) as src:
-                    with WarpedVRT(src, crs="EPSG:4326") as vrt:
-                        # TODO: Make band configuration available
-                        dst_array = vrt.read()[:3, :, :]
-                        minx, miny, maxx, maxy = vrt.bounds
-
-                m.add_child(
-                    folium.raster_layers.ImageOverlay(
-                        np.moveaxis(np.stack(dst_array), 0, 2),
-                        bounds=[[miny, minx], [maxy, maxx]],  # different order.
-                        name=f"Image {idx+1} - {feature_name}",
-                    )
-                )
-
-        # Collapse layer control with too many features.
-        if df.shape[0] > 4:  # pylint: disable=simplifiable-if-statement  #type: ignore
-            collapsed = True
-        else:
-            collapsed = False
-        folium.LayerControl(position="bottomleft", collapsed=collapsed).add_to(m)
-
-        try:
-            assert get_ipython() is not None
-            display(m)
-        except (AssertionError, NameError):
-            logger.info(
-                "Returning folium map object. To display it directly run in a "
-                "Jupyter notebook!"
-            )
-            return m
+        return m
 
     def get_logs(
         self, as_print: bool = True, as_return: bool = False
