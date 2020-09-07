@@ -1,6 +1,5 @@
 mkdocs
 mkdocs-material
-pandoc
 pygments
 pymdown-extensions
 mkdocs-autolinks-plugin
