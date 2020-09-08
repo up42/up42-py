@@ -341,7 +341,9 @@ def workflow_get_info(workflow):
     required=True,
 )
 @click.option(
-    "--description", type=str, help="An optional description for the workflow.",
+    "--description",
+    type=str,
+    help="An optional description for the workflow.",
 )
 @click.pass_context
 def update_name(ctx, name, description):
@@ -632,10 +634,24 @@ COMMAND_CATALOG = catalog.command(context_settings=CONTEXT_SETTINGS)
 @click.option(
     "--sensors",
     type=click.Choice(
-        ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p",]
+        [
+            "pleiades",
+            "spot",
+            "sentinel1",
+            "sentinel2",
+            "sentinel3",
+            "sentinel5p",
+        ]
     ),
     multiple=True,
-    default=["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p",],
+    default=[
+        "pleiades",
+        "spot",
+        "sentinel1",
+        "sentinel2",
+        "sentinel3",
+        "sentinel5p",
+    ],
     help="Imagery sensors to search for.",
 )
 @click.option(

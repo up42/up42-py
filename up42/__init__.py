@@ -84,7 +84,9 @@ def initialize_jobtask(jobtask_id, job_id) -> "JobTask":
 
 
 def get_blocks(
-    block_type=None, basic: bool = True, as_dataframe=False,
+    block_type=None,
+    basic: bool = True,
+    as_dataframe=False,
 ):
     tools = Tools(auth=_auth)
     return tools.get_blocks(block_type, basic, as_dataframe)

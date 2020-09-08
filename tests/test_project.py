@@ -41,7 +41,8 @@ def test_create_workflow(project_mock):
             "data": {"id": "workflow_id123", "displayId": "workflow_displayId123"},
         }
         m.post(
-            url=url_workflow_creation, json=json_workflow_creation,
+            url=url_workflow_creation,
+            json=json_workflow_creation,
         )
 
         workflow = project_mock.create_workflow(
@@ -121,7 +122,14 @@ def test_get_jobs(project_mock):
             f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}/jobs"
         )
         json_jobs = {
-            "data": [{"id": job_id, "status": "SUCCEEDED", "inputs": {}, "error": {},}]
+            "data": [
+                {
+                    "id": job_id,
+                    "status": "SUCCEEDED",
+                    "inputs": {},
+                    "error": {},
+                }
+            ]
         }
         m.get(url=url_jobs, json=json_jobs)
 

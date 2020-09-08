@@ -27,11 +27,17 @@ PROJECT_ENVS = mock.patch.dict(
 )
 
 WORKFLOW_ENVS = mock.patch.dict(
-    "os.environ", {"UP42_WORKFLOW_ID": os.environ.get("TEST_UP42_WORKFLOW_ID"),},
+    "os.environ",
+    {
+        "UP42_WORKFLOW_ID": os.environ.get("TEST_UP42_WORKFLOW_ID"),
+    },
 )
 
 JOB_ENVS = mock.patch.dict(
-    "os.environ", {"UP42_JOB_ID": os.environ.get("TEST_UP42_JOB_ID"),},
+    "os.environ",
+    {
+        "UP42_JOB_ID": os.environ.get("TEST_UP42_JOB_ID"),
+    },
 )
 
 
@@ -238,7 +244,13 @@ def test_test_job_live(cli_runner):
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
     result = cli_runner.invoke(
-        cli.main, ["workflow", "test-job", str(input_parameters_json), "--track",],
+        cli.main,
+        [
+            "workflow",
+            "test-job",
+            str(input_parameters_json),
+            "--track",
+        ],
     )
     assert result.exit_code == 0
 
@@ -254,7 +266,13 @@ def test_run_job_live(cli_runner):
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
     result = cli_runner.invoke(
-        cli.main, ["workflow", "run-job", str(input_parameters_json), "--track",],
+        cli.main,
+        [
+            "workflow",
+            "run-job",
+            str(input_parameters_json),
+            "--track",
+        ],
     )
     assert result.exit_code == 0
 

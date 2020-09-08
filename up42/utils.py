@@ -302,7 +302,13 @@ def _plot_images(
 
 def any_vector_to_fc(
     vector: Union[
-        Dict, Feature, FeatureCollection, List, GeoDataFrame, Polygon, Point,
+        Dict,
+        Feature,
+        FeatureCollection,
+        List,
+        GeoDataFrame,
+        Polygon,
+        Point,
     ],
     as_dataframe: bool = False,
 ) -> Union[Dict, GeoDataFrame]:
@@ -368,7 +374,6 @@ def any_vector_to_fc(
             if df.crs.to_string() != "EPSG:4326":
                 df = df.to_crs(epsg=4326)
 
-    df.geometry = df.geometry.buffer(0)
     if as_dataframe:
         return df
     else:
@@ -410,7 +415,9 @@ def fc_to_query_geometry(
     """
     if geometry_operation not in ["bbox", "intersects", "contains"]:
         raise ValueError(
-            "geometry_operation needs to be one of bbox", "intersects", "contains",
+            "geometry_operation needs to be one of bbox",
+            "intersects",
+            "contains",
         )
     try:
         if fc["type"] != "FeatureCollection":
