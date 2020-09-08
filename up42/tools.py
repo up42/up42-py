@@ -10,7 +10,13 @@ import pandas as pd
 import shapely
 import rasterio
 
-from up42.utils import get_logger, folium_base_map, DrawFoliumOverride, _plot_images, _map_images
+from up42.utils import (
+    get_logger,
+    folium_base_map,
+    DrawFoliumOverride,
+    _plot_images,
+    _map_images,
+)
 
 try:
     from IPython.display import display
@@ -230,7 +236,7 @@ class Tools:
         aoi: GeoDataFrame = None,
         filepaths: List = None,
         name_column: str = "id",
-        save_html: Path = None
+        save_html: Path = None,
     ):
         """
         Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
@@ -254,10 +260,10 @@ class Tools:
         m = _map_images(
             plot_file_format=plot_file_format,
             result_df=scenes,
-            aoi=aoi,
             filepaths=filepaths,
+            aoi=aoi,
             name_column=name_column,
-            save_html=save_html
+            save_html=save_html,
         )
 
         return m

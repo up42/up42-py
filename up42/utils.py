@@ -14,20 +14,13 @@ import numpy as np
 import shapely
 import rasterio
 from rasterio.plot import show
+from rasterio.vrt import WarpedVRT
 from shapely.geometry import Point, Polygon, box
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
-from rasterio.vrt import WarpedVRT
 import requests
 from tqdm import tqdm
 import matplotlib.pyplot as plt
-
-try:
-    from IPython.display import display
-    from IPython import get_ipython
-except ImportError:
-    # No Ipython installed, Installed but run in shell
-    pass
 
 
 # truncate log messages > 2000 characters (e.g. huge geometries)
@@ -189,6 +182,7 @@ def folium_base_map(
         # use this one here. Causes an empty map.
     return m
 
+
 def _style_function(feature):  # pylint: disable=unused-argument
     return {
         "fillColor": "#5288c4",
@@ -197,6 +191,7 @@ def _style_function(feature):  # pylint: disable=unused-argument
         "dashArray": "5, 5",
     }
 
+
 def _highlight_function(feature):  # pylint: disable=unused-argument
     return {
         "fillColor": "#ffaf00",
@@ -204,6 +199,7 @@ def _highlight_function(feature):  # pylint: disable=unused-argument
         "weight": 3.5,
         "dashArray": "5, 5",
     }
+
 
 class DrawFoliumOverride(Draw):
     def render(self, **kwargs):
@@ -324,8 +320,16 @@ def _plot_images(
     plt.show()
 
 
-def _map_images(plot_file_format: List[str], result_df: GeoDataFrame, aoi, filepaths, show_images = True,
-                show_features = False, name_column: str = "id", save_html: Path = None):
+def _map_images(
+    plot_file_format: List[str],
+    result_df: GeoDataFrame,
+    filepaths,
+    aoi=None,
+    show_images=True,
+    show_features=False,
+    name_column: str = "id",
+    save_html: Path = None,
+):
     """
     Displays data.json, and if available, one or multiple results geotiffs.
 
@@ -345,17 +349,19 @@ def _map_images(plot_file_format: List[str], result_df: GeoDataFrame, aoi, filep
     m = folium_base_map(lat=centroid.y, lon=centroid.x,)
 
     df_bounds = result_df.bounds
-    list_bound = df_bounds.values.tolist()
+    list_bounds = df_bounds.values.tolist()
     raster_filepaths = [
         path for path in filepaths if Path(path).suffix in plot_file_format
     ]
 
     # Make sure the quicklooks images are equal to the number of features in the scenes
     try:
-        assert len(list_bound) == len(raster_filepaths)
+        assert len(list_bounds) == len(raster_filepaths)
     except AssertionError:
-        logger.error(f"The length of the imgaes {len(raster_filepaths)} is not equal to number of"
-                    f"row in scenes {len(result_df)}")
+        logger.error(
+            f"The length of the imgaes {len(raster_filepaths)} is not equal to number of"
+            f"row in scenes {len(result_df)}"
+        )
         raise
 
     try:
@@ -366,7 +372,7 @@ def _map_images(plot_file_format: List[str], result_df: GeoDataFrame, aoi, filep
     if aoi is not None:
         folium.GeoJson(
             aoi,
-            name='geojson',
+            name="geojson",
             style_function=_style_function,
             highlight_function=_highlight_function,
         ).add_to(m)
@@ -391,12 +397,12 @@ def _map_images(plot_file_format: List[str], result_df: GeoDataFrame, aoi, filep
 
     if show_images and raster_filepaths:
         for idx, (raster_fp, feature_name) in enumerate(
-                zip(raster_filepaths, feature_names)
+            zip(raster_filepaths, feature_names)
         ):
             with rasterio.open(raster_fp) as src:
                 if src.meta["crs"] is None:
                     dst_array = src.read()[:3, :, :]
-                    minx, miny, maxx, maxy = list_bound[idx]
+                    minx, miny, maxx, maxy = list_bounds[idx]
                 else:
                     # Folium requires 4326, streaming blocks are 3857
                     with WarpedVRT(src, crs="EPSG:4326") as vrt:
@@ -412,10 +418,7 @@ def _map_images(plot_file_format: List[str], result_df: GeoDataFrame, aoi, filep
             )
 
     # Collapse layer control with too many features.
-    if result_df.shape[0] > 4:  # pylint: disable=simplifiable-if-statement  #type: ignore
-        collapsed = True
-    else:
-        collapsed = False
+    collapsed = bool(result_df.shape[0] > 4)
     folium.LayerControl(position="bottomleft", collapsed=collapsed).add_to(m)
 
     if save_html:

@@ -233,7 +233,9 @@ class Job(Tools):
         )
         logger.info("Uploaded!")
 
-    def map_results(self, show_images: bool = True, name_column: str = "uid", save_html=None):
+    def map_results(
+        self, show_images: bool = True, name_column: str = "uid", save_html=None
+    ):
         """
         Displays data.json, and if available, one or multiple results geotiffs.
 
@@ -259,8 +261,16 @@ class Job(Tools):
         plot_file_format = [".tif"]
 
         # Add image to map.
-        m = _map_images(plot_file_format=plot_file_format, result_df=df, aoi=None, filepaths=self.results,
-                        show_images=show_images, show_features=True, name_column=name_column, save_html=save_html)
+        m = _map_images(
+            plot_file_format=plot_file_format,
+            result_df=df,
+            filepaths=self.results,
+            aoi=None,
+            show_images=show_images,
+            show_features=True,
+            name_column=name_column,
+            save_html=save_html,
+        )
 
         return m
 

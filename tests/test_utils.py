@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 import tempfile
+import re
 
 import folium
 import geopandas as gpd
@@ -8,6 +9,7 @@ from geopandas import GeoDataFrame
 import pandas as pd
 import pytest
 from shapely.geometry import Point, Polygon, LinearRing
+from shapely import wkt
 import requests_mock
 
 from .context import (
@@ -15,6 +17,7 @@ from .context import (
     any_vector_to_fc,
     fc_to_query_geometry,
     download_results_from_gcs,
+    _map_images,
 )
 
 
@@ -274,3 +277,50 @@ def test_download_result_from_gcs():
             for file in out_files:
                 assert Path(file).exists()
             assert len(out_files) == 2
+
+
+def test_map_images_2_scenes():
+    plot_file_format = [".jpg"]
+
+    result_csv = Path(__file__).resolve().parent / "mock_data/df_2scenes.csv"
+    result_df = pd.read_csv(result_csv)
+    result_df["geometry"] = result_df["geometry"].apply(wkt.loads)
+    gdf = gpd.GeoDataFrame(result_df, geometry="geometry")
+
+    quicklook_1 = (
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
+    )
+    quicklook_2 = (
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_f8c03432-cec1-41b7-a203-4d871a03290f.jpg"
+    )
+    filepaths = [quicklook_1, quicklook_2]
+
+    m = _map_images(plot_file_format, gdf, filepaths)
+    m._repr_html_()
+    out = m._parent.render()
+
+    assert re.search("Image 1 - f8c03432-cec1-41b7-a203-4d871a03290f", out)
+    assert re.search("Image 2 - 16e18e15-c941-4aae-97cd-d67b18dc9f6e", out)
+
+
+def test_map_images_1_scene():
+    plot_file_format = [".jpg"]
+
+    result_csv = Path(__file__).resolve().parent / "mock_data/df_1scene.csv"
+    result_df = pd.read_csv(result_csv)
+    result_df["geometry"] = result_df["geometry"].apply(wkt.loads)
+    gdf = gpd.GeoDataFrame(result_df, geometry="geometry")
+
+    quicklook = (
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
+    )
+    filepaths = [quicklook]
+
+    m = _map_images(plot_file_format, gdf, filepaths)
+    m._repr_html_()
+    out = m._parent.render()
+
+    assert re.search("Image 1 - 2a581680-17e4-4a61-8aa9-9e47e1bf36bb", out)
