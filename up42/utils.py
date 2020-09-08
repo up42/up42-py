@@ -183,7 +183,7 @@ def folium_base_map(
     return m
 
 
-def _style_function(feature):  # pylint: disable=unused-argument
+def _style_function(_):
     return {
         "fillColor": "#5288c4",
         "color": "blue",
@@ -192,7 +192,7 @@ def _style_function(feature):  # pylint: disable=unused-argument
     }
 
 
-def _highlight_function(feature):  # pylint: disable=unused-argument
+def _highlight_function(_):
     return {
         "fillColor": "#ffaf00",
         "color": "red",
