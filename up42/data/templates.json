@@ -5,6 +5,11 @@
     "description": "",
     "blockThumbnailUrl": "",
     "provider": ["UP42", "Airbus"],
+    "blockIds": [
+      "defb134b-ca00-4e16-afa0-639c6dc0c5fe",
+      "903f0435-d638-475e-bbe9-53b5664a22a8",
+      "d0da4ac9-94c6-4905-80f5-c95e702ca878"
+    ],
     "workflow": {
       "oneatlas-pleiades-fullscene:1": {},
       "pansharpen:1": {},
@@ -17,6 +22,11 @@
     "description": "",
     "blockThumbnailUrl": "",
     "provider": ["UP42", "OneAtlas", "Airbus"],
+    "blockIds": [
+      "045019bb-06fc-4fa1-b703-318725b4d8af",
+      "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
+      "79e3e48c-d65f-4528-a6d4-e8d20fecc93c"
+    ],
     "workflow": {
       "oneatlas-spot-aoiclipped:1": {},
       "tiling:1": {},
@@ -33,6 +43,11 @@
       "Orbital Insight",
       "Airbus"
     ],
+    "blockIds": [
+      "18d09f1a-3197-4c27-a15a-54d099c31435",
+      "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
+      "7d8dda9f-db1e-4645-9c1b-e056e0bdc698"
+    ],
     "workflow": {
       "oneatlas-pleiades-aoiclipped:1": {},
       "tiling:1": {
@@ -48,6 +63,7 @@
     "description": "",
     "blockThumbnailUrl": "",
     "provider": ["UP42", "Sobloo"],
+    "blockIds": [],
     "workflow": {
       "sobloo-s2-l1c-fullscene:1": {},
       "s2-superresolution:1": {},
@@ -60,6 +76,7 @@
     "description": "",
     "blockThumbnailUrl": "",
     "provider": ["Sobloo", "Vultus"],
+    "blockIds": [],
     "workflow": {
       "sentinelhub-s2-aoiclipped:1": {},
       "fertilization-zoning-map:1": {}
@@ -71,6 +88,7 @@
     "description": "",
     "blockThumbnailUrl": "",
     "provider": ["UP42", "OneAtlas"],
+    "blockIds": [],
     "workflow": {
       "oneatlas-pleiades-fullscene:1": {},
       "pansharpen:1": {},
@@ -83,6 +101,7 @@
     "description": "",
     "blockThumbnailUrl": "",
     "provider": ["UP42", "OneAtlas"],
+    "blockIds": [],
     "workflow": {
       "oneatlas-spot-fullscene:1": {},
       "pansharpen:1": {},
@@ -96,6 +115,7 @@
     "description": "",
     "blockThumbnailUrl": "",
     "provider": ["UP42", "Sobloo"],
+    "blockIds": [],
     "workflow": {
       "sobloo-s5p:1": {},
       "s5p-lvl3:1": {},
@@ -108,6 +128,7 @@
     "description": "",
     "blockThumbnailUrl": "",
     "provider": ["Airbus", "OneAtlas"],
+    "blockIds": [],
     "workflow": {
       "platforms-up42-wd90-datablock:1": {},
       "platforms-up42-viewshed-processingblock:1": {}
@@ -119,6 +140,7 @@
     "description": "",
     "blockThumbnailUrl": "",
     "provider": ["UP42", "Sobloo"],
+    "blockIds": [],
     "workflow": {
       "sobloo-s1-grd-fullscene:1": {},
       "snap-polarimetric:1": {},
@@ -131,6 +153,7 @@
     "description": "",
     "blockThumbnailUrl": "",
     "provider": ["Sobloo", "Osir.io"],
+    "blockIds": [],
     "workflow": {
       "sobloo-s1-grd-fullscene:1": {},
       "snapship:1": {}
