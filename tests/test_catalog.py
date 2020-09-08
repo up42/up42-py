@@ -60,7 +60,10 @@ def test_construct_parameters_fc_multiple_non_overlapping_features(catalog_mock)
         ascending=True,
     )
     assert isinstance(search_parameters, dict)
-    assert search_parameters["datetime"] == "2020-01-01T00:00:00Z/2020-08-10T00:00:00Z"
+    assert (
+        search_parameters["datetime"]
+        == "2020-01-01T00:00:00+00:00/2020-08-10T00:00:00+00:00"
+    )
     assert search_parameters["intersects"]["type"] == "MultiPolygon"
 
 

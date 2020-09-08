@@ -340,7 +340,7 @@ def test_construct_parameters(workflow_mock):
     assert isinstance(parameters, dict)
     assert parameters == {
         "sobloo-s2-l1c-aoiclipped:1": {
-            "time": "2014-01-01T00:00:00Z/2016-12-31T00:00:00Z",
+            "time": "2014-01-01T00:00:00+00:00/2016-12-31T00:00:00+00:00",
             "limit": 1,
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
         },
@@ -426,7 +426,7 @@ def test_construct_parameters_parallel(workflow_mock):
     assert len(parameters_list) == 2
     assert parameters_list[0] == {
         "sobloo-s2-l1c-aoiclipped:1": {
-            "time": "2014-01-01T00:00:00Z/2016-12-31T00:00:00Z",
+            "time": "2014-01-01T00:00:00+00:00/2016-12-31T00:00:00+00:00",
             "limit": 1,
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
         },
@@ -453,7 +453,7 @@ def test_construct_parameters_parallel_multiple_intervals(workflow_mock):
     assert len(parameters_list) == 4
     assert parameters_list[0] == {
         "sobloo-s2-l1c-aoiclipped:1": {
-            "time": "2014-01-01T00:00:00Z/2016-12-31T00:00:00Z",
+            "time": "2014-01-01T00:00:00+00:00/2016-12-31T00:00:00+00:00",
             "limit": 1,
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
         },
@@ -716,7 +716,7 @@ def test_test_jobs_parallel_live(workflow_live):
     input_parameters_list = [
         {
             "sobloo-s2-l1c-aoiclipped:1": {
-                "time": "2019-01-01T00:00:00Z/2020-12-31T00:00:00Z",
+                "time": "2019-01-01T00:00:00+00:00/2020-12-31T00:00:00+00:00",
                 "limit": 1,
                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
             },
@@ -724,7 +724,7 @@ def test_test_jobs_parallel_live(workflow_live):
         },
         {
             "sobloo-s2-l1c-aoiclipped:1": {
-                "time": "2019-12-01T00:00:00Z/2020-12-31T00:00:00Z",
+                "time": "2019-12-01T00:00:00+00:00/2020-12-31T00:00:00+00:00",
                 "limit": 1,
                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
             },
@@ -749,7 +749,7 @@ def test_run_jobs_parallel_live(workflow_live):
     input_parameters_list = [
         {
             "sobloo-s2-l1c-aoiclipped:1": {
-                "time": "2019-01-01T00:00:00Z/2020-12-31T00:00:00Z",
+                "time": "2019-01-01T00:00:00+00:00/2020-12-31T00:00:00+00:00",
                 "limit": 1,
                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
             },
@@ -757,7 +757,7 @@ def test_run_jobs_parallel_live(workflow_live):
         },
         {
             "sobloo-s2-l1c-aoiclipped:1": {
-                "time": "2019-12-01T00:00:00Z/2020-12-31T00:00:00Z",
+                "time": "2019-12-01T00:00:00+00:00/2020-12-31T00:00:00+00:00",
                 "limit": 1,
                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
             },
