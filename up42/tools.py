@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import shapely
 import rasterio
+import folium
 
 from up42.utils import (
     get_logger,
@@ -237,7 +238,7 @@ class Tools:
         filepaths: List = None,
         name_column: str = "id",
         save_html: Path = None,
-    ):
+    ) -> folium.Map:
         """
         Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
         respective object, e.g. job, catalog).

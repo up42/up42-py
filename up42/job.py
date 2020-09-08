@@ -7,6 +7,7 @@ from geopandas import GeoDataFrame
 import geopandas as gpd
 import requests
 import requests.exceptions
+import folium
 
 from up42.auth import Auth
 from up42.jobtask import JobTask
@@ -235,7 +236,7 @@ class Job(Tools):
 
     def map_results(
         self, show_images: bool = True, name_column: str = "uid", save_html=None
-    ):
+    ) -> folium.Map:
         """
         Displays data.json, and if available, one or multiple results geotiffs.
 

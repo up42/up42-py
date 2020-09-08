@@ -329,7 +329,7 @@ def _map_images(
     show_features=False,
     name_column: str = "id",
     save_html: Path = None,
-):
+) -> folium.Map:
     """
     Displays data.json, and if available, one or multiple results geotiffs.
 
