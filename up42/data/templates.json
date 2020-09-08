@@ -11,16 +11,35 @@
       "ndvi:1": {}
     }
   },
-  "kmeans-sentinel1": {
-    "name": "kmeans-sentinel1",
-    "displayName": "K-Means Clustering Sentinel-1",
+    "shipdetection-spot": {
+    "name": "shipdetection-spot",
+    "displayName": "Ship Detection Spot",
     "description": "",
     "blockThumbnailUrl": "",
-    "provider": ["UP42", "Sobloo"],
+    "provider": ["UP42", "OneAtlas", "Airbus"],
     "workflow": {
-      "sobloo-s1-grd-fullscene:1": {},
-      "snap-polarimetric:1": {},
-      "kmeans-clustering:1": {}
+      "oneatlas-spot-aoiclipped:1": {},
+      "tiling:1": {},
+      "ship-detection:1": {}
+    }
+  },
+  "cardetection-spot": {
+    "name": "cardetection-spot",
+    "displayName": "Car Detection Pleiades",
+    "description": "",
+    "blockThumbnailUrl": "",
+    "provider": [
+      "UP42",
+      "Orbital Insight",
+      "Airbus"
+    ],
+    "workflow": {
+      "oneatlas-pleiades-aoiclipped:1": {},
+      "tiling:1": {
+        "tile_width": 1232,
+        "tile_height": 1232
+      },
+      "orbital_pleiades_cars:1": {}
     }
   },
   "superresolution-sentinel2": {
@@ -33,17 +52,6 @@
       "sobloo-s2-l1c-fullscene:1": {},
       "s2-superresolution:1": {},
       "sharpening:1": {}
-    }
-  },
-  "shipdetection-sentinel1": {
-    "name": "shipdetection-sentinel1",
-    "displayName": "Ship Detection Sentinel-1",
-    "description": "",
-    "blockThumbnailUrl": "",
-    "provider": ["Sobloo", "Osir.io"],
-    "workflow": {
-      "sobloo-s1-grd-fullscene:1": {},
-      "snapship:1": {}
     }
   },
   "fertilizationzoning-sentinel2": {
@@ -69,18 +77,6 @@
       "superresolution:1": {}
     }
   },
-  "sentinel5p-lvl3": {
-    "name": "sentinel5p-lvl3",
-    "displayName": "Sentinel-5P Level-3 Product",
-    "description": "",
-    "blockThumbnailUrl": "",
-    "provider": ["UP42", "Sobloo"],
-    "workflow": {
-      "sobloo-s5p:1": {},
-      "s5p-lvl3:1": {},
-      "data-conversion-netcdf:1": {}
-    }
-  },
   "landcover-spot": {
     "name": "landcover-spot",
     "displayName": "Landcover Classification Spot",
@@ -94,6 +90,18 @@
       "landcover:1": {}
     }
   },
+    "sentinel5p-lvl3": {
+    "name": "sentinel5p-lvl3",
+    "displayName": "Sentinel-5P Level-3 Product",
+    "description": "",
+    "blockThumbnailUrl": "",
+    "provider": ["UP42", "Sobloo"],
+    "workflow": {
+      "sobloo-s5p:1": {},
+      "s5p-lvl3:1": {},
+      "data-conversion-netcdf:1": {}
+    }
+  },
   "viewshed-worlddem": {
     "name": "viewshed-worlddem",
     "displayName": "Viewshed Processing WorldDEM",
@@ -105,48 +113,27 @@
       "platforms-up42-viewshed-processingblock:1": {}
     }
   },
-  "shipdetection-spot": {
-    "name": "shipdetection-spot",
-    "displayName": "Ship Detection Spot",
+    "kmeans-sentinel1": {
+    "name": "kmeans-sentinel1",
+    "displayName": "K-Means Clustering Sentinel-1",
     "description": "",
     "blockThumbnailUrl": "",
-    "provider": ["UP42", "OneAtlas", "Airbus"],
+    "provider": ["UP42", "Sobloo"],
     "workflow": {
-      "oneatlas-spot-aoiclipped:1": {},
-      "tiling:1": {},
-      "ship-detection:1": {}
+      "sobloo-s1-grd-fullscene:1": {},
+      "snap-polarimetric:1": {},
+      "kmeans-clustering:1": {}
     }
   },
-  "shipidentification-spot": {
-    "name": "shipidentification-spot",
-    "displayName": "Ship Identification Spot",
+    "shipdetection-sentinel1": {
+    "name": "shipdetection-sentinel1",
+    "displayName": "Ship Detection Sentinel-1",
     "description": "",
     "blockThumbnailUrl": "",
-    "provider": ["UP42", "OneAtlas", "Airbus"],
+    "provider": ["Sobloo", "Osir.io"],
     "workflow": {
-      "oneatlas-spot-aoiclipped:1": {},
-      "tiling:1": {},
-      "ship-detection:1": {},
-      "ship-identification:1": {}
-    }
-  },
-  "cardetection-spot": {
-    "name": "cardetection-spot",
-    "displayName": "Car Detection Pleiades",
-    "description": "",
-    "blockThumbnailUrl": "",
-    "provider": [
-      "UP42",
-      "Orbital Insight",
-      "Airbus"
-    ],
-    "workflow": {
-      "oneatlas-pleiades-aoiclipped:1": {},
-      "tiling:1": {
-        "tile_width": 1232,
-        "tile_height": 1232
-      },
-      "orbital_pleiades_cars:1": {}
+      "sobloo-s1-grd-fullscene:1": {},
+      "snapship:1": {}
     }
   }
 }
