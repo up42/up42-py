@@ -331,7 +331,9 @@ class Workflow(Tools):
                 input_parameters[data_block_name]["time"] = datetime
 
             if geometry is not None:
-                aoi_fc = any_vector_to_fc(vector=geometry,)
+                aoi_fc = any_vector_to_fc(
+                    vector=geometry,
+                )
                 aoi_feature = fc_to_query_geometry(
                     fc=aoi_fc,
                     geometry_operation=geometry_operation,  # type: ignore
@@ -343,7 +345,15 @@ class Workflow(Tools):
 
     def construct_parameters_parallel(
         self,
-        geometries: List[Union[Dict, Feature, geojson_Polygon, Polygon, Point,]] = None,
+        geometries: List[
+            Union[
+                Dict,
+                Feature,
+                geojson_Polygon,
+                Polygon,
+                Point,
+            ]
+        ] = None,
         interval_dates: List[Tuple[str, str]] = None,
         scene_ids: List = None,
         limit_per_job: int = 1,
@@ -396,7 +406,10 @@ class Workflow(Tools):
         elif scene_ids is not None:
             for scene_id in scene_ids:
                 result_params.append(
-                    self.construct_parameters(geometry=None, scene_ids=[scene_id],)
+                    self.construct_parameters(
+                        geometry=None,
+                        scene_ids=[scene_id],
+                    )
                 )
         else:
             raise ValueError(
@@ -457,7 +470,11 @@ class Workflow(Tools):
         )
         job_json = response_json["data"]
         logger.info(f"Created and running new job: {job_json['id']}.")
-        job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
+        job = Job(
+            self.auth,
+            job_id=job_json["id"],
+            project_id=self.project_id,
+        )
 
         if track_status:
             job.track_status()
@@ -537,7 +554,11 @@ class Workflow(Tools):
                 )
                 job_json = response_json["data"]
                 logger.info(f"Created and running new job: {job_json['id']}")
-                job = Job(self.auth, job_id=job_json["id"], project_id=self.project_id,)
+                job = Job(
+                    self.auth,
+                    job_id=job_json["id"],
+                    project_id=self.project_id,
+                )
                 batch_jobs.append(job)
                 job_nr += 1
 

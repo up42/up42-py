@@ -71,7 +71,6 @@ class Tools:
 
         if df.crs.to_string() != "EPSG:4326":
             df = df.to_crs(epsg=4326)
-        df.geometry = df.geometry.buffer(0)
         # TODO: Explode multipolygons (if neccessary as union in aoi anyway most often).
         # TODO: Have both bboxes for each feature and overall?
         if as_dataframe:
@@ -258,7 +257,10 @@ class Tools:
         )
 
     def get_blocks(
-        self, block_type=None, basic: bool = True, as_dataframe=False,
+        self,
+        block_type=None,
+        basic: bool = True,
+        as_dataframe=False,
     ) -> Union[List[Dict], Dict]:
         """
         Gets a list of all public blocks on the marketplace.

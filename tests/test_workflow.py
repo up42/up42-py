@@ -35,7 +35,9 @@ json_workflow_tasks = {
             "block": {
                 "name": "sobloo-s2-l1c-aoiclipped",
                 "parameters": {
-                    "nodata": {"type": "number",},
+                    "nodata": {
+                        "type": "number",
+                    },
                     "time": {
                         "type": "dateRange",
                         "default": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
@@ -186,7 +188,8 @@ def test_construct_full_workflow_tasks_dict_unkwown_block_raises(workflow_mock):
     with requests_mock.Mocker() as m:
         url_get_blocks = f"{workflow_mock.auth._endpoint()}/blocks"
         m.get(
-            url=url_get_blocks, json=json_blocks,
+            url=url_get_blocks,
+            json=json_blocks,
         )
         with pytest.raises(ValueError):
             workflow_mock._construct_full_workflow_tasks_dict(input_tasks=input_tasks)
@@ -200,16 +203,26 @@ def test_construct_full_workflow_tasks_dict_unkwown_block_raises(workflow_mock):
             "4ed70368-d4e1-4462-bef6-14e768049471",
         ],
         ["sobloo-s2-l1c-aoiclipped", "tiling"],
-        ["Sentinel-2 L1C MSI AOI clipped", "Raster Tiling",],
-        ["a2daaab4-196d-4226-a018-a810444dcad1", "tiling",],
-        ["Sentinel-2 L1C MSI AOI clipped", "4ed70368-d4e1-4462-bef6-14e768049471",],
+        [
+            "Sentinel-2 L1C MSI AOI clipped",
+            "Raster Tiling",
+        ],
+        [
+            "a2daaab4-196d-4226-a018-a810444dcad1",
+            "tiling",
+        ],
+        [
+            "Sentinel-2 L1C MSI AOI clipped",
+            "4ed70368-d4e1-4462-bef6-14e768049471",
+        ],
     ],
 )
 def test_construct_full_workflow_tasks_dict(workflow_mock, input_tasks):
     with requests_mock.Mocker() as m:
         url_get_blocks = f"{workflow_mock.auth._endpoint()}/blocks"
         m.get(
-            url=url_get_blocks, json=json_blocks,
+            url=url_get_blocks,
+            json=json_blocks,
         )
         full_workflow_tasks_dict = workflow_mock._construct_full_workflow_tasks_dict(
             input_tasks=input_tasks
@@ -367,7 +380,9 @@ def test_construct_parameter_only_ids(workflow_mock):
     with requests_mock.Mocker() as m:
         m.get(url=url_workflow_tasks, json=json_workflow_tasks)
 
-        parameters = workflow_mock.construct_parameters(scene_ids=["s2_123223"],)
+        parameters = workflow_mock.construct_parameters(
+            scene_ids=["s2_123223"],
+        )
     assert isinstance(parameters, dict)
     assert parameters == {
         "sobloo-s2-l1c-aoiclipped:1": {"ids": ["s2_123223"], "limit": 1},

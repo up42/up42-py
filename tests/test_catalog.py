@@ -81,7 +81,8 @@ def test_search(catalog_mock):
     with requests_mock.Mocker() as m:
         url_search = f"{catalog_mock.auth._endpoint()}/catalog/stac/search"
         m.post(
-            url=url_search, json=json_search_response,
+            url=url_search,
+            json=json_search_response,
         )
         search_results = catalog_mock.search(mock_search_parameters)
 
