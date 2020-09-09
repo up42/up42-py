@@ -19,13 +19,11 @@ up42.authenticate(project_id="123", project_api_key="456")
 # up42.authenticate(cfg_file="config.json")
 
 project = up42.initialize_project()
-workflow = project.create_workflow(name="30-seconds-workflow", 
-                                   use_existing=True)
 
-# Add data and processing blocks to the workflow.
 print(up42.get_blocks(basic=True))
-input_tasks = ['sobloo-s2-l1c-aoiclipped', 'sharpening']
-workflow.add_workflow_tasks(input_tasks=input_tasks)
+workflow = project.create_workflow(name="30-seconds-workflow",
+                                   blocks=['sobloo-s2-l1c-aoiclipped', 'sharpening'],
+                                   use_existing=True)
 
 # Define the aoi and input parameters of the workflow.
 aoi = workflow.get_example_aoi(as_dataframe=True)

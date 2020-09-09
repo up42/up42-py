@@ -32,38 +32,23 @@ You can either create a new workflow, use project.get_workflows() to get all exi
 
 
 ```python
-# Create a new, empty workflow.
-workflow = project.create_workflow(name="30-seconds-workflow", 
+# Either create a workflow directly filled with tasks
+workflow = project.create_workflow(name="30-seconds-workflow",
+                                   blocks=['sobloo-s2-l1c-aoiclipped', 'sharpening'],
                                    use_existing=True)
 workflow
 ```
 
 
 ```python
-# Add workflow tasks - simple version. See above .get_blocks() result.
-input_tasks= ['sobloo-s2-l1c-aoiclipped', 'sharpening']
-workflow.add_workflow_tasks(input_tasks=input_tasks)
-```
+# Or Create a new, empty workflow an fill/edit the tasks manually
+workflow = project.create_workflow(name="30-seconds-workflow", use_existing=False)
+workflow
 
+workflow.add_workflow_tasks(input_tasks=['sobloo-s2-l1c-aoiclipped', 'sharpening'])
 
-```python
-# Alternative: Add workflow tasks - complex version, gives you more control 
-# about the block connections.
-
-input_tasks = [
-    {
-        "name": "sobloo-s2-l1c-aoiclipped:1",
-        "parentName": None,
-        "blockId": "a2daaab4-196d-4226-a018-a810444dcad1"
-    },
-    {
-        "name": "sharpening:1",
-        "parentName": "sobloo-s2-l1c-aoiclipped:1",
-        "blockId": "4ed70368-d4e1-4462-bef6-14e768049471"
-    }
-]
-
-workflow.add_workflow_tasks(input_tasks=input_tasks)
+# Instead of the block names you can also use the block ids, which point to a specific block version.
+# ["a2daaab4-196d-4226-a018-a810444dcad1", "4ed70368-d4e1-4462-bef6-14e768049471"]
 ```
 
 
