@@ -362,8 +362,8 @@ def _map_images(
         assert len(list_bounds) == len(raster_filepaths)
     except AssertionError:
         logger.error(
-            f"The length of the imgaes {len(raster_filepaths)} is not equal to number of"
-            f"row in scenes {len(result_df)}"
+            f"The length of the downloaded quicklooks {len(raster_filepaths)} is not equal to the number"
+            f" of catalog search results {result_df.shape[0]}"
         )
         raise
 

@@ -244,9 +244,11 @@ class Tools:
 
         Args:
             scenes: GeoDataFrame of scenes, results of catalog.search()
+            aoi: GeoDataFrame of aoi.
             filepaths: Paths to images to plot. Optional, by default picks up the last
                 downloaded results.
             name_column: Name of the feature property that provides the Feature/Layer name.
+            save_html: The path for saving folium map as html file.
         """
         if filepaths is None:
             if self.quicklooks is None:
