@@ -248,7 +248,7 @@ class Tools:
             filepaths: Paths to images to plot. Optional, by default picks up the last
                 downloaded results.
             name_column: Name of the feature property that provides the Feature/Layer name.
-            save_html: The path for saving folium map as html file.
+            save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
         if filepaths is None:
             if self.quicklooks is None:

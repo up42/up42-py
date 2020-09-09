@@ -342,7 +342,7 @@ def _map_images(
         show_images: Shows images if True (default).
         show_features: Show features if True. For quicklooks maps is set to False.
         name_column: Name of the feature property that provides the Feature/Layer name.
-        save_html: The path for saving folium map as html file.
+        save_html: The path for saving folium map as html file. With default None, no file is saved.
     """
 
     centroid = box(*result_df.total_bounds).centroid

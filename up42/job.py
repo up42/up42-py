@@ -251,7 +251,7 @@ class Job(Tools):
         Args:
             show_images: Shows images if True (default), only features if False.
             name_column: Name of the feature property that provides the Feature/Layer name.
-            save_html: The path for saving folium map as html file.
+            save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
         if self.results is None:
             raise ValueError(
