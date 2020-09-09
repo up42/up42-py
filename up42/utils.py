@@ -367,7 +367,7 @@ def _map_images(
     try:
         feature_names = result_df[name_column].to_list()
     except KeyError:
-        feature_names = ""
+        feature_names = [""] * len(result_df.index)
 
     if aoi is not None:
         folium.GeoJson(
