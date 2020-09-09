@@ -54,6 +54,7 @@ nav:
         - Releases: CHANGELOG.md
     - FAQ & Support:
         - FAQ & Support: support-faq.md
+        - Privacy Policy: privacy-policy.md
 
 ## Configuration
 theme:
