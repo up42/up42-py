@@ -425,9 +425,10 @@ def _map_images(
     folium.LayerControl(position="bottomleft", collapsed=collapsed).add_to(m)
 
     if save_html:
-        if not Path(save_html).exists():
-            Path(save_html).mkdir(parents=True, exist_ok=True)
-        filepath = Path(save_html) / "final_map.html"
+        save_html = Path(save_html)
+        if not save_html.exists():
+            save_html.mkdir(parents=True, exist_ok=True)
+        filepath = save_html / "final_map.html"
         with filepath.open("w") as f:
             f.write(m._repr_html_())
     return m
