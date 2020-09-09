@@ -94,8 +94,6 @@ plugins:
         - ".ipynb_checkpoints"
         - "*examples/project*"
         - "*examples/guides/*"
-  #- minify:
-  #    minify_html: false
   - mkdocstrings:
       default_handler: python
       handlers:

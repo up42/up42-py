@@ -6,7 +6,7 @@ Live on github pages:
 ## Installation for doc development:
 ```
 cd docs
-pip install -r requirements_docs.txt
+pip install -r requirements_dev.txt
 ```
 
 ## HTML Preview Server
@@ -22,11 +22,13 @@ Reinstall Python package via
 pip install -e .
 ```
 
+## Build site (Not really neccessary due to preview function):
+```
+mkdocs build
+```
+
 ## Publish
 ```
 mkdocs gh-deploy
 ```
 Pushes to the `gh-deploy` branch and republishes as github pages.
-
-For more infos see readme here:
-https://github.com/up42/docs_mkdocs
