@@ -40,7 +40,7 @@ class Project(Tools):
         self,
         name: str,
         description: str = "",
-        workflow_tasks: List = None,
+        blocks: List = None,
         use_existing: bool = False,
     ) -> "Workflow":
         """
@@ -49,8 +49,8 @@ class Project(Tools):
         Args:
             name: Name of the new workflow.
             description: Description of the new workflow.
-            workflow_tasks: List of workflow tasks (blocks) that the workflow should
-                consist of. Can be a list of block names, block ods or block display names.
+            blocks: List of blocks/tasks that the workflow should consist of.
+                Can be a list of block names, block ids or block display names.
                 If not provided, an empty workflow will be created and you
                 can use `workflow.add_workflow_tasks()` to add/edit them.
             use_existing: If True, instead of creating a new workflow, uses the
@@ -86,8 +86,8 @@ class Project(Tools):
         workflow = Workflow(
             self.auth, project_id=self.project_id, workflow_id=workflow_id
         )
-        if workflow_tasks:
-            workflow.add_workflow_tasks(input_tasks=workflow_tasks)
+        if blocks:
+            workflow.add_workflow_tasks(input_tasks=blocks)
         return workflow
 
     def get_workflows(self, return_json: bool = False) -> Union[List["Workflow"], Dict]:
