@@ -25,7 +25,11 @@ logger = get_logger(__name__)
 # pylint: disable=duplicate-code
 class Job(Tools):
     def __init__(
-        self, auth: Auth, project_id: str, job_id: str, order_ids: List[str] = None,
+        self,
+        auth: Auth,
+        project_id: str,
+        job_id: str,
+        order_ids: List[str] = None,
     ):
         """
         The Job class provides access to the results, parameters and tasks of UP42
@@ -197,11 +201,13 @@ class Job(Tools):
         download_url = self._get_download_url()
         if unpacking:
             out_filepaths = download_results_from_gcs(
-                download_url=download_url, output_directory=output_directory,
+                download_url=download_url,
+                output_directory=output_directory,
             )
         else:
             out_filepaths = download_results_from_gcs_without_unpacking(
-                download_url=download_url, output_directory=output_directory,
+                download_url=download_url,
+                output_directory=output_directory,
             )
 
         self.results = out_filepaths
@@ -230,7 +236,9 @@ class Job(Tools):
             )
             logger.info(f"Upload job {self.job_id} results to {blob.name} ...")
         blob.upload_from_string(
-            data=r.content, content_type="application/octet-stream", client=gs_client,
+            data=r.content,
+            content_type="application/octet-stream",
+            client=gs_client,
         )
         logger.info("Uploaded!")
 

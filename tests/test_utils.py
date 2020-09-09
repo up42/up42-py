@@ -60,7 +60,12 @@ poly = Polygon([(0, 0), (1, 1), (1, 0)])
                 "geometry": {
                     "type": "Polygon",
                     "coordinates": (
-                        ((10.00001, 6.0), (10.0, 5.99), (10.1, 6.00), (10.00001, 6.0),),
+                        (
+                            (10.00001, 6.0),
+                            (10.0, 5.99),
+                            (10.1, 6.00),
+                            (10.00001, 6.0),
+                        ),
                     ),
                 },
             },
@@ -267,11 +272,13 @@ def test_download_result_from_gcs():
         out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         out_tgz_file = open(out_tgz, "rb")
         m.get(
-            url=cloud_storage_url, content=out_tgz_file.read(),
+            url=cloud_storage_url,
+            content=out_tgz_file.read(),
         )
         with tempfile.TemporaryDirectory() as tempdir:
             out_files = download_results_from_gcs(
-                download_url=cloud_storage_url, output_directory=tempdir,
+                download_url=cloud_storage_url,
+                output_directory=tempdir,
             )
             for file in out_files:
                 assert Path(file).exists()

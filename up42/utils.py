@@ -346,7 +346,10 @@ def _map_images(
     """
 
     centroid = box(*result_df.total_bounds).centroid
-    m = folium_base_map(lat=centroid.y, lon=centroid.x,)
+    m = folium_base_map(
+        lat=centroid.y,
+        lon=centroid.x,
+    )
 
     df_bounds = result_df.bounds
     list_bounds = df_bounds.values.tolist()
@@ -432,7 +435,13 @@ def _map_images(
 
 def any_vector_to_fc(
     vector: Union[
-        Dict, Feature, FeatureCollection, List, GeoDataFrame, Polygon, Point,
+        Dict,
+        Feature,
+        FeatureCollection,
+        List,
+        GeoDataFrame,
+        Polygon,
+        Point,
     ],
     as_dataframe: bool = False,
 ) -> Union[Dict, GeoDataFrame]:
@@ -540,7 +549,9 @@ def fc_to_query_geometry(
     """
     if geometry_operation not in ["bbox", "intersects", "contains"]:
         raise ValueError(
-            "geometry_operation needs to be one of bbox", "intersects", "contains",
+            "geometry_operation needs to be one of bbox",
+            "intersects",
+            "contains",
         )
     try:
         if fc["type"] != "FeatureCollection":

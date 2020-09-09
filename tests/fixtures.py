@@ -32,7 +32,8 @@ def auth_mock():
     with requests_mock.Mocker() as m:
         url_token = "https://project_id123:project_apikey123@api.up42.com/oauth/token"
         m.post(
-            url=url_token, json={"data": {"accessToken": "token_789"}},
+            url=url_token,
+            json={"data": {"accessToken": "token_789"}},
         )
         auth = Auth(
             project_id="project_id123",
@@ -84,7 +85,9 @@ def workflow_mock(auth_mock):
         )
 
         workflow = Workflow(
-            auth=auth_mock, workflow_id=workflow_id, project_id=auth_mock.project_id,
+            auth=auth_mock,
+            workflow_id=workflow_id,
+            project_id=auth_mock.project_id,
         )
     return workflow
 
