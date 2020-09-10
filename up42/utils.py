@@ -10,10 +10,12 @@ import math
 import folium
 from folium.plugins import Draw
 from geopandas import GeoDataFrame
+import numpy as np
 import shapely
 import rasterio
 from rasterio.plot import show
-from shapely.geometry import Point, Polygon
+from rasterio.vrt import WarpedVRT
+from shapely.geometry import Point, Polygon, box
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 import requests
@@ -181,6 +183,24 @@ def folium_base_map(
     return m
 
 
+def _style_function(_):
+    return {
+        "fillColor": "#5288c4",
+        "color": "blue",
+        "weight": 2.5,
+        "dashArray": "5, 5",
+    }
+
+
+def _highlight_function(_):
+    return {
+        "fillColor": "#ffaf00",
+        "color": "red",
+        "weight": 3.5,
+        "dashArray": "5, 5",
+    }
+
+
 class DrawFoliumOverride(Draw):
     def render(self, **kwargs):
         # pylint: disable=import-outside-toplevel
@@ -298,6 +318,120 @@ def _plot_images(
     plt.axis("off")
     plt.tight_layout()
     plt.show()
+
+
+def _map_images(
+    plot_file_format: List[str],
+    result_df: GeoDataFrame,
+    filepaths,
+    aoi=None,
+    show_images=True,
+    show_features=False,
+    name_column: str = "id",
+    save_html: Path = None,
+) -> folium.Map:
+    """
+    Displays data.json, and if available, one or multiple results geotiffs.
+
+    Args:
+        plot_file_format: List of accepted image file formats e.g. [".png"]
+        result_df: GeoDataFrame of scenes, results of catalog.search()
+        aoi: GeoDataFrame of aoi
+        filepaths: Paths to images to plot. Optional, by default picks up the last
+            downloaded results.
+        show_images: Shows images if True (default).
+        show_features: Show features if True. For quicklooks maps is set to False.
+        name_column: Name of the feature property that provides the Feature/Layer name.
+        save_html: The path for saving folium map as html file. With default None, no file is saved.
+    """
+
+    centroid = box(*result_df.total_bounds).centroid
+    m = folium_base_map(
+        lat=centroid.y,
+        lon=centroid.x,
+    )
+
+    df_bounds = result_df.bounds
+    list_bounds = df_bounds.values.tolist()
+    raster_filepaths = [
+        path for path in filepaths if Path(path).suffix in plot_file_format
+    ]
+
+    # Make sure the quicklooks images are equal to the number of features in the scenes
+    try:
+        assert len(list_bounds) == len(raster_filepaths)
+    except AssertionError:
+        logger.error(
+            f"The length of the downloaded quicklooks {len(raster_filepaths)} is not equal to the number"
+            f" of catalog search results {result_df.shape[0]}"
+        )
+        raise
+
+    try:
+        feature_names = result_df[name_column].to_list()
+    except KeyError:
+        feature_names = [""] * len(result_df.index)
+
+    if aoi is not None:
+        folium.GeoJson(
+            aoi,
+            name="geojson",
+            style_function=_style_function,
+            highlight_function=_highlight_function,
+        ).add_to(m)
+
+    if show_features:
+        for idx, row in result_df.iterrows():  # type: ignore
+            try:
+                feature_name = row.loc[name_column]
+            except KeyError:
+                feature_name = ""
+            layer_name = f"Feature {idx+1} - {feature_name}"
+            f = folium.GeoJson(
+                row["geometry"],
+                name=layer_name,
+                style_function=_style_function,
+                highlight_function=_highlight_function,
+            )
+            folium.Popup(
+                f"{layer_name}: {row.drop('geometry', axis=0).to_json()}"
+            ).add_to(f)
+            f.add_to(m)
+
+    if show_images and raster_filepaths:
+        for idx, (raster_fp, feature_name) in enumerate(
+            zip(raster_filepaths, feature_names)
+        ):
+            with rasterio.open(raster_fp) as src:
+                if src.meta["crs"] is None:
+                    dst_array = src.read()[:3, :, :]
+                    minx, miny, maxx, maxy = list_bounds[idx]
+                else:
+                    # Folium requires 4326, streaming blocks are 3857
+                    with WarpedVRT(src, crs="EPSG:4326") as vrt:
+                        dst_array = vrt.read()[:3, :, :]
+                        minx, miny, maxx, maxy = vrt.bounds
+
+            m.add_child(
+                folium.raster_layers.ImageOverlay(
+                    np.moveaxis(np.stack(dst_array), 0, 2),
+                    bounds=[[miny, minx], [maxy, maxx]],  # different order.
+                    name=f"Image {idx + 1} - {feature_name}",
+                )
+            )
+
+    # Collapse layer control with too many features.
+    collapsed = bool(result_df.shape[0] > 4)
+    folium.LayerControl(position="bottomleft", collapsed=collapsed).add_to(m)
+
+    if save_html:
+        save_html = Path(save_html)
+        if not save_html.exists():
+            save_html.mkdir(parents=True, exist_ok=True)
+        filepath = save_html / "final_map.html"
+        with filepath.open("w") as f:
+            f.write(m._repr_html_())
+    return m
 
 
 def any_vector_to_fc(

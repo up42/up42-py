@@ -9,8 +9,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import shapely
 import rasterio
+import folium
 
-from up42.utils import get_logger, folium_base_map, DrawFoliumOverride, _plot_images
+from up42.utils import (
+    get_logger,
+    folium_base_map,
+    DrawFoliumOverride,
+    _plot_images,
+    _map_images,
+)
 
 try:
     from IPython.display import display
@@ -222,6 +229,46 @@ class Tools:
             filepaths=filepaths,
             titles=titles,
         )
+
+    def map_quicklooks(
+        self,
+        scenes: GeoDataFrame,
+        aoi: GeoDataFrame = None,
+        filepaths: List = None,
+        name_column: str = "id",
+        save_html: Path = None,
+    ) -> folium.Map:
+        """
+        Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
+        respective object, e.g. job, catalog).
+
+        Args:
+            scenes: GeoDataFrame of scenes, results of catalog.search()
+            aoi: GeoDataFrame of aoi.
+            filepaths: Paths to images to plot. Optional, by default picks up the last
+                downloaded results.
+            name_column: Name of the feature property that provides the Feature/Layer name.
+            save_html: The path for saving folium map as html file. With default None, no file is saved.
+        """
+        if filepaths is None:
+            if self.quicklooks is None:
+                raise ValueError("You first need to download the quicklooks!")
+            filepaths = self.quicklooks
+
+        plot_file_format = [".jpg", ".jpeg", ".png"]
+        warnings.filterwarnings(
+            "ignore", category=rasterio.errors.NotGeoreferencedWarning
+        )
+        m = _map_images(
+            plot_file_format=plot_file_format,
+            result_df=scenes,
+            filepaths=filepaths,
+            aoi=aoi,
+            name_column=name_column,
+            save_html=save_html,
+        )
+
+        return m
 
     def plot_results(
         self,
