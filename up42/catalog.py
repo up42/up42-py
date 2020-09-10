@@ -266,6 +266,7 @@ class Catalog(Tools):
             out_path = output_directory / f"quicklook_{image_id}.jpg"
             out_paths.append(str(out_path))
 
+            # TODO: Find a better mechanism when a quicklook image is not available instead of failing the whole process
             url = (
                 f"{self.auth._endpoint()}/catalog/{provider}/image/{image_id}/quicklook"
             )
