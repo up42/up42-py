@@ -15,6 +15,11 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.11.0](https://pypi.org/project/up42-py/) (2020-08-13)
+- fix: Remove buffer 0 for fixing invalid geometry.
+- Add `map_quicklooks` method for visualising quicklooks interactively.
+- Add an example notebook for mapping quicklooks using `map_quicklooks` method. 
+
 
 ### [0.10.1](https://pypi.org/project/up42-py/) (2020-08-13)
 - Hotfix: Fixes usage of multiple features as the input geometry. 
