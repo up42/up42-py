@@ -357,16 +357,6 @@ def _map_images(
         path for path in filepaths if Path(path).suffix in plot_file_format
     ]
 
-    # Make sure the quicklooks images are equal to the number of features in the scenes
-    try:
-        assert len(list_bounds) == len(raster_filepaths)
-    except AssertionError:
-        logger.error(
-            f"The length of the downloaded quicklooks {len(raster_filepaths)} is not equal to the number"
-            f" of catalog search results {result_df.shape[0]}"
-        )
-        raise
-
     try:
         feature_names = result_df[name_column].to_list()
     except KeyError:

@@ -5,7 +5,6 @@ from geopandas import GeoDataFrame
 from shapely.geometry import shape
 from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
-from requests.exceptions import HTTPError
 from tqdm import tqdm
 
 from up42.auth import Auth
@@ -263,23 +262,21 @@ class Catalog(Tools):
 
         out_paths: List[str] = []
         for image_id in tqdm(image_ids):
-            out_path = output_directory / f"quicklook_{image_id}.jpg"
-            out_paths.append(str(out_path))
-
-            url = (
-                f"{self.auth._endpoint()}/catalog/{provider}/image/{image_id}/quicklook"
-            )
             try:
+                url = f"{self.auth._endpoint()}/catalog/{provider}/image/{image_id}/quicklook"
+
                 response = self.auth._request(
                     request_type="GET", url=url, return_text=False
                 )
-                response.raise_for_status()
-            except HTTPError as err:
-                raise SystemExit(err)
-
-            with open(out_path, "wb") as dst:
-                for chunk in response:
-                    dst.write(chunk)
+                out_path = output_directory / f"quicklook_{image_id}.jpg"
+                out_paths.append(str(out_path))
+                with open(out_path, "wb") as dst:
+                    for chunk in response:
+                        dst.write(chunk)
+            except ValueError:
+                logger.warning(
+                    f"Image with id {image_id} does not have quicklook available. Skipping ..."
+                )
 
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
