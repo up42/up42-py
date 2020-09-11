@@ -51,5 +51,5 @@ catalog.plot_coverage(scenes=search_results,
 catalog.download_quicklooks(image_ids=search_results.id.to_list(), 
                             sensor="pleiades")
 
-catalog.plot_quicklooks(figsize=(20,20))
+catalog.map_quicklooks(scenes=search_results, aoi=aoi)
 ```
