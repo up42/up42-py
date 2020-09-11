@@ -275,7 +275,7 @@ class Catalog(Tools):
                         dst.write(chunk)
             except ValueError:
                 logger.warning(
-                    f"{image_id} does not have quicklook available. Skipping ..."
+                    f"Image with id {image_id} does not have quicklook available. Skipping ..."
                 )
 
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
