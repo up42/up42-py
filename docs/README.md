@@ -12,7 +12,7 @@ pip install -r requirements_docs.txt
 ## HTML Preview Server
 Directly integrated in mkdocs, automatically reloads when you edit a file.
 ```
-mkdocs serve
+make serve
 ```
 Access at `http://127.0.0.1:8000/`
 
@@ -24,7 +24,7 @@ pip install -e .
 
 ## Publish
 ```
-mkdocs gh-deploy
+make gh-deploy
 ```
 Pushes to the `gh-deploy` branch and republishes as github pages.
 
