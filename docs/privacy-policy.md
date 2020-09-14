@@ -1,6 +1,6 @@
 # Privacy Policy
 
-*Last amended: September, 19th, 2019*
+*Last amended: September, 14th, 2020*
 
 UP42 respects your privacy and is committed to transparent privacy practices. This Privacy Policy explains how UP42 GmbH (collectively “UP42“, or “we“, or “us“, or “our“) collects, uses and shares your personal information in connection with your use of our website www.up42.com and explains your choices for how we handle your personal information. For convenience, the site and our services are collectively also referred to as the “Service.”
 
