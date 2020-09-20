@@ -644,7 +644,9 @@ def test_helper_run_parallel_jobs_one_fails(
         }
 
 
+@pytest.mark.skip
 def test_helper_run_parallel_jobs_default(workflow_mock, project_max_concurrent_jobs):
+    """Takes 100sec."""
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
