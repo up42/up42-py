@@ -6,15 +6,20 @@ Live on github pages:
 ## Installation for doc development:
 ```
 cd docs
-pip install -r requirements_docs.txt
+pip install -r requirements_dev.txt
 ```
 
-## HTML Preview Server
+## HTML Preview
 Directly integrated in mkdocs, automatically reloads when you edit a file.
 ```
 make serve
 ```
 Access at `http://127.0.0.1:8000/`
+
+## Build site (Not really neccessary due to preview function):
+```
+mkdocs build
+```
 
 ## Update Python API reference preview via mkdocstrings
 Reinstall Python package via 
