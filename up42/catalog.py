@@ -115,7 +115,7 @@ class Catalog(Tools):
         Returns:
             The constructed parameters dictionary.
         """
-        datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
+        datetime = f"{start_date}T00:00:00Z/{end_date}T23:59:59Z"
         block_filters: List[str] = []
         for sensor in sensors:
             if sensor not in list(supported_sensors.keys()):
@@ -165,7 +165,7 @@ class Catalog(Tools):
         Example:
             ```python
                 search_parameters={
-                    "datetime": "2019-01-01T00:00:00Z/2019-01-15T00:00:00Z",
+                    "datetime": "2019-01-01T00:00:00Z/2019-01-15T23:59:59Z",
                     "intersects": {
                         "type": "Polygon",
                         "coordinates": [[[13.32113746,52.73971768],[13.15981158,52.2092959],

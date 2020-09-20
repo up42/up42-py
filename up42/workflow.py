@@ -327,7 +327,7 @@ class Workflow(Tools):
                 input_parameters[data_block_name]["limit"] = len(scene_ids)
                 input_parameters[data_block_name].pop("time")
             elif start_date is not None and end_date is not None:
-                datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
+                datetime = f"{start_date}T00:00:00Z/{end_date}T23:59:59Z"
                 input_parameters[data_block_name]["time"] = datetime
 
             if geometry is not None:
