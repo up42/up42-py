@@ -186,14 +186,8 @@ class Tools:
             alpha=0.7,
             legend_kwds=dict(loc="upper left", bbox_to_anchor=(1, 1)),
         )
-
         if aoi is not None:
             aoi.plot(color="r", ax=ax, fc="None", edgecolor="r", lw=1)
-            # TODO: Add aoi to legend.
-            # from matplotlib.patches import Patch
-            # patch = Patch(label="aoi", facecolor='None', edgecolor='r')
-            # ax.legend(handles=handles, labels=labels)
-            # TODO: Overlay quicklooks on geometry.
         ax.set_axis_off()
         plt.show()
 

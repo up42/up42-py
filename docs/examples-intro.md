@@ -8,4 +8,6 @@ All examples are provided as [:orange_book: Jupyter notebooks in the examples fo
 :satellite: [Radar Processing](https://up42.github.io/up42-py/examples/radar_processing_1/)  
 :airplane: [Airport monitoring with parallel jobs](https://up42.github.io/up42-py/examples/airports-parallel/)   
 :droplet: [Flood Mapping](https://up42.github.io/up42-py/examples/flood_mapping/)  
-🖼️ [Image mosaicking](https://github.com/up42/mosaicking)
+🖼️ [Image mosaicking](https://github.com/up42/mosaicking)  
+:eye: [Catalog Quicklooks](https://up42.github.io/up42-py/examples/map-quicklooks/)  
+

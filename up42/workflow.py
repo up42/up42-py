@@ -327,8 +327,8 @@ class Workflow(Tools):
                 input_parameters[data_block_name]["limit"] = len(scene_ids)
                 input_parameters[data_block_name].pop("time")
             elif start_date is not None and end_date is not None:
-                datetime = f"{start_date}T00:00:00Z/{end_date}T00:00:00Z"
-                input_parameters[data_block_name]["time"] = datetime
+                time = f"{start_date}T00:00:00Z/{end_date}T23:59:59Z"
+                input_parameters[data_block_name]["time"] = time
 
             if geometry is not None:
                 aoi_fc = any_vector_to_fc(

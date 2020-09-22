@@ -1,6 +1,6 @@
 # :national_park: Detailed Example
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Ftypical-usage.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Ftdetailed-example.ipynb)
 
 This overview of the most important functions repeats the previous 30-seconds-example, but in more detail and shows additional functionality and alternative steps.
 
@@ -45,27 +45,13 @@ input_tasks= ['sobloo-s2-l1c-aoiclipped', 'sharpening']
 workflow.add_workflow_tasks(input_tasks=input_tasks)
 ```
 
-
 ```python
-# Alternative: Add workflow tasks - complex version, gives you more control 
-# about the block connections.
+# You can also add workflow tasks via a specific block id. This is then tied to a specific block version, whereas adding it by block name will always 
+# give you the latest block version.
 
-input_tasks = [
-    {
-        "name": "sobloo-s2-l1c-aoiclipped:1",
-        "parentName": None,
-        "blockId": "a2daaab4-196d-4226-a018-a810444dcad1"
-    },
-    {
-        "name": "sharpening:1",
-        "parentName": "sobloo-s2-l1c-aoiclipped:1",
-        "blockId": "4ed70368-d4e1-4462-bef6-14e768049471"
-    }
-]
-
+input_tasks= ["a2daaab4-196d-4226-a018-a810444dcad1", "4ed70368-d4e1-4462-bef6-14e768049471"]
 workflow.add_workflow_tasks(input_tasks=input_tasks)
 ```
-
 
 ```python
 # Check the added tasks.
