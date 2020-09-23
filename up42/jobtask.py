@@ -133,6 +133,9 @@ class JobTask(Tools):
             The quicklooks filepaths.
         """
         if output_directory is None:
+            # On purpose downloading the quicklooks to the jobs folder and not the
+            # jobtasks folder,since only relevant for data block task. And clearer
+            # for job.download_quicklooks.
             output_directory = (
                 Path.cwd() / f"project_{self.auth.project_id}" / f"job_{self.job_id}"
             )
