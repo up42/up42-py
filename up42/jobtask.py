@@ -99,7 +99,8 @@ class JobTask(Tools):
 
         if output_directory is None:
             output_directory = (
-                Path.cwd() / f"project_{self.auth.project_id}" / f"job_{self.job_id}"
+                Path.cwd()
+                / f"project_{self.auth.project_id}/job_{self.job_id}/jobtask_{self.jobtask_id}"
             )
         else:
             output_directory = Path(output_directory)
