@@ -1,5 +1,6 @@
 from pathlib import Path
 import tempfile
+import shutil
 
 import requests_mock
 import pytest
@@ -65,11 +66,23 @@ def test_jobtask_download_result(jobtask_mock):
             headers={"x-goog-stored-content-length": "221"},
         )
 
+        # With specified outdir
         with tempfile.TemporaryDirectory() as tempdir:
             out_files = jobtask_mock.download_results(output_directory=tempdir)
             for file in out_files:
                 assert Path(file).exists()
             assert len(out_files) == 2
+
+        # With default outdir
+        default_outdir = Path.cwd() / f"project_{jobtask_mock.auth.project_id}/job_{jobtask_mock.job_id}/jobtask_{jobtask_mock.jobtask_id}"
+        out_files = jobtask_mock.download_results()
+        assert default_outdir.exists()
+        assert default_outdir.is_dir()
+        for file in out_files:
+            assert Path(file).exists()
+        assert len(out_files) == 2
+        assert str(default_outdir) in str(out_files[0])
+        shutil.rmtree(default_outdir)
 
 
 @pytest.mark.live
