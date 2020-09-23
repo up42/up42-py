@@ -74,7 +74,12 @@ def test_jobtask_download_result(jobtask_mock):
             assert len(out_files) == 2
 
         # With default outdir
-        default_outdir = Path.cwd() / f"project_{jobtask_mock.auth.project_id}/job_{jobtask_mock.job_id}/jobtask_{jobtask_mock.jobtask_id}"
+        default_outdir = (
+            Path.cwd()
+            / f"project_{jobtask_mock.auth.project_id}/job_{jobtask_mock.job_id}/jobtask_{jobtask_mock.jobtask_id}"
+        )
+        if default_outdir.exists():
+            shutil.rmtree(default_outdir)
         out_files = jobtask_mock.download_results()
         assert default_outdir.exists()
         assert default_outdir.is_dir()
