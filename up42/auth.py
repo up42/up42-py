@@ -3,7 +3,8 @@ from pathlib import Path
 from typing import Dict, List, Union
 
 import requests
-from requests.exceptions import HTTPError, ConnectionError, RequestException
+import requests.exceptions
+from requests.exceptions import HTTPError
 from tenacity import (
     Retrying,
     wait_fixed,
@@ -214,7 +215,7 @@ class Auth(Tools):
                 wait=wait_fixed(0),
                 retry=(
                     retry_if_exception_type(HTTPError)
-                    | retry_if_exception_type(ConnectionError)
+                    | retry_if_exception_type(requests.exceptions.ConnectionError)
                 ),
                 after=self._get_token(),
             )
@@ -226,9 +227,9 @@ class Auth(Tools):
 
         try:
             response.raise_for_status()
-        except RequestException as err:  # Base error class
+        except requests.exceptions.RequestException as err:  # Base error class
             err_message = json.loads(response.text)["error"]
-            err_message = f"Error {err_message['code']} - {err_message['message']}!"
+            err_message = f"{err_message['code']} Error - {err_message['message']}!"
             logger.error(err_message)
             raise HTTPError(err_message) from err
 
