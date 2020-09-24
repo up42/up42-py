@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Union
 
 import requests
-import requests.exceptions
+from requests.exceptions import HTTPError, ConnectionError, RequestException
 from tenacity import (
     Retrying,
     wait_fixed,
@@ -213,8 +213,8 @@ class Auth(Tools):
                 stop=stop_after_attempt(1),  # TODO: Find optimal retry solution
                 wait=wait_fixed(0),
                 retry=(
-                    retry_if_exception_type(requests.exceptions.HTTPError)
-                    | retry_if_exception_type(requests.exceptions.ConnectionError)
+                    retry_if_exception_type(HTTPError)
+                    | retry_if_exception_type(ConnectionError)
                 ),
                 after=self._get_token(),
             )
