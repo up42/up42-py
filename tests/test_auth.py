@@ -110,14 +110,14 @@ def test_request(auth_mock):
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 
 
-def test_request_raises(auth_mock):
-    # TODO
-    pass
-    # with requests_mock.Mocker() as m:
-    #     m.get(url="http://test.com", text='{"data": {"xyz":789}, "error":{}}')
-    #
-    #     response_json = auth_mock._request(request_type="GET", url="http://test.com")
-    # assert response_json == {"data": {"xyz": 789}, "error": {}}
+# def test_request_raises(auth_mock):
+#     # TODO
+#     pass
+# with requests_mock.Mocker() as m:
+#     m.get(url="http://test.com", text='{"data": {"xyz":789}, "error":{}}')
+#
+#     response_json = auth_mock._request(request_type="GET", url="http://test.com")
+# assert response_json == {"data": {"xyz": 789}, "error": {}}
 
 
 def test_request_with_retry(auth_mock):
