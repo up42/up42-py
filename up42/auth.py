@@ -111,10 +111,10 @@ class Auth(Tools):
     def _get_token(self):
         try:
             self._get_token_project()
-        except requests.exceptions.HTTPError:
+        except HTTPError as err:
             raise ValueError(
-                "Authentication was not successful, check the provided project keys."
-            )
+                "Authentication was not successful, check the provided project credentials."
+            ) from err
 
     def _get_token_project(self) -> None:
         """Project specific authentication via project id and project api key."""
