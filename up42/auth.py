@@ -4,7 +4,6 @@ from typing import Dict, List, Union
 
 import requests
 import requests.exceptions
-from requests.exceptions import HTTPError
 from tenacity import (
     Retrying,
     wait_fixed,
@@ -112,7 +111,7 @@ class Auth(Tools):
     def _get_token(self):
         try:
             self._get_token_project()
-        except HTTPError as err:
+        except requests.exceptions.HTTPError as err:
             raise ValueError(
                 "Authentication was not successful, check the provided project credentials."
             ) from err
@@ -214,7 +213,7 @@ class Auth(Tools):
                 stop=stop_after_attempt(1),  # TODO: Find optimal retry solution
                 wait=wait_fixed(0),
                 retry=(
-                    retry_if_exception_type(HTTPError)
+                    retry_if_exception_type(requests.exceptions.HTTPError)
                     | retry_if_exception_type(requests.exceptions.ConnectionError)
                 ),
                 after=self._get_token(),
@@ -231,7 +230,7 @@ class Auth(Tools):
             err_message = json.loads(response.text)["error"]
             err_message = f"{err_message['code']} Error - {err_message['message']}!"
             logger.error(err_message)
-            raise HTTPError(err_message) from err
+            raise requests.exceptions.HTTPError(err_message) from err
 
         # Handle response text.
         if return_text:
