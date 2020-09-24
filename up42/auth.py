@@ -224,18 +224,13 @@ class Auth(Tools):
         else:
             response = self._request_helper(request_type, url, data, querystring)  # type: ignore
 
-        # TODO: Uniform error format on backend, too many different cases.
-        # TODO: Put error messages in the specific functions.
-        if response.status_code != 200:
-            if response.status_code == 403:  # pylint: disable=no-else-raise
-                raise ValueError(
-                    "Access not possible, check if the given ids are correct, "
-                    "you have sufficient credits, "
-                    "that the referenced workflow/job object exists, "
-                    "and if the aoi is too big (>1000 sqkm)."
-                )
-            elif response.status_code == 404:
-                raise ValueError("Product not found!")
+        try:
+            response.raise_for_status()
+        except RequestException as err:  # Base error class
+            err_message = json.loads(response.text)["error"]
+            err_message = f"Error {err_message['code']} - {err_message['message']}!"
+            logger.error(err_message)
+            raise HTTPError(err_message) from err
 
         # Handle response text.
         if return_text:
