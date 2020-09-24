@@ -31,7 +31,7 @@ class Auth(Tools):
         Info:
             Authentication is possible via the credentials of a specific project (project_id &
             project_api_key). To get your **project id** and **project api key**, follow
-            the instructions in the docs installation chapter.
+            the instructions in the docs authentication chapter.
 
         Args:
             cfg_file: File path to the cfg.json with {project_id: "...", project_api_key: "..."}.
