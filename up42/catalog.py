@@ -249,9 +249,7 @@ class Catalog(Tools):
         )
 
         if output_directory is None:
-            output_directory = (
-                Path.cwd() / f"project_{self.auth.project_id}" / "catalog"
-            )
+            output_directory = Path.cwd() / f"project_{self.auth.project_id}/catalog"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
