@@ -110,7 +110,6 @@ def test_request(auth_mock):
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 
 
-
 def test_request_raises(auth_mock):
     # TODO
     pass
