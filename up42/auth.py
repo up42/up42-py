@@ -31,7 +31,7 @@ class Auth(Tools):
         Info:
             Authentication is possible via the credentials of a specific project (project_id &
             project_api_key). To get your **project id** and **project api key**, follow
-            the instructions in the docs installation chapter.
+            the instructions in the docs authentication chapter.
 
         Args:
             cfg_file: File path to the cfg.json with {project_id: "...", project_api_key: "..."}.
@@ -111,10 +111,10 @@ class Auth(Tools):
     def _get_token(self):
         try:
             self._get_token_project()
-        except requests.exceptions.HTTPError:
+        except requests.exceptions.HTTPError as err:
             raise ValueError(
-                "Authentication was not successful, check the provided project keys."
-            )
+                "Authentication was not successful, check the provided project credentials."
+            ) from err
 
     def _get_token_project(self) -> None:
         """Project specific authentication via project id and project api key."""
@@ -224,18 +224,13 @@ class Auth(Tools):
         else:
             response = self._request_helper(request_type, url, data, querystring)  # type: ignore
 
-        # TODO: Uniform error format on backend, too many different cases.
-        # TODO: Put error messages in the specific functions.
-        if response.status_code != 200:
-            if response.status_code == 403:  # pylint: disable=no-else-raise
-                raise ValueError(
-                    "Access not possible, check if the given ids are correct, "
-                    "you have sufficient credits, "
-                    "that the referenced workflow/job object exists, "
-                    "and if the aoi is too big (>1000 sqkm)."
-                )
-            elif response.status_code == 404:
-                raise ValueError("Product not found!")
+        try:
+            response.raise_for_status()
+        except requests.exceptions.RequestException as err:  # Base error class
+            err_message = json.loads(response.text)["error"]
+            err_message = f"{err_message['code']} Error - {err_message['message']}!"
+            logger.error(err_message)
+            raise requests.exceptions.RequestException(err_message) from err
 
         # Handle response text.
         if return_text:

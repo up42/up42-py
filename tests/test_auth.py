@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 import requests_mock
+import requests
 
 from .context import Auth
 
@@ -108,6 +109,20 @@ def test_request(auth_mock):
 
         response_json = auth_mock._request(request_type="GET", url="http://test.com")
     assert response_json == {"data": {"xyz": 789}, "error": {}}
+
+
+def test_request_non200_raises(auth_mock):
+    with requests_mock.Mocker() as m:
+        m.get(
+            url="http://test.com",
+            text='{"data": {}, "error":{"code":403, '
+            '"message": "some 403 error message"}}',
+            status_code=403,
+        )
+
+        with pytest.raises(requests.exceptions.RequestException) as e:
+            auth_mock._request(request_type="GET", url="http://test.com")
+        assert "some 403 error message!" in str(e.value)
 
 
 def test_request_with_retry(auth_mock):
