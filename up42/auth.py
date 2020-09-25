@@ -230,7 +230,7 @@ class Auth(Tools):
             err_message = json.loads(response.text)["error"]
             err_message = f"{err_message['code']} Error - {err_message['message']}!"
             logger.error(err_message)
-            raise requests.exceptions.HTTPError(err_message) from err
+            raise requests.exceptions.RequestException(err_message) from err
 
         # Handle response text.
         if return_text:
