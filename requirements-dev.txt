@@ -8,6 +8,7 @@ mkdocs-jupyter
 mkdocs-exclude
 mkdocs-click
 mkdocstrings
+nbconvert==5.6.1
 black
 requests-mock
 pylint==2.5.0

@@ -57,7 +57,7 @@ def cfg_default(defult_path="./config.json"):
 )
 @click.option("--env", default="com")
 @click.pass_context
-def main(ctx, project_id, project_api_key, cfg_file, env):
+def up42(ctx, project_id, project_api_key, cfg_file, env):
     ctx.ensure_object(dict)
     if project_id and project_api_key:
         ctx.obj = Auth(project_id=project_id, project_api_key=project_api_key, env=env)
@@ -65,7 +65,7 @@ def main(ctx, project_id, project_api_key, cfg_file, env):
         ctx.obj = Auth(cfg_file=cfg_file, env=env)
 
 
-COMMAND = main.command(context_settings=CONTEXT_SETTINGS)
+COMMAND = up42.command(context_settings=CONTEXT_SETTINGS)
 
 
 @COMMAND
@@ -190,7 +190,7 @@ def validate_manifest(auth, manifest_json):
 
 
 # Project
-@main.group()
+@up42.group()
 @click.pass_context
 def project(ctx):
     """
@@ -297,7 +297,7 @@ def workflow_from_name(project, workflow_name):
 
 
 # Workflows
-@main.group()
+@up42.group()
 @click.pass_context
 @click.option(
     "-wid",
@@ -467,7 +467,7 @@ def run_job(workflow, input_parameters_json, track):
 
 
 # Jobs
-@main.group()
+@up42.group()
 @click.pass_context
 @click.option(
     "-jid",
@@ -602,7 +602,7 @@ def track_status(job, interval):
 # Catalog
 
 
-@main.group()
+@up42.group()
 @click.pass_context
 def catalog(ctx):
     """
