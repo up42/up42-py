@@ -120,7 +120,7 @@ def test_request_non200_raises(auth_mock):
             status_code=403,
         )
 
-        with pytest.raises(requests.exceptions.HTTPError) as e:
+        with pytest.raises(requests.exceptions.RequestException) as e:
             auth_mock._request(request_type="GET", url="http://test.com")
         assert "some 403 error message!" in str(e.value)
 
