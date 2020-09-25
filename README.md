@@ -13,7 +13,7 @@
 
 <p align="center">
     <b>
-      <a href="https://up42.github.io/up42-py/">Documentation</a> &nbsp; • &nbsp;
+      <a href="https://sdk.up42.com/">Documentation</a> &nbsp; • &nbsp;
       <a href="http://www.up42.com">UP42.com</a> &nbsp; • &nbsp;
       <a href="#support">Support</a>
     </b>
@@ -27,11 +27,11 @@
 - Command Line Interface (**CLI**)
 
 
-<img align="right" href="https://up42.github.io/up42-py/" src="docs/assets/docs.png" alt="" height="200"/>
+<img align="right" href="https://sdk.up42.com/" src="docs/assets/docs.png" alt="" height="200"/>
 
 ## Installation & Documentation
 
-See the **[documentation](https://up42.github.io/up42-py/)** for **getting started guides**, **examples** and the **code reference**.
+See the **[documentation](https://sdk.up42.com/)** for **getting started guides**, **examples** and the **code reference**.
 
 The package requires Python > 3.6.
 
@@ -92,4 +92,4 @@ job.plot_results()
 
 ## Support
 
-For any kind of issues or suggestions please see the [**documentation**](https://up42.github.io/up42-py/), open a **[github issue](https://github.com/up42/up42-py/issues)** or contact us via Email **[support@up42.com](mailto:support@up42.com)**
+For any kind of issues or suggestions please see the [**documentation**](https://sdk.up42.com/), open a **[github issue](https://github.com/up42/up42-py/issues)** or contact us via Email **[support@up42.com](mailto:support@up42.com)**
