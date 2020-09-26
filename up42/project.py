@@ -26,7 +26,9 @@ class Project(Tools):
 
     def __repr__(self):
         return (
-            f"Project(project_id={self.project_id}, auth={self.auth}, info={self.info})"
+            f"Project(project_name={self.info['name']}, project_id={self.project_id}, "
+            f"createdAt={self.info['createdAt']}, updatedAt={self.info['createdAt']}, "
+            f"{'env=dev' if self.auth.env == 'dev' else ''})"
         )
 
     def _get_info(self):
