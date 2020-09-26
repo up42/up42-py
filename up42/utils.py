@@ -23,11 +23,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 
-# truncate log messages > 2000 characters (e.g. huge geometries)
-LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message).2000s"
-
-
-def get_logger(name, level=logging.INFO):
+def get_logger(name, level=logging.INFO, log_verbose=True,):
     """
     Use level=logging.CRITICAL to disable temporarily.
     """
@@ -36,7 +32,12 @@ def get_logger(name, level=logging.INFO):
     # create console handler and set level to debug
     ch = logging.StreamHandler()
     ch.setLevel(level)
-    formatter = logging.Formatter(LOG_FORMAT)
+    if log_verbose:
+        # hide logger module & level, truncate log messages > 2000 characters (e.g. huge geometries)
+        log_format = "%(asctime)s - %(message).2000s"
+    else:
+        log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)"
+    formatter = logging.Formatter(log_format)
     ch.setFormatter(formatter)
     logger.addHandler(ch)
     logger.propagate = False
