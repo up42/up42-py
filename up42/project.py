@@ -25,10 +25,11 @@ class Project(Tools):
             self.info = self._get_info()
 
     def __repr__(self):
+        env = ', env=dev' if self.auth.env == 'dev' else ''
         return (
             f"Project(project_name={self.info['name']}, project_id={self.project_id}, "
-            f"createdAt={self.info['createdAt']}, updatedAt={self.info['createdAt']}, "
-            f"{'env=dev' if self.auth.env == 'dev' else ''})"
+            f"description={self.info['description']}, createdAt={self.info['createdAt']}"
+            f"{env})"
         )
 
     def _get_info(self):
