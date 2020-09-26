@@ -46,13 +46,15 @@ class Job(Tools):
 
     def __repr__(self):
 
-        order_ids = f", order_ids={self.order_ids}" if self.order_ids is not None else ""
+        order_ids = (
+            f", order_ids={self.order_ids}, " if self.order_ids is not None else ""
+        )
 
         return (
             f"Job(job_name={self.info['name']}, job_id={self.job_id}, "
             f"status={self.info['status']}, createdAt={self.info['createdAt']}, "
             f"finishedAt={self.info['finishedAt']}, input_parameters={self.info['inputs']}, "
-            f"{order_ids}" #TODO: Always add project&workflow?
+            f"{order_ids}"
             f"workflow_name={self.info['workflowName']}, workflow_id={self.info['workflowId']})"
         )
 

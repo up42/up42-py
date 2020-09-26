@@ -28,9 +28,7 @@ class JobCollection(Tools):
             self.jobs_id = None
 
     def __repr__(self):
-        return (
-            f"JobCollection(len={len(self.jobs)}, jobs={self.jobs}"
-        )
+        return f"JobCollection(len={len(self.jobs)}, jobs={self.jobs}"
 
     def __getitem__(self, index: int) -> Job:
         return self.jobs[index]

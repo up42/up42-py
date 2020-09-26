@@ -36,7 +36,7 @@ class Workflow(Tools):
         return (
             f"Workflow(workflow_name={self.info['name']}, workflow_id={self.workflow_id}, "
             f"description={self.info['description']}, createdAt={self.info['createdAt']}, "
-            f"workflow_tasks={list(self.workflow_tasks.keys())}, " #TODO: Maybe block version?
+            f"workflow_tasks={list(self.workflow_tasks.keys())}, "  # TODO: Maybe block version?
             f"project_name={self.info['name']}, project_id={self.project_id})"
         )
 
