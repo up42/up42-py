@@ -33,8 +33,6 @@ class Workflow(Tools):
             self.info = self._get_info()
 
     def __repr__(self):
-
-
         return (
             f"Workflow(workflow_name={self.info['name']}, workflow_id={self.workflow_id}, "
             f"description={self.info['description']}, createdAt={self.info['createdAt']}, "
@@ -54,6 +52,7 @@ class Workflow(Tools):
 
     @property
     def workflow_tasks(self):
+        """The building blocks of the workflow"""
         logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
         workflow_tasks = self.get_workflow_tasks(basic=True)
         logging.getLogger("up42.workflow").setLevel(logging.INFO)

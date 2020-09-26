@@ -45,9 +45,14 @@ class Job(Tools):
             self.info = self._get_info()
 
     def __repr__(self):
+
+        order_ids = f", order_ids={self.order_ids}" if self.order_ids is not None else ""
+
         return (
-            f"Job(job_id={self.job_id}, project_id={self.project_id}, "
-            f"order_ids={self.order_ids}, auth={self.auth}, info={self.info})"
+            f"Job(job_name={self.info['name']}, job_id={self.job_id}, "
+            f"status={self.info['status']}, createdAt={self.info['createdAt']}, finishedAt={self.info['finishedAt']}, "
+            f"input_parameters={self.info['inputs']}{order_ids})" #TODO: Always add project&workflow?
+            #f"workflow_name={self.info['workflowName']}, workflow_id={self.info['workflowId']})"
         )
 
     def _get_info(self):
