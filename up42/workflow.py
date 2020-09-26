@@ -33,15 +33,13 @@ class Workflow(Tools):
             self.info = self._get_info()
 
     def __repr__(self):
-        logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
-        workflow_tasks = list(self.get_workflow_tasks(basic=True).keys()) #TODO Maybe as property
-        logging.getLogger("up42.workflow").setLevel(logging.INFO)
+
 
         return (
             f"Workflow(workflow_name={self.info['name']}, workflow_id={self.workflow_id}, "
             f"description={self.info['description']}, createdAt={self.info['createdAt']}, "
             f"totalProcessingTime={self.info['totalProcessingTime']}, "
-            f"workflow_tasks={workflow_tasks})"
+            f"workflow_tasks={list(self.workflow_tasks.keys())})" #TODO: Maybe block version?
         )
 
     def _get_info(self) -> Dict:
@@ -53,6 +51,13 @@ class Workflow(Tools):
         response_json = self.auth._request(request_type="GET", url=url)
         self.info = response_json["data"]
         return self.info
+
+    @property
+    def workflow_tasks(self):
+        logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
+        workflow_tasks = self.get_workflow_tasks(basic=True)
+        logging.getLogger("up42.workflow").setLevel(logging.INFO)
+        return workflow_tasks
 
     def get_compatible_blocks(self) -> Dict:
         """
