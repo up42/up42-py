@@ -33,9 +33,15 @@ class Workflow(Tools):
             self.info = self._get_info()
 
     def __repr__(self):
+        logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
+        workflow_tasks = list(self.get_workflow_tasks(basic=True).keys()) #TODO Maybe as property
+        logging.getLogger("up42.workflow").setLevel(logging.INFO)
+
         return (
-            f"Workflow(workflow_id={self.workflow_id}, project_id={self.project_id}, "
-            f"auth={self.auth}, info={self.info})"
+            f"Workflow(workflow_name={self.info['name']}, workflow_id={self.workflow_id}, "
+            f"description={self.info['description']}, createdAt={self.info['createdAt']}, "
+            f"totalProcessingTime={self.info['totalProcessingTime']}, "
+            f"workflow_tasks={workflow_tasks})"
         )
 
     def _get_info(self) -> Dict:
