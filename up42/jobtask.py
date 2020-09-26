@@ -36,8 +36,11 @@ class JobTask(Tools):
 
     def __repr__(self):
         return (
-            f"JobTask(jobtask_id={self.jobtask_id}, job={self.job_id}, "
-            f"auth={self.auth}, info={self.info})"
+            f"JobTask(jobtask_name={self.info['name']}, jobtask_id={self.jobtask_id}, "
+            f"status={self.info['status']}, createdAt={self.info['createdAt']}, "
+            f"finishedAt={self.info['finishedAt']}, "
+            f"block_name= {self.info['block']['name']}, block_version={self.info['blockVersion']}, "
+            f"job_name={self.info['name']}, job_id={self.job_id})"
         )
 
     def _get_info(self):
@@ -47,7 +50,7 @@ class JobTask(Tools):
             f"/tasks/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
-        self.info = response_json["data"]
+        self.info = response_json["data"][0] #TODO: Why in list?
         return self.info
 
     def get_results_json(self, as_dataframe: bool = False) -> Union[Dict, GeoDataFrame]:
