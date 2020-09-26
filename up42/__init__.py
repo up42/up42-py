@@ -42,8 +42,12 @@ def initialize_project() -> "Project":
     """Directly returns the correct Project object (has to exist on UP42)."""
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    logger.info(f"Working on Project with project_id {_auth.project_id}")
-    return Project(auth=_auth, project_id=str(_auth.project_id))
+    project = Project(auth=_auth, project_id=str(_auth.project_id))
+    try:
+        logger.info(f"Initialized {project}")
+    except AttributeError:
+        pass
+    return project
 
 
 def initialize_catalog() -> "Catalog":
@@ -57,30 +61,45 @@ def initialize_workflow(workflow_id) -> "Workflow":
     """Directly returns a Workflow object (has to exist on UP42)."""
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    return Workflow(
+    workflow = Workflow(
         auth=_auth, workflow_id=workflow_id, project_id=str(_auth.project_id)
     )
+    try:
+        logger.info(f"Initialized {workflow}")
+    except AttributeError:
+        pass
+    return workflow
 
 
 def initialize_job(job_id, order_ids: List[str] = None) -> "Job":
     """Directly returns a Job object (has to exist on UP42)."""
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    return Job(
+    job = Job(
         auth=_auth, job_id=job_id, project_id=str(_auth.project_id), order_ids=order_ids
     )
+    try:
+        logger.info(f"Initialized {job}")
+    except AttributeError:
+        pass
+    return job
 
 
 def initialize_jobtask(jobtask_id, job_id) -> "JobTask":
     """Directly returns a JobTask object (has to exist on UP42)."""
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    return JobTask(
+    jobtask = JobTask(
         auth=_auth,
         jobtask_id=jobtask_id,
         job_id=job_id,
         project_id=str(_auth.project_id),
     )
+    try:
+        logger.info(f"Initialized {jobtask}")
+    except AttributeError:
+        pass
+    return jobtask
 
 
 def get_blocks(
