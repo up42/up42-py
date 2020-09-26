@@ -32,7 +32,7 @@ class Project(Tools):
             f"{env})"
         )
 
-    def _get_info(self):
+    def _get_info(self):  # TODO: To property.
         """Gets metadata info from sever for an existing project"""
         url = f"{self.auth._endpoint()}/projects/{self.project_id}"
         response_json = self.auth._request(request_type="GET", url=url)

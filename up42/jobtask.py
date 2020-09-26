@@ -50,7 +50,7 @@ class JobTask(Tools):
             f"/tasks/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
-        self.info = response_json["data"]
+        self.info = response_json["data"][0]  # TODO: Backend - Why is this a list?
         return self.info
 
     def get_results_json(self, as_dataframe: bool = False) -> Union[Dict, GeoDataFrame]:
