@@ -29,8 +29,7 @@ class JobCollection(Tools):
 
     def __repr__(self):
         return (
-            f"JobCollection(jobs={self.jobs}, project_id={self.project_id}, "
-            f"auth={self.auth})"
+            f"JobCollection(len={len(self.jobs)}, jobs={self.jobs}"
         )
 
     def __getitem__(self, index: int) -> Job:
