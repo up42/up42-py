@@ -23,7 +23,11 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 
-def get_logger(name, level=logging.INFO, log_verbose=True,):
+def get_logger(
+    name,
+    level=logging.INFO,
+    log_verbose=True,
+):
     """
     Use level=logging.CRITICAL to disable temporarily.
     """
