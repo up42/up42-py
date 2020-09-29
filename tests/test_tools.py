@@ -197,3 +197,15 @@ def test_validate_manifest_invalid_live(tools_live):
         )
     with pytest.raises(ValueError):
         tools_live.validate_manifest(path_or_json=mainfest_json)
+
+
+def test_filter_jobs_on_mode(tools_mock):
+    job_json = [{"mode": "DEFAULT"}, {"mode": "DRY_RUN"}]
+    r = tools_mock.filter_jobs_on_mode(job_json)
+    assert len(r) == 2
+    r = tools_mock.filter_jobs_on_mode(job_json, test_jobs=False, real_jobs=True)
+    assert len(r) == 1
+    r = tools_mock.filter_jobs_on_mode(job_json, test_jobs=True, real_jobs=False)
+    assert len(r) == 1
+    with pytest.raises(ValueError):
+        tools_mock.filter_jobs_on_mode(job_json, test_jobs=False, real_jobs=False)
