@@ -97,8 +97,8 @@ def test_jobtask_download_result_live(jobtask_live):
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 2
-        assert Path(out_files[0]).name == "data.json"
-        assert Path(out_files[1]).suffix == ".tif"
+        assert Path(out_files[0]).suffix == ".tif"
+        assert Path(out_files[1]).name == "data.json"
 
 
 def test_download_quicklook(jobtask_mock):
