@@ -70,8 +70,7 @@ theme:
   # Default values, taken from mkdocs_theme.yml
   language: en
   features:
-    - tabs
-    #- instant
+    - navigation.tabs
   palette:
     primary: indigo
     accent: purple
