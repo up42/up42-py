@@ -106,7 +106,9 @@ class Project(Tools):
             ]
             return workflows
 
-    def get_jobs(self, return_json: bool = False) -> Union[JobCollection, Dict]:
+    def get_jobs(
+        self, return_json: bool = False, test_jobs: bool = True, real_jobs: bool = True
+    ) -> Union[JobCollection, List[Dict]]:
         """
         Get all jobs in the project as a JobCollection or json.
 
@@ -115,13 +117,17 @@ class Project(Tools):
 
         Args:
             return_json: If true, returns the job info jsons instead of JobCollection.
+            test_jobs: Return test jobs or test queries.
+            real_jobs: Return real jobs.
 
         Returns:
             All job objects in a JobCollection, or alternatively the jobs info as json.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
-        jobs_json = response_json["data"]
+        jobs_json = self.filter_jobs_on_mode(
+            response_json["data"], test_jobs, real_jobs
+        )
         logger.info(f"Got {len(jobs_json)} jobs in project {self.project_id}.")
         if return_json:
             return jobs_json

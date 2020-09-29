@@ -128,6 +128,7 @@ def test_get_jobs(project_mock):
                     "status": "SUCCEEDED",
                     "inputs": {},
                     "error": {},
+                    "mode": "DEFAULT",
                 }
             ]
         }
@@ -137,7 +138,10 @@ def test_get_jobs(project_mock):
             f"{project_mock.auth._endpoint()}/projects/"
             f"{project_mock.project_id}/jobs/{job_id}"
         )
-        m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
+        m.get(
+            url=url_job_info,
+            json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
+        )
 
         jobcollection = project_mock.get_jobs()
         assert isinstance(jobcollection.jobs, list)

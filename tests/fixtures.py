@@ -110,7 +110,10 @@ def job_mock(auth_mock):
         url_job_info = (
             f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
         )
-        m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
+        m.get(
+            url=url_job_info,
+            json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
+        )
 
         job = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id)
     return job
@@ -123,7 +126,10 @@ def jobs_mock(auth_mock):
         url_job_info = (
             f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
         )
-        m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
+        m.get(
+            url=url_job_info,
+            json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
+        )
 
         job1 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id)
 
