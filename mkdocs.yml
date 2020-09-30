@@ -38,7 +38,7 @@ nav:
         - Radar processing: examples/radar_processing_1.ipynb
         - Airport monitoring: examples/airports-parallel.ipynb
         - Flood mapping: examples/flood_mapping.ipynb
-        - Quicklooks mapping: examples/map-quicklooks.ipynb
+        - Catalog Quicklooks: examples/map-quicklooks.ipynb
     - CLI:
         - Command Line Interface (CLI): cli.md
         - Command Reference: reference/cli.md
@@ -70,8 +70,7 @@ theme:
   # Default values, taken from mkdocs_theme.yml
   language: en
   features:
-    - tabs
-    #- instant
+    - navigation.tabs
   palette:
     primary: indigo
     accent: purple
@@ -104,6 +103,7 @@ plugins:
           rendering:
             show_root_heading: false
             show_source: true
+            show_category_heading: true
           selection:
             filters:
               - "!^_"  # exlude all members starting with _
