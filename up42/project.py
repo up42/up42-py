@@ -7,7 +7,7 @@ from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection
 from up42.tools import Tools
-from up42.utils import get_logger
+from up42.utils import get_logger, filter_jobs_on_mode
 from up42.workflow import Workflow
 
 logger = get_logger(__name__)
@@ -125,9 +125,7 @@ class Project(Tools):
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
-        jobs_json = self.filter_jobs_on_mode(
-            response_json["data"], test_jobs, real_jobs
-        )
+        jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
         logger.info(f"Got {len(jobs_json)} jobs in project {self.project_id}.")
         if return_json:
             return jobs_json

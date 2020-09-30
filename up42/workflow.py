@@ -15,7 +15,12 @@ from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection
 from up42.tools import Tools
-from up42.utils import get_logger, any_vector_to_fc, fc_to_query_geometry
+from up42.utils import (
+    get_logger,
+    any_vector_to_fc,
+    fc_to_query_geometry,
+    filter_jobs_on_mode,
+)
 
 logger = get_logger(__name__)
 
@@ -698,9 +703,7 @@ class Workflow(Tools):
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
-        jobs_json = self.filter_jobs_on_mode(
-            response_json["data"], test_jobs, real_jobs
-        )
+        jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
 
         jobs_workflow_json = [
             j for j in jobs_json if j["workflowId"] == self.workflow_id
