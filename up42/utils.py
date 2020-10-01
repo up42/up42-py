@@ -593,3 +593,32 @@ def fc_to_query_geometry(
             elif squash_multiple_features == "first":
                 query_geometry = fc["features"][0]["geometry"]
     return query_geometry
+
+
+def filter_jobs_on_mode(
+    jobs_json: List[dict], test_jobs: bool = True, real_jobs: bool = True
+) -> List[dict]:
+    """
+    Filter jobs according to selected mode.
+
+    Args:
+        jobs_json: List of jobs as returned by /jobs endpoint.
+        test_jobs: If returning test jobs or test queries.
+        real_jobs: If returning real jobs.
+
+    Returns:
+        List of filtered jobs.
+
+    Raises:
+        ValueError: When no modes are selected to filter jobs with.
+    """
+    selected_modes = []
+    if test_jobs:
+        selected_modes.append("DRY_RUN")
+    if real_jobs:
+        selected_modes.append("DEFAULT")
+    if not selected_modes:
+        raise ValueError("At least one of test_jobs and real_jobs must be True.")
+    jobs_json = [job for job in jobs_json if job["mode"] in selected_modes]
+    logger.info(f"Returning {selected_modes} jobs.")
+    return jobs_json

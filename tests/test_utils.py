@@ -17,6 +17,7 @@ from .context import (
     fc_to_query_geometry,
     download_results_from_gcs,
     _map_images,
+    filter_jobs_on_mode,
 )
 
 
@@ -356,3 +357,15 @@ def test_map_images_1_scene():
     out = m._parent.render()
 
     assert "Image 1 - 2a581680-17e4-4a61-8aa9-9e47e1bf36bb" in out
+
+
+def test_filter_jobs_on_mode():
+    job_json = [{"mode": "DEFAULT"}, {"mode": "DRY_RUN"}]
+    r = filter_jobs_on_mode(job_json)
+    assert len(r) == 2
+    r = filter_jobs_on_mode(job_json, test_jobs=False, real_jobs=True)
+    assert len(r) == 1
+    r = filter_jobs_on_mode(job_json, test_jobs=True, real_jobs=False)
+    assert len(r) == 1
+    with pytest.raises(ValueError):
+        filter_jobs_on_mode(job_json, test_jobs=False, real_jobs=False)

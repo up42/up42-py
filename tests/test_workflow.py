@@ -819,6 +819,7 @@ def test_get_jobs(workflow_mock):
                     "status": "SUCCEEDED",
                     "inputs": {},
                     "error": {},
+                    "mode": "DEFAULT",
                     "workflowId": "123456",
                 },
                 {
@@ -826,6 +827,7 @@ def test_get_jobs(workflow_mock):
                     "status": "SUCCEEDED",
                     "inputs": {},
                     "error": {},
+                    "mode": "DEFAULT",
                     "workflowId": workflow_mock.workflow_id,
                 },
             ]
@@ -836,7 +838,10 @@ def test_get_jobs(workflow_mock):
             f"{workflow_mock.auth._endpoint()}/projects/"
             f"{workflow_mock.project_id}/jobs/{job_id}"
         )
-        m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
+        m.get(
+            url=url_job_info,
+            json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
+        )
 
         jobcollection = workflow_mock.get_jobs()
         assert isinstance(jobcollection, JobCollection)

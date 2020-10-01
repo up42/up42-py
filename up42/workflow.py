@@ -15,7 +15,12 @@ from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection
 from up42.tools import Tools
-from up42.utils import get_logger, any_vector_to_fc, fc_to_query_geometry
+from up42.utils import (
+    get_logger,
+    any_vector_to_fc,
+    fc_to_query_geometry,
+    filter_jobs_on_mode,
+)
 
 logger = get_logger(__name__)
 
@@ -682,19 +687,23 @@ class Workflow(Tools):
         )
         return jobcollection
 
-    def get_jobs(self, return_json: bool = False) -> Union[JobCollection, List[Dict]]:
+    def get_jobs(
+        self, return_json: bool = False, test_jobs: bool = True, real_jobs: bool = True
+    ) -> Union[JobCollection, List[Dict]]:
         """
         Get all jobs associated with the workflow as a JobCollection or json.
 
         Args:
             return_json: If true, returns the job info jsons instead of a JobCollection.
+            test_jobs: Return test jobs or test queries.
+            real_jobs: Return real jobs.
 
         Returns:
             A JobCollection, or alternatively the jobs info as json.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)
-        jobs_json = response_json["data"]
+        jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
 
         jobs_workflow_json = [
             j for j in jobs_json if j["workflowId"] == self.workflow_id
