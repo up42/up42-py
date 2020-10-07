@@ -13,6 +13,7 @@ from up42.utils import (
     fc_to_query_geometry,
     download_results_from_gcs,
     _map_images,
+    filter_jobs_on_mode,
 )
 from up42.auth import Auth
 from up42.project import Project

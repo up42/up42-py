@@ -13,7 +13,7 @@ Please contact us via Email **[support@up42.com](mailto:support@up42.com)** or o
 
 <br>
 
-[UP42 blockutils](https://up42.github.io/blocks/) - Developer tools to easily create custom UP42 data & processing blocks   
+[UP42 blockutils](https://blockutils.up42.com/) - Developer tools to easily create custom UP42 data & processing blocks   
 [UP42 mosaicking](https://github.com/up42/mosaicking) - Scripts to create image mosaics using UP42   
 
 ## **FAQ**

@@ -16,7 +16,7 @@
 ## Functionality
 
 An overview of the **functionality** of each object 
-(also see the [**code reference**](https://up42.github.io/up42-py/reference/project/)):
+(also see the [**code reference**](https://sdk.up42.com/reference/project/)):
 
 !!! example "Available Functionality"
     === "up42"
