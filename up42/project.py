@@ -22,19 +22,18 @@ class Project(Tools):
         self.auth = auth
         self.project_id = project_id
         if self.auth.get_info:
-            self.info = self._get_info()
+            self._info = self.info
 
     def __repr__(self):
-        return (
-            f"Project(project_id={self.project_id}, auth={self.auth}, info={self.info})"
-        )
+        return f"Project(project_id={self.project_id}, auth={self.auth}, info={self._info})"
 
-    def _get_info(self):
+    @property
+    def info(self):
         """Gets metadata info from sever for an existing project"""
         url = f"{self.auth._endpoint()}/projects/{self.project_id}"
         response_json = self.auth._request(request_type="GET", url=url)
-        self.info = response_json["data"]
-        return self.info
+        self._info = response_json["data"]
+        return self._info
 
     def create_workflow(
         self, name: str, description: str = "", use_existing: bool = False
@@ -60,8 +59,8 @@ class Project(Tools):
             matching_workflows = [
                 workflow
                 for workflow in existing_workflows
-                if workflow.info["name"] == name
-                and workflow.info["description"] == description
+                if workflow._info["name"] == name
+                and workflow._info["description"] == description
             ]
             if matching_workflows:
                 existing_workflow = matching_workflows[0]
