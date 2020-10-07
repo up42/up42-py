@@ -58,7 +58,8 @@ class Job(Tools):
         self._info = response_json["data"]
         return self._info
 
-    def get_status(self) -> str:
+    @property
+    def status(self) -> str:
         """
         Gets the job status.
 
@@ -73,7 +74,7 @@ class Job(Tools):
     @property
     def is_succeeded(self):
         """Gets True if the job succeeded, False otherwise"""
-        return self.get_status() == "SUCCEEDED"
+        return self.status == "SUCCEEDED"
 
     def track_status(self, report_time: int = 30) -> str:
         """
@@ -93,7 +94,7 @@ class Job(Tools):
 
         while status != "SUCCEEDED":
             logger.setLevel(logging.CRITICAL)
-            status = self.get_status()
+            status = self.status
             logger.setLevel(logging.INFO)
 
             # TODO: Add statuses as constants (maybe objects?)

@@ -740,7 +740,7 @@ def test_test_jobs_parallel_live(workflow_live):
     for input_parameters in input_parameters_list:
         input_parameters.update({"config": {"mode": "DRY_RUN"}})
     for index, job in enumerate(jb.jobs):
-        assert job.get_status() == "SUCCEEDED"
+        assert job.status == "SUCCEEDED"
         assert job._info["inputs"] == input_parameters_list[index]
         assert job._info["mode"] == "DRY_RUN"
 
@@ -769,7 +769,7 @@ def test_run_jobs_parallel_live(workflow_live):
     jb = workflow_live.run_jobs_parallel(input_parameters_list=input_parameters_list)
     assert isinstance(jb, JobCollection)
     for index, job in enumerate(jb.jobs):
-        assert job.get_status() == "SUCCEEDED"
+        assert job.status == "SUCCEEDED"
         assert job._info["inputs"] == input_parameters_list[index]
         assert job._info["mode"] == "DEFAULT"
 
@@ -788,7 +788,7 @@ def test_test_job_live(workflow_live):
         job_info_params.update({"config": {"mode": "DRY_RUN"}})
         assert jb._info["inputs"] == job_info_params
         assert jb._info["mode"] == "DRY_RUN"
-    assert jb.get_status() == "SUCCEEDED"
+    assert jb.status == "SUCCEEDED"
 
 
 @pytest.mark.live
@@ -801,7 +801,7 @@ def test_run_job_live(workflow_live):
     with open(input_parameters_json) as src:
         assert jb._info["inputs"] == json.load(src)
         assert jb._info["mode"] == "DEFAULT"
-    assert jb.get_status() == "SUCCEEDED"
+    assert jb.status == "SUCCEEDED"
     assert jb._info["name"] == "aa_py"
 
 

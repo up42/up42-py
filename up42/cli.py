@@ -507,7 +507,7 @@ def cancel_job(job):
     """
     Cancel a job that is running.
     """
-    job.get_status()
+    logger.info(job.status)
     if click.confirm("Are you sure you want to cancel job with job id '{job.job_id}'?"):
         job.cancel_job()
 
@@ -580,7 +580,7 @@ def get_status(job):
     """
     Get the job status.
     """
-    logger.info(job.get_status())
+    logger.info(job.status)
 
 
 @COMMAND_JOB

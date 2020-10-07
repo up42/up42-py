@@ -95,7 +95,7 @@ class JobCollection(Tools):
         Returns:
             A dictionary with key being the job_id and value the job status.
         """
-        return self.apply(lambda job: job.get_status(), only_succeeded=False)
+        return self.apply(lambda job: job.status, only_succeeded=False)
 
     # TODO: Add method to get logs of failed jobs
 

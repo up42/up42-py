@@ -40,7 +40,7 @@ def test_get_status(job_mock, status):
         )
         m.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
-        job_status = job_mock.get_status()
+        job_status = job_mock.status
     assert job_status == status
 
 
