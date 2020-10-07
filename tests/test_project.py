@@ -21,9 +21,9 @@ def test_project_info(project_mock):
             f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}"
         )
         m.get(url=url_project_info, json={"data": {"xyz": 789}, "error": {}})
-
+        info = project_mock.info
     assert isinstance(project_mock, Project)
-    assert project_mock.info["xyz"] == 789
+    assert info["xyz"] == 789
     assert project_mock._info["xyz"] == 789
 
 

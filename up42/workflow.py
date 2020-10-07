@@ -35,23 +35,24 @@ class Workflow(Tools):
         self.project_id = project_id
         self.workflow_id = workflow_id
         if self.auth.get_info:
-            self.info = self._get_info()
+            self._info = self.info
 
     def __repr__(self):
         return (
             f"Workflow(workflow_id={self.workflow_id}, project_id={self.project_id}, "
-            f"auth={self.auth}, info={self.info})"
+            f"auth={self.auth}, info={self._info})"
         )
 
-    def _get_info(self) -> Dict:
+    @property
+    def info(self) -> Dict:
         """Gets metadata info from an existing workflow"""
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
             f"{self.workflow_id}"
         )
         response_json = self.auth._request(request_type="GET", url=url)
-        self.info = response_json["data"]
-        return self.info
+        self._info = response_json["data"]
+        return self._info
 
     def get_compatible_blocks(self) -> Dict:
         """
@@ -464,7 +465,7 @@ class Workflow(Tools):
         logger.info(f"Selected input_parameters: {input_parameters}")
 
         if name is None:
-            name = self.info["name"]
+            name = self._info["name"]
         name = f"{name}_py"  # Temporary recognition of python API usage.
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/"
@@ -522,7 +523,7 @@ class Workflow(Tools):
                 logger.info("+++++++++++++++++++++++++++++++++")
 
         if name is None:
-            name = self.info["name"]
+            name = self._info["name"]
 
         jobs_list = []
         job_nr = 0
@@ -739,6 +740,7 @@ class Workflow(Tools):
             f"{self.workflow_id}"
         )
         self.auth._request(request_type="PUT", url=url, data=properties_to_update)
+        # TODO: Renew info
         logger.info(f"Updated workflow name: {properties_to_update}")
 
     def delete(self) -> None:
