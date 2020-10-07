@@ -11,7 +11,7 @@ from .fixtures import auth_mock, auth_live, jobtask_mock, jobtask_live
 
 
 def test_get_info(jobtask_mock):
-    del jobtask_mock.info
+    del jobtask_mock._info
 
     with requests_mock.Mocker() as m:
         url_jobtask_info = (
@@ -20,11 +20,10 @@ def test_get_info(jobtask_mock):
             f"{jobtask_mock.job_id}/tasks/"
         )
         m.get(url=url_jobtask_info, text='{"data": {"xyz":789}, "error":{}}')
-
-        info = jobtask_mock._get_info()
+        info = jobtask_mock.info
     assert isinstance(jobtask_mock, JobTask)
     assert info["xyz"] == 789
-    assert jobtask_mock.info["xyz"] == 789
+    assert jobtask_mock._info["xyz"] == 789
 
 
 def test_get_result_json(jobtask_mock):

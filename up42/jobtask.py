@@ -32,23 +32,24 @@ class JobTask(Tools):
         self.quicklooks = None
         self.results = None
         if self.auth.get_info:
-            self.info = self._get_info()
+            self._info = self.info
 
     def __repr__(self):
         return (
             f"JobTask(jobtask_id={self.jobtask_id}, job={self.job_id}, "
-            f"auth={self.auth}, info={self.info})"
+            f"auth={self.auth}, info={self._info})"
         )
 
-    def _get_info(self):
+    @property
+    def info(self):
         """Gets metadata info from an existing Job"""
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
             f"/tasks/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
-        self.info = response_json["data"]
-        return self.info
+        self._info = response_json["data"]
+        return self._info
 
     def get_results_json(self, as_dataframe: bool = False) -> Union[Dict, GeoDataFrame]:
         """

@@ -48,7 +48,7 @@ class JobCollection(Tools):
         `worker` needs to accept `Job` as first argument. For example, a
         lambda function that returns the job info:
         ```python
-        self.apply(lambda job: job._get_info())
+        self.apply(lambda job: job.info)
         ```
 
         Args:
@@ -86,7 +86,7 @@ class JobCollection(Tools):
         Returns:
             A dictionary with key being the job_id and value the job information.
         """
-        return self.apply(lambda job: job._get_info(), only_succeeded=False)
+        return self.apply(lambda job: job.info, only_succeeded=False)
 
     def get_jobs_status(self) -> Dict[str, str]:
         """
