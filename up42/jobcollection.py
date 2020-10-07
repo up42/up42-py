@@ -40,6 +40,26 @@ class JobCollection(Tools):
         for job in self.jobs:
             yield job
 
+    @property
+    def info(self):
+        """
+        Gets the jobs information.
+
+        Returns:
+            A dictionary with key being the job_id and value the job information.
+        """
+        return self.apply(lambda job: job.info, only_succeeded=False)
+
+    @property
+    def status(self) -> Dict[str, str]:
+        """
+        Gets the jobs' status.
+
+        Returns:
+            A dictionary with key being the job_id and value the job status.
+        """
+        return self.apply(lambda job: job.status, only_succeeded=False)
+
     def apply(
         self, worker: Callable, only_succeeded: bool = True, **kwargs
     ) -> Dict[str, Any]:
@@ -78,24 +98,6 @@ class JobCollection(Tools):
             )
 
         return out_dict
-
-    def get_jobs_info(self) -> Dict[str, Dict]:
-        """
-        Gets the jobs information.
-
-        Returns:
-            A dictionary with key being the job_id and value the job information.
-        """
-        return self.apply(lambda job: job.info, only_succeeded=False)
-
-    def get_jobs_status(self) -> Dict[str, str]:
-        """
-        Gets the jobs status.
-
-        Returns:
-            A dictionary with key being the job_id and value the job status.
-        """
-        return self.apply(lambda job: job.status, only_succeeded=False)
 
     # TODO: Add method to get logs of failed jobs
 
