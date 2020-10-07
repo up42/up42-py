@@ -10,7 +10,7 @@ from .context import JobTask
 from .fixtures import auth_mock, auth_live, jobtask_mock, jobtask_live
 
 
-def test_get_info(jobtask_mock):
+def test_info(jobtask_mock):
     del jobtask_mock._info
 
     with requests_mock.Mocker() as m:

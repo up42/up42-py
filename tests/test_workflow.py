@@ -92,7 +92,7 @@ json_blocks = {
 }
 
 
-def test_workflow_get_info(workflow_mock):
+def test_workflow_info(workflow_mock):
     del workflow_mock._info
 
     with requests_mock.Mocker() as m:
