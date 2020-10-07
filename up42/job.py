@@ -42,20 +42,21 @@ class Job(Tools):
         self.results = None
         self.order_ids = order_ids
         if self.auth.get_info:
-            self.info = self._get_info()
+            self._info = self.info
 
     def __repr__(self):
         return (
             f"Job(job_id={self.job_id}, project_id={self.project_id}, "
-            f"order_ids={self.order_ids}, auth={self.auth}, info={self.info})"
+            f"order_ids={self.order_ids}, auth={self.auth}, info={self._info})"
         )
 
-    def _get_info(self):
+    @property
+    def info(self):
         """Gets metadata info from an existing Job"""
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
         response_json = self.auth._request(request_type="GET", url=url)
-        self.info = response_json["data"]
-        return self.info
+        self._info = response_json["data"]
+        return self._info
 
     def get_status(self) -> str:
         """
@@ -65,8 +66,7 @@ class Job(Tools):
             The job status, one of "SUCCEEDED", "NOT STARTED", "PENDING", "RUNNING",
             "CANCELLED", "CANCELLING", "FAILED", "ERROR"
         """
-        info = self._get_info()
-        status = info["status"]
+        status = self.info["status"]
         logger.info(f"Job is {status}")
         return status
 
