@@ -85,7 +85,7 @@ def test_jobcollection_get_jobs_status(jobcollection_single_mock, status):
         )
         m.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
-        job_statuses = jobcollection_single_mock.get_jobs_status()
+        job_statuses = jobcollection_single_mock.status
     assert isinstance(job_statuses, dict)
     assert job_statuses[jobcollection_single_mock[0].job_id] == status
 

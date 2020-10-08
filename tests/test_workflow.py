@@ -583,7 +583,7 @@ def test_helper_run_parallel_jobs_all_fails(
         )
         assert isinstance(jb, JobCollection)
         assert len(jb.jobs) == 2
-        assert jb.get_jobs_status() == {
+        assert jb.status == {
             "workflow_name_123_0_py": "FAILED",
             "workflow_name_123_1_py": "FAILED",
         }
@@ -637,7 +637,7 @@ def test_helper_run_parallel_jobs_one_fails(
         )
         assert isinstance(jb, JobCollection)
         assert len(jb.jobs) == 2
-        assert jb.get_jobs_status() == {
+        assert jb.status == {
             "workflow_name_123_0_py": "SUCCEEDED",
             "workflow_name_123_1_py": "FAILED",
         }
