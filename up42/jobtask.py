@@ -44,9 +44,6 @@ class JobTask(Tools):
     def info(self) -> Dict:
         """
         Gets the jobtask metadata information.
-
-        Returns:
-            A dictionary with the jobtask metadata information.
         """
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"

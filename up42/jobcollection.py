@@ -59,10 +59,8 @@ class JobCollection(Tools):
     @property
     def status(self) -> Dict[str, str]:
         """
-        Gets the status for each job in the jobcollection.
-
-        Returns:
-            A dictionary with key being the job_id and value the job status.
+        Gets the status for each job in the jobcollection, a dictionary with
+        job_id : job status.
         """
         return self.apply(lambda job: job.status, only_succeeded=False)
 

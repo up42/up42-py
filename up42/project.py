@@ -31,9 +31,6 @@ class Project(Tools):
     def info(self) -> Dict:
         """
         Gets the project metadata information.
-
-        Returns:
-            A dictionary with the project metadata information.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}"
         response_json = self.auth._request(request_type="GET", url=url)
@@ -159,9 +156,6 @@ class Project(Tools):
     def max_concurrent_jobs(self) -> int:
         """
         Gets the maximum number of concurrent jobs allowed by the project settings.
-
-        Returns:
-            The maximum number of concurrent jobs allowed by the project settings.
         """
         project_settings = self.get_project_settings()
         project_settings_dict = {d["name"]: int(d["value"]) for d in project_settings}
