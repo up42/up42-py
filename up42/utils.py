@@ -63,13 +63,16 @@ def deprecation(
         version: The package version in which the deprecation will happen.
         extra_message: Optional message after default deprecation warning.
     """
+
     def actual_decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             message = f"`{function_name}` will be deprecated in version {version}, use `{replacement_name}` instead! {extra_message}"
             warnings.warn(message, DeprecationWarning, stacklevel=2)
             return func(*args, **kwargs)
+
         return wrapper
+
     return actual_decorator
 
 
