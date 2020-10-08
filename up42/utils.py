@@ -1,12 +1,13 @@
 import copy
 import logging
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Union, Tuple, Callable
 from pathlib import Path
 import shutil
 import tempfile
 import tarfile
 import math
 import warnings
+import functools
 
 import folium
 from folium.plugins import Draw
@@ -48,19 +49,28 @@ logger = get_logger(__name__)
 
 
 def deprecation(
-    function: str, replacement: str, version: str = "0.13.0", extra_message: str = ""
-) -> None:
+    function_name: str,
+    replacement_name: str,
+    version: str = "0.13.0",
+    extra_message: str = "",
+):
     """
-    Helper for deprecation warnings.
+    Decorator for custom deprecation warnings.
 
     Args:
-        function: Name of the to be deprecated function.
-        replacement: Name of the replacement function.
+        function_name: Name of the to be deprecated function.
+        replacement_name: Name of the replacement function.
         version: The package version in which the deprecation will happen.
         extra_message: Optional message after default deprecation warning.
     """
-    message = f"`{function}` will be deprecated in version {version}, use `{replacement}` instead! {extra_message}"
-    warnings.warn(message, DeprecationWarning, stacklevel=3)
+    def actual_decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            message = f"`{function_name}` will be deprecated in version {version}, use `{replacement_name}` instead! {extra_message}"
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
+            return func(*args, **kwargs)
+        return wrapper
+    return actual_decorator
 
 
 def download_results_from_gcs(
