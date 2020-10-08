@@ -13,6 +13,7 @@ from up42.auth import Auth
 from up42.jobtask import JobTask
 from up42.tools import Tools
 from up42.utils import (
+    deprecation,
     get_logger,
     _map_images,
     download_results_from_gcs,
@@ -54,9 +55,6 @@ class Job(Tools):
     def info(self) -> Dict:
         """
         Gets the job metadata information.
-
-        Returns:
-            A dictionary with the job metadata information.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
         response_json = self.auth._request(request_type="GET", url=url)
@@ -66,11 +64,8 @@ class Job(Tools):
     @property
     def status(self) -> str:
         """
-        Gets the job progress status.
-
-        Returns:
-            The job status, one of "SUCCEEDED", "NOT STARTED", "PENDING", "RUNNING",
-            "CANCELLED", "CANCELLING", "FAILED", "ERROR"
+        Gets the job progress status. One of `SUCCEEDED`, `NOT STARTED`, `PENDING`,
+            `RUNNING`, `CANCELLED`, `CANCELLING`, `FAILED`, `ERROR`.
         """
         status = self.info["status"]
         logger.info(f"Job is {status}")
@@ -79,15 +74,13 @@ class Job(Tools):
     @property
     def is_succeeded(self) -> bool:
         """
-        Gets True if the job succeeded, False otherwise.
-
-        Returns:
-            True if the job succeeded, False otherwise.
+        Gets `True` if the job succeeded, `False` otherwise.
+        Also see [status attribute](job.md#up42.job.Job.status).
         """
         return self.status == "SUCCEEDED"
 
     def track_status(self, report_time: int = 30) -> str:
-        """
+        """`
         Continuously gets the job status until job has finished or failed.
 
         Internally checks every five seconds for the status, prints the log every
