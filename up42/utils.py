@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import Dict, List, Union, Tuple, Callable
+from typing import Dict, List, Union, Tuple
 from pathlib import Path
 import shutil
 import tempfile

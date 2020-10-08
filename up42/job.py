@@ -71,6 +71,13 @@ class Job(Tools):
         logger.info(f"Job is {status}")
         return status
 
+    def get_status(self) -> str:
+        """
+        `get_status` will be deprecated in release 0.13, use [status attribute](job.md#up42.job.Job.status) instead.
+        """
+        deprecation("get_status", "job.status")
+        return self.status
+
     @property
     def is_succeeded(self) -> bool:
         """
