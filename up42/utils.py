@@ -1,11 +1,12 @@
 import copy
 import logging
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Union, Tuple, Callable
 from pathlib import Path
 import shutil
 import tempfile
 import tarfile
 import math
+import warnings
 
 import folium
 from folium.plugins import Draw
@@ -44,6 +45,22 @@ def get_logger(name, level=logging.INFO):
 
 
 logger = get_logger(__name__)
+
+
+def deprecation(
+    function: str, replacement: str, version: str = "0.13.0", extra_message: str = ""
+) -> None:
+    """
+    Helper for deprecation warnings.
+
+    Args:
+        function: Name of the to be deprecated function.
+        replacement: Name of the replacement function.
+        version: The package version in which the deprecation will happen.
+        extra_message: Optional message after default deprecation warning.
+    """
+    message = f"`{function}` will be deprecated in version {version}, use `{replacement}` instead! {extra_message}"
+    warnings.warn(message, DeprecationWarning, stacklevel=3)
 
 
 def download_results_from_gcs(
