@@ -45,7 +45,12 @@ class Workflow(Tools):
 
     @property
     def info(self) -> Dict:
-        """Gets metadata info from an existing workflow"""
+        """
+        Gets the workflow metadata information.
+
+        Returns:
+            A dictionary with the workflow metadata information.
+        """
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
             f"{self.workflow_id}"
@@ -757,7 +762,12 @@ class Workflow(Tools):
 
     @property
     def max_concurrent_jobs(self) -> int:
-        """Gets the maximum number of concurrent jobs allowed by the project settings."""
+        """
+        Gets the maximum number of concurrent jobs allowed by the project settings.
+
+        Returns:
+            The maximum number of concurrent jobs allowed by the project settings.
+        """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
         response_json = self.auth._request(request_type="GET", url=url)
         project_settings = response_json["data"]

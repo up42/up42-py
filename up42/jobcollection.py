@@ -41,9 +41,9 @@ class JobCollection(Tools):
             yield job
 
     @property
-    def info(self):
+    def info(self) -> Dict[str, str]:
         """
-        Gets the jobs information.
+        Gets the metadata information for each job in the jobcollection.
 
         Returns:
             A dictionary with key being the job_id and value the job information.
@@ -53,7 +53,7 @@ class JobCollection(Tools):
     @property
     def status(self) -> Dict[str, str]:
         """
-        Gets the jobs' status.
+        Gets the status for each job in the jobcollection.
 
         Returns:
             A dictionary with key being the job_id and value the job status.

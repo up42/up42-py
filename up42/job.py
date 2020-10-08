@@ -51,8 +51,13 @@ class Job(Tools):
         )
 
     @property
-    def info(self):
-        """Gets metadata info from an existing Job"""
+    def info(self) -> Dict:
+        """
+        Gets the job metadata information.
+
+        Returns:
+            A dictionary with the job metadata information.
+        """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
@@ -61,7 +66,7 @@ class Job(Tools):
     @property
     def status(self) -> str:
         """
-        Gets the job status.
+        Gets the job progress status.
 
         Returns:
             The job status, one of "SUCCEEDED", "NOT STARTED", "PENDING", "RUNNING",
@@ -72,8 +77,13 @@ class Job(Tools):
         return status
 
     @property
-    def is_succeeded(self):
-        """Gets True if the job succeeded, False otherwise"""
+    def is_succeeded(self) -> bool:
+        """
+        Gets True if the job succeeded, False otherwise.
+
+        Returns:
+            True if the job succeeded, False otherwise.
+        """
         return self.status == "SUCCEEDED"
 
     def track_status(self, report_time: int = 30) -> str:
