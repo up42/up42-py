@@ -277,10 +277,13 @@ def test_download_result_from_gcs():
             content=out_tgz_file.read(),
         )
         with tempfile.TemporaryDirectory() as tempdir:
+            with open(Path(tempdir) / "dummy.txt", "w") as fp:
+                fp.write("dummy")
             out_files = download_results_from_gcs(
                 download_url=cloud_storage_url,
                 output_directory=tempdir,
             )
+
             for file in out_files:
                 assert Path(file).exists()
             assert len(out_files) == 2
