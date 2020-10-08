@@ -41,7 +41,7 @@ class JobCollection(Tools):
             yield job
 
     @property
-    def info(self) -> Dict[str, str]:
+    def info(self) -> Dict[str, Dict]:
         """
         Gets the metadata information for each job in the jobcollection, dictionary of
             job_id : job_information.
@@ -51,7 +51,8 @@ class JobCollection(Tools):
     @deprecation("get_jobs_info", "jobcollection.info")
     def get_jobs_info(self) -> Dict[str, Dict]:
         """
-        `get_jobs_info` will be deprecated in release 0.13, use [info attribute](jobcollection.md#up42.jobcollection.JobCollection.info) instead.
+        `get_jobs_info` will be deprecated in release 0.13, use
+        [info attribute](jobcollection.md#up42.jobcollection.JobCollection.info) instead.
         """
         return self.info
 
@@ -68,7 +69,8 @@ class JobCollection(Tools):
     @deprecation("get_jobs_status", "jobcollection.status")
     def get_jobs_status(self) -> Dict[str, str]:
         """
-        `get_jobs_status` will be deprecated in release 0.13, use [status attribute](jobcollection.md#up42.jobcollection.JobCollection.status) instead.
+        `get_jobs_status` will be deprecated in release 0.13, use
+        [status attribute](jobcollection.md#up42.jobcollection.JobCollection.status) instead.
         """
         return self.status
 

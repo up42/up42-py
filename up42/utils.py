@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import Dict, List, Union, Tuple, Callable
+from typing import Dict, List, Union, Tuple
 from pathlib import Path
 import shutil
 import tempfile
@@ -67,7 +67,10 @@ def deprecation(
     def actual_decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            message = f"`{function_name}` will be deprecated in version {version}, use `{replacement_name}` instead! {extra_message}"
+            message = (
+                f"`{function_name}` will be deprecated in version {version}, "
+                f"use `{replacement_name}` instead! {extra_message}"
+            )
             warnings.warn(message, DeprecationWarning, stacklevel=2)
             return func(*args, **kwargs)
 
