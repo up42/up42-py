@@ -32,26 +32,30 @@ class JobTask(Tools):
         self.quicklooks = None
         self.results = None
         if self.auth.get_info:
-            self.info = self._get_info()
+            self._info = self.info
 
     def __repr__(self):
+        info = self.info
         return (
-            f"JobTask(jobtask_name={self.info['name']}, jobtask_id={self.jobtask_id}, "
-            f"status={self.info['status']}, createdAt={self.info['createdAt']}, "
-            f"finishedAt={self.info['finishedAt']}, "
-            f"block_name= {self.info['block']['name']}, block_version={self.info['blockVersion']}, "
-            f"job_name={self.info['name']}, job_id={self.job_id})"
+            f"JobTask(jobtask_name={info['name']}, jobtask_id={self.jobtask_id}, "
+            f"status={info['status']}, createdAt={info['createdAt']}, "
+            f"finishedAt={info['finishedAt']}, "
+            f"block_name= {info['block']['name']}, block_version={info['blockVersion']}, "
+            f"job_name={info['name']}, job_id={self.job_id})"
         )
 
-    def _get_info(self):
-        """Gets metadata info from an existing Job"""
+    @property
+    def info(self) -> Dict:
+        """
+        Gets the jobtask metadata information.
+        """
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
             f"/tasks/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
-        self.info = response_json["data"][0]  # TODO: Backend - Why is this a list?
-        return self.info
+        self._info = response_json["data"]
+        return response_json["data"]
 
     def get_results_json(self, as_dataframe: bool = False) -> Union[Dict, GeoDataFrame]:
         """

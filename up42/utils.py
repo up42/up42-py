@@ -6,6 +6,8 @@ import shutil
 import tempfile
 import tarfile
 import math
+import warnings
+import functools
 
 import folium
 from folium.plugins import Draw
@@ -51,6 +53,37 @@ def get_logger(
 logger = get_logger(__name__)
 
 
+def deprecation(
+    function_name: str,
+    replacement_name: str,
+    version: str = "0.13.0",
+    extra_message: str = "",
+):
+    """
+    Decorator for custom deprecation warnings.
+
+    Args:
+        function_name: Name of the to be deprecated function.
+        replacement_name: Name of the replacement function.
+        version: The package version in which the deprecation will happen.
+        extra_message: Optional message after default deprecation warning.
+    """
+
+    def actual_decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            message = (
+                f"`{function_name}` will be deprecated in version {version}, "
+                f"use `{replacement_name}` instead! {extra_message}"
+            )
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return actual_decorator
+
+
 def download_results_from_gcs(
     download_url: str, output_directory: Union[str, Path]
 ) -> List[str]:
@@ -83,10 +116,15 @@ def download_results_from_gcs(
     with tarfile.open(tgz_file) as tar:
         tar.extractall(path=output_directory)
         output_folder_path = output_directory / "output"
+        out_filepaths = []
         for src_path in output_folder_path.glob("**/*"):
             dst_path = output_directory / src_path.relative_to(output_folder_path)
             shutil.move(str(src_path), str(dst_path))
-        out_filepaths = [str(x) for x in output_directory.glob("**/*") if x.is_file()]
+            if dst_path.is_dir():
+                out_filepaths += [str(x) for x in dst_path.glob("**/*")]
+            elif dst_path.is_file():
+                out_filepaths.append(str(dst_path))
+        output_folder_path.rmdir()
 
     logger.info(
         f"Download successful of {len(out_filepaths)} files to output_directory "

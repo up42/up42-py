@@ -92,8 +92,8 @@ json_blocks = {
 }
 
 
-def test_workflow_get_info(workflow_mock):
-    del workflow_mock.info
+def test_workflow_info(workflow_mock):
+    del workflow_mock._info
 
     with requests_mock.Mocker() as m:
         url_workflow_info = (
@@ -102,11 +102,10 @@ def test_workflow_get_info(workflow_mock):
             f"{workflow_mock.workflow_id}"
         )
         m.get(url=url_workflow_info, json={"data": {"xyz": 789}, "error": {}})
-
-        info = workflow_mock._get_info()
+        info = workflow_mock.info
     assert isinstance(workflow_mock, Workflow)
     assert info["xyz"] == 789
-    assert workflow_mock.info["xyz"] == 789
+    assert workflow_mock._info["xyz"] == 789
 
 
 def test_get_compatible_blocks(workflow_mock):
@@ -486,7 +485,7 @@ def test_construct_parameters_parallel_scene_ids(workflow_mock):
 
 def test_run_job(workflow_mock, job_mock):
     with requests_mock.Mocker() as m:
-        job_name = f"{workflow_mock.info['name']}_py"
+        job_name = f"{workflow_mock._info['name']}_py"
         job_url = (
             f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
             f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
@@ -520,7 +519,7 @@ def test_helper_run_parallel_jobs_dry_run(workflow_mock, project_max_concurrent_
 
     with project_max_concurrent_jobs(10) as m:
         for i, _ in enumerate(input_parameters_list):
-            job_name = f"{workflow_mock.info['name']}_{i}_py"
+            job_name = f"{workflow_mock._info['name']}_{i}_py"
             job_url = (
                 f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
                 f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
@@ -539,7 +538,7 @@ def test_helper_run_parallel_jobs_dry_run(workflow_mock, project_max_concurrent_
     assert isinstance(jb, JobCollection)
     assert len(jb.jobs) == 2
     for job in jb.jobs:
-        assert job.info["mode"] == "DRY_RUN"
+        assert job._info["mode"] == "DRY_RUN"
 
 
 def test_helper_run_parallel_jobs_all_fails(
@@ -557,7 +556,7 @@ def test_helper_run_parallel_jobs_all_fails(
     }
     with project_max_concurrent_jobs(10) as m:
         for i, _ in enumerate(input_parameters_list):
-            job_name = f"{workflow_mock.info['name']}_{i}_py"
+            job_name = f"{workflow_mock._info['name']}_{i}_py"
             job_url = (
                 f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
                 f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
@@ -584,7 +583,7 @@ def test_helper_run_parallel_jobs_all_fails(
         )
         assert isinstance(jb, JobCollection)
         assert len(jb.jobs) == 2
-        assert jb.get_jobs_status() == {
+        assert jb.status == {
             "workflow_name_123_0_py": "FAILED",
             "workflow_name_123_1_py": "FAILED",
         }
@@ -611,7 +610,7 @@ def test_helper_run_parallel_jobs_one_fails(
 
     with project_max_concurrent_jobs(10) as m:
         for i, _ in enumerate(input_parameters_list):
-            job_name = f"{workflow_mock.info['name']}_{i}_py"
+            job_name = f"{workflow_mock._info['name']}_{i}_py"
             job_url = (
                 f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
                 f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
@@ -638,7 +637,7 @@ def test_helper_run_parallel_jobs_one_fails(
         )
         assert isinstance(jb, JobCollection)
         assert len(jb.jobs) == 2
-        assert jb.get_jobs_status() == {
+        assert jb.status == {
             "workflow_name_123_0_py": "SUCCEEDED",
             "workflow_name_123_1_py": "FAILED",
         }
@@ -659,7 +658,7 @@ def test_helper_run_parallel_jobs_default(workflow_mock, project_max_concurrent_
 
     with project_max_concurrent_jobs(10) as m:
         for i, _ in enumerate(input_parameters_list):
-            job_name = f"{workflow_mock.info['name']}_{i}_py"
+            job_name = f"{workflow_mock._info['name']}_{i}_py"
             job_url = (
                 f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
                 f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
@@ -677,7 +676,7 @@ def test_helper_run_parallel_jobs_default(workflow_mock, project_max_concurrent_
     assert isinstance(jb, JobCollection)
     assert len(jb.jobs) == 20
     for job in jb.jobs:
-        assert job.info["mode"] == "DEFAULT"
+        assert job._info["mode"] == "DEFAULT"
 
 
 def test_helper_run_parallel_jobs_fail_concurrent_jobs(
@@ -695,7 +694,7 @@ def test_helper_run_parallel_jobs_fail_concurrent_jobs(
 
     with project_max_concurrent_jobs(1) as m:
         for i, _ in enumerate(input_parameters_list):
-            job_name = f"{workflow_mock.info['name']}_{i}_py"
+            job_name = f"{workflow_mock._info['name']}_{i}_py"
             job_url = (
                 f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
                 f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
@@ -741,9 +740,9 @@ def test_test_jobs_parallel_live(workflow_live):
     for input_parameters in input_parameters_list:
         input_parameters.update({"config": {"mode": "DRY_RUN"}})
     for index, job in enumerate(jb.jobs):
-        assert job.get_status() == "SUCCEEDED"
-        assert job.info["inputs"] == input_parameters_list[index]
-        assert job.info["mode"] == "DRY_RUN"
+        assert job.status == "SUCCEEDED"
+        assert job._info["inputs"] == input_parameters_list[index]
+        assert job._info["mode"] == "DRY_RUN"
 
 
 @pytest.mark.live
@@ -770,9 +769,9 @@ def test_run_jobs_parallel_live(workflow_live):
     jb = workflow_live.run_jobs_parallel(input_parameters_list=input_parameters_list)
     assert isinstance(jb, JobCollection)
     for index, job in enumerate(jb.jobs):
-        assert job.get_status() == "SUCCEEDED"
-        assert job.info["inputs"] == input_parameters_list[index]
-        assert job.info["mode"] == "DEFAULT"
+        assert job.status == "SUCCEEDED"
+        assert job._info["inputs"] == input_parameters_list[index]
+        assert job._info["mode"] == "DEFAULT"
 
 
 @pytest.mark.live
@@ -787,9 +786,9 @@ def test_test_job_live(workflow_live):
     with open(input_parameters_json) as src:
         job_info_params = json.load(src)
         job_info_params.update({"config": {"mode": "DRY_RUN"}})
-        assert jb.info["inputs"] == job_info_params
-        assert jb.info["mode"] == "DRY_RUN"
-    assert jb.get_status() == "SUCCEEDED"
+        assert jb._info["inputs"] == job_info_params
+        assert jb._info["mode"] == "DRY_RUN"
+    assert jb.status == "SUCCEEDED"
 
 
 @pytest.mark.live
@@ -800,10 +799,10 @@ def test_run_job_live(workflow_live):
     jb = workflow_live.run_job(input_parameters_json, track_status=True, name="aa")
     assert isinstance(jb, Job)
     with open(input_parameters_json) as src:
-        assert jb.info["inputs"] == json.load(src)
-        assert jb.info["mode"] == "DEFAULT"
-    assert jb.get_status() == "SUCCEEDED"
-    assert jb.info["name"] == "aa_py"
+        assert jb._info["inputs"] == json.load(src)
+        assert jb._info["mode"] == "DEFAULT"
+    assert jb.status == "SUCCEEDED"
+    assert jb._info["name"] == "aa_py"
 
 
 def test_get_jobs(workflow_mock):
@@ -860,7 +859,7 @@ def test_get_jobs_live(workflow_live):
     assert isinstance(jobcollection, list)
     assert isinstance(jobcollection.jobs[0], Job)
     assert all(
-        [j.info["workflowId"] == workflow_live.workflow_id for j in jobcollection.jobs]
+        [j._info["workflowId"] == workflow_live.workflow_id for j in jobcollection.jobs]
     )
 
 

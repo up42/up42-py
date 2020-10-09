@@ -8,7 +8,7 @@ from up42.auth import Auth
 from up42.job import Job
 from up42.tools import Tools
 
-from up42.utils import get_logger
+from up42.utils import get_logger, deprecation
 
 logger = get_logger(__name__)
 
@@ -37,6 +37,38 @@ class JobCollection(Tools):
         for job in self.jobs:
             yield job
 
+    @property
+    def info(self) -> Dict[str, Dict]:
+        """
+        Gets the metadata information for each job in the jobcollection, dictionary of
+            job_id : job_information.
+        """
+        return self.apply(lambda job: job.info, only_succeeded=False)
+
+    @deprecation("get_jobs_info", "jobcollection.info")
+    def get_jobs_info(self) -> Dict[str, Dict]:
+        """
+        `get_jobs_info` will be deprecated in release 0.13, use
+        [info attribute](jobcollection.md#up42.jobcollection.JobCollection.info) instead.
+        """
+        return self.info
+
+    @property
+    def status(self) -> Dict[str, str]:
+        """
+        Gets the status for each job in the jobcollection, a dictionary with
+        job_id : job status.
+        """
+        return self.apply(lambda job: job.status, only_succeeded=False)
+
+    @deprecation("get_jobs_status", "jobcollection.status")
+    def get_jobs_status(self) -> Dict[str, str]:
+        """
+        `get_jobs_status` will be deprecated in release 0.13, use
+        [status attribute](jobcollection.md#up42.jobcollection.JobCollection.status) instead.
+        """
+        return self.status
+
     def apply(
         self, worker: Callable, only_succeeded: bool = True, **kwargs
     ) -> Dict[str, Any]:
@@ -45,7 +77,7 @@ class JobCollection(Tools):
         `worker` needs to accept `Job` as first argument. For example, a
         lambda function that returns the job info:
         ```python
-        self.apply(lambda job: job._get_info())
+        self.apply(lambda job: job.info)
         ```
 
         Args:
@@ -75,24 +107,6 @@ class JobCollection(Tools):
             )
 
         return out_dict
-
-    def get_jobs_info(self) -> Dict[str, Dict]:
-        """
-        Gets the jobs information.
-
-        Returns:
-            A dictionary with key being the job_id and value the job information.
-        """
-        return self.apply(lambda job: job._get_info(), only_succeeded=False)
-
-    def get_jobs_status(self) -> Dict[str, str]:
-        """
-        Gets the jobs status.
-
-        Returns:
-            A dictionary with key being the job_id and value the job status.
-        """
-        return self.apply(lambda job: job.get_status(), only_succeeded=False)
 
     # TODO: Add method to get logs of failed jobs
 

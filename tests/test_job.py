@@ -13,8 +13,8 @@ from .context import Job, JobTask
 from .fixtures import auth_mock, auth_live, job_mock, job_live, jobtask_mock
 
 
-def test_job_get_info(job_mock):
-    del job_mock.info
+def test_job_info(job_mock):
+    del job_mock._info
 
     with requests_mock.Mocker() as m:
         url_job_info = (
@@ -22,17 +22,16 @@ def test_job_get_info(job_mock):
             f"{job_mock.project_id}/jobs/{job_mock.job_id}"
         )
         m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
-
-        info = job_mock._get_info()
+        info = job_mock.info
     assert isinstance(job_mock, Job)
     assert info["xyz"] == 789
-    assert job_mock.info["xyz"] == 789
+    assert job_mock._info["xyz"] == 789
 
 
 # pylint: disable=unused-argument
 @pytest.mark.parametrize("status", ["NOT STARTED", "PENDING", "RUNNING"])
 def test_get_status(job_mock, status):
-    del job_mock.info
+    del job_mock._info
 
     with requests_mock.Mocker() as m:
         url_job_info = (
@@ -41,7 +40,7 @@ def test_get_status(job_mock, status):
         )
         m.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
-        job_status = job_mock.get_status()
+        job_status = job_mock.status
     assert job_status == status
 
 
@@ -57,7 +56,7 @@ def test_get_status(job_mock, status):
     ],
 )
 def test_is_succeeded(job_mock, status, expected):
-    del job_mock.info
+    del job_mock._info
 
     with requests_mock.Mocker() as m:
         url_job_info = (
@@ -72,7 +71,7 @@ def test_is_succeeded(job_mock, status, expected):
 
 @pytest.mark.parametrize("status", ["SUCCEEDED"])
 def test_track_status_pass(job_mock, status):
-    del job_mock.info
+    del job_mock._info
     with requests_mock.Mocker() as m:
         url_job_info = (
             f"{job_mock.auth._endpoint()}/projects/"
@@ -87,7 +86,7 @@ def test_track_status_pass(job_mock, status):
 @pytest.mark.parametrize("status", ["FAILED", "ERROR", "CANCELLED", "CANCELLING"])
 def test_track_status_fail(job_mock, jobtask_mock, status):
     with pytest.raises(ValueError):
-        del job_mock.info
+        del job_mock._info
         with requests_mock.Mocker() as m:
             url_job_info = (
                 f"{job_mock.auth._endpoint()}/projects/"
@@ -234,7 +233,8 @@ def test_job_download_result(job_mock):
             for path in out_paths:
                 assert path.exists()
             assert len(out_paths) == 2
-            assert out_paths[0].name == "data.json"
+            assert out_paths[0].name == "7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+            assert out_paths[1].name == "data.json"
             assert out_paths[1].parent.exists()
             assert out_paths[1].parent.is_dir()
 
