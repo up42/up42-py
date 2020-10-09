@@ -59,7 +59,7 @@ class Job(Tools):
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
-        return self._info
+        return response_json["data"]
 
     @property
     def status(self) -> str:

@@ -54,7 +54,7 @@ class Workflow(Tools):
         )
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
-        return self._info
+        return response_json["data"]
 
     def get_compatible_blocks(self) -> Dict:
         """

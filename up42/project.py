@@ -35,7 +35,7 @@ class Project(Tools):
         url = f"{self.auth._endpoint()}/projects/{self.project_id}"
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
-        return self._info
+        return response_json["data"]
 
     def create_workflow(
         self, name: str, description: str = "", use_existing: bool = False
