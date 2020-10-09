@@ -164,8 +164,8 @@ def test_workflow_live(cli_runner):
 @PROJECT_ENVS
 @WORKFLOW_ENVS
 @pytest.mark.live()
-def test_workflow_get_info_live(cli_runner):
-    result = cli_runner.invoke(cli.up42, ["workflow", "get-info"])
+def test_workflow_info_live(cli_runner):
+    result = cli_runner.invoke(cli.up42, ["workflow", "info"])
     assert result.exit_code == 0
 
 
@@ -291,8 +291,8 @@ def test_job_live(cli_runner):
 @PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
-def test_job_get_info_live(cli_runner):
-    result = cli_runner.invoke(cli.up42, ["job", "get-info"])
+def test_job_info_live(cli_runner):
+    result = cli_runner.invoke(cli.up42, ["job", "info"])
     assert result.exit_code == 0
 
 

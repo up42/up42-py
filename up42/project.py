@@ -22,19 +22,20 @@ class Project(Tools):
         self.auth = auth
         self.project_id = project_id
         if self.auth.get_info:
-            self.info = self._get_info()
+            self._info = self.info
 
     def __repr__(self):
-        return (
-            f"Project(project_id={self.project_id}, auth={self.auth}, info={self.info})"
-        )
+        return f"Project(project_id={self.project_id}, auth={self.auth}, info={self._info})"
 
-    def _get_info(self):
-        """Gets metadata info from sever for an existing project"""
+    @property
+    def info(self) -> Dict:
+        """
+        Gets the project metadata information.
+        """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}"
         response_json = self.auth._request(request_type="GET", url=url)
-        self.info = response_json["data"]
-        return self.info
+        self._info = response_json["data"]
+        return response_json["data"]
 
     def create_workflow(
         self, name: str, description: str = "", use_existing: bool = False
@@ -60,8 +61,8 @@ class Project(Tools):
             matching_workflows = [
                 workflow
                 for workflow in existing_workflows
-                if workflow.info["name"] == name
-                and workflow.info["description"] == description
+                if workflow._info["name"] == name
+                and workflow._info["description"] == description
             ]
             if matching_workflows:
                 existing_workflow = matching_workflows[0]
@@ -153,7 +154,9 @@ class Project(Tools):
 
     @property
     def max_concurrent_jobs(self) -> int:
-        """Gets the maximum number of concurrent jobs allowed by the project settings."""
+        """
+        Gets the maximum number of concurrent jobs allowed by the project settings.
+        """
         project_settings = self.get_project_settings()
         project_settings_dict = {d["name"]: int(d["value"]) for d in project_settings}
         return project_settings_dict["MAX_CONCURRENT_JOBS"]

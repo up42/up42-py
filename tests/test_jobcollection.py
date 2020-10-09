@@ -63,7 +63,7 @@ def test_job_iterator(jobcollection_multiple_mock, jobcollection_empty_mock):
         )
 
 
-def test_jobcollection_get_jobs_info(jobcollection_single_mock):
+def test_jobcollection_info(jobcollection_single_mock):
     with requests_mock.Mocker() as m:
         url_job_info = (
             f"{jobcollection_single_mock.auth._endpoint()}/projects/"
@@ -71,7 +71,7 @@ def test_jobcollection_get_jobs_info(jobcollection_single_mock):
         )
         m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
 
-        info = jobcollection_single_mock.get_jobs_info()
+        info = jobcollection_single_mock.info
     assert isinstance(info, dict)
     assert info[jobcollection_single_mock[0].job_id] == {"xyz": 789}
 
@@ -85,7 +85,7 @@ def test_jobcollection_get_jobs_status(jobcollection_single_mock, status):
         )
         m.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
-        job_statuses = jobcollection_single_mock.get_jobs_status()
+        job_statuses = jobcollection_single_mock.status
     assert isinstance(job_statuses, dict)
     assert job_statuses[jobcollection_single_mock[0].job_id] == status
 

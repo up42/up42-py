@@ -269,7 +269,7 @@ def update_project_settings(
 def workflows_from_context():
     class OptionChoiceFromContext(click.Option):
         def full_process_value(self, ctx, value):
-            workflow_names = [wkf.info["name"] for wkf in ctx.obj.get_workflows()]
+            workflow_names = [wkf._info["name"] for wkf in ctx.obj.get_workflows()]
             self.type = click.Choice(workflow_names)
             return super(OptionChoiceFromContext, self).full_process_value(ctx, value)
 
@@ -322,9 +322,9 @@ def workflow(ctx, workflow_id):
 COMMAND_WORKFLOW = workflow.command(context_settings=CONTEXT_SETTINGS)
 
 
-@workflow.command("get-info", context_settings=CONTEXT_SETTINGS)
+@workflow.command("info", context_settings=CONTEXT_SETTINGS)
 @click.pass_obj
-def workflow_get_info(workflow):
+def workflow_info(workflow):
     """
     Get information about the workflow.
     """
@@ -350,14 +350,14 @@ def update_name(ctx, name, description):
     """
     Update the workflow name.
     """
-    logger.info("Current info: {}".format(ctx.obj.info))
+    logger.info("Current info: {}".format(ctx.obj._info))
     if click.confirm(
-        f"Are you sure you want to change the name '{ctx.obj.info.get('name')}' to '{name}'?",
+        f"Are you sure you want to change the name '{ctx.obj._info.get('name')}' to '{name}'?",
         abort=True,
     ):
         ctx.obj.update_name(name, description)
         ctx.obj = Workflow(ctx.obj.auth, ctx.obj.project_id, ctx.obj.workflow_id)
-        logger.info("New info: {}".format(ctx.obj.info))
+        logger.info("New info: {}".format(ctx.obj._info))
 
 
 @COMMAND_WORKFLOW
@@ -366,9 +366,9 @@ def delete(workflow):
     """
     Delete the workflow.
     """
-    logger.info("Current info: {}".format(workflow.info))
+    logger.info("Current info: {}".format(workflow._info))
     if click.confirm(
-        f"Are you sure you want to delete workflow '{workflow.info.get('name')}'?",
+        f"Are you sure you want to delete workflow '{workflow._info.get('name')}'?",
         abort=True,
     ):
         workflow.delete()
@@ -492,13 +492,13 @@ def job(ctx, job_id):
 COMMAND_JOB = job.command(context_settings=CONTEXT_SETTINGS)
 
 
-@job.command("get-info", context_settings=CONTEXT_SETTINGS)
+@job.command("info", context_settings=CONTEXT_SETTINGS)
 @click.pass_obj
-def job_get_info(job):
+def job_info(job):
     """
     Get information about the job.
     """
-    logger.info(pprint_json(job.info))
+    logger.info(pprint_json(job._info))
 
 
 @COMMAND_JOB
@@ -507,7 +507,7 @@ def cancel_job(job):
     """
     Cancel a job that is running.
     """
-    job.get_status()
+    logger.info(job.status)
     if click.confirm("Are you sure you want to cancel job with job id '{job.job_id}'?"):
         job.cancel_job()
 
@@ -580,7 +580,7 @@ def get_status(job):
     """
     Get the job status.
     """
-    logger.info(job.get_status())
+    logger.info(job.status)
 
 
 @COMMAND_JOB

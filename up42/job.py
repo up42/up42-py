@@ -13,6 +13,7 @@ from up42.auth import Auth
 from up42.jobtask import JobTask
 from up42.tools import Tools
 from up42.utils import (
+    deprecation,
     get_logger,
     _map_images,
     download_results_from_gcs,
@@ -42,41 +43,51 @@ class Job(Tools):
         self.results = None
         self.order_ids = order_ids
         if self.auth.get_info:
-            self.info = self._get_info()
+            self._info = self.info
 
     def __repr__(self):
         return (
             f"Job(job_id={self.job_id}, project_id={self.project_id}, "
-            f"order_ids={self.order_ids}, auth={self.auth}, info={self.info})"
+            f"order_ids={self.order_ids}, auth={self.auth}, info={self._info})"
         )
 
-    def _get_info(self):
-        """Gets metadata info from an existing Job"""
+    @property
+    def info(self) -> Dict:
+        """
+        Gets the job metadata information.
+        """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
         response_json = self.auth._request(request_type="GET", url=url)
-        self.info = response_json["data"]
-        return self.info
+        self._info = response_json["data"]
+        return response_json["data"]
 
-    def get_status(self) -> str:
+    @property
+    def status(self) -> str:
         """
-        Gets the job status.
-
-        Returns:
-            The job status, one of "SUCCEEDED", "NOT STARTED", "PENDING", "RUNNING",
-            "CANCELLED", "CANCELLING", "FAILED", "ERROR"
+        Gets the job progress status. One of `SUCCEEDED`, `NOT STARTED`, `PENDING`,
+            `RUNNING`, `CANCELLED`, `CANCELLING`, `FAILED`, `ERROR`.
         """
-        info = self._get_info()
-        status = info["status"]
+        status = self.info["status"]
         logger.info(f"Job is {status}")
         return status
 
+    @deprecation("get_status", "job.status")
+    def get_status(self) -> str:
+        """
+        `get_status` will be deprecated in release 0.13, use [status attribute](job.md#up42.job.Job.status) instead.
+        """
+        return self.status
+
     @property
-    def is_succeeded(self):
-        """Gets True if the job succeeded, False otherwise"""
-        return self.get_status() == "SUCCEEDED"
+    def is_succeeded(self) -> bool:
+        """
+        Gets `True` if the job succeeded, `False` otherwise.
+        Also see [status attribute](job.md#up42.job.Job.status).
+        """
+        return self.status == "SUCCEEDED"
 
     def track_status(self, report_time: int = 30) -> str:
-        """
+        """`
         Continuously gets the job status until job has finished or failed.
 
         Internally checks every five seconds for the status, prints the log every
@@ -93,7 +104,7 @@ class Job(Tools):
 
         while status != "SUCCEEDED":
             logger.setLevel(logging.CRITICAL)
-            status = self.get_status()
+            status = self.status
             logger.setLevel(logging.INFO)
 
             # TODO: Add statuses as constants (maybe objects?)
