@@ -60,14 +60,14 @@ class Workflow(Tools):
         return response_json["data"]
 
     @property
-    def workflow_tasks(self) -> Dict:
+    def workflow_tasks(self) -> Dict[str, str]:
         """
         Gets the building blocks of the workflow as a dictionary with task_name : block-version
         """
         logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
         workflow_tasks = self.get_workflow_tasks(basic=True)
         logging.getLogger("up42.workflow").setLevel(logging.INFO)
-        return workflow_tasks
+        return workflow_tasks  # type: ignore
 
     def get_compatible_blocks(self) -> Dict:
         """
