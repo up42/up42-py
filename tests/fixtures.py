@@ -16,7 +16,7 @@ from .context import (
 
 # TODO: Use patch.dict instead of 2 fictures?
 @pytest.fixture()
-def auth_mock_no_request():
+def auth_mock_no_request(requests_mock):
     auth = Auth(
         project_id="project_id123",
         project_api_key="project_apikey123",
@@ -24,16 +24,29 @@ def auth_mock_no_request():
         retry=False,
         get_info=False,
     )
+
+    url_get_token = (
+        f"https://{auth.project_id}:"
+        f"{auth.project_api_key}@api.up42."
+        f"{auth.env}/oauth/token"
+    )
+    json_get_token = {"data": {"accessToken": "token_789"}}
+    requests_mock.post(
+        url=url_get_token,
+        json=json_get_token,
+    )
+
     return auth
 
 
 @pytest.fixture()
 def auth_mock(requests_mock):
-    url_token = "https://project_id123:project_apikey123@api.up42.com/oauth/token"
-    json_token = {"data": {"accessToken": "token_789"}}
+    # token for initial authentication
+    url_get_token = "https://project_id123:project_apikey123@api.up42.com/oauth/token"
+    json_get_token = {"data": {"accessToken": "token_789"}}
     requests_mock.post(
-        url=url_token,
-        json=json_token,
+        url=url_get_token,
+        json=json_get_token,
     )
     auth = Auth(
         project_id="project_id123",

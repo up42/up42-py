@@ -86,7 +86,8 @@ def test_get_jobs(project_mock, requests_mock):
 @pytest.mark.skip
 @pytest.mark.live
 def test_get_jobs_live(project_live):
-    # Skip by default as too many jobs in test project, triggers too many job info requests.
+    # Skip by default as too many jobs in test project, triggers too many job info
+    # requests.
     jobcollection = project_live.get_jobs()
     assert isinstance(jobcollection.jobs, list)
     assert isinstance(jobcollection.jobs[0], Job)
