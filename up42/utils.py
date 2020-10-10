@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 def get_logger(
     name,
     level=logging.INFO,
-    log_verbose=True,
+    verbose=False,
 ):
     """
     Use level=logging.CRITICAL to disable temporarily.
@@ -38,11 +38,11 @@ def get_logger(
     # create console handler and set level to debug
     ch = logging.StreamHandler()
     ch.setLevel(level)
-    if log_verbose:
+    if verbose:
+        log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)"
+    else:
         # hide logger module & level, truncate log messages > 2000 characters (e.g. huge geometries)
         log_format = "%(asctime)s - %(message).2000s"
-    else:
-        log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)"
     formatter = logging.Formatter(log_format)
     ch.setFormatter(formatter)
     logger.addHandler(ch)
