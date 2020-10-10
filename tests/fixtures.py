@@ -28,20 +28,20 @@ def auth_mock_no_request():
 
 
 @pytest.fixture()
-def auth_mock():
-    with requests_mock.Mocker() as m:
-        url_token = "https://project_id123:project_apikey123@api.up42.com/oauth/token"
-        m.post(
-            url=url_token,
-            json={"data": {"accessToken": "token_789"}},
-        )
-        auth = Auth(
-            project_id="project_id123",
-            project_api_key="project_apikey123",
-            authenticate=True,
-            retry=False,
-            get_info=True,
-        )
+def auth_mock(requests_mock):
+    url_token = "https://project_id123:project_apikey123@api.up42.com/oauth/token"
+    json_token = {"data": {"accessToken": "token_789"}}
+    requests_mock.post(
+        url=url_token,
+        json=json_token,
+    )
+    auth = Auth(
+        project_id="project_id123",
+        project_api_key="project_apikey123",
+        authenticate=True,
+        retry=False,
+        get_info=True,
+    )
     return auth
 
 
@@ -55,12 +55,64 @@ def auth_live():
 
 
 @pytest.fixture()
-def project_mock(auth_mock):
-    with requests_mock.Mocker() as m:
-        url_project_info = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}"
-        m.get(url=url_project_info, json={"data": {"xyz": 789}, "error": {}})
+def project_mock(auth_mock, requests_mock):
+    # info
+    url_project_info = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}"
+    json_project_info = {"data": {"xyz": 789}, "error": {}}
+    requests_mock.get(url=url_project_info, json=json_project_info)
 
-        project = Project(auth=auth_mock, project_id=auth_mock.project_id)
+    project = Project(auth=auth_mock, project_id=auth_mock.project_id)
+
+    # create_workflow. If with use_existing=True, requires workflow info mock.
+    url_create_workflow = (
+        f"{project.auth._endpoint()}/projects/" f"{project.project_id}/workflows/"
+    )
+    json_create_workflow = {
+        "error": {},
+        "data": {"id": "workflow_id123", "displayId": "workflow_displayId123"},
+    }
+    requests_mock.post(url=url_create_workflow, json=json_create_workflow)
+
+    # get_workflows
+    url_get_workflows = (
+        f"{auth_mock._endpoint()}/projects/" f"{project.project_id}/workflows"
+    )
+    json_get_workflows = {
+        "data": [{"id": "workflow_id123"}, {"id": "workflow_id123"}],
+        "error": {},
+    }  # Same workflow_id to not have to get multiple .info
+    requests_mock.get(url=url_get_workflows, json=json_get_workflows)
+
+    # get_jobs. Requires job_info mock.
+    job_id = "job_id123"
+    url_get_jobs = f"{auth_mock._endpoint()}/projects/{project.project_id}/jobs"
+    json_get_jobs = {
+        "data": [
+            {
+                "id": job_id,
+                "status": "SUCCEEDED",
+                "inputs": {},
+                "error": {},
+                "mode": "DEFAULT",
+            }
+        ]
+    }
+    requests_mock.get(url=url_get_jobs, json=json_get_jobs)
+
+    # project_settings
+    url_project_settings = (
+        f"{auth_mock._endpoint()}/projects/{project.project_id}/settings"
+    )
+    json_project_settings = {
+        "data": [
+            {"name": "MAX_CONCURRENT_JOBS"},
+            {"name": "MAX_AOI_SIZE"},
+            {"name": "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE"},
+        ],
+        "error": {},
+    }
+    requests_mock.get(url=url_project_settings, json=json_project_settings)
+
     return project
 
 
