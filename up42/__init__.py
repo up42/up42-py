@@ -67,7 +67,7 @@ def initialize_job(job_id, order_ids: List[str] = None) -> "Job":
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
     return Job(
-        auth=_auth, job_id=job_id, project_id=str(_auth.project_id), order_ids=order_ids
+        auth=_auth, job_id=job_id, project_id=str(_auth.project_id)
     )
 
 
