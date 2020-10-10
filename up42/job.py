@@ -47,15 +47,14 @@ class Job(Tools):
 
     def __repr__(self):
         order_ids = (
-            f", order_ids={self.order_ids}, " if self.order_ids is not None else ""
+            f", order_ids: {self.order_ids}, " if self.order_ids is not None else ""
         )
         info = self.info
         return (
-            f"Job(job_name={info['name']}, job_id={self.job_id}, "
-            f"status={info['status']}, createdAt={info['createdAt']}, "
-            f"finishedAt={info['finishedAt']}, input_parameters={info['inputs']}, "
-            f"{order_ids}"
-            f"workflow_name={info['workflowName']}, workflow_id={info['workflowId']})"
+            f"Job(name: {info['name']}, job_id: {self.job_id}, mode: {info['mode']}, "
+            f"status: {info['status']}, startedAt: {info['startedAt']}, "
+            f"finishedAt: {info['finishedAt']}, workflow_name: {info['workflowName']}, "
+            f"{order_ids}, input_parameters: {info['inputs']}"
         )
 
     @property

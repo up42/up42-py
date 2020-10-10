@@ -26,10 +26,10 @@ class Project(Tools):
 
     def __repr__(self):
         info = self.info
-        env = ", env=dev" if self.auth.env == "dev" else ""
+        env = ", env: dev" if self.auth.env == "dev" else ""
         return (
-            f"Project(project_name={info['name']}, project_id={self.project_id}, "
-            f"description={info['description']}, createdAt={info['createdAt']}"
+            f"Project(name: {info['name']}, project_id: {self.project_id}, "
+            f"description: {info['description']}, createdAt: {info['createdAt']}"
             f"{env})"
         )
 

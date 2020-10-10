@@ -40,10 +40,10 @@ class Workflow(Tools):
     def __repr__(self):
         info = self.info
         return (
-            f"Workflow(workflow_name={info['name']}, workflow_id={self.workflow_id}, "
-            f"description={info['description']}, createdAt={info['createdAt']}, "
-            f"workflow_tasks={list(self.workflow_tasks.keys())}, "  # TODO: Maybe block version?
-            f"project_name={info['name']}, project_id={self.project_id})"
+            f"Workflow(name: {info['name']}, workflow_id: {self.workflow_id}, "
+            f"description: {info['description']}, createdAt: {info['createdAt']}, "
+            f"project_name: {info['name']}, "
+            f"workflow_tasks: {list(self.workflow_tasks.keys())}"
         )
 
     @property
