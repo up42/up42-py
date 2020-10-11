@@ -36,7 +36,7 @@ def test_job_info(job_mock):
             f"{job_mock.auth._endpoint()}/projects/"
             f"{job_mock.project_id}/jobs/{job_mock.job_id}"
         )
-        m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
+        m.get(url=url_job_info, json={"data": {"xyz":789}, "error":{}})
         info = job_mock.info
     assert isinstance(job_mock, Job)
     assert info["xyz"] == 789

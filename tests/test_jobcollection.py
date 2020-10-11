@@ -84,7 +84,7 @@ def test_jobcollection_info(jobcollection_single_mock):
             f"{jobcollection_single_mock.auth._endpoint()}/projects/"
             f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
         )
-        m.get(url=url_job_info, text='{"data": {"xyz":789}, "error":{}}')
+        m.get(url=url_job_info, json={"data": {"xyz":789}, "error":{}})
 
         info = jobcollection_single_mock.info
     assert isinstance(info, dict)
