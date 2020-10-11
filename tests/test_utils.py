@@ -9,7 +9,6 @@ import pandas as pd
 import pytest
 from shapely.geometry import Point, Polygon, LinearRing
 from shapely import wkt
-import requests_mock
 
 from .context import (
     folium_base_map,

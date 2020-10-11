@@ -2,7 +2,6 @@ from pathlib import Path
 import json
 import tempfile
 
-import requests_mock
 import pytest
 import geopandas as gpd
 

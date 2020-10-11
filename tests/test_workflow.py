@@ -115,31 +115,27 @@ def test_construct_full_workflow_tasks_dict(workflow_mock, input_tasks):
     )
 
 
-# @pytest.mark.skip
-# # TODO: Resolve
-# def test_add_workflow_tasks_full(workflow_mock, caplog):
-#     input_tasks_full = [
-#         {
-#             "name": "sobloo-s2-l1c-aoiclipped:1",
-#             "parentName": None,
-#             "blockId": "a2daaab4-196d-4226-a018-a810444dcad1",
-#         },
-#         {
-#             "name": "sharpening:1",
-#             "parentName": "sobloo-s2-l1c-aoiclipped",
-#             "blockId": "4ed70368-d4e1-4462-bef6-14e768049471",
-#         },
-#     ]
-#
-#     job_url = (
-#         f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
-#         f"{workflow_mock.workflow_id}/tasks/"
-#     )
-#     with requests_mock.Mocker() as m:
-#         m.post(url=job_url, status_code=200)
-#
-#         workflow_mock.add_workflow_tasks(input_tasks_full)
-#     assert f"Added tasks to workflow: {input_tasks_full}" in caplog.text
+def test_add_workflow_tasks_full(workflow_mock, requests_mock):
+    input_tasks_full = [
+        {
+            "name": "sobloo-s2-l1c-aoiclipped:1",
+            "parentName": None,
+            "blockId": "a2daaab4-196d-4226-a018-a810444dcad1",
+        },
+        {
+            "name": "sharpening:1",
+            "parentName": "sobloo-s2-l1c-aoiclipped",
+            "blockId": "4ed70368-d4e1-4462-bef6-14e768049471",
+        },
+    ]
+    job_url = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks/"
+    )
+    requests_mock.post(url=job_url, status_code=200)
+
+    workflow_mock.add_workflow_tasks(input_tasks_full)
+    # TODO:caplog, capture logger
 
 
 @pytest.mark.live
@@ -651,33 +647,28 @@ def test_get_jobs_live(workflow_live):
     )
 
 
-# TODO: Resolve
-# def test_update_name(workflow_mock, caplog):
-#     new_name = "new_workflow_name"
-#     with requests_mock.Mocker() as m:
-#         url_update_name = (
-#             f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
-#             f"{workflow_mock.workflow_id}"
-#         )
-#         json_new_properties = {"data": {}, "error": {}}
-#         m.post(
-#             url=url_update_name,
-#             json=json_new_properties,
-#         )
-#
-#         workflow_mock.update_name(name=new_name)
-#     assert f"Updated workflow name: {new_name}" in caplog.text
+def test_update_name(workflow_mock, requests_mock):
+    new_name = "new_workflow_name"
+    url_update_name = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}"
+    )
+    json_new_properties = {"data": {}, "error": {}}
+    requests_mock.put(
+        url=url_update_name,
+        json=json_new_properties,
+    )
+
+    workflow_mock.update_name(name=new_name)
+    # TODO:caplog, capture logger
 
 
-# @pytest.mark.skip
-# TODO: Resolve
-# def test_delete(workflow_mock, caplog, requests_mock):
-#     # delete
-#     delete_url = (
-#         f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
-#         f"{workflow_mock.workflow_id}"
-#     )
-#     requests_mock.delete(url=delete_url)
-#
-#     workflow_mock.delete()
-#     assert f"Successfully deleted workflow: {workflow_mock.workflow_id}" in caplog.text
+def test_delete(workflow_mock, requests_mock):
+    delete_url = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}"
+    )
+    requests_mock.delete(url=delete_url)
+
+    workflow_mock.delete()
+    # TODO:caplog, capture logger
