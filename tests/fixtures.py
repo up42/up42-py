@@ -14,6 +14,71 @@ from .context import (
     Catalog,
 )
 
+json_workflow_tasks = {
+    "data": [
+        {
+            "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
+            "name": "sobloo-s2-l1c-aoiclipped:1",
+            "block": {
+                "name": "sobloo-s2-l1c-aoiclipped",
+                "parameters": {
+                    "nodata": {
+                        "type": "number",
+                    },
+                    "time": {
+                        "type": "dateRange",
+                        "default": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+                    },
+                },
+            },
+        },
+        {
+            "id": "af626c54-156e-4f13-a743-55efd27de533",
+            "name": "tiling:1",
+            "block": {
+                "name": "tiling",
+                "parameters": {
+                    "nodata": {
+                        "type": "number",
+                        "default": None,
+                        "required": False,
+                        "description": "Value representing..",
+                    },
+                    "tile_width": {
+                        "type": "number",
+                        "default": 768,
+                        "required": True,
+                        "description": "Width of a tile in pixels",
+                    },
+                },
+            },
+        },
+    ],
+    "error": {},
+}
+
+json_blocks = {
+    "data": [
+        {
+            "id": "4ed70368-d4e1-4462-bef6-14e768049471",
+            "name": "tiling",
+            "displayName": "Raster Tiling",
+        },
+        {
+            "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
+            "name": "sharpening",
+            "displayName": "Sharpening Filter",
+        },
+        {
+            "id": "a2daaab4-196d-4226-a018-a810444dcad1",
+            "name": "sobloo-s2-l1c-aoiclipped",
+            "displayName": "Sentinel-2 L1C MSI AOI clipped",
+        },
+    ],
+    "error": {},
+}
+
+
 # TODO: Use patch.dict instead of 2 fictures?
 @pytest.fixture()
 def auth_mock_no_request(requests_mock):
@@ -55,6 +120,14 @@ def auth_mock(requests_mock):
         retry=False,
         get_info=True,
     )
+
+    # get_blocks
+    url_get_blocks = f"{auth._endpoint()}/blocks"
+    requests_mock.get(
+        url=url_get_blocks,
+        json=json_blocks,
+    )
+
     return auth
 
 
@@ -88,7 +161,7 @@ def project_mock(auth_mock, requests_mock):
 
     # get_workflows
     url_get_workflows = (
-        f"{auth_mock._endpoint()}/projects/" f"{project.project_id}/workflows"
+        f"{project.auth._endpoint()}/projects/" f"{project.project_id}/workflows"
     )
     json_get_workflows = {
         "data": [{"id": "workflow_id123"}, {"id": "workflow_id123"}],
@@ -98,7 +171,7 @@ def project_mock(auth_mock, requests_mock):
 
     # get_jobs. Requires job_info mock.
     job_id = "job_id123"
-    url_get_jobs = f"{auth_mock._endpoint()}/projects/{project.project_id}/jobs"
+    url_get_jobs = f"{project.auth._endpoint()}/projects/{project.project_id}/jobs"
     json_get_jobs = {
         "data": [
             {
@@ -114,7 +187,7 @@ def project_mock(auth_mock, requests_mock):
 
     # project_settings
     url_project_settings = (
-        f"{auth_mock._endpoint()}/projects/{project.project_id}/settings"
+        f"{project.auth._endpoint()}/projects/{project.project_id}/settings"
     )
     json_project_settings = {
         "data": [
@@ -136,24 +209,90 @@ def project_live(auth_live):
 
 
 @pytest.fixture()
-def workflow_mock(auth_mock):
+def workflow_mock(auth_mock, requests_mock):
+    workflow_name = "workflow_name_123"
     workflow_id = "workflow_id123"
-    with requests_mock.Mocker() as m:
-        url_workflow_info = (
-            f"{auth_mock._endpoint()}/projects/"
-            f"{auth_mock.project_id}/workflows/"
-            f"{workflow_id}"
-        )
-        m.get(
-            url=url_workflow_info,
-            json={"data": {"xyz": 789, "name": "workflow_name_123"}, "error": {}},
-        )
 
-        workflow = Workflow(
-            auth=auth_mock,
-            workflow_id=workflow_id,
-            project_id=auth_mock.project_id,
-        )
+    # info
+    url_workflow_info = (
+        f"{auth_mock._endpoint()}/projects/"
+        f"{auth_mock.project_id}/workflows/"
+        f"{workflow_id}"
+    )
+    json_workflow_info = {
+        "data": {
+            "name": workflow_name,
+            "id": workflow_id,
+            "xyz": 789,
+        },
+        "error": {},
+    }
+    requests_mock.get(url=url_workflow_info, json=json_workflow_info)
+
+    workflow = Workflow(
+        auth=auth_mock,
+        workflow_id=workflow_id,
+        project_id=auth_mock.project_id,
+    )
+
+    # get_workflow_tasks
+    url_workflow_tasks = (
+        f"{workflow.auth._endpoint()}/projects/{workflow.auth.project_id}/workflows/"
+        f"{workflow.workflow_id}/tasks"
+    )
+    requests_mock.get(url=url_workflow_tasks, json=json_workflow_tasks)
+
+    # get_compatible_blocks
+    url_compatible_blocks = (
+        f"{workflow.auth._endpoint()}/projects/{workflow.project_id}/"
+        f"workflows/{workflow.workflow_id}/"
+        f"compatible-blocks?parentTaskName=tiling:1"
+    )
+    json_compatible_blocks = {
+        "data": {
+            "blocks": [
+                {"blockId": "aaa123", "name": "aaa", "versionTag": "2.0"},
+                {"blockId": "bbb123", "name": "bbb", "versionTag": "2.0"},
+            ],
+            "error": {},
+        }
+    }
+    requests_mock.get(url=url_compatible_blocks, json=json_compatible_blocks)
+
+    # run_job
+    job_name = f"{workflow._info['name']}_py"
+    job_id = workflow._info["id"]
+    url_run_job = (
+        f"{workflow.auth._endpoint()}/projects/{workflow.project_id}/"
+        f"workflows/{workflow.workflow_id}/jobs?name={job_name}"
+    )
+    json_run_job = {"data": {"id": job_id}}
+    requests_mock.post(url=url_run_job, json=json_run_job)
+
+    # get_jobs
+    url_get_jobs = f"{workflow.auth._endpoint()}/projects/{workflow.project_id}/jobs"
+    json_get_jobs = {
+        "data": [
+            {
+                "id": job_id,
+                "status": "SUCCEEDED",
+                "inputs": {},
+                "error": {},
+                "mode": "DEFAULT",
+                "workflowId": "123456",
+            },
+            {
+                "id": job_id,
+                "status": "SUCCEEDED",
+                "inputs": {},
+                "error": {},
+                "mode": "DEFAULT",
+                "workflowId": workflow.workflow_id,
+            },
+        ]
+    }
+    requests_mock.get(url=url_get_jobs, json=json_get_jobs)
+
     return workflow
 
 
@@ -314,8 +453,8 @@ def catalog_live(auth_live):
 
 
 @pytest.fixture()
-def project_max_concurrent_jobs(project_mock):
-    def _project_max_concurrent_jobs(maximum=5):
+def project_mock_max_concurrent_jobs(project_mock):
+    def _project_mock_max_concurrent_jobs(maximum=5):
         m = requests_mock.Mocker()
         url_project_info = (
             f"{project_mock.auth._endpoint()}/projects/{project_mock.project_id}"
@@ -338,4 +477,4 @@ def project_max_concurrent_jobs(project_mock):
         )
         return m
 
-    return _project_max_concurrent_jobs
+    return _project_mock_max_concurrent_jobs

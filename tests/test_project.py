@@ -7,14 +7,15 @@ from .fixtures import (
     auth_live,
     project_mock,
     project_live,
-    project_max_concurrent_jobs,
+    project_mock_max_concurrent_jobs,
 )
 
 
-def test_info(project_mock):
-    info = project_mock.info
+def test_project_info(project_mock):
+    del project_mock._info
+
     assert isinstance(project_mock, Project)
-    assert info["xyz"] == 789
+    assert project_mock.info["xyz"] == 789
     assert project_mock._info["xyz"] == 789
 
 
@@ -109,8 +110,8 @@ def test_get_project_settings_live(project_live):
     assert "MAX_CONCURRENT_JOBS" in project_settings_dict.keys()
 
 
-def test_max_concurrent_jobs(project_mock, project_max_concurrent_jobs):
-    with project_max_concurrent_jobs(5):
+def test_max_concurrent_jobs(project_mock, project_mock_max_concurrent_jobs):
+    with project_mock_max_concurrent_jobs(5):
         max_concurrent_jobs = project_mock.max_concurrent_jobs
     assert max_concurrent_jobs == 5
 
