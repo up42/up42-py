@@ -377,25 +377,51 @@ def job_mock(auth_mock, requests_mock):
 
 
 @pytest.fixture()
-def jobs_mock(auth_mock):
-    with requests_mock.Mocker() as m:
-        url_job_info = (
-            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
-        )
-        m.get(
-            url=url_job_info,
-            json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
-        )
+def job_live(auth_live):
+    job = Job(
+        auth=auth_live,
+        project_id=auth_live.project_id,
+        job_id=os.getenv("TEST_UP42_JOB_ID"),
+    )
+    return job
 
-        job1 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID)
 
-        url_job_info = (
-            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID_2}"
-        )
-        m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
+@pytest.fixture()
+def jobs_mock(auth_mock, requests_mock):
+    url_job_info = (
+        f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
+    )
+    requests_mock.get(
+        url=url_job_info,
+        json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
+    )
 
-        job2 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID_2)
+    job1 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID)
+
+    url_job_info = (
+        f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID_2}"
+    )
+    requests_mock.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
+
+    job2 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID_2)
     return [job1, job2]
+
+
+@pytest.fixture()
+def jobs_live(auth_live):
+    job_1 = Job(
+        auth=auth_live,
+        project_id=auth_live.project_id,
+        job_id=os.getenv("TEST_UP42_JOB_ID"),
+    )
+
+    job_2 = Job(
+        auth=auth_live,
+        project_id=auth_live.project_id,
+        job_id=os.getenv("TEST_UP42_JOB_ID_2"),
+    )
+
+    return [job_1, job_2]
 
 
 @pytest.fixture()
@@ -425,47 +451,46 @@ def jobcollection_live(auth_live, jobs_live):
 
 
 @pytest.fixture()
-def job_live(auth_live):
-    job = Job(
-        auth=auth_live,
-        project_id=auth_live.project_id,
-        job_id=os.getenv("TEST_UP42_JOB_ID"),
+def jobtask_mock(auth_mock, requests_mock):
+    url_jobtask_info = (
+        f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
+        f"/tasks/"
     )
-    return job
+    requests_mock.get(url=url_jobtask_info, json={"data": {"xyz": 789}, "error": {}})
 
-
-@pytest.fixture()
-def jobs_live(auth_live):
-    job_1 = Job(
-        auth=auth_live,
-        project_id=auth_live.project_id,
-        job_id=os.getenv("TEST_UP42_JOB_ID"),
+    jobtask = JobTask(
+        auth=auth_mock,
+        project_id=auth_mock.project_id,
+        job_id=JOB_ID,
+        jobtask_id=JOBTASK_ID,
     )
 
-    job_2 = Job(
-        auth=auth_live,
-        project_id=auth_live.project_id,
-        job_id=os.getenv("TEST_UP42_JOB_ID_2"),
+    # get_results_json
+    url = (
+        f"{jobtask.auth._endpoint()}/projects/{jobtask.auth.project_id}/"
+        f"jobs/{jobtask.job_id}/tasks/{jobtask.jobtask_id}/"
+        f"outputs/data-json/"
+    )
+    requests_mock.get(url, json={"type": "FeatureCollection", "features": []})
+
+    # get_download_url
+    url_download_result = (
+        f"{jobtask.auth._endpoint()}/projects/{jobtask.project_id}/"
+        f"jobs/{jobtask.job_id}/tasks/{jobtask.jobtask_id}/"
+        f"downloads/results/"
+    )
+    requests_mock.get(
+        url_download_result, json={"data": {"url": DOWNLOAD_URL}, "error": {}}
     )
 
-    return [job_1, job_2]
+    # quicklooks
+    url_quicklook = (
+        f"{jobtask.auth._endpoint()}/projects/{jobtask.project_id}/"
+        f"jobs/{jobtask.job_id}"
+        f"/tasks/{jobtask.jobtask_id}/outputs/quicklooks/"
+    )
+    requests_mock.get(url_quicklook, json={"data": ["a_quicklook.png"]})
 
-
-@pytest.fixture()
-def jobtask_mock(auth_mock):
-    with requests_mock.Mocker() as m:
-        url_jobtask_info = (
-            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
-            f"/tasks/"
-        )
-        m.get(url=url_jobtask_info, json={"data": {"xyz": 789}, "error": {}})
-
-        jobtask = JobTask(
-            auth=auth_mock,
-            project_id=auth_mock.project_id,
-            job_id=JOB_ID,
-            jobtask_id=JOBTASK_ID,
-        )
     return jobtask
 
 
