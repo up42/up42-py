@@ -7,7 +7,7 @@ import pytest
 # pylint: disable=unused-import
 from .context import JobTask
 from .fixtures import auth_mock, auth_live, jobtask_mock, jobtask_live
-from .object_names import *
+from .fixtures import DOWNLOAD_URL
 
 
 def test_info(jobtask_mock):

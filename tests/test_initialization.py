@@ -11,7 +11,13 @@ from .context import (
     initialize_job,
     initialize_jobtask,
 )
-from .object_names import *
+from .fixtures import (
+    PROJECT_ID,
+    PROJECT_APIKEY,
+    WORKFLOW_ID,
+    JOB_ID,
+    JOBTASK_ID,
+)
 import up42  # pylint: disable=wrong-import-order
 
 

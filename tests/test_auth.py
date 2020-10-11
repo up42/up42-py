@@ -13,7 +13,11 @@ from .fixtures import (
     auth_mock,
     auth_live,
 )
-from .object_names import *
+from .fixtures import (
+    TOKEN,
+    PROJECT_ID,
+    PROJECT_APIKEY,
+)
 
 
 def test_auth_kwargs():

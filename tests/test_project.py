@@ -9,7 +9,12 @@ from .fixtures import (
     project_live,
     project_mock_max_concurrent_jobs,
 )
-from .object_names import *
+from .fixtures import (
+    WORKFLOW_ID,
+    WORKFLOW_NAME,
+    WORKFLOW_DESCRIPTION,
+    JOB_ID,
+)
 
 
 def test_project_info(project_mock):

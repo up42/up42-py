@@ -13,7 +13,6 @@ from .fixtures import (
     catalog_mock,
     catalog_live,
 )
-from .object_names import *
 import up42  # pylint: disable=wrong-import-order
 
 

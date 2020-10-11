@@ -24,7 +24,10 @@ from .fixtures import (
     project_mock,
     project_mock_max_concurrent_jobs,
 )
-from .object_names import *
+from .fixtures import (
+    JOB_ID,
+    JOB_NAME,
+)
 import up42
 
 

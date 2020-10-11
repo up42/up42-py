@@ -19,7 +19,10 @@ from .fixtures import (
     jobs_live,
     jobcollection_live,
 )
-from .object_names import *
+from .fixtures import (
+    JOB_ID,
+    JOB_ID_2,
+)
 
 
 def test_jobcollection(jobcollection_single_mock):
