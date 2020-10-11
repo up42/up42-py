@@ -11,22 +11,7 @@ from folium import Map
 # pylint: disable=unused-import
 from .context import Job, JobTask
 from .fixtures import auth_mock, auth_live, job_mock, job_live, jobtask_mock
-from .fixtures import (
-    TOKEN,
-    PROJECT_ID,
-    PROJECT_APIKEY,
-    PROJECT_NAME,
-    PROJECT_DESCRIPTION,
-    WORKFLOW_ID,
-    WORKFLOW_NAME,
-    WORKFLOW_DESCRIPTION,
-    JOB_ID,
-    JOB_ID_2,
-    JOB_NAME,
-    JOBTASK_ID,
-    JOBTASK_NAME,
-    DOWNLOAD_URL,
-)
+from .object_names import *
 
 
 def test_job_info(job_mock):
