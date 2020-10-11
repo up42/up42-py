@@ -4,14 +4,13 @@ import tempfile
 import tarfile
 from shutil import copyfile
 
-import requests_mock
 import pytest
 from folium import Map
 
 # pylint: disable=unused-import
 from .context import Job, JobTask
 from .fixtures import auth_mock, auth_live, job_mock, job_live, jobtask_mock
-from .fixtures import DOWNLOAD_URL
+from .fixtures import DOWNLOAD_URL, JOBTASK_ID
 
 
 def test_job_info(job_mock):
@@ -72,18 +71,16 @@ def test_track_status_pass(job_mock, status, requests_mock):
 
 
 @pytest.mark.parametrize("status", ["FAILED", "ERROR", "CANCELLED", "CANCELLING"])
-def test_track_status_fail(job_mock, jobtask_mock, status, requests_mock):
+def test_track_status_fail(job_mock, status, requests_mock):
+    del job_mock._info
+
+    url_job_info = (
+        f"{job_mock.auth._endpoint()}/projects/"
+        f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    )
+    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+
     with pytest.raises(ValueError):
-        del job_mock._info
-
-        url_job_info = (
-            f"{job_mock.auth._endpoint()}/projects/"
-            f"{job_mock.project_id}/jobs/{job_mock.job_id}"
-        )
-        requests_mock.get(
-            url=url_job_info, json={"data": {"status": status}, "error": {}}
-        )
-
         job_mock.track_status()
 
 
@@ -93,10 +90,10 @@ def test_cancel_job(job_mock, requests_mock):
     job_mock.cancel_job()
 
 
-def test_download_quicklook(job_mock, jobtask_mock, requests_mock):
+def test_download_quicklook(job_mock, requests_mock):
     url = (
         f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
-        f"/tasks/{jobtask_mock.jobtask_id}/outputs/quicklooks/a_quicklook.png"
+        f"/tasks/{JOBTASK_ID}/outputs/quicklooks/a_quicklook.png"
     )
     quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
     requests_mock.get(url, content=open(quicklook_file, "rb").read())
@@ -115,21 +112,21 @@ def test_get_result_json(job_mock):
     }
 
 
-def test_get_logs(job_mock, jobtask_mock):
-    assert job_mock.get_logs(as_return=True)[jobtask_mock.jobtask_id] == ""
+def test_get_logs(job_mock):
+    assert job_mock.get_logs(as_return=True)[JOBTASK_ID] == ""
     assert not job_mock.get_logs()
 
 
-def test_get_jobtasks(job_mock, jobtask_mock):
+def test_get_jobtasks(job_mock):
     job_tasks = job_mock.get_jobtasks()
     assert isinstance(job_tasks[0], JobTask)
-    assert job_tasks[0].jobtask_id == jobtask_mock.jobtask_id
+    assert job_tasks[0].jobtask_id == JOBTASK_ID
 
 
-def test_get_jobtasks_result_json(job_mock, jobtask_mock):
+def test_get_jobtasks_result_json(job_mock):
     res = job_mock.get_jobtasks_results_json()
     assert len(res) == 1
-    assert res[jobtask_mock.jobtask_id] == {
+    assert res[JOBTASK_ID] == {
         "type": "FeatureCollection",
         "features": [],
     }

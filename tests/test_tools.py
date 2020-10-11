@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 import geopandas as gpd
 from mock import patch
-import requests_mock
 import pandas as pd
 
 # pylint: disable=unused-import

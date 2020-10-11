@@ -332,7 +332,7 @@ def job_mock(auth_mock, requests_mock):
 
     # get_jobtasks
     url_job_tasks = (
-        f"{job.auth._endpoint()}/projects/{job.project_id}/jobs/{job.job_id}" f"/tasks/"
+        f"{job.auth._endpoint()}/projects/{job.project_id}/jobs/{job.job_id}/tasks/"
     )
     requests_mock.get(url=url_job_tasks, json={"data": [{"id": JOBTASK_ID}]})
 
@@ -452,6 +452,7 @@ def jobcollection_live(auth_live, jobs_live):
 
 @pytest.fixture()
 def jobtask_mock(auth_mock, requests_mock):
+    # info
     url_jobtask_info = (
         f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
         f"/tasks/"

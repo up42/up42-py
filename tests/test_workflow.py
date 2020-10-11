@@ -2,14 +2,8 @@ from pathlib import Path
 import json
 import copy
 
-# pylint: disable=unused-import
-from unittest.mock import Mock, patch
-import unittest.mock as mock
-
 import pytest
-import requests_mock
 import shapely
-from geojson import Feature
 
 # pylint: disable=unused-import,wrong-import-order
 from .context import Workflow, Job, JobCollection
@@ -24,10 +18,7 @@ from .fixtures import (
     project_mock,
     project_mock_max_concurrent_jobs,
 )
-from .fixtures import (
-    JOB_ID,
-    JOB_NAME,
-)
+from .fixtures import JOB_ID, JOB_NAME, JOBTASK_ID
 import up42
 
 
@@ -411,7 +402,7 @@ def test_helper_run_parallel_jobs_all_fails(
 
 
 def test_helper_run_parallel_jobs_one_fails(
-    workflow_mock, jobtask_mock, project_mock_max_concurrent_jobs
+    workflow_mock, project_mock_max_concurrent_jobs
 ):
     input_parameters_list = [
         {"sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1}},
@@ -446,10 +437,10 @@ def test_helper_run_parallel_jobs_one_fails(
                 f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/{job_name}"
                 f"/tasks/"
             )
-            m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
+            m.get(url=url_job_tasks, json={"data": [{"id": JOBTASK_ID}]})
             url_log = (
                 f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/"
-                f"{job_name}/tasks/{jobtask_mock.jobtask_id}/logs"
+                f"{job_name}/tasks/{JOBTASK_ID}/logs"
             )
             m.get(url_log, json="")
 
