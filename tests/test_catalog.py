@@ -72,19 +72,17 @@ def test_construct_parameters_unsopported_sensor_raises(catalog_mock):
         )
 
 
-def test_search(catalog_mock):
+def test_search(catalog_mock, requests_mock):
     with open(
         Path(__file__).resolve().parent / "mock_data/search_response.json"
     ) as json_file:
         json_search_response = json.load(json_file)
-
-    with requests_mock.Mocker() as m:
-        url_search = f"{catalog_mock.auth._endpoint()}/catalog/stac/search"
-        m.post(
-            url=url_search,
-            json=json_search_response,
-        )
-        search_results = catalog_mock.search(mock_search_parameters)
+    url_search = f"{catalog_mock.auth._endpoint()}/catalog/stac/search"
+    requests_mock.post(
+        url=url_search,
+        json=json_search_response,
+    )
+    search_results = catalog_mock.search(mock_search_parameters)
 
     assert isinstance(search_results, gpd.GeoDataFrame)
     assert search_results.shape == (1, 9)
@@ -114,62 +112,58 @@ def test_search_live(catalog_live):
     assert search_results["type"] == "FeatureCollection"
 
 
-def test_download_quicklook(catalog_mock):
+def test_download_quicklook(catalog_mock, requests_mock):
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
+    provider = "oneatlas"
+    url_quicklooks = (
+        f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
+    )
+    quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    requests_mock.get(url_quicklooks, content=open(quicklook_file, "rb").read())
+
     with tempfile.TemporaryDirectory() as tempdir:
-        provider = "oneatlas"
-        with requests_mock.Mocker() as m:
-            url = f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
-            quicklook_file = (
-                Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-            )
-            m.get(url, content=open(quicklook_file, "rb").read())
-
-            out_paths = catalog_mock.download_quicklooks(
-                image_ids=[sel_id], sensor="pleiades", output_directory=tempdir
-            )
-
+        out_paths = catalog_mock.download_quicklooks(
+            image_ids=[sel_id], sensor="pleiades", output_directory=tempdir
+        )
         assert len(out_paths) == 1
         assert Path(out_paths[0]).exists()
         assert Path(out_paths[0]).suffix == ".jpg"
 
 
-def test_download_no_quicklook(catalog_mock):
+def test_download_no_quicklook(catalog_mock, requests_mock):
     sel_id = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
+    provider = "sobloo-image"
+    url_quicklook = (
+        f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
+    )
+    requests_mock.get(url_quicklook, status_code=404)
+
     with tempfile.TemporaryDirectory() as tempdir:
-        provider = "sobloo-image"
-        with requests_mock.Mocker() as m:
-            url = f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
-            m.get(url, status_code=404)
-
-            out_paths = catalog_mock.download_quicklooks(
-                image_ids=[sel_id], sensor="sentinel5p", output_directory=tempdir
-            )
-
+        out_paths = catalog_mock.download_quicklooks(
+            image_ids=[sel_id], sensor="sentinel5p", output_directory=tempdir
+        )
         assert len(out_paths) == 0
 
 
-def test_download_1_quicklook_1_no_quicklook(catalog_mock):
+def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
     sel_id_no = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
+    provider = "sobloo-image"
+    url_no_quicklook = f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id_no}/quicklook"
+    requests_mock.get(url_no_quicklook, status_code=404)
+
+    url_quicklook = (
+        f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
+    )
+    quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    requests_mock.get(url_quicklook, content=open(quicklook_file, "rb").read())
+
     with tempfile.TemporaryDirectory() as tempdir:
-        provider = "sobloo-image"
-        with requests_mock.Mocker() as m:
-            url_no = f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id_no}/quicklook"
-            m.get(url_no, status_code=404)
-
-            url = f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
-            quicklook_file = (
-                Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-            )
-            m.get(url, content=open(quicklook_file, "rb").read())
-
-            out_paths = catalog_mock.download_quicklooks(
-                image_ids=[sel_id, sel_id_no],
-                sensor="sentinel5p",
-                output_directory=tempdir,
-            )
-
+        out_paths = catalog_mock.download_quicklooks(
+            image_ids=[sel_id, sel_id_no],
+            sensor="sentinel5p",
+            output_directory=tempdir,
+        )
         assert len(out_paths) == 1
         assert Path(out_paths[0]).exists()
         assert Path(out_paths[0]).suffix == ".jpg"

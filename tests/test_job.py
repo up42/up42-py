@@ -208,9 +208,9 @@ def test_job_download_result_dimap_live(auth_live):
         print(out_files)
         assert Path(out_files[0]).exists()
         assert Path(out_files[20]).exists()
-        assert Path(out_files[1]).exists()
-        assert Path(out_files[1]).name == "data.json"
-        assert len(out_files) == 44
+        assert Path(out_files[-1]).exists()
+        assert Path(out_files[-1]).name == "data.json"
+        assert len(out_files) == 54
 
 
 @pytest.mark.skip

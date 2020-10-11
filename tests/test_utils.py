@@ -266,28 +266,27 @@ def test_fc_to_query_geometry_raises_with_not_accepted():
         fc_to_query_geometry(ring, geometry_operation="bbox")
 
 
-def test_download_result_from_gcs():
+def test_download_result_from_gcs(requests_mock):
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
-    with requests_mock.Mocker() as m:
-        out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-        out_tgz_file = open(out_tgz, "rb")
-        m.get(
-            url=cloud_storage_url,
-            content=out_tgz_file.read(),
+    out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+    out_tgz_file = open(out_tgz, "rb")
+    requests_mock.get(
+        url=cloud_storage_url,
+        content=out_tgz_file.read(),
+    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        with open(Path(tempdir) / "dummy.txt", "w") as fp:
+            fp.write("dummy")
+        out_files = download_results_from_gcs(
+            download_url=cloud_storage_url,
+            output_directory=tempdir,
         )
-        with tempfile.TemporaryDirectory() as tempdir:
-            with open(Path(tempdir) / "dummy.txt", "w") as fp:
-                fp.write("dummy")
-            out_files = download_results_from_gcs(
-                download_url=cloud_storage_url,
-                output_directory=tempdir,
-            )
 
-            for file in out_files:
-                assert Path(file).exists()
-            assert len(out_files) == 2
-            assert not (Path(tempdir) / "output").exists()
+        for file in out_files:
+            assert Path(file).exists()
+        assert len(out_files) == 2
+        assert not (Path(tempdir) / "output").exists()
 
 
 def test_map_images_2_scenes():
