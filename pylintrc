@@ -20,7 +20,8 @@ disable=
     fixme,
     duplicate-code,
     logging-fstring-interpolation,
-    logging-format-interpolation
+    logging-format-interpolation,
+    unused-wildcard-import)
     
 [FORMAT]
 max-line-length=120
