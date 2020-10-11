@@ -9,6 +9,21 @@ from .fixtures import (
     project_live,
     project_mock_max_concurrent_jobs,
 )
+from .fixtures import (
+    TOKEN,
+    PROJECT_ID,
+    PROJECT_APIKEY,
+    PROJECT_NAME,
+    PROJECT_DESCRIPTION,
+    WORKFLOW_ID,
+    WORKFLOW_NAME,
+    WORKFLOW_DESCRIPTION,
+    JOB_ID,
+    JOB_ID_2,
+    JOB_NAME,
+    JOBTASK_ID,
+    JOBTASK_NAME,
+)
 
 
 def test_project_info(project_mock):
@@ -23,7 +38,7 @@ def test_create_workflow(project_mock):
     project_mock.auth.get_info = False
 
     workflow = project_mock.create_workflow(
-        name="workflow_name123", description="workflow_description123"
+        name=WORKFLOW_NAME, description=WORKFLOW_DESCRIPTION
     )
     assert isinstance(workflow, Workflow)
     assert not hasattr(workflow, "_info")
@@ -32,20 +47,20 @@ def test_create_workflow(project_mock):
 def test_create_workflow_use_existing(project_mock, requests_mock):
     url_workflow_info = (
         f"{project_mock.auth._endpoint()}/projects/"
-        f"{project_mock.project_id}/workflows/workflow_id123"
+        f"{project_mock.project_id}/workflows/{WORKFLOW_ID}"
     )
     json_workflow_info = {
         "data": {
-            "name": "workflow_name123",
-            "description": "workflow_description123",
+            "name": WORKFLOW_NAME,
+            "description": WORKFLOW_DESCRIPTION,
         },
         "error": {},
     }
     requests_mock.get(url=url_workflow_info, json=json_workflow_info)
 
     workflow = project_mock.create_workflow(
-        name="workflow_name123",
-        description="workflow_description123",
+        name=WORKFLOW_NAME,
+        description=WORKFLOW_DESCRIPTION,
         use_existing=True,
     )
     assert isinstance(workflow, Workflow)
@@ -67,10 +82,9 @@ def test_get_workflows_live(project_live):
 
 
 def test_get_jobs(project_mock, requests_mock):
-    job_id = "job_id123"
     url_job_info = (
         f"{project_mock.auth._endpoint()}/projects/"
-        f"{project_mock.project_id}/jobs/{job_id}"
+        f"{project_mock.project_id}/jobs/{JOB_ID}"
     )
     json_job_info = {"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}}
     requests_mock.get(
@@ -81,7 +95,7 @@ def test_get_jobs(project_mock, requests_mock):
     jobcollection = project_mock.get_jobs()
     assert isinstance(jobcollection.jobs, list)
     assert isinstance(jobcollection.jobs[0], Job)
-    assert jobcollection.jobs[0].job_id == job_id
+    assert jobcollection.jobs[0].job_id == JOB_ID
 
 
 @pytest.mark.skip

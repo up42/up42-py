@@ -13,12 +13,27 @@ from .fixtures import (
     auth_mock,
     auth_live,
 )
+from .fixtures import (
+    TOKEN,
+    PROJECT_ID,
+    PROJECT_APIKEY,
+    PROJECT_NAME,
+    PROJECT_DESCRIPTION,
+    WORKFLOW_ID,
+    WORKFLOW_NAME,
+    WORKFLOW_DESCRIPTION,
+    JOB_ID,
+    JOB_ID_2,
+    JOB_NAME,
+    JOBTASK_ID,
+    JOBTASK_NAME,
+)
 
 
 def test_auth_kwargs():
     auth = Auth(
-        project_id="project_id123",
-        project_api_key="project_apikey123",
+        project_id=PROJECT_ID,
+        project_api_key=PROJECT_APIKEY,
         env="abc",
         authenticate=False,
         retry=False,
@@ -58,7 +73,7 @@ def test_endpoint(auth_mock_no_request):
 
 def test_get_token_project(auth_mock_no_request):
     auth_mock_no_request._get_token_project()
-    assert auth_mock_no_request.token == "token_789"
+    assert auth_mock_no_request.token == TOKEN
 
 
 @pytest.mark.live

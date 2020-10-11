@@ -19,6 +19,21 @@ from .fixtures import (
     jobs_live,
     jobcollection_live,
 )
+from .fixtures import (
+    TOKEN,
+    PROJECT_ID,
+    PROJECT_APIKEY,
+    PROJECT_NAME,
+    PROJECT_DESCRIPTION,
+    WORKFLOW_ID,
+    WORKFLOW_NAME,
+    WORKFLOW_DESCRIPTION,
+    JOB_ID,
+    JOB_ID_2,
+    JOB_NAME,
+    JOBTASK_ID,
+    JOBTASK_NAME,
+)
 
 
 def test_jobcollection(jobcollection_single_mock):
@@ -33,14 +48,14 @@ def test_job_iterator(jobcollection_multiple_mock, jobcollection_empty_mock):
     worker = lambda job: 1
     res = jobcollection_multiple_mock.apply(worker, only_succeeded=False)
     assert len(res) == 2
-    assert res["jobid_123"] == 1
-    assert res["jobid_456"] == 1
+    assert res[JOB_ID] == 1
+    assert res[JOB_ID_2] == 1
 
     worker = lambda job, add: add
     res = jobcollection_multiple_mock.apply(worker, add=5, only_succeeded=False)
     assert len(res) == 2
-    assert res["jobid_123"] == 5
-    assert res["jobid_456"] == 5
+    assert res[JOB_ID] == 5
+    assert res[JOB_ID_2] == 5
 
     with requests_mock.Mocker() as m:
         status = ["FAILED", "SUCCEEDED"]
@@ -178,10 +193,9 @@ def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
                 merged_data_json = geojson.load(src)
                 print(merged_data_json)
                 assert len(merged_data_json.features) == 2
-                assert merged_data_json.features[0].properties["job_id"] == "jobid_123"
+                assert merged_data_json.features[0].properties["job_id"] == JOB_ID
                 assert (
-                    "jobid_123"
-                    in merged_data_json.features[0].properties["up42.data_path"]
+                    JOB_ID in merged_data_json.features[0].properties["up42.data_path"]
                 )
                 assert (
                     tmpdir
@@ -191,7 +205,7 @@ def test_jobcollection_download_results_merged(jobcollection_multiple_mock):
 
 def test_jobcollection_subscripted(jobcollection_single_mock):
     assert isinstance(jobcollection_single_mock[0], Job)
-    assert jobcollection_single_mock[0].job_id == "jobid_123"
+    assert jobcollection_single_mock[0].job_id == JOB_ID
 
 
 def test_jobcollection_iterator(jobcollection_multiple_mock):

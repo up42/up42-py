@@ -14,6 +14,26 @@ from .context import (
     Catalog,
 )
 
+
+TOKEN = "token_123"
+
+PROJECT_ID = "project_id_123"
+PROJECT_APIKEY = "project_apikey_123"
+PROJECT_NAME = "project_name_123"
+PROJECT_DESCRIPTION = "project_description_123"
+
+WORKFLOW_ID = "workflow_id_123"
+WORKFLOW_NAME = "workflow_name_123"
+WORKFLOW_DESCRIPTION = "workflow_description_123"
+
+JOB_ID = "job_id_123"
+JOB_ID_2 = "jobid_456"
+JOB_NAME = "job_name_123"
+
+JOBTASK_ID = "jobtask_id_123"
+JOBTASK_NAME = "jobtask_name_123"
+
+
 json_workflow_tasks = {
     "data": [
         {
@@ -83,19 +103,18 @@ json_blocks = {
 @pytest.fixture()
 def auth_mock_no_request(requests_mock):
     auth = Auth(
-        project_id="project_id123",
-        project_api_key="project_apikey123",
+        project_id=PROJECT_ID,
+        project_api_key=PROJECT_APIKEY,
         authenticate=False,
         retry=False,
         get_info=False,
     )
 
     url_get_token = (
-        f"https://{auth.project_id}:"
-        f"{auth.project_api_key}@api.up42."
+        f"https://{auth.project_id}:{auth.project_api_key}@api.up42."
         f"{auth.env}/oauth/token"
     )
-    json_get_token = {"data": {"accessToken": "token_789"}}
+    json_get_token = {"data": {"accessToken": TOKEN}}
     requests_mock.post(
         url=url_get_token,
         json=json_get_token,
@@ -107,15 +126,15 @@ def auth_mock_no_request(requests_mock):
 @pytest.fixture()
 def auth_mock(requests_mock):
     # token for initial authentication
-    url_get_token = "https://project_id123:project_apikey123@api.up42.com/oauth/token"
-    json_get_token = {"data": {"accessToken": "token_789"}}
+    url_get_token = f"https://{PROJECT_ID}:{PROJECT_APIKEY}@api.up42.com/oauth/token"
+    json_get_token = {"data": {"accessToken": TOKEN}}
     requests_mock.post(
         url=url_get_token,
         json=json_get_token,
     )
     auth = Auth(
-        project_id="project_id123",
-        project_api_key="project_apikey123",
+        project_id=PROJECT_ID,
+        project_api_key=PROJECT_APIKEY,
         authenticate=True,
         retry=False,
         get_info=True,
@@ -155,7 +174,7 @@ def project_mock(auth_mock, requests_mock):
     )
     json_create_workflow = {
         "error": {},
-        "data": {"id": "workflow_id123", "displayId": "workflow_displayId123"},
+        "data": {"id": WORKFLOW_ID, "displayId": "workflow_displayId_123"},
     }
     requests_mock.post(url=url_create_workflow, json=json_create_workflow)
 
@@ -164,18 +183,18 @@ def project_mock(auth_mock, requests_mock):
         f"{project.auth._endpoint()}/projects/" f"{project.project_id}/workflows"
     )
     json_get_workflows = {
-        "data": [{"id": "workflow_id123"}, {"id": "workflow_id123"}],
+        "data": [{"id": WORKFLOW_ID}, {"id": WORKFLOW_ID}],
         "error": {},
     }  # Same workflow_id to not have to get multiple .info
     requests_mock.get(url=url_get_workflows, json=json_get_workflows)
 
     # get_jobs. Requires job_info mock.
-    job_id = "job_id123"
+
     url_get_jobs = f"{project.auth._endpoint()}/projects/{project.project_id}/jobs"
     json_get_jobs = {
         "data": [
             {
-                "id": job_id,
+                "id": JOB_ID,
                 "status": "SUCCEEDED",
                 "inputs": {},
                 "error": {},
@@ -210,19 +229,16 @@ def project_live(auth_live):
 
 @pytest.fixture()
 def workflow_mock(auth_mock, requests_mock):
-    workflow_name = "workflow_name_123"
-    workflow_id = "workflow_id123"
-
     # info
     url_workflow_info = (
         f"{auth_mock._endpoint()}/projects/"
         f"{auth_mock.project_id}/workflows/"
-        f"{workflow_id}"
+        f"{WORKFLOW_ID}"
     )
     json_workflow_info = {
         "data": {
-            "name": workflow_name,
-            "id": workflow_id,
+            "name": WORKFLOW_NAME,
+            "id": WORKFLOW_ID,
             "xyz": 789,
         },
         "error": {},
@@ -231,7 +247,7 @@ def workflow_mock(auth_mock, requests_mock):
 
     workflow = Workflow(
         auth=auth_mock,
-        workflow_id=workflow_id,
+        workflow_id=WORKFLOW_ID,
         project_id=auth_mock.project_id,
     )
 
@@ -245,8 +261,7 @@ def workflow_mock(auth_mock, requests_mock):
     # get_compatible_blocks
     url_compatible_blocks = (
         f"{workflow.auth._endpoint()}/projects/{workflow.project_id}/"
-        f"workflows/{workflow.workflow_id}/"
-        f"compatible-blocks?parentTaskName=tiling:1"
+        f"workflows/{workflow.workflow_id}/compatible-blocks?parentTaskName=tiling:1"
     )
     json_compatible_blocks = {
         "data": {
@@ -260,13 +275,11 @@ def workflow_mock(auth_mock, requests_mock):
     requests_mock.get(url=url_compatible_blocks, json=json_compatible_blocks)
 
     # run_job
-    job_name = f"{workflow._info['name']}_py"
-    job_id = workflow._info["id"]
     url_run_job = (
         f"{workflow.auth._endpoint()}/projects/{workflow.project_id}/"
-        f"workflows/{workflow.workflow_id}/jobs?name={job_name}"
+        f"workflows/{workflow.workflow_id}/jobs?name={JOB_NAME + '_py'}"
     )
-    json_run_job = {"data": {"id": job_id}}
+    json_run_job = {"data": {"id": JOB_ID}}
     requests_mock.post(url=url_run_job, json=json_run_job)
 
     # get_jobs
@@ -274,7 +287,7 @@ def workflow_mock(auth_mock, requests_mock):
     json_get_jobs = {
         "data": [
             {
-                "id": job_id,
+                "id": JOB_ID,
                 "status": "SUCCEEDED",
                 "inputs": {},
                 "error": {},
@@ -282,7 +295,7 @@ def workflow_mock(auth_mock, requests_mock):
                 "workflowId": "123456",
             },
             {
-                "id": job_id,
+                "id": JOB_ID,
                 "status": "SUCCEEDED",
                 "inputs": {},
                 "error": {},
@@ -308,42 +321,38 @@ def workflow_live(auth_live):
 
 @pytest.fixture()
 def job_mock(auth_mock):
-    job_id = "jobid_123"
-
     with requests_mock.Mocker() as m:
         url_job_info = (
-            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
+            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
         )
         m.get(
             url=url_job_info,
             json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
         )
 
-        job = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id)
+        job = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID)
     return job
 
 
 @pytest.fixture()
 def jobs_mock(auth_mock):
     with requests_mock.Mocker() as m:
-        job_id = "jobid_123"
         url_job_info = (
-            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
+            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
         )
         m.get(
             url=url_job_info,
             json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
         )
 
-        job1 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id)
+        job1 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID)
 
-        job_id = "jobid_456"
         url_job_info = (
-            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
+            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID_2}"
         )
         m.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
 
-        job2 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=job_id)
+        job2 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID_2)
     return [job1, job2]
 
 
@@ -402,12 +411,9 @@ def jobs_live(auth_live):
 
 @pytest.fixture()
 def jobtask_mock(auth_mock):
-    jobtask_id = "jobtaskid_123"
-    job_id = "jobid_123"
-
     with requests_mock.Mocker() as m:
         url_jobtask_info = (
-            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
+            f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
             f"/tasks/"
         )
         m.get(url=url_jobtask_info, json={"data": {"xyz": 789}, "error": {}})
@@ -415,8 +421,8 @@ def jobtask_mock(auth_mock):
         jobtask = JobTask(
             auth=auth_mock,
             project_id=auth_mock.project_id,
-            job_id=job_id,
-            jobtask_id=jobtask_id,
+            job_id=JOB_ID,
+            jobtask_id=JOBTASK_ID,
         )
     return jobtask
 

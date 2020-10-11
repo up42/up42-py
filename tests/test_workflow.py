@@ -24,6 +24,21 @@ from .fixtures import (
     project_mock,
     project_mock_max_concurrent_jobs,
 )
+from .fixtures import (
+    TOKEN,
+    PROJECT_ID,
+    PROJECT_APIKEY,
+    PROJECT_NAME,
+    PROJECT_DESCRIPTION,
+    WORKFLOW_ID,
+    WORKFLOW_NAME,
+    WORKFLOW_DESCRIPTION,
+    JOB_ID,
+    JOB_ID_2,
+    JOB_NAME,
+    JOBTASK_ID,
+    JOBTASK_NAME,
+)
 import up42
 
 
@@ -306,16 +321,16 @@ def test_construct_parameters_parallel_scene_ids(workflow_mock):
 
 def test_run_job(workflow_mock, job_mock, requests_mock):
     # job info
-    requests_mock.get(
-        url=f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/"
-        f"jobs/{job_mock.job_id}",
-        json={"data": {}},
+    url_job_info = (
+        f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/"
+        f"jobs/{job_mock.job_id}"
     )
+    requests_mock.get(url=url_job_info, json={"data": {}})
 
     input_parameters_json = (
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
-    job = workflow_mock.run_job(input_parameters_json)
+    job = workflow_mock.run_job(input_parameters_json, name=JOB_NAME)
     assert isinstance(job, Job)
     assert job.job_id == job_mock.job_id
 
@@ -331,7 +346,7 @@ def test_helper_run_parallel_jobs_dry_run(
 
     example_response = {
         "error": None,
-        "data": {"id": "jobid_123", "status": "SUCCEEDED", "mode": "DRY_RUN"},
+        "data": {"id": JOB_ID, "status": "SUCCEEDED", "mode": "DRY_RUN"},
     }
 
     with project_mock_max_concurrent_jobs(10) as m:
@@ -369,7 +384,7 @@ def test_helper_run_parallel_jobs_all_fails(
 
     response_failed = {
         "error": None,
-        "data": {"id": "jobid_123", "status": "FAILED", "mode": "DRY_RUN"},
+        "data": {"id": JOB_ID, "status": "FAILED", "mode": "DRY_RUN"},
     }
     with project_mock_max_concurrent_jobs(10) as m:
         for i, _ in enumerate(input_parameters_list):
@@ -417,11 +432,11 @@ def test_helper_run_parallel_jobs_one_fails(
     responses = [
         {
             "error": None,
-            "data": {"id": "jobid_123", "status": "SUCCEEDED", "mode": "DRY_RUN"},
+            "data": {"id": JOB_ID, "status": "SUCCEEDED", "mode": "DRY_RUN"},
         },
         {
             "error": None,
-            "data": {"id": "jobid_123", "status": "FAILED", "mode": "DRY_RUN"},
+            "data": {"id": JOB_ID, "status": "FAILED", "mode": "DRY_RUN"},
         },
     ]
 
@@ -472,7 +487,7 @@ def test_helper_run_parallel_jobs_default(
     ] * 10
     example_response = {
         "error": None,
-        "data": {"id": "jobid_123", "status": "SUCCEEDED", "mode": "DEFAULT"},
+        "data": {"id": JOB_ID, "status": "SUCCEEDED", "mode": "DEFAULT"},
     }
 
     with project_mock_max_concurrent_jobs(10) as m:
@@ -508,7 +523,7 @@ def test_helper_run_parallel_jobs_fail_concurrent_jobs(
     ] * 10
     example_response = {
         "error": None,
-        "data": {"id": "jobid_123", "status": "SUCCEEDED", "mode": "DEFAULT"},
+        "data": {"id": JOB_ID, "status": "SUCCEEDED", "mode": "DEFAULT"},
     }
 
     with project_mock_max_concurrent_jobs(1) as m:
@@ -615,21 +630,19 @@ def test_run_job_live(workflow_live):
     input_parameters_json = (
         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
     )
-    jb = workflow_live.run_job(input_parameters_json, track_status=True, name="aa")
+    jb = workflow_live.run_job(input_parameters_json, track_status=True, name=JOB_NAME)
     assert isinstance(jb, Job)
     with open(input_parameters_json) as src:
         assert jb._info["inputs"] == json.load(src)
         assert jb._info["mode"] == "DEFAULT"
     assert jb.status == "SUCCEEDED"
-    assert jb._info["name"] == "aa_py"
+    assert jb._info["name"] == JOB_NAME + "_py"
 
 
 def test_get_jobs(workflow_mock, requests_mock):
-    job_id = workflow_mock._info["id"]
-
     url_job_info = (
         f"{workflow_mock.auth._endpoint()}/projects/"
-        f"{workflow_mock.project_id}/jobs/{job_id}"
+        f"{workflow_mock.project_id}/jobs/{JOB_ID}"
     )
 
     requests_mock.get(
@@ -640,7 +653,7 @@ def test_get_jobs(workflow_mock, requests_mock):
     jobcollection = workflow_mock.get_jobs()
     assert isinstance(jobcollection, JobCollection)
     assert isinstance(jobcollection.jobs[0], Job)
-    assert jobcollection.jobs[0].job_id == job_id
+    assert jobcollection.jobs[0].job_id == JOB_ID
     assert (
         len(jobcollection.jobs) == 1
     )  # Filters out the job that is not associated with the workflow object
