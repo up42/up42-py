@@ -44,8 +44,9 @@ def initialize_project() -> "Project":
     """
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    logger.info(f"Working on Project with project_id {_auth.project_id}")
-    return Project(auth=_auth, project_id=str(_auth.project_id))
+    project = Project(auth=_auth, project_id=str(_auth.project_id))
+    logger.info(f"Initialized {project}")
+    return project
 
 
 def initialize_catalog() -> "Catalog":
@@ -66,9 +67,11 @@ def initialize_workflow(workflow_id: str) -> "Workflow":
     """
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    return Workflow(
+    workflow = Workflow(
         auth=_auth, workflow_id=workflow_id, project_id=str(_auth.project_id)
     )
+    logger.info(f"Initialized {workflow}")
+    return workflow
 
 
 def initialize_job(job_id: str) -> "Job":
@@ -80,6 +83,7 @@ def initialize_job(job_id: str) -> "Job":
     """
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
+    logger.info(f"Initialized {job}")
     return Job(auth=_auth, job_id=job_id, project_id=str(_auth.project_id))
 
 
@@ -93,12 +97,14 @@ def initialize_jobtask(jobtask_id, job_id) -> "JobTask":
     """
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    return JobTask(
+    jobtask = JobTask(
         auth=_auth,
         jobtask_id=jobtask_id,
         job_id=job_id,
         project_id=str(_auth.project_id),
     )
+    logger.info(f"Initialized {jobtask}")
+    return jobtask
 
 
 def get_blocks(

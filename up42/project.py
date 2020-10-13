@@ -25,7 +25,13 @@ class Project(Tools):
             self._info = self.info
 
     def __repr__(self):
-        return f"Project(project_id={self.project_id}, auth={self.auth}, info={self._info})"
+        info = self.info
+        env = ", env: dev" if self.auth.env == "dev" else ""
+        return (
+            f"Project(name: {info['name']}, project_id: {self.project_id}, "
+            f"description: {info['description']}, createdAt: {info['createdAt']}"
+            f"{env})"
+        )
 
     @property
     def info(self) -> Dict:

@@ -19,11 +19,10 @@ def test_info(jobtask_mock):
             f"projects/{jobtask_mock.project_id}/jobs/"
             f"{jobtask_mock.job_id}/tasks/"
         )
-        m.get(url=url_jobtask_info, text='{"data": {"xyz":789}, "error":{}}')
+        m.get(url=url_jobtask_info, json={"data": [{"xyz": 789}], "error": {}})
         info = jobtask_mock.info
     assert isinstance(jobtask_mock, JobTask)
-    assert info["xyz"] == 789
-    assert jobtask_mock._info["xyz"] == 789
+    assert info[0]["xyz"] == 789
 
 
 def test_get_result_json(jobtask_mock):

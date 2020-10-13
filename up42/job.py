@@ -46,9 +46,15 @@ class Job(Tools):
             self._info = self.info
 
     def __repr__(self):
+        order_ids = (
+            f", order_ids: {self.order_ids}, " if self.order_ids is not None else ""
+        )
+        info = self.info
         return (
-            f"Job(job_id={self.job_id}, project_id={self.project_id}, "
-            f"order_ids={self.order_ids}, auth={self.auth}, info={self._info})"
+            f"Job(name: {info['name']}, job_id: {self.job_id}, mode: {info['mode']}, "
+            f"status: {info['status']}, startedAt: {info['startedAt']}, "
+            f"finishedAt: {info['finishedAt']}, workflow_name: {info['workflowName']}, "
+            f"{order_ids}, input_parameters: {info['inputs']}"
         )
 
     @property
@@ -357,18 +363,18 @@ class Job(Tools):
         response_json = self.auth._request(request_type="GET", url=url)
         jobtasks_json: List[Dict] = response_json["data"]
 
-        jobtasks = [
-            JobTask(
-                auth=self.auth,
-                project_id=self.project_id,
-                job_id=self.job_id,
-                jobtask_id=task["id"],
-            )
-            for task in jobtasks_json
-        ]
         if return_json:
             return jobtasks_json
         else:
+            jobtasks = [
+                JobTask(
+                    auth=self.auth,
+                    project_id=self.project_id,
+                    job_id=self.job_id,
+                    jobtask_id=task["id"],
+                )
+                for task in jobtasks_json
+            ]
             return jobtasks
 
     def get_jobtasks_results_json(self) -> Dict:
