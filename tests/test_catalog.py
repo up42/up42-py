@@ -12,7 +12,6 @@ from .fixtures import (
     catalog_mock,
     catalog_live,
 )
-import up42  # pylint: disable=wrong-import-order
 
 
 with open(

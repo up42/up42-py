@@ -19,7 +19,6 @@ from .fixtures import (
     project_mock_max_concurrent_jobs,
 )
 from .fixtures import JOB_ID, JOB_NAME, JOBTASK_ID
-import up42
 
 
 def test_workflow_info(workflow_mock):
