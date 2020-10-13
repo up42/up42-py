@@ -13,10 +13,6 @@ from .fixtures import DOWNLOAD_URL
 def test_info(jobtask_mock):
     del jobtask_mock._info
 
-    assert isinstance(jobtask_mock, JobTask)
-    assert jobtask_mock.info["xyz"] == 789
-    assert jobtask_mock._info["xyz"] == 789
-
 
 def test_get_results_json(jobtask_mock):
     results_json = jobtask_mock.get_results_json()

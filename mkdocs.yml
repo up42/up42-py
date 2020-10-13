@@ -43,6 +43,7 @@ nav:
         - Command Line Interface (CLI): cli.md
         - Command Reference: reference/cli.md
     - Code Reference:
+        - up42: reference/up42.md
         - Project: reference/project.md
         - Workflow: reference/workflow.md
         - Job: reference/job.md

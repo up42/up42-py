@@ -39,48 +39,73 @@ def authenticate(
 
 
 def initialize_project() -> "Project":
-    """Directly returns the correct Project object (has to exist on UP42)."""
+    """
+    Returns the correct Project object (has to exist on UP42).
+    """
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    logger.info(f"Working on Project with project_id {_auth.project_id}")
-    return Project(auth=_auth, project_id=str(_auth.project_id))
+    project = Project(auth=_auth, project_id=str(_auth.project_id))
+    logger.info(f"Initialized {project}")
+    return project
 
 
 def initialize_catalog() -> "Catalog":
-    """Directly returns a Catalog object."""
+    """
+    Returns a Catalog object for using the catalog search.
+    """
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
     return Catalog(auth=_auth)
 
 
-def initialize_workflow(workflow_id) -> "Workflow":
-    """Directly returns a Workflow object (has to exist on UP42)."""
+def initialize_workflow(workflow_id: str) -> "Workflow":
+    """
+    Returns a Workflow object (has to exist on UP42).
+
+    Args:
+        workflow_id: The UP42 workflow_id
+    """
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    return Workflow(
+    workflow = Workflow(
         auth=_auth, workflow_id=workflow_id, project_id=str(_auth.project_id)
     )
+    logger.info(f"Initialized {workflow}")
+    return workflow
 
 
-def initialize_job(job_id, order_ids: List[str] = None) -> "Job":
-    """Directly returns a Job object (has to exist on UP42)."""
+def initialize_job(job_id: str) -> "Job":
+    """
+    Returns a Job object (has to exist on UP42).
+
+    Args:
+        job_id: The UP42 job_id
+    """
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    return Job(
-        auth=_auth, job_id=job_id, project_id=str(_auth.project_id), order_ids=order_ids
-    )
+    job = Job(auth=_auth, job_id=job_id, project_id=str(_auth.project_id))
+    logger.info(f"Initialized {job}")
+    return job
 
 
 def initialize_jobtask(jobtask_id, job_id) -> "JobTask":
-    """Directly returns a JobTask object (has to exist on UP42)."""
+    """
+    Returns a JobTask object (has to exist on UP42).
+
+    Args:
+        jobtask_id: The UP42 jobtask_id
+        job_id: The UP42 job_id
+    """
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    return JobTask(
+    jobtask = JobTask(
         auth=_auth,
         jobtask_id=jobtask_id,
         job_id=job_id,
         project_id=str(_auth.project_id),
     )
+    logger.info(f"Initialized {jobtask}")
+    return jobtask
 
 
 def get_blocks(
@@ -147,6 +172,12 @@ def plot_results(
 
 
 def settings(log=True):
+    """
+    Configures settings about logging etc. when using the up42-py package.
+
+    Args:
+        log: Activates/deactivates logging, default True is activated logging.
+    """
     if log:
         logger.info(
             "Logging enabled (default) - use up42.settings(log=False) to disable."

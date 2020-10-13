@@ -36,6 +36,7 @@ def test_get_workflow_tasks_normal_and_basic(workflow_mock):
     assert tasks[0] == {
         "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
         "name": "sobloo-s2-l1c-aoiclipped:1",
+        "blockVersionTag": "2.2.2",
         "block": {
             "name": "sobloo-s2-l1c-aoiclipped",
             "parameters": {
@@ -50,7 +51,7 @@ def test_get_workflow_tasks_normal_and_basic(workflow_mock):
 
     tasks = workflow_mock.get_workflow_tasks(basic=True)
     assert len(tasks) == 2
-    assert tasks["sobloo-s2-l1c-aoiclipped:1"] == "c0d04ec3-98d7-4183-902f-5bcb2a176d89"
+    assert tasks["sobloo-s2-l1c-aoiclipped:1"] == "2.2.2"
 
 
 @pytest.mark.live

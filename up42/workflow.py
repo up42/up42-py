@@ -38,9 +38,12 @@ class Workflow(Tools):
             self._info = self.info
 
     def __repr__(self):
+        info = self.info
         return (
-            f"Workflow(workflow_id={self.workflow_id}, project_id={self.project_id}, "
-            f"auth={self.auth}, info={self._info})"
+            f"Workflow(name: {info['name']}, workflow_id: {self.workflow_id}, "
+            f"description: {info['description']}, createdAt: {info['createdAt']}, "
+            f"project_name: {info['name']}, "
+            f"workflow_tasks: {self.workflow_tasks}"
         )
 
     @property
@@ -55,6 +58,16 @@ class Workflow(Tools):
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
         return response_json["data"]
+
+    @property
+    def workflow_tasks(self) -> Dict[str, str]:
+        """
+        Gets the building blocks of the workflow as a dictionary with task_name : block-version
+        """
+        logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
+        workflow_tasks = self.get_workflow_tasks(basic=True)
+        logging.getLogger("up42.workflow").setLevel(logging.INFO)
+        return workflow_tasks  # type: ignore
 
     def get_compatible_blocks(self) -> Dict:
         """
@@ -81,7 +94,7 @@ class Workflow(Tools):
         Get the workflow-tasks of the workflow (Blocks in a workflow are called workflow_tasks)
 
         Args:
-            basic: If selected returns a simplified task-name : task-id` version.
+            basic: If selected returns a simplified task-name : block-version dict.
 
         Returns:
             The workflow task info.
@@ -95,7 +108,7 @@ class Workflow(Tools):
         logger.info(f"Got {len(tasks)} tasks/blocks in workflow {self.workflow_id}.")
 
         if basic:
-            return {task["name"]: task["id"] for task in tasks}
+            return {task["name"]: task["blockVersionTag"] for task in tasks}
         else:
             return tasks
 
