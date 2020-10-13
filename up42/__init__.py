@@ -83,8 +83,9 @@ def initialize_job(job_id: str) -> "Job":
     """
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
+    job = Job(auth=_auth, job_id=job_id, project_id=str(_auth.project_id))
     logger.info(f"Initialized {job}")
-    return Job(auth=_auth, job_id=job_id, project_id=str(_auth.project_id))
+    return job
 
 
 def initialize_jobtask(jobtask_id, job_id) -> "JobTask":
