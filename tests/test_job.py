@@ -234,8 +234,15 @@ def test_job_download_result(job_mock):
             for path in out_paths:
                 assert path.exists()
             assert len(out_paths) == 2
-            assert out_paths[0].name == "7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
-            assert out_paths[1].name == "data.json"
+            assert out_paths[0].name in [
+                "7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif",
+                "data.json",
+            ]
+            assert out_paths[1].name in [
+                "7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif",
+                "data.json",
+            ]
+            assert out_paths[0].name != out_paths[1]
             assert out_paths[1].parent.exists()
             assert out_paths[1].parent.is_dir()
 
