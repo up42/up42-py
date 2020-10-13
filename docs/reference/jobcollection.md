@@ -1,6 +1,6 @@
-# JobCollection class
+# JobCollection
 
-The JobCollection class provides facilities for downloading and merging
+The JobCollection object provides facilities for downloading and merging
 multiple jobs results.
 
 

@@ -1,8 +1,14 @@
-# JobTask class
+# JobTask
 
-The JobTask class provides access to the results and parameters of single
-Tasks of UP42 Jobs (each Job contains one or multiple Jobtasks, one for each
-block in the workflow).
+The JobTask object provides access to a specific intermediate result of a block in the 
+workflow. Each job contains one or multiple JobTasks, one for each block.
 
+Initialize an existing jobtask:
+
+```python
+jobtask = up42.initialize_jobtask(jobtask_id="12345", job_id="12345")
+```
+
+<br>
 
 ::: up42.jobtask.JobTask
