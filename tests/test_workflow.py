@@ -52,6 +52,7 @@ def test_get_workflow_tasks_normal_and_basic(workflow_mock):
     tasks = workflow_mock.get_workflow_tasks(basic=True)
     assert len(tasks) == 2
     assert tasks["sobloo-s2-l1c-aoiclipped:1"] == "2.2.2"
+    assert tasks["tiling:1"] == "1.0.0"
 
 
 @pytest.mark.live

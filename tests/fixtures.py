@@ -40,6 +40,7 @@ json_workflow_tasks = {
         {
             "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
             "name": "sobloo-s2-l1c-aoiclipped:1",
+            "blockVersionTag": "2.2.2",
             "block": {
                 "name": "sobloo-s2-l1c-aoiclipped",
                 "parameters": {
@@ -56,6 +57,7 @@ json_workflow_tasks = {
         {
             "id": "af626c54-156e-4f13-a743-55efd27de533",
             "name": "tiling:1",
+            "blockVersionTag": "1.0.0",
             "block": {
                 "name": "tiling",
                 "parameters": {
