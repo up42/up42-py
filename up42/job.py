@@ -363,18 +363,18 @@ class Job(Tools):
         response_json = self.auth._request(request_type="GET", url=url)
         jobtasks_json: List[Dict] = response_json["data"]
 
-        jobtasks = [
-            JobTask(
-                auth=self.auth,
-                project_id=self.project_id,
-                job_id=self.job_id,
-                jobtask_id=task["id"],
-            )
-            for task in jobtasks_json
-        ]
         if return_json:
             return jobtasks_json
         else:
+            jobtasks = [
+                JobTask(
+                    auth=self.auth,
+                    project_id=self.project_id,
+                    job_id=self.job_id,
+                    jobtask_id=task["id"],
+                )
+                for task in jobtasks_json
+            ]
             return jobtasks
 
     def get_jobtasks_results_json(self) -> Dict:
