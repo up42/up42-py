@@ -206,7 +206,7 @@ def jobtask_mock(auth_mock):
             f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{job_id}"
             f"/tasks/"
         )
-        m.get(url=url_jobtask_info, json={"data": {"xyz": 789}, "error": {}})
+        m.get(url=url_jobtask_info, json={"data": [{"xyz": 789}], "error": {}})
 
         jobtask = JobTask(
             auth=auth_mock,

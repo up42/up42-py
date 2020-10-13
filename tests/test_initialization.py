@@ -27,6 +27,8 @@ def test_initialize_object_wo_auth_raises():
         up42.initialize_jobtask(job_id="1234", jobtask_id="1234")
 
 
+# TODO: Adjust and unskip after simplification of test authentication
+@pytest.mark.skip
 def test_global_auth_initialize_objects():
     up42.authenticate(
         project_id="1234",

@@ -179,7 +179,8 @@ def test_get_jobtasks(job_mock, jobtask_mock):
             f"/tasks/"
         )
         m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
-        job_tasks = job_mock.get_jobtasks()
+        job_tasks = job_mock.get_jobtasks(return_json=False)
+        assert isinstance(job_tasks, list)
         assert isinstance(job_tasks[0], JobTask)
         assert job_tasks[0].jobtask_id == jobtask_mock.jobtask_id
 
@@ -233,8 +234,15 @@ def test_job_download_result(job_mock):
             for path in out_paths:
                 assert path.exists()
             assert len(out_paths) == 2
-            assert out_paths[0].name == "7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
-            assert out_paths[1].name == "data.json"
+            assert out_paths[0].name in [
+                "7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif",
+                "data.json",
+            ]
+            assert out_paths[1].name in [
+                "7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif",
+                "data.json",
+            ]
+            assert out_paths[0].name != out_paths[1]
             assert out_paths[1].parent.exists()
             assert out_paths[1].parent.is_dir()
 

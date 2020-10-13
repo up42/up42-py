@@ -35,9 +35,12 @@ class JobTask(Tools):
             self._info = self.info
 
     def __repr__(self):
+        info = self.info[0]
         return (
-            f"JobTask(jobtask_id={self.jobtask_id}, job={self.job_id}, "
-            f"auth={self.auth}, info={self._info})"
+            f"JobTask(name: {info['name']}, jobtask_id: {self.jobtask_id}, "
+            f"status: {info['status']}, startedAt: {info['startedAt']}, "
+            f"finishedAt: {info['finishedAt']}, job_name: {info['name']}, "
+            f"block_name: {info['block']['name']}, block_version: {info['blockVersion']}"
         )
 
     @property
