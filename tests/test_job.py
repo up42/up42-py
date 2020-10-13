@@ -179,7 +179,8 @@ def test_get_jobtasks(job_mock, jobtask_mock):
             f"/tasks/"
         )
         m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
-        job_tasks = job_mock.get_jobtasks()
+        job_tasks = job_mock.get_jobtasks(return_json=False)
+        assert isinstance(job_tasks, list)
         assert isinstance(job_tasks[0], JobTask)
         assert job_tasks[0].jobtask_id == jobtask_mock.jobtask_id
 
