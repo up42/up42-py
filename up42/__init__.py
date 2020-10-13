@@ -80,9 +80,7 @@ def initialize_job(job_id: str) -> "Job":
     """
     if _auth is None:
         raise RuntimeError("Not authenticated, call up42.authenticate() first")
-    return Job(
-        auth=_auth, job_id=job_id, project_id=str(_auth.project_id)
-    )
+    return Job(auth=_auth, job_id=job_id, project_id=str(_auth.project_id))
 
 
 def initialize_jobtask(jobtask_id, job_id) -> "JobTask":
@@ -166,7 +164,7 @@ def plot_results(
     tools.plot_results(figsize, filepaths, titles)
 
 
-def settings(log: bool=True):
+def settings(log=True):
     """
     Configures settings about logging etc. when using the up42-py package.
 
