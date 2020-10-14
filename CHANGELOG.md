@@ -15,6 +15,21 @@ pip show up42-py
 ```
 
 ## Versions
+
+### [0.12.0](https://pypi.org/project/up42-py/) (2020-10-14)
+
+- Simplify object representation to just relevant information, also simplifies logger messages.
+- Add `.info` property to all objects to get the detialed object information, deprecation process for `get_info`.
+- Add `status` property to job, jobtask and jobcollection objects. Deprecation process for `get_status`.
+- Add selection of job mode for `.get_jobs`.
+- Add description of initialization of each object to code reference.
+- Move sdk documentation to custom subdomain "sdk.up42.com".
+- Unpin geopandas version.
+- Simplify mock tests & test fixtures
+- Fix: Use correct cutoff time 23:59:59 in default datetimes.
+- Fix: Download jobtasks to respective jobtask subfolders instead of the job folder.
+
+
 ### [0.11.0](https://pypi.org/project/up42-py/) (2020-08-13)
 - Fix: Remove buffer 0 for fixing invalid geometry.
 - Add `map_quicklooks` method for visualising quicklooks interactively.
