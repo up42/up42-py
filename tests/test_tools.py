@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 import geopandas as gpd
 from mock import patch
-import requests_mock
 import pandas as pd
 
 # pylint: disable=unused-import
@@ -84,20 +83,19 @@ def test_plot_result_alternative_filepaths_and_titles(tools_mock):
     tools_mock.plot_results(filepaths=[fp_tif, fp_tif, fp_tif], titles=["a", "b", "c"])
 
 
-def test_get_blocks(tools_mock):
-    with requests_mock.Mocker() as m:
-        url_get_blocks = f"{tools_mock.auth._endpoint()}/blocks"
-        m.get(
-            url=url_get_blocks,
-            json={
-                "data": [
-                    {"id": "789-2736-212", "name": "tiling"},
-                    {"id": "789-2736-212", "name": "sharpening"},
-                ],
-                "error": {},
-            },
-        )
-        blocks = tools_mock.get_blocks()
+def test_get_blocks(tools_mock, requests_mock):
+    url_get_blocks = f"{tools_mock.auth._endpoint()}/blocks"
+    requests_mock.get(
+        url=url_get_blocks,
+        json={
+            "data": [
+                {"id": "789-2736-212", "name": "tiling"},
+                {"id": "789-2736-212", "name": "sharpening"},
+            ],
+            "error": {},
+        },
+    )
+    blocks = tools_mock.get_blocks()
     assert isinstance(blocks, dict)
     assert "tiling" in list(blocks.keys())
 
@@ -116,37 +114,33 @@ def test_get_blocks_live(tools_live):
     assert "tiling" in blocknames
 
 
-def test_get_blocks_not_basic_dataframe(tools_mock):
-    with requests_mock.Mocker() as m:
-        url_get_blocks = f"{tools_mock.auth._endpoint()}/blocks"
-        m.get(
-            url=url_get_blocks,
-            json={
-                "data": [
-                    {"id": "789-2736-212", "name": "tiling"},
-                    {"id": "789-2736-212", "name": "sharpening"},
-                ],
-                "error": {},
-            },
-        )
+def test_get_blocks_not_basic_dataframe(tools_mock, requests_mock):
+    url_get_blocks = f"{tools_mock.auth._endpoint()}/blocks"
+    json_get_blocks = {
+        "data": [
+            {"id": "789-2736-212", "name": "tiling"},
+            {"id": "789-2736-212", "name": "sharpening"},
+        ],
+        "error": {},
+    }
+    requests_mock.get(url=url_get_blocks, json=json_get_blocks)
 
-        blocks_df = tools_mock.get_blocks(basic=False, as_dataframe=True)
+    blocks_df = tools_mock.get_blocks(basic=False, as_dataframe=True)
     assert isinstance(blocks_df, pd.DataFrame)
     assert "tiling" in blocks_df["name"].to_list()
 
 
-def test_get_block_details(tools_mock):
+def test_get_block_details(tools_mock, requests_mock):
     block_id = "273612-13"
-    with requests_mock.Mocker() as m:
-        url_get_blocks_details = f"{tools_mock.auth._endpoint()}/blocks/{block_id}"
-        m.get(
-            url=url_get_blocks_details,
-            json={
-                "data": {"id": "273612-13", "name": "tiling", "createdAt": "123"},
-                "error": {},
-            },
-        )
-        details = tools_mock.get_block_details(block_id=block_id)
+    url_get_blocks_details = f"{tools_mock.auth._endpoint()}/blocks/{block_id}"
+    requests_mock.get(
+        url=url_get_blocks_details,
+        json={
+            "data": {"id": "273612-13", "name": "tiling", "createdAt": "123"},
+            "error": {},
+        },
+    )
+    details = tools_mock.get_block_details(block_id=block_id)
     assert isinstance(details, dict)
     assert details["id"] == block_id
     assert "createdAt" in details
@@ -162,16 +156,15 @@ def test_get_block_details_live(tools_live):
     assert "createdAt" in details
 
 
-def test_validate_manifest(tools_mock):
+def test_validate_manifest(tools_mock, requests_mock):
     fp = Path(__file__).resolve().parent / "mock_data/manifest.json"
-    with requests_mock.Mocker() as m:
-        url_validate_mainfest = f"{tools_mock.auth._endpoint()}/validate-schema/block"
-        m.post(
-            url=url_validate_mainfest,
-            json={"data": {"valid": True, "errors": []}, "error": {}},
-        )
+    url_validate_mainfest = f"{tools_mock.auth._endpoint()}/validate-schema/block"
+    requests_mock.post(
+        url=url_validate_mainfest,
+        json={"data": {"valid": True, "errors": []}, "error": {}},
+    )
 
-        result = tools_mock.validate_manifest(path_or_json=fp)
+    result = tools_mock.validate_manifest(path_or_json=fp)
     assert result == {"valid": True, "errors": []}
 
 

@@ -3,7 +3,6 @@ import json
 from pathlib import Path
 
 import pytest
-import requests_mock
 import requests
 
 from .context import Auth
@@ -14,12 +13,17 @@ from .fixtures import (
     auth_mock,
     auth_live,
 )
+from .fixtures import (
+    TOKEN,
+    PROJECT_ID,
+    PROJECT_APIKEY,
+)
 
 
 def test_auth_kwargs():
     auth = Auth(
-        project_id="project_id123",
-        project_api_key="project_apikey123",
+        project_id=PROJECT_ID,
+        project_api_key=PROJECT_APIKEY,
         env="abc",
         authenticate=False,
         retry=False,
@@ -58,18 +62,8 @@ def test_endpoint(auth_mock_no_request):
 
 
 def test_get_token_project(auth_mock_no_request):
-    with requests_mock.Mocker() as m:
-        url_token = (
-            f"https://{auth_mock_no_request.project_id}:"
-            f"{auth_mock_no_request.project_api_key}@api.up42."
-            f"{auth_mock_no_request.env}/oauth/token"
-        )
-        m.post(
-            url=url_token,
-            text='{"data":{"accessToken":"token_789"}}',
-        )
-        auth_mock_no_request._get_token_project()
-    assert auth_mock_no_request.token == "token_789"
+    auth_mock_no_request._get_token_project()
+    assert auth_mock_no_request.token == TOKEN
 
 
 @pytest.mark.live
@@ -92,50 +86,40 @@ def test_generate_headers(auth_mock_no_request):
     )
 
 
-def test_request_helper(auth_mock):
-    with requests_mock.Mocker() as m:
-        m.get(url="http://test.com", text='{"data": {"xyz":789}, "error":{}}')
+def test_request_helper(auth_mock, requests_mock):
+    requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
 
-        response = auth_mock._request_helper(
-            request_type="GET", url="http://test.com", data={}, querystring={}
-        )
+    response = auth_mock._request_helper(
+        request_type="GET", url="http://test.com", data={}, querystring={}
+    )
     response_json = json.loads(response.text)
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 
 
-def test_request(auth_mock):
-    with requests_mock.Mocker() as m:
-        m.get(url="http://test.com", text='{"data": {"xyz":789}, "error":{}}')
+def test_request(auth_mock, requests_mock):
+    requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
 
-        response_json = auth_mock._request(request_type="GET", url="http://test.com")
+    response_json = auth_mock._request(request_type="GET", url="http://test.com")
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 
 
-def test_request_non200_raises(auth_mock):
-    with requests_mock.Mocker() as m:
-        m.get(
-            url="http://test.com",
-            text='{"data": {}, "error":{"code":403, '
-            '"message": "some 403 error message"}}',
-            status_code=403,
-        )
+def test_request_non200_raises(auth_mock, requests_mock):
+    requests_mock.get(
+        url="http://test.com",
+        json={"data": {}, "error": {"code": 403, "message": "some 403 error message"}},
+        status_code=403,
+    )
 
-        with pytest.raises(requests.exceptions.RequestException) as e:
-            auth_mock._request(request_type="GET", url="http://test.com")
-        assert "some 403 error message!" in str(e.value)
+    with pytest.raises(requests.exceptions.RequestException) as e:
+        auth_mock._request(request_type="GET", url="http://test.com")
+    assert "some 403 error message!" in str(e.value)
 
 
-def test_request_with_retry(auth_mock):
+def test_request_with_retry(auth_mock, requests_mock):
     auth_mock.retry = True
-    with requests_mock.Mocker() as m:
-        # Retry contains getting a new token, needs to be mocked separately.
-        url_token = f"https://{auth_mock.project_id}:{auth_mock.project_api_key}@api.up42.{auth_mock.env}/oauth/token"
-        m.post(
-            url=url_token,
-            text='{"data":{"accessToken":"token_123"}}',
-        )
+    # Retry contains getting a new token, already mocked in fixture.
 
-        m.get(url="http://test.com", text='{"data": {"xyz":789}, "error":{}}')
+    requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
 
-        response_json = auth_mock._request(request_type="GET", url="http://test.com")
+    response_json = auth_mock._request(request_type="GET", url="http://test.com")
     assert response_json == {"data": {"xyz": 789}, "error": {}}
