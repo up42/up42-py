@@ -4,7 +4,7 @@ click
 tqdm
 geojson
 rasterio
-geopandas==0.7.0
+geopandas
 folium
 branca
 matplotlib
