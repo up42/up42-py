@@ -35,7 +35,7 @@ JOBTASK_ID = "jobtask_id_123"
 JOBTASK_NAME = "jobtask_name_123"
 
 
-json_workflow_tasks = {
+JSON_WORKFLOW_TASKS = {
     "data": [
         {
             "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
@@ -80,7 +80,7 @@ json_workflow_tasks = {
     "error": {},
 }
 
-json_blocks = {
+JSON_BLOCKS = {
     "data": [
         {
             "id": "4ed70368-d4e1-4462-bef6-14e768049471",
@@ -147,7 +147,7 @@ def auth_mock(requests_mock):
     url_get_blocks = f"{auth._endpoint()}/blocks"
     requests_mock.get(
         url=url_get_blocks,
-        json=json_blocks,
+        json=JSON_BLOCKS,
     )
 
     return auth
@@ -259,7 +259,7 @@ def workflow_mock(auth_mock, requests_mock):
         f"{workflow.auth._endpoint()}/projects/{workflow.auth.project_id}/workflows/"
         f"{workflow.workflow_id}/tasks"
     )
-    requests_mock.get(url=url_workflow_tasks, json=json_workflow_tasks)
+    requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
 
     # get_compatible_blocks
     url_compatible_blocks = (
