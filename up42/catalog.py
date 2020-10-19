@@ -1,3 +1,7 @@
+"""
+Catalog search functionality
+"""
+
 from pathlib import Path
 from typing import Dict, Union, List
 
