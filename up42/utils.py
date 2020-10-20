@@ -1,28 +1,20 @@
 import copy
 import logging
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Union
 from pathlib import Path
 import shutil
 import tempfile
 import tarfile
-import math
 import warnings
 import functools
 
-import folium
-from folium.plugins import Draw
 from geopandas import GeoDataFrame
-import numpy as np
 import shapely
-import rasterio
-from rasterio.plot import show
-from rasterio.vrt import WarpedVRT
-from shapely.geometry import Point, Polygon, box
+from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 import requests
 from tqdm import tqdm
-import matplotlib.pyplot as plt
 
 
 def get_logger(
@@ -169,174 +161,6 @@ def download_results_from_gcs_without_unpacking(
         f" '{output_directory}': {[Path(p).name for p in out_filepaths]}"
     )
     return out_filepaths
-
-
-def _plot_images(
-    plot_file_format: List[str],
-    figsize: Tuple[int, int] = (14, 8),
-    filepaths: List[Union[str, Path]] = None,
-    titles: List[str] = None,
-) -> None:
-    """
-    Plots image data (quicklooks or results)
-
-    Args:
-        plot_file_format: List of accepted image file formats e.g. [".tif"]
-        figsize: matplotlib figure size.
-        filepaths: Paths to images to plot. Optional, by default picks up the last
-            downloaded results.
-        titles: Optional list of titles for the subplots.
-
-    """
-    if not isinstance(filepaths, list):
-        filepaths = [filepaths]  # type: ignore
-    filepaths = [Path(path) for path in filepaths]
-
-    imagepaths = [
-        path for path in filepaths if str(path.suffix) in plot_file_format  # type: ignore
-    ]
-    if not imagepaths:
-        raise ValueError(
-            f"This function only plots files of format {plot_file_format}."
-        )
-
-    if not titles:
-        titles = [Path(fp).stem for fp in imagepaths]
-    if not isinstance(titles, list):
-        titles = [titles]  # type: ignore
-
-    if len(imagepaths) < 2:
-        nrows, ncols = 1, 1
-    else:
-        ncols = 3
-        nrows = int(math.ceil(len(imagepaths) / float(ncols)))
-
-    _, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
-    if len(imagepaths) > 1:
-        axs = axs.ravel()
-    else:
-        axs = [axs]
-
-    for idx, (fp, title) in enumerate(zip(imagepaths, titles)):
-        with rasterio.open(fp) as src:
-            img_array = src.read()[:3, :, :]
-            # TODO: Handle more band configurations.
-            # TODO: add histogram equalization?
-            show(
-                img_array,
-                transform=src.transform,
-                title=title,
-                ax=axs[idx],
-                aspect="auto",
-            )
-        axs[idx].set_axis_off()
-    plt.axis("off")
-    plt.tight_layout()
-    plt.show()
-
-
-def _map_images(
-    plot_file_format: List[str],
-    result_df: GeoDataFrame,
-    filepaths,
-    aoi=None,
-    show_images=True,
-    show_features=False,
-    name_column: str = "id",
-    save_html: Path = None,
-) -> folium.Map:
-    """
-    Displays data.json, and if available, one or multiple results geotiffs.
-
-    Args:
-        plot_file_format: List of accepted image file formats e.g. [".png"]
-        result_df: GeoDataFrame of scenes, results of catalog.search()
-        aoi: GeoDataFrame of aoi
-        filepaths: Paths to images to plot. Optional, by default picks up the last
-            downloaded results.
-        show_images: Shows images if True (default).
-        show_features: Show features if True. For quicklooks maps is set to False.
-        name_column: Name of the feature property that provides the Feature/Layer name.
-        save_html: The path for saving folium map as html file. With default None, no file is saved.
-    """
-
-    centroid = box(*result_df.total_bounds).centroid
-    m = folium_base_map(
-        lat=centroid.y,
-        lon=centroid.x,
-    )
-
-    df_bounds = result_df.bounds
-    list_bounds = df_bounds.values.tolist()
-    raster_filepaths = [
-        path for path in filepaths if Path(path).suffix in plot_file_format
-    ]
-
-    try:
-        feature_names = result_df[name_column].to_list()
-    except KeyError:
-        feature_names = [""] * len(result_df.index)
-
-    if aoi is not None:
-        folium.GeoJson(
-            aoi,
-            name="geojson",
-            style_function=_style_function,
-            highlight_function=_highlight_function,
-        ).add_to(m)
-
-    if show_features:
-        for idx, row in result_df.iterrows():  # type: ignore
-            try:
-                feature_name = row.loc[name_column]
-            except KeyError:
-                feature_name = ""
-            layer_name = f"Feature {idx+1} - {feature_name}"
-            f = folium.GeoJson(
-                row["geometry"],
-                name=layer_name,
-                style_function=_style_function,
-                highlight_function=_highlight_function,
-            )
-            folium.Popup(
-                f"{layer_name}: {row.drop('geometry', axis=0).to_json()}"
-            ).add_to(f)
-            f.add_to(m)
-
-    if show_images and raster_filepaths:
-        for idx, (raster_fp, feature_name) in enumerate(
-            zip(raster_filepaths, feature_names)
-        ):
-            with rasterio.open(raster_fp) as src:
-                if src.meta["crs"] is None:
-                    dst_array = src.read()[:3, :, :]
-                    minx, miny, maxx, maxy = list_bounds[idx]
-                else:
-                    # Folium requires 4326, streaming blocks are 3857
-                    with WarpedVRT(src, crs="EPSG:4326") as vrt:
-                        dst_array = vrt.read()[:3, :, :]
-                        minx, miny, maxx, maxy = vrt.bounds
-
-            m.add_child(
-                folium.raster_layers.ImageOverlay(
-                    np.moveaxis(np.stack(dst_array), 0, 2),
-                    bounds=[[miny, minx], [maxy, maxx]],  # different order.
-                    name=f"Image {idx + 1} - {feature_name}",
-                )
-            )
-
-    # Collapse layer control with too many features.
-    collapsed = bool(result_df.shape[0] > 4)
-    folium.LayerControl(position="bottomleft", collapsed=collapsed).add_to(m)
-
-    if save_html:
-        save_html = Path(save_html)
-        if not save_html.exists():
-            save_html.mkdir(parents=True, exist_ok=True)
-        filepath = save_html / "final_map.html"
-        with filepath.open("w") as f:
-            f.write(m._repr_html_())
-    return m
 
 
 def any_vector_to_fc(

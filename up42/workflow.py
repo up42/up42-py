@@ -24,7 +24,7 @@ from up42.utils import (
 logger = get_logger(__name__)
 
 
-class Workflow:
+class Workflow():
     def __init__(self, auth: Auth, project_id: str, workflow_id: str):
         """
         The Workflow class can query all available and spawn new jobs for an UP42
