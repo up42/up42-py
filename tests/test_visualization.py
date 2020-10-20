@@ -15,14 +15,14 @@ from .context import (
     folium_base_map,
 )
 
+poly = Polygon([(0, 0), (1, 1), (1, 0)])
+
 
 def test_folium_base_map():
     m = folium_base_map()
     assert isinstance(m, folium.Map)
     assert m.crs == "EPSG3857"
 
-
-poly = Polygon([(0, 0), (1, 1), (1, 0)])
 
 
 @patch("matplotlib.pyplot.show")

@@ -2,12 +2,10 @@ import json
 from pathlib import Path
 from typing import List, Union, Dict
 
-
 from geopandas import GeoDataFrame
 import geopandas as gpd
 import pandas as pd
 import shapely
-
 
 from up42.visualization import folium_base_map, DrawFoliumOverride
 from up42.utils import (

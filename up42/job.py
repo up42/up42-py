@@ -4,10 +4,8 @@ from time import sleep
 from typing import Dict, List, Union, Optional
 
 from geopandas import GeoDataFrame
-import geopandas as gpd
 import requests
 import requests.exceptions
-import folium
 
 from up42.auth import Auth
 from up42.jobtask import JobTask
@@ -15,7 +13,6 @@ from up42.visualization import Visualization
 from up42.utils import (
     deprecation,
     get_logger,
-    _map_images,
     download_results_from_gcs,
     download_results_from_gcs_without_unpacking,
 )

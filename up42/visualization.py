@@ -7,7 +7,6 @@ import math
 from pathlib import Path
 import warnings
 
-
 import numpy as np
 from shapely.geometry import box
 import geopandas as gpd

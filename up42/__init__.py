@@ -146,29 +146,29 @@ def draw_aoi() -> None:
     tools.draw_aoi()
 
 
-# pylint: disable=duplicate-code
-def plot_coverage(
-    scenes: GeoDataFrame,
-    aoi: GeoDataFrame = None,
-    legend_column: str = "scene_id",
-    figsize=(12, 16),
-) -> None:
-    tools = Tools(auth=_auth)
-    tools.plot_coverage(scenes, aoi, legend_column, figsize)
-
-
-def plot_quicklooks(figsize: Tuple[int, int] = (8, 8), filepaths: List = None) -> None:
-    tools = Tools(auth=_auth)
-    tools.plot_quicklooks(figsize, filepaths)
-
-
-def plot_results(
-    figsize: Tuple[int, int] = (8, 8),
-    filepaths: List[Union[str, Path]] = None,
-    titles: List[str] = None,
-) -> None:
-    tools = Tools(auth=_auth)
-    tools.plot_results(figsize, filepaths, titles)
+# # pylint: disable=duplicate-code
+# def plot_coverage(
+#     scenes: GeoDataFrame,
+#     aoi: GeoDataFrame = None,
+#     legend_column: str = "scene_id",
+#     figsize=(12, 16),
+# ) -> None:
+#     tools = Tools(auth=_auth)
+#     tools.plot_coverage(scenes, aoi, legend_column, figsize)
+#
+#
+# def plot_quicklooks(figsize: Tuple[int, int] = (8, 8), filepaths: List = None) -> None:
+#     tools = Tools(auth=_auth)
+#     tools.plot_quicklooks(figsize, filepaths)
+#
+#
+# def plot_results(
+#     figsize: Tuple[int, int] = (8, 8),
+#     filepaths: List[Union[str, Path]] = None,
+#     titles: List[str] = None,
+# ) -> None:
+#     tools = Tools(auth=_auth)
+#     tools.plot_results(figsize, filepaths, titles)
 
 
 def settings(log=True):
