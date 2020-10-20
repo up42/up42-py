@@ -14,12 +14,13 @@ from tenacity import (
     retry_if_exception_type,
 )
 
+from up42.tools import Tools
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
 
 
-class Auth:
+class Auth(Tools):
     def __init__(
         self,
         cfg_file: Union[str, Path] = None,

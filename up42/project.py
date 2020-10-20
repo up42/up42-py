@@ -8,11 +8,12 @@ from up42.job import Job
 from up42.jobcollection import JobCollection
 from up42.utils import get_logger, filter_jobs_on_mode
 from up42.workflow import Workflow
+from up42.tools import Tools
 
 logger = get_logger(__name__)
 
 
-class Project:
+class Project(Tools):
     def __init__(self, auth: Auth, project_id: str):
         """
         The Project class can query all available workflows and spawn new workflows

@@ -14,6 +14,7 @@ from tqdm import tqdm
 from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection
+from up42.tools import Tools
 from up42.utils import (
     get_logger,
     any_vector_to_fc,
@@ -24,7 +25,7 @@ from up42.utils import (
 logger = get_logger(__name__)
 
 
-class Workflow:
+class Workflow(Tools):
     def __init__(self, auth: Auth, project_id: str, workflow_id: str):
         """
         The Workflow class can query all available and spawn new jobs for an UP42
