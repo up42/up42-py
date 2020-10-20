@@ -11,7 +11,6 @@ from shapely.geometry import Point, Polygon, LinearRing
 from shapely import wkt
 
 from .context import (
-    folium_base_map,
     any_vector_to_fc,
     fc_to_query_geometry,
     download_results_from_gcs,
@@ -20,13 +19,7 @@ from .context import (
 )
 
 
-def test_folium_base_map():
-    m = folium_base_map()
-    assert isinstance(m, folium.Map)
-    assert m.crs == "EPSG3857"
 
-
-poly = Polygon([(0, 0), (1, 1), (1, 0)])
 
 
 @pytest.mark.parametrize(
