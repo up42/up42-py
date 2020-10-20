@@ -5,6 +5,7 @@ import pytest
 import geopandas as gpd
 from mock import patch
 import pandas as pd
+import requests
 
 # pylint: disable=unused-import
 from .fixtures import (
@@ -188,5 +189,5 @@ def test_validate_manifest_invalid_live(tools_live):
                 },
             }
         )
-    with pytest.raises(ValueError):
+    with pytest.raises(requests.exceptions.RequestException):
         tools_live.validate_manifest(path_or_json=mainfest_json)
