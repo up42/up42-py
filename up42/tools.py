@@ -1,22 +1,17 @@
 import json
 from pathlib import Path
-from typing import Tuple, List, Union, Dict
-import warnings
+from typing import List, Union, Dict
+
 
 from geopandas import GeoDataFrame
 import geopandas as gpd
-import matplotlib.pyplot as plt
 import pandas as pd
 import shapely
-import rasterio
-import folium
 
+
+from up42.visualization import folium_base_map, DrawFoliumOverride
 from up42.utils import (
     get_logger,
-    folium_base_map,
-    DrawFoliumOverride,
-    _plot_images,
-    _map_images,
 )
 
 try:
@@ -153,149 +148,6 @@ class Tools:
                 "Jupyter notebook!"
             )
             return m
-
-    @staticmethod
-    def plot_coverage(
-        scenes: GeoDataFrame,
-        aoi: GeoDataFrame = None,
-        legend_column: str = "scene_id",
-        figsize=(12, 16),
-    ) -> None:
-        """
-        Plots a coverage map of a dataframe with geometries e.g. the results of catalog.search())
-        Args:
-            scenes: GeoDataFrame of scenes, results of catalog.search()
-            aoi: GeoDataFrame of aoi.
-            legend_column: Dataframe column set to legend, default is "scene_id".
-                Legend entries are sorted and this determines plotting order.
-            figsize: Matplotlib figure size.
-        """
-        if legend_column not in scenes.columns:
-            legend_column = None  # type: ignore
-            logger.info(
-                "Given legend_column name not in scene dataframe, "
-                "plotting without legend."
-            )
-
-        ax = scenes.plot(
-            legend_column,
-            categorical=True,
-            figsize=figsize,
-            cmap="Set3",
-            legend=True,
-            alpha=0.7,
-            legend_kwds=dict(loc="upper left", bbox_to_anchor=(1, 1)),
-        )
-        if aoi is not None:
-            aoi.plot(color="r", ax=ax, fc="None", edgecolor="r", lw=1)
-        ax.set_axis_off()
-        plt.show()
-
-    def plot_quicklooks(
-        self,
-        figsize: Tuple[int, int] = (8, 8),
-        filepaths: List = None,
-        titles: List[str] = None,
-    ) -> None:
-        """
-        Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
-        respective object, e.g. job, catalog).
-
-        Args:
-            figsize: matplotlib figure size.
-            filepaths: Paths to images to plot. Optional, by default picks up the last
-                downloaded results.
-            titles: List of titles for the subplots, optional.
-
-        """
-        if filepaths is None:
-            if self.quicklooks is None:
-                raise ValueError("You first need to download the quicklooks!")
-            filepaths = self.quicklooks
-
-        plot_file_format = [".jpg", ".jpeg", ".png"]
-        warnings.filterwarnings(
-            "ignore", category=rasterio.errors.NotGeoreferencedWarning
-        )
-        _plot_images(
-            plot_file_format=plot_file_format,
-            figsize=figsize,
-            filepaths=filepaths,
-            titles=titles,
-        )
-
-    def map_quicklooks(
-        self,
-        scenes: GeoDataFrame,
-        aoi: GeoDataFrame = None,
-        filepaths: List = None,
-        name_column: str = "id",
-        save_html: Path = None,
-    ) -> folium.Map:
-        """
-        Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
-        respective object, e.g. job, catalog).
-
-        Args:
-            scenes: GeoDataFrame of scenes, results of catalog.search()
-            aoi: GeoDataFrame of aoi.
-            filepaths: Paths to images to plot. Optional, by default picks up the last
-                downloaded results.
-            name_column: Name of the feature property that provides the Feature/Layer name.
-            save_html: The path for saving folium map as html file. With default None, no file is saved.
-        """
-        if filepaths is None:
-            if self.quicklooks is None:
-                raise ValueError("You first need to download the quicklooks!")
-            filepaths = self.quicklooks
-
-        plot_file_format = [".jpg", ".jpeg", ".png"]
-        warnings.filterwarnings(
-            "ignore", category=rasterio.errors.NotGeoreferencedWarning
-        )
-        m = _map_images(
-            plot_file_format=plot_file_format,
-            result_df=scenes,
-            filepaths=filepaths,
-            aoi=aoi,
-            name_column=name_column,
-            save_html=save_html,
-        )
-
-        return m
-
-    def plot_results(
-        self,
-        figsize: Tuple[int, int] = (14, 8),
-        filepaths: List[Union[str, Path]] = None,
-        titles: List[str] = None,
-    ) -> None:
-        """
-        Plots the downloaded results data.
-
-        Args:
-            figsize: matplotlib figure size.
-            filepaths: Paths to images to plot. Optional, by default picks up the last
-                downloaded results.
-            titles: Optional list of titles for the subplots.
-        """
-        if filepaths is None:
-            if self.results is None:
-                raise ValueError("You first need to download the results!")
-            filepaths = self.results
-            # Unpack results path dict in case of jobcollection.
-            if isinstance(filepaths, dict):
-                filepaths = [
-                    item for sublist in list(filepaths.values()) for item in sublist  # type: ignore
-                ]
-
-        plot_file_format = [".tif"]  # TODO: Add other fileformats.
-        _plot_images(
-            plot_file_format=plot_file_format,
-            figsize=figsize,
-            filepaths=filepaths,
-            titles=titles,
-        )
 
     def get_blocks(
         self,
