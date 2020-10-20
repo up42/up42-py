@@ -1,12 +1,14 @@
 import warnings
 from pathlib import Path
-from typing import Union, Dict
+from typing import Union, Dict, Tuple, List
 import logging
 
 from geojson import FeatureCollection
+from geopandas import GeoDataFrame
 
 # pylint: disable=wrong-import-position
 from up42.tools import Tools
+from up42.viztools import VizTools
 from up42.auth import Auth
 from up42.project import Project
 from up42.workflow import Workflow
@@ -145,29 +147,28 @@ def draw_aoi() -> None:
     tools.draw_aoi()
 
 
-# # pylint: disable=duplicate-code
-# def plot_coverage(
-#     scenes: GeoDataFrame,
-#     aoi: GeoDataFrame = None,
-#     legend_column: str = "scene_id",
-#     figsize=(12, 16),
-# ) -> None:
-#     tools = Tools(auth=_auth)
-#     tools.plot_coverage(scenes, aoi, legend_column, figsize)
-#
-#
-# def plot_quicklooks(figsize: Tuple[int, int] = (8, 8), filepaths: List = None) -> None:
-#     tools = Tools(auth=_auth)
-#     tools.plot_quicklooks(figsize, filepaths)
-#
-#
-# def plot_results(
-#     figsize: Tuple[int, int] = (8, 8),
-#     filepaths: List[Union[str, Path]] = None,
-#     titles: List[str] = None,
-# ) -> None:
-#     tools = Tools(auth=_auth)
-#     tools.plot_results(figsize, filepaths, titles)
+# pylint: disable=duplicate-code
+def plot_coverage(
+    scenes: GeoDataFrame,
+    aoi: GeoDataFrame = None,
+    legend_column: str = "scene_id",
+    figsize=(12, 16),
+) -> None:
+    VizTools().plot_coverage(
+        scenes=scenes, aoi=aoi, legend_column=legend_column, figsize=figsize
+    )
+
+
+def plot_quicklooks(figsize: Tuple[int, int] = (8, 8), filepaths: List = None) -> None:
+    VizTools().plot_quicklooks(figsize=figsize, filepaths=filepaths)
+
+
+def plot_results(
+    figsize: Tuple[int, int] = (8, 8),
+    filepaths: Union[List[Union[str, Path]], Dict] = None,
+    titles: List[str] = None,
+) -> None:
+    VizTools().plot_results(figsize=figsize, filepaths=filepaths, titles=titles)
 
 
 def settings(log=True):
