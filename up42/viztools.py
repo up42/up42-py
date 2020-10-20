@@ -2,7 +2,7 @@
 Visualization tools available in various objects
 """
 
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Dict
 import math
 from pathlib import Path
 import warnings
@@ -37,21 +37,20 @@ logger = get_logger(__name__)
 
 # pylint: disable=no-member, duplicate-code
 class VizTools:
-    def __init__(self, auth=None):
+    def __init__(self):
         """
-        The tools class contains visualiazation functionality
+        Visualization functionality
         """
-        if auth:
-            self.auth = auth
         self.quicklooks = None
         self.results = None
 
     def plot_results(
         self,
-        plot_file_format: List[str] = [".tif"],
         figsize: Tuple[int, int] = (14, 8),
-        filepaths: List[Union[str, Path]] = None,
+        filepaths: Union[List[Union[str, Path]], Dict] = None,
         titles: List[str] = None,
+        # pylint: disable=dangerous-default-value
+        plot_file_format: List[str] = [".tif"],
     ) -> None:
         """
         Plots image data (quicklooks or results)
@@ -70,12 +69,8 @@ class VizTools:
             filepaths = self.results
             # Unpack results path dict in case of jobcollection.
             if isinstance(filepaths, dict):
-                filepaths = [
-                    item
-                    for sublist in list(filepaths.values())
-                    for item in sublist
-                    # type: ignore
-                ]
+                filepaths_lists = list(filepaths.values())
+                filepaths = [item for sublist in filepaths_lists for item in sublist]
 
         if not isinstance(filepaths, list):
             filepaths = [filepaths]  # type: ignore
@@ -275,10 +270,12 @@ class VizTools:
 
         # Add features to map.
         # Some blocks store vector results in an additional geojson file.
+        # pylint: disable=not-an-iterable
         json_fp = [fp for fp in self.results if fp.endswith(".geojson")]
         if json_fp:
             json_fp = json_fp[0]
         else:
+            # pylint: disable=not-an-iterable
             json_fp = [fp for fp in self.results if fp.endswith(".json")][0]
         df: GeoDataFrame = gpd.read_file(json_fp)
 
