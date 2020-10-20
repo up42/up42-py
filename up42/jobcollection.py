@@ -6,14 +6,14 @@ from geojson import FeatureCollection
 
 from up42.auth import Auth
 from up42.job import Job
-from up42.tools import Tools
+from up42.visualization import Visualization
 
 from up42.utils import get_logger, deprecation
 
 logger = get_logger(__name__)
 
 
-class JobCollection(Tools):
+class JobCollection(Visualization):
     def __init__(self, auth: Auth, project_id: str, jobs: List[Job]):
         """
         The JobCollection class provides facilities for downloading and merging

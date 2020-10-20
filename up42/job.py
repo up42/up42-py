@@ -11,7 +11,7 @@ import folium
 
 from up42.auth import Auth
 from up42.jobtask import JobTask
-from up42.tools import Tools
+from up42.visualization import Visualization
 from up42.utils import (
     deprecation,
     get_logger,
@@ -24,7 +24,7 @@ logger = get_logger(__name__)
 
 
 # pylint: disable=duplicate-code
-class Job(Tools):
+class Job(Visualization):
     def __init__(
         self,
         auth: Auth,

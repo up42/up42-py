@@ -19,9 +19,6 @@ from .context import (
 )
 
 
-
-
-
 @pytest.mark.parametrize(
     "len_fc, in_vector",
     [

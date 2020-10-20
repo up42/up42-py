@@ -6,14 +6,13 @@ from tqdm import tqdm
 from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection
-from up42.tools import Tools
 from up42.utils import get_logger, filter_jobs_on_mode
 from up42.workflow import Workflow
 
 logger = get_logger(__name__)
 
 
-class Project(Tools):
+class Project:
     def __init__(self, auth: Auth, project_id: str):
         """
         The Project class can query all available workflows and spawn new workflows

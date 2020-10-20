@@ -12,7 +12,7 @@ from geojson import Feature, FeatureCollection
 from tqdm import tqdm
 
 from up42.auth import Auth
-from up42.tools import Tools
+from up42.visualization import Visualization
 from up42.utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__)
@@ -58,7 +58,7 @@ supported_sensors = {
 }
 
 # pylint: disable=duplicate-code
-class Catalog(Tools):
+class Catalog(Visualization):
     def __init__(self, auth: Auth):
         """
         The Catalog class enables access to the UP42 catalog search. You can search
