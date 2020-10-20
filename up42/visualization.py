@@ -24,7 +24,6 @@ from up42.utils import (
 
 
 try:
-    from IPython.display import display
     from IPython import get_ipython
 
     get_ipython().run_line_magic("matplotlib", "inline")
@@ -156,8 +155,8 @@ class Visualization:
             titles=titles,
         )
 
+    @staticmethod
     def _map_images(
-        self,
         plot_file_format: List[str],
         result_df: GeoDataFrame,
         filepaths,

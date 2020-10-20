@@ -16,6 +16,9 @@ from .context import folium_base_map, Visualization
 from .fixtures import auth_mock, job_mock
 
 
+# pylint: disable=unused-argument
+
+
 def test_folium_base_map():
     m = folium_base_map()
     assert isinstance(m, folium.Map)
@@ -47,8 +50,8 @@ def test_plot_result_not_accepted_file_format_raises():
 
 @patch("matplotlib.pyplot.show")
 def test_plot_quicklooks(capture_canvas, job_mock):
-    fp_quicklook = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    job_mock.quicklook = [fp_quicklook]
+    fp_quicklooks = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    job_mock.quicklooks = [fp_quicklooks]
     job_mock.plot_quicklooks()
 
 

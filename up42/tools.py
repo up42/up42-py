@@ -13,7 +13,6 @@ from up42.utils import (
 )
 
 try:
-    from IPython.display import display
     from IPython import get_ipython
 
     get_ipython().run_line_magic("matplotlib", "inline")
@@ -136,16 +135,7 @@ class Tools:
             },
             edit_options={"polygon": {"allowIntersection": False}},
         ).add_to(m)
-
-        try:
-            assert get_ipython() is not None
-            display(m)
-        except (AssertionError, NameError):
-            logger.info(
-                "Returning folium map object. To display it directly run in a "
-                "Jupyter notebook!"
-            )
-            return m
+        return m
 
     def get_blocks(
         self,
