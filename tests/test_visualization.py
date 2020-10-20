@@ -8,6 +8,7 @@ from mock import patch
 import pandas as pd
 import rasterio
 import folium
+from shapely import wkt
 from shapely.geometry import Polygon
 import matplotlib.pyplot as plt
 
@@ -76,3 +77,76 @@ def test_plot_coverage_wrong_legend_column_ignores(capture_canvas):
         as_dataframe=True,
     )
     Visualization().plot_coverage(df, legend_column="abcdefgh")
+
+
+def test_map_images_2_scenes():
+    plot_file_format = [".jpg"]
+
+    result_csv = Path(__file__).resolve().parent / "mock_data/df_2scenes.csv"
+    result_df = pd.read_csv(result_csv)
+    result_df["geometry"] = result_df["geometry"].apply(wkt.loads)
+    gdf = gpd.GeoDataFrame(result_df, geometry="geometry")
+
+    quicklook_1 = (
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
+    )
+    quicklook_2 = (
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_f8c03432-cec1-41b7-a203-4d871a03290f.jpg"
+    )
+    filepaths = [quicklook_1, quicklook_2]
+
+    m = Visualization()._map_images(plot_file_format, gdf, filepaths)
+    m._repr_html_()
+    out = m._parent.render()
+
+    assert "Image 1 - f8c03432-cec1-41b7-a203-4d871a03290f" in out
+    assert "Image 2 - 16e18e15-c941-4aae-97cd-d67b18dc9f6e" in out
+
+
+def test_map_images_2_scenes_no_column_name():
+    plot_file_format = [".jpg"]
+
+    result_csv = Path(__file__).resolve().parent / "mock_data/df_2scenes.csv"
+    result_df = pd.read_csv(result_csv)
+    result_df["geometry"] = result_df["geometry"].apply(wkt.loads)
+    gdf = gpd.GeoDataFrame(result_df, geometry="geometry")
+
+    quicklook_1 = (
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
+    )
+    quicklook_2 = (
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_f8c03432-cec1-41b7-a203-4d871a03290f.jpg"
+    )
+    filepaths = [quicklook_1, quicklook_2]
+
+    m = Visualization()._map_images(plot_file_format, gdf, filepaths, name_column="nikoo")
+    m._repr_html_()
+    out = m._parent.render()
+
+    assert "Image 1 - " in out
+    assert "Image 2 - " in out
+
+
+def test_map_images_1_scene():
+    plot_file_format = [".jpg"]
+
+    result_csv = Path(__file__).resolve().parent / "mock_data/df_1scene.csv"
+    result_df = pd.read_csv(result_csv)
+    result_df["geometry"] = result_df["geometry"].apply(wkt.loads)
+    gdf = gpd.GeoDataFrame(result_df, geometry="geometry")
+
+    quicklook = (
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
+    )
+    filepaths = [quicklook]
+
+    m = Visualization()._map_images(plot_file_format, gdf, filepaths)
+    m._repr_html_()
+    out = m._parent.render()
+
+    assert "Image 1 - 2a581680-17e4-4a61-8aa9-9e47e1bf36bb" in out
