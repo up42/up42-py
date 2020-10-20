@@ -1,10 +1,9 @@
 import warnings
 from pathlib import Path
-from typing import List, Union, Dict, Tuple
+from typing import Union, Dict
 import logging
 
 from geojson import FeatureCollection
-from geopandas import GeoDataFrame
 
 # pylint: disable=wrong-import-position
 from up42.tools import Tools

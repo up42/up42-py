@@ -336,6 +336,7 @@ class Visualization:
         )
         return m
 
+    @staticmethod
     def plot_coverage(
         scenes: GeoDataFrame,
         aoi: GeoDataFrame = None,
