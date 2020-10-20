@@ -259,47 +259,6 @@ class Job(Visualization):
         )
         logger.info("Uploaded!")
 
-    def map_results(
-        self, show_images: bool = True, name_column: str = "uid", save_html=None
-    ) -> folium.Map:
-        """
-        Displays data.json, and if available, one or multiple results geotiffs.
-
-        Args:
-            show_images: Shows images if True (default), only features if False.
-            name_column: Name of the feature property that provides the Feature/Layer name.
-            save_html: The path for saving folium map as html file. With default None, no file is saved.
-        """
-        if self.results is None:
-            raise ValueError(
-                "You first need to download the results via job.download_results()!"
-            )
-
-        # Add features to map.
-        # Some blocks store vector results in an additional geojson file.
-        json_fp = [fp for fp in self.results if fp.endswith(".geojson")]
-        if json_fp:
-            json_fp = json_fp[0]
-        else:
-            json_fp = [fp for fp in self.results if fp.endswith(".json")][0]
-        df: GeoDataFrame = gpd.read_file(json_fp)
-
-        plot_file_format = [".tif"]
-
-        # Add image to map.
-        m = _map_images(
-            plot_file_format=plot_file_format,
-            result_df=df,
-            filepaths=self.results,
-            aoi=None,
-            show_images=show_images,
-            show_features=True,
-            name_column=name_column,
-            save_html=save_html,
-        )
-
-        return m
-
     def get_logs(
         self, as_print: bool = True, as_return: bool = False
     ) -> Optional[Dict]:
