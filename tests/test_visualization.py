@@ -1,6 +1,4 @@
-import json
 from pathlib import Path
-import warnings
 import tarfile
 from shutil import copyfile
 
@@ -8,14 +6,13 @@ import pytest
 import geopandas as gpd
 from mock import patch
 import pandas as pd
-import rasterio
 import folium
 from shapely import wkt
-from shapely.geometry import Polygon
-import matplotlib.pyplot as plt
 from folium import Map
 
 from .context import folium_base_map, Visualization
+
+# pylint: disable=unused-import,wrong-import-order
 from .fixtures import auth_mock, job_mock
 
 
@@ -26,10 +23,10 @@ def test_folium_base_map():
 
 
 @patch("matplotlib.pyplot.show")
-def test_plot_result_job(jobs_mock):
-    fp_tif = Path(__file__).resolve().parent / "mock_data/s2_128.tif"
-    jobs_mock.result = [fp_tif]
-    jobs_mock.plot_results()
+def test_plot_result_job(capture_canvas, job_mock):
+    fp_tif = Path(__file__).resolve().parent / "mock_data/s2_128.jpg"
+    job_mock.results = [fp_tif]
+    job_mock.plot_results(plot_file_format=[".jpg"])
 
 
 @patch("matplotlib.pyplot.show")
@@ -49,10 +46,10 @@ def test_plot_result_not_accepted_file_format_raises():
 
 
 @patch("matplotlib.pyplot.show")
-def test_plot_quicklooks(jobs_mock):
+def test_plot_quicklooks(capture_canvas, job_mock):
     fp_quicklook = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    jobs_mock.quicklook = [fp_quicklook]
-    jobs_mock.plot_quicklooks()
+    job_mock.quicklook = [fp_quicklook]
+    job_mock.plot_quicklooks()
 
 
 @patch("matplotlib.pyplot.show")
