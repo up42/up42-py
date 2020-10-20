@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 import warnings
+import tarfile
+from shutil import copyfile
 
 import pytest
 import geopandas as gpd
@@ -11,8 +13,10 @@ import folium
 from shapely import wkt
 from shapely.geometry import Polygon
 import matplotlib.pyplot as plt
+from folium import Map
 
 from .context import folium_base_map, Visualization
+from .fixtures import auth_mock, job_mock
 
 
 def test_folium_base_map():
@@ -123,7 +127,9 @@ def test_map_images_2_scenes_no_column_name():
     )
     filepaths = [quicklook_1, quicklook_2]
 
-    m = Visualization()._map_images(plot_file_format, gdf, filepaths, name_column="nikoo")
+    m = Visualization()._map_images(
+        plot_file_format, gdf, filepaths, name_column="nikoo"
+    )
     m._repr_html_()
     out = m._parent.render()
 
@@ -150,3 +156,35 @@ def test_map_images_1_scene():
     out = m._parent.render()
 
     assert "Image 1 - 2a581680-17e4-4a61-8aa9-9e47e1bf36bb" in out
+
+
+def test_map_results(job_mock):
+    fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+    with tarfile.open(fp_tgz) as tar:
+        tar.extractall(fp_tgz.parent)
+    fp_tif = (
+        fp_tgz.parent
+        / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    )
+    fp_data_json = fp_tgz.parent / "output/data.json"
+
+    job_mock.results = [str(fp_tif), str(fp_data_json)]
+    map_object = job_mock.map_results()
+    assert isinstance(map_object, Map)
+
+
+def test_map_results_additional_geojson(job_mock):
+    fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+    with tarfile.open(fp_tgz) as tar:
+        tar.extractall(fp_tgz.parent)
+    fp_tif = (
+        fp_tgz.parent
+        / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    )
+    fp_data_json = fp_tgz.parent / "output/data.json"
+    fp_data_geojson = fp_tgz.parent / "output/additional_vector_file.geojson"
+    copyfile(fp_data_json, fp_data_geojson)
+
+    job_mock.results = [str(fp_tif), str(fp_data_json), str(fp_data_geojson)]
+    map_object = job_mock.map_results()
+    assert isinstance(map_object, Map)
