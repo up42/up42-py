@@ -10,7 +10,7 @@ import requests.exceptions
 from up42.auth import Auth
 from up42.jobtask import JobTask
 from up42.tools import Tools
-from up42.visualization import Visualization
+from up42.viztools import VizTools
 from up42.utils import (
     deprecation,
     get_logger,
@@ -22,7 +22,7 @@ logger = get_logger(__name__)
 
 
 # pylint: disable=duplicate-code
-class Job(Visualization, Tools):
+class Job(VizTools, Tools):
     def __init__(
         self,
         auth: Auth,

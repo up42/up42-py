@@ -7,7 +7,7 @@ import geopandas as gpd
 import pandas as pd
 import shapely
 
-from up42.visualization import folium_base_map, DrawFoliumOverride
+from up42.viztools import folium_base_map, DrawFoliumOverride
 from up42.utils import (
     get_logger,
 )

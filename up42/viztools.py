@@ -36,7 +36,7 @@ logger = get_logger(__name__)
 
 
 # pylint: disable=no-member, duplicate-code
-class Visualization:
+class VizTools:
     def __init__(self, auth=None):
         """
         The tools class contains visualiazation functionality

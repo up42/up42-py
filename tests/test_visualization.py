@@ -10,7 +10,7 @@ import folium
 from shapely import wkt
 from folium import Map
 
-from .context import folium_base_map, Visualization
+from .context import folium_base_map, VizTools
 
 # pylint: disable=unused-import,wrong-import-order
 from .fixtures import auth_mock, job_mock
@@ -35,7 +35,7 @@ def test_plot_result_job(capture_canvas, job_mock):
 @patch("matplotlib.pyplot.show")
 def test_plot_result_alternative_filepaths_and_titles(capture_canvas):
     fp_tif = Path(__file__).resolve().parent / "mock_data/s2_128.jpg"
-    Visualization().plot_results(
+    VizTools().plot_results(
         filepaths=[fp_tif, fp_tif, fp_tif],
         titles=["a", "b", "c"],
         plot_file_format=[".jpg"],
@@ -45,7 +45,7 @@ def test_plot_result_alternative_filepaths_and_titles(capture_canvas):
 def test_plot_result_not_accepted_file_format_raises():
     filepaths = [Path("abc/123.hdf", "abc/123.json")]
     with pytest.raises(ValueError):
-        Visualization().plot_results(filepaths=filepaths)
+        VizTools().plot_results(filepaths=filepaths)
 
 
 @patch("matplotlib.pyplot.show")
@@ -58,9 +58,7 @@ def test_plot_quicklooks(capture_canvas, job_mock):
 @patch("matplotlib.pyplot.show")
 def test_plot_quicklooks_alternative_filepaths(capture_canvas):
     fp_quicklook = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    Visualization().plot_quicklooks(
-        filepaths=[fp_quicklook, fp_quicklook, fp_quicklook]
-    )
+    VizTools().plot_quicklooks(filepaths=[fp_quicklook, fp_quicklook, fp_quicklook])
 
 
 @patch("matplotlib.pyplot.show")
@@ -70,7 +68,7 @@ def test_plot_coverage(capture_canvas):
         / "mock_data/search_results_limited_columns.geojson",
         as_dataframe=True,
     )
-    Visualization().plot_coverage(df)
+    VizTools().plot_coverage(df)
 
 
 @patch("matplotlib.pyplot.show")
@@ -80,7 +78,7 @@ def test_plot_coverage_wrong_legend_column_ignores(capture_canvas):
         / "mock_data/search_results_limited_columns.geojson",
         as_dataframe=True,
     )
-    Visualization().plot_coverage(df, legend_column="abcdefgh")
+    VizTools().plot_coverage(df, legend_column="abcdefgh")
 
 
 def test_map_images_2_scenes():
@@ -101,7 +99,7 @@ def test_map_images_2_scenes():
     )
     filepaths = [quicklook_1, quicklook_2]
 
-    m = Visualization()._map_images(plot_file_format, gdf, filepaths)
+    m = VizTools()._map_images(plot_file_format, gdf, filepaths)
     m._repr_html_()
     out = m._parent.render()
 
@@ -127,9 +125,7 @@ def test_map_images_2_scenes_no_column_name():
     )
     filepaths = [quicklook_1, quicklook_2]
 
-    m = Visualization()._map_images(
-        plot_file_format, gdf, filepaths, name_column="nikoo"
-    )
+    m = VizTools()._map_images(plot_file_format, gdf, filepaths, name_column="nikoo")
     m._repr_html_()
     out = m._parent.render()
 
@@ -151,7 +147,7 @@ def test_map_images_1_scene():
     )
     filepaths = [quicklook]
 
-    m = Visualization()._map_images(plot_file_format, gdf, filepaths)
+    m = VizTools()._map_images(plot_file_format, gdf, filepaths)
     m._repr_html_()
     out = m._parent.render()
 

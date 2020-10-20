@@ -6,14 +6,14 @@ from tqdm import tqdm
 
 from up42.auth import Auth
 from up42.tools import Tools
-from up42.visualization import Visualization
+from up42.viztools import VizTools
 from up42.utils import get_logger, download_results_from_gcs
 
 logger = get_logger(__name__)
 
 
 # pylint: disable=duplicate-code
-class JobTask(Visualization, Tools):
+class JobTask(VizTools, Tools):
     def __init__(
         self,
         auth: Auth,
