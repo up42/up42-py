@@ -14,22 +14,24 @@ from .context import (
     any_vector_to_fc,
     fc_to_query_geometry,
     download_results_from_gcs,
-    _map_images,
     filter_jobs_on_mode,
 )
+
+
+POLY = Polygon([(0, 0), (1, 1), (1, 0)])
 
 
 @pytest.mark.parametrize(
     "len_fc, in_vector",
     [
         (1, Point((10, 6))),
-        (1, poly),
+        (1, POLY),
         (
             1,
             gpd.GeoDataFrame(
                 pd.DataFrame([0], columns=["id"]),
                 crs={"init": "epsg:4326"},
-                geometry=[poly],
+                geometry=[POLY],
             ),
         ),
         (
@@ -37,7 +39,7 @@ from .context import (
             gpd.GeoDataFrame(
                 pd.DataFrame([0, 1], columns=["id"]),
                 crs={"init": "epsg:4326"},
-                geometry=[poly, poly],
+                geometry=[POLY, POLY],
             ),
         ),
         (1, [0.0, 0.0, 1.0, 1.0]),

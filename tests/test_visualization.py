@@ -13,8 +13,6 @@ import matplotlib.pyplot as plt
 
 from .context import folium_base_map, Visualization
 
-poly = Polygon([(0, 0), (1, 1), (1, 0)])
-
 
 def test_folium_base_map():
     m = folium_base_map()
