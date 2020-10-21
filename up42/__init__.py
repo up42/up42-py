@@ -1,6 +1,6 @@
 import warnings
 from pathlib import Path
-from typing import List, Union, Dict, Tuple
+from typing import Union, Dict, Tuple, List
 import logging
 
 from geojson import FeatureCollection
@@ -8,6 +8,7 @@ from geopandas import GeoDataFrame
 
 # pylint: disable=wrong-import-position
 from up42.tools import Tools
+from up42.viztools import VizTools
 from up42.auth import Auth
 from up42.project import Project
 from up42.workflow import Workflow
@@ -153,22 +154,21 @@ def plot_coverage(
     legend_column: str = "scene_id",
     figsize=(12, 16),
 ) -> None:
-    tools = Tools(auth=_auth)
-    tools.plot_coverage(scenes, aoi, legend_column, figsize)
+    VizTools().plot_coverage(
+        scenes=scenes, aoi=aoi, legend_column=legend_column, figsize=figsize
+    )
 
 
 def plot_quicklooks(figsize: Tuple[int, int] = (8, 8), filepaths: List = None) -> None:
-    tools = Tools(auth=_auth)
-    tools.plot_quicklooks(figsize, filepaths)
+    VizTools().plot_quicklooks(figsize=figsize, filepaths=filepaths)
 
 
 def plot_results(
     figsize: Tuple[int, int] = (8, 8),
-    filepaths: List[Union[str, Path]] = None,
+    filepaths: Union[List[Union[str, Path]], Dict] = None,
     titles: List[str] = None,
 ) -> None:
-    tools = Tools(auth=_auth)
-    tools.plot_results(figsize, filepaths, titles)
+    VizTools().plot_results(figsize=figsize, filepaths=filepaths, titles=titles)
 
 
 def settings(log=True):

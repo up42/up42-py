@@ -3,7 +3,6 @@ from pathlib import Path
 
 import pytest
 import geopandas as gpd
-from mock import patch
 import pandas as pd
 import requests
 
@@ -38,52 +37,6 @@ def test_get_example_aoi(tools_mock):
     assert fc["type"] == "FeatureCollection"
 
 
-@patch("matplotlib.pyplot.show")
-def test_plot_coverage(tools_mock):
-    df = gpd.read_file(
-        Path(__file__).resolve().parent
-        / "mock_data/search_results_limited_columns.geojson",
-        as_dataframe=True,
-    )
-    tools_mock.plot_coverage(df)
-
-
-@patch("matplotlib.pyplot.show")
-def test_plot_coverage_wrong_legend_column_ignores(tools_mock):
-    df = gpd.read_file(
-        Path(__file__).resolve().parent
-        / "mock_data/search_results_limited_columns.geojson",
-        as_dataframe=True,
-    )
-    tools_mock.plot_coverage(df, legend_column="abcdefgh")
-
-
-@patch("matplotlib.pyplot.show")
-def test_plot_quicklook(tools_mock):
-    fp_quicklook = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    tools_mock.quicklook = [fp_quicklook]
-    tools_mock.plot_coverage()
-
-
-@patch("matplotlib.pyplot.show")
-def test_plot_quicklook_alternative_filepaths(tools_mock):
-    fp_quicklook = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    tools_mock.plot_coverage(filepaths=[fp_quicklook, fp_quicklook, fp_quicklook])
-
-
-@patch("matplotlib.pyplot.show")
-def test_plot_result(tools_mock):
-    fp_tif = Path(__file__).resolve().parent / "mock_data/s2_128.tif"
-    tools_mock.result = [fp_tif]
-    tools_mock.plot_results()
-
-
-@patch("matplotlib.pyplot.show")
-def test_plot_result_alternative_filepaths_and_titles(tools_mock):
-    fp_tif = Path(__file__).resolve().parent / "mock_data/s2_128.tif"
-    tools_mock.plot_results(filepaths=[fp_tif, fp_tif, fp_tif], titles=["a", "b", "c"])
-
-
 def test_get_blocks(tools_mock, requests_mock):
     url_get_blocks = f"{tools_mock.auth._endpoint()}/blocks"
     requests_mock.get(
@@ -99,12 +52,6 @@ def test_get_blocks(tools_mock, requests_mock):
     blocks = tools_mock.get_blocks()
     assert isinstance(blocks, dict)
     assert "tiling" in list(blocks.keys())
-
-
-def test_plot_result_not_accepted_file_format_raises():
-    filepaths = [Path("abc/123.hdf", "abc/123.json")]
-    with pytest.raises(ValueError):
-        Tools().plot_results(filepaths=filepaths)
 
 
 @pytest.mark.live

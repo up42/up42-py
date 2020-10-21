@@ -1,3 +1,6 @@
+"""
+Command Line Interface functionality with click
+"""
 import os
 import json
 from pathlib import Path

@@ -2,44 +2,34 @@ import json
 from pathlib import Path
 import tempfile
 
-import folium
 import geopandas as gpd
 from geopandas import GeoDataFrame
 import pandas as pd
 import pytest
 from shapely.geometry import Point, Polygon, LinearRing
-from shapely import wkt
 
 from .context import (
-    folium_base_map,
     any_vector_to_fc,
     fc_to_query_geometry,
     download_results_from_gcs,
-    _map_images,
     filter_jobs_on_mode,
 )
 
 
-def test_folium_base_map():
-    m = folium_base_map()
-    assert isinstance(m, folium.Map)
-    assert m.crs == "EPSG3857"
-
-
-poly = Polygon([(0, 0), (1, 1), (1, 0)])
+POLY = Polygon([(0, 0), (1, 1), (1, 0)])
 
 
 @pytest.mark.parametrize(
     "len_fc, in_vector",
     [
         (1, Point((10, 6))),
-        (1, poly),
+        (1, POLY),
         (
             1,
             gpd.GeoDataFrame(
                 pd.DataFrame([0], columns=["id"]),
                 crs={"init": "epsg:4326"},
-                geometry=[poly],
+                geometry=[POLY],
             ),
         ),
         (
@@ -47,7 +37,7 @@ poly = Polygon([(0, 0), (1, 1), (1, 0)])
             gpd.GeoDataFrame(
                 pd.DataFrame([0, 1], columns=["id"]),
                 crs={"init": "epsg:4326"},
-                geometry=[poly, poly],
+                geometry=[POLY, POLY],
             ),
         ),
         (1, [0.0, 0.0, 1.0, 1.0]),
@@ -286,79 +276,6 @@ def test_download_result_from_gcs(requests_mock):
             assert Path(file).exists()
         assert len(out_files) == 2
         assert not (Path(tempdir) / "output").exists()
-
-
-def test_map_images_2_scenes():
-    plot_file_format = [".jpg"]
-
-    result_csv = Path(__file__).resolve().parent / "mock_data/df_2scenes.csv"
-    result_df = pd.read_csv(result_csv)
-    result_df["geometry"] = result_df["geometry"].apply(wkt.loads)
-    gdf = gpd.GeoDataFrame(result_df, geometry="geometry")
-
-    quicklook_1 = (
-        Path(__file__).resolve().parent
-        / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
-    )
-    quicklook_2 = (
-        Path(__file__).resolve().parent
-        / "mock_data/quicklooks/quicklook_f8c03432-cec1-41b7-a203-4d871a03290f.jpg"
-    )
-    filepaths = [quicklook_1, quicklook_2]
-
-    m = _map_images(plot_file_format, gdf, filepaths)
-    m._repr_html_()
-    out = m._parent.render()
-
-    assert "Image 1 - f8c03432-cec1-41b7-a203-4d871a03290f" in out
-    assert "Image 2 - 16e18e15-c941-4aae-97cd-d67b18dc9f6e" in out
-
-
-def test_map_images_2_scenes_no_column_name():
-    plot_file_format = [".jpg"]
-
-    result_csv = Path(__file__).resolve().parent / "mock_data/df_2scenes.csv"
-    result_df = pd.read_csv(result_csv)
-    result_df["geometry"] = result_df["geometry"].apply(wkt.loads)
-    gdf = gpd.GeoDataFrame(result_df, geometry="geometry")
-
-    quicklook_1 = (
-        Path(__file__).resolve().parent
-        / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
-    )
-    quicklook_2 = (
-        Path(__file__).resolve().parent
-        / "mock_data/quicklooks/quicklook_f8c03432-cec1-41b7-a203-4d871a03290f.jpg"
-    )
-    filepaths = [quicklook_1, quicklook_2]
-
-    m = _map_images(plot_file_format, gdf, filepaths, name_column="nikoo")
-    m._repr_html_()
-    out = m._parent.render()
-
-    assert "Image 1 - " in out
-    assert "Image 2 - " in out
-
-
-def test_map_images_1_scene():
-    plot_file_format = [".jpg"]
-
-    result_csv = Path(__file__).resolve().parent / "mock_data/df_1scene.csv"
-    result_df = pd.read_csv(result_csv)
-    result_df["geometry"] = result_df["geometry"].apply(wkt.loads)
-    gdf = gpd.GeoDataFrame(result_df, geometry="geometry")
-
-    quicklook = (
-        Path(__file__).resolve().parent
-        / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
-    )
-    filepaths = [quicklook]
-
-    m = _map_images(plot_file_format, gdf, filepaths)
-    m._repr_html_()
-    out = m._parent.render()
-
-    assert "Image 1 - 2a581680-17e4-4a61-8aa9-9e47e1bf36bb" in out
 
 
 def test_filter_jobs_on_mode():

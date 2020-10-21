@@ -6,9 +6,9 @@ from tqdm import tqdm
 from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection
-from up42.tools import Tools
 from up42.utils import get_logger, filter_jobs_on_mode
 from up42.workflow import Workflow
+from up42.tools import Tools
 
 logger = get_logger(__name__)
 
