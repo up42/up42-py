@@ -41,6 +41,9 @@ class Tools:
         self.results = None
 
     def _deprecate_tools(self, function_name: str):
+        # TODO: When finallay deprecating this, move the functions that don't require ...
+        # TODO: self out of class and import directly in init.
+
         object_name = self.__class__.__name__
         if self.__class__.__name__ in [
             "Project",
@@ -142,7 +145,6 @@ class Tools:
         read_aoi_file().
         """
         self._deprecate_tools("draw_aoi")
-
         m = folium_base_map(layer_control=True)
         DrawFoliumOverride(
             export=True,
