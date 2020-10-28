@@ -16,3 +16,7 @@ jobtask = up42.initialize_jobtask(jobtask_id="12345", job_id="12345")
 ::: up42.jobtask.JobTask
     rendering:
         show_root_toc_entry: False
+    selection:
+        inherited_members: True
+        members: ["info", "get_results_json", "download_results", "plot_results", 
+            "map_results", "download_quicklooks", "plot_quicklooks"]
