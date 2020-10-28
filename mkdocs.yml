@@ -41,7 +41,7 @@ nav:
         - Catalog Quicklooks: examples/map-quicklooks.ipynb
     - CLI:
         - Command Line Interface (CLI): cli.md
-        - Command Reference: reference/cli.md
+        - Command Reference: reference/cli-reference.md
     - Code Reference:
         - up42: reference/up42.md
         - Project: reference/project.md
