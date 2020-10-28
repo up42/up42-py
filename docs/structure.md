@@ -30,9 +30,6 @@ An overview of the **functionality** of each object
         - `.read_vector_file()`
         - `.get_example_aoi()`
         - `.draw_aoi()`
-        - `.plot_coverage()`
-        - `.plot_quicklooks()`
-        - `.plot_results()`
         - `.validate_manifest()`
        
     
@@ -48,16 +45,17 @@ An overview of the **functionality** of each object
     === "Workflow"
         
         - `.info`
+        - `.workflow_tasks`
         - `.add_workflow_tasks()`
         - `.construct_parameters()`
         - `.test_job()`
         - `.run_job()`
-        - `.construct_parameters_parallel()
+        - `.construct_parameters_parallel()`
         - `.test_jobs_parallel()`
         - `.run_jobs_parallel()`
         - `.get_jobs()`
         - `.get_workflow_tasks()`
-        - `.get_compatible_blocks()
+        - `.get_compatible_blocks()`
         - `.get_parameters_info()`
         - `.update_name()`
         - `.delete()`
@@ -74,6 +72,7 @@ An overview of the **functionality** of each object
         - `.get_results_json()`
         - `.get_logs()`
         - `.download_quicklooks()`
+        - `.plot_quicklooks`
         - `.upload_results_to_bucket()`
         - `.get_jobtasks()`
         - `.get_jobtasks_results_json()`
@@ -83,7 +82,10 @@ An overview of the **functionality** of each object
         - `.info`
         - `.get_results_json()`
         - `.download_results()`
+        - `.plot_results()`
+        - `.map_results()`
         - `.download_quicklooks()`
+        - `.plot_quicklooks()`
         
     === "JobCollection"
     
@@ -91,11 +93,15 @@ An overview of the **functionality** of each object
         - `.status`
         - `.download_results()`
         - `.apply()`
+        - `.plot_results()`
+        - `.map_results()`
         
     === "Catalog"
         - `.construct_parameters()`
         - `.search()`
         - `.download_quicklooks()`
+        - `.plot_quicklooks()`
+        - `.map_quicklooks()`
 
         
         
