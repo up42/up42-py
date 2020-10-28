@@ -43,7 +43,7 @@ pip install up42-py
 
 ## 30-second Example
 
-The UP42 Python package uses six classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask** and **Catalog** & **Tools**
+The UP42 Python package uses six classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask** and **JobCollection** & **Catalog**.
 
 ![](docs/assets/vizualisations.jpg)
 
@@ -69,8 +69,8 @@ input_tasks = ['sobloo-s2-l1c-aoiclipped', 'sharpening']
 workflow.add_workflow_tasks(input_tasks=input_tasks)
 
 # Define the aoi and input parameters of the workflow.
-aoi = workflow.get_example_aoi(as_dataframe=True)
-#aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
+aoi = up42.get_example_aoi(as_dataframe=True)
+#aoi = up42.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
 input_parameters = workflow.construct_parameters(geometry=aoi, 
                                                  geometry_operation="bbox", 
                                                  start_date="2018-01-01",

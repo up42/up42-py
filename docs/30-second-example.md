@@ -2,7 +2,7 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
 
-The UP42 Python package uses six classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask** and **Catalog** & **Tools**
+The UP42 Python package uses six classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask** and **JobCollection** & **Catalog**.
 
 ![](assets/vizualisations.jpg)
 
@@ -28,7 +28,7 @@ input_tasks = ['sobloo-s2-l1c-aoiclipped', 'sharpening']
 workflow.add_workflow_tasks(input_tasks=input_tasks)
 
 # Define the aoi and input parameters of the workflow.
-aoi = workflow.get_example_aoi(as_dataframe=True)
+aoi = up42.get_example_aoi(as_dataframe=True)
 #aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
 input_parameters = workflow.construct_parameters(geometry=aoi, 
                                                  geometry_operation="bbox", 
