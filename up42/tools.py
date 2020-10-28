@@ -41,8 +41,8 @@ class Tools:
         self.results = None
 
     def _deprecate_tools(self, function_name: str):
-        # TODO: When finallay deprecating this, move the functions that don't require ...
-        # TODO: self out of class and import directly in init.
+        # TODO: When finallay deprecating this, move the functions that don't require
+        # TODO: the class out of it and import directly in init.
 
         object_name = self.__class__.__name__
         if self.__class__.__name__ in [
@@ -53,7 +53,10 @@ class Tools:
             "JobCollection",
             "Catalog",
         ]:
-            message = f"Use of {object_name}.{function_name} will be deprecated in version 0.13.0, use up42.{function_name} instead!"
+            message = (
+                f"Use of {object_name}.{function_name} will be deprecated in "
+                f"version 0.14.0, use up42.{function_name} instead!"
+            )
             warnings.warn(message, DeprecationWarning, stacklevel=3)
 
     # pylint: disable=no-self-use
