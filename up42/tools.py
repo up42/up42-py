@@ -5,6 +5,7 @@ Base functionality that is not bound to a specific higher level UP42 object.
 import json
 from pathlib import Path
 from typing import List, Union, Dict
+import warnings
 
 from geopandas import GeoDataFrame
 import geopandas as gpd
@@ -38,6 +39,19 @@ class Tools:
             self.auth = auth
         self.quicklooks = None
         self.results = None
+
+    def _deprecate_tools(self, function_name: str):
+        object_name = self.__class__.__name__
+        if self.__class__.__name__ in [
+            "Project",
+            "Workflow",
+            "Job",
+            "JobTask",
+            "JobCollection",
+            "Catalog",
+        ]:
+            message = f"Use of {object_name}.{function_name} will be deprecated in version 0.13.0, use up42.{function_name} instead!"
+            warnings.warn(message, DeprecationWarning, stacklevel=3)
 
     # pylint: disable=no-self-use
     def read_vector_file(
