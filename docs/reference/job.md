@@ -1,5 +1,7 @@
 # Job
 
+## Job object
+
 The Job object is the result of running a workflow. It lets you download, visualize and 
 manipulate the results of the job, and keep track of the status or cancel a job while
 still running.
@@ -18,6 +20,8 @@ job = workflow.run_job(name="new_job", input_parameters={...})
 <br>
 
 ::: up42.job.Job
+    rendering:
+        show_root_toc_entry: False
     selection:
         inherited_members: True
         members: ["cancel_job", "plot_results"]
