@@ -18,3 +18,6 @@ job = workflow.run_job(name="new_job", input_parameters={...})
 <br>
 
 ::: up42.job.Job
+    selection:
+        inherited_members: True
+        members: ["cancel_job", "plot_results"]
