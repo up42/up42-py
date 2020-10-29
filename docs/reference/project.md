@@ -1,5 +1,7 @@
 # Project
 
+## Project object
+
 The Project is the top level object of the UP42 hierachy. With it you can create 
 new workflows, query already existing workflows & jobs in the project and 
 manage the project settings.
@@ -17,3 +19,5 @@ This functionality will soon also be available via the UP42 API & Python SDK.
 <br>
 
 ::: up42.project.Project
+    rendering:
+        show_root_toc_entry: False

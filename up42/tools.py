@@ -5,6 +5,7 @@ Base functionality that is not bound to a specific higher level UP42 object.
 import json
 from pathlib import Path
 from typing import List, Union, Dict
+import warnings
 
 from geopandas import GeoDataFrame
 import geopandas as gpd
@@ -39,6 +40,26 @@ class Tools:
         self.quicklooks = None
         self.results = None
 
+    def _deprecate_tools(self, function_name: str):
+        # TODO: When finally deprecating this, move the functions that don't require
+        # TODO: the class out of it and import directly in init. Don't need to be
+        # TODO: instatiated via Tools in __init__.
+
+        object_name = self.__class__.__name__
+        if object_name in [
+            "Project",
+            "Workflow",
+            "Job",
+            "JobTask",
+            "JobCollection",
+            "Catalog",
+        ]:
+            message = (
+                f"Use of {object_name}.{function_name} will be deprecated in "
+                f"version 0.14.0, use up42.{function_name} instead!"
+            )
+            warnings.warn(message, DeprecationWarning, stacklevel=3)
+
     # pylint: disable=no-self-use
     def read_vector_file(
         self, filename: str = "aoi.geojson", as_dataframe: bool = False
@@ -57,6 +78,8 @@ class Tools:
         Returns:
             Feature Collection
         """
+        self._deprecate_tools("read_vector_file")
+
         suffix = Path(filename).suffix
 
         if suffix == ".kml":
@@ -94,6 +117,8 @@ class Tools:
         Returns:
             Feature collection json with the selected aoi.
         """
+        self._deprecate_tools("get_example_aoi")
+
         logger.info(f"Getting small example aoi in location '{location}'.")
         if location == "Berlin":
             example_aoi = self.read_vector_file(
@@ -123,6 +148,7 @@ class Tools:
         Export the drawn aoi via the export button, then read the geometries via
         read_aoi_file().
         """
+        self._deprecate_tools("draw_aoi")
         m = folium_base_map(layer_control=True)
         DrawFoliumOverride(
             export=True,
@@ -158,6 +184,8 @@ class Tools:
             A list of the public blocks and their metadata. Optional a simpler version
             dict.
         """
+        self._deprecate_tools("get_blocks")
+
         try:
             block_type = block_type.lower()
         except AttributeError:
@@ -211,6 +239,8 @@ class Tools:
         Returns:
             A dict of the block details metadata for the specific block.
         """
+        self._deprecate_tools("get_block_details")
+
         if not hasattr(self, "auth"):
             raise Exception(
                 "Requires authentication with UP42, use up42.authenticate()!"
@@ -275,6 +305,8 @@ class Tools:
                 }
             ```
         """
+        self._deprecate_tools("validate_manifest")
+
         if isinstance(path_or_json, (str, Path)):
             with open(path_or_json) as src:
                 manifest_json = json.load(src)

@@ -50,7 +50,6 @@ nav:
         - JobCollection: reference/jobcollection.md
         - JobTask: reference/jobtask.md
         - Catalog: reference/catalog.md
-        - Tools: reference/tools.md
         - CLI: reference/cli-reference.md
     -  Releases:
         - Releases: CHANGELOG.md
@@ -133,6 +132,7 @@ markdown_extensions:
   - markdown.extensions.footnotes
   - markdown.extensions.meta
   - markdown.extensions.toc:
+      baselevel: 1
       permalink: true
   - pymdownx.arithmatex
   - pymdownx.betterem:

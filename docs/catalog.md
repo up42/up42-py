@@ -12,7 +12,7 @@ Currently the following sensors are supported: **Pleiades, Spot, Sentinel1, Sent
 ```python
 import up42
 up42.authenticate(project_id="123", project_api_key="456")
-up42.authenticate(cfg_file="config.json")
+#up42.authenticate(cfg_file="config.json")
 
 catalog = up42.initialize_catalog()
 ```

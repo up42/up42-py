@@ -131,20 +131,17 @@ def validate_manifest(path_or_json: Union[str, Path, Dict]) -> Dict:
 def read_vector_file(
     filename: str = "aoi.geojson", as_dataframe: bool = False
 ) -> FeatureCollection:
-    tools = Tools(auth=_auth)
-    return tools.read_vector_file(filename, as_dataframe)
+    return Tools().read_vector_file(filename, as_dataframe)
 
 
 def get_example_aoi(
     location: str = "Berlin", as_dataframe: bool = False
 ) -> FeatureCollection:
-    tools = Tools(auth=_auth)
-    return tools.get_example_aoi(location, as_dataframe)
+    return Tools().get_example_aoi(location, as_dataframe)
 
 
 def draw_aoi() -> None:
-    tools = Tools(auth=_auth)
-    tools.draw_aoi()
+    return Tools().draw_aoi()
 
 
 # pylint: disable=duplicate-code

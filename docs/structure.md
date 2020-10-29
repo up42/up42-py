@@ -2,11 +2,10 @@
 
 ## Hierachy
 
-- The Python SDK uses seven object classes, representing the **hierarchical structure of UP42**:
+- The Python SDK uses six object classes, representing the **hierarchical structure of UP42**:
     - **Project > Workflow > Job > JobTask**
     - **JobCollection**
     - **Catalog**
-    - **Tools**
 - Each object can **spawn elements of one level below**, e.g.
     - `project = up42.initialize_project()`
     - `workflow = Project().create_workflow()`
@@ -20,15 +19,23 @@ An overview of the **functionality** of each object
 
 !!! example "Available Functionality"
     === "up42"
+    
         - `.initialize_project()`
         - `.initalize_workflow()`
         - `.initalize_job()`
         - `.initalize_jobtask()`
         - `.initalize_catalog()`
+        - `.get_blocks()`
+        - `.get_block_details()`
+        - `.read_vector_file()`
+        - `.get_example_aoi()`
+        - `.draw_aoi()`
+        - `.validate_manifest()`
        
     
     === "Project"
-    
+        
+        - `.info`
         - `.create_workflow()`
         - `.get_workflows()`
         - `.get_jobs()`
@@ -37,63 +44,65 @@ An overview of the **functionality** of each object
     
     === "Workflow"
         
+        - `.info`
+        - `.workflow_tasks`
         - `.add_workflow_tasks()`
         - `.construct_parameters()`
         - `.test_job()`
         - `.run_job()`
-        - `.construct_parameters_parallel()
+        - `.construct_parameters_parallel()`
         - `.test_jobs_parallel()`
         - `.run_jobs_parallel()`
         - `.get_jobs()`
         - `.get_workflow_tasks()`
-        - `.get_compatible_blocks()
+        - `.get_compatible_blocks()`
         - `.get_parameters_info()`
         - `.update_name()`
         - `.delete()`
         
     === "Job"
     
+        - `.info`
+        - `.status`
         - `.download_results()`
         - `.plot_results()`
         - `.map_results()`
-        - `.get_status()`
         - `.track_status()`
         - `.cancel_job()`
         - `.get_results_json()`
         - `.get_logs()`
         - `.download_quicklooks()`
+        - `.plot_quicklooks`
         - `.upload_results_to_bucket()`
         - `.get_jobtasks()`
         - `.get_jobtasks_results_json()`
         
     === "JobTask"
-    
+        
+        - `.info`
         - `.get_results_json()`
         - `.download_results()`
+        - `.plot_results()`
+        - `.map_results()`
         - `.download_quicklooks()`
+        - `.plot_quicklooks()`
         
     === "JobCollection"
     
+        - `.info`
+        - `.status`
         - `.download_results()`
-        - `.get_jobs_infos()`
-        - `.get_jobs_status()`
         - `.apply()`
+        - `.plot_results()`
+        - `.map_results()`
         
     === "Catalog"
         - `.construct_parameters()`
         - `.search()`
         - `.download_quicklooks()`
-        
-    === "Tools"
-        - `.get_blocks()`
-        - `.get_block_details()`
-        - `.read_vector_file()`
-        - `.get_example_aoi()`
-        - `.draw_aoi()`
-        - `.plot_coverage()`
         - `.plot_quicklooks()`
-        - `.plot_results()`
-        - `.validate_manifest()`
+        - `.map_quicklooks()`
+
         
         
 ## Object Initialization
@@ -139,15 +148,3 @@ If a workflow etc. already exists on UP42, you can **initialize** and access it 
         ```python
         catalog = up42.initialize_catalog()
         ```
-        
-    === "Tools"
-    
-        The tools' functionalities can be accessed from any of the up42 objects, e.g.
-        ```python
-        up42.get_example_aoi()
-        # workflow.get_example_aoi()
-        # job.get_example_aoi()
-        ```
-
-
-        

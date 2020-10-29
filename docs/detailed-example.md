@@ -81,9 +81,9 @@ workflow
 
 There are multiple ways to select an aoi:  
 > - Provide aoi the geometry directly in code as a FeatureCollection, Feature, GeoDataFrame, shapely Polygon or list of bounds coordinates.  
-> - Use .draw_aoi() to draw the aoi and export it as a geojson.  
-> - Use .read_vector_file() to read a geojson, json, shapefile, kml or wkt file.  
-> - Use .get_example_aoi() to read multiple provided sample aois.  
+> - Use up42.draw_aoi() to draw the aoi and export it as a geojson.  
+> - Use up42.read_vector_file() to read a geojson, json, shapefile, kml or wkt file.  
+> - Use up42.get_example_aoi() to read multiple provided sample aois.  
 
 
 ```python
@@ -92,18 +92,18 @@ aoi = [13.375966, 52.515068, 13.378314, 52.516639]
 
 
 ```python
-aoi = workflow.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
+aoi = up42.read_vector_file("data/aoi_berlin.geojson", as_dataframe=True)
 aoi.head(1)
 ```
 
 
 ```python
-#aoi = workflow.get_example_aoi(location="Berlin")
+#aoi = up42.get_example_aoi(location="Berlin")
 ```
 
 
 ```python
-#workflow.draw_aoi()
+#up42.draw_aoi()
 ```
 
 ## Select the workflow parameters
