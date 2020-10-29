@@ -43,13 +43,13 @@ nav:
         - Command Line Interface (CLI): cli.md
         - Command Reference: reference/cli-reference.md
     - Code Reference:
-        - up42: reference/up42.md
-        - Project: reference/project.md
-        - Workflow: reference/workflow.md
-        - Job: reference/job.md
-        - JobCollection: reference/jobcollection.md
-        - JobTask: reference/jobtask.md
-        - Catalog: reference/catalog.md
+        - up42: reference/up42-reference.md
+        - Project: reference/project-reference.md
+        - Workflow: reference/workflow-reference.md
+        - Job: reference/job-reference.md
+        - JobCollection: reference/jobcollection-reference.md
+        - JobTask: reference/jobtask-reference.md
+        - Catalog: reference/catalog-reference.md
         - CLI: reference/cli-reference.md
     -  Releases:
         - Releases: CHANGELOG.md
