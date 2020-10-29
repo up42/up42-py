@@ -14,18 +14,6 @@ Update an existing installation to the **newest version** via:
 pip install up42-py --upgrade
 ```
 
-<br>
-
-!!! Info "Optional: Install Jupyter Lab"
-    The UP42 Python SDK is even more comfortable to use in a **Jupyter notebook**!
-    To install Jupyter Lab:
-    
-    ```bash
-    pip install jupyterlab
-    ```
-
-## Test the installation
-
 To test the successful installation, import it in Python:
 ```python
 import up42
@@ -33,9 +21,20 @@ import up42
 
 !!! Success "Success!"
     Continue with the [Authentication chapter](authentication.md)!
+    
+<br>
+
+
+!!! Info "Optional: Install Jupyter Lab"
+    The UP42 Python SDK is even more comfortable to use in a **Jupyter notebook**!
+    To install [Jupyter Lab](https://jupyter.org/):
+    
+    ```bash
+    pip install jupyterlab
+    ```
 
 
 ## Development installation
 
 The development installation is only necessary if you want to contribute to up42-py or its documentation.
-Please see the [developer readme](https://github.com/up42/up42-py/blob/master/README-dev.md) for the full installation instructions and further information.
+Please see the [developer readme](https://github.com/up42/up42-py/blob/master/README-dev.md) for the full instructions and further information.
