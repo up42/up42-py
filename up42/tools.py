@@ -42,7 +42,8 @@ class Tools:
 
     def _deprecate_tools(self, function_name: str):
         # TODO: When finally deprecating this, move the functions that don't require
-        # TODO: the class out of it and import directly in init.
+        # TODO: the class out of it and import directly in init. Don't need to be
+        # TODO: instatiated via Tools in __init__.
 
         object_name = self.__class__.__name__
         if object_name in [
