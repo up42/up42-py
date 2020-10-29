@@ -256,54 +256,18 @@ class Tools:
 
     def validate_manifest(self, path_or_json: Union[str, Path, Dict]) -> Dict:
         """
-        Validates the block manifest, input either manifest json string or filepath.
+        Validates a block manifest json.
+
+        The block manifest is required to build a custom block on UP42 and contains
+        the metadata about the block as well as block input and output capabilities.
+        Also see the
+        [manifest chapter in the UP42 documentation](https://docs.up42.com/reference/block-manifest.html).
 
         Args:
-            path_or_json: The input manifest, either filepath or json string, see example.
+            path_or_json: The input manifest, either a filepath or json string, see example.
 
         Returns:
             A dictionary with the validation results and potential validation errors.
-
-        Example:
-            ```json
-                {
-                    "_up42_specification_version": 2,
-                    "name": "sharpening",
-                    "type": "processing",
-                    "tags": [
-                        "imagery",
-                        "processing"
-                    ],
-                    "display_name": "Sharpening Filter",
-                    "description": "This block enhances the sharpness of a raster
-                        image by applying an unsharp mask filter algorithm.",
-                    "parameters": {
-                        "strength": {"type": "string", "default": "medium"}
-                    },
-                    "machine": {
-                        "type": "large"
-                    },
-                    "input_capabilities": {
-                        "raster": {
-                            "up42_standard": {
-                                "format": "GTiff"
-                            }
-                        }
-                    },
-                    "output_capabilities": {
-                        "raster": {
-                            "up42_standard": {
-                                "format": "GTiff",
-                                "bands": ">",
-                                "sensor": ">",
-                                "resolution": ">",
-                                "dtype": ">",
-                                "processing_level": ">"
-                            }
-                        }
-                    }
-                }
-            ```
         """
         self._deprecate_tools("validate_manifest")
 
