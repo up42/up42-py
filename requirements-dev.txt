@@ -6,6 +6,7 @@ mkdocs-autolinks-plugin
 mkdocs-table-reader-plugin
 mkdocs-jupyter
 mkdocs-exclude
+mkdocs-exclude-search
 mkdocs-click
 mkdocstrings
 nbconvert==5.6.1

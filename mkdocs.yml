@@ -41,7 +41,7 @@ nav:
         - Catalog Quicklooks: examples/map-quicklooks.ipynb
     - CLI:
         - Command Line Interface (CLI): cli.md
-        - Command Reference: reference/cli.md
+        - Command Reference: reference/cli-reference.md
     - Code Reference:
         - up42: reference/up42.md
         - Project: reference/project.md
@@ -50,7 +50,7 @@ nav:
         - JobCollection: reference/jobcollection.md
         - JobTask: reference/jobtask.md
         - Catalog: reference/catalog.md
-        - CLI: reference/cli.md
+        - CLI: reference/cli-reference.md
     -  Releases:
         - Releases: CHANGELOG.md
     - FAQ & Support:
@@ -94,6 +94,11 @@ plugins:
         - ".ipynb_checkpoints"
         - "*examples/project*"
         - "*examples/guides/*"
+  - exclude-search:
+      exclude:
+        - cli-reference.md
+      ignore:
+        - cli-reference.md#command-line-interface-cli
   #- minify:
   #    minify_html: false
   - mkdocstrings:
