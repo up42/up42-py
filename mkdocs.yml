@@ -14,6 +14,8 @@ copyright: UP42 2020
 ## Social Media
 extra:
   social:
+    - icon: fontawesome/solid/home
+      link: https://up42.com
     - icon: fontawesome/brands/github-alt
       link: https://github.com/up42
     - icon: fontawesome/brands/twitter
