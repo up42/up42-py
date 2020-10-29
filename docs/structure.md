@@ -2,7 +2,7 @@
 
 ## Hierachy
 
-- The Python SDK uses six object classes, representing the **hierarchical structure of UP42**:
+- The Python SDK uses six objects, representing the **hierarchical structure of UP42**:
     - **Project > Workflow > Job > JobTask**
     - **JobCollection**
     - **Catalog**
@@ -14,8 +14,9 @@
 
 ## Functionality
 
-An overview of the **functionality** of each object 
-(also see the [**code reference**](https://sdk.up42.com/reference/project/)):
+A quick overview of the **functionality** of each object. Also see the 
+[**code reference**](https://sdk.up42.com/reference/project/) for more details on each
+function.
 
 !!! example "Available Functionality"
     === "up42"
@@ -107,7 +108,7 @@ An overview of the **functionality** of each object
         
 ## Object Initialization
 
-If a workflow etc. already exists on UP42, you can **initialize** and access it directly using its `id`:
+If a workflow etc. already exists on UP42, you can also **initialize** and access it directly using its `id`:
 
 !!! example "Initialize Object"
     === "Project"
@@ -148,3 +149,8 @@ If a workflow etc. already exists on UP42, you can **initialize** and access it 
         ```python
         catalog = up42.initialize_catalog()
         ```
+        
+<br>
+
+!!! Success "Success!"
+    Continue with the [Catalog Search chapter](catalog.md)!

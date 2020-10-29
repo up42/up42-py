@@ -192,3 +192,7 @@ job.plot_results()
 ```python
 job.map_results()
 ```
+
+!!! Success "Success!"
+    Continue with the [More Examples](examples-intro.md) chapter or have a look at the 
+    [Code Reference](up42.md)!

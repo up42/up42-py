@@ -12,14 +12,16 @@ In the project's **Developers section** you can find the **project_id** and **pr
  
 ## Authenticate  
 
-Authenticate by passing the project credentials directly **as arguments**:
+Authenticate by providing the project credentials **directly in the code**:
 
 ```python
 import up42
 up42.authenticate(project_id="123", project_api_key="456")
 ```
 
-Alternatively, create a **configuration json file** and pass its file path:
+<br>
+
+Or create a simple **configuration json file** and provide its file path:
  
 ```json
 {
@@ -32,3 +34,10 @@ Alternatively, create a **configuration json file** and pass its file path:
 import up42
 up42.authenticate(cfg_file="config.json")
 ```
+
+
+<br>
+
+
+!!! Success "Success!"
+    Continue with the [Structure chapter](structure.md)!

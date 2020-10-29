@@ -56,3 +56,8 @@ catalog.download_quicklooks(image_ids=search_results.id.to_list(),
 
 catalog.map_quicklooks(scenes=search_results, aoi=aoi)
 ```
+
+<br>
+
+!!! Success "Success!"
+    Continue with the [Detailed Example](detailed-example.md)!

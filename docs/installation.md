@@ -19,12 +19,6 @@ To test the successful installation, import it in Python:
 import up42
 ```
 
-!!! Success "Success!"
-    Continue with the [Authentication chapter](authentication.md)!
-    
-<br>
-
-
 !!! Info "Optional: Install Jupyter Lab"
     The UP42 Python SDK is even more comfortable to use in a **Jupyter notebook**!
     To install [Jupyter Lab](https://jupyter.org/):
@@ -33,6 +27,11 @@ import up42
     pip install jupyterlab
     ```
 
+<br>
+
+!!! Success "Success!"
+    Continue with the [Authentication chapter](authentication.md)!
+    
 
 ## Development installation
 
