@@ -205,16 +205,11 @@ class Workflow(Tools):
                 [marketplace](https://marketplace.up42.com).
 
         !!! Info
-            Using block ids specifies a specific version of the block that will be added
-            to the workflow. With block names or block display names, the most recent
-            version of a block will always be added.
+            With block names or block display names, the most recent version of a block
+            will always be added. Using block ids specifies a specific version of the
+            block that will be added to the workflow. 
 
         Example:
-            ```python
-            input_tasks_simple = ['a2daaab4-196d-4226-a018-a810444dcad1',
-                                  '4ed70368-d4e1-4462-bef6-14e768049471']
-            ```
-
             ```python
             input_tasks = ["sobloo-s2-l1c-aoiclipped", "tiling"]
             ```
@@ -222,6 +217,11 @@ class Workflow(Tools):
             ```python
             input_tasks = ["Sentinel-2 L1C MSI AOI clipped",
                            "Raster Tiling"]
+            ```
+
+            ```python
+            input_tasks = ['a2daaab4-196d-4226-a018-a810444dcad1',
+                           '4ed70368-d4e1-4462-bef6-14e768049471']
             ```
         """
         # Relevant when non-linear workflows are introduced:
