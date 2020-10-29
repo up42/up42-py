@@ -1,6 +1,6 @@
 # Examples
 
-This section provides more extensive use cases for the UP42 Python SDK. 
+This section provides more extensive examples & use cases for the UP42 Python SDK. 
 
 **Test them** as :orange_book: Jupyter notebooks in the [examples folder](https://github.com/up42/up42-py/tree/master/examples) or
 interactively with Binder [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples) !

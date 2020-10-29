@@ -51,9 +51,8 @@ nav:
         - JobTask: reference/jobtask-reference.md
         - Catalog: reference/catalog-reference.md
         - CLI: reference/cli-reference.md
-    -  Releases:
+    -  Releases & FAQ:
         - Releases: CHANGELOG.md
-    - FAQ & Support:
         - FAQ & Support: support-faq.md
         - Privacy Policy: privacy-policy.md
 
