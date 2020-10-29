@@ -51,8 +51,8 @@ nav:
     - CLI:
         - Command Line Interface (CLI): cli.md
         - Command Reference: reference/cli-reference.md
-    -  Releases & FAQ:
-        - Releases: CHANGELOG.md
+    -  Changelog & FAQ:
+        - Changelog: CHANGELOG.md
         - FAQ & Support: support-faq.md
         - Privacy Policy: privacy-policy.md
 

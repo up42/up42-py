@@ -1,4 +1,4 @@
-# :calendar: Release notes
+# :calendar: Changelog & Release Notes
 
 ## Upgrading
 
