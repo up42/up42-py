@@ -39,9 +39,6 @@ nav:
         - Airport monitoring: examples/airports-parallel.ipynb
         - Flood mapping: examples/flood_mapping.ipynb
         - Catalog Quicklooks: examples/catalog-quicklooks.ipynb
-    - CLI:
-        - Command Line Interface (CLI): cli.md
-        - Command Reference: reference/cli-reference.md
     - Code Reference:
         - up42: reference/up42-reference.md
         - Project: reference/project-reference.md
@@ -51,6 +48,9 @@ nav:
         - JobTask: reference/jobtask-reference.md
         - Catalog: reference/catalog-reference.md
         - CLI: reference/cli-reference.md
+    - CLI:
+        - Command Line Interface (CLI): cli.md
+        - Command Reference: reference/cli-reference.md
     -  Releases & FAQ:
         - Releases: CHANGELOG.md
         - FAQ & Support: support-faq.md
