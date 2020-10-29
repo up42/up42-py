@@ -38,7 +38,7 @@ nav:
         - Radar processing: examples/radar_processing_1.ipynb
         - Airport monitoring: examples/airports-parallel.ipynb
         - Flood mapping: examples/flood_mapping.ipynb
-        - Catalog Quicklooks: examples/map-quicklooks.ipynb
+        - Catalog Quicklooks: examples/catalog-quicklooks.ipynb
     - CLI:
         - Command Line Interface (CLI): cli.md
         - Command Reference: reference/cli-reference.md
