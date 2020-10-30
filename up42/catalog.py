@@ -36,23 +36,23 @@ supported_sensors = {
     },
     "sentinel1": {
         "blocks": [
-            "sobloo-sentinel1-l1c-grd-full",
-            "sobloo-sentinel1-l1c-grd-aoiclipped",
-            "sobloo-sentinel1-l1c-slc-full",
+            "sobloo-s1-grd-fullscene",
+            "sobloo-s1-grd-aoiclipped",
+            "sobloo-s1-slc-fullscene",
         ],
         "provider": "sobloo-image",
     },
     "sentinel2": {
         "blocks": [
-            "sobloo-sentinel2-lic-msi-full",
-            "sobloo-sentinel2-lic-msi-aoiclipped",
+            "sobloo-s2-l1c-fullscene",
+            "sobloo-s2-l1c-aoiclipped",
         ],
         "provider": "sobloo-image",
     },
-    "sentinel3": {"blocks": ["sobloo-sentinel3-full"], "provider": "sobloo-image"},
+    "sentinel3": {"blocks": ["sobloo-s3"], "provider": "sobloo-image"},
     "sentinel5p": {
         "blocks": [
-            "sobloo-sentinel5-preview-full",
+            "sobloo-s5p",
         ],
         "provider": "sobloo-image",
     },
