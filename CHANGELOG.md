@@ -17,13 +17,13 @@ pip show up42-py
 ## Versions
 
 ### [0.13.0](https://pypi.org/project/up42-py/) (2020-10-30)
-- Consistent use & documentation of basic and plotting functionality:
-    - All [basic functionality](up42-reference.md) (e.g. `up42.get_blocks`) 
-        will soon only be accessible from the `up42` import object.
-    - The option to use this from any lower level object will soon be 
-        removed (e.g. `project.get_blocks`, `workflow.get_blocks`). Triggers a deprecation warning.
-    - Documents all basic functionality in the `up42` [object code reference](up42-reference.md).
-    - Documents the available plotting functionality of each object directly in the [object's code reference](job-reference.md). 
+- New consistent use & documentation of the basic functionality:
+    - All [basic functions](up42-reference.md) (e.g. `up42.get_blocks`) are accessible 
+        from the `up42` import object. Now consistently documented in the `up42` 
+        [object code reference](up42-reference.md).
+    - The option to use this basic functionality from any lower level object will soon be 
+        removed (e.g. `project.get_blocks`, `workflow.get_blocks`). Now triggers a deprecation warning.
+- The plotting functionality of each object is now documented directly in that [object's code reference](job-reference.md). 
 - Fix: Repair catalog search for sobloo.
 - *Various improvements to docs & code reference.*
 - *Overhaul & simplify test fixtures.*
