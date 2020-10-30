@@ -1,17 +1,17 @@
 # :stopwatch: 30 Second Example
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
-
-The UP42 Python package uses six classes, representing the **hierarchical structure of UP42**: **Project > Workflow > Job > JobTask** and **JobCollection** & **Catalog**.
+The UP42 Python package uses six objects, representing the **hierarchical structure** of UP42: **Project > Workflow > Job > JobTask** and **JobCollection** & **Catalog**.
 
 ![](assets/vizualisations.jpg)
 
 ------------------------
 
-A **new workflow** consisting of [**Sentinel-2 data**](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64)
+In this example a **new workflow** consisting of [**Sentinel-2 data**](https://marketplace.up42.com/block/3a381e6b-acb7-4cec-ae65-50798ce80e64)
 and [**Image Sharpening**](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e) is created.
 The area of interest and workflow parameters are defined. After **running the job**, 
 the results are **downloaded** and visualized.
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
 
 ```python
 import up42

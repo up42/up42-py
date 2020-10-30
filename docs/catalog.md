@@ -1,12 +1,15 @@
 # :world_map: Catalog Search
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Fcatalog.ipynb)
-
 **Check data availability & download image preview quicklooks** via the catalog search. 
 You can filter by various parameters e.g. time period, area of interest, cloud cover etc.
 
-Currently the following sensors are supported: **Pleiades, Spot, Sentinel1, Sentinel2, Sentinel3, Sentinel5p**.
-  
+!!! Info "Supported Sensors"
+    Currently the UP42 catalog search supports these sensors: **Pleiades, Spot, Sentinel1, 
+    Sentinel2, Sentinel3, Sentinel5p**.
+
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Fcatalog.ipynb)
+
 ## Initialize Catalog
 
 ```python
@@ -53,3 +56,8 @@ catalog.download_quicklooks(image_ids=search_results.id.to_list(),
 
 catalog.map_quicklooks(scenes=search_results, aoi=aoi)
 ```
+
+<br>
+
+!!! Success "Success!"
+    Continue with the [Detailed Example](detailed-example.md)!

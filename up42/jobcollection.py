@@ -50,7 +50,7 @@ class JobCollection(VizTools, Tools):
     def get_jobs_info(self) -> Dict[str, Dict]:
         """
         `get_jobs_info` will be deprecated in release 0.13, use
-        [info attribute](jobcollection.md#up42.jobcollection.JobCollection.info) instead.
+        [info attribute](jobcollection-reference.md#up42.jobcollection.JobCollection.info) instead.
         """
         return self.info
 
@@ -66,7 +66,7 @@ class JobCollection(VizTools, Tools):
     def get_jobs_status(self) -> Dict[str, str]:
         """
         `get_jobs_status` will be deprecated in release 0.13, use
-        [status attribute](jobcollection.md#up42.jobcollection.JobCollection.status) instead.
+        [status attribute](jobcollection-reference.md#up42.jobcollection.JobCollection.status) instead.
         """
         return self.status
 
