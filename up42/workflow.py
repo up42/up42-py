@@ -207,7 +207,7 @@ class Workflow(Tools):
         !!! Info
             With block names or block display names, the most recent version of a block
             will always be added. Using block ids specifies a specific version of the
-            block that will be added to the workflow. 
+            block that will be added to the workflow.
 
         Example:
             ```python
