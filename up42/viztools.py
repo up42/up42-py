@@ -296,6 +296,8 @@ class VizTools:
         self,
         scenes: GeoDataFrame,
         aoi: GeoDataFrame = None,
+        show_images: bool = True,
+        show_features: bool = False,
         filepaths: List = None,
         name_column: str = "id",
         save_html: Path = None,
@@ -309,6 +311,8 @@ class VizTools:
         Args:
                 scenes: GeoDataFrame of scenes, results of catalog.search()
                 aoi: GeoDataFrame of aoi.
+                show_images: Shows images if True (default).
+                show_features: Shows no features if False (default).
                 filepaths: Paths to images to plot. Optional, by default picks up the last
                         downloaded results.
                 name_column: Name of the feature property that provides the Feature/Layer name.
@@ -327,6 +331,8 @@ class VizTools:
             result_df=scenes,
             filepaths=filepaths,
             aoi=aoi,
+            show_images=show_images,
+            show_features=show_features,
             name_column=name_column,
             save_html=save_html,
         )
