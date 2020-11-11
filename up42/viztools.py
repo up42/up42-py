@@ -355,17 +355,20 @@ class VizTools:
                 "plotting without legend."
             )
 
-        ax = scenes.plot(
-            legend_column,
-            categorical=True,
-            figsize=figsize,
-            cmap="Set3",
-            legend=True,
-            alpha=0.7,
-            legend_kwds=dict(loc="upper left", bbox_to_anchor=(1, 1)),
-        )
-        if aoi is not None:
-            aoi.plot(color="r", ax=ax, fc="None", edgecolor="r", lw=1)
+        try:
+            ax = scenes.plot(
+                legend_column,
+                categorical=True,
+                figsize=figsize,
+                cmap="Set3",
+                legend=True,
+                alpha=0.7,
+                legend_kwds=dict(loc="upper left", bbox_to_anchor=(1, 1)),
+            )
+            if aoi is not None:
+                aoi.plot(color="r", ax=ax, fc="None", edgecolor="r", lw=1)
+        except AttributeError as e:
+            raise TypeError("'scenes' and 'aoi' (optional) have to be a GeoDataFrame.") from e
         ax.set_axis_off()
         plt.show()
 
