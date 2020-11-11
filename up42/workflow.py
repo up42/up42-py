@@ -42,8 +42,7 @@ class Workflow(Tools):
         return (
             f"Workflow(name: {info['name']}, workflow_id: {self.workflow_id}, "
             f"description: {info['description']}, createdAt: {info['createdAt']}, "
-            f"project_name: {info['name']}, "
-            f"workflow_tasks: {self.workflow_tasks}"
+            f"project_id: {self.project_id}, workflow_tasks: {self.workflow_tasks}"
         )
 
     @property
