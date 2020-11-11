@@ -254,12 +254,14 @@ class VizTools:
         return m
 
     def map_results(
-        self, show_images: bool = True, name_column: str = "uid", save_html=None
+        self, show_images: bool = True, show_features: bool=True, name_column: str = "uid", save_html=None
     ) -> folium.Map:
         """
         Displays data.json, and if available, one or multiple results geotiffs.
+
         Args:
-            show_images: Shows images if True (default), only features if False.
+            show_images: Shows images if True (default).
+            show_features: Shows features if True (default).
             name_column: Name of the feature property that provides the Feature/Layer name.
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
@@ -286,7 +288,7 @@ class VizTools:
             filepaths=self.results,
             aoi=None,
             show_images=show_images,
-            show_features=True,
+            show_features=show_features,
             name_column=name_column,
             save_html=save_html,
         )
