@@ -95,6 +95,7 @@ plugins:
         - ".ipynb_checkpoints"
         - "*examples/project*"
         - "*examples/guides/*"
+        - "*swagger*"
   - exclude-search:
       exclude:
         - cli-reference.md
