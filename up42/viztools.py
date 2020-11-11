@@ -193,11 +193,13 @@ class VizTools:
             feature_names = [""] * len(result_df.index)
 
         if aoi is not None:
+            aoi_style = VECTOR_STYLE.copy()
+            aoi_style["color"] = "red"
             folium.GeoJson(
                 aoi,
-                name="geojson",
-                style_function=_style_function,
-                highlight_function=_highlight_function,
+                name="aoi",
+                style_function=lambda x: aoi_style,
+                highlight_function=lambda x: HIGHLIGHT_STYLE,
             ).add_to(m)
 
         if show_features:
@@ -210,8 +212,8 @@ class VizTools:
                 f = folium.GeoJson(
                     row["geometry"],
                     name=layer_name,
-                    style_function=_style_function,
-                    highlight_function=_highlight_function,
+                    style_function=lambda x: VECTOR_STYLE,
+                    highlight_function=lambda x: HIGHLIGHT_STYLE,
                 )
                 folium.Popup(
                     f"{layer_name}: {row.drop('geometry', axis=0).to_json()}"
@@ -438,8 +440,7 @@ def folium_base_map(
     return m
 
 
-def _style_function(_):
-    return {
+VECTOR_STYLE = {
         "fillColor": "#5288c4",
         "color": "blue",
         "weight": 2.5,
@@ -447,8 +448,7 @@ def _style_function(_):
     }
 
 
-def _highlight_function(_):
-    return {
+HIGHLIGHT_STYLE = {
         "fillColor": "#ffaf00",
         "color": "red",
         "weight": 3.5,
