@@ -154,7 +154,7 @@ class VizTools:
     def _map_images(
         plot_file_format: List[str],
         result_df: GeoDataFrame,
-        filepaths,
+        filepaths: List[Union[str, Path]],
         aoi=None,
         show_images=True,
         show_features=False,
@@ -254,17 +254,19 @@ class VizTools:
         return m
 
     def map_results(
-        self, show_images: bool = True, show_features: bool=True, name_column: str = "uid", save_html=None
+        self, aoi: GeoDataFrame = None, show_images: bool = True, show_features: bool=True, name_column: str = "uid", save_html=None
     ) -> folium.Map:
         """
         Displays data.json, and if available, one or multiple results geotiffs.
 
         Args:
+            aoi: GeoDataFrame of aoi.
             show_images: Shows images if True (default).
             show_features: Shows features if True (default).
             name_column: Name of the feature property that provides the Feature/Layer name.
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
+        # TODO: Surface optional filepaths
         if self.results is None:
             raise ValueError(
                 "You first need to download the results via job.download_results()!"
@@ -286,7 +288,7 @@ class VizTools:
             plot_file_format=[".tif"],
             result_df=df,
             filepaths=self.results,
-            aoi=None,
+            aoi=aoi,
             show_images=show_images,
             show_features=show_features,
             name_column=name_column,
