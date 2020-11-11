@@ -39,6 +39,7 @@ nav:
         - Examples: examples-intro.md
         - Radar processing: examples/radar_processing_1.ipynb
         - Airport monitoring: examples/airports-parallel.ipynb
+        - Aircraft detection: examples/aircraft-detection.ipynb
         - Flood mapping: examples/flood_mapping.ipynb
         - Catalog Quicklooks: examples/catalog-quicklooks.ipynb
     - Code Reference:
