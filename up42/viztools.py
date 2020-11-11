@@ -155,7 +155,7 @@ class VizTools:
         plot_file_format: List[str],
         result_df: GeoDataFrame,
         filepaths: List[Union[str, Path]],
-        aoi=None,
+        aoi: GeoDataFrame=None,
         show_images=True,
         show_features=False,
         name_column: str = "id",
@@ -165,8 +165,8 @@ class VizTools:
         Displays data.json, and if available, one or multiple results geotiffs.
         Args:
             plot_file_format: List of accepted image file formats e.g. [".png"]
-            result_df: GeoDataFrame of scenes, results of catalog.search()
-            aoi: GeoDataFrame of aoi
+            result_df: GeoDataFrame with scene geometries.
+            aoi: GeoDataFrame of aoi.
             filepaths: Paths to images to plot. Optional, by default picks up the last
                 downloaded results.
             show_images: Shows images if True (default).
@@ -266,7 +266,7 @@ class VizTools:
             name_column: Name of the feature property that provides the Feature/Layer name.
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
-        # TODO: Surface optional filepaths
+        # TODO: Surface optional filepaths? or remove option alltogether?
         if self.results is None:
             raise ValueError(
                 "You first need to download the results via job.download_results()!"
