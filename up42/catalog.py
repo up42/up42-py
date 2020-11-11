@@ -229,7 +229,7 @@ class Catalog(VizTools, Tools):
     ) -> List[str]:
         """
         Gets the quicklooks of scenes from a single sensor. After download, can
-        be plotted via catalog.plot_quicklooks().
+        be plotted via catalog.plot_quicklooks() or catalog.map_quicklooks().
 
         Args:
             image_ids: List of provider image_ids e.g. ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"].
