@@ -155,7 +155,7 @@ class VizTools:
         plot_file_format: List[str],
         result_df: GeoDataFrame,
         filepaths: List[Union[str, Path]],
-        aoi: GeoDataFrame=None,
+        aoi: GeoDataFrame = None,
         show_images=True,
         show_features=False,
         name_column: str = "id",
@@ -256,7 +256,12 @@ class VizTools:
         return m
 
     def map_results(
-        self, aoi: GeoDataFrame = None, show_images: bool = True, show_features: bool=True, name_column: str = "uid", save_html=None
+        self,
+        aoi: GeoDataFrame = None,
+        show_images: bool = True,
+        show_features: bool = True,
+        name_column: str = "uid",
+        save_html=None,
     ) -> folium.Map:
         """
         Displays data.json, and if available, one or multiple results geotiffs.
@@ -380,7 +385,9 @@ class VizTools:
             if aoi is not None:
                 aoi.plot(color="r", ax=ax, fc="None", edgecolor="r", lw=1)
         except AttributeError as e:
-            raise TypeError("'scenes' and 'aoi' (optional) have to be a GeoDataFrame.") from e
+            raise TypeError(
+                "'scenes' and 'aoi' (optional) have to be a GeoDataFrame."
+            ) from e
         ax.set_axis_off()
         plt.show()
 
@@ -441,19 +448,19 @@ def folium_base_map(
 
 
 VECTOR_STYLE = {
-        "fillColor": "#5288c4",
-        "color": "blue",
-        "weight": 2.5,
-        "dashArray": "5, 5",
-    }
+    "fillColor": "#5288c4",
+    "color": "blue",
+    "weight": 2.5,
+    "dashArray": "5, 5",
+}
 
 
 HIGHLIGHT_STYLE = {
-        "fillColor": "#ffaf00",
-        "color": "red",
-        "weight": 3.5,
-        "dashArray": "5, 5",
-    }
+    "fillColor": "#ffaf00",
+    "color": "red",
+    "weight": 3.5,
+    "dashArray": "5, 5",
+}
 
 
 class DrawFoliumOverride(Draw):
