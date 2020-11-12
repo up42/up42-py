@@ -176,8 +176,10 @@ class VizTools:
         """
         if result_df.shape[0] > 100:
             result_df = result_df.iloc[:100]
-            logger.info("Only the first 100 results will be displayed to avoid memory "
-                        "issues.")
+            logger.info(
+                "Only the first 100 results will be displayed to avoid memory "
+                "issues."
+            )
 
         centroid = box(*result_df.total_bounds).centroid
         m = folium_base_map(
