@@ -234,8 +234,11 @@ def any_vector_to_fc(
             )  # Around 1m buffer # TODO: Find better solution than small buffer?
         elif isinstance(vector, GeoDataFrame):
             df = vector
-            if df.crs.to_string() != "EPSG:4326":
-                df = df.to_crs(epsg=4326)
+            try:
+                if df.crs.to_string() != "EPSG:4326":
+                    df = df.to_crs(epsg=4326)
+            except AttributeError as e:
+                raise AttributeError("GeoDataFrame requires a crs.") from e
 
     if as_dataframe:
         return df
