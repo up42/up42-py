@@ -174,6 +174,10 @@ class VizTools:
             name_column: Name of the feature property that provides the Feature/Layer name.
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
+        if result_df.shape[0] > 100:
+            result_df = result_df.iloc[:100]
+            logger.info("Only the first 100 results will be displayed to avoid memory "
+                        "issues.")
 
         centroid = box(*result_df.total_bounds).centroid
         m = folium_base_map(
