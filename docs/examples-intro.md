@@ -8,7 +8,8 @@ interactively with Binder [![Binder](https://mybinder.org/badge_logo.svg)](https
 <br>
 
 :satellite: [Radar Processing](https://sdk.up42.com/examples/radar_processing_1/)  
-:airplane: [Airport monitoring with parallel jobs](https://sdk.up42.com/examples/airports-parallel/)   
+:airplane: [Airport Monitoring with parallel jobs](https://sdk.up42.com/examples/airports-parallel/)   
+:airplane: [Aircraft Detection](https://sdk.up42.com/examples/aircraft-detection)   
 :droplet: [Flood Mapping](https://sdk.up42.com/examples/flood_mapping/)  
 🖼️ [Image mosaicking](https://github.com/up42/mosaicking)  
 :eye: [Catalog Quicklooks](https://sdk.up42.com/examples/catalog-quicklooks/)  

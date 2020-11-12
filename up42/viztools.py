@@ -154,8 +154,8 @@ class VizTools:
     def _map_images(
         plot_file_format: List[str],
         result_df: GeoDataFrame,
-        filepaths,
-        aoi=None,
+        filepaths: List[Union[str, Path]],
+        aoi: GeoDataFrame = None,
         show_images=True,
         show_features=False,
         name_column: str = "id",
@@ -165,8 +165,8 @@ class VizTools:
         Displays data.json, and if available, one or multiple results geotiffs.
         Args:
             plot_file_format: List of accepted image file formats e.g. [".png"]
-            result_df: GeoDataFrame of scenes, results of catalog.search()
-            aoi: GeoDataFrame of aoi
+            result_df: GeoDataFrame with scene geometries.
+            aoi: GeoDataFrame of aoi.
             filepaths: Paths to images to plot. Optional, by default picks up the last
                 downloaded results.
             show_images: Shows images if True (default).
@@ -193,11 +193,13 @@ class VizTools:
             feature_names = [""] * len(result_df.index)
 
         if aoi is not None:
+            aoi_style = VECTOR_STYLE.copy()
+            aoi_style["color"] = "red"
             folium.GeoJson(
                 aoi,
-                name="geojson",
-                style_function=_style_function,
-                highlight_function=_highlight_function,
+                name="aoi",
+                style_function=lambda x: aoi_style,
+                highlight_function=lambda x: HIGHLIGHT_STYLE,
             ).add_to(m)
 
         if show_features:
@@ -210,8 +212,8 @@ class VizTools:
                 f = folium.GeoJson(
                     row["geometry"],
                     name=layer_name,
-                    style_function=_style_function,
-                    highlight_function=_highlight_function,
+                    style_function=lambda x: VECTOR_STYLE,
+                    highlight_function=lambda x: HIGHLIGHT_STYLE,
                 )
                 folium.Popup(
                     f"{layer_name}: {row.drop('geometry', axis=0).to_json()}"
@@ -254,15 +256,24 @@ class VizTools:
         return m
 
     def map_results(
-        self, show_images: bool = True, name_column: str = "uid", save_html=None
+        self,
+        aoi: GeoDataFrame = None,
+        show_images: bool = True,
+        show_features: bool = True,
+        name_column: str = "uid",
+        save_html=None,
     ) -> folium.Map:
         """
         Displays data.json, and if available, one or multiple results geotiffs.
+
         Args:
-            show_images: Shows images if True (default), only features if False.
+            aoi: GeoDataFrame of aoi.
+            show_images: Shows images if True (default).
+            show_features: Shows features if True (default).
             name_column: Name of the feature property that provides the Feature/Layer name.
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
+        # TODO: Surface optional filepaths? or remove option alltogether?
         if self.results is None:
             raise ValueError(
                 "You first need to download the results via job.download_results()!"
@@ -284,9 +295,9 @@ class VizTools:
             plot_file_format=[".tif"],
             result_df=df,
             filepaths=self.results,
-            aoi=None,
+            aoi=aoi,
             show_images=show_images,
-            show_features=True,
+            show_features=show_features,
             name_column=name_column,
             save_html=save_html,
         )
@@ -296,6 +307,8 @@ class VizTools:
         self,
         scenes: GeoDataFrame,
         aoi: GeoDataFrame = None,
+        show_images: bool = True,
+        show_features: bool = False,
         filepaths: List = None,
         name_column: str = "id",
         save_html: Path = None,
@@ -309,6 +322,8 @@ class VizTools:
         Args:
                 scenes: GeoDataFrame of scenes, results of catalog.search()
                 aoi: GeoDataFrame of aoi.
+                show_images: Shows images if True (default).
+                show_features: Shows no features if False (default).
                 filepaths: Paths to images to plot. Optional, by default picks up the last
                         downloaded results.
                 name_column: Name of the feature property that provides the Feature/Layer name.
@@ -327,6 +342,8 @@ class VizTools:
             result_df=scenes,
             filepaths=filepaths,
             aoi=aoi,
+            show_images=show_images,
+            show_features=show_features,
             name_column=name_column,
             save_html=save_html,
         )
@@ -355,17 +372,22 @@ class VizTools:
                 "plotting without legend."
             )
 
-        ax = scenes.plot(
-            legend_column,
-            categorical=True,
-            figsize=figsize,
-            cmap="Set3",
-            legend=True,
-            alpha=0.7,
-            legend_kwds=dict(loc="upper left", bbox_to_anchor=(1, 1)),
-        )
-        if aoi is not None:
-            aoi.plot(color="r", ax=ax, fc="None", edgecolor="r", lw=1)
+        try:
+            ax = scenes.plot(
+                legend_column,
+                categorical=True,
+                figsize=figsize,
+                cmap="Set3",
+                legend=True,
+                alpha=0.7,
+                legend_kwds=dict(loc="upper left", bbox_to_anchor=(1, 1)),
+            )
+            if aoi is not None:
+                aoi.plot(color="r", ax=ax, fc="None", edgecolor="r", lw=1)
+        except AttributeError as e:
+            raise TypeError(
+                "'scenes' and 'aoi' (optional) have to be a GeoDataFrame."
+            ) from e
         ax.set_axis_off()
         plt.show()
 
@@ -425,22 +447,20 @@ def folium_base_map(
     return m
 
 
-def _style_function(_):
-    return {
-        "fillColor": "#5288c4",
-        "color": "blue",
-        "weight": 2.5,
-        "dashArray": "5, 5",
-    }
+VECTOR_STYLE = {
+    "fillColor": "#5288c4",
+    "color": "blue",
+    "weight": 2.5,
+    "dashArray": "5, 5",
+}
 
 
-def _highlight_function(_):
-    return {
-        "fillColor": "#ffaf00",
-        "color": "red",
-        "weight": 3.5,
-        "dashArray": "5, 5",
-    }
+HIGHLIGHT_STYLE = {
+    "fillColor": "#ffaf00",
+    "color": "red",
+    "weight": 3.5,
+    "dashArray": "5, 5",
+}
 
 
 class DrawFoliumOverride(Draw):

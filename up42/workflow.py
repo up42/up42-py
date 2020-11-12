@@ -42,8 +42,7 @@ class Workflow(Tools):
         return (
             f"Workflow(name: {info['name']}, workflow_id: {self.workflow_id}, "
             f"description: {info['description']}, createdAt: {info['createdAt']}, "
-            f"project_name: {info['name']}, "
-            f"workflow_tasks: {self.workflow_tasks}"
+            f"project_id: {self.project_id}, workflow_tasks: {self.workflow_tasks}"
         )
 
     @property
@@ -331,7 +330,10 @@ class Workflow(Tools):
             Dictionary of constructed input parameters.
         """
         input_parameters = self._get_default_parameters()
-        data_block_name = list(input_parameters.keys())[0]
+        try:
+            data_block_name = list(input_parameters.keys())[0]
+        except IndexError as e:
+            raise ValueError("The Workflow has no workflow tasks.") from e
 
         if order_ids is not None:
             # Needs to be handled in this function(not run_job) as it is only
