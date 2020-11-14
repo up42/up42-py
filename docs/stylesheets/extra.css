@@ -120,40 +120,6 @@ table {
 .md-grid {
     max-width: 64rem !important;
 }
-/*
-.framed-python{
-  margin-top:-70px;
-  overflow:hidden;
-}
-.framed-r{
-  margin-top:0px;
-  overflow:hidden;
-}
-.framed-r-api{
-  margin-top:-50px;
-  overflow:hidden;
-}
-.framed-github{
-  height:100vh !important;
-  width:100% !important;
-}
-*/
-
-
-/*Toc right margins*/
-/*
-@media only screen and (min-width: 76.25em){
-  .framed-python{
-    margin-left:-45px;
-  }
-  .framed-r-api{
-    margin-left:-45px;
-  }
-  .md-sidebar--secondary {
-    margin-left: 100% !important;
-  }
-}
-*/
 
 
 /* mkdocstrings styling
