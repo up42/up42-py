@@ -40,21 +40,6 @@ a.md-button.md-button:hover {
 }
 
 
-/* Define class for block image in block documentation trimmed*/
-.blockimage {
-    width: 200px;
-    margin-right: 20px;
-    margin-top: 7px;
-    position:relative;
-    float:left;
-}
-.blockimage img {
-   width:100%;
-   max-width:100%;
-    float:left;
-}
-
-
 /*Table styling*/
 table {
   padding: 0; }
