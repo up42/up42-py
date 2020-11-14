@@ -9,10 +9,10 @@ mkdocs-exclude
 mkdocs-exclude-search
 mkdocs-click
 mkdocstrings
-nbconvert==5.6.1
+nbconvert
 black
 requests-mock
-pylint==2.5.0
+pylint
 pytest
 pytest-pylint
 pytest-sugar
