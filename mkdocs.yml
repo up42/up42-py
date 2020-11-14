@@ -90,7 +90,8 @@ plugins:
   - search
   - autolinks
   - table-reader
-  - mkdocs-jupyter
+  - mkdocs-jupyter:
+      include_source: True
   - exclude:
       glob:
         - "*config*.json"
