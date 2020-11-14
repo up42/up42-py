@@ -1,12 +1,3 @@
-/* header different color*/
-/*
-.md-header {
-    background-color: #232f3e !important;
-    border-bottom: 1px solid #1b2532 !important;
-}
-*/
-
-
 /* Active tab bold & color */
 .md-tabs__link {
     font-size: .75rem !important;
@@ -108,25 +99,6 @@ a.md-button.md-button:hover {
     float:left;
 }
 
-/* display external links with icon */
-/*
-div.md-content a[href^="http://"]:not([href*="http://127.0.0.1:8000"]):after,
-div.md-content a[href^="https://"]:not([href*="http://127.0.0.1:8000"]):after,
-div.md-content a[href^="http://"]:not([href*="https://docs.up42.com"]):after,
-div.md-content a[href^="https://"]:not([href*="https://docs.up42.com"]):after,
-div.md-content a[href^="//"]:not([href*="http://127.0.0.1:8000"]):after {
-    font-family: 'FontAwesome';
-    content: " \f08e";
-    font-weight: normal;
-    font-style: normal;
-    font-size: 70%;
-    vertical-align: top;
-    display: inline-block;
-    text-decoration: none;
-    padding-left: 3px;
-}
-*/
-
 
 /*Table styling*/
 table {
@@ -201,10 +173,6 @@ table {
 .md-typeset .admonition.settings>.admonition-title:before, .md-typeset details.settings>.admonition-title:before, .md-typeset details.settings>summary:before {
     color: #448aff;
     content: "settings"}
-
-
-/* Code block size, but then too small in blocks*/
-/*code { font-size: 0.75em !important; }*/
 
 
 /* Site width etc.*/
