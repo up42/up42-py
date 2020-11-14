@@ -10,6 +10,7 @@
     color: var(--md-accent-fg-color);
 }
 
+
 /* navigation bar active color*/
 .md-nav__item .md-nav__link--active {
     font-weight: bold !important;
@@ -20,6 +21,7 @@
     font-size: .75rem !important;
     color: var(--md-accent-fg-color);
 }
+
 
 /* frontpage elements */
 .tx-hero h1 {
@@ -35,53 +37,6 @@ a.md-button.md-button--primary:hover {
 }
 a.md-button.md-button:hover {
     color: #000000;
-}
-
-
-/* More visible headings*/
-.md-main h1 {
-    margin: 0.5em 0 1.0em 0;
-    color: #333;
-    font-weight: bold;
-    font-size: 36px;
-    line-height: 40px;
-    /*
-    counter-increment: section-1;
-    counter-reset: section-2 section-3 section-4;
-    */
-}
-.md-main h2 {
-    margin: 1.5em 0 0.4em 0;
-    color: #595959;
-    font-weight: normal;
-    font-size: 30px;
-    line-height: 36px;
-    border-bottom: 1px solid #fff;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.1);
-    padding-bottom: 10px;
-    /*
-    counter-increment: section-2;
-    counter-reset: section-3 section-4;
-    */
-}
-.md-main h3 {
-    margin: 1.2em 0 0.4em 0;
-    color: #595959;
-    font-weight: normal;
-    font-size: 26px;
-    line-height: 40px;
-    /*
-    counter-increment: section-3;
-    counter-reset: section-4;
-    */
-}
-.md-main h4 {
-    margin: 1.0em 0 0.4em 0;
-    color: #333;
-    font-weight: normal;
-    font-size: 20px;
-    line-height: 20px;
-    /* counter-increment: section-4; */
 }
 
 
@@ -126,7 +81,8 @@ table {
     table tr th :last-child, table tr td :last-child {
       margin-bottom: 0; }
 
-/*Neccessary css for tabbed extension*/
+
+/*Tabbed extension css*/
 .tabbed-set {
   display: flex;
   position: relative;
