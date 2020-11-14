@@ -18,14 +18,6 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
   <!-- End Google Tag Manager -->
 {% endblock %}
 
-{% block tabs %}
-  {{ super() }}
-  <style>
-    .md-header{position:initial; padding-top: 0.4rem;}
-    .md-tabs{position:initial; padding-top: 0.4rem;}
-  </style>
-{% endblock %}
-
 {% block announce %}
   <style>.md-announce a,.md-announce a:focus,.md-announce a:hover{color:currentColor}.md-announce strong{white-space:nowrap}.md-announce .twitter{margin-left:.2em;color:#00acee}</style>
     <a href="https://sdk.up42.com/CHANGELOG/"><strong>New version 0.13.0:</strong> Improved access & documentation of plotting and basic functionality and more! See the 📅
