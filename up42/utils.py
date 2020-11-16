@@ -215,10 +215,10 @@ def any_vector_to_fc(
                 df = GeoDataFrame.from_features(
                     FeatureCollection([Feature(geometry=vector)]), crs=4326
                 )
-        except KeyError:
+        except KeyError as e:
             raise ValueError(
                 "Provided geometry dictionary has to include a featurecollection or feature."
-            )
+            ) from e
     else:
         if isinstance(vector, list):
             if len(vector) == 4:
@@ -288,8 +288,8 @@ def fc_to_query_geometry(
     try:
         if fc["type"] != "FeatureCollection":
             raise ValueError("Geometry argument only supports Feature Collections!")
-    except (KeyError, TypeError):
-        raise ValueError("Geometry argument only supports Feature Collections!")
+    except (KeyError, TypeError) as e:
+        raise ValueError("Geometry argument only supports Feature Collections!") from e
 
     # TODO: Handle multipolygons
 

@@ -87,14 +87,14 @@ class Auth:
                     try:
                         self.project_id = config["project_id"]
                         self.project_api_key = config["project_api_key"]
-                    except KeyError:
+                    except KeyError as e:
                         raise ValueError(
                             "Provided config file does not contain project_id and "
                             "project_api_key!"
-                        )
+                        ) from e
                 logger.info("Got credentials from config file.")
-            except FileNotFoundError:
-                raise ValueError("Selected config file does not exist!")
+            except FileNotFoundError as e:
+                raise ValueError("Selected config file does not exist!") from e
 
         elif all(
             v is not None
