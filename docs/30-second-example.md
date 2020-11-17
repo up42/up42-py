@@ -51,3 +51,8 @@ job = workflow.run_job(input_parameters=input_parameters,
 job.download_results()
 job.plot_results()
 ```
+
+<br>
+
+!!! Success "Success!"
+    Continue with the [Installation chapter](installation.md)!

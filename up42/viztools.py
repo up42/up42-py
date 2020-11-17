@@ -474,7 +474,7 @@ class DrawFoliumOverride(Draw):
         # pylint: disable=import-outside-toplevel
         from branca.element import CssLink, Element, Figure, JavascriptLink
 
-        super(DrawFoliumOverride, self).render(**kwargs)
+        super().render(**kwargs)
 
         figure = self.get_root()
         assert isinstance(figure, Figure), (

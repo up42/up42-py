@@ -16,12 +16,14 @@ extra:
   social:
     - icon: fontawesome/solid/home
       link: https://up42.com
-    - icon: fontawesome/brands/github-alt
-      link: https://github.com/up42
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/up42_
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/company/up42/
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/up42
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/u/up42
     - icon: fontawesome/solid/envelope
       link: mailto:support@up42.com
 
@@ -88,7 +90,8 @@ plugins:
   - search
   - autolinks
   - table-reader
-  - mkdocs-jupyter
+  - mkdocs-jupyter:
+      include_source: True
   - exclude:
       glob:
         - "*config*.json"

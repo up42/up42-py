@@ -1,12 +1,3 @@
-/* header different color*/
-/*
-.md-header {
-    background-color: #232f3e !important;
-    border-bottom: 1px solid #1b2532 !important;
-}
-*/
-
-
 /* Active tab bold & color */
 .md-tabs__link {
     font-size: .75rem !important;
@@ -19,6 +10,7 @@
     color: var(--md-accent-fg-color);
 }
 
+
 /* navigation bar active color*/
 .md-nav__item .md-nav__link--active {
     font-weight: bold !important;
@@ -29,6 +21,7 @@
     font-size: .75rem !important;
     color: var(--md-accent-fg-color);
 }
+
 
 /* frontpage elements */
 .tx-hero h1 {
@@ -45,87 +38,6 @@ a.md-button.md-button--primary:hover {
 a.md-button.md-button:hover {
     color: #000000;
 }
-
-
-/* More visible headings*/
-.md-main h1 {
-    margin: 0.5em 0 1.0em 0;
-    color: #333;
-    font-weight: bold;
-    font-size: 36px;
-    line-height: 40px;
-    /*
-    counter-increment: section-1;
-    counter-reset: section-2 section-3 section-4;
-    */
-}
-.md-main h2 {
-    margin: 1.5em 0 0.4em 0;
-    color: #595959;
-    font-weight: normal;
-    font-size: 30px;
-    line-height: 36px;
-    border-bottom: 1px solid #fff;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.1);
-    padding-bottom: 10px;
-    /*
-    counter-increment: section-2;
-    counter-reset: section-3 section-4;
-    */
-}
-.md-main h3 {
-    margin: 1.2em 0 0.4em 0;
-    color: #595959;
-    font-weight: normal;
-    font-size: 26px;
-    line-height: 40px;
-    /*
-    counter-increment: section-3;
-    counter-reset: section-4;
-    */
-}
-.md-main h4 {
-    margin: 1.0em 0 0.4em 0;
-    color: #333;
-    font-weight: normal;
-    font-size: 20px;
-    line-height: 20px;
-    /* counter-increment: section-4; */
-}
-
-
-/* Define class for block image in block documentation trimmed*/
-.blockimage {
-    width: 200px;
-    margin-right: 20px;
-    margin-top: 7px;
-    position:relative;
-    float:left;
-}
-.blockimage img {
-   width:100%;
-   max-width:100%;
-    float:left;
-}
-
-/* display external links with icon */
-/*
-div.md-content a[href^="http://"]:not([href*="http://127.0.0.1:8000"]):after,
-div.md-content a[href^="https://"]:not([href*="http://127.0.0.1:8000"]):after,
-div.md-content a[href^="http://"]:not([href*="https://docs.up42.com"]):after,
-div.md-content a[href^="https://"]:not([href*="https://docs.up42.com"]):after,
-div.md-content a[href^="//"]:not([href*="http://127.0.0.1:8000"]):after {
-    font-family: 'FontAwesome';
-    content: " \f08e";
-    font-weight: normal;
-    font-style: normal;
-    font-size: 70%;
-    vertical-align: top;
-    display: inline-block;
-    text-decoration: none;
-    padding-left: 3px;
-}
-*/
 
 
 /*Table styling*/
@@ -154,7 +66,8 @@ table {
     table tr th :last-child, table tr td :last-child {
       margin-bottom: 0; }
 
-/*Neccessary css for tabbed extension*/
+
+/*Tabbed extension css*/
 .tabbed-set {
   display: flex;
   position: relative;
@@ -203,52 +116,14 @@ table {
     content: "settings"}
 
 
-/* Code block size, but then too small in blocks*/
-/*code { font-size: 0.75em !important; }*/
-
-
 /* Site width etc.*/
 .md-grid {
     max-width: 64rem !important;
 }
-/*
-.framed-python{
-  margin-top:-70px;
-  overflow:hidden;
-}
-.framed-r{
-  margin-top:0px;
-  overflow:hidden;
-}
-.framed-r-api{
-  margin-top:-50px;
-  overflow:hidden;
-}
-.framed-github{
-  height:100vh !important;
-  width:100% !important;
-}
-*/
-
-
-/*Toc right margins*/
-/*
-@media only screen and (min-width: 76.25em){
-  .framed-python{
-    margin-left:-45px;
-  }
-  .framed-r-api{
-    margin-left:-45px;
-  }
-  .md-sidebar--secondary {
-    margin-left: 100% !important;
-  }
-}
-*/
 
 
 /* mkdocstrings styling
-/* Indentation of function doc */
+/* Indentation. */
 div.doc-contents:not(.first) {
   padding-left: 25px;
   border-left: 4px solid rgba(230, 230, 230);
@@ -259,17 +134,12 @@ h5.doc-heading {
   text-transform: none !important;
 }
 /* Don't use vertical space on hidden ToC entries. */
-h6.hidden-toc {
-  margin: 0 !important;
-  position: relative;
-  top: -70px;
-}
-h6.hidden-toc::before {
+.hidden-toc::before {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
 /* Don't show permalink of hidden ToC entries. */
-h6.hidden-toc a.headerlink {
+.hidden-toc a.headerlink {
   display: none;
 }
 /* Avoid breaking parameters name, etc. in table cells. */
@@ -278,7 +148,6 @@ td code {
 }
 /* For pieces of Markdown rendered in table cells. */
 td p {
-  margin-top: 0;
-  margin-bottom: 0;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
-*/

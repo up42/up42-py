@@ -1,8 +1,8 @@
 <!-- Elements added to main will be displayed on all pages -->
 {% extends "base.html" %}
 
-{% block libs %}
 <!-- Google Tag Manager -->
+{% block libs %}
 <script>
 var gtmId = 'GTM-TQPKQK7';
 if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1')) {
@@ -15,17 +15,9 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer', gtmId);
 </script>
-  <!-- End Google Tag Manager -->
 {% endblock %}
 
-{% block tabs %}
-  {{ super() }}
-  <style>
-    .md-header{position:initial; padding-top: 0.4rem;}
-    .md-tabs{position:initial; padding-top: 0.4rem;}
-  </style>
-{% endblock %}
-
+<!-- Announcement bar -->
 {% block announce %}
   <style>.md-announce a,.md-announce a:focus,.md-announce a:hover{color:currentColor}.md-announce strong{white-space:nowrap}.md-announce .twitter{margin-left:.2em;color:#00acee}</style>
     <a href="https://sdk.up42.com/CHANGELOG/"><strong>New version 0.13.0:</strong> Improved access & documentation of plotting and basic functionality and more! See the 📅
@@ -33,8 +25,8 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
     </a>
 {% endblock %}
 
-{% block footer %}
 <!-- More minimal footer -->
+{% block footer %}
 <footer class="md-footer">
     <div class="md-footer-meta md-typeset">
         <div class="md-footer-meta__inner md-grid">
@@ -52,7 +44,6 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
                    title="Material for MkDocs">
                     Material for MkDocs</a>
             </div>
-            <!-- Social links -->
             {% block social %}
             {% include "partials/social.html" %}
             {% endblock %}
@@ -60,3 +51,14 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
     </div>
 </footer>
 {% endblock %}
+
+<!-- Download Links for notebooks -->
+{% block content %}
+{% if page.nb_url %}
+    <a href="{{ page.nb_url }}" title="Download Notebook" class="md-content__button md-icon">
+        {% include ".icons/material/download.svg" %}
+    </a>
+{% endif %}
+
+{{ super() }}
+{% endblock content %}
