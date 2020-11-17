@@ -10,13 +10,33 @@ import requests.exceptions
 from tenacity import (
     Retrying,
     wait_fixed,
+    wait_random_exponential,
     stop_after_attempt,
+    retry_if_exception,
     retry_if_exception_type,
+    retry,
 )
 
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
+
+
+class retry_if_429_error(retry_if_exception):
+    """
+    Adapted from https://github.com/alexwlchan/handling-http-429-with-tenacity
+    Retry strategy that retries if the exception is an ``HTTPError`` with
+    a 429 status code.
+    """
+
+    def __init__(self):
+        def is_http_429_error(exception):
+            return (
+                isinstance(exception, requests.exceptions.HTTPError)
+                and exception.response.status_code == 429
+            )
+
+        super().__init__(predicate=is_http_429_error)
 
 
 class Auth:
@@ -152,6 +172,11 @@ class Auth:
         return headers
 
     # pylint: disable=dangerous-default-value
+    @retry(
+        retry=retry_if_429_error(),
+        wait=wait_random_exponential(multiplier=0.5, max=180),
+        reraise=True,
+    )
     def _request_helper(
         self, request_type: str, url: str, data: Dict = {}, querystring: Dict = {}
     ) -> requests.Response:
@@ -182,6 +207,7 @@ class Auth:
             )
         logger.debug(response)
         logger.debug(data)
+        response.raise_for_status()
         return response
 
     def _request(
@@ -210,26 +236,25 @@ class Auth:
         Returns:
             The API response.
         """
-        if self.retry:
-            retryer = Retrying(
-                stop=stop_after_attempt(1),  # TODO: Find optimal retry solution
-                wait=wait_fixed(0),
-                retry=(
-                    retry_if_exception_type(requests.exceptions.HTTPError)
-                    | retry_if_exception_type(requests.exceptions.ConnectionError)
-                ),
-                after=self._get_token(),
-            )
-            response = retryer(
-                self._request_helper, request_type, url, data, querystring
-            )
-        else:
-            response = self._request_helper(request_type, url, data, querystring)  # type: ignore
-
         try:
-            response.raise_for_status()
+            if self.retry:
+                retryer = Retrying(
+                    stop=stop_after_attempt(1),  # TODO: Find optimal retry solution
+                    wait=wait_fixed(0),
+                    retry=(
+                        retry_if_exception_type(requests.exceptions.HTTPError)
+                        | retry_if_exception_type(requests.exceptions.ConnectionError)
+                    ),
+                    after=self._get_token(),
+                    reraise=True,
+                )
+                response = retryer(
+                    self._request_helper, request_type, url, data, querystring
+                )
+            else:
+                response = self._request_helper(request_type, url, data, querystring)  # type: ignore
         except requests.exceptions.RequestException as err:  # Base error class
-            err_message = json.loads(response.text)["error"]
+            err_message = json.loads(err.response.text)["error"]
             err_message = f"{err_message['code']} Error - {err_message['message']}!"
             logger.error(err_message)
             raise requests.exceptions.RequestException(err_message) from err

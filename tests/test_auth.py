@@ -123,3 +123,23 @@ def test_request_with_retry(auth_mock, requests_mock):
 
     response_json = auth_mock._request(request_type="GET", url="http://test.com")
     assert response_json == {"data": {"xyz": 789}, "error": {}}
+
+
+def test_request_rate_limited(auth_mock, requests_mock):
+    a = requests_mock.get(
+        "http://test.com",
+        [
+            {
+                "status_code": 429,
+                "json": {
+                    "data": {},
+                    "error": {"code": 429, "message": "rate limited"},
+                },
+            },
+            {"json": {"data": {"xyz": 789}, "error": {}}},
+        ],
+    )
+
+    response_json = auth_mock._request(request_type="GET", url="http://test.com")
+    assert response_json == {"data": {"xyz": 789}, "error": {}}
+    assert a.call_count == 2
