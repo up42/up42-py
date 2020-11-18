@@ -16,6 +16,11 @@ pip show up42-py
 
 ## Versions
 
+### [0.13.1](https://pypi.org/project/up42-py/) (2020-11-18)
+- Handle request rate limits via retry mechanism.
+- Limit `map_quicklooks()` to 100 quicklooks.
+- Add aircraft detection example & documentation improvements.
+
 ### [0.13.0](https://pypi.org/project/up42-py/) (2020-10-30)
 - New consistent use & documentation of the basic functionality:
     - All [basic functions](up42-reference.md) (e.g. `up42.get_blocks`) are accessible 
