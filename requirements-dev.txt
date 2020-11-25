@@ -23,3 +23,4 @@ pytest-mypy
 coverage-badge
 mock
 twine
+jupyter

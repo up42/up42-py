@@ -9,4 +9,3 @@ folium
 branca
 matplotlib
 descartes
-jupyter
