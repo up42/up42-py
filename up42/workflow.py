@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 from up42.auth import Auth
 from up42.job import Job
+from up42.estimation import Estimation
 from up42.jobcollection import JobCollection
 from up42.tools import Tools
 from up42.utils import (
@@ -175,7 +176,7 @@ class Workflow(Tools):
         full_input_tasks_definition.append(data_task)
         previous_task_name = data_task["name"]
 
-        # All all following (processing) blocks.
+        # All following (processing) blocks.
         for block_id in input_tasks_ids[1:]:
             # Check if multiple of the same block are in the input tasks definition,
             # so that is does not get skipped as it has the same id.
@@ -442,6 +443,30 @@ class Workflow(Tools):
 
         return result_params
 
+    def estimate_job(self, input_parameters: Union[Dict, str, Path] = None):
+        if input_parameters is None:
+            raise ValueError(
+                "Select the job_parameters, use workflow.construct_parameters()!"
+            )
+
+        input_tasks = self.get_workflow_tasks()
+        url = f"{self.auth._endpoint()}/estimation/price"
+        payload = {
+            "inputs": input_parameters,
+            "tasks": input_tasks,
+        }
+        logger.info(payload)
+
+        response_json = self.auth._request(request_type="POST", url=url, data=payload)
+        estimation = Estimation(
+            self.auth,
+            project_id=self.project_id,
+            workflow_id=self.workflow_id,
+            workflow_estimation=response_json["data"],
+            input_parameters=input_parameters,
+        )
+        return estimation
+
     def _helper_run_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,
@@ -606,6 +631,7 @@ class Workflow(Tools):
         input_parameters: Union[Dict, str, Path] = None,
         track_status: bool = False,
         name: str = None,
+        get_estimation: bool = False,
     ) -> "Job":
         """
         Create a run a new test job (Test Query). With this test query you will not be
@@ -620,6 +646,9 @@ class Workflow(Tools):
         Returns:
             The spawned test job object.
         """
+        if get_estimation:
+            self.estimate_job(input_parameters).info()
+
         return self._helper_run_job(
             input_parameters=input_parameters,
             test_job=True,

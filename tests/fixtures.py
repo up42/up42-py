@@ -101,6 +101,32 @@ JSON_BLOCKS = {
     "error": {},
 }
 
+JSON_WORKFLOW_ESTIMATION = {
+    "data": {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "blockConsumption": {
+                "resources": {"unit": "MEGABYTE", "min": 3.145728, "max": 3.145728},
+                "credit": {"min": 0, "max": 0},
+            },
+            "machineConsumption": {
+                "duration": {"min": 4041, "max": 26380},
+                "credit": {"min": 3, "max": 3},
+            },
+        },
+        "tiling:1": {
+            "blockConsumption": {
+                "resources": {"unit": "MEGABYTE", "min": 3.145728, "max": 3.145728},
+                "credit": {"min": 4, "max": 4},
+            },
+            "machineConsumption": {
+                "duration": {"min": 80930, "max": 428927},
+                "credit": {"min": 2, "max": 9},
+            },
+        },
+    },
+    "error": {},
+}
+
 
 # TODO: Use patch.dict instead of 2 fictures?
 @pytest.fixture()

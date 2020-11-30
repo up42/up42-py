@@ -6,7 +6,7 @@ import pytest
 import shapely
 
 # pylint: disable=unused-import,wrong-import-order
-from .context import Workflow, Job, JobCollection
+from .context import Workflow, Job, JobCollection, Estimation
 from .fixtures import (
     auth_mock,
     auth_live,
@@ -18,7 +18,13 @@ from .fixtures import (
     project_mock,
     project_mock_max_concurrent_jobs,
 )
-from .fixtures import JOB_ID, JOB_NAME, JOBTASK_ID
+from .fixtures import (
+    JOB_ID,
+    JOB_NAME,
+    JOBTASK_ID,
+    JSON_WORKFLOW_TASKS,
+    JSON_WORKFLOW_ESTIMATION,
+)
 
 
 def test_workflow_info(workflow_mock):
@@ -294,6 +300,28 @@ def test_construct_parameters_parallel_scene_ids(workflow_mock):
         "sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1},
         "tiling:1": {"tile_width": 768},
     }
+
+
+def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
+    input_parameters = {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+            "limit": 1,
+            "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
+        },
+        "tiling:1": {"tile_width": 768},
+    }
+    # get_workflow_tasks
+    url_workflow_tasks = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks"
+    )
+    url_workflow_estimation = f"{auth_mock._endpoint()}/estimation/price"
+    requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
+    requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
+    estimation = workflow_mock.estimate_job(input_parameters)
+    assert isinstance(estimation, Estimation)
+    assert estimation.info == JSON_WORKFLOW_ESTIMATION["data"]
 
 
 def test_run_job(workflow_mock, job_mock, requests_mock):
