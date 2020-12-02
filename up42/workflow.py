@@ -103,6 +103,7 @@ class Workflow(Tools):
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
             f"{self.workflow_id}/tasks"
         )
+
         response_json = self.auth._request(request_type="GET", url=url)
         tasks = response_json["data"]
         logger.info(f"Got {len(tasks)} tasks/blocks in workflow {self.workflow_id}.")
@@ -443,28 +444,30 @@ class Workflow(Tools):
 
         return result_params
 
-    def estimate_job(self, input_parameters: Union[Dict, str, Path] = None):
+    def estimate_job(self, input_parameters: Union[Dict, str, Path]) -> Dict:
+        """
+        A function to get the job estimation.
+        :param input_parameters: Either json string of workflow parameters or filepath to json.
+        :return: A dictionary of estimation for each task in the workflow.
+        """
         if input_parameters is None:
             raise ValueError(
                 "Select the job_parameters, use workflow.construct_parameters()!"
             )
+        workflow_tasks = self.get_workflow_tasks()
+        input_tasks = [
+            workflow_tasks[i]["name"].split(":")[0] for i in range(len(workflow_tasks))
+        ]
 
-        input_tasks = self.get_workflow_tasks()
-        url = f"{self.auth._endpoint()}/estimation/price"
-        payload = {
-            "inputs": input_parameters,
-            "tasks": input_tasks,
-        }
-        logger.info(payload)
+        full_input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
+        for index, _ in enumerate(workflow_tasks):
+            full_input_tasks[index]["blockVersionTag"] = workflow_tasks[index][
+                "blockVersionTag"
+            ]
 
-        response_json = self.auth._request(request_type="POST", url=url, data=payload)
         estimation = Estimation(
-            self.auth,
-            project_id=self.project_id,
-            workflow_id=self.workflow_id,
-            workflow_estimation=response_json["data"],
-            input_parameters=input_parameters,
-        )
+            self.auth, self.project_id, input_parameters, full_input_tasks
+        ).estimate_price()
         return estimation
 
     def _helper_run_job(
@@ -628,7 +631,7 @@ class Workflow(Tools):
 
     def test_job(
         self,
-        input_parameters: Union[Dict, str, Path] = None,
+        input_parameters: Union[Dict, str, Path],
         track_status: bool = False,
         name: str = None,
         get_estimation: bool = False,
@@ -647,7 +650,7 @@ class Workflow(Tools):
             The spawned test job object.
         """
         if get_estimation:
-            self.estimate_job(input_parameters).info()
+            self.estimate_job(input_parameters)
 
         return self._helper_run_job(
             input_parameters=input_parameters,

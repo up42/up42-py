@@ -1,4 +1,5 @@
-from typing import Dict
+from typing import Dict, Union, List
+from pathlib import Path
 
 from up42.auth import Auth
 from up42.tools import Tools
@@ -13,23 +14,31 @@ class Estimation(Tools):
         self,
         auth: Auth,
         project_id: str,
-        workflow_id: str,
-        workflow_estimation: Dict,
-        input_parameters,
+        input_parameters: Union[Dict, str, Path],
+        input_tasks: List[Dict],
     ):
         """
         The Estimation class provides facilities for getting estimation of a workflow.
         """
         self.auth = auth
         self.project_id = project_id
-        self.workflow_id = workflow_id
-        self.workflow_estimation = workflow_estimation
         self.input_parameters = input_parameters
+        self.input_tasks = input_tasks
+        self.payload: Dict = {}
 
-    @property
-    def info(self):
+    def estimate_price(self) -> Dict:
         """
-        Gets the estimation information.
+        This function return estimation for a workflow.
+        :return:
         """
-        logger.info(f"Returned estimation: {self.workflow_estimation}")
-        return self.workflow_estimation
+        url = f"{self.auth._endpoint()}/estimate/job"
+        self.payload = {
+            "tasks": self.input_tasks,
+            "inputs": self.input_parameters,
+        }
+
+        response_json = self.auth._request(
+            request_type="POST", url=url, data=self.payload
+        )
+
+        return response_json["data"]

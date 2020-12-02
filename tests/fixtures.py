@@ -12,6 +12,7 @@ from .context import (
     JobTask,
     Tools,
     Catalog,
+    Estimation,
 )
 
 
@@ -36,48 +37,63 @@ JOBTASK_NAME = "jobtask_name_123"
 
 
 JSON_WORKFLOW_TASKS = {
+    "error": "None",
     "data": [
         {
-            "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
+            "id": "aa2cba17-d35c-4395-ab01-a0fd8191a4b3",
             "name": "sobloo-s2-l1c-aoiclipped:1",
-            "blockVersionTag": "2.2.2",
+            "parentsIds": [],
+            "blockName": "sobloo-s2-l1c-aoiclipped",
+            "blockVersionTag": "2.3.0",
             "block": {
+                "id": "3a381e6b-acb7-4cec-ae65-50798ce80e64",
                 "name": "sobloo-s2-l1c-aoiclipped",
+                "displayName": "Sentinel-2 L1C MSI AOI clipped",
                 "parameters": {
-                    "nodata": {
-                        "type": "number",
-                    },
+                    "ids": {"type": "array", "default": "None"},
+                    "bbox": {"type": "array", "default": "None"},
                     "time": {
                         "type": "dateRange",
                         "default": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
                     },
                 },
+                "type": "DATA",
+                "isDryRunSupported": "true",
+                "version": "2.3.0",
             },
+            "environment": "None",
         },
         {
-            "id": "af626c54-156e-4f13-a743-55efd27de533",
+            "id": "24375b2a-288b-46c8-b404-53e48d4e7b25",
             "name": "tiling:1",
-            "blockVersionTag": "1.0.0",
+            "parentsIds": ["aa2cba17-d35c-4395-ab01-a0fd8191a4b3"],
+            "blockName": "tiling",
+            "blockVersionTag": "2.2.3",
             "block": {
+                "id": "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
                 "name": "tiling",
+                "displayName": "Raster Tiling",
                 "parameters": {
                     "nodata": {
                         "type": "number",
-                        "default": None,
-                        "required": False,
-                        "description": "Value representing..",
+                        "default": "None",
+                        "required": "false",
+                        "description": "Value representing ...",
                     },
                     "tile_width": {
                         "type": "number",
                         "default": 768,
-                        "required": True,
+                        "required": "true",
                         "description": "Width of a tile in pixels",
                     },
                 },
+                "type": "PROCESSING",
+                "isDryRunSupported": "false",
+                "version": "2.2.3",
             },
+            "environment": "None",
         },
     ],
-    "error": {},
 }
 
 JSON_BLOCKS = {
@@ -116,7 +132,7 @@ JSON_WORKFLOW_ESTIMATION = {
         "tiling:1": {
             "blockConsumption": {
                 "resources": {"unit": "MEGABYTE", "min": 3.145728, "max": 3.145728},
-                "credit": {"min": 4, "max": 4},
+                "credit": {"min": 0, "max": 0},
             },
             "machineConsumption": {
                 "duration": {"min": 80930, "max": 428927},
@@ -450,6 +466,64 @@ def jobs_live(auth_live):
     )
 
     return [job_1, job_2]
+
+
+@pytest.fixture()
+def estimation_mock(auth_mock):
+    input_parameters = {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+            "limit": 1,
+            "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
+        },
+        "tiling:1": {"tile_width": 768},
+    }
+
+    input_tasks = [
+        {
+            "name": "sobloo-s2-l1c-aoiclipped:1",
+            "parentName": None,
+            "blockId": "3a381e6b-acb7-4cec-ae65-50798ce80e64",
+            "blockVersionTag": "2.3.0",
+        },
+        {
+            "name": "tiling:1",
+            "parentName": "sobloo-s2-l1c-aoiclipped:1",
+            "blockId": "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
+            "blockVersionTag": "2.2.3",
+        },
+    ]
+
+    return Estimation(auth_mock, auth_mock.project_id, input_parameters, input_tasks)
+
+
+@pytest.fixture()
+def estimation_live(auth_live):
+    input_parameters = {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+            "limit": 1,
+            "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
+        },
+        "tiling:1": {"tile_width": 768},
+    }
+
+    input_tasks = [
+        {
+            "name": "sobloo-s2-l1c-aoiclipped:1",
+            "parentName": None,
+            "blockId": "3a381e6b-acb7-4cec-ae65-50798ce80e64",
+            "blockVersionTag": "2.3.0",
+        },
+        {
+            "name": "tiling:1",
+            "parentName": "sobloo-s2-l1c-aoiclipped:1",
+            "blockId": "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
+            "blockVersionTag": "2.2.3",
+        },
+    ]
+
+    return Estimation(auth_live, auth_live.project_id, input_parameters, input_tasks)
 
 
 @pytest.fixture()
