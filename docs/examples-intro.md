@@ -13,4 +13,5 @@ interactively with Binder [![Binder](https://mybinder.org/badge_logo.svg)](https
 :droplet: [Flood Mapping](https://sdk.up42.com/examples/flood_mapping/)  
 🖼️ [Image mosaicking](https://github.com/up42/mosaicking)  
 :eye: [Catalog Quicklooks](https://sdk.up42.com/examples/catalog-quicklooks/)  
+:ship: [Ship Identification](https://sdk.up42.com/examples/ship-identification) 
 
