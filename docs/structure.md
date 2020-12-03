@@ -49,6 +49,7 @@ function.
         - `.workflow_tasks`
         - `.add_workflow_tasks()`
         - `.construct_parameters()`
+        - `.estimate_job()`
         - `.test_job()`
         - `.run_job()`
         - `.construct_parameters_parallel()`
