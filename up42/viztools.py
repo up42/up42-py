@@ -103,6 +103,11 @@ class VizTools:
         else:
             axs = [axs]
 
+        if len(bands) != 3:
+            if len(bands) == 1:
+                bands = bands * 3  # plot as grayband
+            else:
+                raise ValueError("Parameter bands can only contain one or three bands.")
         for idx, (fp, title) in enumerate(zip(imagepaths, titles)):
             with rasterio.open(fp) as src:
                 img_array = src.read(bands)
@@ -228,6 +233,14 @@ class VizTools:
                 f.add_to(m)
 
         if show_images and raster_filepaths:
+            if len(bands) != 3:
+                if len(bands) == 1:
+                    bands = bands * 3  # plot as grayband
+                else:
+                    raise ValueError(
+                        "Parameter bands can only contain one or three bands."
+                    )
+
             for idx, (raster_fp, feature_name) in enumerate(
                 zip(raster_filepaths, feature_names)
             ):
