@@ -14,6 +14,7 @@ from up42.project import Project
 from up42.workflow import Workflow
 from up42.job import Job
 from up42.jobtask import JobTask
+from up42.jobcollection import JobCollection
 from up42.catalog import Catalog
 from up42.utils import get_logger
 
@@ -107,6 +108,26 @@ def initialize_jobtask(jobtask_id, job_id) -> "JobTask":
     )
     logger.info(f"Initialized {jobtask}")
     return jobtask
+
+
+def initialize_jobcollection(job_ids: List[str]) -> "JobCollection":
+    """
+    Returns a JobCollection object (the referenced jobs have to exist on UP42).
+
+    Args:
+        job_ids: List of UP42 job_ids
+    """
+    if _auth is None:
+        raise RuntimeError("Not authenticated, call up42.authenticate() first")
+    jobs = [
+        Job(auth=_auth, job_id=job_id, project_id=str(_auth.project_id))
+        for job_id in job_ids
+    ]
+    jobcollection = JobCollection(
+        auth=_auth, project_id=str(_auth.project_id), jobs=jobs
+    )
+    logger.info(f"Initialized {jobcollection}")
+    return jobcollection
 
 
 def get_blocks(
