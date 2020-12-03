@@ -13,22 +13,33 @@ class Estimation(Tools):
     def __init__(
         self,
         auth: Auth,
-        project_id: str,
         input_parameters: Union[Dict, str, Path],
         input_tasks: List[Dict],
     ):
         """
         The Estimation class provides facilities for getting estimation of a workflow.
+
+        input_parameters: Job input parameters as from workflow.construct_parameters().
+        input_tasks: List of Dict of input_tasks, containing name, parentName, blockId
+            and blockVersionTag. Example:
+                [{
+                    "name": "sobloo-s2-l1c-aoiclipped:1",
+                    "parentName": None,
+                    "blockId": "3a381e6b-acb7-4cec-ae65-50798ce80e64",
+                    "blockVersionTag": "2.3.0",
+                },]
         """
         self.auth = auth
-        self.project_id = project_id
         self.input_parameters = input_parameters
         self.input_tasks = input_tasks
         self.payload: Dict = {}
 
-    def estimate_price(self) -> Dict:
+    def estimate(self) -> Dict:
         """
-        This function return estimation for a workflow.
+        Estimation of price and duration of the workflow for the provided input parameters.
+
+        Returns:
+            A dictionary with credit cost & duration estimate for each workflow task.
         """
         url = f"{self.auth._endpoint()}/estimate/job"
         self.payload = {
