@@ -29,7 +29,6 @@ class Estimation(Tools):
     def estimate_price(self) -> Dict:
         """
         This function return estimation for a workflow.
-        :return:
         """
         url = f"{self.auth._endpoint()}/estimate/job"
         self.payload = {

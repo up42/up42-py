@@ -15,6 +15,9 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.14.0](https://pypi.org/project/up42-py/) (2020-11-18)
+- Add `workflow.estimate_job` for getting estimation the cost of running a workflow.
+- Add boolean `get_estimation` parameter to `workflow.test_job` for getting cost's estimation when running test job. By default is set to false.
 
 ### [0.13.1](https://pypi.org/project/up42-py/) (2020-11-18)
 - Handle request rate limits via retry mechanism.

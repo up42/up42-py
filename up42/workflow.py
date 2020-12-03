@@ -446,28 +446,44 @@ class Workflow(Tools):
 
     def estimate_job(self, input_parameters: Union[Dict, str, Path] = None) -> Dict:
         """
-        A function to get the job estimation.
-        :param input_parameters: Either json string of workflow parameters or filepath to json.
-        :return: A dictionary of estimation for each task in the workflow.
+        Estimation of price and duration of the workflow for the provided input parameters.
+
+        Args:
+            input_parameters: Either json string of workflow parameters or filepath to json.
+
+        Returns:
+            A dictionary of estimation for each task in the workflow.
         """
         if input_parameters is None:
             raise ValueError(
                 "Select the job_parameters, use workflow.construct_parameters()!"
             )
-        workflow_tasks = self.get_workflow_tasks()
-        input_tasks = [
-            workflow_tasks[i]["name"].split(":")[0] for i in range(len(workflow_tasks))
-        ]
 
-        full_input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
-        for index, _ in enumerate(workflow_tasks):
-            full_input_tasks[index]["blockVersionTag"] = workflow_tasks[index][
-                "blockVersionTag"
-            ]
+        workflow_tasks = self.workflow_tasks
+        block_names = [task_name.split(":")[0] for task_name in workflow_tasks.keys()]
+        full_input_tasks = self._construct_full_workflow_tasks_dict(block_names)
+        for input_task in full_input_tasks:
+            input_task["blockVersionTag"] = workflow_tasks[input_task["name"]]
 
         estimation = Estimation(
             self.auth, self.project_id, input_parameters, full_input_tasks
         ).estimate_price()
+
+        min_credits, max_credits, min_duration, max_duration = [], [], [], []
+        for e in estimation.values():
+            min_credits.append(e["blockConsumption"]["credit"]["min"])
+            max_credits.append(e["blockConsumption"]["credit"]["max"])
+            min_credits.append(e["machineConsumption"]["credit"]["min"])
+            max_credits.append(e["machineConsumption"]["credit"]["max"])
+
+            min_duration.append(e["machineConsumption"]["duration"]["min"])
+            max_duration.append(e["machineConsumption"]["duration"]["max"])
+
+        logger.info(
+            f"Estimated: {sum(min_credits)}-{sum(max_credits)} Credits, "
+            f"Duration: {int(sum(min_duration) / 60)}-{int(sum(max_duration) / 60)} min."
+        )
+
         return estimation
 
     def _helper_run_job(
@@ -650,7 +666,7 @@ class Workflow(Tools):
             The spawned test job object.
         """
         if get_estimation:
-            self.estimate_job(input_parameters)
+            _ = self.estimate_job(input_parameters)
 
         return self._helper_run_job(
             input_parameters=input_parameters,
