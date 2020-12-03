@@ -461,13 +461,13 @@ class Workflow(Tools):
 
         workflow_tasks = self.workflow_tasks
         block_names = [task_name.split(":")[0] for task_name in workflow_tasks.keys()]
-        full_input_tasks = self._construct_full_workflow_tasks_dict(block_names)
-        for input_task in full_input_tasks:
-            input_task["blockVersionTag"] = workflow_tasks[input_task["name"]]
+        input_tasks = self._construct_full_workflow_tasks_dict(block_names)
+        for task in input_tasks:
+            task["blockVersionTag"] = workflow_tasks[task["name"]]
 
         estimation = Estimation(
-            self.auth, self.project_id, input_parameters, full_input_tasks
-        ).estimate_price()
+            auth=self.auth, input_parameters=input_parameters, input_tasks=input_tasks
+        ).estimate()
 
         min_credits, max_credits, min_duration, max_duration = [], [], [], []
         for e in estimation.values():
@@ -666,7 +666,7 @@ class Workflow(Tools):
             The spawned test job object.
         """
         if get_estimation:
-            _ = self.estimate_job(input_parameters)
+            self.estimate_job(input_parameters)
 
         return self._helper_run_job(
             input_parameters=input_parameters,

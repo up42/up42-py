@@ -39,5 +39,4 @@ class Estimation(Tools):
         response_json = self.auth._request(
             request_type="POST", url=url, data=self.payload
         )
-
         return response_json["data"]

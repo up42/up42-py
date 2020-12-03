@@ -25,6 +25,6 @@ def test_estimate_price(requests_mock, auth_mock, estimation_mock):
 
     url_workflow_estimation = f"{auth_mock._endpoint()}/estimate/job"
     requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
-    _ = estimation_mock.estimate_price()
+    _ = estimation_mock.estimate()
     assert list(estimation_mock.payload.keys()) == ["tasks", "inputs"]
     assert estimation_mock.payload["tasks"] == input_tasks

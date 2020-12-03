@@ -494,7 +494,7 @@ def estimation_mock(auth_mock):
         },
     ]
 
-    return Estimation(auth_mock, auth_mock.project_id, input_parameters, input_tasks)
+    return Estimation(auth_mock, input_parameters, input_tasks)
 
 
 @pytest.fixture()
