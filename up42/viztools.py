@@ -47,8 +47,9 @@ class VizTools:
     def plot_results(
         self,
         figsize: Tuple[int, int] = (14, 8),
-        filepaths: Union[List[Union[str, Path]], Dict] = None,
+        bands: List[int] = [1, 2, 3],
         titles: List[str] = None,
+        filepaths: Union[List[Union[str, Path]], Dict] = None,
         # pylint: disable=dangerous-default-value
         plot_file_format: List[str] = [".tif"],
     ) -> None:
@@ -56,12 +57,12 @@ class VizTools:
         Plots image data (quicklooks or results)
 
         Args:
-            plot_file_format: List of accepted image file formats e.g. [".tif"]
             figsize: matplotlib figure size.
+            bands: Image bands and order to plot, default [1,2,3]. First band is 1.
+            titles: Optional list of titles for the subplots.
             filepaths: Paths to images to plot. Optional, by default picks up the last
                 downloaded results.
-            titles: Optional list of titles for the subplots.
-
+            plot_file_format: List of accepted image file formats e.g. [".tif"]
         """
         if filepaths is None:
             if self.results is None:
@@ -103,9 +104,7 @@ class VizTools:
 
         for idx, (fp, title) in enumerate(zip(imagepaths, titles)):
             with rasterio.open(fp) as src:
-                img_array = src.read()[:3, :, :]
-                # TODO: Handle more band configurations.
-                # TODO: add histogram equalization?
+                img_array = src.read(bands)
                 show(
                     img_array,
                     transform=src.transform,
