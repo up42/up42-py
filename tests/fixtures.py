@@ -522,8 +522,7 @@ def estimation_live(auth_live):
             "blockVersionTag": "2.2.3",
         },
     ]
-
-    return Estimation(auth_live, auth_live.project_id, input_parameters, input_tasks)
+    return Estimation(auth_live, input_parameters, input_tasks)
 
 
 @pytest.fixture()
