@@ -58,7 +58,7 @@ def test_get_workflow_tasks_normal_and_basic(workflow_mock):
                 },
             },
             "type": "DATA",
-            "isDryRunSupported": "true",
+            "isDryRunSupported": True,
             "version": "2.3.0",
         },
         "environment": "None",

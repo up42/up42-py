@@ -444,7 +444,7 @@ class Workflow(Tools):
 
         return result_params
 
-    def estimate_job(self, input_parameters: Union[Dict, str, Path]) -> Dict:
+    def estimate_job(self, input_parameters: Union[Dict, str, Path] = None) -> Dict:
         """
         A function to get the job estimation.
         :param input_parameters: Either json string of workflow parameters or filepath to json.
@@ -631,7 +631,7 @@ class Workflow(Tools):
 
     def test_job(
         self,
-        input_parameters: Union[Dict, str, Path],
+        input_parameters: Union[Dict, str, Path] = None,
         track_status: bool = False,
         name: str = None,
         get_estimation: bool = False,
