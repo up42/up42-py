@@ -53,7 +53,9 @@ class VizTools:
         titles: List[str] = None,
         filepaths: Union[List[Union[str, Path]], Dict] = None,
         plot_file_format: List[str] = [".tif"],
+        **kwargs,
     ) -> None:
+        # pylint: disable=line-too-long
         """
         Plots image data (quicklooks or results)
 
@@ -64,6 +66,9 @@ class VizTools:
             filepaths: Paths to images to plot. Optional, by default picks up the last
                 downloaded results.
             plot_file_format: List of accepted image file formats e.g. [".tif"]
+            kwargs: Accepts any additional args and kwargs of
+                [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show),
+                 e.g. matplotlib cmap etc.
         """
         if filepaths is None:
             if self.results is None:
@@ -105,7 +110,8 @@ class VizTools:
 
         if len(bands) != 3:
             if len(bands) == 1:
-                bands = bands * 3  # plot as grayband
+                if "cmap" not in kwargs:
+                    kwargs["cmap"] = "gray"
             else:
                 raise ValueError("Parameter bands can only contain one or three bands.")
         for idx, (fp, title) in enumerate(zip(imagepaths, titles)):
@@ -117,6 +123,7 @@ class VizTools:
                     title=title,
                     ax=axs[idx],
                     aspect="auto",
+                    **kwargs,
                 )
             axs[idx].set_axis_off()
         plt.axis("off")
