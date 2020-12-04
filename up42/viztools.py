@@ -2,6 +2,8 @@
 Visualization tools available in various objects
 """
 
+# pylint: disable=dangerous-default-value
+
 from typing import Tuple, List, Union, Dict
 import math
 from pathlib import Path
@@ -47,21 +49,26 @@ class VizTools:
     def plot_results(
         self,
         figsize: Tuple[int, int] = (14, 8),
-        filepaths: Union[List[Union[str, Path]], Dict] = None,
+        bands: List[int] = [1, 2, 3],
         titles: List[str] = None,
-        # pylint: disable=dangerous-default-value
+        filepaths: Union[List[Union[str, Path]], Dict] = None,
         plot_file_format: List[str] = [".tif"],
+        **kwargs,
     ) -> None:
+        # pylint: disable=line-too-long
         """
         Plots image data (quicklooks or results)
 
         Args:
-            plot_file_format: List of accepted image file formats e.g. [".tif"]
             figsize: matplotlib figure size.
+            bands: Image bands and order to plot, default [1,2,3]. First band is 1.
+            titles: Optional list of titles for the subplots.
             filepaths: Paths to images to plot. Optional, by default picks up the last
                 downloaded results.
-            titles: Optional list of titles for the subplots.
-
+            plot_file_format: List of accepted image file formats e.g. [".tif"]
+            kwargs: Accepts any additional args and kwargs of
+                [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show),
+                 e.g. matplotlib cmap etc.
         """
         if filepaths is None:
             if self.results is None:
@@ -101,17 +108,22 @@ class VizTools:
         else:
             axs = [axs]
 
+        if len(bands) != 3:
+            if len(bands) == 1:
+                if "cmap" not in kwargs:
+                    kwargs["cmap"] = "gray"
+            else:
+                raise ValueError("Parameter bands can only contain one or three bands.")
         for idx, (fp, title) in enumerate(zip(imagepaths, titles)):
             with rasterio.open(fp) as src:
-                img_array = src.read()[:3, :, :]
-                # TODO: Handle more band configurations.
-                # TODO: add histogram equalization?
+                img_array = src.read(bands)
                 show(
                     img_array,
                     transform=src.transform,
                     title=title,
                     ax=axs[idx],
                     aspect="auto",
+                    **kwargs,
                 )
             axs[idx].set_axis_off()
         plt.axis("off")
@@ -121,8 +133,8 @@ class VizTools:
     def plot_quicklooks(
         self,
         figsize: Tuple[int, int] = (8, 8),
-        filepaths: List = None,
         titles: List[str] = None,
+        filepaths: List = None,
     ) -> None:
         """
         Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
@@ -155,6 +167,7 @@ class VizTools:
         plot_file_format: List[str],
         result_df: GeoDataFrame,
         filepaths: List[Union[str, Path]],
+        bands: List[int] = [1, 2, 3],
         aoi: GeoDataFrame = None,
         show_images=True,
         show_features=False,
@@ -227,17 +240,25 @@ class VizTools:
                 f.add_to(m)
 
         if show_images and raster_filepaths:
+            if len(bands) != 3:
+                if len(bands) == 1:
+                    bands = bands * 3  # plot as grayband
+                else:
+                    raise ValueError(
+                        "Parameter bands can only contain one or three bands."
+                    )
+
             for idx, (raster_fp, feature_name) in enumerate(
                 zip(raster_filepaths, feature_names)
             ):
                 with rasterio.open(raster_fp) as src:
                     if src.meta["crs"] is None:
-                        dst_array = src.read()[:3, :, :]
+                        dst_array = src.read(bands)
                         minx, miny, maxx, maxy = list_bounds[idx]
                     else:
                         # Folium requires 4326, streaming blocks are 3857
                         with WarpedVRT(src, crs="EPSG:4326") as vrt:
-                            dst_array = vrt.read()[:3, :, :]
+                            dst_array = vrt.read(bands)
                             minx, miny, maxx, maxy = vrt.bounds
 
                 m.add_child(
@@ -263,6 +284,7 @@ class VizTools:
 
     def map_results(
         self,
+        bands=[1, 2, 3],
         aoi: GeoDataFrame = None,
         show_images: bool = True,
         show_features: bool = True,
@@ -273,7 +295,8 @@ class VizTools:
         Displays data.json, and if available, one or multiple results geotiffs.
 
         Args:
-            aoi: GeoDataFrame of aoi.
+            bands: Image bands and order to plot, default [1,2,3]. First band is 1.
+            aoi: Optional visualization of aoi boundaries when given GeoDataFrame of aoi.
             show_images: Shows images if True (default).
             show_features: Shows features if True (default).
             name_column: Name of the feature property that provides the Feature/Layer name.
@@ -298,6 +321,7 @@ class VizTools:
 
         # Add image to map.
         m = self._map_images(
+            bands=bands,
             plot_file_format=[".tif"],
             result_df=df,
             filepaths=self.results,
