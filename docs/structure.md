@@ -25,6 +25,7 @@ function.
         - `.initalize_workflow()`
         - `.initalize_job()`
         - `.initalize_jobtask()`
+        - `.initialize_jobcollection()`
         - `.initalize_catalog()`
         - `.get_blocks()`
         - `.get_block_details()`

@@ -32,6 +32,8 @@ def test_initialize_object_wo_auth_raises():
         up42.initialize_job(job_id=JOB_ID)
     with pytest.raises(RuntimeError):
         up42.initialize_jobtask(job_id=JOB_ID, jobtask_id=JOBTASK_ID)
+    with pytest.raises(RuntimeError):
+        up42.initialize_jobcollection(job_ids=[JOB_ID, JOB_ID])
 
 
 # TODO: Adjust and unskip after simplification of test authentication
@@ -54,3 +56,5 @@ def test_global_auth_initialize_objects():
     assert isinstance(job, up42.Job)
     jobtask = up42.initialize_jobtask(job_id=JOB_ID, jobtask_id=JOBTASK_ID)
     assert isinstance(jobtask, up42.JobTask)
+    jobcollection = up42.initialize_jobcollection(job_ids=[JOB_ID, JOB_ID])
+    assert isinstance(jobcollection, up42.JobCollection)
