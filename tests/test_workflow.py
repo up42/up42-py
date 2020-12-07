@@ -18,7 +18,13 @@ from .fixtures import (
     project_mock,
     project_mock_max_concurrent_jobs,
 )
-from .fixtures import JOB_ID, JOB_NAME, JOBTASK_ID
+from .fixtures import (
+    JOB_ID,
+    JOB_NAME,
+    JOBTASK_ID,
+    JSON_WORKFLOW_TASKS,
+    JSON_WORKFLOW_ESTIMATION,
+)
 
 
 def test_workflow_info(workflow_mock):
@@ -31,27 +37,37 @@ def test_workflow_info(workflow_mock):
 
 def test_get_workflow_tasks_normal_and_basic(workflow_mock):
     tasks = workflow_mock.get_workflow_tasks(basic=False)
+
     assert len(tasks) == 2
     assert tasks[0] == {
-        "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
+        "id": "aa2cba17-d35c-4395-ab01-a0fd8191a4b3",
         "name": "sobloo-s2-l1c-aoiclipped:1",
-        "blockVersionTag": "2.2.2",
+        "parentsIds": [],
+        "blockName": "sobloo-s2-l1c-aoiclipped",
+        "blockVersionTag": "2.3.0",
         "block": {
+            "id": "3a381e6b-acb7-4cec-ae65-50798ce80e64",
             "name": "sobloo-s2-l1c-aoiclipped",
+            "displayName": "Sentinel-2 L1C MSI AOI clipped",
             "parameters": {
-                "nodata": {"type": "number"},
+                "ids": {"type": "array", "default": "None"},
+                "bbox": {"type": "array", "default": "None"},
                 "time": {
                     "type": "dateRange",
                     "default": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
                 },
             },
+            "type": "DATA",
+            "isDryRunSupported": True,
+            "version": "2.3.0",
         },
+        "environment": "None",
     }
 
     tasks = workflow_mock.get_workflow_tasks(basic=True)
     assert len(tasks) == 2
-    assert tasks["sobloo-s2-l1c-aoiclipped:1"] == "2.2.2"
-    assert tasks["tiling:1"] == "1.0.0"
+    assert tasks["sobloo-s2-l1c-aoiclipped:1"] == "2.3.0"
+    assert tasks["tiling:1"] == "2.2.3"
 
 
 @pytest.mark.live
@@ -174,14 +190,17 @@ def test_get_parameter_info_live(workflow_live):
 
 def test_get_default_parameters(workflow_mock):
     default_parameters = workflow_mock._get_default_parameters()
+
     assert isinstance(default_parameters, dict)
     assert all(
         x in list(default_parameters.keys())
         for x in ["tiling:1", "sobloo-s2-l1c-aoiclipped:1"]
     )
-    assert default_parameters["tiling:1"] == {"tile_width": 768}
+    assert default_parameters["tiling:1"] == {"nodata": "None", "tile_width": 768}
     assert default_parameters["sobloo-s2-l1c-aoiclipped:1"] == {
-        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00"
+        "ids": "None",
+        "bbox": "None",
+        "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
     }
 
 
@@ -196,11 +215,12 @@ def test_construct_parameters(workflow_mock):
     assert isinstance(parameters, dict)
     assert parameters == {
         "sobloo-s2-l1c-aoiclipped:1": {
+            "ids": "None",
+            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
             "time": "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
             "limit": 1,
-            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
         },
-        "tiling:1": {"tile_width": 768},
+        "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
 
@@ -214,10 +234,10 @@ def test_construct_parameters_scene_ids(workflow_mock):
     assert parameters == {
         "sobloo-s2-l1c-aoiclipped:1": {
             "ids": ["s2_123223"],
-            "limit": 1,
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
+            "limit": 1,
         },
-        "tiling:1": {"tile_width": 768},
+        "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
 
@@ -227,8 +247,12 @@ def test_construct_parameter_only_ids(workflow_mock):
     )
     assert isinstance(parameters, dict)
     assert parameters == {
-        "sobloo-s2-l1c-aoiclipped:1": {"ids": ["s2_123223"], "limit": 1},
-        "tiling:1": {"tile_width": 768},
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "ids": ["s2_123223"],
+            "bbox": "None",
+            "limit": 1,
+        },
+        "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
 
@@ -237,7 +261,7 @@ def test_construct_parameter_order_ids(workflow_mock):
     assert isinstance(parameters, dict)
     assert parameters == {
         "sobloo-s2-l1c-aoiclipped:1": {"order_ids": ["8472712912"]},
-        "tiling:1": {"tile_width": 768},
+        "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
 
@@ -254,11 +278,12 @@ def test_construct_parameters_parallel(workflow_mock):
     assert len(parameters_list) == 2
     assert parameters_list[0] == {
         "sobloo-s2-l1c-aoiclipped:1": {
+            "ids": "None",
+            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
             "time": "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
             "limit": 1,
-            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
         },
-        "tiling:1": {"tile_width": 768},
+        "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
 
@@ -274,11 +299,12 @@ def test_construct_parameters_parallel_multiple_intervals(workflow_mock):
     assert len(parameters_list) == 4
     assert parameters_list[0] == {
         "sobloo-s2-l1c-aoiclipped:1": {
+            "ids": "None",
+            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
             "time": "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
             "limit": 1,
-            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
         },
-        "tiling:1": {"tile_width": 768},
+        "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
     with pytest.raises(ValueError):
@@ -291,9 +317,46 @@ def test_construct_parameters_parallel_scene_ids(workflow_mock):
     )
     assert len(parameters_list) == 2
     assert parameters_list[0] == {
-        "sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "limit": 1},
+        "sobloo-s2-l1c-aoiclipped:1": {"ids": ["S2abc"], "bbox": "None", "limit": 1},
+        "tiling:1": {"nodata": "None", "tile_width": 768},
+    }
+
+
+def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
+    input_parameters = {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+            "limit": 1,
+            "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
+        },
         "tiling:1": {"tile_width": 768},
     }
+    # get_workflow_tasks
+    url_workflow_tasks = (
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}/tasks"
+    )
+    url_workflow_estimation = f"{auth_mock._endpoint()}/estimate/job"
+    requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
+    requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
+
+    estimation = workflow_mock.estimate_job(input_parameters)
+    assert estimation == JSON_WORKFLOW_ESTIMATION["data"]
+
+
+@pytest.mark.live
+def test_estimate_jobs_live(workflow_live):
+    input_parameters = {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+            "limit": 1,
+            "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
+        },
+        "tiling:1": {"tile_width": 768},
+    }
+    estimation = workflow_live.estimate_job(input_parameters)
+
+    assert estimation == JSON_WORKFLOW_ESTIMATION["data"]
 
 
 def test_run_job(workflow_mock, job_mock, requests_mock):

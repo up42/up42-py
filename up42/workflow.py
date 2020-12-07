@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 from up42.auth import Auth
 from up42.job import Job
+from up42.estimation import Estimation
 from up42.jobcollection import JobCollection
 from up42.tools import Tools
 from up42.utils import (
@@ -102,6 +103,7 @@ class Workflow(Tools):
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
             f"{self.workflow_id}/tasks"
         )
+
         response_json = self.auth._request(request_type="GET", url=url)
         tasks = response_json["data"]
         logger.info(f"Got {len(tasks)} tasks/blocks in workflow {self.workflow_id}.")
@@ -175,7 +177,7 @@ class Workflow(Tools):
         full_input_tasks_definition.append(data_task)
         previous_task_name = data_task["name"]
 
-        # All all following (processing) blocks.
+        # All following (processing) blocks.
         for block_id in input_tasks_ids[1:]:
             # Check if multiple of the same block are in the input tasks definition,
             # so that is does not get skipped as it has the same id.
@@ -442,6 +444,48 @@ class Workflow(Tools):
 
         return result_params
 
+    def estimate_job(self, input_parameters: Union[Dict, str, Path] = None) -> Dict:
+        """
+        Estimation of price and duration of the workflow for the provided input parameters.
+
+        Args:
+            input_parameters: Either json string of workflow parameters or filepath to json.
+
+        Returns:
+            A dictionary of estimation for each task in the workflow.
+        """
+        if input_parameters is None:
+            raise ValueError(
+                "Select the job_parameters, use workflow.construct_parameters()!"
+            )
+
+        workflow_tasks = self.workflow_tasks
+        block_names = [task_name.split(":")[0] for task_name in workflow_tasks.keys()]
+        input_tasks = self._construct_full_workflow_tasks_dict(block_names)
+        for task in input_tasks:
+            task["blockVersionTag"] = workflow_tasks[task["name"]]
+
+        estimation = Estimation(
+            auth=self.auth, input_parameters=input_parameters, input_tasks=input_tasks
+        ).estimate()
+
+        min_credits, max_credits, min_duration, max_duration = [], [], [], []
+        for e in estimation.values():
+            min_credits.append(e["blockConsumption"]["credit"]["min"])
+            max_credits.append(e["blockConsumption"]["credit"]["max"])
+            min_credits.append(e["machineConsumption"]["credit"]["min"])
+            max_credits.append(e["machineConsumption"]["credit"]["max"])
+
+            min_duration.append(e["machineConsumption"]["duration"]["min"])
+            max_duration.append(e["machineConsumption"]["duration"]["max"])
+
+        logger.info(
+            f"Estimated: {sum(min_credits)}-{sum(max_credits)} Credits, "
+            f"Duration: {int(sum(min_duration) / 60)}-{int(sum(max_duration) / 60)} min."
+        )
+
+        return estimation
+
     def _helper_run_job(
         self,
         input_parameters: Union[Dict, str, Path] = None,
@@ -606,6 +650,7 @@ class Workflow(Tools):
         input_parameters: Union[Dict, str, Path] = None,
         track_status: bool = False,
         name: str = None,
+        get_estimation: bool = False,
     ) -> "Job":
         """
         Create a run a new test job (Test Query). With this test query you will not be
@@ -620,6 +665,9 @@ class Workflow(Tools):
         Returns:
             The spawned test job object.
         """
+        if get_estimation:
+            self.estimate_job(input_parameters)
+
         return self._helper_run_job(
             input_parameters=input_parameters,
             test_job=True,
