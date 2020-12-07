@@ -6,10 +6,10 @@ The UP42 Python package uses six objects, representing the **hierarchical struct
 
 ------------------------
 
-A new workflow is created and filled with tasks ([Sentinel-2 data](https://marketplace.up42.com/block/018dfb34-fc19-4334-8125-14fd7535f979), 
-[Land-Surface-Temperature](https://marketplace.up42.com/block/34767300-5caf-472b-a684-a351212b5c14)). 
-The area of interest and workflow parameters are defined. After running the job, 
-the results are downloaded and visualized.
+In this example a **new workflow** consisting of [**Sentinel-2 data**](https://marketplace.up42.com/block/018dfb34-fc19-4334-8125-14fd7535f979)
+and [**Land-Surface-Temperature**](https://marketplace.up42.com/block/34767300-5caf-472b-a684-a351212b5c14) is created.
+The area of interest and workflow parameters are defined. After **running the job**, 
+the results are **downloaded** and visualized.
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
 
