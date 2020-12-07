@@ -60,4 +60,4 @@ catalog.map_quicklooks(scenes=search_results, aoi=aoi)
 <br>
 
 !!! Success "Success!"
-    Continue with the [Detailed Example](detailed-example.md)!
+    Continue with the [Detailed Example](/guides/detailed-example/)!
