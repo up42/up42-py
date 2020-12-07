@@ -36,12 +36,11 @@ nav:
       - Authentication: authentication.md
       - Structure: structure.md
       - Catalog Search: catalog.md
-      - Detailed Example: detailed-example.md
+      - Detailed Example: guides/detailed-example.ipynb
     - Examples:
         - Examples: examples-intro.md
-        - Radar processing: examples/radar_processing_1.ipynb
-        - Airport monitoring: examples/airports-parallel.ipynb
         - Aircraft detection: examples/aircraft-detection.ipynb
+        - Radar processing: examples/radar_processing_1.ipynb
         - Flood mapping: examples/flood_mapping.ipynb
         - Catalog Quicklooks: examples/catalog-quicklooks.ipynb
         - Ship identification: examples/ship-identification.ipynb
