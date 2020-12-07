@@ -16,13 +16,13 @@ pip show up42-py
 
 ## Versions
 ### [0.14.0](https://pypi.org/project/up42-py/) (2020-12-07)
-- New `workflow.estimate_job()` function for estimation of credit costs & job duration before running a job. 
+- Add `workflow.estimate_job()` function for estimation of credit costs & job duration before running a job. 
 - Add `bands=[3,2,1]` parameter in `.plot_results()` and `.map_results()` for band & band order selection.
 - `.plot_results()` now accepts kwargs of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show) and matplotlib.
 - Add `up42.initialize_jobcollection()`
 - Add `get_estimation=False` parameter to `workflow.test_job`.
 - Add ship-identification example.
-- New Getting started examples.
+- Overhaul "Getting started" examples.
 
 ### [0.13.1](https://pypi.org/project/up42-py/) (2020-11-18)
 - Handle request rate limits via retry mechanism.
