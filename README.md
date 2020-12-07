@@ -57,19 +57,19 @@ Try this example without installation! [![Binder](https://mybinder.org/badge_log
 
 ```python
 import up42
-up42.authenticate(project_id="12345", 
-                  project_api_key="67890")
+up42.authenticate(project_id="12345", project_api_key="67890")
 project = up42.initialize_project()
 
 # Construct workflow
 workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
 #print(up42.get_blocks(basic=True))
-input_tasks = ["Sentinel-2 Level 2 (BOA) AOI clipped", "Land Surface Temperature Estimation"]
+input_tasks = ["Sentinel-2 Level 2 (BOA) AOI clipped", 
+               "Land Surface Temperature Estimation"]
 workflow.add_workflow_tasks(input_tasks)
 
 # Define the aoi and input parameters of the workflow to run it.
-# Can also use up42.draw_aoi(), up42.read_vector_file(), provide a FeatureCollection, GeoDataFrame etc.
 aoi = up42.get_example_aoi(as_dataframe=True)
+# Or use up42.draw_aoi(), up42.read_vector_file(), FeatureCollection, GeoDataFrame etc.
 input_parameters = workflow.construct_parameters(geometry=aoi, 
                                                  geometry_operation="bbox", 
                                                  start_date="2018-01-01",
