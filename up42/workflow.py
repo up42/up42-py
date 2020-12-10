@@ -62,7 +62,7 @@ class Workflow(Tools):
     @property
     def workflow_tasks(self) -> Dict[str, str]:
         """
-        Gets the building blocks of the workflow as a dictionary with task_name : block-version
+        Gets the building blocks of the workflow as a dictionary with `task_name:block-version`
         """
         logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
         workflow_tasks = self.get_workflow_tasks(basic=True)
@@ -197,50 +197,53 @@ class Workflow(Tools):
         return full_input_tasks_definition
 
     def add_workflow_tasks(self, input_tasks: Union[List[str], List[Dict]]) -> None:
+        # pylint: disable=line-too-long
         """
         Adds or overwrites workflow tasks in a workflow on UP42.
 
         Args:
-            input_tasks: The input tasks, specifying the blocks. Can be a list of the
-                block ids, block names or block display names (The name shown on the
-                [marketplace](https://marketplace.up42.com).
+            input_tasks: The blocks to be added to the workflow. Can be a list of the
+                block names, block ids (use `up42.get_blocks()`) or block display names
+                (The names shown on the [UP42 marketplace](https://marketplace.up42.com).
 
         !!! Info
             With block names or block display names, the most recent version of a block
-            will always be added. Using block ids specifies a specific version of the
-            block that will be added to the workflow.
+            will be added. Using block ids specifies a specific version of a block.
 
-        Example:
+        Examples:
             ```python
-            input_tasks = ["sobloo-s2-l1c-aoiclipped", "tiling"]
+            # Block names
+            input_tasks = ["sentinelhub-s2", "tiling"]
             ```
 
             ```python
-            input_tasks = ["Sentinel-2 L1C MSI AOI clipped",
+            # Block Display names
+            input_tasks = ["Sentinel-2 Level 2 (BOA) AOI clipped",
                            "Raster Tiling"]
             ```
 
             ```python
-            input_tasks = ['a2daaab4-196d-4226-a018-a810444dcad1',
+            # Block Ids
+            input_tasks = ['018dfb34-fc19-4334-8125-14fd7535f979',
                            '4ed70368-d4e1-4462-bef6-14e768049471']
             ```
-        """
-        # Relevant when non-linear workflows are introduced:
-        # Optional:
-        #     The input_tasks can also be provided as the full, detailed workflow task
-        #     definition (dict of block id, block name and parent block name). Always use :1
-        #     to be able to identify the order when two times the same workflow task is used.
-        #     The name is arbitrary, but best use the block name.
-        #
-        # Example:
-        #     ```python
-        #     input_tasks_full = [{'name': 'sobloo-s2-l1c-aoiclipped:1',
-        #                          'parentName': None,
-        #                          'blockId': 'a2daaab4-196d-4226-a018-a810444dcad1'},
-        #                         {'name': 'sharpening:1',
-        #                          'parentName': 'sobloo-s2-l1c-aoiclipped',
-        #                          'blockId': '4ed70368-d4e1-4462-bef6-14e768049471'}]
 
+        !!! Info "Using Custom Blocks"
+            To use a custom block in your workspace, you need to provide the custom block
+            id directly in the [full workflow definition](https://docs.up42.com/going-further/api-walkthrough.html#creating-the-the-second-task-processing-block-addition)
+            (dict of block id, block name and parent block name). See example below.
+
+        Examples:
+            ```python
+            # Full workflow definition
+            input_tasks = [{'name': 'sentinelhub-s2:1',
+                            'parentName': None,
+                            'blockId': '018dfb34-fc19-4334-8125-14fd7535f979'},
+                           {'name': 'tiling:1',
+                            'parentName': 'sentinelhub-s2:1',
+                            'blockId': '4ed70368-d4e1-4462-bef6-14e768049471'}]
+            ```
+        """
         # Construct proper task definition from simplified input.
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
