@@ -91,7 +91,7 @@ plugins:
   - autolinks
   - table-reader
   - mkdocs-jupyter:
-      include_source: True
+      include_source: False
   - exclude:
       glob:
         - "*config*.json"
