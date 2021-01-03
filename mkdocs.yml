@@ -89,7 +89,6 @@ theme:
 plugins:
   - search
   - autolinks
-  - table-reader
   - mkdocs-jupyter:
       include_source: False
   - exclude:

@@ -3,7 +3,6 @@ mkdocs-material
 pygments
 pymdown-extensions
 mkdocs-autolinks-plugin
-mkdocs-table-reader-plugin
 mkdocs-jupyter
 mkdocs-exclude
 mkdocs-exclude-search
