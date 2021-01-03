@@ -99,13 +99,12 @@ plugins:
         - "*examples/project*"
         - "*examples/guides/*"
         - "*swagger*"
+        - PULL_REQUEST_TEMPLATE.md
   - exclude-search:
       exclude:
         - cli-reference.md
       ignore:
         - cli-reference.md#command-line-interface-cli
-  #- minify:
-  #    minify_html: false
   - mkdocstrings:
       default_handler: python
       handlers:
