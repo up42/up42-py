@@ -3,7 +3,7 @@ orbs:
   notify-slack: interstellar/notify-slack@0.2.0
 
 jobs:
-  build_and_test:
+  test:
     docker:
       - image: circleci/python:3.7
     steps:
@@ -16,9 +16,28 @@ jobs:
       - run:
           name: Runnning tests
           command: make test
+  test_live:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: Install requirements
+          command: |
+            pip install -r requirements.txt
+            pip install -r requirements-dev.txt
+      - run:
+          name: Runnning tests
+          command: make test[live]
+
 
 workflows:
   version: 2
-  build-and-deploy:
+  test:
     jobs:
-      - build_and_test
+      - test
+  test_live:
+    jobs:
+      - test_live:
+          context: up42-py-live-testing
+    
