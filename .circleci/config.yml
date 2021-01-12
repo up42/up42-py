@@ -35,7 +35,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Installing build utils
+          name: Installing packaging utils
           command: python -m pip install --user packaging twine
       - run:
           name: Build package
