@@ -29,13 +29,41 @@ jobs:
       - run:
           name: Runnning tests
           command: make test[live]
+  deploy:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: Installing build utils
+          command: python -m pip install --user packaging twine
+      - run:
+          name: Build package
+          command: make package
+      - run:
+          name: Upload to PyPi
+          command: make upload
 
 
 workflows:
   version: 2
-  test:
+  test_and_deploy:
     jobs:
       - test
+      - hold_before_deploy:
+          type: approval
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
+      - deploy
+          requires:
+            - hold_before_deploy
+          filters:
+            branches:
+              only: master
+
 
   test_live:
     triggers:
