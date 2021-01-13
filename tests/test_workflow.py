@@ -336,7 +336,9 @@ def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
         f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
         f"{workflow_mock.workflow_id}/tasks"
     )
-    url_workflow_estimation = f"{auth_mock._endpoint()}/estimate/job"
+    url_workflow_estimation = (
+        f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/estimate/job"
+    )
     requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
     requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
 
