@@ -26,7 +26,9 @@ def test_estimate_price(requests_mock, auth_mock, estimation_mock):
         },
     ]
 
-    url_workflow_estimation = f"{auth_mock._endpoint()}/estimate/job"
+    url_workflow_estimation = (
+        f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/estimate/job"
+    )
     requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
     _ = estimation_mock.estimate()
     assert list(estimation_mock.payload.keys()) == ["tasks", "inputs"]
@@ -41,7 +43,7 @@ def test_estimate_price_live(auth_live):
             "limit": 1,
             "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
         },
-        "tiling:1": {"tile_width": 768},
+        "tiling:1": {"tile_width": 768, "tile_height": 768},
     }
 
     input_tasks = [

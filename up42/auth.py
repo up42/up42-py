@@ -255,7 +255,8 @@ class Auth:
                 response = self._request_helper(request_type, url, data, querystring)  # type: ignore
         except requests.exceptions.RequestException as err:  # Base error class
             err_message = json.loads(err.response.text)["error"]
-            err_message = f"{err_message['code']} Error - {err_message['message']}!"
+            if "code" in err_message:
+                err_message = f"{err_message['code']} Error - {err_message['message']}!"
             logger.error(err_message)
             raise requests.exceptions.RequestException(err_message) from err
 

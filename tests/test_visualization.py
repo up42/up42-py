@@ -101,7 +101,9 @@ def test_map_images_2_scenes():
 
     m = VizTools()._map_images(plot_file_format, gdf, filepaths)
     m._repr_html_()
-    out = m._parent.render()
+    # Render does not return an object but an html document, as expected
+    # Disabling pylint to avoid error
+    out = m._parent.render()  # pylint: disable=assignment-from-no-return
 
     assert "Image 1 - f8c03432-cec1-41b7-a203-4d871a03290f" in out
     assert "Image 2 - 16e18e15-c941-4aae-97cd-d67b18dc9f6e" in out
@@ -127,7 +129,7 @@ def test_map_images_2_scenes_no_column_name():
 
     m = VizTools()._map_images(plot_file_format, gdf, filepaths, name_column="nikoo")
     m._repr_html_()
-    out = m._parent.render()
+    out = m._parent.render()  # pylint: disable=assignment-from-no-return
 
     assert "Image 1 - " in out
     assert "Image 2 - " in out
@@ -149,7 +151,7 @@ def test_map_images_1_scene():
 
     m = VizTools()._map_images(plot_file_format, gdf, filepaths)
     m._repr_html_()
-    out = m._parent.render()
+    out = m._parent.render()  # pylint: disable=assignment-from-no-return
 
     assert "Image 1 - 2a581680-17e4-4a61-8aa9-9e47e1bf36bb" in out
 
