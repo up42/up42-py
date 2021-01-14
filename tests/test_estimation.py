@@ -43,7 +43,7 @@ def test_estimate_price_live(auth_live):
             "limit": 1,
             "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
         },
-        "tiling:1": {"tile_width": 768},
+        "tiling:1": {"tile_width": 768, "tile_height": 768},
     }
 
     input_tasks = [
