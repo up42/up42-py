@@ -9,7 +9,6 @@ from .fixtures import (
     ASSET_ID,
     DOWNLOAD_URL,
     JSON_ASSET,
-    WORKSPACE_ID,
     auth_mock,
     auth_live,
     asset_mock,
