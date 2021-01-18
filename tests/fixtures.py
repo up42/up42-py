@@ -15,6 +15,7 @@ from .context import (
     Estimation,
     Storage,
     Asset,
+    Order,
 )
 
 
@@ -187,6 +188,24 @@ JSON_ASSETS = {
     },
     "error": None,
 }
+
+JSON_ORDER = {
+    "data": {
+        "id": ORDER_ID,
+        "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
+        "workspaceId": WORKSPACE_ID,
+        "dataProvider": "OneAtlas",
+        "status": "FULFILLED",
+        "createdAt": "2021-01-18T16:18:16.105851Z",
+        "updatedAt": "2021-01-18T16:21:31.966805Z",
+        "assets": [ASSET_ID],
+        "createdBy": {"id": "1094497b-11d8-4fb8-9d6a-5e24a88aa825", "type": "USER"},
+        "updatedBy": {"id": "system", "type": "INTERNAL"},
+    },
+    "error": None,
+}
+
+JSON_ORDERS = {"data": {"orders": [JSON_ORDER["data"]]}, "error": None}
 
 
 # TODO: Use patch.dict instead of 2 fictures?
@@ -708,6 +727,42 @@ def asset_mock(auth_mock, requests_mock):
 def asset_live(auth_live):
     asset = Asset(auth=auth_live, asset_id=os.getenv("TEST_UP42_ASSET_ID"))
     return asset
+
+
+@pytest.fixture()
+def order_mock(auth_mock, requests_mock):
+
+    # order info
+    url_order_info = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}"
+    )
+    requests_mock.get(url=url_order_info, json=JSON_ORDER)
+
+    # metadata
+    requests_mock.get(
+        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}/metadata",
+        json={
+            "data": {
+                "id": "2ba15b00-407f-49d5-8ccc-4694a08ec665",
+                "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
+                "customerReference": "158e8ca9-c5e9-4705-8f44-7aefee1d33ff",
+                "sqKmArea": 0.1,
+                "createdAt": "2021-01-18T16:18:19.395198Z",
+                "updatedAt": "2021-01-18T16:18:19.395198Z",
+            },
+            "error": None,
+        },
+    )
+
+    order = Order(auth=auth_mock, order_id=ORDER_ID)
+
+    return order
+
+
+@pytest.fixture()
+def order_live(auth_live):
+    order = Order(auth=auth_live, order_id=os.getenv("TEST_UP42_ORDER_ID"))
+    return order
 
 
 @pytest.fixture()
