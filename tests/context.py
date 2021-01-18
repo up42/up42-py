@@ -22,6 +22,8 @@ from up42.jobcollection import JobCollection
 from up42.jobtask import JobTask
 from up42.catalog import Catalog
 from up42.estimation import Estimation
+from up42.storage import Storage
+from up42.asset import Asset
 from up42.__init__ import (
     authenticate,
     initialize_project,

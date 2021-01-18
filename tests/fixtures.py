@@ -13,6 +13,8 @@ from .context import (
     Tools,
     Catalog,
     Estimation,
+    Storage,
+    Asset,
 )
 
 
@@ -36,6 +38,8 @@ JOB_NAME = "job_name_123"
 JOBTASK_ID = "jobtask_id_123"
 JOBTASK_NAME = "jobtask_name_123"
 
+ORDER_ID = "order_id_123"
+ASSET_ID = "asset_id_123"
 
 JSON_WORKFLOW_TASKS = {
     "error": "None",
@@ -142,6 +146,46 @@ JSON_WORKFLOW_ESTIMATION = {
         },
     },
     "error": {},
+}
+
+JSON_ASSET = {
+    "data": {
+        "id": ASSET_ID,
+        "workspaceId": WORKSPACE_ID,
+        "createdAt": "2020-12-17T10:41:24.774111Z",
+        "type": "ARCHIVED",
+        "source": "BLOCK",
+        "name": "DS_PHR1B_201903161028440_FR1_PX_E008N47_0606_04372",
+        "size": 3920650,
+        "createdBy": {"id": "system", "type": "INTERNAL"},
+        "updatedBy": {"id": "system", "type": "INTERNAL"},
+        "updatedAt": "2020-12-17T10:41:24.774111Z",
+    },
+    "error": None,
+}
+
+JSON_ASSETS = {
+    "data": {
+        "content": [JSON_ASSET["data"]],
+        "pageable": {
+            "sort": {"sorted": True, "unsorted": False, "empty": False},
+            "pageNumber": 0,
+            "pageSize": 10,
+            "offset": 0,
+            "paged": True,
+            "unpaged": False,
+        },
+        "totalPages": 1,
+        "totalElements": 1,
+        "last": True,
+        "sort": {"sorted": True, "unsorted": False, "empty": False},
+        "numberOfElements": 1,
+        "first": True,
+        "size": 10,
+        "number": 0,
+        "empty": False,
+    },
+    "error": None,
 }
 
 
@@ -613,6 +657,57 @@ def jobtask_live(auth_live):
         jobtask_id=os.getenv("TEST_UP42_JOBTASK_ID"),
     )
     return jobtask
+
+
+@pytest.fixture()
+def storage_mock(auth_mock, requests_mock):
+    # assets
+    url_storage_assets = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets"
+    )
+    requests_mock.get(url=url_storage_assets, json=JSON_ASSETS)
+
+    # asset info
+    url_asset_info = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets/{ASSET_ID}"
+    )
+    requests_mock.get(url=url_asset_info, json=JSON_ASSET)
+
+    storage = Storage(auth=auth_mock)
+
+    return storage
+
+
+@pytest.fixture()
+def storage_live(auth_live):
+    storage = Storage(auth=auth_live)
+    return storage
+
+
+@pytest.fixture()
+def asset_mock(auth_mock, requests_mock):
+
+    # asset info
+    url_asset_info = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets/{ASSET_ID}"
+    )
+    requests_mock.get(url=url_asset_info, json=JSON_ASSET)
+
+    # url
+    requests_mock.get(
+        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets/{ASSET_ID}/downloadUrl",
+        json={"data": {"url": DOWNLOAD_URL}},
+    )
+
+    asset = Asset(auth=auth_mock, asset_id=ASSET_ID)
+
+    return asset
+
+
+@pytest.fixture()
+def asset_live(auth_live):
+    asset = Asset(auth=auth_live, asset_id=os.getenv("TEST_UP42_ASSET_ID"))
+    return asset
 
 
 @pytest.fixture()
