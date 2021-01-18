@@ -21,6 +21,7 @@ DOWNLOAD_URL = "http://up42.api.com/abcdef"
 
 PROJECT_ID = "project_id_123"
 PROJECT_APIKEY = "project_apikey_123"
+WORKSPACE_ID = "workspace_id_123"
 PROJECT_NAME = "project_name_123"
 PROJECT_DESCRIPTION = "project_description_123"
 
@@ -176,6 +177,13 @@ def auth_mock(requests_mock):
     requests_mock.post(
         url=url_get_token,
         json=json_get_token,
+    )
+
+    url_get_workspace = f"https://api.up42.com/projects/{PROJECT_ID}"
+    json_get_workspace = {"data": {"workspaceId": WORKSPACE_ID}}
+    requests_mock.get(
+        url=url_get_workspace,
+        json=json_get_workspace,
     )
     auth = Auth(
         project_id=PROJECT_ID,
