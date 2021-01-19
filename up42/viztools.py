@@ -24,6 +24,23 @@ from up42.utils import (
     get_logger,
 )
 
+# Folium map styling constants
+VECTOR_STYLE = {
+    "fillColor": "#5288c4",
+    "color": "blue",
+    "weight": 2.5,
+    "dashArray": "5, 5",
+}
+
+HIGHLIGHT_STYLE = {
+    "fillColor": "#ffaf00",
+    "color": "red",
+    "weight": 3.5,
+    "dashArray": "5, 5",
+}
+
+# ignore warnings
+warnings.filterwarnings("ignore", category=rasterio.errors.NotGeoreferencedWarning)
 
 try:
     from IPython import get_ipython
@@ -44,7 +61,7 @@ class VizTools:
         Visualization functionality
         """
         self.quicklooks = None
-        self.results = None
+        self.results: Union[list, dict, None] = None
 
     def plot_results(
         self,
@@ -152,9 +169,6 @@ class VizTools:
                 raise ValueError("You first need to download the quicklooks!")
             filepaths = self.quicklooks
 
-        warnings.filterwarnings(
-            "ignore", category=rasterio.errors.NotGeoreferencedWarning
-        )
         self.plot_results(
             plot_file_format=[".jpg", ".jpeg", ".png"],
             figsize=figsize,
@@ -308,15 +322,27 @@ class VizTools:
                 "You first need to download the results via job.download_results()!"
             )
 
-        # Add features to map.
-        # Some blocks store vector results in an additional geojson file.
-        # pylint: disable=not-an-iterable
-        json_fp = [fp for fp in self.results if fp.endswith(".geojson")]
-        if json_fp:
-            json_fp = json_fp[0]
-        else:
+        f_paths = []
+        if isinstance(self.results, list):
+            # Add features to map.
+            # Some blocks store vector results in an additional geojson file.
             # pylint: disable=not-an-iterable
-            json_fp = [fp for fp in self.results if fp.endswith(".json")][0]
+            json_fp = [fp for fp in self.results if fp.endswith(".geojson")]
+            if json_fp:
+                json_fp = json_fp[0]  # why only one element is selected?
+            else:
+                # pylint: disable=not-an-iterable
+                json_fp = [fp for fp in self.results if fp.endswith(".json")][0]
+            f_paths = self.results
+        elif isinstance(self.results, dict):
+            # pylint: disable=unsubscriptable-object
+            json_fp = self.results["merged_result"][0]
+
+            f_paths = []
+            for k, v in self.results.items():
+                if k != "merged_result":
+                    f_paths.append([i for i in v if i.endswith(".tif")][0])
+
         df: GeoDataFrame = gpd.read_file(json_fp)
 
         # Add image to map.
@@ -324,13 +350,14 @@ class VizTools:
             bands=bands,
             plot_file_format=[".tif"],
             result_df=df,
-            filepaths=self.results,
+            filepaths=f_paths,
             aoi=aoi,
             show_images=show_images,
             show_features=show_features,
             name_column=name_column,
             save_html=save_html,
         )
+
         return m
 
     def map_quicklooks(
@@ -364,9 +391,6 @@ class VizTools:
                 raise ValueError("You first need to download the quicklooks!")
             filepaths = self.quicklooks
 
-        warnings.filterwarnings(
-            "ignore", category=rasterio.errors.NotGeoreferencedWarning
-        )
         m = self._map_images(
             plot_file_format=[".jpg", ".jpeg", ".png"],
             result_df=scenes,
@@ -475,22 +499,6 @@ def folium_base_map(
         # If adding additional layers outside of the folium base map function, don't
         # use this one here. Causes an empty map.
     return m
-
-
-VECTOR_STYLE = {
-    "fillColor": "#5288c4",
-    "color": "blue",
-    "weight": 2.5,
-    "dashArray": "5, 5",
-}
-
-
-HIGHLIGHT_STYLE = {
-    "fillColor": "#ffaf00",
-    "color": "red",
-    "weight": 3.5,
-    "dashArray": "5, 5",
-}
 
 
 class DrawFoliumOverride(Draw):
