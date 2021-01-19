@@ -1,6 +1,7 @@
-from typing import Dict
+from typing import Dict, List
 
 from up42.auth import Auth
+from up42.asset import Asset
 from up42.tools import Tools
 from up42.viztools import VizTools
 
@@ -70,3 +71,14 @@ class Order(VizTools, Tools):
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders/{self.order_id}/metadata"
         response_json = self.auth._request(request_type="GET", url=url)
         return response_json["data"]
+
+    def get_assets(self) -> List[Asset]:
+        """
+        Gets the Order assets or results.
+        """
+        if self.is_fulfilled:
+            assets: List[str] = self.info["assets"]
+            return [Asset(self.auth, asset_id=asset) for asset in assets]
+        raise ValueError(
+            f"Order {self.order_id} is not FULFILLED! Status is {self.status}"
+        )

@@ -2,7 +2,7 @@ import os
 import pytest
 
 # pylint: disable=unused-import
-from .context import Order
+from .context import Order, Asset
 from .fixtures import (
     ASSET_ID,
     JSON_ORDER,
@@ -12,6 +12,8 @@ from .fixtures import (
     auth_live,
     order_mock,
     order_live,
+    asset_mock,
+    asset_live,
 )
 
 
@@ -62,3 +64,23 @@ def test_order_metadata(order_mock):
 def test_order_metadata_live(order_live):
     assert order_live.metadata
     assert order_live.metadata["id"] == os.getenv("TEST_UP42_ORDER_ID")
+
+
+def test_get_assets(order_mock, asset_mock):
+    assets = order_mock.get_assets()
+    assert len(assets) == 1
+    assert isinstance(assets[0], Asset)
+    assert assets[0].asset_id == order_mock.info["assets"][0]
+
+
+def test_get_assets_placed(order_mock, asset_mock, monkeypatch):
+    monkeypatch.setattr(Order, "info", {"status": "PLACED"})
+    with pytest.raises(ValueError):
+        order_mock.get_assets()
+
+
+@pytest.mark.live
+def test_get_assets_live(order_live, asset_live):
+    assets = order_live.get_assets()
+    assert len(assets) >= 1
+    assert isinstance(assets[0], Asset)
