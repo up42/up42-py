@@ -1,6 +1,7 @@
 import os
 import pytest
 
+# pylint: disable=unused-import
 from .context import Order
 from .fixtures import (
     ASSET_ID,
@@ -50,10 +51,12 @@ def test_is_fulfilled(order_mock, status, expected, monkeypatch):
     monkeypatch.setattr(Order, "info", {"status": status})
     assert order_mock.is_fulfilled == expected
 
+
 def test_order_metadata(order_mock):
     assert order_mock.metadata
     assert order_mock.metadata["id"] == ORDER_ID
     assert order_mock.metadata["sqKmArea"] == 0.1
+
 
 @pytest.mark.live
 def test_order_metadata_live(order_live):
