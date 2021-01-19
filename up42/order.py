@@ -38,7 +38,7 @@ class Order(VizTools, Tools):
     @property
     def info(self) -> Dict:
         """
-        Gets the Order metadata information.
+        Gets the Order information.
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders/{self.order_id}"
         response_json = self.auth._request(request_type="GET", url=url)
@@ -55,9 +55,18 @@ class Order(VizTools, Tools):
         return status
 
     @property
-    def is_fullfilled(self) -> bool:
+    def is_fulfilled(self) -> bool:
         """
         Gets `True` if the order is fulfilled, `False` otherwise.
         Also see [status attribute](order.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
+
+    @property
+    def metadata(self) -> Dict:
+        """
+        Gets the Order metadata.
+        """
+        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders/{self.order_id}/metadata"
+        response_json = self.auth._request(request_type="GET", url=url)
+        return response_json["data"]

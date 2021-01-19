@@ -27,4 +27,4 @@ def test_get_assets(storage_mock):
 @pytest.mark.live
 def test_get_assets_live(storage_live):
     assets = storage_live.get_assets()
-    assert len(assets) == 1
+    assert len(assets) >= 1

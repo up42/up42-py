@@ -743,7 +743,7 @@ def order_mock(auth_mock, requests_mock):
         url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}/metadata",
         json={
             "data": {
-                "id": "2ba15b00-407f-49d5-8ccc-4694a08ec665",
+                "id": ORDER_ID,
                 "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
                 "customerReference": "158e8ca9-c5e9-4705-8f44-7aefee1d33ff",
                 "sqKmArea": 0.1,
