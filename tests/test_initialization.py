@@ -22,6 +22,15 @@ from .fixtures import (
     JOBTASK_ID,
     ORDER_ID,
     ASSET_ID,
+    auth_mock,
+    project_mock,
+    workflow_mock,
+    job_mock,
+    jobtask_mock,
+    jobcollection_single_mock,
+    storage_mock,
+    order_mock,
+    asset_mock,
 )
 import up42  # pylint: disable=wrong-import-order
 
@@ -47,13 +56,22 @@ def test_initialize_object_wo_auth_raises():
         up42.initialize_asset(asset_id=ASSET_ID)
 
 
-# TODO: Adjust and unskip after simplification of test authentication
-@pytest.mark.skip
-def test_global_auth_initialize_objects():
+# pylint: disable=unused-argument
+def test_global_auth_initialize_objects(
+    auth_mock,
+    project_mock,
+    workflow_mock,
+    job_mock,
+    jobtask_mock,
+    jobcollection_single_mock,
+    storage_mock,
+    order_mock,
+    asset_mock,
+):
     up42.authenticate(
         project_id=PROJECT_ID,
         project_api_key=PROJECT_APIKEY,
-        authenticate=False,
+        authenticate=True,
         get_info=False,
         retry=False,
     )

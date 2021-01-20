@@ -279,7 +279,16 @@ def auth_live():
 def project_mock(auth_mock, requests_mock):
     # info
     url_project_info = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}"
-    json_project_info = {"data": {"xyz": 789}, "error": {}}
+    json_project_info = {
+        "data": {
+            "xyz": 789,
+            "workspaceId": WORKSPACE_ID,
+            "name": PROJECT_NAME,
+            "description": PROJECT_DESCRIPTION,
+            "createdAt": "some_date",
+        },
+        "error": {},
+    }
     requests_mock.get(url=url_project_info, json=json_project_info)
 
     project = Project(auth=auth_mock, project_id=auth_mock.project_id)
@@ -355,6 +364,8 @@ def workflow_mock(auth_mock, requests_mock):
         "data": {
             "name": WORKFLOW_NAME,
             "id": WORKFLOW_ID,
+            "description": PROJECT_DESCRIPTION,
+            "createdAt": "some_date",
             "xyz": 789,
         },
         "error": {},
@@ -440,7 +451,20 @@ def job_mock(auth_mock, requests_mock):
     url_job_info = (
         f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
     )
-    json_job_info = {"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}}
+    json_job_info = {
+        "data": {
+            "xyz": 789,
+            "mode": "DEFAULT",
+            "description": "some_description",
+            "startedAt": "some_date",
+            "workflowName": WORKFLOW_NAME,
+            "name": JOB_NAME,
+            "finishedAt": "some_date",
+            "status": "SUCCESSFULL",
+            "inputs": "some_inputs",
+        },
+        "error": {},
+    }
     requests_mock.get(url=url_job_info, json=json_job_info)
 
     job = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID)
@@ -629,7 +653,23 @@ def jobtask_mock(auth_mock, requests_mock):
         f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
         f"/tasks/"
     )
-    requests_mock.get(url=url_jobtask_info, json={"data": {"xyz": 789}, "error": {}})
+    requests_mock.get(
+        url=url_jobtask_info,
+        json={
+            "data": [
+                {
+                    "xyz": 789,
+                    "name": JOBTASK_NAME,
+                    "status": "SUCCESSFULL",
+                    "startedAt": "some_date",
+                    "finishedAt": "some_date",
+                    "block": {"name": "a_block"},
+                    "blockVersion": "1.0.0",
+                }
+            ],
+            "error": {},
+        },
+    )
 
     jobtask = JobTask(
         auth=auth_mock,
