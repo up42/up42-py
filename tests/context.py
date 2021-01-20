@@ -32,4 +32,7 @@ from up42.__init__ import (
     initialize_workflow,
     initialize_job,
     initialize_jobtask,
+    initialize_storage,
+    initialize_order,
+    initialize_asset,
 )
