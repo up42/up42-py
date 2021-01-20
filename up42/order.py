@@ -82,3 +82,33 @@ class Order(VizTools, Tools):
         raise ValueError(
             f"Order {self.order_id} is not FULFILLED! Status is {self.status}"
         )
+
+    @classmethod
+    def place(cls, auth: Auth, data_provider_name: str, order_params: Dict) -> "Order":
+        """
+        Places an order.
+
+        Args:
+            auth (Auth): An authentication object.
+            data_provider_name (str): The data provider name. Currently only `oneatlas` is a supported provider.
+            order_params (Dict): Order definition, including `id` and `aoi`.
+
+        Returns:
+            Order: The placed order.
+        """
+        assert (
+            data_provider_name == "oneatlas"
+        ), "Currently only `oneatlas` is supported as a data provider."
+        order_payload = {
+            "dataProviderName": data_provider_name,
+            "orderParams": order_params,
+        }
+        url = f"{auth._endpoint()}/workspaces/{auth.workspace_id}/orders"
+        response_json = auth._request(request_type="POST", url=url, data=order_payload)
+        try:
+            order_id = response_json["data"]["id"]
+        except KeyError as e:
+            raise ValueError(f"Order was not placed: {response_json}") from e
+        order = cls(auth=auth, order_id=order_id)
+        logger.info(f"Order {order.order_id} is now {order.status}.")
+        return order

@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 # pylint: disable=unused-import
@@ -84,3 +85,79 @@ def test_get_assets_live(order_live, asset_live):
     assets = order_live.get_assets()
     assert len(assets) >= 1
     assert isinstance(assets[0], Asset)
+
+
+@pytest.fixture
+def order_payload():
+    return {
+        "dataProviderName": "oneatlas",
+        "orderParams": {
+            "id": "1cc21a92-2485-413f-b60e-55f1da1f6975",
+            "aoi": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [13.357031, 52.52361],
+                        [13.350981, 52.524362],
+                        [13.351544, 52.526326],
+                        [13.355284, 52.526765],
+                        [13.356944, 52.525067],
+                        [13.357257, 52.524409],
+                        [13.357031, 52.52361],
+                    ]
+                ],
+            },
+        },
+    }
+
+
+def test_place_order(order_payload, auth_mock, order_mock, requests_mock):
+    requests_mock.post(
+        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
+        json={
+            "data": {"id": ORDER_ID},
+            "error": {},
+        },
+    )
+    order = Order.place(
+        auth_mock, order_payload["dataProviderName"], order_payload["orderParams"]
+    )
+    assert isinstance(order, Order)
+    assert order.order_id == ORDER_ID
+
+
+def test_place_order_no_id(order_payload, auth_mock, order_mock, requests_mock):
+    requests_mock.post(
+        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
+        json={
+            "data": {"xyz": 892},
+            "error": {},
+        },
+    )
+    with pytest.raises(ValueError):
+        Order.place(
+            auth_mock, order_payload["dataProviderName"], order_payload["orderParams"]
+        )
+
+
+def test_place_order_wrong_provider(
+    order_payload, auth_mock, order_mock, requests_mock
+):
+    requests_mock.post(
+        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
+        json={
+            "data": {"xyz": 892},
+            "error": {},
+        },
+    )
+    with pytest.raises(AssertionError):
+        Order.place(auth_mock, "some_provider", order_payload["orderParams"])
+
+
+@pytest.mark.skip(reason="Placing orders costs credits.")
+@pytest.mark.live
+def test_place_order_live(order_payload):
+    order = Order.place(
+        auth_mock, order_payload["dataProviderName"], order_payload["orderParams"]
+    )
+    assert order.status == "PLACED"
