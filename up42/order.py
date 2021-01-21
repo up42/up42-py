@@ -106,7 +106,7 @@ class Order(VizTools, Tools):
         url = f"{auth._endpoint()}/workspaces/{auth.workspace_id}/orders"
         response_json = auth._request(request_type="POST", url=url, data=order_payload)
         try:
-            order_id = response_json["data"]["id"]
+            order_id = response_json["data"]["id"]  # type: ignore
         except KeyError as e:
             raise ValueError(f"Order was not placed: {response_json}") from e
         order = cls(auth=auth, order_id=order_id)
