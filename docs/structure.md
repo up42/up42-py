@@ -27,6 +27,9 @@ function.
         - `.initalize_jobtask()`
         - `.initialize_jobcollection()`
         - `.initalize_catalog()`
+        - `.initalize_storage()`
+        - `.initalize_order()`
+        - `.initalize_asset()`
         - `.get_blocks()`
         - `.get_block_details()`
         - `.read_vector_file()`

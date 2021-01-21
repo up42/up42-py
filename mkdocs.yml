@@ -52,6 +52,9 @@ nav:
         - JobCollection: reference/jobcollection-reference.md
         - JobTask: reference/jobtask-reference.md
         - Catalog: reference/catalog-reference.md
+        - Storage: reference/storage-reference.md
+        - Order: reference/order-reference.md
+        - Asset: reference/asset-reference.md
         - CLI: reference/cli-reference.md
     - CLI:
         - Command Line Interface (CLI): cli.md

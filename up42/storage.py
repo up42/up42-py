@@ -50,7 +50,7 @@ class Storage(Tools):
         Gets all assets in the workspace as Asset objects or json.
 
         Args:
-            return_json: True returns Asset Objects.
+            return_json: If set to True, returns json object.
 
         Returns:
             Asset objects in the workspace or alternatively json info of the assets.
@@ -72,7 +72,7 @@ class Storage(Tools):
         Gets all orders in the workspace as Order objects or json.
 
         Args:
-            return_json: True returns Order Objects.
+            return_json: If set to True, returns json object.
 
         Returns:
             Order objects in the workspace or alternatively json info of the orders.
