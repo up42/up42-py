@@ -14,7 +14,7 @@ from up42.utils import (
 logger = get_logger(__name__)
 
 
-class Asset(VizTools, Tools):
+class Asset(Tools):
     def __init__(
         self,
         auth: Auth,

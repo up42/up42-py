@@ -13,7 +13,7 @@ from up42.utils import (
 logger = get_logger(__name__)
 
 
-class Order(VizTools, Tools):
+class Order(Tools):
     def __init__(
         self,
         auth: Auth,
