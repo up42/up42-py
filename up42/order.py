@@ -4,7 +4,6 @@ from typing import Dict, List
 from up42.auth import Auth
 from up42.asset import Asset
 from up42.tools import Tools
-from up42.viztools import VizTools
 
 from up42.utils import (
     get_logger,
