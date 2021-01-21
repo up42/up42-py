@@ -1,3 +1,4 @@
+from time import sleep
 from typing import Dict, List
 
 from up42.auth import Auth
@@ -49,7 +50,7 @@ class Order(VizTools, Tools):
     @property
     def status(self) -> str:
         """
-        Gets the Order status. One of `PLACED`, `FULFILLED`...
+        Gets the Order status. One of `PLACED`, `FAILED`, `FULFILLED`, `BEING_FULFILLED`, `FAILED_PERMANENTLY`.
         """
         status = self.info["status"]
         logger.info(f"Order is {status}")
@@ -112,3 +113,41 @@ class Order(VizTools, Tools):
         order = cls(auth=auth, order_id=order_id)
         logger.info(f"Order {order.order_id} is now {order.status}.")
         return order
+
+    def track_status(self, report_time: int = 120) -> str:
+        """`
+        Continuously gets the order status until order is fulfilled or failed.
+
+        Internally checks every `report_time` (s) for the status and prints the log.
+
+        Warning:
+            When placing orders of items that are in archive or cold storage,
+            the order fulfillment can happen up to **24h after order placement**.
+            In such cases,
+            please make sure to set an appropriate `report_time`.
+
+        Args:
+            report_time: The intervall (in seconds) when to get the order status.
+
+        Returns:
+            str: The final order status.
+        """
+        logger.info(
+            f"Tracking order status, reporting every {report_time} seconds...",
+        )
+        time_asleep = 0
+
+        while not self.is_fulfilled:
+            status = self.status
+            if status in ["PLACED", "BEING_FULFILLED"]:
+                if time_asleep != 0 and time_asleep % report_time == 0:
+                    logger.info(f"Order is {status}! - {self.order_id}")
+            elif status in ["FAILED", "FAILED_PERMANENTLY"]:
+                logger.info(f"Order is {status}! - {self.order_id}")
+                raise ValueError("Order has failed!")
+
+            sleep(report_time)
+            time_asleep += report_time
+
+        logger.info(f"Order is fulfilled successfully! - {self.order_id}")
+        return self.status

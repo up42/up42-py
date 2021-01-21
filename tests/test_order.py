@@ -161,3 +161,51 @@ def test_place_order_live(order_payload):
         auth_mock, order_payload["dataProviderName"], order_payload["orderParams"]
     )
     assert order.status == "PLACED"
+
+
+def test_track_status_running(order_mock, requests_mock):
+    del order_mock._info
+
+    url_job_info = (
+        f"{order_mock.auth._endpoint()}/workspaces/"
+        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
+    )
+    requests_mock.get(
+        url_job_info,
+        [
+            {"json": {"data": {"status": "PLACED"}, "error": {}}},
+            {"json": {"data": {"status": "BEING_FULFILLED"}, "error": {}}},
+            {"json": {"data": {"status": "FULFILLED"}, "error": {}}},
+        ],
+    )
+
+    order_status = order_mock.track_status(report_time=0.1)
+    assert order_status == "FULFILLED"
+
+
+@pytest.mark.parametrize("status", ["FULFILLED"])
+def test_track_status_pass(order_mock, status, requests_mock):
+    del order_mock._info
+
+    url_job_info = (
+        f"{order_mock.auth._endpoint()}/workspaces/"
+        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
+    )
+    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+
+    order_status = order_mock.track_status()
+    assert order_status == status
+
+
+@pytest.mark.parametrize("status", ["FAILED", "FAILED_PERMANENTLY"])
+def test_track_status_fail(order_mock, status, requests_mock):
+    del order_mock._info
+
+    url_job_info = (
+        f"{order_mock.auth._endpoint()}/workspaces/"
+        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
+    )
+    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+
+    with pytest.raises(ValueError):
+        order_mock.track_status()
