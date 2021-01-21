@@ -10,4 +10,4 @@ The Order class enables you to place, inspect and get information on orders.
         show_root_toc_entry: False
     selection:
         inherited_members: True
-        members: ["info", "status", "is_fulfilled", "metadata", "get_assets", "place", "track_status"]
+        members: ["info", "status", "is_fulfilled", "metadata", "get_assets", "place", "estimate", "track_status"]

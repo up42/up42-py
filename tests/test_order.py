@@ -220,3 +220,24 @@ def test_track_status_fail(order_mock, status, requests_mock):
 
     with pytest.raises(ValueError):
         order_mock.track_status()
+
+
+def test_estimate_order(order_payload, auth_mock, requests_mock):
+    url_order_estimation = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/estimate"
+    )
+    requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
+    estimation = Order.estimate(
+        auth_mock, order_payload["dataProviderName"], order_payload["orderParams"]
+    )
+    assert isinstance(estimation, int)
+    assert estimation == 100
+
+
+@pytest.mark.live
+def test_estimate_order_live(order_payload, auth_live):
+    estimation = Order.estimate(
+        auth_live, order_payload["dataProviderName"], order_payload["orderParams"]
+    )
+    assert isinstance(estimation, int)
+    assert estimation == 105

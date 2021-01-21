@@ -4,7 +4,6 @@ from typing import Dict, List, Optional
 from up42.auth import Auth
 from up42.asset import Asset
 from up42.tools import Tools
-
 from up42.utils import (
     get_logger,
 )
@@ -23,7 +22,7 @@ class Order(Tools):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.order_id = order_id
-        self.payload: Dict = payload
+        self.payload = payload
         if self.auth.get_info:
             self._info = self.info
 
@@ -110,6 +109,35 @@ class Order(Tools):
         order = cls(auth=auth, order_id=order_id, payload=order_payload)
         logger.info(f"Order {order.order_id} is now {order.status}.")
         return order
+
+    @staticmethod
+    def estimate(auth: Auth, data_provider_name: str, order_params: Dict) -> int:
+        """
+        Returns an estimation of the cost of an order.
+
+        Args:
+            auth (Auth): An authentication object.
+            data_provider_name (str): The data provider name. Currently only `oneatlas` is a supported provider.
+            order_params (Dict): Order definition, including `id` and `aoi`.
+
+        Returns:
+            int: The estimated cost of the order
+        """
+        assert (
+            data_provider_name in DATA_PROVIDERS
+        ), f"Currently only {DATA_PROVIDERS} are supported as a data provider."
+        url = f"{auth._endpoint()}/workspaces/{auth.workspace_id}/orders/estimate"
+        payload = {
+            "dataProviderName": data_provider_name,
+            "orderParams": order_params,
+        }
+
+        response_json = auth._request(request_type="POST", url=url, data=payload)
+        estimated_credits: int = response_json["data"]["credits"]  # type: ignore
+        logger.info(
+            f"Order with order parameters {payload} is estimated to cost {estimated_credits}."
+        )
+        return estimated_credits
 
     def track_status(self, report_time: int = 120) -> str:
         """`
