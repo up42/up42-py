@@ -60,7 +60,7 @@ class Order(Tools):
     def is_fulfilled(self) -> bool:
         """
         Gets `True` if the order is fulfilled, `False` otherwise.
-        Also see [status attribute](order.md#up42.order.Order.status).
+        Also see [status attribute](order-reference.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
 
