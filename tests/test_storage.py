@@ -18,6 +18,26 @@ def test_init(storage_mock):
     assert storage_mock.workspace_id == WORKSPACE_ID
 
 
+def test_paginate(storage_mock, requests_mock):
+    url = "http://some_url/assets"
+
+    def paginated_response(page):
+        return {
+            "data": {
+                "content": [{"something": "is"}, {"something": "is_not"}],
+                "totalPages": 3,
+                "totalElements": 6,
+                "number": page,
+            },
+        }
+
+    requests_mock.get(
+        "/assets", [{"json": paginated_response(page)} for page in range(0, 3)]
+    )
+    res = storage_mock._paginate(url)
+    assert len(res) == 6
+
+
 def test_get_assets(storage_mock):
     assets = storage_mock.get_assets()
     assert len(assets) == 1
@@ -28,7 +48,7 @@ def test_get_assets(storage_mock):
 @pytest.mark.live
 def test_get_assets_live(storage_live):
     assets = storage_live.get_assets()
-    assert len(assets) >= 1
+    assert len(assets) >= 2
 
 
 def test_get_orders(storage_mock):

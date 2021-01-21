@@ -23,6 +23,28 @@ class Storage(Tools):
         env = ", env: dev" if self.auth.env == "dev" else ""
         return f"Storage(workspace_id: {self.workspace_id}{env})"
 
+    def _paginate(self, url: str) -> List[Dict]:
+        """
+        Helper to fetch list of items in paginated endpoint.
+
+        Args:
+            url (str): The base paginated endpoint.
+
+        Returns:
+            List[Dict]: List of all paginated items.
+        """
+        first_pagination_response = self.auth._request(request_type="GET", url=url)
+        output = first_pagination_response["data"]["content"]
+        num_pages = first_pagination_response["data"]["totalPages"]
+        total_items = first_pagination_response["data"]["totalElements"]
+        for page in range(2, num_pages + 1):
+            response_json = self.auth._request(
+                request_type="GET", url=url + f"?page={page}"
+            )
+            output += response_json["data"]["content"]
+        assert len(output) == total_items, "Some paginated items are missing!"
+        return output
+
     def get_assets(self, return_json: bool = False) -> Union[List[Asset], Dict]:
         """
         Gets all assets in the workspace as Asset objects or json.
@@ -34,12 +56,11 @@ class Storage(Tools):
             Asset objects in the workspace or alternatively json info of the assets.
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets"
-        response_json = self.auth._request(request_type="GET", url=url)
-        assets_json = response_json["data"]["content"]
+        assets_json = self._paginate(url)
         logger.info(f"Got {len(assets_json)} assets for workspace {self.workspace_id}.")
 
         if return_json:
-            return assets_json
+            return assets_json  # type: ignore
         else:
             assets = [
                 Asset(self.auth, asset_id=asset["id"]) for asset in tqdm(assets_json)
