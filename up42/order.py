@@ -1,5 +1,5 @@
 from time import sleep
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from up42.auth import Auth
 from up42.asset import Asset
@@ -11,13 +11,11 @@ from up42.utils import (
 
 logger = get_logger(__name__)
 
+DATA_PROVIDERS = ["oneatlas"]
+
 
 class Order(Tools):
-    def __init__(
-        self,
-        auth: Auth,
-        order_id: str,
-    ):
+    def __init__(self, auth: Auth, order_id: str, payload: Optional[Dict] = None):
         """
         The Order class provides access to the results, parameters and metadata of UP42
         Orders.
@@ -25,7 +23,7 @@ class Order(Tools):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.order_id = order_id
-        self.results = None
+        self.payload: Dict = payload
         if self.auth.get_info:
             self._info = self.info
 
@@ -97,8 +95,8 @@ class Order(Tools):
             Order: The placed order.
         """
         assert (
-            data_provider_name == "oneatlas"
-        ), "Currently only `oneatlas` is supported as a data provider."
+            data_provider_name in DATA_PROVIDERS
+        ), f"Currently only {DATA_PROVIDERS} are supported as a data provider."
         order_payload = {
             "dataProviderName": data_provider_name,
             "orderParams": order_params,
@@ -109,7 +107,7 @@ class Order(Tools):
             order_id = response_json["data"]["id"]  # type: ignore
         except KeyError as e:
             raise ValueError(f"Order was not placed: {response_json}") from e
-        order = cls(auth=auth, order_id=order_id)
+        order = cls(auth=auth, order_id=order_id, payload=order_payload)
         logger.info(f"Order {order.order_id} is now {order.status}.")
         return order
 

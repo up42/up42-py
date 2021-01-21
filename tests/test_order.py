@@ -67,6 +67,15 @@ def test_order_metadata_live(order_live):
     assert order_live.metadata["id"] == os.getenv("TEST_UP42_ORDER_ID")
 
 
+def test_order_payload(order_mock):
+    assert not order_mock.payload
+
+
+@pytest.mark.live
+def test_order_payload_live(order_live):
+    assert not order_live.payload
+
+
 def test_get_assets(order_mock, asset_mock):
     assets = order_mock.get_assets()
     assert len(assets) == 1
@@ -124,6 +133,7 @@ def test_place_order(order_payload, auth_mock, order_mock, requests_mock):
     )
     assert isinstance(order, Order)
     assert order.order_id == ORDER_ID
+    assert order.payload == order_payload
 
 
 def test_place_order_no_id(order_payload, auth_mock, order_mock, requests_mock):
@@ -161,6 +171,7 @@ def test_place_order_live(order_payload):
         auth_mock, order_payload["dataProviderName"], order_payload["orderParams"]
     )
     assert order.status == "PLACED"
+    assert order.payload == order_payload
 
 
 def test_track_status_running(order_mock, requests_mock):
