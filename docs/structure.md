@@ -2,10 +2,11 @@
 
 ## Hierachy
 
-- The Python SDK uses six objects, representing the **hierarchical structure of UP42**:
+- The Python SDK uses nine objects, representing the **hierarchical structure of UP42**:
     - **Project > Workflow > Job > JobTask**
     - **JobCollection**
-    - **Catalog**
+    - **Catalog > Order**
+    - **Storage > Asset**
 - Each object can **spawn elements of one level below**, e.g.
     - `project = up42.initialize_project()`
     - `workflow = Project().create_workflow()`
@@ -111,6 +112,22 @@ function.
         - `.estimate_order()`
         - `.place_order()`
 
+    === "Storage"
+        - `.get_orders()`
+        - `.get_assets()`
+    
+    === "Order"
+        - `.info`
+        - `.status`
+        - `.metadata`
+        - `.get_assets()`
+        - `.track_status()`
+    
+    === "Asset"
+        - `.info`
+        - `.download()`
+
+
         
         
 ## Object Initialization
@@ -155,6 +172,28 @@ If a workflow etc. already exists on UP42, you can also **initialize** and acces
     
         ```python
         catalog = up42.initialize_catalog()
+        ```
+    
+    === "Storage"
+    
+        ```python
+        storage = up42.initialize_storage()
+        ```
+    
+    === "Order"
+    
+        ```python
+        UP42_ORDER_ID="ea36dee9-fed6-457e-8400-2c20ebd30f44"
+        
+        order = up42.initialize_order(order_id=UP42_ORDER_ID)
+        ```
+    
+    === "Asset"
+    
+        ```python
+        UP42_ASSET_ID="8c2dfb4d-bd35-435f-8667-48aea0dce2da"
+        
+        asset = up42.initialize_asset(asset_id=UP42_ASSET_ID)
         ```
         
 <br>
