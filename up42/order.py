@@ -135,7 +135,7 @@ class Order(Tools):
         response_json = auth._request(request_type="POST", url=url, data=payload)
         estimated_credits: int = response_json["data"]["credits"]  # type: ignore
         logger.info(
-            f"Order with order parameters {payload} is estimated to cost {estimated_credits}."
+            f"Order with order parameters {payload} is estimated to cost {estimated_credits} UP42 credits."
         )
         return estimated_credits
 
