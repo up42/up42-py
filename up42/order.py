@@ -140,7 +140,7 @@ class Order(Tools):
         return estimated_credits
 
     def track_status(self, report_time: int = 120) -> str:
-        """`
+        """
         Continuously gets the order status until order is fulfilled or failed.
 
         Internally checks every `report_time` (s) for the status and prints the log.
