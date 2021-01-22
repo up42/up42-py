@@ -237,7 +237,10 @@ def test_order_from_catalog(order_payload, order_mock, catalog_mock, requests_mo
     assert isinstance(order, Order)
     assert order.order_id == ORDER_ID
 
-def test_order_from_catalog_track_status(order_payload, order_mock, catalog_mock, requests_mock):
+
+def test_order_from_catalog_track_status(
+    order_payload, order_mock, catalog_mock, requests_mock
+):
     with open(
         Path(__file__).resolve().parent / "mock_data/search_response.json"
     ) as json_file:
@@ -269,7 +272,10 @@ def test_order_from_catalog_track_status(order_payload, order_mock, catalog_mock
         ],
     )
     order = catalog_mock.place_order(
-        order_payload["orderParams"]["aoi"], search_results.loc[0], track_status=True, report_time=0.1
+        order_payload["orderParams"]["aoi"],
+        search_results.loc[0],
+        track_status=True,
+        report_time=0.1,
     )
     assert isinstance(order, Order)
     assert order.order_id == ORDER_ID
