@@ -279,3 +279,26 @@ def test_order_from_catalog_track_status(
     )
     assert isinstance(order, Order)
     assert order.order_id == ORDER_ID
+
+
+@pytest.mark.live
+def test_estimate_order_from_catalog_live(catalog_live):
+    search_results = catalog_live.search(mock_search_parameters)
+    estimation = catalog_live.estimate_order(
+        mock_search_parameters["intersects"], search_results.loc[0]
+    )
+    assert isinstance(estimation, int)
+    assert estimation == 32
+
+
+@pytest.mark.skip(reason="Placing orders costs credits.")
+@pytest.mark.live
+def test_order_from_catalog_live(
+    order_payload, order_mock, catalog_mock, requests_mock
+):
+    search_results = catalog_live.search(mock_search_parameters)
+    order = catalog_live.place_order(
+        mock_search_parameters["intersects"], search_results.loc[0]
+    )
+    assert isinstance(order, Order)
+    assert order.order_id
