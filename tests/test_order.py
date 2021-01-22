@@ -1,5 +1,4 @@
 import os
-
 import pytest
 
 # pylint: disable=unused-import
@@ -15,6 +14,7 @@ from .fixtures import (
     order_live,
     asset_mock,
     asset_live,
+    catalog_mock,
 )
 
 
