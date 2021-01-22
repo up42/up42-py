@@ -108,6 +108,8 @@ function.
         - `.download_quicklooks()`
         - `.plot_quicklooks()`
         - `.map_quicklooks()`
+        - `.estimate_order()`
+        - `.place_order()`
 
         
         
