@@ -37,11 +37,12 @@ class Storage(Tools):
         output = first_pagination_response["data"]["content"]
         num_pages = first_pagination_response["data"]["totalPages"]
         total_items = first_pagination_response["data"]["totalElements"]
-        for page in range(2, num_pages + 1):
+        for page in range(1, num_pages):
             response_json = self.auth._request(
                 request_type="GET", url=url + f"?page={page}"
             )
             output += response_json["data"]["content"]
+        print(len(output), total_items)
         assert len(output) == total_items, "Some paginated items are missing!"
         return output
 
