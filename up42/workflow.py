@@ -332,7 +332,7 @@ class Workflow(Tools):
             scene_ids: List of scene_ids, if given ignores all other parameters except geometry.
             order_ids: Optional, can be used to incorporate existing bought imagery on UP42
                 into new workflows.
-            assets: Optional, can be used to incorporate existing assest in Storage (result of Orders for instance)
+            assets: Optional, can be used to incorporate existing assets in Storage (result of Orders for instance)
                 into new workflows.
 
         Returns:
