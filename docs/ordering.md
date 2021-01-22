@@ -1,14 +1,14 @@
-# :world_map: Catalog Search
+# :postbox: Ordering
 
-**Check data availability & download image preview quicklooks** via the catalog search. 
-You can filter by various parameters e.g. time period, area of interest, cloud cover etc.
+**Order images and download them** via the ordering and assets. 
+You can filter by various parameters e.g. time period, area of interest, cloud cover etc, using Catalog Search.
+Then, you can order an image into UP42 Storage and download it to inspect the result - all with the convenience of the UP42 Python SDK!
 
-!!! Info "Supported Sensors"
-    Currently the UP42 catalog search supports these sensors: **Pleiades, Spot, Sentinel1, 
-    Sentinel2, Sentinel3, Sentinel5p**.
+!!! Info "Supported Provider"
+    Currently ordering supports these data providers: **OneAtlas**.
 
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Fcatalog.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Fordering.ipynb)
 
 ## Initialize Catalog
 
@@ -33,11 +33,11 @@ search_parameters = catalog.construct_parameters(geometry=aoi,
                                                  start_date="2018-01-01",
                                                  end_date="2020-12-31",
                                                  sensors=["pleiades"],
-                                                 max_cloudcover=20,
+                                                 max_cloudcover=5,
                                                  sortby="cloudCoverage", 
-                                                 limit=10)
+                                                 limit=1)
 search_results = catalog.search(search_parameters=search_parameters)
-display(search_results.head())
+search_results
 ```
 
 
@@ -57,7 +57,20 @@ catalog.download_quicklooks(image_ids=search_results.id.to_list(),
 catalog.map_quicklooks(scenes=search_results, aoi=aoi)
 ```
 
+## Place an order for the image, tracking it's status
+
+```python
+order = catalog.place_order(aoi, search_results.loc[0])
+order.track_status()
+```
+
+## Get the assets or results of the order
+
+```python
+assets = order.get_assets()
+assets[0].download()
+```
 <br>
 
 !!! Success "Success!"
-    Continue with [Ordering](ordering.md)!
+    Continue with the [Detailed Example](/guides/detailed-example/)!
