@@ -17,6 +17,7 @@ from .fixtures import (
     jobtask_mock,
     project_mock,
     project_mock_max_concurrent_jobs,
+    asset_mock,
 )
 from .fixtures import (
     JOB_ID,
@@ -261,6 +262,24 @@ def test_construct_parameter_order_ids(workflow_mock):
     assert isinstance(parameters, dict)
     assert parameters == {
         "sobloo-s2-l1c-aoiclipped:1": {"order_ids": ["8472712912"]},
+        "tiling:1": {"nodata": "None", "tile_width": 768},
+    }
+
+
+def test_construct_parameter_assets(workflow_mock, asset_mock):
+    parameters = workflow_mock.construct_parameters(assets=[asset_mock])
+    assert isinstance(parameters, dict)
+    assert parameters == {
+        "sobloo-s2-l1c-aoiclipped:1": {"asset_ids": [asset_mock.asset_id]},
+        "tiling:1": {"nodata": "None", "tile_width": 768},
+    }
+
+    parameters = workflow_mock.construct_parameters(assets=[asset_mock, asset_mock])
+    assert isinstance(parameters, dict)
+    assert parameters == {
+        "sobloo-s2-l1c-aoiclipped:1": {
+            "asset_ids": [asset_mock.asset_id, asset_mock.asset_id]
+        },
         "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 

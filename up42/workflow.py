@@ -15,6 +15,7 @@ from up42.auth import Auth
 from up42.job import Job
 from up42.estimation import Estimation
 from up42.jobcollection import JobCollection
+from up42.asset import Asset
 from up42.tools import Tools
 from up42.utils import (
     get_logger,
@@ -313,6 +314,7 @@ class Workflow(Tools):
         limit: int = None,
         scene_ids: List = None,
         order_ids: List[str] = None,
+        assets: List[Asset] = None,
     ) -> Dict:
         """
         Constructs workflow input parameters with a specified aoi, the default input parameters, and
@@ -330,6 +332,8 @@ class Workflow(Tools):
             scene_ids: List of scene_ids, if given ignores all other parameters except geometry.
             order_ids: Optional, can be used to incorporate existing bought imagery on UP42
                 into new workflows.
+            assets: Optional, can be used to incorporate existing assest in Storage (result of Orders for instance)
+                into new workflows.
 
         Returns:
             Dictionary of constructed input parameters.
@@ -344,6 +348,12 @@ class Workflow(Tools):
             # Needs to be handled in this function(not run_job) as it is only
             # relevant for the data block.
             input_parameters[data_block_name] = {"order_ids": order_ids}
+        elif assets is not None:
+            # Needs to be handled in this function(not run_job) as it is only
+            # relevant for the data block.
+            input_parameters[data_block_name] = {
+                "asset_ids": [asset.asset_id for asset in assets]
+            }
         else:
             if limit is not None:
                 input_parameters[data_block_name]["limit"] = limit
