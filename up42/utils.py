@@ -117,14 +117,17 @@ def download_results_from_gcs(
         f.extractall(path=output_directory)
         output_folder_path = output_directory / "output"
         out_filepaths = []
-        for src_path in output_folder_path.glob("**/*"):
-            dst_path = output_directory / src_path.relative_to(output_folder_path)
-            shutil.move(str(src_path), str(dst_path))
-            if dst_path.is_dir():
-                out_filepaths += [str(x) for x in dst_path.glob("**/*")]
-            elif dst_path.is_file():
-                out_filepaths.append(str(dst_path))
-        output_folder_path.rmdir()
+        if output_folder_path.exists():
+            for src_path in output_folder_path.glob("**/*"):
+                dst_path = output_directory / src_path.relative_to(output_folder_path)
+                shutil.move(str(src_path), str(dst_path))
+                if dst_path.is_dir():
+                    out_filepaths += [str(x) for x in dst_path.glob("**/*")]
+                elif dst_path.is_file():
+                    out_filepaths.append(str(dst_path))
+            output_folder_path.rmdir()
+        else:
+            out_filepaths += [str(x) for x in output_directory.glob("**/*")]
 
     logger.info(
         f"Download successful of {len(out_filepaths)} files to output_directory "
