@@ -11,4 +11,4 @@ or results of jobs with download blocks.
         show_root_toc_entry: False
     selection:
         inherited_members: True
-        members: ["info", "download"]
+        members: ["info", "source", "download"]

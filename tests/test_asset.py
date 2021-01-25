@@ -35,7 +35,7 @@ def test_asset_info_live(asset_live):
 
 
 def test_asset_source(asset_mock):
-    assert asset_mock.source == "ORDER"
+    assert asset_mock.source == "BLOCK"
 
 
 @pytest.mark.live

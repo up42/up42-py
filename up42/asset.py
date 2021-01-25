@@ -47,6 +47,15 @@ class Asset(Tools):
         self._info = response_json["data"]
         return response_json["data"]
 
+    @property
+    def source(self) -> Dict:
+        """
+        Gets the source of the Asset. One of `TASKING`, `ORDER`, `BLOCK`, `UPLOAD`.
+        """
+        source = self.info["source"]
+        logger.info(f"Asset source is {source}")
+        return source
+
     def _get_download_url(self) -> str:
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets/{self.asset_id}/downloadUrl"
         response_json = self.auth._request(request_type="GET", url=url)
