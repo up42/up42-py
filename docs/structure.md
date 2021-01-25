@@ -125,6 +125,7 @@ function.
     
     === "Asset"
         - `.info`
+        - `.source`
         - `.download()`
 
 
