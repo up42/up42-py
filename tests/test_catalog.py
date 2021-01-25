@@ -288,7 +288,7 @@ def test_estimate_order_from_catalog_live(catalog_live):
         mock_search_parameters["intersects"], search_results.loc[0]
     )
     assert isinstance(estimation, int)
-    assert estimation == 32
+    assert estimation == 12
 
 
 @pytest.mark.skip(reason="Placing orders costs credits.")
