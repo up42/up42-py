@@ -34,6 +34,15 @@ def test_asset_info_live(asset_live):
     assert asset_live.info["name"]
 
 
+def test_asset_source(asset_mock):
+    assert asset_mock.source == "ORDER"
+
+
+@pytest.mark.live
+def test_asset_source_live(asset_live):
+    assert asset_live.source == "BLOCK"
+
+
 def test_asset_get_download_url(asset_mock):
     url = asset_mock._get_download_url()
     assert url == DOWNLOAD_URL
