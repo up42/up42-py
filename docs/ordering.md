@@ -2,7 +2,7 @@
 
 **Order images and download them** via the ordering and assets. 
 You can filter by various parameters e.g. time period, area of interest, cloud cover etc, using Catalog Search.
-Then, you can order an image into UP42 Storage and download it to inspect the result - all with the convenience of the UP42 Python SDK!
+Then, you can order an image into the UP42 Storage and download it to inspect the result - all with the convenience of the UP42 Python SDK!
 
 !!! Info "Supported Provider"
     Currently ordering supports these data providers: **OneAtlas**.
