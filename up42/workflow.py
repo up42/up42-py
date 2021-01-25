@@ -351,9 +351,12 @@ class Workflow(Tools):
         elif assets is not None:
             # Needs to be handled in this function(not run_job) as it is only
             # relevant for the data block.
-            input_parameters[data_block_name] = {
-                "asset_ids": [asset.asset_id for asset in assets]
-            }
+            asset_ids = [asset.asset_id for asset in assets if asset.source == "BLOCK"]
+            if not asset_ids:
+                raise ValueError(
+                    "None of the assets are usable in a workflow since the source is not `BLOCK`."
+                )
+            input_parameters[data_block_name] = {"asset_ids": asset_ids}
         else:
             if limit is not None:
                 input_parameters[data_block_name]["limit"] = limit

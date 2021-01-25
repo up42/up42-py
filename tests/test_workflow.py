@@ -6,7 +6,7 @@ import pytest
 import shapely
 
 # pylint: disable=unused-import,wrong-import-order
-from .context import Workflow, Job, JobCollection
+from .context import Workflow, Job, JobCollection, Asset
 from .fixtures import (
     auth_mock,
     auth_live,
@@ -266,7 +266,7 @@ def test_construct_parameter_order_ids(workflow_mock):
     }
 
 
-def test_construct_parameter_assets(workflow_mock, asset_mock):
+def test_construct_parameter_assets(workflow_mock, asset_mock, monkeypatch):
     parameters = workflow_mock.construct_parameters(assets=[asset_mock])
     assert isinstance(parameters, dict)
     assert parameters == {
@@ -282,6 +282,10 @@ def test_construct_parameter_assets(workflow_mock, asset_mock):
         },
         "tiling:1": {"nodata": "None", "tile_width": 768},
     }
+
+    monkeypatch.setattr(Asset, "source", property(lambda self: "ORDER"))
+    with pytest.raises(ValueError):
+        workflow_mock.construct_parameters(assets=[asset_mock])
 
 
 def test_construct_parameters_parallel(workflow_mock):
