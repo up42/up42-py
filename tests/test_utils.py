@@ -277,6 +277,7 @@ def test_download_result_from_gcs(requests_mock):
         assert len(out_files) == 2
         assert not (Path(tempdir) / "output").exists()
 
+
 def test_download_result_from_gcs_zip(requests_mock):
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
@@ -299,6 +300,7 @@ def test_download_result_from_gcs_zip(requests_mock):
         assert len(out_files) == 2
         assert not (Path(tempdir) / "output").exists()
 
+
 def test_download_result_from_gcs_not_compressed(requests_mock):
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
@@ -316,6 +318,7 @@ def test_download_result_from_gcs_not_compressed(requests_mock):
                 download_url=cloud_storage_url,
                 output_directory=tempdir,
             )
+
 
 def test_filter_jobs_on_mode():
     job_json = [{"mode": "DEFAULT"}, {"mode": "DRY_RUN"}]
