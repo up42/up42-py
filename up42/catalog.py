@@ -347,7 +347,7 @@ class Catalog(VizTools, Tools):
         Args:
             geometry (Union[ Dict, Feature, FeatureCollection, List, GeoDataFrame, Point, Polygon, ]): The intended
                 output AOI of the order.
-            scene (GeoSeries): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
+            scene (Series): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
                 for the first scene of a catalog search result.
 
         Returns:
@@ -377,7 +377,7 @@ class Catalog(VizTools, Tools):
         Args:
             geometry (Union[ Dict, Feature, FeatureCollection, List, GeoDataFrame, Point, Polygon, ]): The intended
                 output AOI of the order.
-            scene (GeoSeries): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
+            scene (Series): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
                 for the first scene of a catalog search result.
             track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
             report_time: The intervall (in seconds) when to get the order status, if `track_status` is set tp True.
