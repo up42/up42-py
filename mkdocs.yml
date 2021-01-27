@@ -36,6 +36,7 @@ nav:
       - Authentication: authentication.md
       - Structure: structure.md
       - Catalog Search: catalog.md
+      - Ordering: ordering.md
       - Detailed Example: guides/detailed-example.ipynb
     - Examples:
         - Examples: examples-intro.md
