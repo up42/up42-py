@@ -36,6 +36,7 @@ nav:
       - Authentication: authentication.md
       - Structure: structure.md
       - Catalog Search: catalog.md
+      - Ordering: ordering.md
       - Detailed Example: guides/detailed-example.ipynb
     - Examples:
         - Examples: examples-intro.md
@@ -52,6 +53,9 @@ nav:
         - JobCollection: reference/jobcollection-reference.md
         - JobTask: reference/jobtask-reference.md
         - Catalog: reference/catalog-reference.md
+        - Storage: reference/storage-reference.md
+        - Order: reference/order-reference.md
+        - Asset: reference/asset-reference.md
         - CLI: reference/cli-reference.md
     - CLI:
         - Command Line Interface (CLI): cli.md

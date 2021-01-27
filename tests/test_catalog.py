@@ -5,12 +5,17 @@ import tempfile
 import pytest
 import geopandas as gpd
 
+from .context import Order
+
 # pylint: disable=unused-import
+from .test_order import order_payload
 from .fixtures import (
     auth_mock,
     auth_live,
     catalog_mock,
     catalog_live,
+    order_mock,
+    ORDER_ID,
 )
 
 
@@ -179,3 +184,121 @@ def test_download_quicklook_live(catalog_live):
         assert len(out_paths) == 1
         assert Path(out_paths[0]).exists()
         assert Path(out_paths[0]).suffix == ".jpg"
+
+
+# pylint: disable=unused-argument
+def test_estimate_order_from_catalog(
+    order_payload, order_mock, catalog_mock, requests_mock
+):
+    with open(
+        Path(__file__).resolve().parent / "mock_data/search_response.json"
+    ) as json_file:
+        json_search_response = json.load(json_file)
+    url_search = f"{catalog_mock.auth._endpoint()}/catalog/stac/search"
+    requests_mock.post(
+        url=url_search,
+        json=json_search_response,
+    )
+    search_results = catalog_mock.search(mock_search_parameters)
+    url_order_estimation = (
+        f"{catalog_mock.auth._endpoint()}/workspaces/"
+        f"{catalog_mock.auth.workspace_id}/orders/estimate"
+    )
+    requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
+    estimation = catalog_mock.estimate_order(
+        order_payload["orderParams"]["aoi"], search_results.loc[0]
+    )
+    assert isinstance(estimation, int)
+    assert estimation == 100
+
+
+def test_order_from_catalog(order_payload, order_mock, catalog_mock, requests_mock):
+    with open(
+        Path(__file__).resolve().parent / "mock_data/search_response.json"
+    ) as json_file:
+        json_search_response = json.load(json_file)
+    url_search = f"{catalog_mock.auth._endpoint()}/catalog/stac/search"
+    requests_mock.post(
+        url=url_search,
+        json=json_search_response,
+    )
+    search_results = catalog_mock.search(mock_search_parameters)
+
+    requests_mock.post(
+        url=f"{catalog_mock.auth._endpoint()}/workspaces/{catalog_mock.auth.workspace_id}/orders",
+        json={
+            "data": {"id": ORDER_ID},
+            "error": {},
+        },
+    )
+    order = catalog_mock.place_order(
+        order_payload["orderParams"]["aoi"], search_results.loc[0]
+    )
+    assert isinstance(order, Order)
+    assert order.order_id == ORDER_ID
+
+
+def test_order_from_catalog_track_status(
+    order_payload, order_mock, catalog_mock, requests_mock
+):
+    with open(
+        Path(__file__).resolve().parent / "mock_data/search_response.json"
+    ) as json_file:
+        json_search_response = json.load(json_file)
+    url_search = f"{catalog_mock.auth._endpoint()}/catalog/stac/search"
+    requests_mock.post(
+        url=url_search,
+        json=json_search_response,
+    )
+    search_results = catalog_mock.search(mock_search_parameters)
+
+    requests_mock.post(
+        url=f"{catalog_mock.auth._endpoint()}/workspaces/{catalog_mock.auth.workspace_id}/orders",
+        json={
+            "data": {"id": ORDER_ID},
+            "error": {},
+        },
+    )
+    url_order_info = (
+        f"{order_mock.auth._endpoint()}/workspaces/"
+        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
+    )
+    requests_mock.get(
+        url_order_info,
+        [
+            {"json": {"data": {"status": "PLACED"}, "error": {}}},
+            {"json": {"data": {"status": "BEING_FULFILLED"}, "error": {}}},
+            {"json": {"data": {"status": "FULFILLED"}, "error": {}}},
+        ],
+    )
+    order = catalog_mock.place_order(
+        order_payload["orderParams"]["aoi"],
+        search_results.loc[0],
+        track_status=True,
+        report_time=0.1,
+    )
+    assert isinstance(order, Order)
+    assert order.order_id == ORDER_ID
+
+
+@pytest.mark.live
+def test_estimate_order_from_catalog_live(catalog_live):
+    search_results = catalog_live.search(mock_search_parameters)
+    estimation = catalog_live.estimate_order(
+        mock_search_parameters["intersects"], search_results.loc[0]
+    )
+    assert isinstance(estimation, int)
+    assert estimation == 12
+
+
+@pytest.mark.skip(reason="Placing orders costs credits.")
+@pytest.mark.live
+def test_order_from_catalog_live(
+    order_payload, order_mock, catalog_mock, requests_mock
+):
+    search_results = catalog_live.search(mock_search_parameters)
+    order = catalog_live.place_order(
+        mock_search_parameters["intersects"], search_results.loc[0]
+    )
+    assert isinstance(order, Order)
+    assert order.order_id

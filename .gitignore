@@ -144,3 +144,5 @@ docs/mkdocs_macros
 /examples/project*
 - "*swagger*"
 - "*redoc*"
+
+.DS_Store

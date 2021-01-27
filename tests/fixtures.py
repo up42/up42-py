@@ -13,6 +13,9 @@ from .context import (
     Tools,
     Catalog,
     Estimation,
+    Storage,
+    Asset,
+    Order,
 )
 
 
@@ -21,6 +24,7 @@ DOWNLOAD_URL = "http://up42.api.com/abcdef"
 
 PROJECT_ID = "project_id_123"
 PROJECT_APIKEY = "project_apikey_123"
+WORKSPACE_ID = "workspace_id_123"
 PROJECT_NAME = "project_name_123"
 PROJECT_DESCRIPTION = "project_description_123"
 
@@ -35,6 +39,8 @@ JOB_NAME = "job_name_123"
 JOBTASK_ID = "jobtask_id_123"
 JOBTASK_NAME = "jobtask_name_123"
 
+ORDER_ID = "order_id_123"
+ASSET_ID = "asset_id_123"
 
 JSON_WORKFLOW_TASKS = {
     "error": "None",
@@ -143,6 +149,64 @@ JSON_WORKFLOW_ESTIMATION = {
     "error": {},
 }
 
+JSON_ASSET = {
+    "data": {
+        "id": ASSET_ID,
+        "workspaceId": WORKSPACE_ID,
+        "createdAt": "2020-12-17T10:41:24.774111Z",
+        "type": "ARCHIVED",
+        "source": "BLOCK",
+        "name": "DS_PHR1B_201903161028440_FR1_PX_E008N47_0606_04372",
+        "size": 3920650,
+        "createdBy": {"id": "system", "type": "INTERNAL"},
+        "updatedBy": {"id": "system", "type": "INTERNAL"},
+        "updatedAt": "2020-12-17T10:41:24.774111Z",
+    },
+    "error": None,
+}
+
+JSON_ASSETS = {
+    "data": {
+        "content": [JSON_ASSET["data"]],
+        "pageable": {
+            "sort": {"sorted": True, "unsorted": False, "empty": False},
+            "pageNumber": 0,
+            "pageSize": 10,
+            "offset": 0,
+            "paged": True,
+            "unpaged": False,
+        },
+        "totalPages": 1,
+        "totalElements": 1,
+        "last": True,
+        "sort": {"sorted": True, "unsorted": False, "empty": False},
+        "numberOfElements": 1,
+        "first": True,
+        "size": 10,
+        "number": 0,
+        "empty": False,
+    },
+    "error": None,
+}
+
+JSON_ORDER = {
+    "data": {
+        "id": ORDER_ID,
+        "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
+        "workspaceId": WORKSPACE_ID,
+        "dataProvider": "OneAtlas",
+        "status": "FULFILLED",
+        "createdAt": "2021-01-18T16:18:16.105851Z",
+        "updatedAt": "2021-01-18T16:21:31.966805Z",
+        "assets": [ASSET_ID],
+        "createdBy": {"id": "1094497b-11d8-4fb8-9d6a-5e24a88aa825", "type": "USER"},
+        "updatedBy": {"id": "system", "type": "INTERNAL"},
+    },
+    "error": None,
+}
+
+JSON_ORDERS = {"data": {"orders": [JSON_ORDER["data"]]}, "error": None}
+
 
 # TODO: Use patch.dict instead of 2 fictures?
 @pytest.fixture()
@@ -177,6 +241,13 @@ def auth_mock(requests_mock):
         url=url_get_token,
         json=json_get_token,
     )
+
+    url_get_workspace = f"https://api.up42.com/projects/{PROJECT_ID}"
+    json_get_workspace = {"data": {"workspaceId": WORKSPACE_ID}}
+    requests_mock.get(
+        url=url_get_workspace,
+        json=json_get_workspace,
+    )
     auth = Auth(
         project_id=PROJECT_ID,
         project_api_key=PROJECT_APIKEY,
@@ -208,7 +279,16 @@ def auth_live():
 def project_mock(auth_mock, requests_mock):
     # info
     url_project_info = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}"
-    json_project_info = {"data": {"xyz": 789}, "error": {}}
+    json_project_info = {
+        "data": {
+            "xyz": 789,
+            "workspaceId": WORKSPACE_ID,
+            "name": PROJECT_NAME,
+            "description": PROJECT_DESCRIPTION,
+            "createdAt": "some_date",
+        },
+        "error": {},
+    }
     requests_mock.get(url=url_project_info, json=json_project_info)
 
     project = Project(auth=auth_mock, project_id=auth_mock.project_id)
@@ -284,6 +364,8 @@ def workflow_mock(auth_mock, requests_mock):
         "data": {
             "name": WORKFLOW_NAME,
             "id": WORKFLOW_ID,
+            "description": PROJECT_DESCRIPTION,
+            "createdAt": "some_date",
             "xyz": 789,
         },
         "error": {},
@@ -369,7 +451,20 @@ def job_mock(auth_mock, requests_mock):
     url_job_info = (
         f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
     )
-    json_job_info = {"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}}
+    json_job_info = {
+        "data": {
+            "xyz": 789,
+            "mode": "DEFAULT",
+            "description": "some_description",
+            "startedAt": "some_date",
+            "workflowName": WORKFLOW_NAME,
+            "name": JOB_NAME,
+            "finishedAt": "some_date",
+            "status": "SUCCESSFULL",
+            "inputs": "some_inputs",
+        },
+        "error": {},
+    }
     requests_mock.get(url=url_job_info, json=json_job_info)
 
     job = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID)
@@ -558,7 +653,23 @@ def jobtask_mock(auth_mock, requests_mock):
         f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
         f"/tasks/"
     )
-    requests_mock.get(url=url_jobtask_info, json={"data": {"xyz": 789}, "error": {}})
+    requests_mock.get(
+        url=url_jobtask_info,
+        json={
+            "data": [
+                {
+                    "xyz": 789,
+                    "name": JOBTASK_NAME,
+                    "status": "SUCCESSFULL",
+                    "startedAt": "some_date",
+                    "finishedAt": "some_date",
+                    "block": {"name": "a_block"},
+                    "blockVersion": "1.0.0",
+                }
+            ],
+            "error": {},
+        },
+    )
 
     jobtask = JobTask(
         auth=auth_mock,
@@ -605,6 +716,105 @@ def jobtask_live(auth_live):
         jobtask_id=os.getenv("TEST_UP42_JOBTASK_ID"),
     )
     return jobtask
+
+
+@pytest.fixture()
+def storage_mock(auth_mock, requests_mock):
+    # assets
+    url_storage_assets = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets"
+    )
+    requests_mock.get(url=url_storage_assets, json=JSON_ASSETS)
+
+    # asset info
+    url_asset_info = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets/{ASSET_ID}"
+    )
+    requests_mock.get(url=url_asset_info, json=JSON_ASSET)
+
+    # orders
+    url_storage_assets = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders"
+    )
+    requests_mock.get(url=url_storage_assets, json=JSON_ORDERS)
+
+    # orders info
+    url_order_info = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}"
+    )
+    requests_mock.get(url=url_order_info, json=JSON_ORDER)
+
+    storage = Storage(auth=auth_mock)
+
+    return storage
+
+
+@pytest.fixture()
+def storage_live(auth_live):
+    storage = Storage(auth=auth_live)
+    return storage
+
+
+@pytest.fixture()
+def asset_mock(auth_mock, requests_mock):
+
+    # asset info
+    url_asset_info = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets/{ASSET_ID}"
+    )
+    requests_mock.get(url=url_asset_info, json=JSON_ASSET)
+
+    # url
+    requests_mock.get(
+        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets/{ASSET_ID}/downloadUrl",
+        json={"data": {"url": DOWNLOAD_URL}},
+    )
+
+    asset = Asset(auth=auth_mock, asset_id=ASSET_ID)
+
+    return asset
+
+
+@pytest.fixture()
+def asset_live(auth_live):
+    asset = Asset(auth=auth_live, asset_id=os.getenv("TEST_UP42_ASSET_ID"))
+    return asset
+
+
+@pytest.fixture()
+def order_mock(auth_mock, requests_mock):
+
+    # order info
+    url_order_info = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}"
+    )
+    requests_mock.get(url=url_order_info, json=JSON_ORDER)
+
+    # metadata
+    requests_mock.get(
+        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}/metadata",
+        json={
+            "data": {
+                "id": ORDER_ID,
+                "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
+                "customerReference": "158e8ca9-c5e9-4705-8f44-7aefee1d33ff",
+                "sqKmArea": 0.1,
+                "createdAt": "2021-01-18T16:18:19.395198Z",
+                "updatedAt": "2021-01-18T16:18:19.395198Z",
+            },
+            "error": None,
+        },
+    )
+
+    order = Order(auth=auth_mock, order_id=ORDER_ID)
+
+    return order
+
+
+@pytest.fixture()
+def order_live(auth_live):
+    order = Order(auth=auth_live, order_id=os.getenv("TEST_UP42_ORDER_ID"))
+    return order
 
 
 @pytest.fixture()

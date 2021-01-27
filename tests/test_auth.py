@@ -13,11 +13,7 @@ from .fixtures import (
     auth_mock,
     auth_live,
 )
-from .fixtures import (
-    TOKEN,
-    PROJECT_ID,
-    PROJECT_APIKEY,
-)
+from .fixtures import TOKEN, PROJECT_ID, PROJECT_APIKEY, WORKSPACE_ID
 
 
 def test_auth_kwargs():
@@ -69,6 +65,16 @@ def test_get_token_project(auth_mock_no_request):
 @pytest.mark.live
 def test_get_token_project_live(auth_live):
     assert hasattr(auth_live, "token")
+
+
+def test_get_workspace(auth_mock):
+    auth_mock._get_workspace()
+    assert auth_mock.workspace_id == WORKSPACE_ID
+
+
+@pytest.mark.live
+def test_get_workspace_live(auth_live):
+    assert hasattr(auth_live, "workspace_id")
 
 
 def test_generate_headers(auth_mock_no_request):
