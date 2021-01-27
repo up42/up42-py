@@ -388,6 +388,7 @@ class Catalog(VizTools, Tools):
             the order fulfillment can happen up to **24h after order placement**.
             In such cases,
             please make sure to set an appropriate `report_time`.
+            You can also use `Order.track_status` on the returned object to track the status later.
 
         Returns:
             Order: The placed order.
