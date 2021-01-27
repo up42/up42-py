@@ -40,22 +40,9 @@ search_results = catalog.search(search_parameters=search_parameters)
 search_results
 ```
 
-
-```python
-catalog.plot_coverage(scenes=search_results, 
-                      aoi=aoi, 
-                      legend_column="scene_id")
-```
-
-## Download & visualize quicklooks
-
-
-```python
-catalog.download_quicklooks(image_ids=search_results.id.to_list(), 
-                            sensor="pleiades")
-
-catalog.map_quicklooks(scenes=search_results, aoi=aoi)
-```
+!!! Info "Catalog Search"
+    For more detail on how to perform a catalog search, and additional options,
+    go to [Catalog Search](./catalog.md).
 
 ## Place an order for the image, tracking it's status
 
@@ -70,6 +57,14 @@ order.track_status()
 assets = order.get_assets()
 assets[0].download()
 ```
+
+You can also get previously ordered assets from UP42 Storage:
+
+```python
+storage = up42.initialize_storage()
+assets = storage.get_assets()
+```
+
 <br>
 
 !!! Success "Success!"
