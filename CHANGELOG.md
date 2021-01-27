@@ -15,6 +15,13 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.15.0](https://pypi.org/project/up42-py/) (2020-01-27)
+- Add `Storage`, `Order` and `Asset` objects.
+- Add possibility to create orders from `Catalog` with `Catalog.place_order`.
+- Add possibility to use assets in job parameters with `Workflow.construct_paramaters`.
+- Update job estimation endpoint.
+- Multiple documentation fixes.
+
 ### [0.14.0](https://pypi.org/project/up42-py/) (2020-12-07)
 - Add `workflow.estimate_job()` function for estimation of credit costs & job duration before running a job. 
 - Add `bands=[3,2,1]` parameter in `.plot_results()` and `.map_results()` for band & band order selection.
