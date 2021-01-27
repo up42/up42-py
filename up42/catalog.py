@@ -380,7 +380,8 @@ class Catalog(VizTools, Tools):
             scene (Series): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
                 for the first scene of a catalog search result.
             track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
-            report_time (int): The intervall (in seconds) when to get the order status, if `track_status` is set to True.
+            report_time (int): The intervall (in seconds) when to get the order status, 
+                if `track_status` is set to True.
 
          Warning:
             When placing orders of items that are in archive or cold storage,
