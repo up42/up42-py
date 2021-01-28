@@ -42,7 +42,6 @@ class Storage(Tools):
                 request_type="GET", url=url + f"?page={page}"
             )
             output += response_json["data"]["content"]
-        print(len(output), total_items)
         assert len(output) == total_items, "Some paginated items are missing!"
         return output
 
