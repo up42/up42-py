@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "features": [{"type": "Feature", "bbox": [-95.929012, 41.102121, -95.875969, 41.132642], "geometry": null, "properties": {"up42.data_path": "e7c6b792-ab7d-43ea-86ed-911861cb71d5/building_footprints_2020-08-06T14:44:03Z.geojson", "osm_timestamp": "2020-08-06T14:44:03Z", "osm_tag": "building_footprints"}}]}

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://up42.github.io/up42-py/reference/up42-reference/">
       
       <link rel="shortcut icon" href="../../assets/logo-up42.ico">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.3">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.4">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.3b61ea93.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.15aa0b43.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.75751829.min.css">
         
           
           
@@ -97,7 +97,7 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
           <div class="md-announce__inner md-grid md-typeset">
             
   <style>.md-announce a,.md-announce a:focus,.md-announce a:hover{color:currentColor}.md-announce strong{white-space:nowrap}.md-announce .twitter{margin-left:.2em;color:#00acee}</style>
-    <a href="https://sdk.up42.com/CHANGELOG/"><strong>New in 0.14.0: Price estimation 🎉! See the release notes and update!</strong>
+    <a href="https://sdk.up42.com/CHANGELOG/"><strong>New in 0.15.0: Ordering 🎉! See the release notes and update!</strong>
     </a>
 
           </div>
@@ -444,7 +444,20 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
 
 
   <li class="md-nav__item">
-    <a href="../../guides/detailed-example/" class="md-nav__link">
+    <a href="../../ordering/" class="md-nav__link">
+      Ordering
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../guides/detailed-example.ipynb" class="md-nav__link">
       Detailed Example
     </a>
   </li>
@@ -641,6 +654,13 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#up42.__init__.initialize_asset" class="md-nav__link">
+    initialize_asset()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#up42.__init__.initialize_catalog" class="md-nav__link">
     initialize_catalog()
   </a>
@@ -669,8 +689,22 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
 </li>
         
           <li class="md-nav__item">
+  <a href="#up42.__init__.initialize_order" class="md-nav__link">
+    initialize_order()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#up42.__init__.initialize_project" class="md-nav__link">
     initialize_project()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#up42.__init__.initialize_storage" class="md-nav__link">
+    initialize_storage()
   </a>
   
 </li>
@@ -817,6 +851,45 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
   <li class="md-nav__item">
     <a href="../catalog-reference/" class="md-nav__link">
       Catalog
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../storage-reference/" class="md-nav__link">
+      Storage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../order-reference/" class="md-nav__link">
+      Order
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../asset-reference/" class="md-nav__link">
+      Asset
     </a>
   </li>
 
@@ -1002,6 +1075,13 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#up42.__init__.initialize_asset" class="md-nav__link">
+    initialize_asset()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#up42.__init__.initialize_catalog" class="md-nav__link">
     initialize_catalog()
   </a>
@@ -1030,8 +1110,22 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
 </li>
         
           <li class="md-nav__item">
+  <a href="#up42.__init__.initialize_order" class="md-nav__link">
+    initialize_order()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#up42.__init__.initialize_project" class="md-nav__link">
     initialize_project()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#up42.__init__.initialize_storage" class="md-nav__link">
+    initialize_storage()
   </a>
   
 </li>
@@ -1119,17 +1213,65 @@ data &amp; processing blocks, read or draw vector data, and adjust the SDK setti
 <p>To import the UP42 library:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">up42</span>
 </code></pre></div>
-
 <p><br></p>
 <div class="doc doc-object doc-module">
 <div class="doc doc-contents first">
 <div class="doc doc-children">
 <h2 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h2>
 <div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="up42.__init__.initialize_asset">
+
+<code class="highlight language-python"><span class="n">initialize_asset</span><span class="p">(</span><span class="n">asset_id</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.__init__.initialize_asset" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
+<p>Returns an Asset object (has to exist on UP42).</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>asset_id</code></td>
+<td><code>str</code></td>
+<td>
+<p>The UP42 asset_id</p>
+</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+          <summary>Source code in <code>up42/__init__.py</code></summary>
+          <div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">initialize_asset</span><span class="p">(</span><span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Asset"</span><span class="p">:</span>
+    <span class="sd">"""</span>
+<span class="sd">    Returns an Asset object (has to exist on UP42).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        asset_id: The UP42 asset_id</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">_auth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Not authenticated, call up42.authenticate() first"</span><span class="p">)</span>
+    <span class="n">asset</span> <span class="o">=</span> <span class="n">Asset</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="n">_auth</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Initialized </span><span class="si">{</span><span class="n">asset</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">asset</span>
+</code></pre>
+</div>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
 <h3 class="doc doc-heading" id="up42.__init__.initialize_catalog">
 
-        <code class="highlight language-python">
-initialize_catalog<span class="p">()</span>        </code>
+<code class="highlight language-python"><span class="n">initialize_catalog</span><span class="p">()</span></code>
 
 
       <a class="headerlink" href="#up42.__init__.initialize_catalog" title="Permanent link">&para;</a></h3>
@@ -1153,8 +1295,7 @@ initialize_catalog<span class="p">()</span>        </code>
 <div class="doc doc-object doc-function">
 <h3 class="doc doc-heading" id="up42.__init__.initialize_job">
 
-        <code class="highlight language-python">
-initialize_job<span class="p">(</span><span class="n">job_id</span><span class="p">)</span>        </code>
+<code class="highlight language-python"><span class="n">initialize_job</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span></code>
 
 
       <a class="headerlink" href="#up42.__init__.initialize_job" title="Permanent link">&para;</a></h3>
@@ -1204,8 +1345,7 @@ initialize_job<span class="p">(</span><span class="n">job_id</span><span class="
 <div class="doc doc-object doc-function">
 <h3 class="doc doc-heading" id="up42.__init__.initialize_jobcollection">
 
-        <code class="highlight language-python">
-initialize_jobcollection<span class="p">(</span><span class="n">job_ids</span><span class="p">)</span>        </code>
+<code class="highlight language-python"><span class="n">initialize_jobcollection</span><span class="p">(</span><span class="n">job_ids</span><span class="p">)</span></code>
 
 
       <a class="headerlink" href="#up42.__init__.initialize_jobcollection" title="Permanent link">&para;</a></h3>
@@ -1261,8 +1401,7 @@ initialize_jobcollection<span class="p">(</span><span class="n">job_ids</span><s
 <div class="doc doc-object doc-function">
 <h3 class="doc doc-heading" id="up42.__init__.initialize_jobtask">
 
-        <code class="highlight language-python">
-initialize_jobtask<span class="p">(</span><span class="n">jobtask_id</span><span class="p">,</span> <span class="n">job_id</span><span class="p">)</span>        </code>
+<code class="highlight language-python"><span class="n">initialize_jobtask</span><span class="p">(</span><span class="n">jobtask_id</span><span class="p">,</span> <span class="n">job_id</span><span class="p">)</span></code>
 
 
       <a class="headerlink" href="#up42.__init__.initialize_jobtask" title="Permanent link">&para;</a></h3>
@@ -1324,10 +1463,59 @@ initialize_jobtask<span class="p">(</span><span class="n">jobtask_id</span><span
 </div>
 </div>
 <div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="up42.__init__.initialize_order">
+
+<code class="highlight language-python"><span class="n">initialize_order</span><span class="p">(</span><span class="n">order_id</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.__init__.initialize_order" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
+<p>Returns an Order object (has to exist on UP42).</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>order_id</code></td>
+<td><code>str</code></td>
+<td>
+<p>The UP42 order_id</p>
+</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+          <summary>Source code in <code>up42/__init__.py</code></summary>
+          <div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">initialize_order</span><span class="p">(</span><span class="n">order_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Order"</span><span class="p">:</span>
+    <span class="sd">"""</span>
+<span class="sd">    Returns an Order object (has to exist on UP42).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        order_id: The UP42 order_id</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">_auth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Not authenticated, call up42.authenticate() first"</span><span class="p">)</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">Order</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="n">_auth</span><span class="p">,</span> <span class="n">order_id</span><span class="o">=</span><span class="n">order_id</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Initialized </span><span class="si">{</span><span class="n">order</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">order</span>
+</code></pre>
+</div>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
 <h3 class="doc doc-heading" id="up42.__init__.initialize_project">
 
-        <code class="highlight language-python">
-initialize_project<span class="p">()</span>        </code>
+<code class="highlight language-python"><span class="n">initialize_project</span><span class="p">()</span></code>
 
 
       <a class="headerlink" href="#up42.__init__.initialize_project" title="Permanent link">&para;</a></h3>
@@ -1351,10 +1539,33 @@ initialize_project<span class="p">()</span>        </code>
 </div>
 </div>
 <div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="up42.__init__.initialize_storage">
+
+<code class="highlight language-python"><span class="n">initialize_storage</span><span class="p">()</span></code>
+
+
+      <a class="headerlink" href="#up42.__init__.initialize_storage" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
+<p>Returns a Storage object to list orders and assets.</p>
+<details class="quote">
+          <summary>Source code in <code>up42/__init__.py</code></summary>
+          <div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">initialize_storage</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s2">"Storage"</span><span class="p">:</span>
+    <span class="sd">"""</span>
+<span class="sd">    Returns a Storage object to list orders and assets.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">_auth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Not authenticated, call up42.authenticate() first"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Storage</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="n">_auth</span><span class="p">)</span>
+</code></pre>
+</div>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
 <h3 class="doc doc-heading" id="up42.__init__.initialize_workflow">
 
-        <code class="highlight language-python">
-initialize_workflow<span class="p">(</span><span class="n">workflow_id</span><span class="p">)</span>        </code>
+<code class="highlight language-python"><span class="n">initialize_workflow</span><span class="p">(</span><span class="n">workflow_id</span><span class="p">)</span></code>
 
 
       <a class="headerlink" href="#up42.__init__.initialize_workflow" title="Permanent link">&para;</a></h3>
@@ -1406,8 +1617,7 @@ initialize_workflow<span class="p">(</span><span class="n">workflow_id</span><sp
 <div class="doc doc-object doc-function">
 <h3 class="doc doc-heading" id="up42.__init__.settings">
 
-        <code class="highlight language-python">
-settings<span class="p">(</span><span class="n">log</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>        </code>
+<code class="highlight language-python"><span class="n">settings</span><span class="p">(</span><span class="n">log</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
       <a class="headerlink" href="#up42.__init__.settings" title="Permanent link">&para;</a></h3>
@@ -1470,8 +1680,7 @@ settings<span class="p">(</span><span class="n">log</span><span class="o">=</spa
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.tools.Tools.draw_aoi">
 
-        <code class="highlight language-python">
-draw_aoi<span class="p">(</span><span class="bp">self</span><span class="p">)</span>        </code>
+<code class="highlight language-python"><span class="n">draw_aoi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
       <a class="headerlink" href="#up42.tools.Tools.draw_aoi" title="Permanent link">&para;</a></h3>
@@ -1516,8 +1725,7 @@ read_aoi_file().</p>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.tools.Tools.get_block_details">
 
-        <code class="highlight language-python">
-get_block_details<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_id</span><span class="p">,</span> <span class="n">as_dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>        </code>
+<code class="highlight language-python"><span class="n">get_block_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_id</span><span class="p">,</span> <span class="n">as_dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
       <a class="headerlink" href="#up42.tools.Tools.get_block_details" title="Permanent link">&para;</a></h3>
@@ -1607,8 +1815,7 @@ the server, includes all manifest.json and marketplace.json contents.</p>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.tools.Tools.get_blocks">
 
-        <code class="highlight language-python">
-get_blocks<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">basic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>        </code>
+<code class="highlight language-python"><span class="n">get_blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">basic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
       <a class="headerlink" href="#up42.tools.Tools.get_blocks" title="Permanent link">&para;</a></h3>
@@ -1740,8 +1947,7 @@ dict.</p>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.tools.Tools.get_example_aoi">
 
-        <code class="highlight language-python">
-get_example_aoi<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">'Berlin'</span><span class="p">,</span> <span class="n">as_dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>        </code>
+<code class="highlight language-python"><span class="n">get_example_aoi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">'Berlin'</span><span class="p">,</span> <span class="n">as_dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
       <a class="headerlink" href="#up42.tools.Tools.get_example_aoi" title="Permanent link">&para;</a></h3>
@@ -1840,8 +2046,7 @@ get_example_aoi<span class="p">(</span><span class="bp">self</span><span class="
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.tools.Tools.read_vector_file">
 
-        <code class="highlight language-python">
-read_vector_file<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'aoi.geojson'</span><span class="p">,</span> <span class="n">as_dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>        </code>
+<code class="highlight language-python"><span class="n">read_vector_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">'aoi.geojson'</span><span class="p">,</span> <span class="n">as_dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
       <a class="headerlink" href="#up42.tools.Tools.read_vector_file" title="Permanent link">&para;</a></h3>
@@ -1948,8 +2153,7 @@ for use as the aoi geometry in the workflow input parameters
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.tools.Tools.validate_manifest">
 
-        <code class="highlight language-python">
-validate_manifest<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_or_json</span><span class="p">)</span>        </code>
+<code class="highlight language-python"><span class="n">validate_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_or_json</span><span class="p">)</span></code>
 
 
       <a class="headerlink" href="#up42.tools.Tools.validate_manifest" title="Permanent link">&para;</a></h3>
@@ -2133,8 +2337,8 @@ Also see the
 
     </div>
     
-      <script src="../../assets/javascripts/vendor.08c56446.min.js"></script>
-      <script src="../../assets/javascripts/bundle.6ced434e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      <script src="../../assets/javascripts/vendor.93c04032.min.js"></script>
+      <script src="../../assets/javascripts/bundle.83e5331e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
       
       <script>
         app = initialize({

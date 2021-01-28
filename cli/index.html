@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://up42.github.io/up42-py/cli/">
       
       <link rel="shortcut icon" href="../assets/logo-up42.ico">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.3">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.4">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.3b61ea93.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.15aa0b43.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.39b8e14a.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.75751829.min.css">
         
           
           
@@ -97,7 +97,7 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
           <div class="md-announce__inner md-grid md-typeset">
             
   <style>.md-announce a,.md-announce a:focus,.md-announce a:hover{color:currentColor}.md-announce strong{white-space:nowrap}.md-announce .twitter{margin-left:.2em;color:#00acee}</style>
-    <a href="https://sdk.up42.com/CHANGELOG/"><strong>New in 0.14.0: Price estimation 🎉! See the release notes and update!</strong>
+    <a href="https://sdk.up42.com/CHANGELOG/"><strong>New in 0.15.0: Ordering 🎉! See the release notes and update!</strong>
     </a>
 
           </div>
@@ -444,7 +444,20 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
 
 
   <li class="md-nav__item">
-    <a href="../guides/detailed-example/" class="md-nav__link">
+    <a href="../ordering/" class="md-nav__link">
+      Ordering
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../guides/detailed-example.ipynb" class="md-nav__link">
       Detailed Example
     </a>
   </li>
@@ -673,6 +686,45 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
   <li class="md-nav__item">
     <a href="../reference/catalog-reference/" class="md-nav__link">
       Catalog
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../reference/storage-reference/" class="md-nav__link">
+      Storage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../reference/order-reference/" class="md-nav__link">
+      Order
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../reference/asset-reference/" class="md-nav__link">
+      Asset
     </a>
   </li>
 
@@ -965,11 +1017,9 @@ It is installed automatically with and based on the Python SDK. </p>
 terminal or command line. This will print out a summary of the available commands.</p>
 <div class="highlight"><pre><span></span><code>up42 -h
 </code></pre></div>
-
 <p>To get help on a specific command, use:</p>
 <div class="highlight"><pre><span></span><code>up42 <span class="nb">command</span> -h
 </code></pre></div>
-
 <h2 id="authenticate">Authenticate<a class="headerlink" href="#authenticate" title="Permanent link">&para;</a></h2>
 <p>You can authenticate with a <code>PROJECT_ID</code> and <code>PROJECT_API_KEY</code>
 <div class="highlight"><pre><span></span><code>up42 -pid <span class="o">[</span>PROJECT_ID<span class="o">]</span> -pkey <span class="o">[</span>PROJECT_API_KEY<span class="o">]</span> auth
@@ -982,11 +1032,9 @@ pair or the path to the config file as an environment variable.</p>
 <div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">UP42_PROJECT_ID</span><span class="o">=[</span>PROJECT_ID<span class="o">]</span>
 <span class="nb">export</span> <span class="nv">UP42_PROJECT_API_KEY</span><span class="o">=[</span>PROJECT_API_KEY<span class="o">]</span>
 </code></pre></div>
-
 <p>Or when using <code>config.json</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">UP42_CFG_FILE</span><span class="o">=[</span>path to config.json<span class="o">]</span>
 </code></pre></div>
-
 <p>To save the authentication for future sessions make sure to append these variables
 to your bash profile file:
 <div class="highlight"><pre><span></span><code><span class="c1"># Linux</span>
@@ -998,11 +1046,9 @@ to your bash profile file:
 config command.</p>
 <div class="highlight"><pre><span></span><code>up42 -pid <span class="o">[</span>PROJECT_ID<span class="o">]</span> -pkey <span class="o">[</span>PROJECT_API_KEY<span class="o">]</span> config
 </code></pre></div>
-
 <h2 id="workflows">Workflows<a class="headerlink" href="#workflows" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>up42 workflow -h
 </code></pre></div>
-
 <p>Create a new workflow:
 <div class="highlight"><pre><span></span><code>up42 project create-workflow a_test
 </code></pre></div></p>
@@ -1015,14 +1061,12 @@ config command.</p>
 <p>After running the command to persist the workflow you can get the workflow tasks:</p>
 <div class="highlight"><pre><span></span><code>up42 workflow get-workflow-tasks
 </code></pre></div>
-
 <p>You can also add workflow tasks to the workflow via a json file (see <a href="/guides/detailed-example/">detailed-example</a> for an example):
 <div class="highlight"><pre><span></span><code>up42 workflow add-workflow-tasks new_workflow_tasks.json
 </code></pre></div></p>
 <h2 id="jobs">Jobs<a class="headerlink" href="#jobs" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>up42 job -h
 </code></pre></div>
-
 <p>First create and run a new test job with parameters defined in a json file (see <a href="/guides/detailed-example/">detailed-example</a> for an example):
 <div class="highlight"><pre><span></span><code>up42 workflow test-job input_parameters.json --track
 </code></pre></div></p>
@@ -1042,7 +1086,6 @@ Or download and unpack the results:
 <h2 id="catalog">Catalog<a class="headerlink" href="#catalog" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>up42 catalog -h
 </code></pre></div>
-
 <p>With the catalog commands you can easily search the UP42 catalog for data. First,
 create a parameter configuration:
 <div class="highlight"><pre><span></span><code>up42 catalog construct-parameters example_aoi.geojson --sensors pleiades --max-cloud-cover <span class="m">5</span>
@@ -1150,8 +1193,8 @@ create a parameter configuration:
 
     </div>
     
-      <script src="../assets/javascripts/vendor.08c56446.min.js"></script>
-      <script src="../assets/javascripts/bundle.6ced434e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      <script src="../assets/javascripts/vendor.93c04032.min.js"></script>
+      <script src="../assets/javascripts/bundle.83e5331e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
       
       <script>
         app = initialize({

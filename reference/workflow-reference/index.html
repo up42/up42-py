@@ -1,18 +1,40 @@
 <!-- Elements added to main will be displayed on all pages -->
-<!DOCTYPE html>
 
-<html class="no-js" lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<meta content="UP42 Python SDK" name="description"/>
-<link href="https://up42.github.io/up42-py/reference/workflow-reference/" rel="canonical"/>
-<link href="../../assets/logo-up42.ico" rel="shortcut icon"/>
-<meta content="mkdocs-1.1.2, mkdocs-material-6.2.3" name="generator"/>
-<title>Workflow - UP42 Python SDK</title>
-<link href="../../assets/stylesheets/main.3b61ea93.min.css" rel="stylesheet"/>
-<link href="../../assets/stylesheets/palette.39b8e14a.min.css" rel="stylesheet"/>
-<meta content="#4051b5" name="theme-color"/>
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="UP42 Python SDK">
+      
+      
+      
+      
+        <link rel="canonical" href="https://up42.github.io/up42-py/reference/workflow-reference/">
+      
+      <link rel="shortcut icon" href="../../assets/logo-up42.ico">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.4">
+    
+    
+      
+        <title>Workflow - UP42 Python SDK</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.15aa0b43.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.75751829.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#4051b5">
+        
+      
+    
+    
 <script>
 var gtmId = 'GTM-TQPKQK7';
 if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1')) {
@@ -25,677 +47,1272 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer', gtmId);
 </script>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
-<style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
-<link href="../../stylesheets/extra.css" rel="stylesheet"/>
+
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    
+      
+        
 <script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-132885718-1","auto"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}),document.addEventListener("DOMContentSwitch",function(){ga("send","pageview",document.location.pathname)})</script>
-<script async="" src="https://www.google-analytics.com/analytics.js"></script>
-</head>
-<body data-md-color-accent="purple" data-md-color-primary="indigo" data-md-color-scheme="" dir="ltr">
-<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
-<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
-<label class="md-overlay" for="__drawer"></label>
-<div data-md-component="skip">
-<a class="md-skip" href="#workflow">
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="indigo" data-md-color-accent="purple">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#workflow" class="md-skip">
           Skip to content
         </a>
-</div>
-<div data-md-component="announce">
-<aside class="md-announce">
-<div class="md-announce__inner md-grid md-typeset">
-<style>.md-announce a,.md-announce a:focus,.md-announce a:hover{color:currentColor}.md-announce strong{white-space:nowrap}.md-announce .twitter{margin-left:.2em;color:#00acee}</style>
-<a href="https://sdk.up42.com/CHANGELOG/"><strong>New in 0.14.0: Price estimation 🎉! See the release notes and update!</strong>
-</a>
-</div>
-</aside>
-</div>
-<header class="md-header" data-md-component="header">
-<nav aria-label="Header" class="md-header-nav md-grid">
-<a aria-label="UP42 Python SDK" class="md-header-nav__button md-logo" href="https://up42.github.io/up42-py/" title="UP42 Python SDK">
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+      
+    </div>
+    <div data-md-component="announce">
+      
+        <aside class="md-announce">
+          <div class="md-announce__inner md-grid md-typeset">
+            
+  <style>.md-announce a,.md-announce a:focus,.md-announce a:hover{color:currentColor}.md-announce strong{white-space:nowrap}.md-announce .twitter{margin-left:.2em;color:#00acee}</style>
+    <a href="https://sdk.up42.com/CHANGELOG/"><strong>New in 0.15.0: Ordering 🎉! See the release notes and update!</strong>
+    </a>
 
-<svg height="300" preserveaspectratio="xMidYMid meet" version="1.1" viewbox="0 0 300 300" width="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path d="M0 0L301.5 0L301.5 300L0 300L0 0Z" id="a1GmkaXFhc"></path><path d="M46.9 105.6C46.9 142.93 46.9 163.67 46.9 167.82C46.9 177.98 53.89 183.69 64.36 183.69C74.84 183.69 81.82 178.3 81.82 167.82C81.82 163.67 81.82 142.93 81.82 105.6L105.95 105.6C105.95 142.93 105.95 163.67 105.95 167.82C105.95 190.04 89.44 205.6 64.36 205.6C39.28 205.6 22.46 190.04 22.46 167.82C22.46 163.67 22.46 142.93 22.46 105.6L46.9 105.6Z" id="ePubGLbJJ"></path><path d="M164.89 105.6C184.57 105.6 197.8 119.79 197.8 139.79C197.8 159.79 184.57 174.63 164.89 174.63C163.73 174.63 157.93 174.63 147.48 174.63L147.48 205.6L122.64 205.6L122.64 105.6C147.99 105.6 162.08 105.6 164.89 105.6ZM172.64 140.11C172.64 132.37 168.44 126.56 160.06 126.56C159.22 126.56 155.02 126.56 147.48 126.56L147.48 153.66L159.73 153.66C168.34 149.79 172.64 145.27 172.64 140.11Z" id="e3xlgi979P"></path><path d="M228.42 85.15L237.44 85.15L237.44 118.88L245.01 118.88L245.01 125.37L237.44 125.37L237.44 140.15L229.68 140.15L229.68 125.55L202.63 125.55L202.45 120.5L228.42 85.15ZM229.5 118.7C229.5 106.79 229.5 100.18 229.5 98.86C229.5 96.33 229.86 93.45 229.86 93.45C229.85 93.45 229.7 93.45 229.68 93.45C228.96 95.07 227.88 96.52 226.98 97.96C225.92 99.35 220.63 106.32 211.11 118.88L211.11 118.88L229.5 118.88L229.5 118.7Z" id="c1yTzdREXX"></path><path d="M276.4 101.25C276.4 95.94 272.34 92.23 266.5 92.23C259.25 92.23 255.36 99.13 255.36 99.13C254.8 98.75 250.27 95.78 249.7 95.41C253.24 89.05 259.78 85.15 267.03 85.15C277.11 85.15 284.36 91.34 284.36 100.72C284.36 118.4 258.19 121.23 258.01 133.61C259.83 133.61 268.91 133.61 285.25 133.61L285.25 140.15C264.03 140.15 252.24 140.15 249.88 140.15C249.7 138.56 249.53 137.15 249.53 135.91C249.53 116.63 276.4 113.8 276.4 101.25Z" id="d2t6xtf3zG"></path></defs><g><g><g><use fill="#242c5c" fill-opacity="1" opacity="1" xlink:href="#a1GmkaXFhc"></use></g><g><use fill="#ffffff" fill-opacity="1" opacity="1" xlink:href="#ePubGLbJJ"></use><g><use fill-opacity="0" opacity="1" stroke="#ffffff" stroke-opacity="1" stroke-width="1" xlink:href="#ePubGLbJJ"></use></g></g><g><use fill="#ffffff" fill-opacity="1" opacity="1" xlink:href="#e3xlgi979P"></use><g><use fill-opacity="0" opacity="1" stroke="#ffffff" stroke-opacity="1" stroke-width="1" xlink:href="#e3xlgi979P"></use></g></g><g><use fill="#ffffff" fill-opacity="1" opacity="1" xlink:href="#c1yTzdREXX"></use><g><use fill-opacity="0" opacity="1" stroke="#ffffff" stroke-opacity="1" stroke-width="1" xlink:href="#c1yTzdREXX"></use></g></g><g><use fill="#ffffff" fill-opacity="1" opacity="1" xlink:href="#d2t6xtf3zG"></use><g><use fill-opacity="0" opacity="1" stroke="#ffffff" stroke-opacity="1" stroke-width="1" xlink:href="#d2t6xtf3zG"></use></g></g></g></g></svg>
-</a>
-<label class="md-header-nav__button md-icon" for="__drawer">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"></path></svg>
-</label>
-<div class="md-header-nav__title" data-md-component="header-title">
-<div class="md-header-nav__ellipsis">
-<div class="md-header-nav__topic">
-<span class="md-ellipsis">
+          </div>
+        </aside>
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://up42.github.io/up42-py/" title="UP42 Python SDK" class="md-header-nav__button md-logo" aria-label="UP42 Python SDK">
+      
+  
+  <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" viewBox="0 0 300 300" width="300" height="300"><defs><path d="M0 0L301.5 0L301.5 300L0 300L0 0Z" id="a1GmkaXFhc"></path><path d="M46.9 105.6C46.9 142.93 46.9 163.67 46.9 167.82C46.9 177.98 53.89 183.69 64.36 183.69C74.84 183.69 81.82 178.3 81.82 167.82C81.82 163.67 81.82 142.93 81.82 105.6L105.95 105.6C105.95 142.93 105.95 163.67 105.95 167.82C105.95 190.04 89.44 205.6 64.36 205.6C39.28 205.6 22.46 190.04 22.46 167.82C22.46 163.67 22.46 142.93 22.46 105.6L46.9 105.6Z" id="ePubGLbJJ"></path><path d="M164.89 105.6C184.57 105.6 197.8 119.79 197.8 139.79C197.8 159.79 184.57 174.63 164.89 174.63C163.73 174.63 157.93 174.63 147.48 174.63L147.48 205.6L122.64 205.6L122.64 105.6C147.99 105.6 162.08 105.6 164.89 105.6ZM172.64 140.11C172.64 132.37 168.44 126.56 160.06 126.56C159.22 126.56 155.02 126.56 147.48 126.56L147.48 153.66L159.73 153.66C168.34 149.79 172.64 145.27 172.64 140.11Z" id="e3xlgi979P"></path><path d="M228.42 85.15L237.44 85.15L237.44 118.88L245.01 118.88L245.01 125.37L237.44 125.37L237.44 140.15L229.68 140.15L229.68 125.55L202.63 125.55L202.45 120.5L228.42 85.15ZM229.5 118.7C229.5 106.79 229.5 100.18 229.5 98.86C229.5 96.33 229.86 93.45 229.86 93.45C229.85 93.45 229.7 93.45 229.68 93.45C228.96 95.07 227.88 96.52 226.98 97.96C225.92 99.35 220.63 106.32 211.11 118.88L211.11 118.88L229.5 118.88L229.5 118.7Z" id="c1yTzdREXX"></path><path d="M276.4 101.25C276.4 95.94 272.34 92.23 266.5 92.23C259.25 92.23 255.36 99.13 255.36 99.13C254.8 98.75 250.27 95.78 249.7 95.41C253.24 89.05 259.78 85.15 267.03 85.15C277.11 85.15 284.36 91.34 284.36 100.72C284.36 118.4 258.19 121.23 258.01 133.61C259.83 133.61 268.91 133.61 285.25 133.61L285.25 140.15C264.03 140.15 252.24 140.15 249.88 140.15C249.7 138.56 249.53 137.15 249.53 135.91C249.53 116.63 276.4 113.8 276.4 101.25Z" id="d2t6xtf3zG"></path></defs><g><g><g><use xlink:href="#a1GmkaXFhc" opacity="1" fill="#242c5c" fill-opacity="1"></use></g><g><use xlink:href="#ePubGLbJJ" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#ePubGLbJJ" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#e3xlgi979P" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#e3xlgi979P" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#c1yTzdREXX" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#c1yTzdREXX" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#d2t6xtf3zG" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#d2t6xtf3zG" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g></g></g></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
             UP42 Python SDK
           </span>
-</div>
-<div class="md-header-nav__topic">
-<span class="md-ellipsis">
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
             
               Workflow
             
           </span>
-</div>
-</div>
-</div>
-<label class="md-header-nav__button md-icon" for="__search">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
-</label>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
 <div class="md-search" data-md-component="search" role="dialog">
-<label class="md-search__overlay" for="__search"></label>
-<div class="md-search__inner" role="search">
-<form class="md-search__form" name="search">
-<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" data-md-state="active" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
-<label class="md-search__icon md-icon" for="__search">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
-</label>
-<button aria-label="Clear" class="md-search__icon md-icon" data-md-component="search-reset" tabindex="-1" type="reset">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
-</button>
-</form>
-<div class="md-search__output">
-<div class="md-search__scrollwrap" data-md-scrollfix="">
-<div class="md-search-result" data-md-component="search-result">
-<div class="md-search-result__meta">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
             Initializing search
           </div>
-<ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="md-header-nav__source">
-<a class="md-source" href="https://github.com/up42/up42-py" title="Go to repository">
-<div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
-</div>
-<div class="md-source__repository">
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/up42/up42-py" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
     up42-py
   </div>
 </a>
-</div>
-</nav>
+      </div>
+    
+  </nav>
 </header>
-<div class="md-container" data-md-component="container">
-<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
-<div class="md-tabs__inner md-grid">
-<ul class="md-tabs__list">
-<li class="md-tabs__item">
-<a class="md-tabs__link" href="../..">
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../.." class="md-tabs__link">
       Home
     </a>
-</li>
-<li class="md-tabs__item">
-<a class="md-tabs__link" href="../../30-second-example/">
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../30-second-example/" class="md-tabs__link">
         Getting Started
       </a>
-</li>
-<li class="md-tabs__item">
-<a class="md-tabs__link" href="../../examples-intro/">
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../examples-intro/" class="md-tabs__link">
         Examples
       </a>
-</li>
-<li class="md-tabs__item">
-<a class="md-tabs__link md-tabs__link--active" href="../up42-reference/">
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../up42-reference/" class="md-tabs__link md-tabs__link--active">
         Code Reference
       </a>
-</li>
-<li class="md-tabs__item">
-<a class="md-tabs__link" href="../../cli/">
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cli/" class="md-tabs__link">
         CLI
       </a>
-</li>
-<li class="md-tabs__item">
-<a class="md-tabs__link" href="../../CHANGELOG/">
-        Changelog &amp; FAQ
-      </a>
-</li>
-</ul>
-</div>
-</nav>
-<main class="md-main" data-md-component="main">
-<div class="md-main__inner md-grid">
-<div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
-<div class="md-sidebar__scrollwrap">
-<div class="md-sidebar__inner">
-<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
-<label class="md-nav__title" for="__drawer">
-<a aria-label="UP42 Python SDK" class="md-nav__button md-logo" href="https://up42.github.io/up42-py/" title="UP42 Python SDK">
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+    </li>
+  
 
-<svg height="300" preserveaspectratio="xMidYMid meet" version="1.1" viewbox="0 0 300 300" width="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path d="M0 0L301.5 0L301.5 300L0 300L0 0Z" id="a1GmkaXFhc"></path><path d="M46.9 105.6C46.9 142.93 46.9 163.67 46.9 167.82C46.9 177.98 53.89 183.69 64.36 183.69C74.84 183.69 81.82 178.3 81.82 167.82C81.82 163.67 81.82 142.93 81.82 105.6L105.95 105.6C105.95 142.93 105.95 163.67 105.95 167.82C105.95 190.04 89.44 205.6 64.36 205.6C39.28 205.6 22.46 190.04 22.46 167.82C22.46 163.67 22.46 142.93 22.46 105.6L46.9 105.6Z" id="ePubGLbJJ"></path><path d="M164.89 105.6C184.57 105.6 197.8 119.79 197.8 139.79C197.8 159.79 184.57 174.63 164.89 174.63C163.73 174.63 157.93 174.63 147.48 174.63L147.48 205.6L122.64 205.6L122.64 105.6C147.99 105.6 162.08 105.6 164.89 105.6ZM172.64 140.11C172.64 132.37 168.44 126.56 160.06 126.56C159.22 126.56 155.02 126.56 147.48 126.56L147.48 153.66L159.73 153.66C168.34 149.79 172.64 145.27 172.64 140.11Z" id="e3xlgi979P"></path><path d="M228.42 85.15L237.44 85.15L237.44 118.88L245.01 118.88L245.01 125.37L237.44 125.37L237.44 140.15L229.68 140.15L229.68 125.55L202.63 125.55L202.45 120.5L228.42 85.15ZM229.5 118.7C229.5 106.79 229.5 100.18 229.5 98.86C229.5 96.33 229.86 93.45 229.86 93.45C229.85 93.45 229.7 93.45 229.68 93.45C228.96 95.07 227.88 96.52 226.98 97.96C225.92 99.35 220.63 106.32 211.11 118.88L211.11 118.88L229.5 118.88L229.5 118.7Z" id="c1yTzdREXX"></path><path d="M276.4 101.25C276.4 95.94 272.34 92.23 266.5 92.23C259.25 92.23 255.36 99.13 255.36 99.13C254.8 98.75 250.27 95.78 249.7 95.41C253.24 89.05 259.78 85.15 267.03 85.15C277.11 85.15 284.36 91.34 284.36 100.72C284.36 118.4 258.19 121.23 258.01 133.61C259.83 133.61 268.91 133.61 285.25 133.61L285.25 140.15C264.03 140.15 252.24 140.15 249.88 140.15C249.7 138.56 249.53 137.15 249.53 135.91C249.53 116.63 276.4 113.8 276.4 101.25Z" id="d2t6xtf3zG"></path></defs><g><g><g><use fill="#242c5c" fill-opacity="1" opacity="1" xlink:href="#a1GmkaXFhc"></use></g><g><use fill="#ffffff" fill-opacity="1" opacity="1" xlink:href="#ePubGLbJJ"></use><g><use fill-opacity="0" opacity="1" stroke="#ffffff" stroke-opacity="1" stroke-width="1" xlink:href="#ePubGLbJJ"></use></g></g><g><use fill="#ffffff" fill-opacity="1" opacity="1" xlink:href="#e3xlgi979P"></use><g><use fill-opacity="0" opacity="1" stroke="#ffffff" stroke-opacity="1" stroke-width="1" xlink:href="#e3xlgi979P"></use></g></g><g><use fill="#ffffff" fill-opacity="1" opacity="1" xlink:href="#c1yTzdREXX"></use><g><use fill-opacity="0" opacity="1" stroke="#ffffff" stroke-opacity="1" stroke-width="1" xlink:href="#c1yTzdREXX"></use></g></g><g><use fill="#ffffff" fill-opacity="1" opacity="1" xlink:href="#d2t6xtf3zG"></use><g><use fill-opacity="0" opacity="1" stroke="#ffffff" stroke-opacity="1" stroke-width="1" xlink:href="#d2t6xtf3zG"></use></g></g></g></g></svg>
-</a>
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../CHANGELOG/" class="md-tabs__link">
+        Changelog & FAQ
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://up42.github.io/up42-py/" title="UP42 Python SDK" class="md-nav__button md-logo" aria-label="UP42 Python SDK">
+      
+  
+  <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" viewBox="0 0 300 300" width="300" height="300"><defs><path d="M0 0L301.5 0L301.5 300L0 300L0 0Z" id="a1GmkaXFhc"></path><path d="M46.9 105.6C46.9 142.93 46.9 163.67 46.9 167.82C46.9 177.98 53.89 183.69 64.36 183.69C74.84 183.69 81.82 178.3 81.82 167.82C81.82 163.67 81.82 142.93 81.82 105.6L105.95 105.6C105.95 142.93 105.95 163.67 105.95 167.82C105.95 190.04 89.44 205.6 64.36 205.6C39.28 205.6 22.46 190.04 22.46 167.82C22.46 163.67 22.46 142.93 22.46 105.6L46.9 105.6Z" id="ePubGLbJJ"></path><path d="M164.89 105.6C184.57 105.6 197.8 119.79 197.8 139.79C197.8 159.79 184.57 174.63 164.89 174.63C163.73 174.63 157.93 174.63 147.48 174.63L147.48 205.6L122.64 205.6L122.64 105.6C147.99 105.6 162.08 105.6 164.89 105.6ZM172.64 140.11C172.64 132.37 168.44 126.56 160.06 126.56C159.22 126.56 155.02 126.56 147.48 126.56L147.48 153.66L159.73 153.66C168.34 149.79 172.64 145.27 172.64 140.11Z" id="e3xlgi979P"></path><path d="M228.42 85.15L237.44 85.15L237.44 118.88L245.01 118.88L245.01 125.37L237.44 125.37L237.44 140.15L229.68 140.15L229.68 125.55L202.63 125.55L202.45 120.5L228.42 85.15ZM229.5 118.7C229.5 106.79 229.5 100.18 229.5 98.86C229.5 96.33 229.86 93.45 229.86 93.45C229.85 93.45 229.7 93.45 229.68 93.45C228.96 95.07 227.88 96.52 226.98 97.96C225.92 99.35 220.63 106.32 211.11 118.88L211.11 118.88L229.5 118.88L229.5 118.7Z" id="c1yTzdREXX"></path><path d="M276.4 101.25C276.4 95.94 272.34 92.23 266.5 92.23C259.25 92.23 255.36 99.13 255.36 99.13C254.8 98.75 250.27 95.78 249.7 95.41C253.24 89.05 259.78 85.15 267.03 85.15C277.11 85.15 284.36 91.34 284.36 100.72C284.36 118.4 258.19 121.23 258.01 133.61C259.83 133.61 268.91 133.61 285.25 133.61L285.25 140.15C264.03 140.15 252.24 140.15 249.88 140.15C249.7 138.56 249.53 137.15 249.53 135.91C249.53 116.63 276.4 113.8 276.4 101.25Z" id="d2t6xtf3zG"></path></defs><g><g><g><use xlink:href="#a1GmkaXFhc" opacity="1" fill="#242c5c" fill-opacity="1"></use></g><g><use xlink:href="#ePubGLbJJ" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#ePubGLbJJ" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#e3xlgi979P" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#e3xlgi979P" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#c1yTzdREXX" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#c1yTzdREXX" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#d2t6xtf3zG" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#d2t6xtf3zG" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g></g></g></svg>
+
+    </a>
     UP42 Python SDK
   </label>
-<div class="md-nav__source">
-<a class="md-source" href="https://github.com/up42/up42-py" title="Go to repository">
-<div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
-</div>
-<div class="md-source__repository">
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/up42/up42-py" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
     up42-py
   </div>
 </a>
-</div>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../..">
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href="../.." class="md-nav__link">
       Home
     </a>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" id="nav-2" type="checkbox"/>
-<label class="md-nav__link" for="nav-2">
+  </li>
+
+    
+      
+      
+      
+
+
+
+  
+  <li class="md-nav__item md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+    
+    <label class="md-nav__link" for="nav-2">
       Getting Started
       <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Getting Started" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="nav-2">
-<span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon"></span>
         Getting Started
       </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../30-second-example/">
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../30-second-example/" class="md-nav__link">
       30 Second Example
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../installation/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../installation/" class="md-nav__link">
       Installation
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../authentication/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../authentication/" class="md-nav__link">
       Authentication
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../structure/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../structure/" class="md-nav__link">
       Structure
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../catalog/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../catalog/" class="md-nav__link">
       Catalog Search
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../guides/detailed-example/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../ordering/" class="md-nav__link">
+      Ordering
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../guides/detailed-example.ipynb" class="md-nav__link">
       Detailed Example
     </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" id="nav-3" type="checkbox"/>
-<label class="md-nav__link" for="nav-3">
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  
+  <li class="md-nav__item md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+    
+    <label class="md-nav__link" for="nav-3">
       Examples
       <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Examples" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="nav-3">
-<span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Examples" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
         Examples
       </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../examples-intro/">
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../examples-intro/" class="md-nav__link">
       Examples
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../examples/aircraft-detection/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../examples/aircraft-detection/" class="md-nav__link">
       Aircraft detection
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../examples/radar_processing_1/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../examples/radar_processing_1/" class="md-nav__link">
       Radar processing
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../examples/flood_mapping/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../examples/flood_mapping/" class="md-nav__link">
       Flood mapping
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../examples/catalog-quicklooks/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../examples/catalog-quicklooks/" class="md-nav__link">
       Catalog Quicklooks
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../examples/ship-identification/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../examples/ship-identification/" class="md-nav__link">
       Ship identification
     </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item md-nav__item--active md-nav__item--nested">
-<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="nav-4" id="nav-4" type="checkbox"/>
-<label class="md-nav__link" for="nav-4">
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  
+
+
+  
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
       Code Reference
       <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Code Reference" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="nav-4">
-<span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Code Reference" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon"></span>
         Code Reference
       </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../up42-reference/">
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../up42-reference/" class="md-nav__link">
       up42
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../project-reference/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../project-reference/" class="md-nav__link">
       Project
     </a>
-</li>
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
+  </li>
+
+        
+          
+          
+          
+
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
         Workflow
         <span class="md-nav__icon md-icon"></span>
-</label>
-<a class="md-nav__link md-nav__link--active" href="./">
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
       Workflow
     </a>
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#workflow-object">
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#workflow-object" class="md-nav__link">
     Workflow object
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#attributes">
+      
+        <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
     Attributes
   </a>
-<nav aria-label="Attributes" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.info">
+  
+    <nav class="md-nav" aria-label="Attributes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.info" class="md-nav__link">
     info
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.max_concurrent_jobs">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.max_concurrent_jobs" class="md-nav__link">
     max_concurrent_jobs
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.workflow_tasks">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.workflow_tasks" class="md-nav__link">
     workflow_tasks
   </a>
+  
 </li>
-</ul>
-</nav>
+        
+      </ul>
+    </nav>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#methods">
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
     Methods
   </a>
-<nav aria-label="Methods" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.add_workflow_tasks">
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.add_workflow_tasks" class="md-nav__link">
     add_workflow_tasks()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.construct_parameters">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.construct_parameters" class="md-nav__link">
     construct_parameters()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.construct_parameters_parallel">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.construct_parameters_parallel" class="md-nav__link">
     construct_parameters_parallel()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.delete">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.delete" class="md-nav__link">
     delete()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.estimate_job">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.estimate_job" class="md-nav__link">
     estimate_job()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.get_compatible_blocks">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.get_compatible_blocks" class="md-nav__link">
     get_compatible_blocks()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.get_jobs">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.get_jobs" class="md-nav__link">
     get_jobs()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.get_parameters_info">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.get_parameters_info" class="md-nav__link">
     get_parameters_info()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.get_workflow_tasks">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.get_workflow_tasks" class="md-nav__link">
     get_workflow_tasks()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.run_job">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.run_job" class="md-nav__link">
     run_job()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.run_jobs_parallel">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.run_jobs_parallel" class="md-nav__link">
     run_jobs_parallel()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.test_job">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.test_job" class="md-nav__link">
     test_job()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.test_jobs_parallel">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.test_jobs_parallel" class="md-nav__link">
     test_jobs_parallel()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.update_name">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.update_name" class="md-nav__link">
     update_name()
   </a>
+  
 </li>
-</ul>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../job-reference/">
+    
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../job-reference/" class="md-nav__link">
       Job
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../jobcollection-reference/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../jobcollection-reference/" class="md-nav__link">
       JobCollection
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../jobtask-reference/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../jobtask-reference/" class="md-nav__link">
       JobTask
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../catalog-reference/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../catalog-reference/" class="md-nav__link">
       Catalog
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../cli-reference/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../storage-reference/" class="md-nav__link">
+      Storage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../order-reference/" class="md-nav__link">
+      Order
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../asset-reference/" class="md-nav__link">
+      Asset
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../cli-reference/" class="md-nav__link">
       CLI
     </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" id="nav-5" type="checkbox"/>
-<label class="md-nav__link" for="nav-5">
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  
+  <li class="md-nav__item md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5" >
+    
+    <label class="md-nav__link" for="nav-5">
       CLI
       <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="CLI" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="nav-5">
-<span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="CLI" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        <span class="md-nav__icon md-icon"></span>
         CLI
       </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../cli/">
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../cli/" class="md-nav__link">
       Command Line Interface (CLI)
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../cli-reference/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../cli-reference/" class="md-nav__link">
       Command Reference
     </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="nav-6" id="nav-6" type="checkbox"/>
-<label class="md-nav__link" for="nav-6">
-      Changelog &amp; FAQ
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  
+  <li class="md-nav__item md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6" >
+    
+    <label class="md-nav__link" for="nav-6">
+      Changelog & FAQ
       <span class="md-nav__icon md-icon"></span>
-</label>
-<nav aria-label="Changelog &amp; FAQ" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="nav-6">
-<span class="md-nav__icon md-icon"></span>
-        Changelog &amp; FAQ
+    </label>
+    <nav class="md-nav" aria-label="Changelog & FAQ" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        <span class="md-nav__icon md-icon"></span>
+        Changelog & FAQ
       </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../CHANGELOG/">
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../CHANGELOG/" class="md-nav__link">
       Changelog
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../support-faq/">
-      FAQ &amp; Support
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../support-faq/" class="md-nav__link">
+      FAQ & Support
     </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../privacy-policy/">
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../privacy-policy/" class="md-nav__link">
       Privacy Policy
     </a>
-</li>
-</ul>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
 </nav>
-</li>
-</ul>
-</nav>
-</div>
-</div>
-</div>
-<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
-<div class="md-sidebar__scrollwrap">
-<div class="md-sidebar__inner">
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
-<ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#workflow-object">
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#workflow-object" class="md-nav__link">
     Workflow object
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#attributes">
+      
+        <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
     Attributes
   </a>
-<nav aria-label="Attributes" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.info">
+  
+    <nav class="md-nav" aria-label="Attributes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.info" class="md-nav__link">
     info
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.max_concurrent_jobs">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.max_concurrent_jobs" class="md-nav__link">
     max_concurrent_jobs
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.workflow_tasks">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.workflow_tasks" class="md-nav__link">
     workflow_tasks
   </a>
+  
 </li>
-</ul>
-</nav>
+        
+      </ul>
+    </nav>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#methods">
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
     Methods
   </a>
-<nav aria-label="Methods" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.add_workflow_tasks">
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.add_workflow_tasks" class="md-nav__link">
     add_workflow_tasks()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.construct_parameters">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.construct_parameters" class="md-nav__link">
     construct_parameters()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.construct_parameters_parallel">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.construct_parameters_parallel" class="md-nav__link">
     construct_parameters_parallel()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.delete">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.delete" class="md-nav__link">
     delete()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.estimate_job">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.estimate_job" class="md-nav__link">
     estimate_job()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.get_compatible_blocks">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.get_compatible_blocks" class="md-nav__link">
     get_compatible_blocks()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.get_jobs">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.get_jobs" class="md-nav__link">
     get_jobs()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.get_parameters_info">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.get_parameters_info" class="md-nav__link">
     get_parameters_info()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.get_workflow_tasks">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.get_workflow_tasks" class="md-nav__link">
     get_workflow_tasks()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.run_job">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.run_job" class="md-nav__link">
     run_job()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.run_jobs_parallel">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.run_jobs_parallel" class="md-nav__link">
     run_jobs_parallel()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.test_job">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.test_job" class="md-nav__link">
     test_job()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.test_jobs_parallel">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.test_jobs_parallel" class="md-nav__link">
     test_jobs_parallel()
   </a>
+  
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#up42.workflow.Workflow.update_name">
+        
+          <li class="md-nav__item">
+  <a href="#up42.workflow.Workflow.update_name" class="md-nav__link">
     update_name()
   </a>
+  
 </li>
-</ul>
-</nav>
+        
+      </ul>
+    </nav>
+  
 </li>
-</ul>
+      
+    </ul>
+  
 </nav>
-</div>
-</div>
-</div>
-<div class="md-content">
-<article class="md-content__inner md-typeset">
-<h1 id="workflow">Workflow<a class="headerlink" href="#workflow" title="Permanent link">¶</a></h1>
-<h2 id="workflow-object">Workflow object<a class="headerlink" href="#workflow-object" title="Permanent link">¶</a></h2>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="workflow">Workflow<a class="headerlink" href="#workflow" title="Permanent link">&para;</a></h1>
+<h2 id="workflow-object">Workflow object<a class="headerlink" href="#workflow-object" title="Permanent link">&para;</a></h2>
 <p>With whe workflow object you can configure &amp; run jobs and query exisiting jobs of this 
 workflow.</p>
 <p>Initialize an existing workflow:</p>
-<div class="highlight"><pre><span></span><code><span class="n">workflow</span> <span class="o">=</span> <span class="n">up42</span><span class="o">.</span><span class="n">initialize_workflow</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="s2">"12345"</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">workflow</span> <span class="o">=</span> <span class="n">up42</span><span class="o">.</span><span class="n">initialize_workflow</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="s2">&quot;12345&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>Create a new workflow:
-<div class="highlight"><pre><span></span><code><span class="n">workflow</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">create_workflow</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"new_workflow"</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">workflow</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">create_workflow</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_workflow&quot;</span><span class="p">)</span>
 </code></pre></div></p>
-<p><br/></p>
+<p><br></p>
 <div class="doc doc-object doc-class">
 <div class="doc doc-contents first">
 <div class="doc doc-children">
-<h2 id="attributes">Attributes<a class="headerlink" href="#attributes" title="Permanent link">¶</a></h2>
+<h2 id="attributes">Attributes<a class="headerlink" href="#attributes" title="Permanent link">&para;</a></h2>
 <div class="doc doc-object doc-attribute">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.info">
-<code class="highlight">
-info: <span class="n">Dict</span> </code>
-<span class="doc doc-properties">
-<small class="doc doc-property doc-property-property"><code>property</code></small>
-<small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
-</span>
-<a class="headerlink" href="#up42.workflow.Workflow.info" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">info</span><span class="p">:</span> <span class="n">Dict</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+      <a class="headerlink" href="#up42.workflow.Workflow.info" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Gets the workflow metadata information.</p>
 </div>
 </div>
 <div class="doc doc-object doc-attribute">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.max_concurrent_jobs">
-<code class="highlight">
-max_concurrent_jobs: <span class="nb">int</span> </code>
-<span class="doc doc-properties">
-<small class="doc doc-property doc-property-property"><code>property</code></small>
-<small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
-</span>
-<a class="headerlink" href="#up42.workflow.Workflow.max_concurrent_jobs" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">max_concurrent_jobs</span><span class="p">:</span> <span class="nb">int</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+      <a class="headerlink" href="#up42.workflow.Workflow.max_concurrent_jobs" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Gets the maximum number of concurrent jobs allowed by the project settings.</p>
 </div>
 </div>
 <div class="doc doc-object doc-attribute">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.workflow_tasks">
-<code class="highlight">
-workflow_tasks: <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> </code>
-<span class="doc doc-properties">
-<small class="doc doc-property doc-property-property"><code>property</code></small>
-<small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
-</span>
-<a class="headerlink" href="#up42.workflow.Workflow.workflow_tasks" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">workflow_tasks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+      <a class="headerlink" href="#up42.workflow.Workflow.workflow_tasks" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Gets the building blocks of the workflow as a dictionary with <code>task_name:block-version</code></p>
 </div>
 </div>
-<h2 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">¶</a></h2>
+<h2 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h2>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.add_workflow_tasks">
-<code class="highlight language-python">
-add_workflow_tasks<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_tasks</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.add_workflow_tasks" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">add_workflow_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_tasks</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.add_workflow_tasks" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Adds or overwrites workflow tasks in a workflow on UP42.</p>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -761,8 +1378,8 @@ id directly in the <a href="https://docs.up42.com/going-further/api-walkthrough.
 </code></pre>
 </div>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">add_workflow_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_tasks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
     <span class="sd">"""</span>
@@ -828,10 +1445,12 @@ id directly in the <a href="https://docs.up42.com/going-further/api-walkthrough.
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.construct_parameters">
-<code class="highlight language-python">
-construct_parameters<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">geometry_operation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">handle_multiple_features</span><span class="o">=</span><span class="s1">'union'</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scene_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.construct_parameters" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">construct_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">geometry_operation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">handle_multiple_features</span><span class="o">=</span><span class="s1">'union'</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scene_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assets</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.construct_parameters" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Constructs workflow input parameters with a specified aoi, the default input parameters, and
 optionally limit and order-ids. Further parameter editing needs to be done manually
 via dict.update({key:value}).</p>
@@ -905,6 +1524,15 @@ into new workflows.</p>
 </td>
 <td><code>None</code></td>
 </tr>
+<tr>
+<td><code>assets</code></td>
+<td><code>List[up42.asset.Asset]</code></td>
+<td>
+<p>Optional, can be used to incorporate existing assets in Storage (result of Orders for instance)
+into new workflows.</p>
+</td>
+<td><code>None</code></td>
+</tr>
 </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -925,8 +1553,8 @@ into new workflows.</p>
 </tbody>
 </table>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">construct_parameters</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -946,6 +1574,7 @@ into new workflows.</p>
     <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">scene_ids</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">order_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">assets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Asset</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
     <span class="sd">"""</span>
 <span class="sd">    Constructs workflow input parameters with a specified aoi, the default input parameters, and</span>
@@ -963,6 +1592,8 @@ into new workflows.</p>
 <span class="sd">        scene_ids: List of scene_ids, if given ignores all other parameters except geometry.</span>
 <span class="sd">        order_ids: Optional, can be used to incorporate existing bought imagery on UP42</span>
 <span class="sd">            into new workflows.</span>
+<span class="sd">        assets: Optional, can be used to incorporate existing assets in Storage (result of Orders for instance)</span>
+<span class="sd">            into new workflows.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Dictionary of constructed input parameters.</span>
@@ -977,6 +1608,15 @@ into new workflows.</p>
         <span class="c1"># Needs to be handled in this function(not run_job) as it is only</span>
         <span class="c1"># relevant for the data block.</span>
         <span class="n">input_parameters</span><span class="p">[</span><span class="n">data_block_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"order_ids"</span><span class="p">:</span> <span class="n">order_ids</span><span class="p">}</span>
+    <span class="k">elif</span> <span class="n">assets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Needs to be handled in this function(not run_job) as it is only</span>
+        <span class="c1"># relevant for the data block.</span>
+        <span class="n">asset_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">asset</span><span class="o">.</span><span class="n">asset_id</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span> <span class="k">if</span> <span class="n">asset</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="s2">"BLOCK"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">asset_ids</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"None of the assets are usable in a workflow since the source is not `BLOCK`."</span>
+            <span class="p">)</span>
+        <span class="n">input_parameters</span><span class="p">[</span><span class="n">data_block_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"asset_ids"</span><span class="p">:</span> <span class="n">asset_ids</span><span class="p">}</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">input_parameters</span><span class="p">[</span><span class="n">data_block_name</span><span class="p">][</span><span class="s2">"limit"</span><span class="p">]</span> <span class="o">=</span> <span class="n">limit</span>
@@ -1010,10 +1650,12 @@ into new workflows.</p>
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.construct_parameters_parallel">
-<code class="highlight language-python">
-construct_parameters_parallel<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">interval_dates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scene_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limit_per_job</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">geometry_operation</span><span class="o">=</span><span class="s1">'intersects'</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.construct_parameters_parallel" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">construct_parameters_parallel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">interval_dates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scene_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limit_per_job</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">geometry_operation</span><span class="o">=</span><span class="s1">'intersects'</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.construct_parameters_parallel" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Maps a list of geometries and a list of time series into a list
 of input parameters of a workflow. If you pass 2 geometries and 1 time
 interval this will result in 2 x 1 input parameters.</p>
@@ -1090,8 +1732,8 @@ All other arguments are ignored except geometries if passed.</p>
 </tbody>
 </table>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">construct_parameters_parallel</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">geometries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span>
@@ -1174,14 +1816,16 @@ All other arguments are ignored except geometries if passed.</p>
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.delete">
-<code class="highlight language-python">
-delete<span class="p">(</span><span class="bp">self</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.delete" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.delete" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Deletes the workflow and sets the Python object to None.</p>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">"""</span>
 <span class="sd">    Deletes the workflow and sets the Python object to None.</span>
@@ -1200,10 +1844,12 @@ delete<span class="p">(</span><span class="bp">self</span><span class="p">)</spa
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.estimate_job">
-<code class="highlight language-python">
-estimate_job<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.estimate_job" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">estimate_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.estimate_job" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Estimation of price and duration of the workflow for the provided input parameters.</p>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1244,8 +1890,8 @@ estimate_job<span class="p">(</span><span class="bp">self</span><span class="p">
 </tbody>
 </table>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">estimate_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
     <span class="sd">"""</span>
 <span class="sd">    Estimation of price and duration of the workflow for the provided input parameters.</span>
@@ -1294,17 +1940,19 @@ estimate_job<span class="p">(</span><span class="bp">self</span><span class="p">
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.get_compatible_blocks">
-<code class="highlight language-python">
-get_compatible_blocks<span class="p">(</span><span class="bp">self</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.get_compatible_blocks" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">get_compatible_blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.get_compatible_blocks" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Gets all compatible blocks for the current workflow. If the workflow is empty
 it will provide all data blocks, if the workflow already has workflow tasks, it
 will provide the compatible blocks for the last workflow task in the workflow.</p>
 <p>Currently no data blocks can be attached to other data blocks.</p>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">get_compatible_blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
     <span class="sd">"""</span>
 <span class="sd">    Gets all compatible blocks for the current workflow. If the workflow is empty</span>
@@ -1331,10 +1979,12 @@ will provide the compatible blocks for the last workflow task in the workflow.</
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.get_jobs">
-<code class="highlight language-python">
-get_jobs<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_json</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">test_jobs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">real_jobs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.get_jobs" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">get_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_json</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">test_jobs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">real_jobs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.get_jobs" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Get all jobs associated with the workflow as a JobCollection or json.</p>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1391,8 +2041,8 @@ get_jobs<span class="p">(</span><span class="bp">self</span><span class="p">,</s
 </tbody>
 </table>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">get_jobs</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">return_json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">test_jobs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">real_jobs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobCollection</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]]:</span>
@@ -1437,10 +2087,12 @@ get_jobs<span class="p">(</span><span class="bp">self</span><span class="p">,</s
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.get_parameters_info">
-<code class="highlight language-python">
-get_parameters_info<span class="p">(</span><span class="bp">self</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.get_parameters_info" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">get_parameters_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.get_parameters_info" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Gets infos about the workflow parameters of each block in the current workflow
 to make it easy to construct the desired parameters.</p>
 <p><strong>Returns:</strong></p>
@@ -1461,8 +2113,8 @@ to make it easy to construct the desired parameters.</p>
 </tbody>
 </table>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">get_parameters_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
     <span class="sd">"""</span>
 <span class="sd">    Gets infos about the workflow parameters of each block in the current workflow</span>
@@ -1485,10 +2137,12 @@ to make it easy to construct the desired parameters.</p>
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.get_workflow_tasks">
-<code class="highlight language-python">
-get_workflow_tasks<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.get_workflow_tasks" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">get_workflow_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.get_workflow_tasks" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Get the workflow-tasks of the workflow (Blocks in a workflow are called workflow_tasks)</p>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1529,8 +2183,8 @@ get_workflow_tasks<span class="p">(</span><span class="bp">self</span><span clas
 </tbody>
 </table>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">get_workflow_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
     <span class="sd">"""</span>
 <span class="sd">    Get the workflow-tasks of the workflow (Blocks in a workflow are called workflow_tasks)</span>
@@ -1561,10 +2215,12 @@ get_workflow_tasks<span class="p">(</span><span class="bp">self</span><span clas
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.run_job">
-<code class="highlight language-python">
-run_job<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">track_status</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.run_job" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">run_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">track_status</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.run_job" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Creates and runs a new job.</p>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1622,8 +2278,8 @@ the job status every 30 seconds.</p>
 </tbody>
 </table>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">input_parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1652,10 +2308,12 @@ the job status every 30 seconds.</p>
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.run_jobs_parallel">
-<code class="highlight language-python">
-run_jobs_parallel<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameters_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_concurrent_jobs</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.run_jobs_parallel" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">run_jobs_parallel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameters_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_concurrent_jobs</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.run_jobs_parallel" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Create and run jobs in parallel.</p>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1729,8 +2387,8 @@ run_jobs_parallel<span class="p">(</span><span class="bp">self</span><span class
 </tbody>
 </table>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">run_jobs_parallel</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">input_parameters_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1764,10 +2422,12 @@ run_jobs_parallel<span class="p">(</span><span class="bp">self</span><span class
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.test_job">
-<code class="highlight language-python">
-test_job<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">track_status</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">get_estimation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.test_job" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">test_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">track_status</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">get_estimation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.test_job" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Create a run a new test job (Test Query). With this test query you will not be
 charged with any data or processing credits, but have a preview of the job result.</p>
 <p><strong>Parameters:</strong></p>
@@ -1826,8 +2486,8 @@ the job status every 30 seconds.</p>
 </tbody>
 </table>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">test_job</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">input_parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1864,10 +2524,12 @@ the job status every 30 seconds.</p>
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.test_jobs_parallel">
-<code class="highlight language-python">
-test_jobs_parallel<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameters_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_concurrent_jobs</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.test_jobs_parallel" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">test_jobs_parallel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameters_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_concurrent_jobs</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.test_jobs_parallel" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Create and run test jobs (Test Query) in parallel. With this test query you will not be
 charged with any data or processing credits, but have a preview of the job result.</p>
 <p><strong>Parameters:</strong></p>
@@ -1943,8 +2605,8 @@ This is defined in the project settings.</p>
 </tbody>
 </table>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">test_jobs_parallel</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">input_parameters_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1980,10 +2642,12 @@ This is defined in the project settings.</p>
 </div>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="up42.workflow.Workflow.update_name">
-<code class="highlight language-python">
-update_name<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> </code>
-<a class="headerlink" href="#up42.workflow.Workflow.update_name" title="Permanent link">¶</a></h3>
-<div class="doc doc-contents">
+
+<code class="highlight language-python"><span class="n">update_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+      <a class="headerlink" href="#up42.workflow.Workflow.update_name" title="Permanent link">&para;</a></h3>
+<div class="doc doc-contents ">
 <p>Updates the workflow name and description.</p>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2015,8 +2679,8 @@ update_name<span class="p">(</span><span class="bp">self</span><span class="p">,
 </tbody>
 </table>
 <details class="quote">
-<summary>Source code in <code>up42/workflow.py</code></summary>
-<div class="highlight">
+          <summary>Source code in <code>up42/workflow.py</code></summary>
+          <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">update_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">"""</span>
 <span class="sd">    Updates the workflow name and description.</span>
@@ -2041,52 +2705,103 @@ update_name<span class="p">(</span><span class="bp">self</span><span class="p">,
 </div>
 </div>
 </div>
-</article>
-</div>
-</div>
-</main>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
 <footer class="md-footer">
-<div class="md-footer-meta md-typeset">
-<div class="md-footer-meta__inner md-grid">
-<!-- Copyright and theme information -->
-<div class="md-footer-copyright">
-<div class="md-footer-copyright__highlight">
+    <div class="md-footer-meta md-typeset">
+        <div class="md-footer-meta__inner md-grid">
+            <!-- Copyright and theme information -->
+            <div class="md-footer-copyright">
+                
+                <div class="md-footer-copyright__highlight">
                     UP42 2020
                 </div>
                 
                 powered by
                 <a href="https://www.mkdocs.org" title="MkDocs">MkDocs</a>
                 and
-                <a href="https://squidfunk.github.io/mkdocs-material/" title="Material for MkDocs">
+                <a href="https://squidfunk.github.io/mkdocs-material/"
+                   title="Material for MkDocs">
                     Material for MkDocs</a>
-</div>
-<div class="md-footer-social">
-<a class="md-footer-social__link" href="https://up42.com" rel="noopener" target="_blank" title="up42.com">
-<svg viewbox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M280.37 148.26L96 300.11V464a16 16 0 0016 16l112.06-.29a16 16 0 0015.92-16V368a16 16 0 0116-16h64a16 16 0 0116 16v95.64a16 16 0 0016 16.05L464 480a16 16 0 0016-16V300L295.67 148.26a12.19 12.19 0 00-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 00-12-12h-56a12 12 0 00-12 12v72.61L318.47 43a48 48 0 00-61 0L4.34 251.47a12 12 0 00-1.6 16.9l25.5 31A12 12 0 0045.15 301l235.22-193.74a12.19 12.19 0 0115.3 0L530.9 301a12 12 0 0016.9-1.6l25.5-31a12 12 0 00-1.7-16.93z"></path></svg>
-</a>
-<a class="md-footer-social__link" href="https://twitter.com/up42_" rel="noopener" target="_blank" title="twitter.com">
-<svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path></svg>
-</a>
-<a class="md-footer-social__link" href="https://www.linkedin.com/company/up42/" rel="noopener" target="_blank" title="www.linkedin.com">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg>
-</a>
-<a class="md-footer-social__link" href="https://github.com/up42" rel="noopener" target="_blank" title="github.com">
-<svg viewbox="0 0 480 512" xmlns="http://www.w3.org/2000/svg"><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"></path></svg>
-</a>
-<a class="md-footer-social__link" href="https://hub.docker.com/u/up42" rel="noopener" target="_blank" title="hub.docker.com">
-<svg viewbox="0 0 640 512" xmlns="http://www.w3.org/2000/svg"><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"></path></svg>
-</a>
-<a class="md-footer-social__link" href="mailto:support@up42.com" rel="noopener" target="_blank" title="">
-<svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path></svg>
-</a>
-</div>
-</div>
-</div>
+            </div>
+            
+            
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://up42.com" target="_blank" rel="noopener" title="up42.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M280.37 148.26L96 300.11V464a16 16 0 0016 16l112.06-.29a16 16 0 0015.92-16V368a16 16 0 0116-16h64a16 16 0 0116 16v95.64a16 16 0 0016 16.05L464 480a16 16 0 0016-16V300L295.67 148.26a12.19 12.19 0 00-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 00-12-12h-56a12 12 0 00-12 12v72.61L318.47 43a48 48 0 00-61 0L4.34 251.47a12 12 0 00-1.6 16.9l25.5 31A12 12 0 0045.15 301l235.22-193.74a12.19 12.19 0 0115.3 0L530.9 301a12 12 0 0016.9-1.6l25.5-31a12 12 0 00-1.7-16.93z"/></svg>
+      </a>
+    
+      
+      
+        
+        
+      
+      <a href="https://twitter.com/up42_" target="_blank" rel="noopener" title="twitter.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+      </a>
+    
+      
+      
+        
+        
+      
+      <a href="https://www.linkedin.com/company/up42/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+      </a>
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/up42" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+      </a>
+    
+      
+      
+        
+        
+      
+      <a href="https://hub.docker.com/u/up42" target="_blank" rel="noopener" title="hub.docker.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
+      </a>
+    
+      
+      
+      <a href="mailto:support@up42.com" target="_blank" rel="noopener" title="" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/></svg>
+      </a>
+    
+  </div>
+
+            
+        </div>
+    </div>
 </footer>
-</div>
-<script src="../../assets/javascripts/vendor.08c56446.min.js"></script>
-<script src="../../assets/javascripts/bundle.6ced434e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
-<script>
+
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.93c04032.min.js"></script>
+      <script src="../../assets/javascripts/bundle.83e5331e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
         app = initialize({
           base: "../..",
           features: ['navigation.tabs'],
@@ -2095,6 +2810,9 @@ update_name<span class="p">(</span><span class="bp">self</span><span class="p">,
           }, typeof search !== "undefined" && search)
         })
       </script>
-<script src="../../stylesheets/extra.js"></script>
-</body>
+      
+        <script src="../../stylesheets/extra.js"></script>
+      
+    
+  </body>
 </html>

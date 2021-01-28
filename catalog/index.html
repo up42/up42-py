@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://up42.github.io/up42-py/catalog/">
       
       <link rel="shortcut icon" href="../assets/logo-up42.ico">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.3">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.4">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.3b61ea93.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.15aa0b43.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.39b8e14a.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.75751829.min.css">
         
           
           
@@ -97,7 +97,7 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
           <div class="md-announce__inner md-grid md-typeset">
             
   <style>.md-announce a,.md-announce a:focus,.md-announce a:hover{color:currentColor}.md-announce strong{white-space:nowrap}.md-announce .twitter{margin-left:.2em;color:#00acee}</style>
-    <a href="https://sdk.up42.com/CHANGELOG/"><strong>New in 0.14.0: Price estimation 🎉! See the release notes and update!</strong>
+    <a href="https://sdk.up42.com/CHANGELOG/"><strong>New in 0.15.0: Ordering 🎉! See the release notes and update!</strong>
     </a>
 
           </div>
@@ -498,7 +498,20 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
 
 
   <li class="md-nav__item">
-    <a href="../guides/detailed-example/" class="md-nav__link">
+    <a href="../ordering/" class="md-nav__link">
+      Ordering
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../guides/detailed-example.ipynb" class="md-nav__link">
       Detailed Example
     </a>
   </li>
@@ -738,6 +751,45 @@ if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1'))
 
 
   <li class="md-nav__item">
+    <a href="../reference/storage-reference/" class="md-nav__link">
+      Storage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../reference/order-reference/" class="md-nav__link">
+      Order
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../reference/asset-reference/" class="md-nav__link">
+      Asset
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
     <a href="../reference/cli-reference/" class="md-nav__link">
       CLI
     </a>
@@ -946,13 +998,11 @@ Sentinel2, Sentinel3, Sentinel5p</strong>.</p>
 
 <span class="n">catalog</span> <span class="o">=</span> <span class="n">up42</span><span class="o">.</span><span class="n">initialize_catalog</span><span class="p">()</span>
 </code></pre></div>
-
 <h2 id="search-scenes-in-aoi">Search scenes in aoi<a class="headerlink" href="#search-scenes-in-aoi" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="n">aoi</span> <span class="o">=</span> <span class="n">up42</span><span class="o">.</span><span class="n">get_example_aoi</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;Berlin&quot;</span><span class="p">,</span> <span class="n">as_dataframe</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="c1">#aoi = up42.read_vector_file(&quot;data/aoi_washington.geojson&quot;, </span>
 <span class="c1">#                            as_dataframe=False)</span>
 </code></pre></div>
-
 <div class="highlight"><pre><span></span><code><span class="n">search_parameters</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">construct_parameters</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">aoi</span><span class="p">,</span> 
                                                  <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2018-01-01&quot;</span><span class="p">,</span>
                                                  <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;2020-12-31&quot;</span><span class="p">,</span>
@@ -963,23 +1013,20 @@ Sentinel2, Sentinel3, Sentinel5p</strong>.</p>
 <span class="n">search_results</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search_parameters</span><span class="o">=</span><span class="n">search_parameters</span><span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">search_results</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </code></pre></div>
-
 <div class="highlight"><pre><span></span><code><span class="n">catalog</span><span class="o">.</span><span class="n">plot_coverage</span><span class="p">(</span><span class="n">scenes</span><span class="o">=</span><span class="n">search_results</span><span class="p">,</span> 
                       <span class="n">aoi</span><span class="o">=</span><span class="n">aoi</span><span class="p">,</span> 
                       <span class="n">legend_column</span><span class="o">=</span><span class="s2">&quot;scene_id&quot;</span><span class="p">)</span>
 </code></pre></div>
-
 <h2 id="download-visualize-quicklooks">Download &amp; visualize quicklooks<a class="headerlink" href="#download-visualize-quicklooks" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="n">catalog</span><span class="o">.</span><span class="n">download_quicklooks</span><span class="p">(</span><span class="n">image_ids</span><span class="o">=</span><span class="n">search_results</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> 
                             <span class="n">sensor</span><span class="o">=</span><span class="s2">&quot;pleiades&quot;</span><span class="p">)</span>
 
 <span class="n">catalog</span><span class="o">.</span><span class="n">map_quicklooks</span><span class="p">(</span><span class="n">scenes</span><span class="o">=</span><span class="n">search_results</span><span class="p">,</span> <span class="n">aoi</span><span class="o">=</span><span class="n">aoi</span><span class="p">)</span>
 </code></pre></div>
-
 <p><br></p>
 <div class="admonition success">
 <p class="admonition-title">Success!</p>
-<p>Continue with the <a href="/guides/detailed-example/">Detailed Example</a>!</p>
+<p>Continue with <a href="../ordering/">Ordering</a>!</p>
 </div>
                 
               
@@ -1074,8 +1121,8 @@ Sentinel2, Sentinel3, Sentinel5p</strong>.</p>
 
     </div>
     
-      <script src="../assets/javascripts/vendor.08c56446.min.js"></script>
-      <script src="../assets/javascripts/bundle.6ced434e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      <script src="../assets/javascripts/vendor.93c04032.min.js"></script>
+      <script src="../assets/javascripts/bundle.83e5331e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
       
       <script>
         app = initialize({
