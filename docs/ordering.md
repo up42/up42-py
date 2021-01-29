@@ -36,6 +36,13 @@ search_parameters = catalog.construct_parameters(geometry=aoi,
                                                  max_cloudcover=5,
                                                  sortby="cloudCoverage", 
                                                  limit=1)
+# Select only immediately available images
+# Use {"IN": ["DATA"]} for archive data
+search_parameters["query"]["up42:usageType"] = {
+      "IN": [
+        "ANALYTICS"
+      ]
+    }
 search_results = catalog.search(search_parameters=search_parameters)
 search_results
 ```
