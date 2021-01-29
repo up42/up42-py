@@ -95,6 +95,8 @@ plugins:
   - autolinks
   - mkdocs-jupyter:
       include_source: False
+  - macros:
+      module_name: docs/macros
   - exclude:
       glob:
         - "*config*.json"

@@ -6,6 +6,7 @@ mkdocs-autolinks-plugin
 mkdocs-jupyter
 mkdocs-exclude
 mkdocs-exclude-search
+mkdocs-macros-plugin
 mkdocs-click
 mkdocstrings
 nbconvert
