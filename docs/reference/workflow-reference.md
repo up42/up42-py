@@ -2,8 +2,8 @@
 
 ## Workflow object
 
-With whe workflow object you can configure & run jobs and query exisiting jobs of this 
-workflow.
+The Workflow object lets you configure & run jobs and query exisiting jobs related
+to this workflow.
 
 Initialize an existing workflow:
 

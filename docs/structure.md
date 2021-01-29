@@ -9,7 +9,7 @@
     - **Storage > Asset**
 - Each object can **spawn elements of one level below**, e.g.
     - `project = up42.initialize_project()`
-    - `workflow = Project().create_workflow()`
+    - `workflow = project.create_workflow()`
     - `job = workflow.run_job()`
 
 
@@ -22,25 +22,28 @@ function.
 !!! example "Available Functionality"
     === "up42"
     
-        - `.initialize_project()`
-        - `.initalize_workflow()`
-        - `.initalize_job()`
-        - `.initalize_jobtask()`
-        - `.initialize_jobcollection()`
-        - `.initalize_catalog()`
-        - `.initalize_storage()`
-        - `.initalize_order()`
-        - `.initalize_asset()`
+        up42 is the base object imported to Python. It provides the elementary functionality 
+        that is not bound to a specific object of the UP42 structure (Project > Workflow > Job etc.).
+        From it you can initialize existing objects, get information about UP42 
+        data & processing blocks, read or draw vector data, and adjust the SDK settings.
+
+        - `.initialize_project()`, `.initalize_workflow()`, `.initalize_job()`, `.initalize_jobtask()`, 
+            `.initialize_jobcollection()`, `.initalize_catalog()`, `.initalize_storage()`, `.initalize_order()`, `.initalize_asset()`
         - `.get_blocks()`
         - `.get_block_details()`
         - `.read_vector_file()`
         - `.get_example_aoi()`
         - `.draw_aoi()`
         - `.validate_manifest()`
-       
+        - `.settings()`
+
     
     === "Project"
-        
+
+        The Project is the top level object of the UP42 hierachy. With it you can create 
+        new workflows, query already existing workflows & jobs in the project and 
+        manage the project settings.
+
         - `.info`
         - `.create_workflow()`
         - `.get_workflows()`
@@ -49,6 +52,9 @@ function.
         - `.update_project_settings()`
     
     === "Workflow"
+
+        The Workflow object lets you configure & run jobs and query exisiting jobs related
+        to this workflow.
         
         - `.info`
         - `.workflow_tasks`
@@ -68,6 +74,10 @@ function.
         - `.delete()`
         
     === "Job"
+
+        The Job object is the result of running a workflow. It lets you download, visualize and 
+        manipulate the results of the job, and keep track of the status or cancel a job while
+        still running.
     
         - `.info`
         - `.status`
@@ -85,6 +95,9 @@ function.
         - `.get_jobtasks_results_json()`
         
     === "JobTask"
+
+        The JobTask object provides access to a specific intermediate result of a block in the 
+        workflow. Each job contains one or multiple JobTasks, one for each block.
         
         - `.info`
         - `.get_results_json()`
@@ -95,6 +108,9 @@ function.
         - `.plot_quicklooks()`
         
     === "JobCollection"
+
+        The JobCollection object provides facilities for downloading and merging
+        multiple jobs results.
     
         - `.info`
         - `.status`
@@ -104,6 +120,11 @@ function.
         - `.map_results()`
         
     === "Catalog"
+
+        The Catalog class enables access to the UP42 catalog search. You can search
+        for satellite image scenes (for different sensors and criteria like cloud cover),
+        plot the scene coverage and download and plot the scene quicklooks.
+
         - `.construct_parameters()`
         - `.search()`
         - `.download_quicklooks()`
@@ -113,10 +134,17 @@ function.
         - `.place_order()`
 
     === "Storage"
+
+        The Storage class enables access to the UP42 storage. You can list
+        your assets and orders in storage.
+
         - `.get_orders()`
         - `.get_assets()`
     
     === "Order"
+
+        The Order class enables you to place, inspect and get information on orders.
+
         - `.info`
         - `.status`
         - `.metadata`
@@ -124,6 +152,10 @@ function.
         - `.track_status()`
     
     === "Asset"
+
+        The Asset class enables access to the UP42 assets in the user storage. Assets are results 
+        of orders or results of jobs with download blocks.
+
         - `.info`
         - `.source`
         - `.download()`
