@@ -1,6 +1,6 @@
 # :card_box: Structure
 
-## Hierachy
+## hierarchy
 
 - The Python SDK uses nine objects, representing the **hierarchical structure of UP42**:
     - **Project > Workflow > Job > JobTask**
@@ -40,7 +40,7 @@ function.
     
     === "Project"
 
-        The Project is the top level object of the UP42 hierachy. With it you can create 
+        The Project is the top level object of the UP42 hierarchy. With it you can create 
         new workflows, query already existing workflows & jobs in the project and 
         manage the project settings.
 

@@ -2,7 +2,7 @@
 
 ## Project object
 
-The Project is the top level object of the UP42 hierachy. With it you can create 
+The Project is the top level object of the UP42 hierarchy. With it you can create 
 new workflows, query already existing workflows & jobs in the project and 
 manage the project settings.
 
