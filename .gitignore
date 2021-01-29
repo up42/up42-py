@@ -140,6 +140,7 @@ output/
 docs/examples
 docs/CHANGELOG.md
 /dev
+docs/mkdocs_macros
 /examples/project*
 - "*swagger*"
 - "*redoc*"
