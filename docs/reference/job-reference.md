@@ -2,7 +2,7 @@
 
 ## Job object
 
-The Job object is the result of running a workflow. It lets you download, visualize and 
+The Job class is the result of running a workflow. It lets you download, visualize and 
 manipulate the results of the job, and keep track of the status or cancel a job while
 still running.
 

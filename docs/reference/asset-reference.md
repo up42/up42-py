@@ -2,7 +2,7 @@
 
 ## Asset object
 
-The Asset class enables access to the UP42 assets in the user storage. Assets are results 
+The Asset class enables access to the UP42 assets in the storage. Assets are results 
 of orders or results of jobs with download blocks.
 
 
