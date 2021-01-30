@@ -5,6 +5,8 @@ Used primarily for the definition of class descriptions and class functionality 
 chapters structure.md & and the code reference.
 """
 
+from typing import List
+
 
 def define_env(env):
 	"""
@@ -34,15 +36,26 @@ def define_env(env):
 
 		For more functionality see https://mkdocs-macros-plugin.readthedocs.io/en/latest/macros/
 	"""
-	env.variables.classes_up42 = "up42 is the base object imported to Python. It provides the " \
+	def format_functions(functions: List):
+		# Two tabs to stay within the tabbed code box.
+		# Requires Python linebreak and markdown linebreak (two spaces)!
+		# "\n\t\t• `abc`  \n\t\t• `cde`  \n\t\t• `cde`
+		formatted = [f"\n\t\t&emsp; • `.{func}()`  " for func in functions]
+		return ''.join(formatted)
+
+	env.variables.class_up42 = "up42 is the base object imported to Python. It provides the " \
 	                             "elementary functionality that is not bound to a specific object " \
 	                             "of the UP42 structure (Project > Workflow > Job etc.). From it you " \
 	                             "can initialize existing objects, get information about UP42 data & " \
 	                             "processing blocks, read or draw vector data, and adjust the SDK settings."
 
-	env.variables.functions_job = ["info", "status", "download_results",
+	env.variables.func_job = ["info", "status", "download_results",
 	                               "plot_results", "map_results",
 	                               "track_status", "cancel_job", "get_results_json",
 	                               "get_logs", "download_quicklooks",
 	                               "plot_quicklooks", "upload_results_to_bucket",
 	                               "get_jobtasks", "get_jobtasks_results_json"]
+
+	env.variables.func_job_formatted = format_functions(env.variables.functions_job)
+
+
