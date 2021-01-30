@@ -2,9 +2,7 @@
 
 ## Project object
 
-The Project is the top level object of the UP42 hierarchy. With it you can create 
-new workflows, query already existing workflows & jobs in the project and 
-manage the project settings.
+{{ class_project }}
 
 To initialize an existing project, first [authenticate](authentication.md#authenticate)
 with UP42, then use:

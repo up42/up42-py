@@ -2,8 +2,7 @@
 
 ## Workflow object
 
-The Workflow object lets you configure & run jobs and query exisiting jobs related
-to this workflow.
+{{ class_workflow }}
 
 Initialize an existing workflow:
 

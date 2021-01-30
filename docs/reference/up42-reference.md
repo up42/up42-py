@@ -2,11 +2,7 @@
 
 ## up42 object
 
-up42 is the base object imported to Python. It provides the elementary functionality 
-that is not bound to a specific object of the UP42 structure (Project > Workflow > Job etc.).
-
-From it you can initialize existing objects, get information about UP42 
-data & processing blocks, read or draw vector data, and adjust the SDK settings.
+{{ class_up42 }}
 
 To import the UP42 library:
 

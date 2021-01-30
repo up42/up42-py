@@ -1,6 +1,6 @@
 # :card_box: Structure
 
-## hierarchy
+## Hierarchy
 
 - The Python SDK uses nine objects, representing the **hierarchical structure of UP42**:
     - **Project > Workflow > Job > JobTask**
@@ -19,80 +19,31 @@ A quick overview of the **functionality** of each object. Also see the
 [**code reference**](https://sdk.up42.com/reference/project/) for more details on each
 function.
 
+
 !!! example "Available Functionality"
     === "up42"
-    
-        up42 is the base object imported to Python. It provides the elementary functionality 
-        that is not bound to a specific object of the UP42 structure (Project > Workflow > Job etc.).
-        From it you can initialize existing objects, get information about UP42 
-        data & processing blocks, read or draw vector data, and adjust the SDK settings.
 
-        - `.initialize_project()`, `.initalize_workflow()`, `.initalize_job()`, `.initalize_jobtask()`, 
-            `.initialize_jobcollection()`, `.initalize_catalog()`, `.initalize_storage()`, `.initalize_order()`, `.initalize_asset()`
-        - `.get_blocks()`
-        - `.get_block_details()`
-        - `.read_vector_file()`
-        - `.get_example_aoi()`
-        - `.draw_aoi()`
-        - `.validate_manifest()`
-        - `.settings()`
+        {{ class_up42 }}
 
-    
+        {{ format_funcs(funcs_up42)}}
+
     === "Project"
 
-        The Project is the top level object of the UP42 hierarchy. With it you can create 
-        new workflows, query already existing workflows & jobs in the project and 
-        manage the project settings.
+        {{ class_project }}
 
-        - `.info`
-        - `.create_workflow()`
-        - `.get_workflows()`
-        - `.get_jobs()`
-        - `.get_project_settings()`
-        - `.update_project_settings()`
+        {{ format_funcs(funcs_project)}}
     
     === "Workflow"
 
-        The Workflow object lets you configure & run jobs and query exisiting jobs related
-        to this workflow.
-        
-        - `.info`
-        - `.workflow_tasks`
-        - `.add_workflow_tasks()`
-        - `.construct_parameters()`
-        - `.estimate_job()`
-        - `.test_job()`
-        - `.run_job()`
-        - `.construct_parameters_parallel()`
-        - `.test_jobs_parallel()`
-        - `.run_jobs_parallel()`
-        - `.get_jobs()`
-        - `.get_workflow_tasks()`
-        - `.get_compatible_blocks()`
-        - `.get_parameters_info()`
-        - `.update_name()`
-        - `.delete()`
+        {{ class_workflow }}
+
+        {{ format_funcs(funcs_workflow)}}
         
     === "Job"
 
-        The Job object is the result of running a workflow. It lets you download, visualize and 
-        manipulate the results of the job, and keep track of the status or cancel a job while
-        still running.
-    
-        - `.info`
-        - `.status`
-        - `.download_results()`
-        - `.plot_results()`
-        - `.map_results()`
-        - `.track_status()`
-        - `.cancel_job()`
-        - `.get_results_json()`
-        - `.get_logs()`
-        - `.download_quicklooks()`
-        - `.plot_quicklooks`
-        - `.upload_results_to_bucket()`
-        - `.get_jobtasks()`
-        - `.get_jobtasks_results_json()`
+        {{ class_job }}
+
+        {{ format_funcs(funcs_job)}}
         
     === "JobTask"
 
