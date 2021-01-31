@@ -15,11 +15,22 @@ logger = get_logger(__name__)
 
 
 class JobCollection(VizTools, Tools):
+    """
+    The JobCollection class provides facilities for handling and downloading
+    multiple jobs results as one object.
+
+    A jobcollection is created as the result of e.g. running multiple jobs in parallel:
+    ```python
+    jobcollection = workflow.run_jobs_parallel()
+    ```
+
+    Initialize a jobcollection from existing jobs:
+    ```python
+    jobcollection = up42.initialize_jobcollection(job_ids=["12345", "6789"])
+    ```
+    """
+
     def __init__(self, auth: Auth, project_id: str, jobs: List[Job]):
-        """
-        The JobCollection class provides facilities for downloading and merging
-        multiple jobs results.
-        """
         self.auth = auth
         self.project_id = project_id
         self.jobs = jobs

@@ -62,12 +62,18 @@ supported_sensors = {
 
 # pylint: disable=duplicate-code
 class Catalog(VizTools, Tools):
+    """
+    The Catalog class enables access to the UP42 catalog search. You can search
+    for satellite image scenes (for different sensors and criteria like cloud cover),
+    plot the scene coverage and download and plot the scene quicklooks.
+
+    Use the catalog:
+    ```python
+    catalog = up42.initialize_catalog()
+    ```
+    """
+
     def __init__(self, auth: Auth):
-        """
-        The Catalog class enables access to the UP42 catalog search. You can search
-        for satellite image scenes (for different sensors and criteria like cloud cover),
-        plot the scene coverage and download and plot the scene quicklooks.
-        """
         self.auth = auth
         self.quicklooks = None
 

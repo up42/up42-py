@@ -1,16 +1,4 @@
 # up42
-
-## up42 object
-
-{{ class_up42 }}
-
-To import the UP42 library:
-
-```python
-import up42
-```
-
-<br>
       
 ::: up42.__init__
     rendering:

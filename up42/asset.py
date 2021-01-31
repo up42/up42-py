@@ -14,14 +14,21 @@ logger = get_logger(__name__)
 
 
 class Asset(Tools):
+    """
+    The Asset class enables access to the UP42 assets in the storage. Assets are results
+    of orders or results of jobs with download blocks.
+
+    Use an existing asset:
+    ```python
+    asset = up42.initialize_asset(asset_id="8c2dfb4d-bd35-435f-8667-48aea0dce2da")
+    ```
+    """
+
     def __init__(
         self,
         auth: Auth,
         asset_id: str,
     ):
-        """
-        The Asset class provides access to fullfilled Orders and results of select data blocks.
-        """
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.asset_id = asset_id
