@@ -4,7 +4,12 @@ Defined snippets and macros for repeated use in mkdocs.
 Used primarily for the definition of class descriptions and class functionality (used in the class
 chapters structure.md & and the code reference.
 
-Use as {{ hello }} or {{ format_functions(func_project)}}
+Use as {{ hello }} or {{ format_upper(list_of_strings)}}
+
+To include markdown files:
+{% include 'class_descriptions/project.md' %}
+
+Changes in macro code require restart of mkdocs serve.
 """
 
 from typing import List, Callable
@@ -14,6 +19,8 @@ import up42
 def define_env(env):
     """
     This is the hook for defining variables, macros and filters.
+
+    For more functionality see https://mkdocs-macros-plugin.readthedocs.io/en/latest/macros/
 
     Examples:
             # Use a variable/snippet, e.g. {{ name1 }}
@@ -27,21 +34,13 @@ def define_env(env):
             # Or to export some predefined function
             import math
             env.macro(math.floor) # will be exported as 'floor'
-
-            # Plot inline:
-    # Inspired by https://github.com/fralau/mkdocs_macros_plugin/issues/37#issuecomment-636555341
-    ...
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    html_string = f"<img alt='{alt_text}' width='{width}' height='{height}' src='data:image/png;base64,{data}'/>"
-    return html_string
-
-            For more functionality see https://mkdocs-macros-plugin.readthedocs.io/en/latest/macros/
     """
 
     def get_class_funcs(
-        c: Callable, exclude: List[str] = None, exclude_tools=True
+        c: Callable,
+        exclude: List[str] = None,
+        exclude_tools=True,
+        exclude_viztools=False,
     ) -> List[str]:
         """
         Gets all class methods, excluding specifically excluded ones.
@@ -51,18 +50,20 @@ def define_env(env):
                 exclude: Exclude specific methids.
                 exclude_tools: Exclude inherited functions from Tools. Only relevant for up42 module.
         """
+        funcs = dir(c)
         function_names = [
-            func
-            for func in dir(c)
-            if callable(getattr(c, func))
-            and not func.startswith("_")
-            and not func.startswith("__")
-            and not func[0].isupper()
+            f
+            for f in funcs
+            if not f.startswith("_")
+            and not f.startswith("__")
+            and not f[0].isupper()
+            and not f.capitalize() in funcs
+            and not f in ["jobcollection", "jobtask", "utils", "viztools", "estimation", "warnings", "logger", "get_logger"]
         ]
         if exclude_tools:
-            function_names = [
-                func for func in function_names if func not in dir(up42.Tools)
-            ]
+            function_names = [f for f in function_names if f not in dir(up42.Tools)]
+        if exclude_viztools:
+            function_names = [f for f in function_names if f not in dir(up42.VizTools)]
         return function_names
 
     @env.macro
@@ -74,26 +75,35 @@ def define_env(env):
         # Two tabs to stay within the tabbed code box.
         # Requires Python linebreak and markdown linebreak (two spaces)!
         # "\n\t\t• `abc`  \n\t\t• `cde`  \n\t\t• `cde`
+
         formatted = [f"\n\t\t&emsp; • `.{func}()`  " for func in functions]
         return "".join(formatted)
 
-    env.variables.class_up42 = """up42 is the base object imported to Python. It provides the 
-	                             elementary functionality that is not bound to a specific object 
-	                             of the UP42 structure (Project > Workflow > Job etc.). From it you 
-	                             can initialize existing objects, get information about UP42 data & 
-	                             processing blocks, read or draw vector data, and adjust the SDK settings."""
-    env.variables.funcs_up42 = get_class_funcs(up42, exclude_tools=False)
+    # Variables
 
-    env.variables.class_project = """The Project is the top level object of the UP42 hierarchy. With it you 
-	                              can create new workflows, query already existing workflows & jobs in the 
-	                              project and manage the project settings."""
+    # needs to fit the indention of the structure chapter box.
+    env.variables.docstring_up42 = up42.__doc__.replace("\n", "\n\t")  # init module docstring
+    env.variables.docstring_project = up42.Project.__doc__.replace("\n", "\n\t")
+    env.variables.docstring_workflow = up42.Workflow.__doc__.replace("\n", "\n\t")
+    env.variables.docstring_job = up42.Job.__doc__.replace("\n", "\n\t")
+    env.variables.docstring_jobtask = up42.JobTask.__doc__.replace("\n", "\n\t")
+    env.variables.docstring_jobcollection = up42.JobCollection.__doc__.replace(
+        "\n", "\n\t"
+    )
+    env.variables.docstring_catalog = up42.Catalog.__doc__.replace("\n", "\n\t")
+    env.variables.docstring_order = up42.Order.__doc__.replace("\n", "\n\t")
+    env.variables.docstring_storage = up42.Storage.__doc__.replace("\n", "\n\t")
+    env.variables.docstring_asset = up42.Asset.__doc__.replace("\n", "\n\t")
+
+    env.variables.funcs_up42 = get_class_funcs(
+        up42, exclude_tools=False, exclude_viztools=True
+    )
     env.variables.funcs_project = get_class_funcs(up42.Project)
-
-    env.variables.class_workflow = """The Workflow object lets you configure & run jobs and query exisiting jobs related
-				to this workflow."""
     env.variables.funcs_workflow = get_class_funcs(up42.Workflow)
-
-    env.variables.class_job = """The Job class is the result of running a workflow. It lets you download, visualize and 
-					manipulate the results of the job, and keep track of the status or cancel a job while
-					still running."""
     env.variables.funcs_job = get_class_funcs(up42.Job)
+    env.variables.funcs_jobtask = get_class_funcs(up42.JobTask)
+    env.variables.funcs_jobcollection = get_class_funcs(up42.JobCollection)
+    env.variables.funcs_catalog = get_class_funcs(up42.Catalog)
+    env.variables.funcs_order = get_class_funcs(up42.Order)
+    env.variables.funcs_storage = get_class_funcs(up42.Storage)
+    env.variables.funcs_asset = get_class_funcs(up42.Asset)
