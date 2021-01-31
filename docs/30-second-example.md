@@ -1,6 +1,6 @@
 # :stopwatch: 30 Second Example
 
-The UP42 Python package uses nine objects, representing the **hierarchical structure** of UP42:  
+The UP42 Python package uses nine classes, representing the **hierarchical structure** of UP42:  
 **Project > Workflow > Job > JobTask** | **JobCollection** | **Catalog > Order** | **Storage > Asset**
 
 ![](assets/vizualisations.jpg)

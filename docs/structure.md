@@ -2,12 +2,12 @@
 
 ## Hierarchy
 
-- The Python SDK uses nine class objects, representing the **hierarchical structure of UP42**:
+- The Python SDK uses nine classes, representing the **hierarchical structure of UP42**:
     - **Project > Workflow > Job > JobTask**
     - **JobCollection**
     - **Catalog > Order**
     - **Storage > Asset**
-- Each object can **spawn elements of one level below**, e.g.
+- Each class object can **spawn elements of one level below**, e.g.
     - `project = up42.initialize_project()`
     - `workflow = project.create_workflow()`
     - `job = workflow.run_job()`
