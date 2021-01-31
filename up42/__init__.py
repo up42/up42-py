@@ -1,3 +1,15 @@
+"""
+    `up42` is the base library module imported to Python. It provides the elementary
+    functionality that is not bound to a specific class of the UP42 structure (Project > Workflow > Job etc.).
+    From `up42` you can initialize other existing objects, get information about UP42 data &
+    processing blocks, read or draw vector data, and adjust the SDK settings.
+
+    To import the UP42 library:
+    ```python
+    import up42
+    ```
+"""
+
 import warnings
 from pathlib import Path
 from typing import Union, Dict, Tuple, List
