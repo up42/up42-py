@@ -12,10 +12,17 @@ logger = get_logger(__name__)
 
 
 class Storage(Tools):
+    """
+    The Storage class enables access to the UP42 storage. You can list
+    your assets and orders within an UP42 workspace.
+
+    Use the storage:
+    ```python
+    storage = up42.initialize_storage()
+    ```
+    """
+
     def __init__(self, auth: Auth):
-        """
-        The Storage class can query all available assets within an UP42 workspace.
-        """
         self.auth = auth
         self.workspace_id = auth.workspace_id
 

@@ -1,6 +1,6 @@
 # :key: Authentication
 
-To create and run workflow you first need to authenticate with **UP42** via your **project credentials**.
+To create and run a workflow, you first need to authenticate with **UP42** via your **project credentials**.
 
 ## Get your Project credentials
 

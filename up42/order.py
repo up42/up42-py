@@ -14,11 +14,16 @@ DATA_PROVIDERS = ["oneatlas"]
 
 
 class Order(Tools):
+    """
+    The Order class enables you to place, inspect and get information on orders.
+
+    Use an existing order:
+    ```python
+    order = up42.initialize_order(order_id="ea36dee9-fed6-457e-8400-2c20ebd30f44")
+    ```
+    """
+
     def __init__(self, auth: Auth, order_id: str, payload: Optional[Dict] = None):
-        """
-        The Order class provides access to the results, parameters and metadata of UP42
-        Orders.
-        """
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.order_id = order_id

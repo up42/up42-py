@@ -28,11 +28,22 @@ logger = get_logger(__name__)
 
 
 class Workflow(Tools):
+    """
+    The Workflow class lets you configure & run jobs and query existing jobs related
+    to this workflow.
+
+    Create a new workflow:
+    ```python
+    workflow = project.create_workflow(name="new_workflow")
+    ```
+
+    Use an existing workflow:
+    ```python
+    workflow = up42.initialize_workflow(workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98")
+    ```
+    """
+
     def __init__(self, auth: Auth, project_id: str, workflow_id: str):
-        """
-        The Workflow class can query all available and spawn new jobs for an UP42
-        Workflow and helps to find and set the the workflow tasks, parameters and aoi.
-        """
         self.auth = auth
         self.project_id = project_id
         self.workflow_id = workflow_id

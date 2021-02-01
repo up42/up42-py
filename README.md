@@ -43,7 +43,7 @@ pip install up42-py
 
 ## 30-second Example
 
-The UP42 Python package uses nine objects, representing the **hierarchical structure** of UP42: **Project > Workflow > Job > JobTask**, **JobCollection**, **Catalog > Order** & **Storage > Asset**.
+The UP42 Python package uses nine classes, representing the **hierarchical structure** of UP42: **Project > Workflow > Job > JobTask** | **JobCollection** | **Catalog > Order** | **Storage > Asset**.
 
 ![](docs/assets/vizualisations.jpg)
 

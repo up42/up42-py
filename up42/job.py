@@ -23,6 +23,22 @@ logger = get_logger(__name__)
 
 # pylint: disable=duplicate-code
 class Job(VizTools, Tools):
+    """
+    The Job class is the result of running a workflow. It lets you download, visualize and
+        manipulate the results of the job, and keep track of the status or cancel a job while
+        still running.
+
+    Run a new job:
+    ```python
+    job = workflow.run_job(name="new_job", input_parameters={...})
+    ```
+
+    Use an existing job:
+    ```python
+    job = up42.initialize_job(job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021")
+    ```
+    """
+
     def __init__(
         self,
         auth: Auth,
@@ -30,10 +46,7 @@ class Job(VizTools, Tools):
         job_id: str,
         order_ids: List[str] = None,
     ):
-        """
-        The Job class provides access to the results, parameters and tasks of UP42
-        Jobs (Workflows that have been run as Jobs).
-        """
+
         self.auth = auth
         self.project_id = project_id
         self.job_id = job_id
@@ -78,7 +91,8 @@ class Job(VizTools, Tools):
     @deprecation("get_status", "job.status")
     def get_status(self) -> str:
         """
-        `get_status` will be deprecated in release 0.13, use [status attribute](job.md#up42.job.Job.status) instead.
+        `get_status` will be deprecated in release 0.13, use
+        [status attribute](job-reference.md#up42.job.Job.status) instead.
         """
         return self.status
 
@@ -86,7 +100,7 @@ class Job(VizTools, Tools):
     def is_succeeded(self) -> bool:
         """
         Gets `True` if the job succeeded, `False` otherwise.
-        Also see [status attribute](job.md#up42.job.Job.status).
+        Also see [status attribute](job-reference.md#up42.job.Job.status).
         """
         return self.status == "SUCCEEDED"
 

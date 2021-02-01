@@ -62,12 +62,18 @@ supported_sensors = {
 
 # pylint: disable=duplicate-code
 class Catalog(VizTools, Tools):
+    """
+    The Catalog class enables access to the UP42 catalog search. You can search
+    for satellite image scenes (for different sensors and criteria like cloud cover),
+    plot the scene coverage and download and plot the scene quicklooks.
+
+    Use the catalog:
+    ```python
+    catalog = up42.initialize_catalog()
+    ```
+    """
+
     def __init__(self, auth: Auth):
-        """
-        The Catalog class enables access to the UP42 catalog search. You can search
-        for satellite image scenes (for different sensors and criteria like cloud cover),
-        plot the scene coverage and download and plot the scene quicklooks.
-        """
         self.auth = auth
         self.quicklooks = None
 
@@ -380,7 +386,7 @@ class Catalog(VizTools, Tools):
             scene (Series): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
                 for the first scene of a catalog search result.
             track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
-            report_time (int): The intervall (in seconds) when to get the order status, 
+            report_time (int): The intervall (in seconds) when to get the order status,
                 if `track_status` is set to True.
 
          Warning:

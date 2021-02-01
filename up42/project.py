@@ -14,11 +14,22 @@ logger = get_logger(__name__)
 
 
 class Project(Tools):
+    """
+    The Project is the top-level class of the UP42 hierarchy. With it you can create
+    new workflows, query already existing workflows & jobs in the project and manage
+    the project settings.
+
+    Create a new project on the [**UP42 Console website**](authentication.md#authenticate).
+
+    Use an existing project:
+    ```python
+    up42.authenticate(project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321",
+                      project_api_key="9i7uec8a-45be-41ad-a50f-98bewb528b10")
+    project = up42.initialize_project()
+    ```
+    """
+
     def __init__(self, auth: Auth, project_id: str):
-        """
-        The Project class can query all available workflows and spawn new workflows
-        within an UP42 project. Also handles project user settings.
-        """
         self.auth = auth
         self.project_id = project_id
         if self.auth.get_info:
