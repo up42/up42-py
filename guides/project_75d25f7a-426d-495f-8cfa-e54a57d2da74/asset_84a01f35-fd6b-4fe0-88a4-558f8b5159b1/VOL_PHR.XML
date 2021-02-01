@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<?xml-stylesheet href="./LIBRARY/VOL_STYL.XSL" type="text/xsl"?>
+<Dimap_Document xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SPOT_vol.xsd" version="2.15">
+    <Metadata_Identification>
+        <METADATA_FORMAT version="2.15">DIMAP</METADATA_FORMAT>
+        <METADATA_PROFILE>VOLUME</METADATA_PROFILE>
+        <METADATA_SUBPROFILE>SINGLE_VOLUME</METADATA_SUBPROFILE>
+        <METADATA_LANGUAGE>en</METADATA_LANGUAGE>
+    </Metadata_Identification>
+    <Dataset_Identification>
+        <DATASET_NAME>PHR Volume Description</DATASET_NAME>
+        <DATASET_ID></DATASET_ID>
+    </Dataset_Identification>
+    <Product_Information>
+        <Producer_Information>
+            <PRODUCER_NAME>AIRBUS DS</PRODUCER_NAME>
+            <PRODUCER_URL href="http://www.geo-airbusds.com"/>
+            <PRODUCER_CONTACT>sales@airbus.com</PRODUCER_CONTACT>
+            <PRODUCER_ADDRESS>5 rue des satellites - BP 14359 - F 31030 Toulouse Cedex 4 - France</PRODUCER_ADDRESS>
+        </Producer_Information>
+        <Distributor_Information>
+            <DISTRIBUTOR_NAME>AIRBUS DS</DISTRIBUTOR_NAME>
+            <DISTRIBUTOR_URL href="http://www.geo-airbusds.com"/>
+            <DISTRIBUTOR_CONTACT>sales@airbus.com</DISTRIBUTOR_CONTACT>
+            <DISTRIBUTOR_ADDRESS>5 rue des satellites - BP 14359 - F 31030 Toulouse Cedex 4 - France</DISTRIBUTOR_ADDRESS>
+        </Distributor_Information>
+        <Delivery_Identification>
+            <PRODUCTION_DATE>2021-01-27T18:32:56.301Z</PRODUCTION_DATE>
+            <JOB_ID>efa532c0-efa7-4e9f-ce1c-41b2f14fc419</JOB_ID>
+            <PRODUCT_CODE></PRODUCT_CODE>
+            <PRODUCT_TYPE>NA</PRODUCT_TYPE>
+            <PRODUCT_INFO>PHR</PRODUCT_INFO>
+            <Order_Identification>
+                <CUSTOMER_REFERENCE>41568024-8fb8-443d-909e-bc12ca24e0ae</CUSTOMER_REFERENCE>
+                <INTERNAL_REFERENCE></INTERNAL_REFERENCE>
+                <COMMERCIAL_REFERENCE>e339a202-6d97-41d3-b63a-a069c30c24c0</COMMERCIAL_REFERENCE>
+                <COMMERCIAL_ITEM></COMMERCIAL_ITEM>
+                <COMMENT></COMMENT>
+            </Order_Identification>
+        </Delivery_Identification>
+    </Product_Information>
+    <Dataset_Content>
+        <Dataset_Components>
+            <Component>
+                <COMPONENT_TITLE>ORTHO MS PHR Volume Description</COMPONENT_TITLE>
+                <COMPONENT_TYPE>DIMAP</COMPONENT_TYPE>
+                <COMPONENT_PATH href="IMG_PHR1A_MS_001/DIM_PHR1A_MS_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-001.XML"/>
+                <COMPONENT_TN_PATH href="IMG_PHR1A_MS_001/ICON_PHR1A_MS_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-001.JPG"/>
+                <COMPONENT_TN_FORMAT>image/jpeg</COMPONENT_TN_FORMAT>
+            </Component>
+            <Component>
+                <COMPONENT_TITLE>ORTHO P PHR Volume Description</COMPONENT_TITLE>
+                <COMPONENT_TYPE>DIMAP</COMPONENT_TYPE>
+                <COMPONENT_PATH href="IMG_PHR1A_P_002/DIM_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002.XML"/>
+                <COMPONENT_TN_PATH href="IMG_PHR1A_P_002/ICON_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002.JPG"/>
+                <COMPONENT_TN_FORMAT>image/jpeg</COMPONENT_TN_FORMAT>
+            </Component>
+            <Component>
+                <COMPONENT_TITLE>Digital Documentation about DIMAP format</COMPONENT_TITLE>
+                <COMPONENT_TYPE>ENCAPSULATED</COMPONENT_TYPE>
+                <COMPONENT_PATH href="http://www.geo-airbusds.com/en/3030-pleiades-and-spot-6-7-format-delivery"/>
+                <COMPONENT_TN_PATH href="LIBRARY/LOGO.JPG"/>
+                <COMPONENT_TN_FORMAT>image/jpeg</COMPONENT_TN_FORMAT>
+            </Component>
+        </Dataset_Components>
+    </Dataset_Content>
+</Dimap_Document>

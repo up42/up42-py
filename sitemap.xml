@@ -1,119 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url>
      <loc>https://up42.github.io/up42-py/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/30-second-example/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/installation/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/authentication/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/structure/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/catalog/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/ordering/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://up42.github.io/up42-py/guides/detailed-example/</loc>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/examples-intro/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/examples/aircraft-detection/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/examples/radar_processing_1/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/examples/flood_mapping/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/examples/catalog-quicklooks/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/examples/ship-identification/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/up42-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/project-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/workflow-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/job-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/jobcollection-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/jobtask-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/catalog-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/storage-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/order-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/asset-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/cli-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/cli/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/reference/cli-reference/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/CHANGELOG/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/support-faq/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://up42.github.io/up42-py/privacy-policy/</loc>
-     <lastmod>2021-01-28</lastmod>
+     <lastmod>2021-02-01</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>

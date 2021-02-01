@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Dimap_Document>
+    <Metadata_Identification>
+        <METADATA_FORMAT version="2.15">DIMAP</METADATA_FORMAT>
+        <METADATA_PROFILE>PHR_ORTHO</METADATA_PROFILE>
+        <METADATA_SUBPROFILE>PROCESSING</METADATA_SUBPROFILE>
+        <METADATA_LANGUAGE>en</METADATA_LANGUAGE>
+    </Metadata_Identification>
+    <Coordinate_Reference_System>
+        <Temporal_CRS>
+            <CRS_TABLES version="0.0">ITU</CRS_TABLES>
+            <TEMPORAL_CRS_NAME>UTC</TEMPORAL_CRS_NAME>
+        </Temporal_CRS>
+    </Coordinate_Reference_System>
+    <Processing_Step_List>
+        <Processing_Step>
+            <DATE_TIME>2020-04-18T11:25:19Z</DATE_TIME>
+            <SOFTWARE version="V_05_03">inv</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <DATE_TIME>2020-04-18T11:58:17.3Z</DATE_TIME>
+            <SOFTWARE version="5.6.1">LAI_INIT_LOC_INV</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <DATE_TIME>2020-04-18T12:00:13Z</DATE_TIME>
+            <SOFTWARE version="5.7">ALBUM_NCN</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <DATE_TIME>2020-04-18T12:03:15Z</DATE_TIME>
+            <SOFTWARE version="V_05_03">inv</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <DATE_TIME>2021-01-25T11:26:05.0Z</DATE_TIME>
+            <SOFTWARE version="5.6.1">LAI_INIT_LOC_PROD</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <DATE_TIME>2021-01-25T11:26:19.0Z</DATE_TIME>
+            <SOFTWARE version="4.1">RADIO_PHR</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <DATE_TIME>2021-01-25T11:27:18.0Z</DATE_TIME>
+            <SOFTWARE version="6.1">PretrtM</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <DATE_TIME>2021-01-25T11:28:37.0Z</DATE_TIME>
+            <SOFTWARE version="6.1">SIGMA</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <DATE_TIME>2021-01-25T11:28:37.0Z</DATE_TIME>
+            <SOFTWARE version="6.1">PostrtM</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <DATE_TIME>2021-01-25T11:30:54Z</DATE_TIME>
+            <SOFTWARE version="2.2.3">ReflectanceDisplay</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <PROCESSING_LEVEL>ORTHO</PROCESSING_LEVEL>
+            <DATE_TIME>2021-01-27T18:33:46.111Z</DATE_TIME>
+            <SOFTWARE version="">Ingestor</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <PROCESSING_LEVEL>ORTHO</PROCESSING_LEVEL>
+            <DATE_TIME>2021-01-27T18:33:46.111Z</DATE_TIME>
+            <SOFTWARE version="1.3.51.5">GeoPaaS</SOFTWARE>
+        </Processing_Step>
+        <Processing_Step>
+            <PROCESSING_LEVEL>ORTHO</PROCESSING_LEVEL>
+            <DATE_TIME>2021-01-27T18:33:46.111Z</DATE_TIME>
+            <SOFTWARE version="v48.1.0">Format</SOFTWARE>
+        </Processing_Step>
+    </Processing_Step_List>
+    <Processing_Parameter_List>
+        <PROCESSING_LEVEL>L0</PROCESSING_LEVEL>
+        <Processing_Parameter>
+            <PARAMETER_DESC>PAIPSY parameters</PARAMETER_DESC>
+            <PARAMETER_TYPE>PAIPSY_PARAMETERS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_PAIPSY_PARAMETERS_0010_20120718131600_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Viewing direction of the real sensor model PA</PARAMETER_DESC>
+            <PARAMETER_TYPE>PA1313131313_VIEWING_DIRECTIONS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_PA1313131313_VIEWING_DIRECTIONS_0027_20150501000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Viewing direction of the real sensor model B0</PARAMETER_DESC>
+            <PARAMETER_TYPE>B0_VIEWING_DIRECTIONS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_B0_VIEWING_DIRECTIONS_0027_20150501000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Viewing direction of the real sensor model B1</PARAMETER_DESC>
+            <PARAMETER_TYPE>B1_VIEWING_DIRECTIONS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_B1_VIEWING_DIRECTIONS_0027_20150501000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Viewing direction of the real sensor model B2</PARAMETER_DESC>
+            <PARAMETER_TYPE>B2_VIEWING_DIRECTIONS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_B2_VIEWING_DIRECTIONS_0027_20150501000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Viewing direction of the real sensor model B3</PARAMETER_DESC>
+            <PARAMETER_TYPE>B3_VIEWING_DIRECTIONS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_B3_VIEWING_DIRECTIONS_0027_20150501000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Spacecraft model</PARAMETER_DESC>
+            <PARAMETER_TYPE>SPACECRAFT_MODEL2</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_SPACECRAFT_MODEL2_0014_20111219000001_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Earth model</PARAMETER_DESC>
+            <PARAMETER_TYPE>EARTH_MODEL</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_EARTH_MODEL_0007_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Euclide parameters</PARAMETER_DESC>
+            <PARAMETER_TYPE>EUCLIDE</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_EUCLIDE_0006_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Parameters of vigneting areas</PARAMETER_DESC>
+            <PARAMETER_TYPE>INTER_ARRAY</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_INTER_ARRAY_0008_20141016000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Common parameters</PARAMETER_DESC>
+            <PARAMETER_TYPE>COMMON2</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_COMMON2_0007_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>LAI Init Loc Inventory parameters</PARAMETER_DESC>
+            <PARAMETER_TYPE>INIT_LOC_INV_PARAM</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_INIT_LOC_INV_PARAM_0012_20111217000001_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Parameters for ALBUM_NCN LAI</PARAMETER_DESC>
+            <PARAMETER_TYPE>ALBUM_NCN_PARAM</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_ALBUM_NCN_PARAM_0023_20111217000006_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Out of order detectors</PARAMETER_DESC>
+            <PARAMETER_TYPE>OUT_OF_ORDER_DETECTORS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_OUT_OF_ORDER_DETECTORS_0008_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Absolute calibration coefficients</PARAMETER_DESC>
+            <PARAMETER_TYPE>PHYSICAL_GAIN_DATA</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_PHYSICAL_GAIN_DATA_0026_20200401160000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Spectral parameters</PARAMETER_DESC>
+            <PARAMETER_TYPE>SPECTRAL_SENSITIVITIES</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_SPECTRAL_SENSITIVITIES_0008_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+    </Processing_Parameter_List>
+    <Processing_Parameter_List>
+        <PROCESSING_LEVEL>SENSOR</PROCESSING_LEVEL>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Viewing direction of the real sensor model PA</PARAMETER_DESC>
+            <PARAMETER_TYPE>PA1313131313_VIEWING_DIRECTIONS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_PA1313131313_VIEWING_DIRECTIONS_0027_20150501000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Viewing direction of the real sensor model B0</PARAMETER_DESC>
+            <PARAMETER_TYPE>B0_VIEWING_DIRECTIONS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_B0_VIEWING_DIRECTIONS_0027_20150501000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Viewing direction of the real sensor model B1</PARAMETER_DESC>
+            <PARAMETER_TYPE>B1_VIEWING_DIRECTIONS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_B1_VIEWING_DIRECTIONS_0027_20150501000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Viewing direction of the real sensor model B2</PARAMETER_DESC>
+            <PARAMETER_TYPE>B2_VIEWING_DIRECTIONS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_B2_VIEWING_DIRECTIONS_0027_20150501000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Viewing direction of the real sensor model B3</PARAMETER_DESC>
+            <PARAMETER_TYPE>B3_VIEWING_DIRECTIONS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_B3_VIEWING_DIRECTIONS_0027_20150501000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Spacecraft model</PARAMETER_DESC>
+            <PARAMETER_TYPE>SPACECRAFT_MODEL2</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_SPACECRAFT_MODEL2_0014_20111219000001_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Earth model</PARAMETER_DESC>
+            <PARAMETER_TYPE>EARTH_MODEL</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_EARTH_MODEL_0008_20121201000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Euclide parameters</PARAMETER_DESC>
+            <PARAMETER_TYPE>EUCLIDE</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_EUCLIDE_0007_20121201000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Parameters of vigneting areas</PARAMETER_DESC>
+            <PARAMETER_TYPE>INTER_ARRAY</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_INTER_ARRAY_0008_20141016000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Common parameters</PARAMETER_DESC>
+            <PARAMETER_TYPE>COMMON2</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_COMMON2_0007_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Out of order detectors</PARAMETER_DESC>
+            <PARAMETER_TYPE>OUT_OF_ORDER_DETECTORS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_OUT_OF_ORDER_DETECTORS_0008_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>FOG hybridation parameters</PARAMETER_DESC>
+            <PARAMETER_TYPE>FOG_HYBRIDATION_BDS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_FOG_HYBRIDATION_BDS_0008_20111219000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>LAI Init Loc Production parameters</PARAMETER_DESC>
+            <PARAMETER_TYPE>INIT_LOC_PROD_PARAM</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_INIT_LOC_PROD_PARAM_0017_20111222000001_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>GIPP file (no available description)</PARAMETER_DESC>
+            <PARAMETER_TYPE>RADIO_PHR2_PARAM</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_RADIO_PHR2_PARAM_0010_20141016000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Wavelet base</PARAMETER_DESC>
+            <PARAMETER_TYPE>WAVELET_BASE</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_WAVELET_BASE_0006_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Astrid Deconvolution filter</PARAMETER_DESC>
+            <PARAMETER_TYPE>DECONVOLUTION_FILTER</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_DECONVOLUTION_FILTER_0010_20111217000002_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Wavelet filters</PARAMETER_DESC>
+            <PARAMETER_TYPE>WAVELET_FILTERS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_WAVELET_FILTERS_0006_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Instrument noise model</PARAMETER_DESC>
+            <PARAMETER_TYPE>NOISE_MODEL</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_NOISE_MODEL_0010_20111217000001_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>PA dark currents</PARAMETER_DESC>
+            <PARAMETER_TYPE>PA1313131313_DARK_CURRENTS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_PA1313131313_DARK_CURRENTS_0024_20191112000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>PA relative sensitivities</PARAMETER_DESC>
+            <PARAMETER_TYPE>PA1313131313_RELATIVE_SENSITIVITIES</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_PA1313131313_RELATIVE_SENSITIVITIES_0022_20180404000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Straylight parameters for PA band</PARAMETER_DESC>
+            <PARAMETER_TYPE>PA_STRAYLIGHT</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_PA_STRAYLIGHT_0007_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>XS dark currents</PARAMETER_DESC>
+            <PARAMETER_TYPE>XS_DARK_CURRENTS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_XS_DARK_CURRENTS_0023_20191112000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>XS relative sensitivities</PARAMETER_DESC>
+            <PARAMETER_TYPE>XS_RELATIVE_SENSITIVITIES</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_XS_RELATIVE_SENSITIVITIES_0024_20190406000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Straylight parameters for XS bands</PARAMETER_DESC>
+            <PARAMETER_TYPE>XS_STRAYLIGHT</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_XS_STRAYLIGHT_0006_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Pointspread functions</PARAMETER_DESC>
+            <PARAMETER_TYPE>CAMERA_PSF</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_CAMERA_PSF_0006_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Absolute calibration coefficients</PARAMETER_DESC>
+            <PARAMETER_TYPE>PHYSICAL_GAIN_DATA</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_PHYSICAL_GAIN_DATA_0026_20200401160000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Spectral parameters</PARAMETER_DESC>
+            <PARAMETER_TYPE>SPECTRAL_SENSITIVITIES</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_SPECTRAL_SENSITIVITIES_0008_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Astrid arrays L2 norm coefficients</PARAMETER_DESC>
+            <PARAMETER_TYPE>L2_NORM_COEFFICIENTS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_L2_NORM_COEFFICIENTS_0009_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Astrid arrays Maximum coefficients</PARAMETER_DESC>
+            <PARAMETER_TYPE>MAXIMUM_COEFFICIENTS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_MAXIMUM_COEFFICIENTS_0009_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Astrid arrays Denoising threshold</PARAMETER_DESC>
+            <PARAMETER_TYPE>DENOISING_THRESHOLD</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_DENOISING_THRESHOLD_0009_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Astrid arrays Deconvolution threshold</PARAMETER_DESC>
+            <PARAMETER_TYPE>DECONVOLUTION_THRESHOLD</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_DECONVOLUTION_THRESHOLD_0009_20111217000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Geometric parameters to refine with spatiotriangulation process</PARAMETER_DESC>
+            <PARAMETER_TYPE>PARAMETERS_TO_BE_REFINED</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_PARAMETERS_TO_BE_REFINED_0011_20120101000001_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>Perfect sensor model</PARAMETER_DESC>
+            <PARAMETER_TYPE>PERFECT_SENSOR</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_PERFECT_SENSOR_0009_20111217000001_O</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>GIPP file (no available description)</PARAMETER_DESC>
+            <PARAMETER_TYPE>SIGMA3_PARAMETERS</PARAMETER_TYPE>
+            <PARAMETER_ID>PHR1A_SIGMA3_PARAMETERS_0009_20121201000000_O</PARAMETER_ID>
+        </Processing_Parameter>
+    </Processing_Parameter_List>
+    <Processing_Parameter_List>
+        <PROCESSING_LEVEL>ORTHO</PROCESSING_LEVEL>
+        <Processing_Parameter>
+            <PARAMETER_DESC>MIPP configuration for GeoPaas</PARAMETER_DESC>
+            <PARAMETER_TYPE>MIPP_GEOPAAS</PARAMETER_TYPE>
+            <PARAMETER_ID>custom</PARAMETER_ID>
+        </Processing_Parameter>
+        <Processing_Parameter>
+            <PARAMETER_DESC>MIPP configuration for Format</PARAMETER_DESC>
+            <PARAMETER_TYPE>MIPP_FORMAT</PARAMETER_TYPE>
+            <PARAMETER_ID>default-phr1a-2020-07-01</PARAMETER_ID>
+        </Processing_Parameter>
+    </Processing_Parameter_List>
+    <Processing_Characteristics>
+        <Inventory_Processing>
+            <PROCESSING_LEVEL>ARCHIVE</PROCESSING_LEVEL>
+        </Inventory_Processing>
+        <Registration_Characteristics>
+            <REGISTRATION_SCENARIO>REF_TILE_MASTER</REGISTRATION_SCENARIO>
+            <DTM_SOURCE_TYPE>SRTM</DTM_SOURCE_TYPE>
+            <DTM_Source_List>
+                <DTM_Source>
+                    <DTM_ID>E013N52</DTM_ID>
+                    <DTM_SPECIFIC_DATA/>
+                </DTM_Source>
+            </DTM_Source_List>
+            <Reference_Coverage>
+                <THRESHOLD>0.3</THRESHOLD>
+                <REGISTRATION_SCENARIO_APPLIED>true</REGISTRATION_SCENARIO_APPLIED>
+            </Reference_Coverage>
+            <Quality_Assessment>
+                <Registration_Coverage_Measurement>
+                    <MEASURE_NAME>Registration Effective Coverage</MEASURE_NAME>
+                    <MEASURE_UNIT>percent</MEASURE_UNIT>
+                    <Quality_Values>
+                        <REGISTRATION_COVERAGE>99.5514</REGISTRATION_COVERAGE>
+                    </Quality_Values>
+                </Registration_Coverage_Measurement>
+            </Quality_Assessment>
+        </Registration_Characteristics>
+    </Processing_Characteristics>
+</Dimap_Document>

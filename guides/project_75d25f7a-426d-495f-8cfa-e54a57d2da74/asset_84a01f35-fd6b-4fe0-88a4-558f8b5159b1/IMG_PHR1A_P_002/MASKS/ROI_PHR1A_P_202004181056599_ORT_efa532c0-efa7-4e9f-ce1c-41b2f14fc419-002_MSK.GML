@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<hma:Mask gml:id="PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002_imgroi_msk" xmlns:gml="http://www.opengis.net/gml" xmlns:hma="http://earth.esa.int/hma" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <gml:name> from data-strip PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002</gml:name>
+    <gml:boundedBy>
+        <gml:Envelope srsName="urn:ogc:def:crs:EPSG::4326">
+            <gml:lowerCorner>13.376000000000003 52.51507870370369</gml:lowerCorner>
+            <gml:upperCorner>13.37828703703704 52.51662962962966</gml:upperCorner>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <hma:maskMembers>
+        <hma:MaskFeature gml:id="source_image_footprint-PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002-0">
+            <hma:maskType codeSpace="urn:phr:ipu:maskType">SOURCE_IMAGE_FOOTPRINT</hma:maskType>
+            <gml:extentOf>
+                <gml:Polygon srsName="urn:ogc:def:crs:epsg::4326"><gml:exterior><gml:LinearRing><gml:posList>52.5166319444445 13.3759953703704 52.5166319444445 13.3782916666666 52.5150763888888 13.3782916666666 52.5150763888888 13.3759953703704 52.5166319444445 13.3759953703704</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon>
+            </gml:extentOf>
+        </hma:MaskFeature>
+    </hma:maskMembers>
+</hma:Mask>

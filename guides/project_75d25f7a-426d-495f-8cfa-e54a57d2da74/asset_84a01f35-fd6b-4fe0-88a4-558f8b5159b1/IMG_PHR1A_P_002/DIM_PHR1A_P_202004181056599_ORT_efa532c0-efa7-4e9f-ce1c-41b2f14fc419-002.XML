@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="./LIBRARY/STYLE.XSL" type="text/xsl"?>
+<Dimap_Document>
+    <Metadata_Identification>
+        <METADATA_FORMAT version="2.15">DIMAP</METADATA_FORMAT>
+        <METADATA_PROFILE>PHR_ORTHO</METADATA_PROFILE>
+        <METADATA_SUBPROFILE>PRODUCT</METADATA_SUBPROFILE>
+        <METADATA_LANGUAGE>en</METADATA_LANGUAGE>
+    </Metadata_Identification>
+    <Dataset_Identification>
+        <DATASET_TYPE>RASTER_ORTHO</DATASET_TYPE>
+        <DATASET_NAME version="1.0">DS_PHR1A_202004181056235_FR1_PX_E013N52_0514_00313</DATASET_NAME>
+        <DATASET_TN_PATH href="ICON_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002.JPG"></DATASET_TN_PATH>
+        <DATASET_TN_FORMAT>image/jpeg</DATASET_TN_FORMAT>
+        <DATASET_QL_PATH href="PREVIEW_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002.JPG"></DATASET_QL_PATH>
+        <DATASET_QL_FORMAT>image/jpeg</DATASET_QL_FORMAT>
+        <Legal_Constraints>
+            <COPYRIGHT>©CNES_2020, distribution AIRBUS DS, France, all rights reserved</COPYRIGHT>
+        </Legal_Constraints>
+    </Dataset_Identification>
+    <Dataset_Content>
+        <SURFACE_AREA unit="square km">0.027</SURFACE_AREA>
+        <CLOUD_COVERAGE unit="percent">0.000</CLOUD_COVERAGE>
+        <SNOW_COVERAGE unit="percent">0.000</SNOW_COVERAGE>
+        <Dataset_Components>
+            <Component>
+                <COMPONENT_TITLE>Processing</COMPONENT_TITLE>
+                <COMPONENT_CONTENT>Lineage Information</COMPONENT_CONTENT>
+                <COMPONENT_TYPE>DIMAP</COMPONENT_TYPE>
+                <COMPONENT_PATH href="LINEAGE/PROCESSING_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002_DIM.XML"></COMPONENT_PATH>
+            </Component>
+            <Component>
+                <COMPONENT_TITLE>Strip Source</COMPONENT_TITLE>
+                <COMPONENT_CONTENT>Lineage Information</COMPONENT_CONTENT>
+                <COMPONENT_TYPE>DIMAP</COMPONENT_TYPE>
+                <COMPONENT_PATH href="LINEAGE/STRIP_DS_PHR1A_202004181056599_FR1_PX_E013N52_0513_01048_DIM.XML"></COMPONENT_PATH>
+            </Component>
+            <Component>
+                <COMPONENT_TITLE>Source for Ground reset</COMPONENT_TITLE>
+                <COMPONENT_CONTENT>Lineage Information</COMPONENT_CONTENT>
+                <COMPONENT_TYPE>DIMAP</COMPONENT_TYPE>
+                <COMPONENT_PATH href="LINEAGE/GROUND_R3D_OR_SPOTView_N52E013_DIM.XML"></COMPONENT_PATH>
+            </Component>
+        </Dataset_Components>
+        <Dataset_Extent>
+            <EXTENT_TYPE>Bounding_Polygon</EXTENT_TYPE>
+            <Vertex>
+                <LON>13.376000000000001</LON>
+                <LAT>52.51662962962965</LAT>
+                <COL>1</COL>
+                <ROW>1</ROW>
+            </Vertex>
+            <Vertex>
+                <LON>13.378287037037039</LON>
+                <LAT>52.51662962962965</LAT>
+                <COL>248</COL>
+                <ROW>1</ROW>
+            </Vertex>
+            <Vertex>
+                <LON>13.378287037037039</LON>
+                <LAT>52.51507870370372</LAT>
+                <COL>248</COL>
+                <ROW>336</ROW>
+            </Vertex>
+            <Vertex>
+                <LON>13.376000000000001</LON>
+                <LAT>52.51507870370372</LAT>
+                <COL>1</COL>
+                <ROW>336</ROW>
+            </Vertex>
+            <Center>
+                <LON>13.377143518518519</LON>
+                <LAT>52.515854166666685</LAT>
+                <COL>125</COL>
+                <ROW>169</ROW>
+            </Center>
+        </Dataset_Extent>
+    </Dataset_Content>
+    <Product_Information>
+        <Producer_Information>
+            <PRODUCER_NAME>AIRBUS DS GEO</PRODUCER_NAME>
+            <PRODUCER_URL href="http://www.geo-airbusds.com"></PRODUCER_URL>
+            <PRODUCER_CONTACT>contact@geo-airbus.com</PRODUCER_CONTACT>
+            <PRODUCER_ADDRESS>5 rue des Satellites - BP 14359 - F 31030 Toulouse Cedex 4 - France</PRODUCER_ADDRESS>
+        </Producer_Information>
+        <Delivery_Identification>
+            <PRODUCTION_DATE>2021-01-27T18:32:56.301Z</PRODUCTION_DATE>
+            <JOB_ID>efa532c0-efa7-4e9f-ce1c-41b2f14fc419002</JOB_ID>
+            <PRODUCT_CODE>PLEIADES</PRODUCT_CODE>
+            <DELIVERY_TYPE>NETWORK</DELIVERY_TYPE>
+            <Order_Identification>
+                <CUSTOMER_REFERENCE>41568024-8fb8-443d-909e-bc12ca24e0ae</CUSTOMER_REFERENCE>
+                <INTERNAL_REFERENCE></INTERNAL_REFERENCE>
+                <COMMERCIAL_REFERENCE>e339a202-6d97-41d3-b63a-a069c30c24c0</COMMERCIAL_REFERENCE>
+                <COMMERCIAL_ITEM></COMMERCIAL_ITEM>
+            </Order_Identification>
+        </Delivery_Identification>
+    </Product_Information>
+    <Coordinate_Reference_System>
+        <Geodetic_CRS>
+            <CRS_TABLES version="6.3">EPSG</CRS_TABLES>
+            <GEODETIC_CRS_TYPE>GEOGRAPHIC2D</GEODETIC_CRS_TYPE>
+            <GEODETIC_CRS_NAME></GEODETIC_CRS_NAME>
+            <GEODETIC_CRS_CODE>urn:ogc:def:crs:EPSG::4326</GEODETIC_CRS_CODE>
+        </Geodetic_CRS>
+        <Temporal_CRS>
+            <CRS_TABLES version="0.0">ITU</CRS_TABLES>
+            <TEMPORAL_CRS_NAME>UTC</TEMPORAL_CRS_NAME>
+        </Temporal_CRS>
+    </Coordinate_Reference_System>
+    <Geoposition>
+        <Raster_CRS>
+            <RASTER_GEOMETRY>GROUND</RASTER_GEOMETRY>
+            <PIXEL_ORIENTATION>UL</PIXEL_ORIENTATION>
+            <PIXEL_CRS_TYPE>CELL</PIXEL_CRS_TYPE>
+            <PIXEL_ORIGIN>1</PIXEL_ORIGIN>
+        </Raster_CRS>
+        <Geoposition_Insert>
+            <ULXMAP>13.376000000000001</ULXMAP>
+            <ULYMAP>52.51662962962965</ULYMAP>
+            <XDIM>9.259259259262617e-06</XDIM>
+            <YDIM>4.629629629628239e-06</YDIM>
+        </Geoposition_Insert>
+    </Geoposition>
+    <Processing_Information>
+        <Production_Facility>
+            <SOFTWARE version="1.3.51.5">GeoPaaS</SOFTWARE>
+            <PROCESSING_CENTER>MPP-Public</PROCESSING_CENTER>
+            <PROCESSING_PLACE>GCP</PROCESSING_PLACE>
+        </Production_Facility>
+        <Product_Settings>
+            <PROCESSING_LEVEL>ORTHO</PROCESSING_LEVEL>
+            <SPECTRAL_PROCESSING>P</SPECTRAL_PROCESSING>
+            <Geometric_Settings>
+                <GEOMETRIC_PROCESSING>ORTHO</GEOMETRIC_PROCESSING>
+                <EPHEMERIS_USED>CORRECTED</EPHEMERIS_USED>
+                <ATTITUDES_USED>ACCURATE</ATTITUDES_USED>
+                <GROUND_SETTING>true</GROUND_SETTING>
+                <GROUND_DESC>R3D_ORTHO</GROUND_DESC>
+                <VERTICAL_SETTING>true</VERTICAL_SETTING>
+                <VERTICAL_DESC>PAS_DEM R3D_DEM SRTM GTOPO30</VERTICAL_DESC>
+            </Geometric_Settings>
+            <Radiometric_Settings>
+                <RADIOMETRIC_PROCESSING>REFLECTANCE</RADIOMETRIC_PROCESSING>
+                <INTER_DETECTOR_NORMALIZATION>false</INTER_DETECTOR_NORMALIZATION>
+                <DETECTORS_INTERPOLATION>true</DETECTORS_INTERPOLATION>
+                <STRAYLIGHT_CORRECTION>false</STRAYLIGHT_CORRECTION>
+                <VCTI_CORRECTION>false</VCTI_CORRECTION>
+                <INTER_ARRAY_RECONSTRUCTION>true</INTER_ARRAY_RECONSTRUCTION>
+                <RADIOMETRIC_STRETCH>false</RADIOMETRIC_STRETCH>
+                <OUT_OF_ORDER_THRESHOLD>0.5</OUT_OF_ORDER_THRESHOLD>
+            </Radiometric_Settings>
+            <Sampling_Settings>
+                <RESAMPLING_SPACING unit="m">0.5000000000311292</RESAMPLING_SPACING>
+                <RESAMPLING_KERNEL>BICUBIC</RESAMPLING_KERNEL>
+            </Sampling_Settings>
+            <MTF_Settings>
+                <PAN_RESTORATION>true</PAN_RESTORATION>
+                <MS_RESTORATION>false</MS_RESTORATION>
+            </MTF_Settings>
+        </Product_Settings>
+        <Processing_Lineage>
+            <Component>
+                <COMPONENT_TITLE>Processing</COMPONENT_TITLE>
+                <COMPONENT_CONTENT>Lineage Information</COMPONENT_CONTENT>
+                <COMPONENT_TYPE>DIMAP</COMPONENT_TYPE>
+                <COMPONENT_PATH href="LINEAGE/PROCESSING_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002_DIM.XML"></COMPONENT_PATH>
+            </Component>
+        </Processing_Lineage>
+    </Processing_Information>
+    <Raster_Data>
+        <Data_Access>
+            <DATA_FILE_ORGANISATION>BAND_COMPOSITE</DATA_FILE_ORGANISATION>
+            <DATA_FILE_FORMAT>image/jp2</DATA_FILE_FORMAT>
+            <DATA_FILE_TILES>true</DATA_FILE_TILES>
+            <Data_Files>
+                <Data_File tile_R="1" tile_C="1">
+                    <DATA_FILE_PATH href="IMG_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002_R1C1.JP2"></DATA_FILE_PATH>
+                </Data_File>
+            </Data_Files>
+        </Data_Access>
+        <Raster_Dimensions>
+            <NROWS>336</NROWS>
+            <NCOLS>248</NCOLS>
+            <NBANDS>1</NBANDS>
+            <Tile_Set>
+                <NTILES>1</NTILES>
+                <Regular_Tiling>
+                    <NTILES_SIZE ncols="248" nrows="336"></NTILES_SIZE>
+                    <NTILES_COUNT ntiles_C="1" ntiles_R="1"></NTILES_COUNT>
+                    <OVERLAP_ROW>0.0</OVERLAP_ROW>
+                    <OVERLAP_COL>0.0</OVERLAP_COL>
+                </Regular_Tiling>
+            </Tile_Set>
+        </Raster_Dimensions>
+        <Raster_Encoding>
+            <DATA_TYPE>INTEGER</DATA_TYPE>
+            <NBITS>16</NBITS>
+            <SIGN>UNSIGNED</SIGN>
+            <COMPRESSION_TYPE>LOSSLESS</COMPRESSION_TYPE>
+            <COMPRESSION_RATIO unit="bpp">2.140264810510229</COMPRESSION_RATIO>
+        </Raster_Encoding>
+        <Raster_Display>
+            <Band_Display_Order>
+                <RED_CHANNEL>P</RED_CHANNEL>
+                <GREEN_CHANNEL>P</GREEN_CHANNEL>
+                <BLUE_CHANNEL>P</BLUE_CHANNEL>
+                <ALPHA_CHANNEL></ALPHA_CHANNEL>
+            </Band_Display_Order>
+            <Special_Value>
+                <SPECIAL_VALUE_TEXT>NODATA</SPECIAL_VALUE_TEXT>
+                <SPECIAL_VALUE_COUNT>0</SPECIAL_VALUE_COUNT>
+            </Special_Value>
+            <Special_Value>
+                <SPECIAL_VALUE_TEXT>SATURATED</SPECIAL_VALUE_TEXT>
+                <SPECIAL_VALUE_COUNT>32767</SPECIAL_VALUE_COUNT>
+            </Special_Value>
+        </Raster_Display>
+    </Raster_Data>
+    <Radiometric_Data>
+        <Dynamic_Range>
+            <ACQUISITION_RANGE>12</ACQUISITION_RANGE>
+            <PRODUCT_RANGE>16</PRODUCT_RANGE>
+        </Dynamic_Range>
+        <Histogram_Band_List>
+            <Histogram_Band>
+                <BAND_ID>P</BAND_ID>
+                <VALUES>1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 2 0 2 1 0 0 0 0 0 2 1 0 0 1 0 0 1 0 1 2 3 1 1 2 2 0 1 1 1 0 2 1 2 2 1 0 5 2 0 2 3 2 0 3 0 1 6 4 2 1 2 3 3 4 6 3 4 3 3 4 3 4 4 5 4 1 6 6 4 5 5 5 6 7 5 7 2 2 9 4 7 10 10 10 7 13 11 12 6 14 13 13 7 16 22 16 13 18 20 16 16 16 16 16 14 18 23 12 17 21 19 18 15 12 22 21 14 21 24 21 14 16 21 16 25 21 14 20 18 21 17 16 20 20 16 13 17 24 20 25 15 15 18 28 19 25 16 19 27 24 28 23 22 31 25 20 17 20 22 31 25 19 21 20 29 25 22 21 22 22 17 22 21 27 30 24 27 32 20 12 26 21 16 26 23 20 24 27 24 17 20 23 16 24 24 18 30 25 15 21 31 25 23 15 15 30 29 32 18 22 26 17 17 20 20 21 19 21 24 21 19 26 37 30 29 27 23 35 27 27 21 26 28 21 31 18 28 25 31 31 30 25 22 23 17 21 29 28 23 29 25 19 24 16 23 28 32 36 29 26 24 23 39 26 28 26 21 23 38 18 27 23 31 18 24 31 41 31 21 28 41 28 37 30 25 21 26 35 30 37 29 27 24 40 24 25 21 36 23 44 37 27 30 35 30 28 46 31 34 41 26 38 33 30 34 35 48 46 47 46 37 33 39 36 44 64 41 46 42 40 51 38 49 53 63 58 59 57 52 51 61 60 70 48 52 42 52 48 55 54 54 52 43 66 41 59 76 38 59 59 55 55 53 55 52 60 59 69 69 74 64 60 59 75 66 64 73 47 60 62 69 81 67 55 69 67 63 80 62 68 67 72 70 75 51 76 72 64 81 73 87 78 86 57 78 62 78 87 82 74 81 77 86 73 74 73 80 75 80 75 79 75 66 79 72 67 77 80 90 74 66 85 76 87 62 94 80 70 66 66 67 57 76 64 85 73 60 82 71 58 70 74 73 70 64 76 62 68 81 71 72 78 67 70 80 64 70 64 78 56 62 78 74 69 69 69 67 58 78 73 60 83 69 71 78 76 71 66 75 76 79 65 60 70 80 86 76 84 63 71 78 73 62 82 63 85 77 84 94 76 73 76 80 81 74 70 59 69 91 78 85 91 80 88 81 82 80 72 93 79 94 97 71 85 81 83 70 66 101 92 67 83 100 93 87 90 71 87 76 98 89 86 73 91 84 72 93 88 97 82 89 89 102 81 91 95 70 103 105 87 86 99 89 73 72 96 85 88 94 100 79 100 87 67 87 92 93 82 85 78 75 84 91 95 90 78 94 83 96 93 75 59 96 80 102 83 81 90 94 89 83 85 93 92 85 91 93 98 109 95 90 114 91 98 89 103 86 98 105 78 107 96 105 101 95 102 101 83 95 96 97 121 107 94 101 100 109 130 103 114 99 115 117 111 84 122 108 85 116 114 95 120 114 97 133 111 114 116 105 129 118 147 131 104 117 134 125 133 118 108 102 128 124 128 124 128 120 117 113 123 137 136 122 124 144 116 127 120 114 121 134 123 134 120 127 125 116 118 105 112 114 110 112 114 117 117 110 108 107 106 101 120 106 109 100 108 107 113 104 121 126 84 104 92 92 111 104 107 99 107 89 83 90 84 92 118 83 96 112 90 104 76 98 81 94 73 78 74 78 73 100 96 88 85 76 81 82 81 88 99 91 86 94 79 73 79 70 95 78 69 84 73 91 84 78 81 71 81 76 81 83 68 90 70 67 60 86 81 66 82 75 66 81 69 69 86 87 74 76 77 68 71 67 63 69 63 66 81 76 62 69 68 74 71 67 65 67 82 60 60 64 65 73 71 60 68 79 52 62 79 59 63 63 68 62 48 60 59 65 60 57 56 62 64 59 54 56 55 54 59 53 55 62 60 59 57 57 48 59 67 61 65 52 62 61 54 73 64 61 69 57 47 70 51 61 44 52 54 52 56 55 43 69 48 55 53 63 46 44 36 40 51 38 55 57 51 56 51 63 41 55 40 44 46 47 52 46 60 57 47 49 57 39 47 46 46 36 43 64 48 47 52 65 47 38 54 46 50 49 52 49 51 48 50 51 53 40 53 44 49 44 36 51 55 38 46 43 51 44 32 44 50 49 55 49 39 46 45 53 44 40 54 50 45 45 44 49 37 42 36 40 51 49 50 47 52 63 44 43 49 45 31 43 31 49 58 44 44 43 36 49 42 38 38 46 32 43 48 41 48 54 35 36 34 50 44 46 47 43 37 42 43 47 47 36 44 31 30 43 37 26 50 38 43 38 50 40 53 48 43 48 44 48 50 48 39 51 33 41 42 45 54 47 50 43 41 40 45 45 32 48 59 48 47 35 49 42 59 48 49 38 50 48 54 60 53 59 53 49 46 42 38 41 58 45 39 42 62 42 57 48 64 51 54 52 61 33 60 51 52 50 52 50 54 55 52 59 48 64 42 47 46 62 45 50 41 45 64 61 56 47 48 66 56 52 64 65 51 55 51 59 52 51 57 63 44 54 43 71 46 65 51 63 68 52 45 50 56 55 57 52 48 35 57 56 45 54 51 52 45 43 64 50 56 54 43 55 44 39 30 49 53 56 56 37 59 53 53 63 49 53 48 61 52 56 58 47 31 49 52 62 53 68 57 56 53 40 36 56 51 47 55 49 55 53 53 58 55 36 31 41 34 39 36 48 41 38 47 35 41 34 34 48 47 51 41 40 39 37 40 33 37 34 40 54 41 35 42 33 35 41 42 43 38 50 41 54 47 47 39 50 42 33 49 50 48 36 37 40 41 38 48 45 43 37 40 44 35 42 50 41 48 36 49 52 29 37 26 29 52 40 41 43 35 37 42 55 43 36 38 30 37 41 31 41 34 40 41 48 36 36 38 44 39 33 40 29 40 31 49 38 31 42 34 45 47 45 42 49 54 45 43 42 30 49 48 46 31 32 43 39 42 42 45 41 48 31 54 41 30 50 38 29 40 38 41 35 41 39 41 55 40 38 39 38 42 30 34 39 47 33 41 43 36 36 37 30 42 52 44 28 38 31 42 33 42 37 34 33 34 32 39 40 35 35 29 30 35 30 36 26 40 37 39 30 28 34 27 33 32 39 31 39 46 35 31 35 32 27 26 28 43 23 31 30 27 31 32 31 30 40 40 31 38 31 28 32 32 41 29 33 37 33 28 26 21 31 37 36 41 21 28 32 29 34 32 32 21 32 33 33 36 20 33 38 41 23 33 22 37 34 30 25 31 29 22 39 33 33 38 38 32 30 23 19 35 29 26 26 38 27 26 37 23 29 20 27 28 25 34 14 28 22 27 35 30 21 29 24 27 27 29 26 20 22 23 34 27 39 30 28 29 24 20 28 17 22 25 24 29 25 28 29 39 24 21 19 20 24 24 33 26 24 24 28 32 20 32 25 24 26 21 12 26 23 26 23 32 22 17 33 23 23 13 25 26 21 17 22 28 26 18 25 14 23 19 20 28 15 15 11 22 20 12 21 19 16 15 17 12 14 17 13 16 16 25 14 11 14 13 15 10 20 13 12 12 17 18 18 13 16 16 13 18 18 14 18 15 8 7 16 8 18 12 13 14 9 15 7 9 18 12 10 14 15 15 16 5 14 14 9 14 9 2 10 8 11 6 7 9 13 15 7 10 12 7 8 2 8 11 6 8 9 8 8 15 4 6 9 6 3 12 8 3 11 9 10 8 7 5 3 7 12 13 7 9 7 16 8 9 6 7 10 8 6 10 4 8 7 3 7 6 4 6 11 6 6 7 8 3 3 9 7 0 8 3 6 4 7 4 6 5 4 9 6 11 11 14 5 7 6 4 4 10 4 4 9 9 3 8 5 7 11 2 7 5 5 3 5 11 6 6 8 12 10 7 5 5 7 6 4 11 4 9 6 7 10 4 5 4 7 7 6 7 7 5 8 6 3 4 8 7 7 2 5 4 8 6 8 11 5 4 6 6 5 5 7 8 5 6 3 4 9 3 5 3 5 4 7 5 7 2 3 5 3 3 2 4 2 4 6 2 7 3 3 2 4 6 6 4 4 3 5 5 7 4 1 3 6 3 1 1 10 0 5 1 1 5 3 2 4 6 5 6 8 4 2 5 4 4 5 1 8 2 5 3 4 1 7 0 4 5 3 6 1 6 3 4 1 3 2 1 1 3 2 6 4 6 4 0 3 4 4 0 5 4 5 1 0 2 1 0 6 3 2 4 5 3 5 1 0 1 1 1 1 3 2 2 2 4 7 1 4 2 4 4 0 1 2 2 3 1 4 2 4 2 2 1 1 2 2 0 1 0 5 7 2 2 0 4 0 2 1 1 1 3 1 2 1 2 0 1 5 2 2 2 0 0 1 4 4 1 1 5 0 1 1 4 0 1 3 5 4 0 1 0 2 2 1 3 1 0 1 1 1 0 1 1 1 4 0 0 2 2 0 0 0 1 0 4 0 2 0 1 0 1 1 1 3 1 1 0 1 0 2 2 4 0 2 1 1 2 0 1 2 2 4 0 0 0 2 2 0 0 0 1 0 2 0 3 0 2 1 1 2 1 1 1 1 1 1 2 3 0 3 1 1 1 2 1 0 1 0 0 0 0 0 1 0 3 2 0 1 0 3 1 0 3 1 1 2 1 2 1 1 0 0 2 1 1 1 1 3 1 0 0 3 0 1 5 1 1 2 1 0 1 1 2 2 0 0 1 0 0 1 0 1 0 2 1 2 0 0 1 0 1 0 1 0 1 0 0 1 5 2 0 0 1 0 2 3 0 1 0 1 0 0 0 1 0 0 1 4 1 1 1 2 0 2 2 0 2 2 2 0 0 0 2 2 0 2 0 1 2 2 4 2 2 0 2 1 1 3 2 2 1 3 1 2 1 1 0 1 2 1 0 2 1 1 1 1 1 2 1 2 0 1 1 1 4 0 0 1 2 0 2 1 1 2 0 2 0 1 1 0 1 1 3 4 3 1 0 0 0 1 2 2 1 1 0 2 4 1 1 2 1 0 5 1 0 1 2 1 1 1 0 0 1 1 2 1 0 2 1 0 1 0 2 1 1 2 0 4 3 1 0 0 2 0 1 0 0 0 0 1 0 1 1 1 0 1 1 0 0 0 0 0 0 0 0 0 2 1 1 2 0 1 1 0 0 0 1 0 0 0 0 0 0 1 0 0 2 0 0 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 3 0 1 0 0 1 0 0 0 1 0 0 0 1 1 1 0 0 0 1 0 0 1 0 1 0 0 1 0 1 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 1 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 1 1 0 1 0 1 0 1 0 1 0 0 0 1 0 1 1 0 0 1 0 0 0 0 1 2 2 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 1 0 0 1 0 1 0 1 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 1 0 0 0 1 0 0 1 0 1 0 0 0 0 1 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 1 0 2 1 0 0 1 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 1 1 0 0 0 1 0 0 1 0 0 1 1 1 1 0 2 0 0 0 0 0 0 1 0 0 1 1 0 1 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 1 1 0 1 0 0 0 0 0 0 1 1 0 0 1 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 2 0 0 0 0 1 0 0 2 0 0 0 0 1 1 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 1 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 1 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 1 0 0 0 0 0 0 0 1 2 0 0 1 0 0 0 0 0 0 0 1 1 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 2 0 0 0 0 0 0 1 0 0 0 1 1 1 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 1 0 1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 0 0 2 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 1 0 0 2 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 1 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 2 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 2 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 1 0 0 0 0 0 0 1 0 0 0 1 0 1 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 2 0 1 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 2 0 0 0 1 1 0 0 1 0 1 0 0 1 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 1 0 1 1 1 0 1 0 2 0 0 0 0 0 0 0 0 0 0 0 0 2 0 1 0 0 2 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 1 1 0 0 0 0 1 0 0 0 0 2 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 2 0 0 1 0 0 1 1 0 0 0 0 1 1 0 0 0 0 0 0 1 1 0 0 0 0 1 3 1 0 0 0 1 0 0 2 0 0 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 1 2 1 0 2 1 1 1 0 0 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0 0 1 1 0 2 0 0 1 0 0 1 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 1 0 1 1 2 0 0 1 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 1 0 0 0 0 0 1 0 0 0 1 0 1 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 1 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 1 1 0 0 0 0 0 0 0 1 0 0 1 1 0 0 0 0 0 0 0 0 0 1 1 0 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 1 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 2 0 0 0 0 0 0 1 0 0 1 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1</VALUES>
+                <STEP>1</STEP>
+                <MIN>95</MIN>
+                <MAX>5711</MAX>
+                <MEAN>1101.3805683563749</MEAN>
+                <STDV>441.7677097552465</STDV>
+            </Histogram_Band>
+        </Histogram_Band_List>
+        <Radiometric_Calibration>
+            <Instrument_Calibration>
+                <Band_Measurement_List>
+                    <Band_Spectral_Range>
+                        <BAND_ID>P</BAND_ID>
+                        <CALIBRATION_DATE>2011-12-17T00:00:00.000Z</CALIBRATION_DATE>
+                        <MEASURE_DESC>Spectral range value of raw radiometric Band</MEASURE_DESC>
+                        <MEASURE_UNIT>micrometers</MEASURE_UNIT>
+                        <MEASURE_UNCERTAINTY>Specification accuracy value</MEASURE_UNCERTAINTY>
+                        <MIN>0.47</MIN>
+                        <MAX>0.83</MAX>
+                    </Band_Spectral_Range>
+                    <Band_Reflectance>
+                        <BAND_ID>P</BAND_ID>
+                        <CALIBRATION_DATE>2021-01-25T11:31:06Z</CALIBRATION_DATE>
+                        <MEASURE_DESC>Reflectance gained value (RHO') to Reflectance (RHO). Formulae RHO=RHO'/GAIN+BIAS</MEASURE_DESC>
+                        <MEASURE_UNIT></MEASURE_UNIT>
+                        <MEASURE_UNCERTAINTY></MEASURE_UNCERTAINTY>
+                        <GAIN>10000</GAIN>
+                        <BIAS>0</BIAS>
+                    </Band_Reflectance>
+                    <Band_Radiance>
+                        <BAND_ID>P</BAND_ID>
+                        <CALIBRATION_DATE>2021-01-25T11:31:06Z</CALIBRATION_DATE>
+                        <MEASURE_DESC>Reflectance (RHO) to TOA Radiance (L). Formulae L=RHO/GAIN+BIAS</MEASURE_DESC>
+                        <MEASURE_UNIT>watt/m2/steradians/micrometers</MEASURE_UNIT>
+                        <MEASURE_UNCERTAINTY>Specification accuracy value</MEASURE_UNCERTAINTY>
+                        <GAIN>0.003270678244925419</GAIN>
+                        <BIAS>8.666648667306873</BIAS>
+                    </Band_Radiance>
+                    <Band_Digital_Number>
+                        <BAND_ID>P</BAND_ID>
+                        <CALIBRATION_DATE>2021-01-25T11:31:06Z</CALIBRATION_DATE>
+                        <MEASURE_DESC>TOA Radiance (L) to Raw radiometric count (DN). Formulae DN=L/GAIN+BIAS</MEASURE_DESC>
+                        <MEASURE_UNIT></MEASURE_UNIT>
+                        <MEASURE_UNCERTAINTY></MEASURE_UNCERTAINTY>
+                        <GAIN>0.08710801393728222</GAIN>
+                        <BIAS>-0.0</BIAS>
+                    </Band_Digital_Number>
+                    <Band_Solar_Irradiance>
+                        <BAND_ID>P</BAND_ID>
+                        <CALIBRATION_DATE>2011-12-17T00:00:00.000Z</CALIBRATION_DATE>
+                        <MEASURE_DESC>Solar irradiance value of raw radiometric Band</MEASURE_DESC>
+                        <MEASURE_UNIT>watt/m2/micron</MEASURE_UNIT>
+                        <MEASURE_UNCERTAINTY>Specification</MEASURE_UNCERTAINTY>
+                        <VALUE>1549.0</VALUE>
+                    </Band_Solar_Irradiance>
+                </Band_Measurement_List>
+            </Instrument_Calibration>
+        </Radiometric_Calibration>
+    </Radiometric_Data>
+    <Geometric_Data>
+        <Use_Area>
+            <Located_Geometric_Values>
+                <LOCATION_TYPE>Top Center</LOCATION_TYPE>
+                <COL>124</COL>
+                <ROW>1</ROW>
+                <TIME>2020-04-18T10:57:00.789Z</TIME>
+                <GEOMETRIC_GLIDING>999.9</GEOMETRIC_GLIDING>
+                <Acquisition_Angles>
+                    <AZIMUTH_ANGLE>179.98548839181564</AZIMUTH_ANGLE>
+                    <VIEWING_ANGLE_ACROSS_TRACK unit="deg">38.869383615333135</VIEWING_ANGLE_ACROSS_TRACK>
+                    <VIEWING_ANGLE_ALONG_TRACK unit="deg">9.959833050853613</VIEWING_ANGLE_ALONG_TRACK>
+                    <VIEWING_ANGLE unit="deg">39.75732870109418</VIEWING_ANGLE>
+                    <INCIDENCE_ANGLE_ALONG_TRACK>-30.23316036253209</INCIDENCE_ANGLE_ALONG_TRACK>
+                    <INCIDENCE_ANGLE_ACROSS_TRACK>-39.47667946902307</INCIDENCE_ANGLE_ACROSS_TRACK>
+                    <INCIDENCE_ANGLE>45.25619958387874</INCIDENCE_ANGLE>
+                </Acquisition_Angles>
+                <Solar_Incidences>
+                    <SUN_AZIMUTH unit="deg">176.76501662516142</SUN_AZIMUTH>
+                    <SUN_ELEVATION unit="deg">48.521949751343065</SUN_ELEVATION>
+                </Solar_Incidences>
+                <Ground_Sample_Distance>
+                    <GSD_ACROSS_TRACK unit="m">1.2952004582029042</GSD_ACROSS_TRACK>
+                    <GSD_ALONG_TRACK unit="m">1.0457500363923662</GSD_ALONG_TRACK>
+                </Ground_Sample_Distance>
+            </Located_Geometric_Values>
+            <Located_Geometric_Values>
+                <LOCATION_TYPE>Center</LOCATION_TYPE>
+                <COL>124</COL>
+                <ROW>168</ROW>
+                <TIME>2020-04-18T10:57:00.798Z</TIME>
+                <GEOMETRIC_GLIDING>999.9</GEOMETRIC_GLIDING>
+                <Acquisition_Angles>
+                    <AZIMUTH_ANGLE>179.98697347496662</AZIMUTH_ANGLE>
+                    <VIEWING_ANGLE_ACROSS_TRACK unit="deg">38.870817150669794</VIEWING_ANGLE_ACROSS_TRACK>
+                    <VIEWING_ANGLE_ALONG_TRACK unit="deg">9.96132739431863</VIEWING_ANGLE_ALONG_TRACK>
+                    <VIEWING_ANGLE unit="deg">39.75886518715565</VIEWING_ANGLE>
+                    <INCIDENCE_ANGLE_ALONG_TRACK>-30.234624322610323</INCIDENCE_ANGLE_ALONG_TRACK>
+                    <INCIDENCE_ANGLE_ACROSS_TRACK>-39.478610365977644</INCIDENCE_ANGLE_ACROSS_TRACK>
+                    <INCIDENCE_ANGLE>45.258071861713624</INCIDENCE_ANGLE>
+                </Acquisition_Angles>
+                <Solar_Incidences>
+                    <SUN_AZIMUTH unit="deg">176.76501988352223</SUN_AZIMUTH>
+                    <SUN_ELEVATION unit="deg">48.52272292177717</SUN_ELEVATION>
+                </Solar_Incidences>
+                <Ground_Sample_Distance>
+                    <GSD_ACROSS_TRACK unit="m">1.2952857656344452</GSD_ACROSS_TRACK>
+                    <GSD_ALONG_TRACK unit="m">1.0462672376574687</GSD_ALONG_TRACK>
+                </Ground_Sample_Distance>
+            </Located_Geometric_Values>
+            <Located_Geometric_Values>
+                <LOCATION_TYPE>Bottom Center</LOCATION_TYPE>
+                <COL>124</COL>
+                <ROW>336</ROW>
+                <TIME>2020-04-18T10:57:00.806Z</TIME>
+                <GEOMETRIC_GLIDING>999.9</GEOMETRIC_GLIDING>
+                <Acquisition_Angles>
+                    <AZIMUTH_ANGLE>179.99148365216095</AZIMUTH_ANGLE>
+                    <VIEWING_ANGLE_ACROSS_TRACK unit="deg">38.87205498060907</VIEWING_ANGLE_ACROSS_TRACK>
+                    <VIEWING_ANGLE_ALONG_TRACK unit="deg">9.962796034996481</VIEWING_ANGLE_ALONG_TRACK>
+                    <VIEWING_ANGLE unit="deg">39.76033016731723</VIEWING_ANGLE>
+                    <INCIDENCE_ANGLE_ALONG_TRACK>-30.234199437146653</INCIDENCE_ANGLE_ALONG_TRACK>
+                    <INCIDENCE_ANGLE_ACROSS_TRACK>-39.481506858262236</INCIDENCE_ANGLE_ACROSS_TRACK>
+                    <INCIDENCE_ANGLE>45.25987554750332</INCIDENCE_ANGLE>
+                </Acquisition_Angles>
+                <Solar_Incidences>
+                    <SUN_AZIMUTH unit="deg">176.76502273474216</SUN_AZIMUTH>
+                    <SUN_ELEVATION unit="deg">48.52350071185475</SUN_ELEVATION>
+                </Solar_Incidences>
+                <Ground_Sample_Distance>
+                    <GSD_ACROSS_TRACK unit="m">1.2953722667260437</GSD_ACROSS_TRACK>
+                    <GSD_ALONG_TRACK unit="m">1.0447892178845861</GSD_ALONG_TRACK>
+                </Ground_Sample_Distance>
+            </Located_Geometric_Values>
+        </Use_Area>
+    </Geometric_Data>
+    <Quality_Assessment>
+        <Planimetric_Accuracy_Measurement>
+            <QUALITY_TABLES>DTED2</QUALITY_TABLES>
+            <MEASURE_ID>AHA</MEASURE_ID>
+            <MEASURE_NAME>Absolute Horizontal Accuracy</MEASURE_NAME>
+            <MEASURE_TYPE>MATCHING</MEASURE_TYPE>
+            <MEASURE_UNIT>m</MEASURE_UNIT>
+            <Quality_Values>
+                <ACCURACY_MEAN>0</ACCURACY_MEAN>
+                <ACCURACY_STDV>0</ACCURACY_STDV>
+                <ACCURACY_CE90>0</ACCURACY_CE90>
+            </Quality_Values>
+        </Planimetric_Accuracy_Measurement>
+        <Imaging_Quality_Measurement>
+            <QUALITY_TABLES>PHR</QUALITY_TABLES>
+            <MEASURE_NAME>Cloud_Cotation (CLD)</MEASURE_NAME>
+            <MEASURE_TYPE>AUTOMATIC</MEASURE_TYPE>
+            <Quality_Mask>
+                <Component>
+                    <COMPONENT_TITLE>Cloud_Cotation Mask</COMPONENT_TITLE>
+                    <COMPONENT_CONTENT>GML MASK</COMPONENT_CONTENT>
+                    <COMPONENT_TYPE>ENCAPSULATED</COMPONENT_TYPE>
+                    <COMPONENT_PATH href="MASKS/CLD_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002_MSK.GML"></COMPONENT_PATH>
+                </Component>
+            </Quality_Mask>
+        </Imaging_Quality_Measurement>
+        <Imaging_Quality_Measurement>
+            <QUALITY_TABLES>PHR</QUALITY_TABLES>
+            <MEASURE_NAME>Detector_Quality (DET)</MEASURE_NAME>
+            <MEASURE_TYPE>AUTOMATIC</MEASURE_TYPE>
+            <Quality_Mask>
+                <Component>
+                    <COMPONENT_TITLE>Detector_Quality Mask</COMPONENT_TITLE>
+                    <COMPONENT_CONTENT>GML MASK</COMPONENT_CONTENT>
+                    <COMPONENT_TYPE>ENCAPSULATED</COMPONENT_TYPE>
+                    <COMPONENT_PATH href="MASKS/DET_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002_MSK.GML"></COMPONENT_PATH>
+                </Component>
+            </Quality_Mask>
+        </Imaging_Quality_Measurement>
+        <Imaging_Quality_Measurement>
+            <QUALITY_TABLES>PHR</QUALITY_TABLES>
+            <MEASURE_NAME>Technical_Index (QTE)</MEASURE_NAME>
+            <MEASURE_TYPE>AUTOMATIC</MEASURE_TYPE>
+            <Quality_Mask>
+                <Component>
+                    <COMPONENT_TITLE>Technical_Index Mask</COMPONENT_TITLE>
+                    <COMPONENT_CONTENT>GML MASK</COMPONENT_CONTENT>
+                    <COMPONENT_TYPE>ENCAPSULATED</COMPONENT_TYPE>
+                    <COMPONENT_PATH href="MASKS/QTE_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002_MSK.GML"></COMPONENT_PATH>
+                </Component>
+            </Quality_Mask>
+        </Imaging_Quality_Measurement>
+        <Imaging_Quality_Measurement>
+            <QUALITY_TABLES>PHR</QUALITY_TABLES>
+            <MEASURE_NAME>Saturation_Cotation (SLT)</MEASURE_NAME>
+            <MEASURE_TYPE>AUTOMATIC</MEASURE_TYPE>
+            <Quality_Mask>
+                <Component>
+                    <COMPONENT_TITLE>Saturation_Cotation Mask</COMPONENT_TITLE>
+                    <COMPONENT_CONTENT>GML MASK</COMPONENT_CONTENT>
+                    <COMPONENT_TYPE>ENCAPSULATED</COMPONENT_TYPE>
+                    <COMPONENT_PATH href="MASKS/SLT_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002_MSK.GML"></COMPONENT_PATH>
+                </Component>
+            </Quality_Mask>
+        </Imaging_Quality_Measurement>
+        <Imaging_Quality_Measurement>
+            <QUALITY_TABLES>PHR</QUALITY_TABLES>
+            <MEASURE_NAME>Snow_Cotation (SNW)</MEASURE_NAME>
+            <MEASURE_TYPE>AUTOMATIC</MEASURE_TYPE>
+            <Quality_Mask>
+                <Component>
+                    <COMPONENT_TITLE>Snow_Cotation Mask</COMPONENT_TITLE>
+                    <COMPONENT_CONTENT>GML MASK</COMPONENT_CONTENT>
+                    <COMPONENT_TYPE>ENCAPSULATED</COMPONENT_TYPE>
+                    <COMPONENT_PATH href="MASKS/SNW_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002_MSK.GML"></COMPONENT_PATH>
+                </Component>
+            </Quality_Mask>
+        </Imaging_Quality_Measurement>
+        <Imaging_Quality_Measurement>
+            <QUALITY_TABLES>PHR</QUALITY_TABLES>
+            <MEASURE_NAME>Area_Of_Interest (ROI)</MEASURE_NAME>
+            <MEASURE_TYPE>AUTOMATIC</MEASURE_TYPE>
+            <Quality_Mask>
+                <Component>
+                    <COMPONENT_TITLE>Area_Of_Interest Mask</COMPONENT_TITLE>
+                    <COMPONENT_CONTENT>GML MASK</COMPONENT_CONTENT>
+                    <COMPONENT_TYPE>ENCAPSULATED</COMPONENT_TYPE>
+                    <COMPONENT_PATH href="MASKS/ROI_PHR1A_P_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-002_MSK.GML"></COMPONENT_PATH>
+                </Component>
+            </Quality_Mask>
+        </Imaging_Quality_Measurement>
+    </Quality_Assessment>
+    <Dataset_Sources>
+        
+        <Source_Identification>
+            <SOURCE_ID>DS_PHR1A_202004181056599_FR1_PX_E013N52_0513_01048</SOURCE_ID>
+            <SOURCE_TYPE>Strip_Source</SOURCE_TYPE>
+            <SOURCE_DESCRIPTION>PHR1A Data Strip</SOURCE_DESCRIPTION>
+            <Strip_Source>
+                <MISSION>PHR</MISSION>
+                <MISSION_INDEX>1A</MISSION_INDEX>
+                <INSTRUMENT>PHR</INSTRUMENT>
+                <INSTRUMENT_INDEX>1A</INSTRUMENT_INDEX>
+                <IMAGING_DATE>2020-04-18</IMAGING_DATE>
+                <IMAGING_TIME>10:56:59.9Z</IMAGING_TIME>
+                <BAND_MODE>PX</BAND_MODE>
+            </Strip_Source>
+            <Component>
+                <COMPONENT_TITLE>Strip Source</COMPONENT_TITLE>
+                <COMPONENT_CONTENT>Lineage Information</COMPONENT_CONTENT>
+                <COMPONENT_TYPE>DIMAP</COMPONENT_TYPE>
+                <COMPONENT_PATH href="LINEAGE/STRIP_DS_PHR1A_202004181056599_FR1_PX_E013N52_0513_01048_DIM.XML"></COMPONENT_PATH>
+            </Component>
+        </Source_Identification>
+        <Source_Identification>
+            <SOURCE_TYPE>Ground_Source</SOURCE_TYPE>
+            <SOURCE_DESCRIPTION>Reference3D ORTHO Layer</SOURCE_DESCRIPTION>
+            <Component>
+                <COMPONENT_TITLE>Source for Ground reset</COMPONENT_TITLE>
+                <COMPONENT_CONTENT>Lineage Information</COMPONENT_CONTENT>
+                <COMPONENT_TYPE>DIMAP</COMPONENT_TYPE>
+                <COMPONENT_PATH href="LINEAGE/GROUND_R3D_OR_SPOTView_N52E013_DIM.XML"></COMPONENT_PATH>
+            </Component>
+        </Source_Identification>
+    </Dataset_Sources>
+</Dimap_Document>

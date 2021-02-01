@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Dimap_Document>
+  <Metadata_Identification>
+    <METADATA_FORMAT version="2.15">DIMAP</METADATA_FORMAT>
+    <METADATA_PROFILE>PHR_SENSOR</METADATA_PROFILE>
+    <METADATA_SUBPROFILE>GROUND</METADATA_SUBPROFILE>
+    <METADATA_LANGUAGE>en</METADATA_LANGUAGE>
+  </Metadata_Identification>
+  <Source_Identification>
+    <SOURCE_ID>SPOTView_N52E013</SOURCE_ID>
+    <SOURCE_TYPE>ORTHOIMAGE</SOURCE_TYPE>
+    <SOURCE_NAME>R3D</SOURCE_NAME>
+    <SOURCE_DESCRIPTION>Reference3D ortho layer</SOURCE_DESCRIPTION>
+  </Source_Identification>
+  <Source_Content>
+    <SOURCE_LOCATION>SPOTView_N52E013</SOURCE_LOCATION>
+  </Source_Content>
+  <Source_Information>
+    <Producer_Information>
+      <PRODUCER_NAME>AIRBUS DS GEO / IGN</PRODUCER_NAME>
+      <PRODUCER_URL href="http://www.geo-airbusds.com/"/>
+      <PRODUCER_CONTACT>contact@geo-airbusds.com</PRODUCER_CONTACT>
+      <PRODUCER_ADDRESS>5 rue des Satellites - BP 14359 - F 31030 Toulouse Cedex 4 - France</PRODUCER_ADDRESS>
+    </Producer_Information>
+  </Source_Information>
+  <Coordinate_Reference_System>
+    <Geodetic_CRS>
+      <GEODETIC_CRS_TYPE>GEOGRAPHIC2D</GEODETIC_CRS_TYPE>
+      <GEODETIC_CRS_NAME>WGS 1984</GEODETIC_CRS_NAME>
+      <GEODETIC_CRS_CODE>urn:ogc:def:crs:EPSG::4326</GEODETIC_CRS_CODE>
+    </Geodetic_CRS>
+  </Coordinate_Reference_System>
+  <Processing_Information>
+    <PROCESSING_LEVEL>SENSOR</PROCESSING_LEVEL>
+    <Adjustment_Method>
+      <GROUND_ADJUSTMENT>MATCHING</GROUND_ADJUSTMENT>
+    </Adjustment_Method>
+  </Processing_Information>
+  <Quality_Assessment>
+    <Planimetric_Accuracy_Measurement>
+      <QUALITY_TABLES>DTED2</QUALITY_TABLES>
+      <MEASURE_ID>AHA</MEASURE_ID>
+      <MEASURE_NAME>Absolute Horizontal Accuracy</MEASURE_NAME>
+      <MEASURE_TYPE>SPECIFICATION</MEASURE_TYPE>
+      <MEASURE_UNIT>M</MEASURE_UNIT>
+      <MEASURE_CITATION version="5.3">Reference3D Product Description</MEASURE_CITATION>
+      <Quality_Values>
+        <ACCURACY_CE90>16</ACCURACY_CE90>
+      </Quality_Values>
+    </Planimetric_Accuracy_Measurement>
+  </Quality_Assessment>
+</Dimap_Document>

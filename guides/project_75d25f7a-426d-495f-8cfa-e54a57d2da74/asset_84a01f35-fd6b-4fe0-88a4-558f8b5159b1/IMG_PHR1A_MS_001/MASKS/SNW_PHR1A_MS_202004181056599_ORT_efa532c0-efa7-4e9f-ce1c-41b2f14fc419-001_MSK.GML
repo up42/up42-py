@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<hma:Mask gml:id="PHR1A_MS_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-001_imgsnw_msk" xmlns:gml="http://www.opengis.net/gml" xmlns:hma="http://earth.esa.int/hma" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <gml:name>Snow Cotation Mask from data-strip PHR1A_MS_202004181056599_ORT_efa532c0-efa7-4e9f-ce1c-41b2f14fc419-001</gml:name>
+    <gml:boundedBy>
+        <gml:Envelope srsName="urn:ogc:def:crs:EPSG::4326">
+            <gml:lowerCorner>13.376000000000005 52.51509259259257</gml:lowerCorner>
+            <gml:upperCorner>13.378259259259263 52.51662962962967</gml:upperCorner>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <hma:maskMembers>
+    </hma:maskMembers>
+</hma:Mask>
