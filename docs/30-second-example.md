@@ -7,8 +7,8 @@ The UP42 Python package uses nine classes, representing the **hierarchical struc
 
 ------------------------
 
-In this example a **new workflow** consisting of [**Sentinel-2 data**](https://marketplace.up42.com/block/018dfb34-fc19-4334-8125-14fd7535f979)
-and [**Land-Surface-Temperature**](https://marketplace.up42.com/block/34767300-5caf-472b-a684-a351212b5c14) is created.
+In this example a **new workflow** consisting of [**Sentinel-2 L2A data**](https://marketplace.up42.com/block/4471e5ef-90f1-4bf0-9243-66bc9d8b4c99)
+and [**Sharpening Filter**](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e) is created.
 The area of interest and workflow parameters are defined. After **running the job**, 
 the results are **downloaded** and visualized.
 
@@ -22,8 +22,8 @@ project = up42.initialize_project()
 # Construct workflow
 workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
 #print(up42.get_blocks(basic=True))
-input_tasks = ["Sentinel-2 Level 2 (GeoTIFF)",
-               "Land Surface Temperature Estimation"]
+input_tasks = ["Sentinel-2 L2A (GeoTIFF)",
+               "Sharpening Filter"]
 workflow.add_workflow_tasks(input_tasks)
 
 # Define the aoi and input parameters of the workflow to run it.
@@ -34,7 +34,7 @@ input_parameters = workflow.construct_parameters(geometry=aoi,
                                                  start_date="2018-01-01",
                                                  end_date="2020-12-31",
                                                  limit=1)
-input_parameters["sentinelhub-s2-aoiclipped:1"].update({"max_cloud_cover":5})
+input_parameters["esa-s2-l2a-gtiff:1"].update({"max_cloud_cover":5})
 
 # Price estimation
 workflow.estimate_job(input_parameters)
