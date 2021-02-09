@@ -46,8 +46,7 @@ test_job = workflow.test_job(input_parameters, track_status=True)
 job = workflow.run_job(input_parameters, track_status=True)
 
 job.download_results()
-job.plot_results(figsize=(6,6), bands=[1], cmap="YlOrBr")
-#job.map_results(bands=[1])
+job.plot_results(figsize=(6,6))
 ```
 
 <br>
