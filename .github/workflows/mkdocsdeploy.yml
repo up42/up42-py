@@ -1,22 +1,38 @@
 name: Publish docs via GitHub Pages
-on: push
+on:
+  push:
+    branches:
+      - master
+    paths:
+      # Only rebuild website when docs have changed
+      - 'docs/**'
+      - 'examples/**'
+      - 'CHANGELOG.md'
+      - 'mkdocs.yml'
 
 jobs:
-  deployDocs:
+  build:
     name: Deploy docs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout master
         uses: actions/checkout@v2
-      
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install -r requirements-docs.txt
+
       - name: Create symlinks for examples and changelog
         run: |
              ln -s examples docs
              ln -s CHANGELOG.md docs
 
       - name: Deploy docs
-        uses: mhausenblas/mkdocs-deploy-gh-pages@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REQUIREMENTS: requirements-docs.txt
-          EXTRA_PACKAGES: build-base libzmq musl-dev python3 python3-dev zeromq-dev py3-rasterio
+        run: mkdocs gh-deploy -m "update gh-pages [ci skip]" --force
