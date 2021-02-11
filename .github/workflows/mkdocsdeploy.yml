@@ -11,10 +11,12 @@ jobs:
       
       - name: Fix paths for examples and changelog
         run: |
-          ls
+          unlink docs/examples; ln -s examples docs
+	        unlink docs/CHANGELOG.md; ln -s CHANGELOG.md docs
+        shell: bash
 
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          EXTRA_PACKAGES: build-base
+          REQUIREMENTS: requirements-dev.txt
