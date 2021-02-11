@@ -6,11 +6,12 @@ import up42
 
 @pytest.mark.live()
 def test_e2e_30sec():
-    up42.authenticate(
+    _auth = up42.Auth(
         project_id=os.getenv("TEST_UP42_PROJECT_ID"),
         project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
-    project = up42.initialize_project()
+
+    project = up42.Project(_auth, project_id=_auth.project_id)
 
     # Construct workflow
     workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
