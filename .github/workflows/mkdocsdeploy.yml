@@ -14,8 +14,6 @@ jobs:
           ls
           unlink up42-py/docs/examples
           ln -s up42-py/examples up42-py/docs
-	        unlink up42-py/docs/CHANGELOG.md
-          ln -s up42-py/CHANGELOG.md up42-py/docs
 
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
