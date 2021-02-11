@@ -47,14 +47,14 @@ JSON_WORKFLOW_TASKS = {
     "data": [
         {
             "id": "aa2cba17-d35c-4395-ab01-a0fd8191a4b3",
-            "name": "sobloo-s2-l1c-aoiclipped:1",
+            "name": "esa-s2-l2a-gtiff:1",
             "parentsIds": [],
-            "blockName": "sobloo-s2-l1c-aoiclipped",
-            "blockVersionTag": "2.3.0",
+            "blockName": "esa-s2-l2a-gtiff",
+            "blockVersionTag": "1.0.1",
             "block": {
-                "id": "3a381e6b-acb7-4cec-ae65-50798ce80e64",
-                "name": "sobloo-s2-l1c-aoiclipped",
-                "displayName": "Sentinel-2 L1C MSI AOI clipped",
+                "id": "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
+                "name": "esa-s2-l2a-gtiff",
+                "displayName": "Sentinel-2 L2A (GeoTIFF)",
                 "parameters": {
                     "ids": {"type": "array", "default": "None"},
                     "bbox": {"type": "array", "default": "None"},
@@ -65,7 +65,7 @@ JSON_WORKFLOW_TASKS = {
                 },
                 "type": "DATA",
                 "isDryRunSupported": True,
-                "version": "2.3.0",
+                "version": "1.0.1",
             },
             "environment": "None",
         },
@@ -115,9 +115,9 @@ JSON_BLOCKS = {
             "displayName": "Sharpening Filter",
         },
         {
-            "id": "a2daaab4-196d-4226-a018-a810444dcad1",
-            "name": "sobloo-s2-l1c-aoiclipped",
-            "displayName": "Sentinel-2 L1C MSI AOI clipped",
+            "id": "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
+            "name": "esa-s2-l2a-gtiff",
+            "displayName": "Sentinel-2 L2A (GeoTIFF)",
         },
     ],
     "error": {},
@@ -125,24 +125,24 @@ JSON_BLOCKS = {
 
 JSON_WORKFLOW_ESTIMATION = {
     "data": {
-        "sobloo-s2-l1c-aoiclipped:1": {
+        "esa-s2-l2a-gtiff:1": {
             "blockConsumption": {
-                "resources": {"unit": "MEGABYTE", "min": 3.145728, "max": 3.145728},
-                "credit": {"min": 0, "max": 0},
+                "credit": {"max": 0, "min": 0},
+                "resources": {"max": 0, "min": 0, "unit": "SQUARE_KM"},
             },
             "machineConsumption": {
-                "duration": {"min": 4041, "max": 26380},
-                "credit": {"min": 3, "max": 3},
+                "credit": {"max": 1, "min": 1},
+                "duration": {"max": 0, "min": 0},
             },
         },
         "tiling:1": {
             "blockConsumption": {
-                "resources": {"unit": "MEGABYTE", "min": 3.145728, "max": 3.145728},
-                "credit": {"min": 0, "max": 0},
+                "credit": {"max": 0, "min": 0},
+                "resources": {"max": 3.145728, "min": 3.145728, "unit": "MEGABYTE"},
             },
             "machineConsumption": {
-                "duration": {"min": 80930, "max": 428927},
-                "credit": {"min": 2, "max": 9},
+                "credit": {"max": 9, "min": 2},
+                "duration": {"max": 428927, "min": 80930},
             },
         },
     },
@@ -566,7 +566,7 @@ def jobs_live(auth_live):
 @pytest.fixture()
 def estimation_mock(auth_mock):
     input_parameters = {
-        "sobloo-s2-l1c-aoiclipped:1": {
+        "esa-s2-l2a-gtiff:1": {
             "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
             "limit": 1,
             "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
@@ -576,14 +576,14 @@ def estimation_mock(auth_mock):
 
     input_tasks = [
         {
-            "name": "sobloo-s2-l1c-aoiclipped:1",
+            "name": "esa-s2-l2a-gtiff:1",
             "parentName": None,
-            "blockId": "3a381e6b-acb7-4cec-ae65-50798ce80e64",
-            "blockVersionTag": "2.3.0",
+            "blockId": "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
+            "blockVersionTag": "1.0.1",
         },
         {
             "name": "tiling:1",
-            "parentName": "sobloo-s2-l1c-aoiclipped:1",
+            "parentName": "esa-s2-l2a-gtiff:1",
             "blockId": "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
             "blockVersionTag": "2.2.3",
         },
@@ -595,7 +595,7 @@ def estimation_mock(auth_mock):
 @pytest.fixture()
 def estimation_live(auth_live):
     input_parameters = {
-        "sobloo-s2-l1c-aoiclipped:1": {
+        "esa-s2-l2a-gtiff:1": {
             "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
             "limit": 1,
             "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
@@ -605,14 +605,14 @@ def estimation_live(auth_live):
 
     input_tasks = [
         {
-            "name": "sobloo-s2-l1c-aoiclipped:1",
+            "name": "esa-s2-l2a-gtiff:1",
             "parentName": None,
-            "blockId": "3a381e6b-acb7-4cec-ae65-50798ce80e64",
-            "blockVersionTag": "2.3.0",
+            "blockId": "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
+            "blockVersionTag": "1.0.1",
         },
         {
             "name": "tiling:1",
-            "parentName": "sobloo-s2-l1c-aoiclipped:1",
+            "parentName": "esa-s2-l2a-gtiff:1",
             "blockId": "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
             "blockVersionTag": "2.2.3",
         },

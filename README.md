@@ -63,8 +63,8 @@ project = up42.initialize_project()
 # Construct workflow
 workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
 #print(up42.get_blocks(basic=True))
-input_tasks = ["Sentinel-2 Level 2 (GeoTIFF)",
-               "Land Surface Temperature Estimation"]
+input_tasks = ["Sentinel-2 L2A (GeoTIFF)",
+               "Sharpening Filter"]
 workflow.add_workflow_tasks(input_tasks)
 
 # Define the aoi and input parameters of the workflow to run it.
@@ -75,7 +75,7 @@ input_parameters = workflow.construct_parameters(geometry=aoi,
                                                  start_date="2018-01-01",
                                                  end_date="2020-12-31",
                                                  limit=1)
-input_parameters["sentinelhub-s2-aoiclipped:1"].update({"max_cloud_cover":5})
+input_parameters["esa-s2-l2a-gtiff:1"].update({"max_cloud_cover":5})
 
 # Price estimation
 workflow.estimate_job(input_parameters)
@@ -87,8 +87,7 @@ test_job = workflow.test_job(input_parameters, track_status=True)
 job = workflow.run_job(input_parameters, track_status=True)
 
 job.download_results()
-job.plot_results(figsize=(6,6), bands=[1], cmap="YlOrBr")
-#job.map_results(bands=[1])
+job.plot_results(figsize=(6,6))
 ```
 
 ## Support
