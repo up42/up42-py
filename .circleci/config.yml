@@ -66,13 +66,6 @@ workflows:
 
 
   test_live:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - master
     jobs:
       - test_live:
           context: up42-py-live-testing
