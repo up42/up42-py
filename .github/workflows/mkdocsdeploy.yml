@@ -10,8 +10,11 @@ jobs:
         uses: actions/checkout@v2
       
       - run: |
-        unlink up42-py/docs/examples; ln -s up42-py/examples docs
-	      unlink up42-py/docs/CHANGELOG.md; ln -s up42-py/CHANGELOG.md docs
+        unlink up42-py/docs/examples
+        ln -s up42-py/examples docs
+      - run: |
+	      unlink up42-py/docs/CHANGELOG.md
+        ln -s up42-py/CHANGELOG.md docs
 
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
