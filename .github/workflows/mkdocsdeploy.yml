@@ -2,14 +2,16 @@ name: Publish docs via GitHub Pages
 on: push
 
 jobs:
-  build:
+  deployDocs:
     name: Deploy docs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout master
         uses: actions/checkout@v2
       
-      - run: |
+      - name: Fix paths for examples and changelog
+        run: |
+          ls
           unlink up42-py/docs/examples
           ln -s up42-py/examples up42-py/docs
 	        unlink up42-py/docs/CHANGELOG.md
