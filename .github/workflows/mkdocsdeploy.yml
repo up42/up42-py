@@ -9,14 +9,14 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v2
       
-      - name: Fix paths for examples and changelog
+      - name: Create symlinks for examples and changelog
         run: |
-          unlink docs/examples; ln -s examples docs
-	        unlink docs/CHANGELOG.md; ln -s CHANGELOG.md docs
-        shell: bash
+             ln -s examples docs
+             ln -s CHANGELOG.md docs
 
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REQUIREMENTS: requirements-dev.txt
+          REQUIREMENTS: requirements-docs.txt
+          EXTRA_PACKAGES: build-base libzmq musl-dev python3 python3-dev zeromq-dev py3-rasterio
