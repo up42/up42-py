@@ -1,14 +1,17 @@
 name: Publish docs via GitHub Pages
+
 on:
   push:
     branches:
       - master
     paths:
       # Only rebuild website when docs have changed
+      # Comment out when testing locally via act!
       - 'docs/**'
       - 'examples/**'
       - 'CHANGELOG.md'
       - 'mkdocs.yml'
+
 
 jobs:
   build:
@@ -18,21 +21,21 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v2
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.7
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.7
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e .
           python -m pip install -r requirements-docs.txt
+          python -m pip install -e .
 
       - name: Create symlinks for examples and changelog
         run: |
-             ln -s examples docs
-             ln -s CHANGELOG.md docs
+              ln -sfn /github/workspace/examples /github/workspace/docs
+              ln -sfn /github/workspace/examples/guides /github/workspace/docs
+              ln -sfn /github/workspace/CHANGELOG.md /github/workspace/docs
 
       - name: Deploy docs
-        run: mkdocs gh-deploy -m "update gh-pages [ci skip]" --force
+        run: mkdocs gh-deploy --force -m "update gh-pages [ci skip]"
