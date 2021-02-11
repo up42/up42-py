@@ -12,8 +12,6 @@ jobs:
       - name: Fix paths for examples and changelog
         run: |
           ls
-          unlink up42-py/docs/examples
-          ln -s up42-py/examples up42-py/docs
 
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
