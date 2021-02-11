@@ -1,6 +1,4 @@
 version: 2.1
-orbs:
-  notify-slack: interstellar/notify-slack@0.2.0
 
 jobs:
   test:
@@ -63,8 +61,6 @@ workflows:
           filters:
             branches:
               only: master
-
-
   test_live:
     jobs:
       - test_live:
