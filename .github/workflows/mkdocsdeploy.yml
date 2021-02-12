@@ -22,9 +22,10 @@ jobs:
 
       - name: Create symlinks for examples and changelog
         run: |
-              ln -sfn /github/workspace/examples /github/workspace/docs
-              ln -sfn /github/workspace/examples/guides /github/workspace/docs
-              ln -sfn /github/workspace/CHANGELOG.md /github/workspace/docs
+              ls
+              ln -sfn examples docs
+              ln -sfn examples/guides docs
+              ln -sfn CHANGELOG.md docs
 
       - name: Deploy docs
         run: mkdocs gh-deploy --force -m "update gh-pages [ci skip]"
