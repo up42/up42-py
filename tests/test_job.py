@@ -212,7 +212,7 @@ def test_job_download_result_dimap_live(auth_live):
         assert Path(out_files[0]).exists()
         assert Path(out_files[20]).exists()
         assert Path(out_files[-1]).exists()
-        assert Path(out_files[-1]).name == "data.json"
+        assert "data.json" in [Path(of).name for of in out_files]
         assert len(out_files) == 54
 
 

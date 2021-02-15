@@ -6,12 +6,12 @@ import up42
 
 @pytest.mark.live()
 def test_e2e_catalog():
-    up42.authenticate(
+    _auth = up42.Auth(
         project_id=os.getenv("TEST_UP42_PROJECT_ID"),
         project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
 
-    catalog = up42.initialize_catalog()
+    catalog = up42.Catalog(_auth)
 
     ## Search scenes in aoi
 
