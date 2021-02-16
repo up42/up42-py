@@ -255,7 +255,7 @@ def settings(log=True):
     else:
         logger.info("Logging disabled - use up42.settings(log=True) to reactivate.")
 
-    # pylint: disable=expression-not-assigned
+    # pylint: disable=expression-not-assigned,no-member
     [
         setattr(logging.getLogger(name), "disabled", not log)
         for name in logging.root.manager.loggerDict
