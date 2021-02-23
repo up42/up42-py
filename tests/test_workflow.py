@@ -704,7 +704,7 @@ def test_get_jobs_live(workflow_live):
     assert isinstance(jobcollection, list)
     assert isinstance(jobcollection.jobs[0], Job)
     assert all(
-        [j._info["workflowId"] == workflow_live.workflow_id for j in jobcollection.jobs]
+        j._info["workflowId"] == workflow_live.workflow_id for j in jobcollection.jobs
     )
 
 
