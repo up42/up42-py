@@ -124,7 +124,6 @@ plugins:
               - "!^_"  # exlude all members starting with _
       watch:
         - src/my_library
-  #- pdf-export
 
 ## Custom theme additions
 extra_javascript:
@@ -136,8 +135,6 @@ extra_css:
 markdown_extensions:
   - markdown.extensions.admonition
   - markdown.extensions.attr_list
-  - markdown.extensions.codehilite:
-      guess_lang: false
   - markdown.extensions.def_list
   - markdown.extensions.footnotes
   - markdown.extensions.meta
@@ -151,8 +148,7 @@ markdown_extensions:
   - pymdownx.critic
   - pymdownx.details
   - pymdownx.emoji
-  # - pymdownx.highlight:
-  #     linenums_style: pymdownx-inline
+  - pymdownx.highlight
   - pymdownx.inlinehilite
   - pymdownx.keys
   - pymdownx.magiclink:
