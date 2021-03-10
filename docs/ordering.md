@@ -47,6 +47,12 @@ search_results = catalog.search(search_parameters=search_parameters)
 search_results
 ```
 
+## Estimate the order price
+
+```python
+catalog.estimate_order(aoi, search_results.loc[0])
+```
+
 !!! Info "Catalog Search"
     For more detail on how to perform a catalog search, and additional options,
     go to [Catalog Search](./catalog.md).
