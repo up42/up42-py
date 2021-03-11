@@ -334,6 +334,7 @@ class VizTools:
                 # pylint: disable=not-an-iterable
                 json_fp = [fp for fp in self.results if fp.endswith(".json")][0]
             f_paths = self.results
+            
         elif isinstance(self.results, dict):
             # pylint: disable=unsubscriptable-object
             json_fp = self.results["merged_result"][0]
