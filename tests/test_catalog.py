@@ -97,10 +97,20 @@ def test_search_live(catalog_live):
     assert isinstance(search_results, gpd.GeoDataFrame)
     assert search_results.shape == (4, 14)
     assert list(search_results.columns) == [
-        'geometry', 'id', 'acquisitionDate', 'constellation', 'collection',
-        'providerName', 'blockNames', 'cloudCoverage', 'up42:usageType',
-        'providerProperties', 'sceneId', 'resolution', 'deliveryTime',
-        'producer'
+        "geometry",
+        "id",
+        "acquisitionDate",
+        "constellation",
+        "collection",
+        "providerName",
+        "blockNames",
+        "cloudCoverage",
+        "up42:usageType",
+        "providerProperties",
+        "sceneId",
+        "resolution",
+        "deliveryTime",
+        "producer",
     ]
     assert list(search_results.index) == list(range(search_results.shape[0]))
 
