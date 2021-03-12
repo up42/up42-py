@@ -383,7 +383,7 @@ class VizTools:
     def plot_coverage(
         scenes: GeoDataFrame,
         aoi: GeoDataFrame = None,
-        legend_column: str = "scene_id",
+        legend_column: str = "sceneId",
         figsize=(12, 16),
     ) -> None:
         """
@@ -391,7 +391,7 @@ class VizTools:
         Args:
                 scenes: GeoDataFrame of scenes, results of catalog.search()
                 aoi: GeoDataFrame of aoi.
-                legend_column: Dataframe column set to legend, default is "scene_id".
+                legend_column: Dataframe column set to legend, default is "sceneId".
                         Legend entries are sorted and this determines plotting order.
                 figsize: Matplotlib figure size.
         """

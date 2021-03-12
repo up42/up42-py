@@ -221,7 +221,7 @@ def draw_aoi() -> None:
 def plot_coverage(
     scenes: GeoDataFrame,
     aoi: GeoDataFrame = None,
-    legend_column: str = "scene_id",
+    legend_column: str = "sceneId",
     figsize=(12, 16),
 ) -> None:
     VizTools().plot_coverage(
