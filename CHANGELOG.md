@@ -17,7 +17,7 @@ pip show up42-py
 ## Versions
 ### [0.15.1](https://pypi.org/project/up42-py/) (2020-03-12)
 - Fixes breaking API change in catalog search.
-- Catalog search result now contains a `sceneId` property instead of `scene_ids`.
+- Catalog search result now contains a `sceneId` property instead of `scene_id`.
 
 ### [0.15.0](https://pypi.org/project/up42-py/) (2020-01-27)
 - Add `Storage`, `Order` and `Asset` objects.
