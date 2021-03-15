@@ -29,7 +29,7 @@ def test_e2e_catalog():
     search_results = catalog.search(search_parameters=search_parameters)
     # display(search_results.head()), only works in notebook
 
-    # catalog.plot_coverage(scenes=search_results, aoi=aoi, legend_column="scene_id")
+    # catalog.plot_coverage(scenes=search_results, aoi=aoi, legend_column="sceneId")
 
     ## Download & visualize quicklooks
 
