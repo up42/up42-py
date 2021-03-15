@@ -209,19 +209,6 @@ class Catalog(VizTools, Tools):
         poly = shape(geometry)
         df = df[df.intersects(poly)]
         df = df.reset_index(drop=True)
-
-        # Make scene_id more easily accessible
-        def _get_scene_id(row):
-            if row["providerName"] == "oneatlas":
-                row["scene_id"] = row["providerProperties"]["parentIdentifier"]
-            elif row["providerName"] in ["sobloo-radar", "sobloo-image"]:
-                row["scene_id"] = row["providerProperties"]["identification"][
-                    "externalId"
-                ]
-            return row
-
-        # Search result dataframe can contain scenes of multiple sensors, need to apply row by row.
-        df = df.apply(_get_scene_id, axis=1)
         df.crs = dst_crs  # apply resets the crs
 
         if as_dataframe:

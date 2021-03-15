@@ -88,25 +88,29 @@ def test_search(catalog_mock, requests_mock):
     search_results = catalog_mock.search(mock_search_parameters)
 
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (1, 9)
+    assert search_results.shape == (1, 14)
 
 
 @pytest.mark.live
 def test_search_live(catalog_live):
     search_results = catalog_live.search(mock_search_parameters)
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (4, 10)
+    assert search_results.shape == (4, 14)
     assert list(search_results.columns) == [
         "geometry",
         "id",
         "acquisitionDate",
         "constellation",
+        "collection",
         "providerName",
         "blockNames",
         "cloudCoverage",
         "up42:usageType",
         "providerProperties",
-        "scene_id",
+        "sceneId",
+        "resolution",
+        "deliveryTime",
+        "producer",
     ]
     assert list(search_results.index) == list(range(search_results.shape[0]))
 
