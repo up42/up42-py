@@ -82,7 +82,7 @@ def test_track_status_fail(job_mock, status, requests_mock):
 
 
 def test_cancel_job(job_mock, requests_mock):
-    url = f"{job_mock.auth._endpoint()}/jobs/{job_mock.job_id}/cancel/"
+    url = f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}/cancel/"
     requests_mock.post(url, status_code=200)
     job_mock.cancel_job()
 
@@ -173,6 +173,9 @@ def test_job_download_result_nounpacking(job_mock, requests_mock):
             assert Path(file).exists()
         assert len(out_files) == 1
 
+# @pytest.mark.live
+def test_cancel_job_live(job_live):
+    job_live.cancel_job()
 
 @pytest.mark.live
 def test_job_download_result_live(job_live):
@@ -181,7 +184,6 @@ def test_job_download_result_live(job_live):
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 2
-
 
 @pytest.mark.live
 def test_job_download_result_no_tiff_live(auth_live):
