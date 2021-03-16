@@ -3,10 +3,12 @@ from pathlib import Path
 import tempfile
 
 import pytest
+import json
+import time
 
 # pylint: disable=unused-import
 from .context import Job, JobTask
-from .fixtures import auth_mock, auth_live, job_mock, job_live, jobtask_mock
+from .fixtures import auth_mock, auth_live, job_mock, job_live, jobtask_mock, workflow_live
 from .fixtures import DOWNLOAD_URL, JOBTASK_ID
 
 
@@ -173,9 +175,26 @@ def test_job_download_result_nounpacking(job_mock, requests_mock):
             assert Path(file).exists()
         assert len(out_files) == 1
 
-# @pytest.mark.live
-def test_cancel_job_live(job_live):
-    job_live.cancel_job()
+@pytest.mark.live
+def test_cancel_job_live(workflow_live):
+    input_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    )
+    jb = workflow_live.test_job(
+        input_parameters=input_parameters_json, track_status=False
+    )
+    assert isinstance(jb, Job)
+    with open(input_parameters_json) as src:
+        job_info_params = json.load(src)
+        job_info_params.update({"config": {"mode": "DRY_RUN"}})
+        assert jb._info["inputs"] == job_info_params
+        assert jb._info["mode"] == "DRY_RUN"
+
+    jb.cancel_job()
+    # Give service time to cancel job
+    time.sleep(3)
+    assert jb.status in ["CANCELLED", "CANCELLING"]
+
 
 @pytest.mark.live
 def test_job_download_result_live(job_live):
