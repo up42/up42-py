@@ -1,9 +1,9 @@
 import os
 from pathlib import Path
+import json
 import tempfile
 
 import pytest
-import json
 import time
 
 # pylint: disable=unused-import
