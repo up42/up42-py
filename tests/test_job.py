@@ -1,10 +1,11 @@
 import os
 from pathlib import Path
 import json
+import time
 import tempfile
 
 import pytest
-import time
+
 
 # pylint: disable=unused-import
 from .context import Job, JobTask
