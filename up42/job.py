@@ -146,7 +146,7 @@ class Job(VizTools, Tools):
 
     def cancel_job(self) -> None:
         """Cancels a pending or running job."""
-        url = f"{self.auth._endpoint()}/jobs/{self.job_id}/cancel/"
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}/cancel/"
         self.auth._request(request_type="POST", url=url)
         logger.info(f"Job canceled: {self.job_id}")
 
