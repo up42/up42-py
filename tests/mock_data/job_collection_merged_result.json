@@ -1,0 +1,349 @@
+{
+    "features": [
+        {
+            "bbox": [
+                13.359374999999996,
+                52.482780222078155,
+                13.425292968749993,
+                52.522905940278044
+            ],
+            "geometry": {
+                "coordinates": [
+                    [
+                        [
+                            13.359375,
+                            52.48278
+                        ],
+                        [
+                            13.359375,
+                            52.522906
+                        ],
+                        [
+                            13.425293,
+                            52.522906
+                        ],
+                        [
+                            13.425293,
+                            52.48278
+                        ],
+                        [
+                            13.359375,
+                            52.48278
+                        ]
+                    ]
+                ],
+                "type": "Polygon"
+            },
+            "properties": {
+                "acquisition": {
+                    "beginViewingDate": 1576836871024,
+                    "centerViewingDate": 1576836871024,
+                    "endViewingDate": 1576836871024,
+                    "mission": "Sentinel-2",
+                    "missionCode": "S2A",
+                    "missionId": "A",
+                    "missionName": "Sentinel-2A",
+                    "sensorId": "MSI",
+                    "sensorMode": "INS-NOBS"
+                },
+                "archive": {
+                    "filename": "S2A_MSIL1C_20191220T101431_N0208_R022_T33UUU_20191220T105312.SAFE",
+                    "format": "SAFE",
+                    "offLine": false,
+                    "onLine": false,
+                    "size": 566
+                },
+                "attachments": [],
+                "attitude": {},
+                "contentDescription": {
+                    "cloudCoverPercentage": 1.0068
+                },
+                "identification": {
+                    "collection": "Sentinel-2",
+                    "dataset": {},
+                    "externalId": "S2A_MSIL1C_20191220T101431_N0208_R022_T33UUU_20191220T105312",
+                    "hvTileId": "UU33U",
+                    "profile": "Image",
+                    "tileId": "33UUU",
+                    "type": "S2MSI1C"
+                },
+                "illumination": {},
+                "job_id": "job_id_123",
+                "orbit": {
+                    "direction": "DESCENDING",
+                    "number": 23471,
+                    "relativeNumber": 22
+                },
+                "production": {
+                    "baseline": "02.08",
+                    "levelCode": "Level-1C",
+                    "ongoing": false
+                },
+                "provider": {},
+                "quality": {
+                    "qualified": false
+                },
+                "spatialCoverage": {
+                    "geometry": {
+                        "centerPoint": {
+                            "lat": 52.70329063571445,
+                            "lon": 13.118366468633191
+                        },
+                        "geographicBoundingPolygon": {
+                            "coordinates": [
+                                [
+                                    [
+                                        12.373644,
+                                        52.231651
+                                    ],
+                                    [
+                                        13.678544,
+                                        52.255151
+                                    ],
+                                    [
+                                        13.648342,
+                                        53.241964
+                                    ],
+                                    [
+                                        12.805847,
+                                        53.226593
+                                    ],
+                                    [
+                                        12.761606,
+                                        53.126522
+                                    ],
+                                    [
+                                        12.696977,
+                                        52.98098
+                                    ],
+                                    [
+                                        12.632827,
+                                        52.835383
+                                    ],
+                                    [
+                                        12.569493,
+                                        52.689711
+                                    ],
+                                    [
+                                        12.506495,
+                                        52.544093
+                                    ],
+                                    [
+                                        12.444161,
+                                        52.398465
+                                    ],
+                                    [
+                                        12.382571,
+                                        52.252838
+                                    ],
+                                    [
+                                        12.373644,
+                                        52.231651
+                                    ]
+                                ]
+                            ],
+                            "type": "Polygon"
+                        },
+                        "global": false
+                    },
+                    "verticality": {}
+                },
+                "state": {
+                    "insertionDate": 1576851503127,
+                    "resources": {
+                        "quicklook": true,
+                        "thumbnail": true
+                    },
+                    "services": {
+                        "download": "internal",
+                        "wcs": true,
+                        "wms": true,
+                        "wmts": true
+                    }
+                },
+                "target": {},
+                "timeStamp": 1576836871024,
+                "transmission": {},
+                "uid": "21ac03b7-1b1e-43c8-b385-56fde04610aa",
+                "up42.data_path": "7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif",
+                "visibility": {
+                    "deleted": false
+                }
+            },
+            "type": "Feature"
+        },
+        {
+            "bbox": [
+                13.359374999999996,
+                52.482780222078155,
+                13.425292968749993,
+                52.522905940278044
+            ],
+            "geometry": {
+                "coordinates": [
+                    [
+                        [
+                            13.359375,
+                            52.48278
+                        ],
+                        [
+                            13.359375,
+                            52.522906
+                        ],
+                        [
+                            13.425293,
+                            52.522906
+                        ],
+                        [
+                            13.425293,
+                            52.48278
+                        ],
+                        [
+                            13.359375,
+                            52.48278
+                        ]
+                    ]
+                ],
+                "type": "Polygon"
+            },
+            "properties": {
+                "acquisition": {
+                    "beginViewingDate": 1576836871024,
+                    "centerViewingDate": 1576836871024,
+                    "endViewingDate": 1576836871024,
+                    "mission": "Sentinel-2",
+                    "missionCode": "S2A",
+                    "missionId": "A",
+                    "missionName": "Sentinel-2A",
+                    "sensorId": "MSI",
+                    "sensorMode": "INS-NOBS"
+                },
+                "archive": {
+                    "filename": "S2A_MSIL1C_20191220T101431_N0208_R022_T33UUU_20191220T105312.SAFE",
+                    "format": "SAFE",
+                    "offLine": false,
+                    "onLine": false,
+                    "size": 566
+                },
+                "attachments": [],
+                "attitude": {},
+                "contentDescription": {
+                    "cloudCoverPercentage": 1.0068
+                },
+                "identification": {
+                    "collection": "Sentinel-2",
+                    "dataset": {},
+                    "externalId": "S2A_MSIL1C_20191220T101431_N0208_R022_T33UUU_20191220T105312",
+                    "hvTileId": "UU33U",
+                    "profile": "Image",
+                    "tileId": "33UUU",
+                    "type": "S2MSI1C"
+                },
+                "illumination": {},
+                "job_id": "jobid_456",
+                "orbit": {
+                    "direction": "DESCENDING",
+                    "number": 23471,
+                    "relativeNumber": 22
+                },
+                "production": {
+                    "baseline": "02.08",
+                    "levelCode": "Level-1C",
+                    "ongoing": false
+                },
+                "provider": {},
+                "quality": {
+                    "qualified": false
+                },
+                "spatialCoverage": {
+                    "geometry": {
+                        "centerPoint": {
+                            "lat": 52.70329063571445,
+                            "lon": 13.118366468633191
+                        },
+                        "geographicBoundingPolygon": {
+                            "coordinates": [
+                                [
+                                    [
+                                        12.373644,
+                                        52.231651
+                                    ],
+                                    [
+                                        13.678544,
+                                        52.255151
+                                    ],
+                                    [
+                                        13.648342,
+                                        53.241964
+                                    ],
+                                    [
+                                        12.805847,
+                                        53.226593
+                                    ],
+                                    [
+                                        12.761606,
+                                        53.126522
+                                    ],
+                                    [
+                                        12.696977,
+                                        52.98098
+                                    ],
+                                    [
+                                        12.632827,
+                                        52.835383
+                                    ],
+                                    [
+                                        12.569493,
+                                        52.689711
+                                    ],
+                                    [
+                                        12.506495,
+                                        52.544093
+                                    ],
+                                    [
+                                        12.444161,
+                                        52.398465
+                                    ],
+                                    [
+                                        12.382571,
+                                        52.252838
+                                    ],
+                                    [
+                                        12.373644,
+                                        52.231651
+                                    ]
+                                ]
+                            ],
+                            "type": "Polygon"
+                        },
+                        "global": false
+                    },
+                    "verticality": {}
+                },
+                "state": {
+                    "insertionDate": 1576851503127,
+                    "resources": {
+                        "quicklook": true,
+                        "thumbnail": true
+                    },
+                    "services": {
+                        "download": "internal",
+                        "wcs": true,
+                        "wms": true,
+                        "wmts": true
+                    }
+                },
+                "target": {},
+                "timeStamp": 1576836871024,
+                "transmission": {},
+                "uid": "21ac03b7-1b1e-43c8-b385-56fde04610aa",
+                "up42.data_path": "7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif",
+                "visibility": {
+                    "deleted": false
+                }
+            },
+            "type": "Feature"
+        }
+    ],
+    "type": "FeatureCollection"
+}

@@ -171,6 +171,30 @@ def test_map_results(job_mock):
     assert isinstance(map_object, Map)
 
 
+def test_map_results_jobcollection(job_mock):
+    fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+    fp_merged = (
+        Path(__file__).resolve().parent / "mock_data/job_collection_merged_result.json"
+    )
+    with tarfile.open(fp_tgz) as tar:
+        tar.extractall(fp_tgz.parent)
+    fp_tif = (
+        fp_tgz.parent
+        / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    )
+
+    my_dict = {
+        "job_id_123": [str(fp_tif), f"{str(fp_tgz.parent)}/output/data.json"],
+        "jobid_456": [str(fp_tif), f"{str(fp_tgz.parent)}/output/data.json"],
+        "merged_result": [fp_merged],
+    }
+
+    job_mock.results = my_dict
+    map_object = job_mock.map_results()
+
+    assert isinstance(map_object, Map)
+
+
 def test_map_results_additional_geojson(job_mock):
     fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with tarfile.open(fp_tgz) as tar:
