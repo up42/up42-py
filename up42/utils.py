@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import tarfile
+import zipfile
 import warnings
 import functools
 
@@ -91,8 +92,8 @@ def download_results_from_gcs(
     output_directory = Path(output_directory)
 
     # Download
-    tgz_file = tempfile.mktemp()
-    with open(tgz_file, "wb") as dst_tgz:
+    compressed_file = tempfile.mktemp()
+    with open(compressed_file, "wb") as dst_tgz:
         try:
             r = requests.get(download_url)
             r.raise_for_status()
@@ -105,18 +106,28 @@ def download_results_from_gcs(
                 f"Connection error, please try again! {err}"
             )
 
-    with tarfile.open(tgz_file) as tar:
-        tar.extractall(path=output_directory)
+    if tarfile.is_tarfile(compressed_file):
+        unpack = tarfile.open
+    elif zipfile.is_zipfile(compressed_file):
+        unpack = zipfile.ZipFile  # type: ignore
+    else:
+        raise ValueError("Downloaded file is not a TAR or ZIP archive.")
+
+    with unpack(compressed_file) as f:
+        f.extractall(path=output_directory)
         output_folder_path = output_directory / "output"
         out_filepaths = []
-        for src_path in output_folder_path.glob("**/*"):
-            dst_path = output_directory / src_path.relative_to(output_folder_path)
-            shutil.move(str(src_path), str(dst_path))
-            if dst_path.is_dir():
-                out_filepaths += [str(x) for x in dst_path.glob("**/*")]
-            elif dst_path.is_file():
-                out_filepaths.append(str(dst_path))
-        output_folder_path.rmdir()
+        if output_folder_path.exists():
+            for src_path in output_folder_path.glob("**/*"):
+                dst_path = output_directory / src_path.relative_to(output_folder_path)
+                shutil.move(str(src_path), str(dst_path))
+                if dst_path.is_dir():
+                    out_filepaths += [str(x) for x in dst_path.glob("**/*")]
+                elif dst_path.is_file():
+                    out_filepaths.append(str(dst_path))
+            output_folder_path.rmdir()
+        else:
+            out_filepaths += [str(x) for x in output_directory.glob("**/*")]
 
     logger.info(
         f"Download successful of {len(out_filepaths)} files to output_directory "

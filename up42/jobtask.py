@@ -14,6 +14,17 @@ logger = get_logger(__name__)
 
 # pylint: disable=duplicate-code
 class JobTask(VizTools, Tools):
+    """
+    The JobTask class provides access to the result of a specific block in the workflow.
+    Each job contains one or multiple JobTasks, one for each block.
+
+    Use an existing jobtask:
+    ```python
+    jobtask = up42.initialize_jobtask(jobtask_id="3f772637-09aa-4164-bded-692fcd746d20",
+                                      job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021")
+    ```
+    """
+
     def __init__(
         self,
         auth: Auth,
@@ -21,11 +32,6 @@ class JobTask(VizTools, Tools):
         job_id: str,
         jobtask_id: str,
     ):
-        """
-        The JobTask class provides access to the results and parameters of single
-        Tasks of UP42 Jobs (each Job contains one or multiple Jobtasks, one for each
-        block in the workflow).
-        """
         self.auth = auth
         self.project_id = project_id
         self.job_id = job_id

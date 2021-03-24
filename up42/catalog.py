@@ -3,8 +3,9 @@ Catalog search functionality
 """
 
 from pathlib import Path
-from typing import Dict, Union, List
+from typing import Dict, Union, List, Tuple
 
+from pandas import Series
 from geopandas import GeoDataFrame
 from shapely.geometry import shape
 from shapely.geometry import Point, Polygon
@@ -14,6 +15,7 @@ from tqdm import tqdm
 from up42.auth import Auth
 from up42.tools import Tools
 from up42.viztools import VizTools
+from up42.order import Order
 from up42.utils import get_logger, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__)
@@ -23,6 +25,7 @@ supported_sensors = {
     "pleiades": {
         "blocks": [
             "oneatlas-pleiades-fullscene",
+            "oneatlas-pleiades-display",
             "oneatlas-pleiades-aoiclipped",
         ],
         "provider": "oneatlas",
@@ -30,6 +33,7 @@ supported_sensors = {
     "spot": {
         "blocks": [
             "oneatlas-spot-fullscene",
+            "oneatlas-spot-display",
             "oneatlas-spot-aoiclipped",
         ],
         "provider": "oneatlas",
@@ -60,12 +64,18 @@ supported_sensors = {
 
 # pylint: disable=duplicate-code
 class Catalog(VizTools, Tools):
+    """
+    The Catalog class enables access to the UP42 catalog search. You can search
+    for satellite image scenes (for different sensors and criteria like cloud cover),
+    plot the scene coverage and download and plot the scene quicklooks.
+
+    Use the catalog:
+    ```python
+    catalog = up42.initialize_catalog()
+    ```
+    """
+
     def __init__(self, auth: Auth):
-        """
-        The Catalog class enables access to the UP42 catalog search. You can search
-        for satellite image scenes (for different sensors and criteria like cloud cover),
-        plot the scene coverage and download and plot the scene quicklooks.
-        """
         self.auth = auth
         self.quicklooks = None
 
@@ -201,19 +211,6 @@ class Catalog(VizTools, Tools):
         poly = shape(geometry)
         df = df[df.intersects(poly)]
         df = df.reset_index(drop=True)
-
-        # Make scene_id more easily accessible
-        def _get_scene_id(row):
-            if row["providerName"] == "oneatlas":
-                row["scene_id"] = row["providerProperties"]["parentIdentifier"]
-            elif row["providerName"] in ["sobloo-radar", "sobloo-image"]:
-                row["scene_id"] = row["providerProperties"]["identification"][
-                    "externalId"
-                ]
-            return row
-
-        # Search result dataframe can contain scenes of multiple sensors, need to apply row by row.
-        df = df.apply(_get_scene_id, axis=1)
         df.crs = dst_crs  # apply resets the crs
 
         if as_dataframe:
@@ -283,3 +280,116 @@ class Catalog(VizTools, Tools):
 
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
+
+    @staticmethod
+    def _order_payload(
+        geometry: Union[
+            Dict,
+            Feature,
+            FeatureCollection,
+            List,
+            GeoDataFrame,
+            Point,
+            Polygon,
+        ],
+        scene: Series,
+    ) -> Tuple[str, Dict]:
+        """
+        Helper that constructs necessary parameters for `Order.place` and `Order.estimate`.
+
+        Args:
+            geometry (Union[ Dict, Feature, FeatureCollection, List, GeoDataFrame, Point, Polygon, ]): The intended
+                output AOI of the order.
+            scene (GeoSeries): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
+                for the first scene of a catalog search result.
+
+        Returns:
+            str, Dict: A tuple including a provider name and order parameters.
+        """
+        if not isinstance(scene, Series):
+            raise ValueError(
+                "`scene` parameter must be a GeoSeries, or a single item/row of a GeoDataFrame. "
+                "For instance, search_results.loc[0] returns a GeoSeries."
+            )
+        aoi_fc = any_vector_to_fc(
+            vector=geometry,
+        )
+        aoi_geometry = fc_to_query_geometry(
+            fc=aoi_fc,
+            geometry_operation="intersects",
+            squash_multiple_features="union",
+        )
+        data_provider_name = scene.providerName
+        order_params = {"id": scene.id, "aoi": aoi_geometry}
+        return data_provider_name, order_params
+
+    def estimate_order(
+        self,
+        geometry: Union[
+            Dict,
+            Feature,
+            FeatureCollection,
+            List,
+            GeoDataFrame,
+            Point,
+            Polygon,
+        ],
+        scene: Series,
+    ) -> int:
+        """
+        Estimate the cost of an order from an item/row in a result of `Catalog.search`.
+
+        Args:
+            geometry (Union[ Dict, Feature, FeatureCollection, List, GeoDataFrame, Point, Polygon, ]): The intended
+                output AOI of the order.
+            scene (Series): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
+                for the first scene of a catalog search result.
+
+        Returns:
+            int: An estimated cost for the order in UP42 credits.
+        """
+        data_provider_name, order_params = self._order_payload(geometry, scene)
+        return Order.estimate(self.auth, data_provider_name, order_params)
+
+    def place_order(
+        self,
+        geometry: Union[
+            Dict,
+            Feature,
+            FeatureCollection,
+            List,
+            GeoDataFrame,
+            Point,
+            Polygon,
+        ],
+        scene: Series,
+        track_status: bool = False,
+        report_time: int = 120,
+    ) -> "Order":
+        """
+        Place an order from an item/row in a result of `Catalog.search`.
+
+        Args:
+            geometry (Union[ Dict, Feature, FeatureCollection, List, GeoDataFrame, Point, Polygon, ]): The intended
+                output AOI of the order.
+            scene (Series): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
+                for the first scene of a catalog search result.
+            track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
+            report_time (int): The intervall (in seconds) when to get the order status,
+                if `track_status` is set to True.
+
+         Warning:
+            When placing orders of items that are in archive or cold storage,
+            the order fulfillment can happen up to **24h after order placement**.
+            In such cases,
+            please make sure to set an appropriate `report_time`.
+            You can also use `Order.track_status` on the returned object to track the status later.
+
+        Returns:
+            Order: The placed order.
+        """
+        data_provider_name, order_params = self._order_payload(geometry, scene)
+        order = Order.place(self.auth, data_provider_name, order_params)
+        if track_status:
+            order.track_status(report_time)
+        return order

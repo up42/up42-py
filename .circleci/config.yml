@@ -1,9 +1,7 @@
 version: 2.1
-orbs:
-  notify-slack: interstellar/notify-slack@0.2.0
 
 jobs:
-  build_and_test:
+  test:
     docker:
       - image: circleci/python:3.7
     steps:
@@ -16,9 +14,62 @@ jobs:
       - run:
           name: Runnning tests
           command: make test
+  test_live:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: Install requirements
+          command: |
+            pip install -r requirements.txt
+            pip install -r requirements-dev.txt
+      - run:
+          name: Runnning tests
+          command: make test[live]
+  deploy:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: Installing packaging utils
+          command: python -m pip install --user packaging twine
+      - run:
+          name: Build package
+          command: make package
+      - run:
+          name: Upload to PyPi
+          command: make upload
+
 
 workflows:
   version: 2
-  build-and-deploy:
+  test_and_deploy:
     jobs:
-      - build_and_test
+      - test
+      - hold_before_deploy:
+          type: approval
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
+      - deploy:
+          requires:
+            - hold_before_deploy
+          filters:
+            branches:
+              only: master
+  test_live:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - test_live:
+          context: up42-py-live-testing
+    

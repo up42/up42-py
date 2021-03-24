@@ -69,8 +69,8 @@ def test_jobtask_download_result_live(jobtask_live):
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 2
-        assert Path(out_files[0]).suffix == ".tif"
-        assert Path(out_files[1]).name == "data.json"
+        assert ".tif" in [Path(of).suffix for of in out_files]
+        assert "data.json" in [Path(of).name for of in out_files]
 
 
 def test_download_quicklook(jobtask_mock, requests_mock):
@@ -97,4 +97,4 @@ def test_download_quicklook_live(jobtask_live):
         out_files = jobtask_live.download_quicklooks(output_directory=tempdir)
         assert len(out_files) == 1
         assert Path(out_files[0]).exists()
-        assert Path(out_files[0]).suffix == ".png"
+        assert Path(out_files[0]).suffix == ".jpg"

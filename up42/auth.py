@@ -3,7 +3,7 @@ UP42 authentication mechanism and base requests functionality
 """
 import json
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import requests
 import requests.exceptions
@@ -63,6 +63,7 @@ class Auth:
         self.cfg_file = cfg_file
         self.project_id = project_id
         self.project_api_key = project_api_key
+        self.workspace_id: Optional[str] = None
 
         try:
             self.env: str = kwargs["env"]
@@ -84,6 +85,7 @@ class Auth:
         if self.authenticate:
             self._find_credentials()
             self._get_token()
+            self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
     def __repr__(self):
@@ -154,6 +156,12 @@ class Auth:
         token = json.loads(token_response.text)
         # pylint: disable=attribute-defined-outside-init
         self.token = token["data"]["accessToken"]
+
+    def _get_workspace(self) -> None:
+        """Get workspace id belonging to authenticated project."""
+        url = f"https://api.up42.{self.env}/projects/{self.project_id}"
+        resp = self._request("GET", url)
+        self.workspace_id = resp["data"]["workspaceId"]  # type: ignore
 
     @staticmethod
     def _generate_headers(token: str) -> Dict[str, str]:

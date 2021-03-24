@@ -1,12 +1,15 @@
 import os
 from pathlib import Path
+import json
+import time
 import tempfile
 
 import pytest
 
+
 # pylint: disable=unused-import
 from .context import Job, JobTask
-from .fixtures import auth_mock, auth_live, job_mock, job_live, jobtask_mock
+from .fixtures import auth_mock, auth_live, job_mock, job_live, jobtask_mock, workflow_live
 from .fixtures import DOWNLOAD_URL, JOBTASK_ID
 
 
@@ -82,7 +85,7 @@ def test_track_status_fail(job_mock, status, requests_mock):
 
 
 def test_cancel_job(job_mock, requests_mock):
-    url = f"{job_mock.auth._endpoint()}/jobs/{job_mock.job_id}/cancel/"
+    url = f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}/cancel/"
     requests_mock.post(url, status_code=200)
     job_mock.cancel_job()
 
@@ -173,6 +176,26 @@ def test_job_download_result_nounpacking(job_mock, requests_mock):
             assert Path(file).exists()
         assert len(out_files) == 1
 
+@pytest.mark.live
+def test_cancel_job_live(workflow_live):
+    input_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    )
+    jb = workflow_live.test_job(
+        input_parameters=input_parameters_json, track_status=False
+    )
+    assert isinstance(jb, Job)
+    with open(input_parameters_json) as src:
+        job_info_params = json.load(src)
+        job_info_params.update({"config": {"mode": "DRY_RUN"}})
+        assert jb._info["inputs"] == job_info_params
+        assert jb._info["mode"] == "DRY_RUN"
+
+    jb.cancel_job()
+    # Give service time to cancel job
+    time.sleep(3)
+    assert jb.status in ["CANCELLED", "CANCELLING"]
+
 
 @pytest.mark.live
 def test_job_download_result_live(job_live):
@@ -181,7 +204,6 @@ def test_job_download_result_live(job_live):
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 2
-
 
 @pytest.mark.live
 def test_job_download_result_no_tiff_live(auth_live):
@@ -212,7 +234,7 @@ def test_job_download_result_dimap_live(auth_live):
         assert Path(out_files[0]).exists()
         assert Path(out_files[20]).exists()
         assert Path(out_files[-1]).exists()
-        assert Path(out_files[-1]).name == "data.json"
+        assert "data.json" in [Path(of).name for of in out_files]
         assert len(out_files) == 54
 
 

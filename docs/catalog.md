@@ -44,7 +44,7 @@ display(search_results.head())
 ```python
 catalog.plot_coverage(scenes=search_results, 
                       aoi=aoi, 
-                      legend_column="scene_id")
+                      legend_column="sceneId")
 ```
 
 ## Download & visualize quicklooks
@@ -60,4 +60,4 @@ catalog.map_quicklooks(scenes=search_results, aoi=aoi)
 <br>
 
 !!! Success "Success!"
-    Continue with the [Detailed Example](/guides/detailed-example/)!
+    Continue with [Ordering](ordering.md)!

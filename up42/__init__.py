@@ -1,3 +1,15 @@
+"""
+    `up42` is the base library module imported to Python. It provides the elementary
+    functionality that is not bound to a specific class of the UP42 structure (Project > Workflow > Job etc.).
+    From `up42` you can initialize other existing objects, get information about UP42 data &
+    processing blocks, read or draw vector data, and adjust the SDK settings.
+
+    To import the UP42 library:
+    ```python
+    import up42
+    ```
+"""
+
 import warnings
 from pathlib import Path
 from typing import Union, Dict, Tuple, List
@@ -16,6 +28,9 @@ from up42.job import Job
 from up42.jobtask import JobTask
 from up42.jobcollection import JobCollection
 from up42.catalog import Catalog
+from up42.storage import Storage
+from up42.order import Order
+from up42.asset import Asset
 from up42.utils import get_logger
 
 logger = get_logger(__name__, level=logging.INFO)
@@ -130,6 +145,43 @@ def initialize_jobcollection(job_ids: List[str]) -> "JobCollection":
     return jobcollection
 
 
+def initialize_storage() -> "Storage":
+    """
+    Returns a Storage object to list orders and assets.
+    """
+    if _auth is None:
+        raise RuntimeError("Not authenticated, call up42.authenticate() first")
+    return Storage(auth=_auth)
+
+
+def initialize_order(order_id: str) -> "Order":
+    """
+    Returns an Order object (has to exist on UP42).
+
+    Args:
+        order_id: The UP42 order_id
+    """
+    if _auth is None:
+        raise RuntimeError("Not authenticated, call up42.authenticate() first")
+    order = Order(auth=_auth, order_id=order_id)
+    logger.info(f"Initialized {order}")
+    return order
+
+
+def initialize_asset(asset_id: str) -> "Asset":
+    """
+    Returns an Asset object (has to exist on UP42).
+
+    Args:
+        asset_id: The UP42 asset_id
+    """
+    if _auth is None:
+        raise RuntimeError("Not authenticated, call up42.authenticate() first")
+    asset = Asset(auth=_auth, asset_id=asset_id)
+    logger.info(f"Initialized {asset}")
+    return asset
+
+
 def get_blocks(
     block_type=None,
     basic: bool = True,
@@ -169,7 +221,7 @@ def draw_aoi() -> None:
 def plot_coverage(
     scenes: GeoDataFrame,
     aoi: GeoDataFrame = None,
-    legend_column: str = "scene_id",
+    legend_column: str = "sceneId",
     figsize=(12, 16),
 ) -> None:
     VizTools().plot_coverage(
@@ -203,7 +255,7 @@ def settings(log=True):
     else:
         logger.info("Logging disabled - use up42.settings(log=True) to reactivate.")
 
-    # pylint: disable=expression-not-assigned
+    # pylint: disable=expression-not-assigned,no-member
     [
         setattr(logging.getLogger(name), "disabled", not log)
         for name in logging.root.manager.loggerDict

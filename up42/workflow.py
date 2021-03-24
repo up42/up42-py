@@ -15,6 +15,7 @@ from up42.auth import Auth
 from up42.job import Job
 from up42.estimation import Estimation
 from up42.jobcollection import JobCollection
+from up42.asset import Asset
 from up42.tools import Tools
 from up42.utils import (
     get_logger,
@@ -27,11 +28,22 @@ logger = get_logger(__name__)
 
 
 class Workflow(Tools):
+    """
+    The Workflow class lets you configure & run jobs and query existing jobs related
+    to this workflow.
+
+    Create a new workflow:
+    ```python
+    workflow = project.create_workflow(name="new_workflow")
+    ```
+
+    Use an existing workflow:
+    ```python
+    workflow = up42.initialize_workflow(workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98")
+    ```
+    """
+
     def __init__(self, auth: Auth, project_id: str, workflow_id: str):
-        """
-        The Workflow class can query all available and spawn new jobs for an UP42
-        Workflow and helps to find and set the the workflow tasks, parameters and aoi.
-        """
         self.auth = auth
         self.project_id = project_id
         self.workflow_id = workflow_id
@@ -313,6 +325,7 @@ class Workflow(Tools):
         limit: int = None,
         scene_ids: List = None,
         order_ids: List[str] = None,
+        assets: List[Asset] = None,
     ) -> Dict:
         """
         Constructs workflow input parameters with a specified aoi, the default input parameters, and
@@ -330,6 +343,8 @@ class Workflow(Tools):
             scene_ids: List of scene_ids, if given ignores all other parameters except geometry.
             order_ids: Optional, can be used to incorporate existing bought imagery on UP42
                 into new workflows.
+            assets: Optional, can be used to incorporate existing assets in Storage (result of Orders for instance)
+                into new workflows.
 
         Returns:
             Dictionary of constructed input parameters.
@@ -344,6 +359,15 @@ class Workflow(Tools):
             # Needs to be handled in this function(not run_job) as it is only
             # relevant for the data block.
             input_parameters[data_block_name] = {"order_ids": order_ids}
+        elif assets is not None:
+            # Needs to be handled in this function(not run_job) as it is only
+            # relevant for the data block.
+            asset_ids = [asset.asset_id for asset in assets if asset.source == "BLOCK"]
+            if not asset_ids:
+                raise ValueError(
+                    "None of the assets are usable in a workflow since the source is not `BLOCK`."
+                )
+            input_parameters[data_block_name] = {"asset_ids": asset_ids}
         else:
             if limit is not None:
                 input_parameters[data_block_name]["limit"] = limit

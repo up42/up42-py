@@ -36,6 +36,7 @@ nav:
       - Authentication: authentication.md
       - Structure: structure.md
       - Catalog Search: catalog.md
+      - Ordering: ordering.md
       - Detailed Example: guides/detailed-example.ipynb
     - Examples:
         - Examples: examples-intro.md
@@ -52,6 +53,9 @@ nav:
         - JobCollection: reference/jobcollection-reference.md
         - JobTask: reference/jobtask-reference.md
         - Catalog: reference/catalog-reference.md
+        - Storage: reference/storage-reference.md
+        - Order: reference/order-reference.md
+        - Asset: reference/asset-reference.md
         - CLI: reference/cli-reference.md
     - CLI:
         - Command Line Interface (CLI): cli.md
@@ -91,6 +95,8 @@ plugins:
   - autolinks
   - mkdocs-jupyter:
       include_source: False
+  - macros:
+      module_name: docs/macros
   - exclude:
       glob:
         - "*config*.json"
@@ -118,7 +124,6 @@ plugins:
               - "!^_"  # exlude all members starting with _
       watch:
         - src/my_library
-  #- pdf-export
 
 ## Custom theme additions
 extra_javascript:
@@ -130,8 +135,6 @@ extra_css:
 markdown_extensions:
   - markdown.extensions.admonition
   - markdown.extensions.attr_list
-  - markdown.extensions.codehilite:
-      guess_lang: false
   - markdown.extensions.def_list
   - markdown.extensions.footnotes
   - markdown.extensions.meta
@@ -145,8 +148,7 @@ markdown_extensions:
   - pymdownx.critic
   - pymdownx.details
   - pymdownx.emoji
-  # - pymdownx.highlight:
-  #     linenums_style: pymdownx-inline
+  - pymdownx.highlight
   - pymdownx.inlinehilite
   - pymdownx.keys
   - pymdownx.magiclink:
