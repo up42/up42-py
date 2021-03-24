@@ -37,12 +37,8 @@ search_parameters = catalog.construct_parameters(geometry=aoi,
                                                  sortby="cloudCoverage", 
                                                  limit=1)
 # Select only immediately available images
-# Use {"IN": ["DATA"]} for archive data
-search_parameters["query"]["up42:usageType"] = {
-      "IN": [
-        "ANALYTICS"
-      ]
-    }
+# Use {"in": ["MINUTES", "HOURS"]} for archive data
+search_parameters["query"]["deliveryTime"] = {"in": ["MINUTES"]}
 search_results = catalog.search(search_parameters=search_parameters)
 search_results
 ```
