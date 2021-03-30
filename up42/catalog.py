@@ -25,6 +25,7 @@ supported_sensors = {
     "pleiades": {
         "blocks": [
             "oneatlas-pleiades-fullscene",
+            "oneatlas-pleiades-display",
             "oneatlas-pleiades-aoiclipped",
         ],
         "provider": "oneatlas",
@@ -32,6 +33,7 @@ supported_sensors = {
     "spot": {
         "blocks": [
             "oneatlas-spot-fullscene",
+            "oneatlas-spot-display",
             "oneatlas-spot-aoiclipped",
         ],
         "provider": "oneatlas",
