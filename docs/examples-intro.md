@@ -15,7 +15,9 @@ interactively with Binder [![Binder](https://mybinder.org/badge_logo.svg)](https
 [NEXTMap One - Elevation Data (Streaming) and Viewshed](https://sdk.up42.com/examples/data-block-examples/nextmapone-viewshed-data-example)    
 [OneAtlas WorldDEM](https://sdk.up42.com/examples/data-block-examples/oneatlas-worlddem-12m-example)  
 [Open Street Map](https://sdk.up42.com/examples/data-block-examples/osm-example)  
-[Sobloo Sentinel-1 L1 SLC (SAFE)](https://sdk.up42.com/examples/data-block-examples/sobloo-sentinel1-l1-example)    
+[Pleiades Reflectance (Download)](https://sdk.up42.com/examples/data-block-examples/pleiades-download-example)  
+[Sentinel-2 L2A Analytic (GeoTIFF)](https://sdk.up42.com/examples/data-block-examples/sentinel2-l2-a-geotiff-example)  
+[Sobloo Sentinel-1 L1 SLC (SAFE)](https://sdk.up42.com/examples/data-block-examples/sobloo-sentinel1-l1-example)      
 
 ## Advanced Examples
 :airplane: [Aircraft Detection](https://sdk.up42.com/examples/aircraft-detection)   

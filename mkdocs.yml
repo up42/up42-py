@@ -50,6 +50,8 @@ nav:
             - NEXTMap One - Elevation Data (Streaming) and Viewshed: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
             - OneAtlas WorldDEM: examples/data-block-examples/oneatlas-worlddem-12m-example.ipynb
             - Open Street Map: examples/data-block-examples/osm-example.ipynb
+            - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
+            - Sentinel-2 L2A Analytic (GeoTIFF): examples/data-block-examples/sentinel2-l2-a-geotiff-example.ipynb
             - Sobloo Sentinel-1 L1 SLC (SAFE): examples/data-block-examples/sobloo-sentinel1-l1-example.ipynb
         - Advanced Examples:
           - Aircraft detection: examples/aircraft-detection.ipynb
