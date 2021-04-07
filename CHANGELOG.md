@@ -15,7 +15,7 @@ pip show up42-py
 ```
 
 ## Versions
-### [0.16.0](https://pypi.org/project/up42-py/) (2021-04-07)
+### [0.15.2](https://pypi.org/project/up42-py/) (2021-04-07)
 - Enables plotting of jobcollection with `.map_results()`.
 - Fixes `.cancel_job()` functionality.
 
