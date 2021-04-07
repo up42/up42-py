@@ -15,6 +15,10 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.16.0](https://pypi.org/project/up42-py/) (2021-04-07)
+- Enables plotting of jobcollection with `.map_results()`.
+- Fixes `.cancel_job()` functionality.
+
 ### [0.15.1](https://pypi.org/project/up42-py/) (2020-03-12)
 - Fixes breaking API change in catalog search.
 - Catalog search result now contains a `sceneId` property instead of `scene_id`.
