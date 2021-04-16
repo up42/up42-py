@@ -197,7 +197,7 @@ class Project(Tools):
         current_settings = {d["name"]: d for d in self.get_project_settings()}
 
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
-        payload = {"settings": {}}
+        payload: Dict = {"settings": {}}
         desired_settings = {
             "JOB_QUERY_MAX_AOI_SIZE": max_aoi_size,
             "MAX_CONCURRENT_JOBS": max_concurrent_jobs,
