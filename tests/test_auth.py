@@ -9,7 +9,6 @@ from .context import Auth
 
 # pylint: disable=unused-import
 from .fixtures import (
-    auth_mock_no_request,
     auth_mock,
     auth_live,
 )
@@ -23,43 +22,41 @@ def test_auth_kwargs():
         env="abc",
         authenticate=False,
         retry=False,
-        get_info=False,
     )
     assert auth.env == "abc"
     assert not auth.authenticate
     assert not auth.retry
-    assert not auth.get_info
 
 
-def test_no_credentials_raises(auth_mock_no_request):
-    auth_mock_no_request.project_id = None
-    auth_mock_no_request.project_api_key = None
+def test_no_credentials_raises(auth_mock):
+    auth_mock.project_id = None
+    auth_mock.project_api_key = None
     with pytest.raises(ValueError):
-        auth_mock_no_request._find_credentials()
+        auth_mock._find_credentials()
 
 
-def test_find_credentials_cfg_file(auth_mock_no_request):
-    auth_mock_no_request.project_id = None
-    auth_mock_no_request.project_api_key = None
+def test_find_credentials_cfg_file(auth_mock):
+    auth_mock.project_id = None
+    auth_mock.project_api_key = None
 
     fp = Path(__file__).resolve().parent / "mock_data" / "test_config.json"
-    auth_mock_no_request.cfg_file = fp
+    auth_mock.cfg_file = fp
 
-    auth_mock_no_request._find_credentials()
-    assert auth_mock_no_request.project_id is not None
-    assert auth_mock_no_request.project_api_key is not None
-
-
-def test_endpoint(auth_mock_no_request):
-    assert auth_mock_no_request._endpoint() == "https://api.up42.com"
-
-    auth_mock_no_request.env = "abc"
-    assert auth_mock_no_request._endpoint() == "https://api.up42.abc"
+    auth_mock._find_credentials()
+    assert auth_mock.project_id is not None
+    assert auth_mock.project_api_key is not None
 
 
-def test_get_token_project(auth_mock_no_request):
-    auth_mock_no_request._get_token_project()
-    assert auth_mock_no_request.token == TOKEN
+def test_endpoint(auth_mock):
+    assert auth_mock._endpoint() == "https://api.up42.com"
+
+    auth_mock.env = "abc"
+    assert auth_mock._endpoint() == "https://api.up42.abc"
+
+
+def test_get_token_project(auth_mock):
+    auth_mock._get_token_project()
+    assert auth_mock.token == TOKEN
 
 
 @pytest.mark.live
@@ -77,7 +74,7 @@ def test_get_workspace_live(auth_live):
     assert hasattr(auth_live, "workspace_id")
 
 
-def test_generate_headers(auth_mock_no_request):
+def test_generate_headers(auth_mock):
     version = io.open(
         Path(__file__).resolve().parents[1] / "up42/_version.txt", encoding="utf-8"
     ).read()
@@ -87,9 +84,7 @@ def test_generate_headers(auth_mock_no_request):
         "cache-control": "no-cache",
         "X-UP42-info": f"python/{version}",
     }
-    assert (
-        auth_mock_no_request._generate_headers(token="token_1011") == expected_headers
-    )
+    assert auth_mock._generate_headers(token="token_1011") == expected_headers
 
 
 def test_request_helper(auth_mock, requests_mock):

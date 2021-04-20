@@ -208,30 +208,6 @@ JSON_ORDER = {
 JSON_ORDERS = {"data": {"orders": [JSON_ORDER["data"]]}, "error": None}
 
 
-# TODO: Use patch.dict instead of 2 fictures?
-@pytest.fixture()
-def auth_mock_no_request(requests_mock):
-    auth = Auth(
-        project_id=PROJECT_ID,
-        project_api_key=PROJECT_APIKEY,
-        authenticate=False,
-        retry=False,
-        get_info=False,
-    )
-
-    url_get_token = (
-        f"https://{auth.project_id}:{auth.project_api_key}@api.up42."
-        f"{auth.env}/oauth/token"
-    )
-    json_get_token = {"data": {"accessToken": TOKEN}}
-    requests_mock.post(
-        url=url_get_token,
-        json=json_get_token,
-    )
-
-    return auth
-
-
 @pytest.fixture()
 def auth_mock(requests_mock):
     # token for initial authentication
@@ -253,7 +229,6 @@ def auth_mock(requests_mock):
         project_api_key=PROJECT_APIKEY,
         authenticate=True,
         retry=False,
-        get_info=True,
     )
 
     # get_blocks
