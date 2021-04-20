@@ -355,8 +355,8 @@ def test_get_results_json_live(cli_runner):
 @PROJECT_ENVS
 @JOB_ENVS
 @pytest.mark.live()
-def test_get_status_live(cli_runner):
-    result = cli_runner.invoke(cli.up42, ["job", "get-status"])
+def test_status_live(cli_runner):
+    result = cli_runner.invoke(cli.up42, ["job", "status"])
     assert result.exit_code == 0
 
 
