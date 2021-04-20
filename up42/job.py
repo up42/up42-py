@@ -12,7 +12,6 @@ from up42.jobtask import JobTask
 from up42.tools import Tools
 from up42.viztools import VizTools
 from up42.utils import (
-    deprecation,
     get_logger,
     download_results_from_gcs,
     download_results_from_gcs_without_unpacking,
