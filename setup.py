@@ -31,4 +31,5 @@ setup(
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
     ],
+    python_requires=">=3.6, <3.9",
 )
