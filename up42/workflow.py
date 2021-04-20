@@ -47,8 +47,7 @@ class Workflow(Tools):
         self.auth = auth
         self.project_id = project_id
         self.workflow_id = workflow_id
-        if self.auth.get_info:
-            self._info = self.info
+        self._info = self.info
 
     def __repr__(self):
         info = self.info
