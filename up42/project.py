@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 from tqdm import tqdm
 
@@ -45,7 +45,7 @@ class Project(Tools):
         )
 
     @property
-    def info(self) -> Dict:
+    def info(self) -> dict:
         """
         Gets the project metadata information.
         """
@@ -98,7 +98,7 @@ class Project(Tools):
         )
         return workflow
 
-    def get_workflows(self, return_json: bool = False) -> Union[List["Workflow"], Dict]:
+    def get_workflows(self, return_json: bool = False) -> Union[List["Workflow"], dict]:
         """
         Gets all workflows in a project as workflow objects or json.
 
@@ -126,7 +126,7 @@ class Project(Tools):
 
     def get_jobs(
         self, return_json: bool = False, test_jobs: bool = True, real_jobs: bool = True
-    ) -> Union[JobCollection, List[Dict]]:
+    ) -> Union[JobCollection, List[dict]]:
         """
         Get all jobs in the project as a JobCollection or json.
 
@@ -180,9 +180,9 @@ class Project(Tools):
 
     def update_project_settings(
         self,
-        max_aoi_size: int = None,
-        max_concurrent_jobs: int = None,
-        number_of_images=None,
+        max_aoi_size: Optional[int] = None,
+        max_concurrent_jobs: Optional[int] = None,
+        number_of_images: Optional[int] = None,
     ) -> None:
         """
         Updates a project's settings.

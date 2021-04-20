@@ -193,7 +193,7 @@ class Catalog(VizTools, Tools):
         """
         logger.info(f"Searching catalog with search_parameters: {search_parameters}")
         url = f"{self.auth._endpoint()}/catalog/stac/search"
-        response_json = self.auth._request("POST", url, search_parameters)
+        response_json: dict = self.auth._request("POST", url, search_parameters)
         logger.info(f"{len(response_json['features'])} results returned.")
         dst_crs = "EPSG:4326"
         df = GeoDataFrame.from_features(response_json, crs=dst_crs)
@@ -222,7 +222,7 @@ class Catalog(VizTools, Tools):
         self,
         image_ids: List[str],
         sensor: str,
-        output_directory: Union[str, Path] = None,
+        output_directory: Union[str, Path, None] = None,
     ) -> List[str]:
         """
         Gets the quicklooks of scenes from a single sensor. After download, can

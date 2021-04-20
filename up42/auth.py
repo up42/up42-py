@@ -42,9 +42,9 @@ class retry_if_429_error(retry_if_exception):
 class Auth:
     def __init__(
         self,
-        cfg_file: Union[str, Path] = None,
-        project_id: str = None,
-        project_api_key: str = None,
+        cfg_file: Union[str, Path, None] = None,
+        project_id: Optional[str] = None,
+        project_api_key: Optional[str] = None,
         **kwargs,
     ):
         """

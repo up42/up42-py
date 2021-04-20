@@ -3,7 +3,7 @@ import logging
 import copy
 from collections import Counter
 from pathlib import Path
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Union, Tuple, Optional
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
@@ -59,7 +59,7 @@ class Workflow(Tools):
         )
 
     @property
-    def info(self) -> Dict:
+    def info(self) -> dict:
         """
         Gets the workflow metadata information.
         """
@@ -74,14 +74,14 @@ class Workflow(Tools):
     @property
     def workflow_tasks(self) -> Dict[str, str]:
         """
-        Gets the building blocks of the workflow as a dictionary with `task_name:block-version`
+        Gets the building blocks of the workflow as a dictionary with `task_name:block-version`.
         """
         logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
         workflow_tasks = self.get_workflow_tasks(basic=True)
         logging.getLogger("up42.workflow").setLevel(logging.INFO)
         return workflow_tasks  # type: ignore
 
-    def get_compatible_blocks(self) -> Dict:
+    def get_compatible_blocks(self) -> dict:
         """
         Gets all compatible blocks for the current workflow. If the workflow is empty
         it will provide all data blocks, if the workflow already has workflow tasks, it
@@ -101,9 +101,9 @@ class Workflow(Tools):
         }
         return compatible_blocks
 
-    def get_workflow_tasks(self, basic: bool = False) -> Union[List, Dict]:
+    def get_workflow_tasks(self, basic: bool = False) -> Union[List, dict]:
         """
-        Get the workflow-tasks of the workflow (Blocks in a workflow are called workflow_tasks)
+        Get the workflow-tasks of the workflow (Blocks in a workflow are called workflow_tasks).
 
         Args:
             basic: If selected returns a simplified task-name : block-version dict.
@@ -127,7 +127,7 @@ class Workflow(Tools):
 
     def _construct_full_workflow_tasks_dict(
         self, input_tasks: Union[List]
-    ) -> List[Dict]:
+    ) -> List[dict]:
         """
         Constructs the full workflow task definition from a simplified version.
         Accepts blocks ids, block names, block display names & combinations of them.
@@ -158,7 +158,7 @@ class Workflow(Tools):
 
         # Get public + custom blocks.
         logging.getLogger("up42.tools").setLevel(logging.CRITICAL)
-        blocks: Dict = self.get_blocks(basic=False)  # type: ignore
+        blocks: dict = self.get_blocks(basic=False)  # type: ignore
         logging.getLogger("up42.tools").setLevel(logging.INFO)
 
         # Get ids of the input tasks, regardless of the specified format.
@@ -208,7 +208,7 @@ class Workflow(Tools):
             previous_task_name = next_task["name"]
         return full_input_tasks_definition
 
-    def add_workflow_tasks(self, input_tasks: Union[List[str], List[Dict]]) -> None:
+    def add_workflow_tasks(self, input_tasks: Union[List[str], List[dict]]) -> None:
         # pylint: disable=line-too-long
         """
         Adds or overwrites workflow tasks in a workflow on UP42.
@@ -267,7 +267,7 @@ class Workflow(Tools):
         self.auth._request(request_type="POST", url=url, data=input_tasks)
         logger.info(f"Added tasks to workflow: {input_tasks}")
 
-    def get_parameters_info(self) -> Dict:
+    def get_parameters_info(self) -> dict:
         """
         Gets infos about the workflow parameters of each block in the current workflow
         to make it easy to construct the desired parameters.
@@ -283,7 +283,7 @@ class Workflow(Tools):
             workflow_parameters_info[task_name] = task_default_parameters
         return workflow_parameters_info
 
-    def _get_default_parameters(self) -> Dict:
+    def _get_default_parameters(self) -> dict:
         """
         Gets the default parameters for the workflow that can be directly used to
         run a job. Excludes geometry operation and geometry of the data block.
@@ -309,24 +309,24 @@ class Workflow(Tools):
     def construct_parameters(
         self,
         geometry: Union[
-            Dict,
+            dict,
             Feature,
             FeatureCollection,
             geojson_Polygon,
-            List,
+            list,
             GeoDataFrame,
             Polygon,
             Point,
         ] = None,
-        geometry_operation: str = None,
+        geometry_operation: Optional[str] = None,
         handle_multiple_features: str = "union",
-        start_date: str = None,
-        end_date: str = None,
-        limit: int = None,
-        scene_ids: List = None,
-        order_ids: List[str] = None,
-        assets: List[Asset] = None,
-    ) -> Dict:
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        limit: Optional[int] = None,
+        scene_ids: Optional[list] = None,
+        order_ids: Optional[List[str]] = None,
+        assets: Optional[List[Asset]] = None,
+    ) -> dict:
         """
         Constructs workflow input parameters with a specified aoi, the default input parameters, and
         optionally limit and order-ids. Further parameter editing needs to be done manually
@@ -343,8 +343,8 @@ class Workflow(Tools):
             scene_ids: List of scene_ids, if given ignores all other parameters except geometry.
             order_ids: Optional, can be used to incorporate existing bought imagery on UP42
                 into new workflows.
-            assets: Optional, can be used to incorporate existing assets in Storage (result of Orders for instance)
-                into new workflows.
+            assets: Optional, can be used to incorporate existing assets in Storage (result
+                of Orders for instance) into new workflows.
 
         Returns:
             Dictionary of constructed input parameters.
@@ -399,7 +399,7 @@ class Workflow(Tools):
         self,
         geometries: List[
             Union[
-                Dict,
+                dict,
                 Feature,
                 geojson_Polygon,
                 Polygon,
@@ -407,7 +407,7 @@ class Workflow(Tools):
             ]
         ] = None,
         interval_dates: List[Tuple[str, str]] = None,
-        scene_ids: List = None,
+        scene_ids: List[str] = None,
         limit_per_job: int = 1,
         geometry_operation: str = "intersects",
     ) -> List[dict]:
@@ -471,7 +471,7 @@ class Workflow(Tools):
 
         return result_params
 
-    def estimate_job(self, input_parameters: Union[Dict, str, Path] = None) -> Dict:
+    def estimate_job(self, input_parameters: Union[dict, str, Path] = None) -> dict:
         """
         Estimation of price and duration of the workflow for the provided input parameters.
 
@@ -576,7 +576,7 @@ class Workflow(Tools):
 
     def _helper_run_parallel_jobs(
         self,
-        input_parameters_list: List[Dict] = None,
+        input_parameters_list: List[dict] = None,
         max_concurrent_jobs: int = 10,
         test_job: bool = False,
         name: str = None,
@@ -704,7 +704,7 @@ class Workflow(Tools):
 
     def test_jobs_parallel(
         self,
-        input_parameters_list: List[Dict] = None,
+        input_parameters_list: List[dict] = None,
         name: str = None,
         max_concurrent_jobs: int = 10,
     ) -> "JobCollection":
@@ -755,7 +755,7 @@ class Workflow(Tools):
 
     def run_jobs_parallel(
         self,
-        input_parameters_list: List[Dict] = None,
+        input_parameters_list: Optional[List[dict]] = None,
         name: str = None,
         max_concurrent_jobs: int = 10,
     ) -> "JobCollection":
@@ -818,7 +818,9 @@ class Workflow(Tools):
             )
             return jobcollection
 
-    def update_name(self, name: str = None, description: str = None) -> None:
+    def update_name(
+        self, name: Optional[str] = None, description: Optional[str] = None
+    ) -> None:
         """
         Updates the workflow name and description.
 
