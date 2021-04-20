@@ -1,5 +1,5 @@
 from time import sleep
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from up42.auth import Auth
 from up42.asset import Asset
@@ -23,7 +23,7 @@ class Order(Tools):
     ```
     """
 
-    def __init__(self, auth: Auth, order_id: str, payload: Optional[Dict] = None):
+    def __init__(self, auth: Auth, order_id: str, payload: Optional[dict] = None):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.order_id = order_id
@@ -39,7 +39,7 @@ class Order(Tools):
         )
 
     @property
-    def info(self) -> Dict:
+    def info(self) -> dict:
         """
         Gets the Order information.
         """
@@ -66,7 +66,7 @@ class Order(Tools):
         return self.status == "FULFILLED"
 
     @property
-    def metadata(self) -> Dict:
+    def metadata(self) -> dict:
         """
         Gets the Order metadata.
         """
@@ -86,14 +86,14 @@ class Order(Tools):
         )
 
     @classmethod
-    def place(cls, auth: Auth, data_provider_name: str, order_params: Dict) -> "Order":
+    def place(cls, auth: Auth, data_provider_name: str, order_params: dict) -> "Order":
         """
         Places an order.
 
         Args:
-            auth (Auth): An authentication object.
-            data_provider_name (str): The data provider name. Currently only `oneatlas` is a supported provider.
-            order_params (Dict): Order definition, including `id` and `aoi`.
+            auth: An authentication object.
+            data_provider_name: The data provider name. Currently only `oneatlas` is a supported provider.
+            order_params: Order definition, including `id` and `aoi`.
 
         Returns:
             Order: The placed order.
@@ -116,14 +116,14 @@ class Order(Tools):
         return order
 
     @staticmethod
-    def estimate(auth: Auth, data_provider_name: str, order_params: Dict) -> int:
+    def estimate(auth: Auth, data_provider_name: str, order_params: dict) -> int:
         """
         Returns an estimation of the cost of an order.
 
         Args:
-            auth (Auth): An authentication object.
-            data_provider_name (str): The data provider name. Currently only `oneatlas` is a supported provider.
-            order_params (Dict): Order definition, including `id` and `aoi`.
+            auth: An authentication object.
+            data_provider_name: The data provider name. Currently only `oneatlas` is a supported provider.
+            order_params: Order definition, including `id` and `aoi`.
 
         Returns:
             int: The estimated cost of the order
@@ -157,7 +157,7 @@ class Order(Tools):
             please make sure to set an appropriate `report_time`.
 
         Args:
-            report_time: The intervall (in seconds) when to get the order status.
+            report_time: The interval (in seconds) when to get the order status.
 
         Returns:
             str: The final order status.

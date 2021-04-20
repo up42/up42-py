@@ -50,7 +50,7 @@ class JobCollection(VizTools, Tools):
             yield job
 
     @property
-    def info(self) -> Dict[str, Dict]:
+    def info(self) -> Dict[str, dict]:
         """
         Gets the metadata information for each job in the jobcollection, dictionary of
             job_id : job_information.

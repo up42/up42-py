@@ -12,7 +12,7 @@
 
 import warnings
 from pathlib import Path
-from typing import Union, Dict, Tuple, List
+from typing import Union, Tuple, List, Optional
 import logging
 
 from geojson import FeatureCollection
@@ -42,8 +42,8 @@ _auth = None
 
 def authenticate(
     cfg_file: Union[str, Path] = None,
-    project_id: str = None,
-    project_api_key: str = None,
+    project_id: Optional[str] = None,
+    project_api_key: Optional[str] = None,
     **kwargs,
 ):
     global _auth  # pylint: disable=global-statement
@@ -191,12 +191,12 @@ def get_blocks(
     return tools.get_blocks(block_type, basic, as_dataframe)
 
 
-def get_block_details(block_id: str, as_dataframe=False) -> Dict:
+def get_block_details(block_id: str, as_dataframe=False) -> dict:
     tools = Tools(auth=_auth)
     return tools.get_block_details(block_id, as_dataframe)
 
 
-def validate_manifest(path_or_json: Union[str, Path, Dict]) -> Dict:
+def validate_manifest(path_or_json: Union[str, Path, dict]) -> dict:
     tools = Tools(auth=_auth)
     return tools.validate_manifest(path_or_json)
 
@@ -229,13 +229,15 @@ def plot_coverage(
     )
 
 
-def plot_quicklooks(figsize: Tuple[int, int] = (8, 8), filepaths: List = None) -> None:
+def plot_quicklooks(
+    figsize: Tuple[int, int] = (8, 8), filepaths: Optional[list] = None
+) -> None:
     VizTools().plot_quicklooks(figsize=figsize, filepaths=filepaths)
 
 
 def plot_results(
     figsize: Tuple[int, int] = (8, 8),
-    filepaths: Union[List[Union[str, Path]], Dict] = None,
+    filepaths: Union[List[Union[str, Path]], dict] = None,
     titles: List[str] = None,
 ) -> None:
     VizTools().plot_results(figsize=figsize, filepaths=filepaths, titles=titles)

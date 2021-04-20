@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import Dict, List, Union
+from typing import List, Union
 from pathlib import Path
 import shutil
 import tempfile
@@ -19,9 +19,9 @@ from tqdm import tqdm
 
 
 def get_logger(
-    name,
+    name: str,
     level=logging.INFO,
-    verbose=False,
+    verbose: bool = False,
 ):
     """
     Use level=logging.CRITICAL to disable temporarily.
@@ -176,21 +176,21 @@ def download_results_from_gcs_without_unpacking(
 
 def any_vector_to_fc(
     vector: Union[
-        Dict,
+        dict,
         Feature,
         FeatureCollection,
-        List,
+        list,
         GeoDataFrame,
         Polygon,
         Point,
     ],
     as_dataframe: bool = False,
-) -> Union[Dict, GeoDataFrame]:
+) -> Union[dict, GeoDataFrame]:
     """
     Gets a uniform feature collection dictionary (with fc and f bboxes) from any input vector type.
 
     Args:
-        vector: One of Dict, FeatureCollection, Feature, List of bounds coordinates,
+        vector: One of dict, FeatureCollection, Feature, list of bounds coordinates,
             GeoDataFrame, shapely.geometry.Polygon, shapely.geometry.Point.
             All assume EPSG 4326 and Polygons!
         as_dataframe: GeoDataFrame output with as_dataframe=True.
@@ -209,7 +209,7 @@ def any_vector_to_fc(
         ),
     ):
         raise ValueError(
-            "The provided geometry muste be a FeatureCollection, Feature, Dict, geopandas "
+            "The provided geometry muste be a FeatureCollection, Feature, dict, geopandas "
             "Dataframe, shapely Polygon, shapely Point or a list of 4 bounds coordinates."
         )
 
@@ -259,7 +259,7 @@ def any_vector_to_fc(
 
 
 def fc_to_query_geometry(
-    fc: Union[Dict, FeatureCollection],
+    fc: Union[dict, FeatureCollection],
     geometry_operation: str,
     squash_multiple_features: str = "union",
 ) -> Union[List, dict]:

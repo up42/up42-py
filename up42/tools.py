@@ -4,7 +4,7 @@ Base functionality that is not bound to a specific higher level UP42 object.
 
 import json
 from pathlib import Path
-from typing import List, Union, Dict
+from typing import List, Union, Dict, Optional
 import warnings
 
 from geopandas import GeoDataFrame
@@ -63,7 +63,7 @@ class Tools:
     # pylint: disable=no-self-use
     def read_vector_file(
         self, filename: str = "aoi.geojson", as_dataframe: bool = False
-    ) -> Union[Dict, GeoDataFrame]:
+    ) -> Union[dict, GeoDataFrame]:
         """
         Reads vector files (geojson, shapefile, kml, wkt) to a feature collection,
         for use as the aoi geometry in the workflow input parameters
@@ -168,10 +168,10 @@ class Tools:
 
     def get_blocks(
         self,
-        block_type=None,
+        block_type: Optional[str] = None,
         basic: bool = True,
         as_dataframe=False,
-    ) -> Union[List[Dict], Dict]:
+    ) -> Union[List[Dict], dict]:
         """
         Gets a list of all public blocks on the marketplace.
 
@@ -187,7 +187,7 @@ class Tools:
         self._deprecate_tools("get_blocks")
 
         try:
-            block_type = block_type.lower()
+            block_type = block_type.lower()  # type: ignore
         except AttributeError:
             pass
         if not hasattr(self, "auth"):
@@ -227,7 +227,7 @@ class Tools:
             else:
                 return blocks_json
 
-    def get_block_details(self, block_id: str, as_dataframe=False) -> Dict:
+    def get_block_details(self, block_id: str, as_dataframe: bool = False) -> dict:
         """
         Gets the detailed information about a specific public block from
         the server, includes all manifest.json and marketplace.json contents.
@@ -254,7 +254,7 @@ class Tools:
         else:
             return details_json
 
-    def validate_manifest(self, path_or_json: Union[str, Path, Dict]) -> Dict:
+    def validate_manifest(self, path_or_json: Union[str, Path, dict]) -> dict:
         """
         Validates a block manifest json.
 

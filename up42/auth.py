@@ -3,7 +3,7 @@ UP42 authentication mechanism and base requests functionality
 """
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, Optional, Union
 
 import requests
 import requests.exceptions
@@ -42,9 +42,9 @@ class retry_if_429_error(retry_if_exception):
 class Auth:
     def __init__(
         self,
-        cfg_file: Union[str, Path] = None,
-        project_id: str = None,
-        project_api_key: str = None,
+        cfg_file: Union[str, Path, None] = None,
+        project_id: Optional[str] = None,
+        project_api_key: Optional[str] = None,
         **kwargs,
     ):
         """
@@ -186,7 +186,7 @@ class Auth:
         reraise=True,
     )
     def _request_helper(
-        self, request_type: str, url: str, data: Dict = {}, querystring: Dict = {}
+        self, request_type: str, url: str, data: dict = {}, querystring: dict = {}
     ) -> requests.Response:
         """
         Helper function for the request, running the actual request with the correct headers.
@@ -222,10 +222,10 @@ class Auth:
         self,
         request_type: str,
         url: str,
-        data: Union[Dict, List] = {},
-        querystring: Dict = {},
+        data: Union[dict, list] = {},
+        querystring: dict = {},
         return_text: bool = True,
-    ) -> Union[str, Dict, requests.Response]:
+    ) -> Union[str, dict, requests.Response]:
         """
         Handles retrying the request and automatically gets a new token if the old
         is invalid.
