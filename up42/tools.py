@@ -4,7 +4,7 @@ Base functionality that is not bound to a specific higher level UP42 object.
 
 import json
 from pathlib import Path
-from typing import List, Union, Dict
+from typing import List, Union, Dict, Optional
 import warnings
 
 from geopandas import GeoDataFrame
@@ -168,7 +168,7 @@ class Tools:
 
     def get_blocks(
         self,
-        block_type: str = None,
+        block_type: Optional[str] = None,
         basic: bool = True,
         as_dataframe=False,
     ) -> Union[List[Dict], dict]:
@@ -187,7 +187,7 @@ class Tools:
         self._deprecate_tools("get_blocks")
 
         try:
-            block_type = block_type.lower()
+            block_type = block_type.lower()  # type: ignore
         except AttributeError:
             pass
         if not hasattr(self, "auth"):
