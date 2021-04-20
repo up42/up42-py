@@ -121,7 +121,7 @@ def test_max_concurrent_jobs(project_mock, project_mock_max_concurrent_jobs):
     assert max_concurrent_jobs == 5
 
 
-# @pytest.mark.live
+@pytest.mark.live
 def test_max_concurrent_jobs_live(project_live):
     max_concurrent_jobs = project_live.max_concurrent_jobs
     assert max_concurrent_jobs == 100

@@ -48,7 +48,7 @@ def test_get_workflow_tasks_normal_and_basic(workflow_mock):
     assert tasks["tiling:1"] == "2.2.3"
 
 
-# @pytest.mark.live
+@pytest.mark.live
 def test_get_workflow_tasks_live(workflow_live):
     workflow_tasks = workflow_live.get_workflow_tasks(basic=True)
     assert isinstance(workflow_tasks, dict)
@@ -346,7 +346,7 @@ def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
     assert estimation == JSON_WORKFLOW_ESTIMATION["data"]
 
 
-# @pytest.mark.live
+@pytest.mark.live
 def test_estimate_jobs_live(workflow_live):
     input_parameters = {
         "esa-s2-l2a-gtiff-visual:1": {
