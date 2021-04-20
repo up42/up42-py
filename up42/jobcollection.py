@@ -65,14 +65,6 @@ class JobCollection(VizTools, Tools):
         """
         return self.apply(lambda job: job.status, only_succeeded=False)
 
-    @deprecation("get_jobs_status", "jobcollection.status")
-    def get_jobs_status(self) -> Dict[str, str]:
-        """
-        `get_jobs_status` will be deprecated in release 0.13, use
-        [status attribute](jobcollection-reference.md#up42.jobcollection.JobCollection.status) instead.
-        """
-        return self.status
-
     def apply(
         self, worker: Callable, only_succeeded: bool = True, **kwargs
     ) -> Dict[str, Any]:
