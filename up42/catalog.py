@@ -3,7 +3,7 @@ Catalog search functionality
 """
 
 from pathlib import Path
-from typing import Dict, Union, List, Tuple
+from typing import Union, List, Tuple
 
 from pandas import Series
 from geopandas import GeoDataFrame
@@ -86,10 +86,10 @@ class Catalog(VizTools, Tools):
     @staticmethod
     def construct_parameters(
         geometry: Union[
-            Dict,
+            dict,
             Feature,
             FeatureCollection,
-            List,
+            list,
             GeoDataFrame,
             Point,
             Polygon,
@@ -108,13 +108,13 @@ class Catalog(VizTools, Tools):
         max_cloudcover: float = 100,
         sortby: str = "acquisitionDate",
         ascending: bool = True,
-    ) -> Dict:
+    ) -> dict:
         """
         Follows STAC principles and property names.
 
         Args:
-            geometry: The search geometry, one of Dict, Feature, FeatureCollection,
-                List, GeoDataFrame, Point, Polygon.
+            geometry: The search geometry, one of dict, Feature, FeatureCollection,
+                list, GeoDataFrame, Point, Polygon.
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
             sensors: The satellite sensors to search for, one or multiple of
@@ -164,8 +164,8 @@ class Catalog(VizTools, Tools):
         return search_parameters
 
     def search(
-        self, search_parameters: Dict, as_dataframe: bool = True
-    ) -> Union[GeoDataFrame, Dict]:
+        self, search_parameters: dict, as_dataframe: bool = True
+    ) -> Union[GeoDataFrame, dict]:
         """
         Searches the catalog for the the search parameters and returns the metadata of
         the matching scenes.
@@ -284,27 +284,27 @@ class Catalog(VizTools, Tools):
     @staticmethod
     def _order_payload(
         geometry: Union[
-            Dict,
+            dict,
             Feature,
             FeatureCollection,
-            List,
+            list,
             GeoDataFrame,
             Point,
             Polygon,
         ],
         scene: Series,
-    ) -> Tuple[str, Dict]:
+    ) -> Tuple[str, dict]:
         """
         Helper that constructs necessary parameters for `Order.place` and `Order.estimate`.
 
         Args:
-            geometry (Union[ Dict, Feature, FeatureCollection, List, GeoDataFrame, Point, Polygon, ]): The intended
+            geometry (Union[ dict, Feature, FeatureCollection, list, GeoDataFrame, Point, Polygon, ]): The intended
                 output AOI of the order.
             scene (GeoSeries): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
                 for the first scene of a catalog search result.
 
         Returns:
-            str, Dict: A tuple including a provider name and order parameters.
+            str, dict: A tuple including a provider name and order parameters.
         """
         if not isinstance(scene, Series):
             raise ValueError(
@@ -326,10 +326,10 @@ class Catalog(VizTools, Tools):
     def estimate_order(
         self,
         geometry: Union[
-            Dict,
+            dict,
             Feature,
             FeatureCollection,
-            List,
+            list,
             GeoDataFrame,
             Point,
             Polygon,
@@ -340,7 +340,7 @@ class Catalog(VizTools, Tools):
         Estimate the cost of an order from an item/row in a result of `Catalog.search`.
 
         Args:
-            geometry (Union[ Dict, Feature, FeatureCollection, List, GeoDataFrame, Point, Polygon, ]): The intended
+            geometry (Union[ dict, Feature, FeatureCollection, list, GeoDataFrame, Point, Polygon, ]): The intended
                 output AOI of the order.
             scene (Series): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
                 for the first scene of a catalog search result.
@@ -354,10 +354,10 @@ class Catalog(VizTools, Tools):
     def place_order(
         self,
         geometry: Union[
-            Dict,
+            dict,
             Feature,
             FeatureCollection,
-            List,
+            list,
             GeoDataFrame,
             Point,
             Polygon,
@@ -370,7 +370,7 @@ class Catalog(VizTools, Tools):
         Place an order from an item/row in a result of `Catalog.search`.
 
         Args:
-            geometry (Union[ Dict, Feature, FeatureCollection, List, GeoDataFrame, Point, Polygon, ]): The intended
+            geometry (Union[ dict, Feature, FeatureCollection, list, GeoDataFrame, Point, Polygon, ]): The intended
                 output AOI of the order.
             scene (Series): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
                 for the first scene of a catalog search result.

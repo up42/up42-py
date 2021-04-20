@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from typing import Dict, List, Union
+from typing import List, Union
 
 from up42.auth import Auth
 from up42.tools import Tools
@@ -45,7 +45,7 @@ class Asset(Tools):
         )
 
     @property
-    def info(self) -> Dict:
+    def info(self) -> dict:
         """
         Gets the asset metadata information.
         """
@@ -55,7 +55,7 @@ class Asset(Tools):
         return response_json["data"]
 
     @property
-    def source(self) -> Dict:
+    def source(self) -> dict:
         """
         Gets the source of the Asset. One of `TASKING`, `ORDER`, `BLOCK`, `UPLOAD`.
         """

@@ -4,7 +4,7 @@ Base functionality that is not bound to a specific higher level UP42 object.
 
 import json
 from pathlib import Path
-from typing import List, Union, Dict, Optional
+from typing import List, Union, Dict
 import warnings
 
 from geopandas import GeoDataFrame
