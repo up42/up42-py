@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Union, List
+from typing import Union, List
 
 from geopandas import GeoDataFrame
 from tqdm import tqdm
@@ -50,7 +50,7 @@ class JobTask(VizTools):
         )
 
     @property
-    def info(self) -> Dict:
+    def info(self) -> dict:
         """
         Gets the jobtask metadata information.
         """
@@ -62,7 +62,7 @@ class JobTask(VizTools):
         self._info = response_json["data"]
         return response_json["data"]
 
-    def get_results_json(self, as_dataframe: bool = False) -> Union[Dict, GeoDataFrame]:
+    def get_results_json(self, as_dataframe: bool = False) -> Union[dict, GeoDataFrame]:
         """
         Gets the Jobtask results data.json.
 

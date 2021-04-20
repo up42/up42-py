@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from time import sleep
-from typing import Dict, List, Union, Optional
+from typing import List, Union, Optional
 
 from geopandas import GeoDataFrame
 import requests
@@ -42,7 +42,7 @@ class Job(VizTools):
         auth: Auth,
         project_id: str,
         job_id: str,
-        order_ids: List[str] = None,
+        order_ids: Optional[List[str]] = None,
     ):
 
         self.auth = auth
@@ -67,7 +67,7 @@ class Job(VizTools):
         )
 
     @property
-    def info(self) -> Dict:
+    def info(self) -> dict:
         """
         Gets the job metadata information.
         """
@@ -159,7 +159,7 @@ class Job(VizTools):
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
 
-    def get_results_json(self, as_dataframe: bool = False) -> Union[Dict, GeoDataFrame]:
+    def get_results_json(self, as_dataframe: bool = False) -> Union[dict, GeoDataFrame]:
         """
         Gets the Job results data.json.
 
@@ -233,7 +233,12 @@ class Job(VizTools):
         return out_filepaths
 
     def upload_results_to_bucket(
-        self, gs_client, bucket, folder, extension: str = ".tgz", version: str = "v0"
+        self,
+        gs_client,
+        bucket,
+        folder: str,
+        extension: str = ".tgz",
+        version: str = "v0",
     ) -> None:
         """
         Uploads the results of a job directly to a custom google cloud storage bucket.
@@ -263,7 +268,7 @@ class Job(VizTools):
 
     def get_logs(
         self, as_print: bool = True, as_return: bool = False
-    ) -> Optional[Dict]:
+    ) -> Optional[dict]:
         """
         Convenience function to print or return the logs of all job tasks.
 
@@ -276,7 +281,7 @@ class Job(VizTools):
         """
         job_logs = {}
 
-        jobtasks: List[Dict] = self.get_jobtasks(return_json=True)  # type: ignore
+        jobtasks: List[dict] = self.get_jobtasks(return_json=True)  # type: ignore
         jobtasks_ids = [task["id"] for task in jobtasks]
 
         logger.info(f"Getting logs for {len(jobtasks_ids)} job tasks: {jobtasks_ids}")
@@ -306,7 +311,7 @@ class Job(VizTools):
 
     def get_jobtasks(
         self, return_json: bool = False
-    ) -> Union[List["JobTask"], List[Dict]]:
+    ) -> Union[List["JobTask"], List[dict]]:
         """
         Get the individual items of the job as JobTask objects or json.
 
@@ -322,7 +327,7 @@ class Job(VizTools):
         )
         logger.info(f"Getting job tasks: {self.job_id}")
         response_json = self.auth._request(request_type="GET", url=url)
-        jobtasks_json: List[Dict] = response_json["data"]
+        jobtasks_json: List[dict] = response_json["data"]
 
         if return_json:
             return jobtasks_json
@@ -338,7 +343,7 @@ class Job(VizTools):
             ]
             return jobtasks
 
-    def get_jobtasks_results_json(self) -> Dict:
+    def get_jobtasks_results_json(self) -> dict:
         """
         Convenience function to get the resulting data.json of all job tasks
         in a dictionary of strings.
@@ -346,7 +351,7 @@ class Job(VizTools):
         Returns:
             The data.json of alle single job tasks.
         """
-        jobtasks: List[Dict] = self.get_jobtasks(return_json=True)  # type: ignore
+        jobtasks: List[dict] = self.get_jobtasks(return_json=True)  # type: ignore
         jobtasks_ids = [task["id"] for task in jobtasks]
         jobtasks_results_json = {}
         for jobtask_id in jobtasks_ids:

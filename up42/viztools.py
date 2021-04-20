@@ -4,7 +4,7 @@ Visualization tools available in various objects
 
 # pylint: disable=dangerous-default-value
 
-from typing import Tuple, List, Union, Dict
+from typing import Tuple, List, Union, Optional
 import math
 from pathlib import Path
 import warnings
@@ -67,8 +67,8 @@ class VizTools:
         self,
         figsize: Tuple[int, int] = (14, 8),
         bands: List[int] = [1, 2, 3],
-        titles: List[str] = None,
-        filepaths: Union[List[Union[str, Path]], Dict] = None,
+        titles: Optional[List[str]] = None,
+        filepaths: Union[List[Union[str, Path]], dict, None] = None,
         plot_file_format: List[str] = [".tif"],
         **kwargs,
     ) -> None:
@@ -150,8 +150,8 @@ class VizTools:
     def plot_quicklooks(
         self,
         figsize: Tuple[int, int] = (8, 8),
-        titles: List[str] = None,
-        filepaths: List = None,
+        titles: Optional[List[str]] = None,
+        filepaths: Optional[list] = None,
     ) -> None:
         """
         Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
@@ -182,11 +182,11 @@ class VizTools:
         result_df: GeoDataFrame,
         filepaths: List[Union[str, Path]],
         bands: List[int] = [1, 2, 3],
-        aoi: GeoDataFrame = None,
+        aoi: Optional[GeoDataFrame] = None,
         show_images=True,
         show_features=False,
         name_column: str = "id",
-        save_html: Path = None,
+        save_html: Optional[Path] = None,
     ) -> folium.Map:
         """
         Displays data.json, and if available, one or multiple results geotiffs.
@@ -303,7 +303,7 @@ class VizTools:
         show_images: bool = True,
         show_features: bool = True,
         name_column: str = "uid",
-        save_html=None,
+        save_html: Path = None,
     ) -> folium.Map:
         """
         Displays data.json, and if available, one or multiple results geotiffs.
@@ -364,12 +364,12 @@ class VizTools:
     def map_quicklooks(
         self,
         scenes: GeoDataFrame,
-        aoi: GeoDataFrame = None,
+        aoi: Optional[GeoDataFrame] = None,
         show_images: bool = True,
         show_features: bool = False,
-        filepaths: List = None,
+        filepaths: Optional[list] = None,
         name_column: str = "id",
-        save_html: Path = None,
+        save_html: Optional[Path] = None,
     ) -> folium.Map:
         """
         TODO: Currently only implemented for catalog!
@@ -407,7 +407,7 @@ class VizTools:
     @staticmethod
     def plot_coverage(
         scenes: GeoDataFrame,
-        aoi: GeoDataFrame = None,
+        aoi: Optional[GeoDataFrame] = None,
         legend_column: str = "sceneId",
         figsize=(12, 16),
     ) -> None:
@@ -452,7 +452,7 @@ def folium_base_map(
     lon: float = 13.39117252959244,
     zoom_start: int = 14,
     width_percent: str = "95%",
-    layer_control=False,
+    layer_control: bool = False,
 ) -> folium.Map:
     """Provides a folium map with basic features and UP42 logo."""
     mapfigure = folium.Figure(width=width_percent)

@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import List, Union
 
 from tqdm import tqdm
 
@@ -29,7 +29,7 @@ class Storage:
         env = ", env: dev" if self.auth.env == "dev" else ""
         return f"Storage(workspace_id: {self.workspace_id}{env})"
 
-    def _paginate(self, url: str) -> List[Dict]:
+    def _paginate(self, url: str) -> List[dict]:
         """
         Helper to fetch list of items in paginated endpoint.
 
@@ -37,7 +37,7 @@ class Storage:
             url (str): The base paginated endpoint.
 
         Returns:
-            List[Dict]: List of all paginated items.
+            List[dict]: List of all paginated items.
         """
         first_pagination_response = self.auth._request(request_type="GET", url=url)
         output = first_pagination_response["data"]["content"]
@@ -51,7 +51,7 @@ class Storage:
         assert len(output) == total_items, "Some paginated items are missing!"
         return output
 
-    def get_assets(self, return_json: bool = False) -> Union[List[Asset], Dict]:
+    def get_assets(self, return_json: bool = False) -> Union[List[Asset], dict]:
         """
         Gets all assets in the workspace as Asset objects or json.
 
@@ -73,7 +73,7 @@ class Storage:
             ]
             return assets
 
-    def get_orders(self, return_json: bool = False) -> Union[List[Order], Dict]:
+    def get_orders(self, return_json: bool = False) -> Union[List[Order], dict]:
         """
         Gets all orders in the workspace as Order objects or json.
 
