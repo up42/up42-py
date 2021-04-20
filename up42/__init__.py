@@ -37,7 +37,7 @@ logger = get_logger(__name__, level=logging.INFO)
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-_auth = None
+_auth: Union[Auth, None] = None
 
 
 def authenticate(
@@ -203,13 +203,13 @@ def validate_manifest(path_or_json: Union[str, Path, Dict]) -> Dict:
 
 def read_vector_file(
     filename: str = "aoi.geojson", as_dataframe: bool = False
-) -> FeatureCollection:
+) -> Union[Dict, GeoDataFrame]:
     return Tools().read_vector_file(filename, as_dataframe)
 
 
 def get_example_aoi(
     location: str = "Berlin", as_dataframe: bool = False
-) -> FeatureCollection:
+) -> Union[Dict, GeoDataFrame]:
     return Tools().get_example_aoi(location, as_dataframe)
 
 
