@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Dict, List, Union
 
 from up42.auth import Auth
-from up42.tools import Tools
 from up42.utils import (
     get_logger,
     download_results_from_gcs,
@@ -13,7 +12,7 @@ from up42.utils import (
 logger = get_logger(__name__)
 
 
-class Asset(Tools):
+class Asset:
     """
     The Asset class enables access to the UP42 assets in the storage. Assets are results
     of orders or results of jobs with download blocks.
