@@ -270,7 +270,7 @@ def project_mock(auth_mock, requests_mock):
 
     project = Project(auth=auth_mock, project_id=auth_mock.project_id)
 
-    # create_workflow. If with use_existing=True, requires workflow info mock.
+    # create_workflow.
     url_create_workflow = (
         f"{project.auth._endpoint()}/projects/" f"{project.project_id}/workflows/"
     )
@@ -279,6 +279,20 @@ def project_mock(auth_mock, requests_mock):
         "data": {"id": WORKFLOW_ID, "displayId": "workflow_displayId_123"},
     }
     requests_mock.post(url=url_create_workflow, json=json_create_workflow)
+
+    # workflow.info (for create_workflow)
+    url_workflow_info = (
+        f"{project.auth._endpoint()}/projects/"
+        f"{project.project_id}/workflows/{WORKFLOW_ID}"
+    )
+    json_workflow_info = {
+        "data": {
+            "name": WORKFLOW_NAME,
+            "description": WORKFLOW_DESCRIPTION,
+        },
+        "error": {},
+    }
+    requests_mock.get(url=url_workflow_info, json=json_workflow_info)
 
     # get_workflows
     url_get_workflows = (
