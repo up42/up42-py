@@ -47,14 +47,14 @@ JSON_WORKFLOW_TASKS = {
     "data": [
         {
             "id": "aa2cba17-d35c-4395-ab01-a0fd8191a4b3",
-            "name": "esa-s2-l2a-gtiff:1",
+            "name": "esa-s2-l2a-gtiff-visual:1",
             "parentsIds": [],
-            "blockName": "esa-s2-l2a-gtiff",
+            "blockName": "esa-s2-l2a-gtiff-visual",
             "blockVersionTag": "1.0.1",
             "block": {
-                "id": "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
-                "name": "esa-s2-l2a-gtiff",
-                "displayName": "Sentinel-2 L2A (GeoTIFF)",
+                "id": "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
+                "name": "esa-s2-l2a-gtiff-visual",
+                "displayName": "Sentinel-2 L2A Visual (GeoTIFF)",
                 "parameters": {
                     "ids": {"type": "array", "default": "None"},
                     "bbox": {"type": "array", "default": "None"},
@@ -115,9 +115,9 @@ JSON_BLOCKS = {
             "displayName": "Sharpening Filter",
         },
         {
-            "id": "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
-            "name": "esa-s2-l2a-gtiff",
-            "displayName": "Sentinel-2 L2A (GeoTIFF)",
+            "id": "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
+            "name": "esa-s2-l2a-gtiff-visual",
+            "displayName": "Sentinel-2 L2A Visual (GeoTIFF)",
         },
     ],
     "error": {},
@@ -125,7 +125,7 @@ JSON_BLOCKS = {
 
 JSON_WORKFLOW_ESTIMATION = {
     "data": {
-        "esa-s2-l2a-gtiff:1": {
+        "esa-s2-l2a-gtiff-visual:1": {
             "blockConsumption": {
                 "credit": {"max": 0, "min": 0},
                 "resources": {"max": 0, "min": 0, "unit": "SQUARE_KM"},
@@ -272,6 +272,8 @@ def auth_live():
         project_id=os.getenv("TEST_UP42_PROJECT_ID"),
         project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
+    print(os.getenv("TEST_UP42_PROJECT_ID"))
+    print(os.getenv("TEST_UP42_PROJECT_API_KEY"))
     return auth
 
 
@@ -566,7 +568,7 @@ def jobs_live(auth_live):
 @pytest.fixture()
 def estimation_mock(auth_mock):
     input_parameters = {
-        "esa-s2-l2a-gtiff:1": {
+        "esa-s2-l2a-gtiff-visual:1": {
             "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
             "limit": 1,
             "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
@@ -576,14 +578,14 @@ def estimation_mock(auth_mock):
 
     input_tasks = [
         {
-            "name": "esa-s2-l2a-gtiff:1",
+            "name": "esa-s2-l2a-gtiff-visual:1",
             "parentName": None,
-            "blockId": "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
+            "blockId": "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
             "blockVersionTag": "1.0.1",
         },
         {
             "name": "tiling:1",
-            "parentName": "esa-s2-l2a-gtiff:1",
+            "parentName": "esa-s2-l2a-gtiff-visual:1",
             "blockId": "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
             "blockVersionTag": "2.2.3",
         },
@@ -595,7 +597,7 @@ def estimation_mock(auth_mock):
 @pytest.fixture()
 def estimation_live(auth_live):
     input_parameters = {
-        "esa-s2-l2a-gtiff:1": {
+        "esa-s2-l2a-gtiff-visual:1": {
             "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
             "limit": 1,
             "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
@@ -605,14 +607,14 @@ def estimation_live(auth_live):
 
     input_tasks = [
         {
-            "name": "esa-s2-l2a-gtiff:1",
+            "name": "esa-s2-l2a-gtiff-visual:1",
             "parentName": None,
-            "blockId": "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
+            "blockId": "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
             "blockVersionTag": "1.0.1",
         },
         {
             "name": "tiling:1",
-            "parentName": "esa-s2-l2a-gtiff:1",
+            "parentName": "esa-s2-l2a-gtiff-visual:1",
             "blockId": "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
             "blockVersionTag": "2.2.3",
         },
