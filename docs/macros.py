@@ -118,8 +118,6 @@ def define_env(env):
     env.variables.funcs_jobcollection = get_methods(
         up42.JobCollection,
         exclude=[
-            "get_jobs_info",
-            "get_jobs_status",
             "plot_quicklooks",
             "map_quicklooks",
             "plot_coverage",

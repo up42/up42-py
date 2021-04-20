@@ -82,9 +82,7 @@ def test_jobcollection_info(jobcollection_single_mock, requests_mock):
 
 
 @pytest.mark.parametrize("status", ["NOT STARTED", "PENDING", "RUNNING"])
-def test_jobcollection_get_jobs_status(
-    jobcollection_single_mock, status, requests_mock
-):
+def test_jobcollection_jobs_status(jobcollection_single_mock, status, requests_mock):
     url_job_info = (
         f"{jobcollection_single_mock.auth._endpoint()}/projects/"
         f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"

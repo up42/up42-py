@@ -9,7 +9,7 @@ from up42.job import Job
 from up42.viztools import VizTools
 from up42.tools import Tools
 
-from up42.utils import get_logger, deprecation
+from up42.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -57,14 +57,6 @@ class JobCollection(VizTools, Tools):
         """
         return self.apply(lambda job: job.info, only_succeeded=False)
 
-    @deprecation("get_jobs_info", "jobcollection.info")
-    def get_jobs_info(self) -> Dict[str, Dict]:
-        """
-        `get_jobs_info` will be deprecated in release 0.13, use
-        [info attribute](jobcollection-reference.md#up42.jobcollection.JobCollection.info) instead.
-        """
-        return self.info
-
     @property
     def status(self) -> Dict[str, str]:
         """
@@ -72,14 +64,6 @@ class JobCollection(VizTools, Tools):
         job_id : job status.
         """
         return self.apply(lambda job: job.status, only_succeeded=False)
-
-    @deprecation("get_jobs_status", "jobcollection.status")
-    def get_jobs_status(self) -> Dict[str, str]:
-        """
-        `get_jobs_status` will be deprecated in release 0.13, use
-        [status attribute](jobcollection-reference.md#up42.jobcollection.JobCollection.status) instead.
-        """
-        return self.status
 
     def apply(
         self, worker: Callable, only_succeeded: bool = True, **kwargs
