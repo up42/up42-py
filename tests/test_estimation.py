@@ -13,14 +13,14 @@ from .fixtures import (
 def test_estimate_price(requests_mock, auth_mock, estimation_mock):
     input_tasks = [
         {
-            "name": "esa-s2-l2a-gtiff:1",
+            "name": "esa-s2-l2a-gtiff-visual:1",
             "parentName": None,
-            "blockId": "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
+            "blockId": "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
             "blockVersionTag": "1.0.1",
         },
         {
             "name": "tiling:1",
-            "parentName": "esa-s2-l2a-gtiff:1",
+            "parentName": "esa-s2-l2a-gtiff-visual:1",
             "blockId": "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
             "blockVersionTag": "2.2.3",
         },
@@ -38,7 +38,7 @@ def test_estimate_price(requests_mock, auth_mock, estimation_mock):
 @pytest.mark.live
 def test_estimate_price_live(auth_live):
     input_parameters = {
-        "esa-s2-l2a-gtiff:1": {
+        "esa-s2-l2a-gtiff-visual:1": {
             "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
             "limit": 1,
             "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
@@ -48,14 +48,14 @@ def test_estimate_price_live(auth_live):
 
     input_tasks = [
         {
-            "name": "esa-s2-l2a-gtiff:1",
+            "name": "esa-s2-l2a-gtiff-visual:1",
             "parentName": None,
-            "blockId": "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
-            "blockVersionTag": "1.0.1",
+            "blockId": "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
+            "blockVersionTag": "1.2.1",
         },
         {
             "name": "tiling:1",
-            "parentName": "esa-s2-l2a-gtiff:1",
+            "parentName": "esa-s2-l2a-gtiff-visual:1",
             "blockId": "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
             "blockVersionTag": "2.2.3",
         },
@@ -63,8 +63,8 @@ def test_estimate_price_live(auth_live):
     estimation = Estimation(auth_live, input_parameters, input_tasks).estimate()
     assert isinstance(estimation, dict)
     assert len(estimation) == 2
-    assert list(estimation.keys()) == ["esa-s2-l2a-gtiff:1", "tiling:1"]
-    assert list(estimation["esa-s2-l2a-gtiff:1"].keys()) == [
+    assert list(estimation.keys()) == ["esa-s2-l2a-gtiff-visual:1", "tiling:1"]
+    assert list(estimation["esa-s2-l2a-gtiff-visual:1"].keys()) == [
         "blockConsumption",
         "machineConsumption",
     ]

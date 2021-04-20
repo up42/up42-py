@@ -9,7 +9,14 @@ import pytest
 
 # pylint: disable=unused-import
 from .context import Job, JobTask
-from .fixtures import auth_mock, auth_live, job_mock, job_live, jobtask_mock, workflow_live
+from .fixtures import (
+    auth_mock,
+    auth_live,
+    job_mock,
+    job_live,
+    jobtask_mock,
+    workflow_live,
+)
 from .fixtures import DOWNLOAD_URL, JOBTASK_ID
 
 
@@ -176,6 +183,7 @@ def test_job_download_result_nounpacking(job_mock, requests_mock):
             assert Path(file).exists()
         assert len(out_files) == 1
 
+
 @pytest.mark.live
 def test_cancel_job_live(workflow_live):
     input_parameters_json = (
@@ -204,6 +212,7 @@ def test_job_download_result_live(job_live):
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 2
+
 
 @pytest.mark.live
 def test_job_download_result_no_tiff_live(auth_live):

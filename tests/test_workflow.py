@@ -44,15 +44,15 @@ def test_get_workflow_tasks_normal_and_basic(workflow_mock):
 
     tasks = workflow_mock.get_workflow_tasks(basic=True)
     assert len(tasks) == 2
-    assert tasks["esa-s2-l2a-gtiff:1"] == "1.0.1"
+    assert tasks["esa-s2-l2a-gtiff-visual:1"] == "1.0.1"
     assert tasks["tiling:1"] == "2.2.3"
 
 
-@pytest.mark.live
+# @pytest.mark.live
 def test_get_workflow_tasks_live(workflow_live):
     workflow_tasks = workflow_live.get_workflow_tasks(basic=True)
     assert isinstance(workflow_tasks, dict)
-    assert "esa-s2-l2a-gtiff:1" in list(workflow_tasks.keys())
+    assert "esa-s2-l2a-gtiff-visual:1" in list(workflow_tasks.keys())
 
 
 def test_get_compatible_blocks(workflow_mock):
@@ -78,20 +78,20 @@ def test_construct_full_workflow_tasks_dict_unkwown_block_raises(workflow_mock):
     "input_tasks",
     [
         [
-            "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
+            "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
             "4ed70368-d4e1-4462-bef6-14e768049471",
         ],
-        ["esa-s2-l2a-gtiff", "tiling"],
+        ["esa-s2-l2a-gtiff-visual", "tiling"],
         [
-            "Sentinel-2 L2A (GeoTIFF)",
+            "Sentinel-2 L2A Visual (GeoTIFF)",
             "Raster Tiling",
         ],
         [
-            "4471e5ef-90f1-4bf0-9243-66bc9d8b4c99",
+            "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
             "tiling",
         ],
         [
-            "Sentinel-2 L2A (GeoTIFF)",
+            "Sentinel-2 L2A Visual (GeoTIFF)",
             "4ed70368-d4e1-4462-bef6-14e768049471",
         ],
     ],
@@ -101,10 +101,10 @@ def test_construct_full_workflow_tasks_dict(workflow_mock, input_tasks):
         input_tasks=input_tasks
     )
     assert isinstance(full_workflow_tasks_dict, list)
-    assert full_workflow_tasks_dict[0]["name"] == "esa-s2-l2a-gtiff:1"
+    assert full_workflow_tasks_dict[0]["name"] == "esa-s2-l2a-gtiff-visual:1"
     assert full_workflow_tasks_dict[0]["parentName"] is None
     assert full_workflow_tasks_dict[1]["name"] == "tiling:1"
-    assert full_workflow_tasks_dict[1]["parentName"] == "esa-s2-l2a-gtiff:1"
+    assert full_workflow_tasks_dict[1]["parentName"] == "esa-s2-l2a-gtiff-visual:1"
     assert (
         full_workflow_tasks_dict[1]["blockId"] == "4ed70368-d4e1-4462-bef6-14e768049471"
     )
@@ -113,13 +113,13 @@ def test_construct_full_workflow_tasks_dict(workflow_mock, input_tasks):
 def test_add_workflow_tasks_full(workflow_mock, requests_mock):
     input_tasks_full = [
         {
-            "name": "esa-s2-l2a-gtiff:1",
+            "name": "esa-s2-l2a-gtiff-visual:1",
             "parentName": None,
             "blockId": "a2daaab4-196d-4226-a018-a810444dcad1",
         },
         {
             "name": "sharpening:1",
-            "parentName": "esa-s2-l2a-gtiff",
+            "parentName": "esa-s2-l2a-gtiff-visual",
             "blockId": "4ed70368-d4e1-4462-bef6-14e768049471",
         },
     ]
@@ -144,7 +144,8 @@ def test_get_parameter_info(workflow_mock):
     parameter_info = workflow_mock.get_parameters_info()
     assert isinstance(parameter_info, dict)
     assert all(
-        x in list(parameter_info.keys()) for x in ["tiling:1", "esa-s2-l2a-gtiff:1"]
+        x in list(parameter_info.keys())
+        for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"]
     )
     assert all(
         x in list(parameter_info["tiling:1"].keys()) for x in ["nodata", "tile_width"]
@@ -156,7 +157,8 @@ def test_get_parameter_info_live(workflow_live):
     parameter_info = workflow_live.get_parameters_info()
     assert isinstance(parameter_info, dict)
     assert all(
-        x in list(parameter_info.keys()) for x in ["tiling:1", "esa-s2-l2a-gtiff:1"]
+        x in list(parameter_info.keys())
+        for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"]
     )
     assert all(
         x in list(parameter_info["tiling:1"].keys())
@@ -169,10 +171,11 @@ def test_get_default_parameters(workflow_mock):
 
     assert isinstance(default_parameters, dict)
     assert all(
-        x in list(default_parameters.keys()) for x in ["tiling:1", "esa-s2-l2a-gtiff:1"]
+        x in list(default_parameters.keys())
+        for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"]
     )
     assert default_parameters["tiling:1"] == {"nodata": "None", "tile_width": 768}
-    assert default_parameters["esa-s2-l2a-gtiff:1"] == {
+    assert default_parameters["esa-s2-l2a-gtiff-visual:1"] == {
         "ids": "None",
         "bbox": "None",
         "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
@@ -189,7 +192,7 @@ def test_construct_parameters(workflow_mock):
     )
     assert isinstance(parameters, dict)
     assert parameters == {
-        "esa-s2-l2a-gtiff:1": {
+        "esa-s2-l2a-gtiff-visual:1": {
             "ids": "None",
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
             "time": "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
@@ -207,7 +210,7 @@ def test_construct_parameters_scene_ids(workflow_mock):
     )
     assert isinstance(parameters, dict)
     assert parameters == {
-        "esa-s2-l2a-gtiff:1": {
+        "esa-s2-l2a-gtiff-visual:1": {
             "ids": ["s2_123223"],
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
             "limit": 1,
@@ -222,7 +225,7 @@ def test_construct_parameter_only_ids(workflow_mock):
     )
     assert isinstance(parameters, dict)
     assert parameters == {
-        "esa-s2-l2a-gtiff:1": {
+        "esa-s2-l2a-gtiff-visual:1": {
             "ids": ["s2_123223"],
             "bbox": "None",
             "limit": 1,
@@ -235,7 +238,7 @@ def test_construct_parameter_order_ids(workflow_mock):
     parameters = workflow_mock.construct_parameters(order_ids=["8472712912"])
     assert isinstance(parameters, dict)
     assert parameters == {
-        "esa-s2-l2a-gtiff:1": {"order_ids": ["8472712912"]},
+        "esa-s2-l2a-gtiff-visual:1": {"order_ids": ["8472712912"]},
         "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
@@ -244,14 +247,16 @@ def test_construct_parameter_assets(workflow_mock, asset_mock, monkeypatch):
     parameters = workflow_mock.construct_parameters(assets=[asset_mock])
     assert isinstance(parameters, dict)
     assert parameters == {
-        "esa-s2-l2a-gtiff:1": {"asset_ids": [asset_mock.asset_id]},
+        "esa-s2-l2a-gtiff-visual:1": {"asset_ids": [asset_mock.asset_id]},
         "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
     parameters = workflow_mock.construct_parameters(assets=[asset_mock, asset_mock])
     assert isinstance(parameters, dict)
     assert parameters == {
-        "esa-s2-l2a-gtiff:1": {"asset_ids": [asset_mock.asset_id, asset_mock.asset_id]},
+        "esa-s2-l2a-gtiff-visual:1": {
+            "asset_ids": [asset_mock.asset_id, asset_mock.asset_id]
+        },
         "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
@@ -272,7 +277,7 @@ def test_construct_parameters_parallel(workflow_mock):
     assert isinstance(parameters_list, list)
     assert len(parameters_list) == 2
     assert parameters_list[0] == {
-        "esa-s2-l2a-gtiff:1": {
+        "esa-s2-l2a-gtiff-visual:1": {
             "ids": "None",
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
             "time": "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
@@ -293,7 +298,7 @@ def test_construct_parameters_parallel_multiple_intervals(workflow_mock):
     )
     assert len(parameters_list) == 4
     assert parameters_list[0] == {
-        "esa-s2-l2a-gtiff:1": {
+        "esa-s2-l2a-gtiff-visual:1": {
             "ids": "None",
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
             "time": "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
@@ -312,14 +317,14 @@ def test_construct_parameters_parallel_scene_ids(workflow_mock):
     )
     assert len(parameters_list) == 2
     assert parameters_list[0] == {
-        "esa-s2-l2a-gtiff:1": {"ids": ["S2abc"], "bbox": "None", "limit": 1},
+        "esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "bbox": "None", "limit": 1},
         "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
 
 def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
     input_parameters = {
-        "esa-s2-l2a-gtiff:1": {
+        "esa-s2-l2a-gtiff-visual:1": {
             "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
             "limit": 1,
             "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
@@ -341,10 +346,10 @@ def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
     assert estimation == JSON_WORKFLOW_ESTIMATION["data"]
 
 
-@pytest.mark.live
+# @pytest.mark.live
 def test_estimate_jobs_live(workflow_live):
     input_parameters = {
-        "esa-s2-l2a-gtiff:1": {
+        "esa-s2-l2a-gtiff-visual:1": {
             "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
             "limit": 1,
             "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
@@ -377,8 +382,8 @@ def test_helper_run_parallel_jobs_dry_run(
 ):
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
-        {"esa-s2-l2a-gtiff:1": {"ids": ["S2abc"], "limit": 1}},
-        {"esa-s2-l2a-gtiff:1": {"ids": ["S2def"], "limit": 1}},
+        {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
+        {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2def"], "limit": 1}},
     ]
 
     example_response = {
@@ -415,8 +420,8 @@ def test_helper_run_parallel_jobs_all_fails(
 ):
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
-        {"esa-s2-l2a-gtiff:1": {"ids": ["S2abc"], "limit": 1}},
-        {"esa-s2-l2a-gtiff:1": {"ids": ["S2def"], "limit": 1}},
+        {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
+        {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2def"], "limit": 1}},
     ]
 
     response_failed = {
@@ -462,8 +467,8 @@ def test_helper_run_parallel_jobs_one_fails(
     workflow_mock, project_mock_max_concurrent_jobs
 ):
     input_parameters_list = [
-        {"esa-s2-l2a-gtiff:1": {"ids": ["S2abc"], "limit": 1}},
-        {"esa-s2-l2a-gtiff:1": {"ids": ["S2def"], "limit": 1}},
+        {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
+        {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2def"], "limit": 1}},
     ]
 
     responses = [
@@ -519,8 +524,8 @@ def test_helper_run_parallel_jobs_default(
     """Takes 100sec."""
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
-        {"esa-s2-l2a-gtiff:1": {"ids": ["S2abc"], "limit": 1}},
-        {"esa-s2-l2a-gtiff:1": {"ids": ["S2def"], "limit": 1}},
+        {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
+        {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2def"], "limit": 1}},
     ] * 10
     example_response = {
         "error": None,
@@ -555,8 +560,8 @@ def test_helper_run_parallel_jobs_fail_concurrent_jobs(
 ):
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
-        {"esa-s2-l2a-gtiff:1": {"ids": ["S2abc"], "limit": 1}},
-        {"esa-s2-l2a-gtiff:1": {"ids": ["S2def"], "limit": 1}},
+        {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
+        {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2def"], "limit": 1}},
     ] * 10
     example_response = {
         "error": None,
@@ -587,7 +592,7 @@ def test_helper_run_parallel_jobs_fail_concurrent_jobs(
 def test_test_jobs_parallel_live(workflow_live):
     input_parameters_list = [
         {
-            "esa-s2-l2a-gtiff:1": {
+            "esa-s2-l2a-gtiff-visual:1": {
                 "time": "2019-01-01T00:00:00+00:00/2019-12-31T23:59:59+00:00",
                 "limit": 1,
                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
@@ -595,7 +600,7 @@ def test_test_jobs_parallel_live(workflow_live):
             "tiling:1": {"tile_width": 768, "tile_height": 768},
         },
         {
-            "esa-s2-l2a-gtiff:1": {
+            "esa-s2-l2a-gtiff-visual:1": {
                 "time": "2020-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
                 "limit": 1,
                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
@@ -620,7 +625,7 @@ def test_test_jobs_parallel_live(workflow_live):
 def test_run_jobs_parallel_live(workflow_live):
     input_parameters_list = [
         {
-            "esa-s2-l2a-gtiff:1": {
+            "esa-s2-l2a-gtiff-visual:1": {
                 "time": "2019-01-01T00:00:00+00:00/2019-12-31T23:59:59+00:00",
                 "limit": 1,
                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
@@ -628,7 +633,7 @@ def test_run_jobs_parallel_live(workflow_live):
             "tiling:1": {"tile_width": 768, "tile_height": 768},
         },
         {
-            "esa-s2-l2a-gtiff:1": {
+            "esa-s2-l2a-gtiff-visual:1": {
                 "time": "2020-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
                 "limit": 1,
                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
