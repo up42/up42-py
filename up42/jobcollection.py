@@ -9,7 +9,7 @@ from up42.job import Job
 from up42.viztools import VizTools
 from up42.tools import Tools
 
-from up42.utils import get_logger, deprecation
+from up42.utils import get_logger
 
 logger = get_logger(__name__)
 
