@@ -3,7 +3,6 @@ from typing import Dict, List, Optional
 
 from up42.auth import Auth
 from up42.asset import Asset
-from up42.tools import Tools
 from up42.utils import (
     get_logger,
 )
@@ -13,7 +12,7 @@ logger = get_logger(__name__)
 DATA_PROVIDERS = ["oneatlas"]
 
 
-class Order(Tools):
+class Order:
     """
     The Order class enables you to place, inspect and get information on orders.
 

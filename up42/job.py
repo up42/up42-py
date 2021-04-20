@@ -9,7 +9,6 @@ import requests.exceptions
 
 from up42.auth import Auth
 from up42.jobtask import JobTask
-from up42.tools import Tools
 from up42.viztools import VizTools
 from up42.utils import (
     get_logger,
@@ -21,7 +20,7 @@ logger = get_logger(__name__)
 
 
 # pylint: disable=duplicate-code
-class Job(VizTools, Tools):
+class Job(VizTools):
     """
     The Job class is the result of running a workflow. It lets you download, visualize and
         manipulate the results of the job, and keep track of the status or cancel a job while

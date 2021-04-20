@@ -5,7 +5,6 @@ from geopandas import GeoDataFrame
 from tqdm import tqdm
 
 from up42.auth import Auth
-from up42.tools import Tools
 from up42.viztools import VizTools
 from up42.utils import get_logger, download_results_from_gcs
 
@@ -13,7 +12,7 @@ logger = get_logger(__name__)
 
 
 # pylint: disable=duplicate-code
-class JobTask(VizTools, Tools):
+class JobTask(VizTools):
     """
     The JobTask class provides access to the result of a specific block in the workflow.
     Each job contains one or multiple JobTasks, one for each block.

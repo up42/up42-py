@@ -27,7 +27,7 @@ from up42.utils import (
 logger = get_logger(__name__)
 
 
-class Workflow(Tools):
+class Workflow:
     """
     The Workflow class lets you configure & run jobs and query existing jobs related
     to this workflow.
@@ -158,7 +158,7 @@ class Workflow(Tools):
 
         # Get public + custom blocks.
         logging.getLogger("up42.tools").setLevel(logging.CRITICAL)
-        blocks: Dict = self.get_blocks(basic=False)  # type: ignore
+        blocks: Dict = Tools(auth=self.auth).get_blocks(basic=False)  # type: ignore
         logging.getLogger("up42.tools").setLevel(logging.INFO)
 
         # Get ids of the input tasks, regardless of the specified format.
