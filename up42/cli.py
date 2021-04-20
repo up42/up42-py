@@ -579,7 +579,7 @@ def get_results_json(job):
 
 @COMMAND_JOB
 @click.pass_obj
-def get_status(job):
+def status(job):
     """
     Get the job status.
     """
