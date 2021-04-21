@@ -1,4 +1,5 @@
 import pytest
+import requests
 from .context import Project, Workflow, Job
 
 # pylint: disable=unused-import
@@ -97,8 +98,32 @@ def test_get_project_settings_live(project_live):
     project_settings = project_live.get_project_settings()
     assert isinstance(project_settings, list)
     assert len(project_settings) == 3
-    project_settings_dict = {item["name"]: item for item in project_settings}
-    assert "MAX_CONCURRENT_JOBS" in project_settings_dict.keys()
+    assert project_settings[0]["name"] in [
+        "JOB_QUERY_MAX_AOI_SIZE",
+        "MAX_CONCURRENT_JOBS",
+        "'JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE'",
+    ]
+
+
+def test_update_project_settings(project_mock):
+    # 2 responses of post request in fixture, 404 and 201
+    with pytest.raises(requests.exceptions.RequestException):
+        project_mock.update_project_settings(max_aoi_size=5, max_concurrent_jobs=500)
+
+    project_mock.update_project_settings(max_aoi_size=5, max_concurrent_jobs=500)
+
+
+@pytest.mark.live
+def test_update_project_settings_live(project_live):
+    project_live.update_project_settings(max_concurrent_jobs=8)
+    project_settings = project_live.get_project_settings()
+    assert isinstance(project_settings, list)
+    for setting in project_settings:
+        if setting["name"] == "MAX_CONCURRENT_JOBS":
+            assert setting["value"] == "8"
+
+    # Reset to default value
+    project_live.update_project_settings(max_concurrent_jobs=3)
 
 
 def test_max_concurrent_jobs(project_mock, project_mock_max_concurrent_jobs):
