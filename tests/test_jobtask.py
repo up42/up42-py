@@ -97,4 +97,4 @@ def test_download_quicklook_live(jobtask_live):
         out_files = jobtask_live.download_quicklooks(output_directory=tempdir)
         assert len(out_files) == 1
         assert Path(out_files[0]).exists()
-        assert Path(out_files[0]).suffix == ".jpg"
+        assert Path(out_files[0]).suffix == ".png"
