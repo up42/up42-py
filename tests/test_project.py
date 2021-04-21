@@ -112,7 +112,7 @@ def test_get_project_settings_live(project_live):
     project_settings = project_live.get_project_settings()
     assert isinstance(project_settings, list)
     assert len(project_settings) == 3
-    assert project_settings[0]["name"] == "MAX_CONCURRENT_JOBS"
+    assert project_settings[0]["name"] in ["JOB_QUERY_MAX_AOI_SIZE", "MAX_CONCURRENT_JOBS", "'JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE'"]
 
 
 def test_update_project_settings(project_mock):
