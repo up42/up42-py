@@ -43,7 +43,6 @@ class Job(VizTools, Tools):
         auth: Auth,
         project_id: str,
         job_id: str,
-        order_ids: Optional[List[str]] = None,
     ):
 
         self.auth = auth
@@ -51,20 +50,16 @@ class Job(VizTools, Tools):
         self.job_id = job_id
         self.quicklooks = None
         self.results = None
-        self.order_ids = order_ids
         if self.auth.get_info:
             self._info = self.info
 
     def __repr__(self):
-        order_ids = (
-            f", order_ids: {self.order_ids}, " if self.order_ids is not None else ""
-        )
         info = self.info
         return (
             f"Job(name: {info['name']}, job_id: {self.job_id}, mode: {info['mode']}, "
             f"status: {info['status']}, startedAt: {info['startedAt']}, "
             f"finishedAt: {info['finishedAt']}, workflow_name: {info['workflowName']}, "
-            f"{order_ids}, input_parameters: {info['inputs']}"
+            f"input_parameters: {info['inputs']}"
         )
 
     @property
@@ -246,20 +241,10 @@ class Job(VizTools, Tools):
         """
         download_url = self._get_download_url()
         r = requests.get(download_url)
-
-        if self.order_ids is not None:
-            blob = bucket.blob(
-                str(Path(version) / Path(folder) / Path(self.order_ids[0] + extension))
-            )
-            logger.info(
-                f"Upload job {self.job_id} results with order_ids to "
-                f"{blob.name} ..."
-            )
-        else:
-            blob = bucket.blob(
-                str(Path(version) / Path(folder) / Path(self.job_id + extension))
-            )
-            logger.info(f"Upload job {self.job_id} results to {blob.name} ...")
+        blob = bucket.blob(
+            str(Path(version) / Path(folder) / Path(self.job_id + extension))
+        )
+        logger.info(f"Upload job {self.job_id} results to {blob.name} ...")
         blob.upload_from_string(
             data=r.content,
             content_type="application/octet-stream",
