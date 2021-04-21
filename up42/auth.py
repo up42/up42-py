@@ -24,9 +24,10 @@ logger = get_logger(__name__)
 
 class retry_if_429_error(retry_if_exception):
     """
-    Adapted from https://github.com/alexwlchan/handling-http-429-with-tenacity
     Retry strategy that retries if the exception is an ``HTTPError`` with
-    a 429 status code.
+    a 429 status code (too many requests).
+
+    Adapted from https://github.com/alexwlchan/handling-http-429-with-tenacity
     """
 
     def __init__(self):
@@ -42,9 +43,9 @@ class retry_if_429_error(retry_if_exception):
 class Auth:
     def __init__(
         self,
-        cfg_file: Union[str, Path, None] = None,
         project_id: Optional[str] = None,
         project_api_key: Optional[str] = None,
+        cfg_file: Union[str, Path, None] = None,
         **kwargs,
     ):
         """
@@ -56,9 +57,9 @@ class Auth:
             the instructions in the docs authentication chapter.
 
         Args:
-            cfg_file: File path to the cfg.json with {project_id: "...", project_api_key: "..."}.
             project_id: The unique identifier of the project.
             project_api_key: The project-specific API key.
+            cfg_file: File path to the cfg.json with {project_id: "...", project_api_key: "..."}.
         """
         self.cfg_file = cfg_file
         self.project_id = project_id
@@ -132,7 +133,7 @@ class Auth:
         return f"https://api.up42.{self.env}"
 
     # pylint: disable=assignment-from-no-return
-    def _get_token(self):
+    def _get_token(self) -> None:
         try:
             self._get_token_project()
         except requests.exceptions.HTTPError as err:
@@ -227,10 +228,13 @@ class Auth:
         return_text: bool = True,
     ) -> Union[str, dict, requests.Response]:
         """
-        Handles retrying the request and automatically gets a new token if the old
-        is invalid.
+        Handles retrying the request and automatically retries and gets a new token if
+        the old is invalid.
 
-        Retry is enabled by default, can be set to False as kwargs in Api().
+        Retry is enabled by default, can be set to False as kwargs of Auth.
+
+        In addition to this retry mechanic, 429-errors (too many requests) are retried
+        more extensively in _request_helper.
 
         Args:
             request_type: 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'
