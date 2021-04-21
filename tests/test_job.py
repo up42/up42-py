@@ -192,8 +192,10 @@ def test_cancel_job_live(workflow_live):
     jb = workflow_live.test_job(
         input_parameters=input_parameters_json, track_status=False
     )
+    # Can happen that the test job is finished before the cancellation kicks in server-side.
     jb.cancel_job()
-    # Give service time to cancel job
+
+    # Give service time to cancel job before assertions
     time.sleep(3)
     assert jb.status in ["CANCELLED", "CANCELLING"]
 
