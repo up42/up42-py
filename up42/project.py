@@ -192,20 +192,23 @@ class Project(Tools):
             max_concurrent_jobs: The maximum number of concurrent jobs, from 1-10, default 1.
             number_of_images: The maximum number of images returned with each job, from 1-20, default 10.
         """
+        # The ranges and default values of the project settings can potentially get
+        # increased, so need to be dynamically queried from the server.
+        current_settings = {d["name"]: d for d in self.get_project_settings()}
+
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
-        payload = [
-            {
-                "name": "JOB_QUERY_MAX_AOI_SIZE",
-                "value": f"{100 if max_aoi_size is None else max_aoi_size}",
-            },
-            {
-                "name": "MAX_CONCURRENT_JOBS",
-                "value": f"{10 if max_concurrent_jobs is None else max_concurrent_jobs}",
-            },
-            {
-                "name": "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE",
-                "value": f"{10 if number_of_images is None else number_of_images}",
-            },
-        ]
-        self.auth._request(request_type="PUT", url=url, data=payload)
+        payload: Dict = {"settings": {}}
+        desired_settings = {
+            "JOB_QUERY_MAX_AOI_SIZE": max_aoi_size,
+            "MAX_CONCURRENT_JOBS": max_concurrent_jobs,
+            "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE": number_of_images,
+        }
+
+        for name, desired_setting in desired_settings.items():
+            if desired_setting is None:
+                payload["settings"][name] = str(current_settings[name]["value"])
+            else:
+                payload["settings"][name] = str(desired_setting)
+
+        self.auth._request(request_type="POST", url=url, data=payload)
         logger.info(f"Updated project settings: {payload}")

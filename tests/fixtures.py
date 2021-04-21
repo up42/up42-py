@@ -337,13 +337,33 @@ def project_mock(auth_mock, requests_mock):
     )
     json_project_settings = {
         "data": [
-            {"name": "MAX_CONCURRENT_JOBS"},
-            {"name": "MAX_AOI_SIZE"},
-            {"name": "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE"},
+            {"name": "MAX_CONCURRENT_JOBS", "value": "10"},
+            {"name": "MAX_AOI_SIZE", "value": "5000"},
+            {"name": "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE", "value": "20"},
         ],
         "error": {},
     }
     requests_mock.get(url=url_project_settings, json=json_project_settings)
+
+    # project settings update
+    url_projects_settings_update = (
+        f"{project.auth._endpoint()}/projects/project_id_123/settings"
+    )
+    json_desired_project_settings = {
+        "data": [
+            {"name": "MAX_CONCURRENT_JOBS", "value": "500"},
+            {"name": "MAX_AOI_SIZE", "value": "5"},
+            {"name": "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE", "value": "20"},
+        ],
+        "error": {},
+    }
+    requests_mock.post(
+        url_projects_settings_update,
+        [
+            {"status_code": 404, "json": json_desired_project_settings},
+            {"status_code": 201, "json": json_desired_project_settings},
+        ],
+    )
 
     return project
 
