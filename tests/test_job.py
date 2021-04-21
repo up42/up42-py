@@ -192,17 +192,17 @@ def test_cancel_job_live(workflow_live):
     jb = workflow_live.test_job(
         input_parameters=input_parameters_json, track_status=False
     )
+    jb.cancel_job()
+    # Give service time to cancel job
+    time.sleep(3)
+    assert jb.status in ["CANCELLED", "CANCELLING"]
+
     assert isinstance(jb, Job)
     with open(input_parameters_json) as src:
         job_info_params = json.load(src)
         job_info_params.update({"config": {"mode": "DRY_RUN"}})
         assert jb._info["inputs"] == job_info_params
         assert jb._info["mode"] == "DRY_RUN"
-
-    jb.cancel_job()
-    # Give service time to cancel job
-    time.sleep(3)
-    assert jb.status in ["CANCELLED", "CANCELLING"]
 
 
 @pytest.mark.live
