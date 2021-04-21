@@ -9,6 +9,7 @@ import requests
 import requests.exceptions
 from tenacity import (
     Retrying,
+    stop_after_delay,
     wait_fixed,
     wait_random_exponential,
     stop_after_attempt,
@@ -251,8 +252,8 @@ class Auth:
         try:
             if self.retry:
                 retryer = Retrying(
-                    stop=stop_after_attempt(1),  # TODO: Find optimal retry solution
-                    wait=wait_fixed(0),
+                    stop=(stop_after_attempt(2) | stop_after_delay(3)),
+                    wait=wait_fixed(0.5),
                     retry=(
                         retry_if_exception_type(requests.exceptions.HTTPError)
                         | retry_if_exception_type(requests.exceptions.ConnectionError)
