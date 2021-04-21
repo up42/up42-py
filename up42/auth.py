@@ -25,9 +25,8 @@ logger = get_logger(__name__)
 
 class retry_if_429_error(retry_if_exception):
     """
-    Retry strategy that retries if the exception is an ``HTTPError`` with
-    a 429 status code (too many requests).
-
+    Altered tenacity retry strategy that retries if the exception is an ``HTTPError``
+    with a 429 status code (too many requests).
     Adapted from https://github.com/alexwlchan/handling-http-429-with-tenacity
     """
 
@@ -66,6 +65,7 @@ class Auth:
         self.project_id = project_id
         self.project_api_key = project_api_key
         self.workspace_id: Optional[str] = None
+        self.token: Optional[str] = None
 
         try:
             self.env: str = kwargs["env"]
@@ -133,8 +133,7 @@ class Auth:
         """Gets the endpoint."""
         return f"https://api.up42.{self.env}"
 
-    # pylint: disable=assignment-from-no-return
-    def _get_token(self) -> None:
+    def _get_token(self):
         try:
             self._get_token_project()
         except requests.exceptions.HTTPError as err:
@@ -155,9 +154,7 @@ class Auth:
         }
         token_response = requests.request("POST", url, data=payload, headers=headers)
         token_response.raise_for_status()
-        token = json.loads(token_response.text)
-        # pylint: disable=attribute-defined-outside-init
-        self.token = token["data"]["accessToken"]
+        self.token = json.loads(token_response.text)["data"]["accessToken"]
 
     def _get_workspace(self) -> None:
         """Get workspace id belonging to authenticated project."""
@@ -202,7 +199,7 @@ class Auth:
         Returns:
             The request response.
         """
-        headers = self._generate_headers(self.token)
+        headers = self._generate_headers(self.token)  # type: ignore
         if querystring == {}:
             response = requests.request(
                 method=request_type, url=url, data=json.dumps(data), headers=headers
@@ -281,12 +278,10 @@ class Auth:
                 response_text = response.text
 
             # Handle api error messages here before handling it in every single function.
-            # pylint: disable=no-else-raise
             try:
                 if response_text["error"] is not None and response_text["data"] is None:
                     raise ValueError(response_text["error"])
-                else:
-                    return response_text
+                return response_text
             except (
                 KeyError,
                 TypeError,
