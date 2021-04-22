@@ -77,10 +77,6 @@ class Auth:
             self.retry: bool = kwargs["retry"]
         except KeyError:
             self.retry = True
-        try:
-            self.get_info: bool = kwargs["get_info"]
-        except KeyError:
-            self.get_info = True
 
         if self.authenticate:
             self._find_credentials()

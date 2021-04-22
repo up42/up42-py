@@ -50,8 +50,7 @@ class Job(VizTools, Tools):
         self.job_id = job_id
         self.quicklooks = None
         self.results = None
-        if self.auth.get_info:
-            self._info = self.info
+        self._info = self.info
 
     def __repr__(self):
         info = self.info

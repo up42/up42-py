@@ -29,35 +29,21 @@ def test_project_info(project_mock):
 
 
 def test_create_workflow(project_mock):
-    project_mock.auth.get_info = False
-
     workflow = project_mock.create_workflow(
         name=WORKFLOW_NAME, description=WORKFLOW_DESCRIPTION
     )
     assert isinstance(workflow, Workflow)
-    assert not hasattr(workflow, "_info")
+    assert hasattr(workflow, "_info")
 
 
-def test_create_workflow_use_existing(project_mock, requests_mock):
-    url_workflow_info = (
-        f"{project_mock.auth._endpoint()}/projects/"
-        f"{project_mock.project_id}/workflows/{WORKFLOW_ID}"
-    )
-    json_workflow_info = {
-        "data": {
-            "name": WORKFLOW_NAME,
-            "description": WORKFLOW_DESCRIPTION,
-        },
-        "error": {},
-    }
-    requests_mock.get(url=url_workflow_info, json=json_workflow_info)
-
+def test_create_workflow_use_existing(project_mock):
     workflow = project_mock.create_workflow(
         name=WORKFLOW_NAME,
         description=WORKFLOW_DESCRIPTION,
         use_existing=True,
     )
     assert isinstance(workflow, Workflow)
+    assert hasattr(workflow, "_info")
 
 
 def test_get_workflows(project_mock):
