@@ -17,6 +17,8 @@ from .fixtures import (
     JOB_ID,
 )
 
+MAX_CONCURRENT_JOBS = 12
+
 
 def test_project_info(project_mock):
     del project_mock._info
@@ -97,7 +99,7 @@ def test_get_project_settings(project_mock):
 def test_get_project_settings_live(project_live):
     project_settings = project_live.get_project_settings()
     assert isinstance(project_settings, list)
-    assert len(project_settings) == 3
+    assert len(project_settings) == MAX_CONCURRENT_JOBS
     assert project_settings[0]["name"] in [
         "JOB_QUERY_MAX_AOI_SIZE",
         "MAX_CONCURRENT_JOBS",
@@ -115,15 +117,15 @@ def test_update_project_settings(project_mock):
 
 @pytest.mark.live
 def test_update_project_settings_live(project_live):
-    project_live.update_project_settings(max_concurrent_jobs=8)
+    project_live.update_project_settings(max_concurrent_jobs=15)
     project_settings = project_live.get_project_settings()
     assert isinstance(project_settings, list)
     for setting in project_settings:
         if setting["name"] == "MAX_CONCURRENT_JOBS":
-            assert setting["value"] == "8"
+            assert setting["value"] == "15"
 
     # Reset to default value
-    project_live.update_project_settings(max_concurrent_jobs=3)
+    project_live.update_project_settings(max_concurrent_jobs=MAX_CONCURRENT_JOBS)
 
 
 def test_max_concurrent_jobs(project_mock, project_mock_max_concurrent_jobs):
@@ -135,4 +137,4 @@ def test_max_concurrent_jobs(project_mock, project_mock_max_concurrent_jobs):
 @pytest.mark.live
 def test_max_concurrent_jobs_live(project_live):
     max_concurrent_jobs = project_live.max_concurrent_jobs
-    assert max_concurrent_jobs == 100
+    assert max_concurrent_jobs == MAX_CONCURRENT_JOBS
