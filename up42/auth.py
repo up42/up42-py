@@ -9,7 +9,6 @@ import requests
 import requests.exceptions
 from tenacity import (
     Retrying,
-    stop_after_delay,
     wait_fixed,
     wait_random_exponential,
     stop_after_attempt,
