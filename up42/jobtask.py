@@ -37,8 +37,7 @@ class JobTask(VizTools):
         self.jobtask_id = jobtask_id
         self.quicklooks = None
         self.results = None
-        if self.auth.get_info:
-            self._info = self.info
+        self._info = self.info
 
     def __repr__(self):
         info = self.info[0]

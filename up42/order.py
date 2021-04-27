@@ -27,8 +27,7 @@ class Order:
         self.workspace_id = auth.workspace_id
         self.order_id = order_id
         self.payload = payload
-        if self.auth.get_info:
-            self._info = self.info
+        self._info = self.info
 
     def __repr__(self):
         info = self.info

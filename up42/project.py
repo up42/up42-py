@@ -31,8 +31,7 @@ class Project:
     def __init__(self, auth: Auth, project_id: str):
         self.auth = auth
         self.project_id = project_id
-        if self.auth.get_info:
-            self._info = self.info
+        self._info = self.info
 
     def __repr__(self):
         info = self.info

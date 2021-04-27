@@ -32,8 +32,6 @@ class Asset:
         self.workspace_id = auth.workspace_id
         self.asset_id = asset_id
         self.results = None
-        if self.auth.get_info:
-            self._info = self.info
 
     def __repr__(self):
         info = self.info
@@ -50,7 +48,6 @@ class Asset:
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets/{self.asset_id}"
         response_json = self.auth._request(request_type="GET", url=url)
-        self._info = response_json["data"]
         return response_json["data"]
 
     @property

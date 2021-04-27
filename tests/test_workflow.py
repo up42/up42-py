@@ -234,15 +234,6 @@ def test_construct_parameter_only_ids(workflow_mock):
     }
 
 
-def test_construct_parameter_order_ids(workflow_mock):
-    parameters = workflow_mock.construct_parameters(order_ids=["8472712912"])
-    assert isinstance(parameters, dict)
-    assert parameters == {
-        "esa-s2-l2a-gtiff-visual:1": {"order_ids": ["8472712912"]},
-        "tiling:1": {"nodata": "None", "tile_width": 768},
-    }
-
-
 def test_construct_parameter_assets(workflow_mock, asset_mock, monkeypatch):
     parameters = workflow_mock.construct_parameters(assets=[asset_mock])
     assert isinstance(parameters, dict)
