@@ -17,6 +17,8 @@ from .fixtures import (
     JOB_ID,
 )
 
+MAX_CONCURRENT_JOBS = 12
+
 
 def test_project_info(project_mock):
     del project_mock._info
@@ -27,35 +29,21 @@ def test_project_info(project_mock):
 
 
 def test_create_workflow(project_mock):
-    project_mock.auth.get_info = False
-
     workflow = project_mock.create_workflow(
         name=WORKFLOW_NAME, description=WORKFLOW_DESCRIPTION
     )
     assert isinstance(workflow, Workflow)
-    assert not hasattr(workflow, "_info")
+    assert hasattr(workflow, "_info")
 
 
-def test_create_workflow_use_existing(project_mock, requests_mock):
-    url_workflow_info = (
-        f"{project_mock.auth._endpoint()}/projects/"
-        f"{project_mock.project_id}/workflows/{WORKFLOW_ID}"
-    )
-    json_workflow_info = {
-        "data": {
-            "name": WORKFLOW_NAME,
-            "description": WORKFLOW_DESCRIPTION,
-        },
-        "error": {},
-    }
-    requests_mock.get(url=url_workflow_info, json=json_workflow_info)
-
+def test_create_workflow_use_existing(project_mock):
     workflow = project_mock.create_workflow(
         name=WORKFLOW_NAME,
         description=WORKFLOW_DESCRIPTION,
         use_existing=True,
     )
     assert isinstance(workflow, Workflow)
+    assert hasattr(workflow, "_info")
 
 
 def test_get_workflows(project_mock):
@@ -129,15 +117,15 @@ def test_update_project_settings(project_mock):
 
 @pytest.mark.live
 def test_update_project_settings_live(project_live):
-    project_live.update_project_settings(max_concurrent_jobs=8)
+    project_live.update_project_settings(max_concurrent_jobs=15)
     project_settings = project_live.get_project_settings()
     assert isinstance(project_settings, list)
     for setting in project_settings:
         if setting["name"] == "MAX_CONCURRENT_JOBS":
-            assert setting["value"] == "8"
+            assert setting["value"] == "15"
 
     # Reset to default value
-    project_live.update_project_settings(max_concurrent_jobs=3)
+    project_live.update_project_settings(max_concurrent_jobs=MAX_CONCURRENT_JOBS)
 
 
 def test_max_concurrent_jobs(project_mock, project_mock_max_concurrent_jobs):
@@ -149,4 +137,4 @@ def test_max_concurrent_jobs(project_mock, project_mock_max_concurrent_jobs):
 @pytest.mark.live
 def test_max_concurrent_jobs_live(project_live):
     max_concurrent_jobs = project_live.max_concurrent_jobs
-    assert max_concurrent_jobs == 100
+    assert max_concurrent_jobs == MAX_CONCURRENT_JOBS

@@ -47,8 +47,7 @@ class Workflow(Tools):
         self.auth = auth
         self.project_id = project_id
         self.workflow_id = workflow_id
-        if self.auth.get_info:
-            self._info = self.info
+        self._info = self.info
 
     def __repr__(self):
         info = self.info
@@ -324,7 +323,6 @@ class Workflow(Tools):
         end_date: Optional[str] = None,
         limit: Optional[int] = None,
         scene_ids: Optional[list] = None,
-        order_ids: Optional[List[str]] = None,
         assets: Optional[List[Asset]] = None,
     ) -> dict:
         """
@@ -341,8 +339,6 @@ class Workflow(Tools):
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
             scene_ids: List of scene_ids, if given ignores all other parameters except geometry.
-            order_ids: Optional, can be used to incorporate existing bought imagery on UP42
-                into new workflows.
             assets: Optional, can be used to incorporate existing assets in Storage (result
                 of Orders for instance) into new workflows.
 
@@ -355,11 +351,7 @@ class Workflow(Tools):
         except IndexError as e:
             raise ValueError("The Workflow has no workflow tasks.") from e
 
-        if order_ids is not None:
-            # Needs to be handled in this function(not run_job) as it is only
-            # relevant for the data block.
-            input_parameters[data_block_name] = {"order_ids": order_ids}
-        elif assets is not None:
+        if assets is not None:
             # Needs to be handled in this function(not run_job) as it is only
             # relevant for the data block.
             asset_ids = [asset.asset_id for asset in assets if asset.source == "BLOCK"]
