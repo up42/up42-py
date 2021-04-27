@@ -141,10 +141,11 @@ def test_get_jobtasks_result_json(job_mock):
 
 def test_job_download_result(job_mock, requests_mock):
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-    out_tgz_file = open(out_tgz, "rb")
+    with open(out_tgz, "rb") as src_tgz:
+        out_tgz_file = src_tgz.read()
     requests_mock.get(
         url=DOWNLOAD_URL,
-        content=out_tgz_file.read(),
+        content=out_tgz_file,
         headers={"x-goog-stored-content-length": "163"},
     )
 
@@ -170,10 +171,11 @@ def test_job_download_result(job_mock, requests_mock):
 def test_job_download_result_nounpacking(job_mock, requests_mock):
 
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-    out_tgz_file = open(out_tgz, "rb")
+    with open(out_tgz, "rb") as src_tgz:
+        out_tgz_file = src_tgz.read()
     requests_mock.get(
         url=DOWNLOAD_URL,
-        content=out_tgz_file.read(),
+        content=out_tgz_file,
         headers={"x-goog-stored-content-length": "163"},
     )
 

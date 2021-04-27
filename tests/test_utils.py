@@ -259,10 +259,11 @@ def test_download_result_from_gcs(requests_mock):
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-    out_tgz_file = open(out_tgz, "rb")
+    with open(out_tgz, "rb") as src_tgz:
+        out_tgz_file = src_tgz.read()
     requests_mock.get(
         url=cloud_storage_url,
-        content=out_tgz_file.read(),
+        content=out_tgz_file,
     )
     with tempfile.TemporaryDirectory() as tempdir:
         with open(Path(tempdir) / "dummy.txt", "w") as fp:
@@ -282,10 +283,12 @@ def test_download_result_from_gcs_zip(requests_mock):
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
     out_zip = Path(__file__).resolve().parent / "mock_data/result_tif.zip"
-    out_zip_file = open(out_zip, "rb")
+    with open(out_zip, "rb") as src_zip:
+        out_zip_file = src_zip.read()
+
     requests_mock.get(
         url=cloud_storage_url,
-        content=out_zip_file.read(),
+        content=out_zip_file,
     )
     with tempfile.TemporaryDirectory() as tempdir:
         with open(Path(tempdir) / "dummy.txt", "w") as fp:
@@ -305,10 +308,12 @@ def test_download_result_from_gcs_not_compressed(requests_mock):
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
     out_zip = Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
-    out_zip_file = open(out_zip, "rb")
+    with open(out_zip, "rb") as src_zip:
+        out_zip_file = src_zip.read()
+
     requests_mock.get(
         url=cloud_storage_url,
-        content=out_zip_file.read(),
+        content=out_zip_file,
     )
     with tempfile.TemporaryDirectory() as tempdir:
         with open(Path(tempdir) / "dummy.txt", "w") as fp:

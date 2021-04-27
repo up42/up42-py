@@ -56,10 +56,11 @@ def test_asset_get_download_url_live(asset_live):
 
 def test_asset_download(asset_mock, requests_mock):
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-    out_tgz_file = open(out_tgz, "rb")
+    with open(out_tgz, "rb") as src_tgz:
+        out_tgz_file = src_tgz.read()
     requests_mock.get(
         url=DOWNLOAD_URL,
-        content=out_tgz_file.read(),
+        content=out_tgz_file,
         headers={"x-goog-stored-content-length": "163"},
     )
 
@@ -85,10 +86,11 @@ def test_asset_download(asset_mock, requests_mock):
 def test_asset_download_nounpacking(asset_mock, requests_mock):
 
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-    out_tgz_file = open(out_tgz, "rb")
+    with open(out_tgz, "rb") as src_tgz:
+        out_tgz_file = src_tgz.read()
     requests_mock.get(
         url=DOWNLOAD_URL,
-        content=out_tgz_file.read(),
+        content=out_tgz_file,
         headers={"x-goog-stored-content-length": "163"},
     )
 
