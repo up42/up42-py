@@ -31,10 +31,11 @@ def test_get_result_json_live(jobtask_live):
 
 def test_jobtask_download_result(jobtask_mock, requests_mock):
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-    out_tgz_file = open(out_tgz, "rb")
+    with open(out_tgz, "rb") as src_tgz:
+        out_tgz_file = src_tgz.read()
     requests_mock.get(
         url=DOWNLOAD_URL,
-        content=out_tgz_file.read(),
+        content=out_tgz_file,
         headers={"x-goog-stored-content-length": "221"},
     )
 
