@@ -26,7 +26,9 @@ jobs:
             pip install -r requirements-dev.txt
       - run:
           name: Runnning tests
-          command: make test[live]
+          command: |
+            rm -r .pytest_cache
+            python -m pytest --runlive --durations=5
   deploy:
     docker:
       - image: circleci/python:3.7
