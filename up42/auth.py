@@ -249,7 +249,7 @@ class Auth:
         try:
             if self.retry:
                 retryer = Retrying(
-                    stop=(stop_after_attempt(2) | stop_after_delay(3)),
+                    stop=stop_after_attempt(2),
                     wait=wait_fixed(0.5),
                     retry=(
                         retry_if_exception_type(requests.exceptions.HTTPError)
