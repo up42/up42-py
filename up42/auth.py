@@ -43,9 +43,9 @@ class retry_if_429_error(retry_if_exception):
 class Auth:
     def __init__(
         self,
+        cfg_file: Union[str, Path, None] = None,
         project_id: Optional[str] = None,
         project_api_key: Optional[str] = None,
-        cfg_file: Union[str, Path, None] = None,
         **kwargs,
     ):
         """
@@ -57,9 +57,9 @@ class Auth:
             the instructions in the docs authentication chapter.
 
         Args:
+            cfg_file: File path to the cfg.json with {project_id: "...", project_api_key: "..."}.
             project_id: The unique identifier of the project.
             project_api_key: The project-specific API key.
-            cfg_file: File path to the cfg.json with {project_id: "...", project_api_key: "..."}.
         """
         self.cfg_file = cfg_file
         self.project_id = project_id
