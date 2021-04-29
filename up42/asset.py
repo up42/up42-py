@@ -31,7 +31,7 @@ class Asset:
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.asset_id = asset_id
-        self.results = None
+        self.results: Union[List[str], None] = None
 
     def __repr__(self):
         info = self.info

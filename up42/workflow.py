@@ -552,7 +552,7 @@ class Workflow:
             f"workflows/{self.workflow_id}/jobs?name={name}"
         )
         response_json = self.auth._request(
-            request_type="POST", url=url, data=input_parameters
+            request_type="POST", url=url, data=input_parameters  # type: ignore
         )
         job_json = response_json["data"]
         logger.info(f"Created and running new job: {job_json['id']}.")
