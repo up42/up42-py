@@ -2,14 +2,13 @@ from typing import Union, List
 from pathlib import Path
 
 from up42.auth import Auth
-from up42.tools import Tools
 
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
 
 
-class Estimation(Tools):
+class Estimation:
     def __init__(
         self,
         auth: Auth,

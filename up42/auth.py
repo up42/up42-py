@@ -219,7 +219,7 @@ class Auth:
         data: Union[dict, list] = {},
         querystring: dict = {},
         return_text: bool = True,
-    ) -> Union[str, dict, requests.Response]:
+    ):  # Union[str, dict, requests.Response]:
         """
         Handles retrying the request and automatically retries and gets a new token if
         the old is invalid.
