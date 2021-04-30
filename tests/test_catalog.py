@@ -120,6 +120,76 @@ def test_search_live(catalog_live):
     assert search_results["type"] == "FeatureCollection"
 
 
+@pytest.mark.live
+def test_search_live_pagination_token(catalog_live):
+    search_params_limit_600 = {
+        "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
+        "intersects": {
+            "type": "Polygon",
+            "coordinates": [
+          [
+            [
+              12.008056640625,
+              52.66305767075935
+            ],
+            [
+              16.292724609375,
+              52.66305767075935
+            ],
+            [
+              16.292724609375,
+              52.72963909783717
+            ],
+            [
+              12.008056640625,
+              52.72963909783717
+            ],
+            [
+              12.008056640625,
+              52.66305767075935
+            ]
+          ]
+        ]
+        },
+        "limit": 600,
+        "query": {
+            "dataBlock": {
+                "in": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-display",
+                       "oneatlas-pleiades-aoiclipped",
+                       "oneatlas-spot-fullscene", "oneatlas-spot-display",
+                       "oneatlas-spot-aoiclipped",
+                       "sobloo-s1-grd-fullscene", "sobloo-s1-grd-aoiclipped",
+                       "sobloo-s1-slc-fullscene"]
+            }
+        }
+    }
+    search_results = catalog_live.search(search_params_limit_600)
+    assert isinstance(search_results, gpd.GeoDataFrame)
+    assert search_results.shape == (600, 14)
+    assert list(search_results.columns) == [
+        "geometry",
+        "id",
+        "acquisitionDate",
+        "constellation",
+        "collection",
+        "providerName",
+        "blockNames",
+        "cloudCoverage",
+        "up42:usageType",
+        "providerProperties",
+        "sceneId",
+        "resolution",
+        "deliveryTime",
+        "producer",
+    ]
+    assert list(search_results.index) == list(range(search_results.shape[0]))
+
+    # As fc
+    search_results = catalog_live.search(mock_search_parameters, as_dataframe=False)
+    assert isinstance(search_results, dict)
+    assert search_results["type"] == "FeatureCollection"
+
+
 def test_download_quicklook(catalog_mock, requests_mock):
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
     provider = "oneatlas"
