@@ -108,6 +108,7 @@ class Catalog(VizTools):
             "sentinel3",
             "sentinel5p",
         ],
+        usage_type: List[str]= ["processing", "purchase"],
         limit: int = 10,
         max_cloudcover: float = 100,
         sortby: str = "acquisitionDate",
@@ -123,6 +124,9 @@ class Catalog(VizTools):
             end_date: Query period ending day, format "2020-01-01".
             sensors: The satellite sensors to search for, one or multiple of
                 ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p"]
+            usage_type: Filter for the usage type of the search results images, default
+                ["processing", "purchase"]. "processing" (can be downloaded or used directly
+                with a processing algorithm), "purchase" (can only be download).
             limit: The maximum number of search results to return (1-max.500).
             max_cloudcover: Maximum cloudcover % - e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloudcover.
@@ -166,6 +170,27 @@ class Catalog(VizTools):
             "query": query_filters,
             "sortby": [{"field": f"properties.{sortby}", "direction": sort_order}],
         }
+
+        if usage_type == ["processing"]:
+            # Non-archive data
+            search_parameters["query"]["deliveryTime"] = {"in": ["MINUTES"]}
+        elif usage_type == ["purchase"]:
+            # Archive data
+            search_parameters["query"]["deliveryTime"] = {"in": ["HOURS"]}
+        elif usage_type == ["processing", "purchase"]:
+            # Archive and non-archive data
+            search_parameters["query"]["deliveryTime"] = {"in": ["MINUTES", "HOURS"]}
+        else:
+            raise ValueError("Select correct `usage_type`")
+
+
+            # TODO: Is this only archive or both?
+
+        else:
+            # Only immediately available data.
+
+        #TODO: Flag for analytics?
+
         return search_parameters
 
     def search(
