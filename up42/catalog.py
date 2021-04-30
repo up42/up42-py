@@ -193,10 +193,28 @@ class Catalog(VizTools, Tools):
         """
         logger.info(f"Searching catalog with search_parameters: {search_parameters}")
         url = f"{self.auth._endpoint()}/catalog/stac/search"
+
+        max_limit = search_parameters["limit"]
+        if max_limit > 500:
+            search_parameters["limit"] = 500
+
         response_json: dict = self.auth._request("POST", url, search_parameters)
-        logger.info(f"{len(response_json['features'])} results returned.")
+        #TODO: Why is for a search with 0 features returned a next object with 50?
+
+        features = response_json["features"]
+
+        # This also resolved filter issues of API, less results than expected.
+        while len(features) < max_limit:
+            url_next_page = response_json["links"][1]["href"]
+            response_json = self.auth._request("GET", url_next_page)
+            features += response_json["features"]
+            if url_next_page is None:
+                break
+        features =
+
+        logger.info(f"{len(features)} results returned.")
         dst_crs = "EPSG:4326"
-        df = GeoDataFrame.from_features(response_json, crs=dst_crs)
+        df = GeoDataFrame.from_features(FeatureCollection(features=features), crs=dst_crs)
         if df.empty:
             if as_dataframe:
                 return df
