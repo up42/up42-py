@@ -675,7 +675,7 @@ def construct_parameters(
     Follows STAC principles and property names to create a filter for
     catalog search.
     """
-    geometry = catalog.read_vector_file(geom_file)
+    geometry = Tools(catalog.auth).read_vector_file(geom_file)
     start_date_str = start_date.strftime("%Y-%m-%d")
     end_date_str = end_date.strftime("%Y-%m-%d")
     logger.info(
