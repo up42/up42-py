@@ -159,7 +159,7 @@ def blocks_from_context():
     class OptionChoiceFromContext(click.Option):
         def full_process_value(self, ctx, value):
             self.type = click.Choice(Tools(ctx.obj).get_blocks().keys())
-            return super().full_process_value(ctx, value)
+            return super().full_process_value(ctx, value)  # pylint: disable=no-member
 
     return OptionChoiceFromContext
 
@@ -274,7 +274,7 @@ def workflows_from_context():
         def full_process_value(self, ctx, value):
             workflow_names = [wkf._info["name"] for wkf in ctx.obj.get_workflows()]
             self.type = click.Choice(workflow_names)
-            return super().full_process_value(ctx, value)
+            return super().full_process_value(ctx, value)  # pylint: disable=no-member
 
     return OptionChoiceFromContext
 
