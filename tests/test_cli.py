@@ -1,3 +1,5 @@
+# pylint: disable=no-member
+
 import os
 from unittest import mock
 from pathlib import Path
