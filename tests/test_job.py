@@ -186,9 +186,7 @@ def test_job_download_result_nounpacking(job_mock, requests_mock):
         assert len(out_files) == 1
 
 
-@pytest.mark.skip(
-    reason="Sometimes takes quite long to cancel the job on the server."
-)
+@pytest.mark.skip(reason="Sometimes takes quite long to cancel the job on the server.")
 @pytest.mark.live
 def test_cancel_job_live(workflow_live):
     input_parameters_json = (
