@@ -8,6 +8,7 @@ pytest-sugar
 mypy==0.902
 types-requests
 types-mock
+types-click
 mypy-extensions
 pytest-cov
 pytest-mypy
