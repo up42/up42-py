@@ -6,6 +6,7 @@ pytest
 pytest-pylint
 pytest-sugar
 mypy==0.902
+types-requests
 mypy-extensions
 pytest-cov
 pytest-mypy
