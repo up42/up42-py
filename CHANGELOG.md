@@ -15,11 +15,12 @@ pip show up42-py
 ```
 
 ## Versions
-### [0.16.0](https://pypi.org/project/up42-py/) (2021-05-01)
+### [0.16.0](https://pypi.org/project/up42-py/) (2021-06-30)
+- Limit memory usage for large file downloads (#237)
+- Remove deprecated job.get_status() (Replace by job.status) (#224)
+- Remove deprecated jobcollection.get_job_info() and jobcollection.get_status() (Replaced by jobcollection.info and jobcollection.status)
+- Remove order-id functionality (#228)
 - Limit installation to Python <3.9
-- Removes deprecated job.get_status() (Replace by job.status)
-- Removes deprecated jobcollection.get_job_info() and jobcollection.get_status() (Replaced by jobcollection.info and jobcollection.status)
-- Removes order-id functionality
 - Internal code improvements (e.g. project settings, retry)  
 
 ## Versions
