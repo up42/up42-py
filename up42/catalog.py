@@ -13,7 +13,6 @@ from geojson import Feature, FeatureCollection
 from tqdm import tqdm
 
 from up42.auth import Auth
-from up42.tools import Tools
 from up42.viztools import VizTools
 from up42.order import Order
 from up42.utils import get_logger, any_vector_to_fc, fc_to_query_geometry
@@ -63,7 +62,7 @@ supported_sensors = {
 }
 
 # pylint: disable=duplicate-code
-class Catalog(VizTools, Tools):
+class Catalog(VizTools):
     """
     The Catalog class enables access to the UP42 catalog search. You can search
     for satellite image scenes (for different sensors and criteria like cloud cover),

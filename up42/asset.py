@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import List, Union
 
 from up42.auth import Auth
-from up42.tools import Tools
 from up42.utils import (
     get_logger,
     download_results_from_gcs,
@@ -13,7 +12,7 @@ from up42.utils import (
 logger = get_logger(__name__)
 
 
-class Asset(Tools):
+class Asset:
     """
     The Asset class enables access to the UP42 assets in the storage. Assets are results
     of orders or results of jobs with download blocks.
@@ -32,7 +31,7 @@ class Asset(Tools):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.asset_id = asset_id
-        self.results = None
+        self.results: Union[List[str], None] = None
 
     def __repr__(self):
         info = self.info

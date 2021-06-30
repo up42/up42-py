@@ -95,7 +95,7 @@ def download_results_from_gcs(
     compressed_file = tempfile.mktemp()
     with open(compressed_file, "wb") as dst_tgz:
         try:
-            r = requests.get(download_url)
+            r = requests.get(download_url, stream=True)
             r.raise_for_status()
             for chunk in tqdm(r.iter_content(chunk_size=1024)):
                 if chunk:  # filter out keep-alive new chunks
@@ -155,7 +155,7 @@ def download_results_from_gcs_without_unpacking(
     out_fp = Path().joinpath(output_directory, "output.tgz")
     with open(out_fp, "wb") as dst:
         try:
-            r = requests.get(download_url)
+            r = requests.get(download_url, stream=True)
             r.raise_for_status()
             for chunk in tqdm(r.iter_content(chunk_size=1024)):
                 if chunk:  # filter out keep-alive new chunks

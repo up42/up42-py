@@ -6,12 +6,11 @@ from up42.auth import Auth
 from up42.order import Order
 from up42.asset import Asset
 from up42.utils import get_logger
-from up42.tools import Tools
 
 logger = get_logger(__name__)
 
 
-class Storage(Tools):
+class Storage:
     """
     The Storage class enables access to the UP42 storage. You can list
     your assets and orders within an UP42 workspace.

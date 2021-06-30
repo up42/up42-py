@@ -1,11 +1,14 @@
 nbconvert
 black
 requests-mock
-pylint
+pylint==2.8.3
 pytest
 pytest-pylint
 pytest-sugar
-mypy
+mypy==0.902
+types-requests
+types-mock
+types-click
 mypy-extensions
 pytest-cov
 pytest-mypy

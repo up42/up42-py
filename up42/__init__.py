@@ -12,10 +12,9 @@
 
 import warnings
 from pathlib import Path
-from typing import Union, Tuple, List, Optional
+from typing import Union, Tuple, List, Optional, Dict
 import logging
 
-from geojson import FeatureCollection
 from geopandas import GeoDataFrame
 
 # pylint: disable=wrong-import-position
@@ -37,7 +36,7 @@ logger = get_logger(__name__, level=logging.INFO)
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-_auth = None
+_auth: Union[Auth, None] = None
 
 
 def authenticate(
@@ -203,13 +202,13 @@ def validate_manifest(path_or_json: Union[str, Path, dict]) -> dict:
 
 def read_vector_file(
     filename: str = "aoi.geojson", as_dataframe: bool = False
-) -> FeatureCollection:
+) -> Union[Dict, GeoDataFrame]:
     return Tools().read_vector_file(filename, as_dataframe)
 
 
 def get_example_aoi(
     location: str = "Berlin", as_dataframe: bool = False
-) -> FeatureCollection:
+) -> Union[Dict, GeoDataFrame]:
     return Tools().get_example_aoi(location, as_dataframe)
 
 
