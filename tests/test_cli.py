@@ -145,11 +145,6 @@ def test_workflow_from_name_live(cli_runner):
     )
     assert result.exit_code == 0
 
-    result = cli_runner.invoke(
-        cli.up42, ["project", "workflow-from-name", "-n", "never_a_workflow"]
-    )
-    assert result.exit_code == 2
-
 
 @PROJECT_ENVS
 @pytest.mark.live()
