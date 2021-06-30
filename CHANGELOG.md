@@ -20,7 +20,7 @@ pip show up42-py
 - Remove deprecated job.get_status() (Replace by job.status) (#224)
 - Remove deprecated jobcollection.get_job_info() and jobcollection.get_status() (Replaced by jobcollection.info and jobcollection.status)
 - Remove order-id functionality (#228)
-- Limit installation to Python <3.9
+- Limit installation to Python <=3.9.4
 - Internal code improvements (e.g. project settings, retry)  
 
 ## Versions
