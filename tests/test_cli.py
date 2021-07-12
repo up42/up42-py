@@ -80,7 +80,7 @@ def test_get_block_details_live(cli_runner):
     assert result.exit_code == 0
 
     result = cli_runner.invoke(cli.up42, ["get-block-details", "-n", "never_a_block"])
-    assert result.exit_code == 2
+    assert result.exit_code == 1
 
 
 @PROJECT_ENVS
@@ -144,11 +144,6 @@ def test_workflow_from_name_live(cli_runner):
         cli.up42, ["project", "workflow-from-name", "-n", "test_cli"]
     )
     assert result.exit_code == 0
-
-    result = cli_runner.invoke(
-        cli.up42, ["project", "workflow-from-name", "-n", "never_a_workflow"]
-    )
-    assert result.exit_code == 2
 
 
 @PROJECT_ENVS
