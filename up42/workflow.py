@@ -318,7 +318,6 @@ class Workflow:
             Point,
         ] = None,
         geometry_operation: Optional[str] = None,
-        handle_multiple_features: str = "union",
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         limit: Optional[int] = None,
@@ -381,7 +380,6 @@ class Workflow:
                 aoi_feature = fc_to_query_geometry(
                     fc=aoi_fc,
                     geometry_operation=geometry_operation,  # type: ignore
-                    squash_multiple_features=handle_multiple_features,
                 )
 
                 input_parameters[data_block_name][geometry_operation] = aoi_feature
