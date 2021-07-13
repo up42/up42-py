@@ -46,25 +46,27 @@ def test_construct_parameters(catalog_mock):
     assert search_parameters["sortby"] == mock_search_parameters["sortby"]
 
 
-def test_construct_parameters_fc_multiple_non_overlapping_features(catalog_mock):
+def test_construct_parameters_fc_multiple_features_raises(catalog_mock):
     with open(
         Path(__file__).resolve().parent / "mock_data/search_footprints.geojson"
     ) as json_file:
         fc = json.load(json_file)
 
-    search_parameters = catalog_mock.construct_parameters(
-        geometry=fc,
-        start_date="2020-01-01",
-        end_date="2020-08-10",
-        sensors=["sentinel2"],
-        limit=10,
-        max_cloudcover=15,
-        sortby="acquisitionDate",
-        ascending=True,
+    with pytest.raises(ValueError) as e:
+        catalog_mock.construct_parameters(
+            geometry=fc,
+            start_date="2020-01-01",
+            end_date="2020-08-10",
+            sensors=["sentinel2"],
+            limit=10,
+            max_cloudcover=15,
+            sortby="acquisitionDate",
+            ascending=True,
+        )
+    assert (
+        str(e.value)
+        == "The provided geometry contains multiple geometries, UP42 only accepts single geometries."
     )
-    assert isinstance(search_parameters, dict)
-    assert search_parameters["datetime"] == "2020-01-01T00:00:00Z/2020-08-10T23:59:59Z"
-    assert search_parameters["intersects"]["type"] == "MultiPolygon"
 
 
 def test_construct_parameters_unsopported_sensor_raises(catalog_mock):
