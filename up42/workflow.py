@@ -4,6 +4,7 @@ import copy
 from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Union, Tuple, Optional
+import warnings
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
@@ -345,6 +346,13 @@ class Workflow:
         Returns:
             Dictionary of constructed input parameters.
         """
+        message = (
+            "The use of `handle_multiple_features` will be deprecated in version 0.17.0, "
+            "to guarantee feature parity with the UP42 platform. The UP42 SDK from then on "
+            "will only handle single geometries!"
+        )
+        warnings.warn(message, DeprecationWarning, stacklevel=2)
+
         input_parameters = self._get_default_parameters()
         try:
             data_block_name = list(input_parameters.keys())[0]
