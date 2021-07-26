@@ -40,7 +40,7 @@ package:
 	twine check dist/*
 
 upload:
-	twine upload dist/*
+	twine upload --skip-existing dist/*
 
 clean:
 	find . -name "__pycache__" -exec rm -rf {} +
