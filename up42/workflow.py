@@ -378,9 +378,26 @@ class Workflow:
                 input_parameters[data_block_name]["ids"] = scene_ids
                 input_parameters[data_block_name]["limit"] = len(scene_ids)
                 input_parameters[data_block_name].pop("time")
-            elif start_date is not None and end_date is not None:
-                time = f"{start_date}T00:00:00Z/{end_date}T23:59:59Z"
-                input_parameters[data_block_name]["time"] = time
+            elif start_date is not None or end_date is not None:
+                try:
+                    start_date_iso: datetime.datetime = datetime.datetime.fromisoformat(start_date)  # type: ignore
+                    end_date_iso: datetime.datetime = datetime.datetime.fromisoformat(end_date)  # type: ignore
+                    if len(end_date) == 10:  # type: ignore
+                        # End date provided in the form "2014-01-01" without clock time, is set
+                        # to the previous day as upper boundary of archive.
+                        end_date_iso = datetime.datetime.combine(
+                            end_date_iso.date(), datetime.time(23, 59, 59)
+                        )
+                except TypeError as e:
+                    if start_date is None or end_date is None:
+                        raise ValueError(
+                            "When using dates, both start_date and end_date need to be provided."
+                        ) from e
+                    start_date_iso, end_date_iso = start_date, end_date  # type: ignore
+
+                formatting = "%Y-%m-%dT%H:%M:%S"
+                period = f"{start_date_iso.strftime(formatting)}Z/{end_date_iso.strftime(formatting)}Z"
+                input_parameters[data_block_name]["time"] = period
 
             if geometry is not None:
                 aoi_fc = any_vector_to_fc(
