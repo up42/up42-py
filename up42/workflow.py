@@ -321,8 +321,8 @@ class Workflow:
         ] = None,
         geometry_operation: Optional[str] = None,
         handle_multiple_features: str = "union",
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: Optional[Union[str, datetime.datetime]] = None,
+        end_date: Optional[Union[str, datetime.datetime]] = None,
         limit: Optional[int] = None,
         scene_ids: Optional[list] = None,
         assets: Optional[List[Asset]] = None,
@@ -338,8 +338,10 @@ class Workflow:
                 assume EPSG 4326.
             geometry_operation: Desired operation, One of "bbox", "intersects", "contains".
             limit: Maximum number of expected results.
-            start_date: Query period starting day, format "2020-01-01".
-            end_date: Query period ending day, format "2020-01-01".
+            start_date: Query period starting day as iso-format string or datetime object,
+                e.g. "2020-01-01" or "2020-01-01T00:00:00".
+            end_date: Query period ending day as iso-format or datetime object,
+                e.g. "2020-01-01T23:59:59" or "2020-01-01".
             scene_ids: List of scene_ids, if given ignores all other parameters except geometry.
             assets: Optional, can be used to incorporate existing assets in Storage (result
                 of Orders for instance) into new workflows.
