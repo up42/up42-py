@@ -5,7 +5,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Union, Tuple, Optional
 import warnings
-import datetime
+from datetime import datetime
+from datetime import time as datetime_time
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
@@ -321,8 +322,8 @@ class Workflow:
         ] = None,
         geometry_operation: Optional[str] = None,
         handle_multiple_features: str = "union",
-        start_date: Optional[Union[str, datetime.datetime]] = None,
-        end_date: Optional[Union[str, datetime.datetime]] = None,
+        start_date: Optional[Union[str, datetime]] = None,
+        end_date: Optional[Union[str, datetime]] = None,
         limit: Optional[int] = None,
         scene_ids: Optional[list] = None,
         assets: Optional[List[Asset]] = None,
@@ -383,13 +384,13 @@ class Workflow:
                 input_parameters[data_block_name].pop("time")
             elif start_date is not None or end_date is not None:
                 try:
-                    start_date_iso: datetime.datetime = datetime.datetime.fromisoformat(start_date)  # type: ignore
-                    end_date_iso: datetime.datetime = datetime.datetime.fromisoformat(end_date)  # type: ignore
+                    start_date_iso: datetime = datetime.fromisoformat(start_date)  # type: ignore
+                    end_date_iso: datetime = datetime.fromisoformat(end_date)  # type: ignore
                     if len(end_date) == 10:  # type: ignore
                         # End date provided in the form "2014-01-01" without clock time, is set
                         # to the previous day as upper boundary of archive.
-                        end_date_iso = datetime.datetime.combine(
-                            end_date_iso.date(), datetime.time(23, 59, 59)
+                        end_date_iso = datetime.combine(
+                            end_date_iso.date(), datetime_time(23, 59, 59)
                         )
                 except TypeError as e:
                     if start_date is None or end_date is None:
