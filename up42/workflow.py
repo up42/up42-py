@@ -390,15 +390,15 @@ class Workflow:
                 # Start and end date can be any combination of str ("YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS")
                 # or datetime objects.
                 if not isinstance(start_date, datetime):
-                    start_dt: datetime = datetime.fromisoformat(start_date)  # type: ignore
+                    start_dt: datetime = datetime.fromisoformat(start_date)
                 else:
                     start_dt = start_date
 
                 if not isinstance(end_date, datetime):
-                    end_dt: datetime = datetime.fromisoformat(end_date)  # type: ignore
+                    end_dt: datetime = datetime.fromisoformat(end_date)
                     try:
-                        # For "YYYY-MM-DD" format the default datetime conversion sets to
-                        # end of day, image archive query requires end of day.
+                        # For "YYYY-MM-DD" string the default datetime conversion sets to
+                        # start of day, but image archive query requires end of day.
                         datetime.strptime(end_date, "%Y-%m-%d")  # format validation
                         end_dt = datetime.combine(
                             end_dt.date(), datetime_time(23, 59, 59, 999999)
