@@ -340,9 +340,9 @@ class Workflow:
             geometry_operation: Desired operation, One of "bbox", "intersects", "contains".
             limit: Maximum number of expected results.
             start_date: Query period starting day as iso-format string or datetime object,
-                e.g. "2020-01-01" or "2020-01-01T00:00:00".
+                e.g. "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS".
             end_date: Query period ending day as iso-format or datetime object,
-                e.g. "2020-01-01T23:59:59" or "2020-01-01".
+                e.g. "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS".
             scene_ids: List of scene_ids, if given ignores all other parameters except geometry.
             assets: Optional, can be used to incorporate existing assets in Storage (result
                 of Orders for instance) into new workflows.
@@ -383,21 +383,30 @@ class Workflow:
                 input_parameters[data_block_name]["limit"] = len(scene_ids)
                 input_parameters[data_block_name].pop("time")
             elif start_date is not None or end_date is not None:
-                try:
-                    start_date_iso: datetime = datetime.fromisoformat(start_date)  # type: ignore
-                    end_date_iso: datetime = datetime.fromisoformat(end_date)  # type: ignore
-                    if len(end_date) == 10:  # type: ignore
-                        # End date provided in the form "2014-01-01" without clock time, is set
-                        # to the previous day as upper boundary of archive.
-                        end_date_iso = datetime.combine(
-                            end_date_iso.date(), datetime_time(23, 59, 59)
+                if start_date is None or end_date is None:
+                    raise ValueError(
+                        "When using dates, both start_date and end_date need to be provided."
+                    )
+                # Start and end date can be any combination of str ("YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS")
+                # or datetime objects.
+                if not isinstance(start_date, datetime):
+                    start_dt: datetime = datetime.fromisoformat(start_date)  # type: ignore
+                else:
+                    start_dt = start_date
+
+                if not isinstance(end_date, datetime):
+                    end_dt: datetime = datetime.fromisoformat(end_date)  # type: ignore
+                    try:
+                        # For "YYYY-MM-DD" format the default datetime conversion sets to
+                        # end of day, image archive query requires end of day.
+                        datetime.strptime(end_date, "%Y-%m-%d")  # format validation
+                        end_dt = datetime.combine(
+                            end_dt.date(), datetime_time(23, 59, 59, 999999)
                         )
-                except TypeError as e:
-                    if start_date is None or end_date is None:
-                        raise ValueError(
-                            "When using dates, both start_date and end_date need to be provided."
-                        ) from e
-                    start_date_iso, end_date_iso = start_date, end_date  # type: ignore
+                    except ValueError:
+                        pass
+                else:
+                    end_dt = end_date
 
                 formatting = "%Y-%m-%dT%H:%M:%S"
                 period = f"{start_date_iso.strftime(formatting)}Z/{end_date_iso.strftime(formatting)}Z"
