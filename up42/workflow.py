@@ -5,6 +5,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Union, Tuple, Optional
 import warnings
+from datetime import datetime
+from datetime import time as datetime_time
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
@@ -320,8 +322,8 @@ class Workflow:
         ] = None,
         geometry_operation: Optional[str] = None,
         handle_multiple_features: str = "union",
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: Optional[Union[str, datetime]] = None,
+        end_date: Optional[Union[str, datetime]] = None,
         limit: Optional[int] = None,
         scene_ids: Optional[list] = None,
         assets: Optional[List[Asset]] = None,
@@ -337,8 +339,10 @@ class Workflow:
                 assume EPSG 4326.
             geometry_operation: Desired operation, One of "bbox", "intersects", "contains".
             limit: Maximum number of expected results.
-            start_date: Query period starting day, format "2020-01-01".
-            end_date: Query period ending day, format "2020-01-01".
+            start_date: Query period starting day as iso-format string or datetime object,
+                e.g. "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS".
+            end_date: Query period ending day as iso-format or datetime object,
+                e.g. "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS".
             scene_ids: List of scene_ids, if given ignores all other parameters except geometry.
             assets: Optional, can be used to incorporate existing assets in Storage (result
                 of Orders for instance) into new workflows.
@@ -378,9 +382,42 @@ class Workflow:
                 input_parameters[data_block_name]["ids"] = scene_ids
                 input_parameters[data_block_name]["limit"] = len(scene_ids)
                 input_parameters[data_block_name].pop("time")
-            elif start_date is not None and end_date is not None:
-                time = f"{start_date}T00:00:00Z/{end_date}T23:59:59Z"
-                input_parameters[data_block_name]["time"] = time
+            elif start_date is not None or end_date is not None:
+                if start_date is None or end_date is None:
+                    raise ValueError(
+                        "When using dates, both start_date and end_date need to be provided."
+                    )
+                # Start and end date can be any combination of str ("YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS")
+                # or datetime objects.
+                if not isinstance(start_date, datetime):
+                    start_dt: datetime = datetime.fromisoformat(start_date)
+                else:
+                    start_dt = start_date
+
+                if not isinstance(end_date, datetime):
+                    end_dt: datetime = datetime.fromisoformat(end_date)
+                    try:
+                        # For "YYYY-MM-DD" string the default datetime conversion sets to
+                        # start of day, but image archive query requires end of day.
+                        datetime.strptime(end_date, "%Y-%m-%d")  # format validation
+                        end_dt = datetime.combine(
+                            end_dt.date(), datetime_time(23, 59, 59, 999999)
+                        )
+                    except ValueError:
+                        pass
+                else:
+                    end_dt = end_date
+
+                if start_dt > end_dt:
+                    raise ValueError(
+                        "The start_date can not be later than the end_date!"
+                    )
+
+                formatting = "%Y-%m-%dT%H:%M:%S"
+                period = (
+                    f"{start_dt.strftime(formatting)}Z/{end_dt.strftime(formatting)}Z"
+                )
+                input_parameters[data_block_name]["time"] = period
 
             if geometry is not None:
                 aoi_fc = any_vector_to_fc(
