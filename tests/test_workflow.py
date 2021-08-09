@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 import copy
+from dateutil.parser import parse
 
 import pytest
 import shapely
@@ -182,12 +183,43 @@ def test_get_default_parameters(workflow_mock):
     }
 
 
-def test_construct_parameters(workflow_mock):
+@pytest.mark.parametrize(
+    "start_date,end_date,result_time",
+    [
+        ("2014-01-01", "2016-12-31", "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z"),
+        (
+            "2014-01-01T00:00:00",
+            "2016-12-31T10:11:12",
+            "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
+        ),
+        (
+            "2014-01-01T00:00:00",
+            "2016-12-31",
+            "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
+        ),
+        (
+            parse("2014-01-01"),
+            parse("2016-12-31T10:11:12"),
+            "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
+        ),
+        (
+            parse("2014-01-01"),
+            "2016-12-31",
+            "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
+        ),
+        (
+            parse("2014-01-01"),
+            "2016-12-31T10:11:12",
+            "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
+        ),
+    ],
+)
+def test_construct_parameters_dates(workflow_mock, start_date, end_date, result_time):
     parameters = workflow_mock.construct_parameters(
         geometry=shapely.geometry.point.Point(1, 3),
         geometry_operation="bbox",
-        start_date="2014-01-01",
-        end_date="2016-12-31",
+        start_date=start_date,
+        end_date=end_date,
         limit=1,
     )
     assert isinstance(parameters, dict)
@@ -195,11 +227,51 @@ def test_construct_parameters(workflow_mock):
         "esa-s2-l2a-gtiff-visual:1": {
             "ids": "None",
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
-            "time": "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
+            "time": result_time,
             "limit": 1,
         },
         "tiling:1": {"nodata": "None", "tile_width": 768},
     }
+
+
+@pytest.mark.parametrize(
+    "start_date,end_date",
+    [(None, "2014-01-01"), ("2014-01-01", None)],
+)
+def test_construct_parameters_raises_with_missing_dates(
+    workflow_mock, start_date, end_date
+):
+    with pytest.raises(ValueError) as e:
+        workflow_mock.construct_parameters(
+            geometry=shapely.geometry.point.Point(1, 3),
+            geometry_operation="bbox",
+            start_date=start_date,
+            end_date=end_date,
+            limit=1,
+        )
+
+        assert (
+            "When using dates, both start_date and end_date need to be provided."
+            in str(e.value)
+        )
+
+
+@pytest.mark.parametrize(
+    "start_date,end_date",
+    [(None, "2016-01-01"), ("2014-01-01", None)],
+)
+def test_construct_parameters_raises_with_mixed_up_dates(
+    workflow_mock, start_date, end_date
+):
+    with pytest.raises(ValueError) as e:
+        workflow_mock.construct_parameters(
+            geometry=shapely.geometry.point.Point(1, 3),
+            geometry_operation="bbox",
+            start_date=start_date,
+            end_date=end_date,
+            limit=1,
+        )
+        assert "The start_date needs to be earlier than the end_date!" in str(e.value)
 
 
 def test_construct_parameters_scene_ids(workflow_mock):
@@ -219,7 +291,7 @@ def test_construct_parameters_scene_ids(workflow_mock):
     }
 
 
-def test_construct_parameter_only_ids(workflow_mock):
+def test_construct_parameter_scene_ids_without_geometry(workflow_mock):
     parameters = workflow_mock.construct_parameters(
         scene_ids=["s2_123223"],
     )

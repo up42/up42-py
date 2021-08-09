@@ -6,6 +6,8 @@ pytest
 pytest-pylint
 pytest-sugar
 mypy==0.902
+python-dateutil
+types-python-dateutil
 types-requests
 types-mock
 types-click
