@@ -241,7 +241,18 @@ def test_construct_parameters_dates(workflow_mock, start_date, end_date, result_
 def test_construct_parameters_raises_with_missing_dates(
     workflow_mock, start_date, end_date
 ):
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as e:
+        workflow_mock.construct_parameters(
+            geometry=shapely.geometry.point.Point(1, 3),
+            geometry_operation="bbox",
+            start_date=start_date,
+            end_date=end_date,
+            limit=1,
+        )
+
+        assert "When using dates, both start_date and end_date need to be provided." as e
+
+
 @pytest.mark.parametrize(
     "start_date,end_date",
     [(None, "2016-01-01"), ("2014-01-01", None)],
