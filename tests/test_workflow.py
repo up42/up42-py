@@ -242,6 +242,14 @@ def test_construct_parameters_raises_with_missing_dates(
     workflow_mock, start_date, end_date
 ):
     with pytest.raises(ValueError):
+@pytest.mark.parametrize(
+    "start_date,end_date",
+    [(None, "2016-01-01"), ("2014-01-01", None)],
+)
+def test_construct_parameters_raises_with_mixed_up_dates(
+    workflow_mock, start_date, end_date
+):
+    with pytest.raises(ValueError) as e:
         workflow_mock.construct_parameters(
             geometry=shapely.geometry.point.Point(1, 3),
             geometry_operation="bbox",
@@ -249,6 +257,7 @@ def test_construct_parameters_raises_with_missing_dates(
             end_date=end_date,
             limit=1,
         )
+        assert "The start_date needs to be earlier than the end_date!" in str(e.value)
 
 
 def test_construct_parameters_scene_ids(workflow_mock):

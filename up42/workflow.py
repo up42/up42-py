@@ -408,8 +408,15 @@ class Workflow:
                 else:
                     end_dt = end_date
 
+                if start_dt > end_dt:
+                    raise ValueError(
+                        "The start_date needs to be earlier than the end_date!"
+                    )
+
                 formatting = "%Y-%m-%dT%H:%M:%S"
-                period = f"{start_date_iso.strftime(formatting)}Z/{end_date_iso.strftime(formatting)}Z"
+                period = (
+                    f"{start_dt.strftime(formatting)}Z/{end_dt.strftime(formatting)}Z"
+                )
                 input_parameters[data_block_name]["time"] = period
 
             if geometry is not None:
