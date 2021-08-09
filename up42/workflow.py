@@ -410,7 +410,7 @@ class Workflow:
 
                 if start_dt > end_dt:
                     raise ValueError(
-                        "The start_date needs to be earlier than the end_date!"
+                        "The start_date can not be later than the end_date!"
                     )
 
                 formatting = "%Y-%m-%dT%H:%M:%S"

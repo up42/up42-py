@@ -250,7 +250,10 @@ def test_construct_parameters_raises_with_missing_dates(
             limit=1,
         )
 
-        assert "When using dates, both start_date and end_date need to be provided." as e
+        assert (
+            "When using dates, both start_date and end_date need to be provided."
+            in str(e.value)
+        )
 
 
 @pytest.mark.parametrize(
