@@ -54,13 +54,24 @@ def test_endpoint(auth_mock):
     assert auth_mock._endpoint() == "https://api.up42.abc"
 
 
-def test_get_token_project(auth_mock):
-    auth_mock._get_token_project()
+def test_get_token(auth_mock):
+    auth_mock._get_token()
     assert auth_mock.token == TOKEN
 
 
 @pytest.mark.live
-def test_get_token_project_live(auth_live):
+def test_get_token_raises_wrong_credentials_live(auth_live):
+    auth_live.project_id = "123"
+    with pytest.raises(ValueError) as e:
+        auth_live._get_token()
+    assert (
+        "Authentication was not successful, check the provided project credentials."
+        in str(e.value)
+    )
+
+
+@pytest.mark.live
+def test_get_token_live(auth_live):
     assert hasattr(auth_live, "token")
 
 

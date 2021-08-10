@@ -1,4 +1,5 @@
 requests
+requests-oauthlib
 tenacity
 click
 tqdm
