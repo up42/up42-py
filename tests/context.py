@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../u
 from up42.tools import Tools
 from up42.viztools import folium_base_map, VizTools
 from up42.utils import (
+    format_time_period,
     any_vector_to_fc,
     fc_to_query_geometry,
     download_results_from_gcs,
