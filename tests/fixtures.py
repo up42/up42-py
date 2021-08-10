@@ -248,8 +248,6 @@ def auth_live():
         project_id=os.getenv("TEST_UP42_PROJECT_ID"),
         project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
-    print(os.getenv("TEST_UP42_PROJECT_ID"))
-    print(os.getenv("TEST_UP42_PROJECT_API_KEY"))
     return auth
 
 
