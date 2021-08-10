@@ -211,12 +211,13 @@ JSON_ORDERS = {"data": {"orders": [JSON_ORDER["data"]]}, "error": None}
 @pytest.fixture()
 def auth_mock(requests_mock):
     # token for initial authentication
-    url_get_token = f"https://{PROJECT_ID}:{PROJECT_APIKEY}@api.up42.com/oauth/token"
-    json_get_token = {"data": {"accessToken": TOKEN}}
-    requests_mock.post(
-        url=url_get_token,
-        json=json_get_token,
-    )
+    url_get_token = "https://api.up42.com/oauth/token"
+    json_get_token = {
+        "data": {"accessToken": TOKEN},
+        "access_token": TOKEN,
+        "token_type": "bearer",
+    }
+    requests_mock.post(url_get_token, json=json_get_token)
 
     url_get_workspace = f"https://api.up42.com/projects/{PROJECT_ID}"
     json_get_workspace = {"data": {"workspaceId": WORKSPACE_ID}}
