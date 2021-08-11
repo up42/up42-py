@@ -196,45 +196,41 @@ class Catalog(VizTools, Tools):
 
         max_limit = search_parameters["limit"]
         if max_limit > 500:
+            # TODO OVerwrites
             search_parameters["limit"] = 500
 
         response_json: dict = self.auth._request("POST", url, search_parameters)
         #TODO: Why is for a search with 0 features returned a next object with 50?
 
         features = response_json["features"]
-
+        # Query additional pages of catalog results.
         # This also resolved filter issues of API, less results than expected.
         while len(features) < max_limit:
             url_next_page = response_json["links"][1]["href"]
-            response_json = self.auth._request("GET", url_next_page)
-            features += response_json["features"]
-            if url_next_page is None:
+            if url_next_page is None: #TODO: Does this actually stop having new pages?
                 break
-        features =
+            response_json = self.auth._request("POST", url_next_page)  #TODO: WHY POST?
+            features += response_json["features"]
 
-        logger.info(f"{len(features)} results returned.")
         dst_crs = "EPSG:4326"
         df = GeoDataFrame.from_features(FeatureCollection(features=features), crs=dst_crs)
+        logger.info(f"{df.shape[0]} results returned.")
         if df.empty:
             if as_dataframe:
                 return df
             else:
                 return df.__geo_interface__
 
-        # Filter to actual geometries intersecting the aoi (Sobloo search uses a rectangular
+        # Filter to actual geometries intersecting the aoi (Backend sobloo search uses a rectangular
         # bounds geometry, can contain scenes that touch the aoi bbox, but not the aoi.
         # So number returned images not consistent with set limit.
-        # TODO: Resolve on backend
-        geometry = search_parameters["intersects"]
-        poly = shape(geometry)
-        df = df[df.intersects(poly)]
-        df = df.reset_index(drop=True)
-        df.crs = dst_crs  # apply resets the crs
-
-        if as_dataframe:
-            return df
-        else:
-            return df.__geo_interface__
+        # TODO: Resolve geometry filtering issue on backend
+        # geometry = search_parameters["intersects"]
+        # poly = shape(geometry)
+        # df = df[df.intersects(poly)]
+        # df = df.reset_index(drop=True)
+        # df.crs = dst_crs  # apply resets the crs
+        #
 
     def download_quicklooks(
         self,
