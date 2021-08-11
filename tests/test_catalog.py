@@ -120,6 +120,41 @@ def test_search_live(catalog_live):
     assert search_results["type"] == "FeatureCollection"
 
 
+
+
+
+@pytest.mark.live
+def test_search_live_processing(catalog_live):
+
+    search_parameters = catalog_live.construct_parameters(
+        start_date="2014-01-01T00:00:00",
+        end_date="2016-12-31T23:59:59",
+        limit=20,
+        usage_type=["processing", "purchase"],
+        geometry = {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [13.375966, 52.515068],
+                    [13.375966, 52.516639],
+                    [13.378314, 52.516639],
+                    [13.378314, 52.515068],
+                    [13.375966, 52.515068]
+                ]
+            ]
+        },
+
+    )
+
+    search_results = catalog_live.search(search_parameters, as_dataframe=True)
+    # DATA & ANALYTICS
+    print(search_results['up42:usageType'])
+    # HOURS & MINUTES
+    print(search_results["deliveryTime"])
+
+
+
+
 def test_download_quicklook(catalog_mock, requests_mock):
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
     provider = "oneatlas"
