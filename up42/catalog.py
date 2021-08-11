@@ -172,7 +172,9 @@ class Catalog(VizTools):
         }
 
         if usage_type == ["processing"]:
-            # Non-archive data
+            # Non-archive data, immediately available
+            # TODO: Are all these analytics?
+            # TODO: What's up with the field "up42:usageType": {"in": ["ANALYTICS"]}}
             search_parameters["query"]["deliveryTime"] = {"in": ["MINUTES"]}
         elif usage_type == ["purchase"]:
             # Archive data
@@ -182,14 +184,6 @@ class Catalog(VizTools):
             search_parameters["query"]["deliveryTime"] = {"in": ["MINUTES", "HOURS"]}
         else:
             raise ValueError("Select correct `usage_type`")
-
-
-            # TODO: Is this only archive or both?
-
-        else:
-            # Only immediately available data.
-
-        #TODO: Flag for analytics?
 
         return search_parameters
 
