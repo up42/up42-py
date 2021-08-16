@@ -182,26 +182,6 @@ def test_get_default_parameters(workflow_mock):
     }
 
 
-def test_construct_parameters(workflow_mock):
-    parameters = workflow_mock.construct_parameters(
-        geometry=shapely.geometry.point.Point(1, 3),
-        geometry_operation="bbox",
-        start_date="2014-01-01",
-        end_date="2016-12-31",
-        limit=1,
-    )
-    assert isinstance(parameters, dict)
-    assert parameters == {
-        "esa-s2-l2a-gtiff-visual:1": {
-            "ids": "None",
-            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
-            "time": "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
-            "limit": 1,
-        },
-        "tiling:1": {"nodata": "None", "tile_width": 768},
-    }
-
-
 def test_construct_parameters_scene_ids(workflow_mock):
     parameters = workflow_mock.construct_parameters(
         geometry=shapely.geometry.point.Point(1, 3),
@@ -219,7 +199,7 @@ def test_construct_parameters_scene_ids(workflow_mock):
     }
 
 
-def test_construct_parameter_only_ids(workflow_mock):
+def test_construct_parameter_scene_ids_without_geometry(workflow_mock):
     parameters = workflow_mock.construct_parameters(
         scene_ids=["s2_123223"],
     )

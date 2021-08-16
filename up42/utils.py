@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import List, Union
+from typing import List, Union, Optional
 from pathlib import Path
 import shutil
 import tempfile
@@ -8,6 +8,8 @@ import tarfile
 import zipfile
 import warnings
 import functools
+from datetime import datetime
+from datetime import time as datetime_time
 
 from geopandas import GeoDataFrame
 import shapely
@@ -95,7 +97,7 @@ def download_results_from_gcs(
     compressed_file = tempfile.mktemp()
     with open(compressed_file, "wb") as dst_tgz:
         try:
-            r = requests.get(download_url)
+            r = requests.get(download_url, stream=True)
             r.raise_for_status()
             for chunk in tqdm(r.iter_content(chunk_size=1024)):
                 if chunk:  # filter out keep-alive new chunks
@@ -155,7 +157,7 @@ def download_results_from_gcs_without_unpacking(
     out_fp = Path().joinpath(output_directory, "output.tgz")
     with open(out_fp, "wb") as dst:
         try:
-            r = requests.get(download_url)
+            r = requests.get(download_url, stream=True)
             r.raise_for_status()
             for chunk in tqdm(r.iter_content(chunk_size=1024)):
                 if chunk:  # filter out keep-alive new chunks
@@ -172,6 +174,53 @@ def download_results_from_gcs_without_unpacking(
         f" '{output_directory}': {[Path(p).name for p in out_filepaths]}"
     )
     return out_filepaths
+
+
+def format_time_period(
+    start_date: Optional[Union[str, datetime]], end_date: Optional[Union[str, datetime]]
+):
+    """
+    Formats a time period string from start date and end date.
+
+    Args:
+        start_date: Query period starting day as iso-format string or datetime object,
+            e.g. "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS".
+        end_date: Query period ending day as iso-format or datetime object,
+            e.g. "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS".
+
+    Returns:
+        Time period string in the format "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z"
+    """
+    if start_date is None or end_date is None:
+        raise ValueError(
+            "When using dates, both start_date and end_date need to be provided."
+        )
+    # Start and end date can be any combination of str ("YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS")
+    # or datetime objects.
+    if not isinstance(start_date, datetime):
+        start_dt: datetime = datetime.fromisoformat(start_date)
+    else:
+        start_dt = start_date
+
+    if not isinstance(end_date, datetime):
+        end_dt: datetime = datetime.fromisoformat(end_date)
+        try:
+            # For "YYYY-MM-DD" string the default datetime conversion sets to
+            # start of day, but image archive query requires end of day.
+            datetime.strptime(end_date, "%Y-%m-%d")  # format validation
+            end_dt = datetime.combine(end_dt.date(), datetime_time(23, 59, 59, 999999))
+        except ValueError:
+            pass
+    else:
+        end_dt = end_date
+
+    if start_dt > end_dt:
+        raise ValueError("The start_date can not be later than the end_date!")
+
+    formatting = "%Y-%m-%dT%H:%M:%S"
+    time_period = f"{start_dt.strftime(formatting)}Z/{end_dt.strftime(formatting)}Z"
+
+    return time_period
 
 
 def any_vector_to_fc(

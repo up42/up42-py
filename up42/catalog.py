@@ -12,10 +12,14 @@ from geojson import Feature, FeatureCollection
 from tqdm import tqdm
 
 from up42.auth import Auth
-from up42.tools import Tools
 from up42.viztools import VizTools
 from up42.order import Order
-from up42.utils import get_logger, any_vector_to_fc, fc_to_query_geometry
+from up42.utils import (
+    get_logger,
+    any_vector_to_fc,
+    fc_to_query_geometry,
+    format_time_period,
+)
 
 logger = get_logger(__name__)
 
@@ -62,7 +66,7 @@ supported_sensors = {
 }
 
 # pylint: disable=duplicate-code
-class Catalog(VizTools, Tools):
+class Catalog(VizTools):
     """
     The Catalog class enables access to the UP42 catalog search. You can search
     for satellite image scenes (for different sensors and criteria like cloud cover),
@@ -129,7 +133,8 @@ class Catalog(VizTools, Tools):
         Returns:
             The constructed parameters dictionary.
         """
-        datetime = f"{start_date}T00:00:00Z/{end_date}T23:59:59Z"
+        time_period = format_time_period(start_date=start_date, end_date=end_date)
+
         block_filters: List[str] = []
         for sensor in sensors:
             if sensor not in list(supported_sensors.keys()):
@@ -154,7 +159,7 @@ class Catalog(VizTools, Tools):
             query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
 
         search_parameters = {
-            "datetime": datetime,
+            "datetime": time_period,
             "intersects": aoi_geometry,
             "limit": limit,
             "query": query_filters,

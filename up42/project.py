@@ -8,12 +8,11 @@ from up42.job import Job
 from up42.jobcollection import JobCollection
 from up42.utils import get_logger, filter_jobs_on_mode
 from up42.workflow import Workflow
-from up42.tools import Tools
 
 logger = get_logger(__name__)
 
 
-class Project(Tools):
+class Project:
     """
     The Project is the top-level class of the UP42 hierarchy. With it you can create
     new workflows, query already existing workflows & jobs in the project and manage

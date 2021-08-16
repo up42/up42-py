@@ -40,7 +40,6 @@ def define_env(env):
     def get_methods(
         c: Callable,
         exclude: List[str] = None,
-        exclude_tools=True,
         exclude_viztools=False,
     ) -> List[str]:
         """
@@ -49,7 +48,6 @@ def define_env(env):
         Args:
                 c: The class object.
                 exclude: Exclude specific methods.
-                exclude_tools: Exclude inherited functions from Tools.
                 exclude_viztools: Exclude inherited functions from VizTools.
         """
         property_methods = [
@@ -67,8 +65,6 @@ def define_env(env):
         # TODO: Could also return separatly for separated formatting.
         function_methods = function_methods + property_methods
 
-        if exclude_tools:
-            function_methods = [f for f in function_methods if f not in dir(up42.Tools)]
         if exclude_viztools:
             function_methods = [
                 f for f in function_methods if f not in dir(up42.VizTools)
@@ -106,9 +102,7 @@ def define_env(env):
     env.variables.docstring_asset = indent(up42.Asset.__doc__)
 
     # Class functions for reference and structure chapter
-    env.variables.funcs_up42 = get_methods(
-        up42, exclude_tools=False, exclude_viztools=True
-    )
+    env.variables.funcs_up42 = get_methods(up42, exclude_viztools=True)
     env.variables.funcs_project = get_methods(up42.Project)
     env.variables.funcs_workflow = get_methods(up42.Workflow)
     env.variables.funcs_job = get_methods(up42.Job)
