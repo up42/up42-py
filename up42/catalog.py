@@ -7,7 +7,6 @@ from typing import Union, List, Tuple
 
 from pandas import Series
 from geopandas import GeoDataFrame
-from shapely.geometry import shape
 from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
 from tqdm import tqdm
@@ -192,19 +191,16 @@ class Catalog(VizTools, Tools):
             ```
         """
         logger.info(f"Searching catalog with search_parameters: {search_parameters}")
-        url = f"{self.auth._endpoint()}/catalog/stac/search"
 
         max_limit = search_parameters["limit"]
         if max_limit > 500:
-            # TODO OVerwrites
+            search_parameters = dict(search_parameters)
             search_parameters["limit"] = 500
 
+        url = f"{self.auth._endpoint()}/catalog/stac/search"
         response_json: dict = self.auth._request("POST", url, search_parameters)
-        #TODO: Why is for a search with 0 features returned a next object with 50?
-
         features = response_json["features"]
-        # Query additional pages of catalog results.
-        # This also resolved filter issues of API, less results than expected.
+
         # Catalog search gives results with >500 items as 50 page pagination tokens.
         # Pagination ends when both links are the same.
         while len(features) < max_limit:
