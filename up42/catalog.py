@@ -7,7 +7,6 @@ from typing import Union, List, Tuple
 
 from pandas import Series
 from geopandas import GeoDataFrame
-from shapely.geometry import shape
 from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
 from tqdm import tqdm
