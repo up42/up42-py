@@ -205,12 +205,14 @@ class Catalog(VizTools, Tools):
         features = response_json["features"]
         # Query additional pages of catalog results.
         # This also resolved filter issues of API, less results than expected.
+        # Catalog search gives results with >500 items as 50 page pagination tokens.
+        # Pagination ends when both links are the same.
         while len(features) < max_limit:
-            url_next_page = response_json["links"][1]["href"]
-            if url_next_page is None: #TODO: Does this actually stop having new pages?
+            url_page = response_json["links"][1]["href"]
+            if url_page == response_json["links"][0]["href"]:
                 break
-            response_json = self.auth._request("POST", url_next_page)  #TODO: WHY POST?
-            features += response_json["features"]
+            response_json_page = self.auth._request("POST", url_page)
+            features += response_json_page["features"]
 
         dst_crs = "EPSG:4326"
         df = GeoDataFrame.from_features(FeatureCollection(features=features), crs=dst_crs)
