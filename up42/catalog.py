@@ -214,25 +214,16 @@ class Catalog(VizTools, Tools):
             response_json_page = self.auth._request("POST", url_page)
             features += response_json_page["features"]
 
-        dst_crs = "EPSG:4326"
-        df = GeoDataFrame.from_features(FeatureCollection(features=features), crs=dst_crs)
-        logger.info(f"{df.shape[0]} results returned.")
-        if df.empty:
-            if as_dataframe:
-                return df
-            else:
-                return df.__geo_interface__
+        features = features[:max_limit]
+        df = GeoDataFrame.from_features(
+            FeatureCollection(features=features), crs="EPSG:4326"
+        )
 
-        # Filter to actual geometries intersecting the aoi (Backend sobloo search uses a rectangular
-        # bounds geometry, can contain scenes that touch the aoi bbox, but not the aoi.
-        # So number returned images not consistent with set limit.
-        # TODO: Resolve geometry filtering issue on backend
-        # geometry = search_parameters["intersects"]
-        # poly = shape(geometry)
-        # df = df[df.intersects(poly)]
-        # df = df.reset_index(drop=True)
-        # df.crs = dst_crs  # apply resets the crs
-        #
+        logger.info(f"{df.shape[0]} results returned.")
+        if as_dataframe:
+            return df
+        else:
+            return df.__geo_interface__
 
     def download_quicklooks(
         self,
