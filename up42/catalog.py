@@ -7,7 +7,6 @@ from typing import Union, List, Tuple
 
 from pandas import Series
 from geopandas import GeoDataFrame
-from shapely.geometry import shape
 from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
 from tqdm import tqdm
@@ -202,21 +201,6 @@ class Catalog(VizTools):
         logger.info(f"{len(response_json['features'])} results returned.")
         dst_crs = "EPSG:4326"
         df = GeoDataFrame.from_features(response_json, crs=dst_crs)
-        if df.empty:
-            if as_dataframe:
-                return df
-            else:
-                return df.__geo_interface__
-
-        # Filter to actual geometries intersecting the aoi (Sobloo search uses a rectangular
-        # bounds geometry, can contain scenes that touch the aoi bbox, but not the aoi.
-        # So number returned images not consistent with set limit.
-        # TODO: Resolve on backend
-        geometry = search_parameters["intersects"]
-        poly = shape(geometry)
-        df = df[df.intersects(poly)]
-        df = df.reset_index(drop=True)
-        df.crs = dst_crs  # apply resets the crs
 
         if as_dataframe:
             return df
