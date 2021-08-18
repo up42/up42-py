@@ -108,7 +108,7 @@ class Catalog(VizTools):
             "sentinel3",
             "sentinel5p",
         ],
-        usage_type: List[str]= ["processing", "purchase"],
+        usage_type: List[str] = ["purchase", "processing"],
         limit: int = 10,
         max_cloudcover: float = 100,
         sortby: str = "acquisitionDate",
@@ -124,9 +124,9 @@ class Catalog(VizTools):
             end_date: Query period ending day, format "2020-01-01".
             sensors: The satellite sensors to search for, one or multiple of
                 ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p"]
-            usage_type: Filter for the usage type of the search results images, default
-                ["processing", "purchase"]. "processing" (can be downloaded or used directly
-                with a processing algorithm), "purchase" (can only be download).
+            usage_type: Filter for imagery that can be processed or just purchased. Either
+                ["processing"] (can be downloaded or used directly with a processing algorithm),
+                ["purchase"] (can only be download), or both ["purchase", "processing"].
             limit: The maximum number of search results to return (1-max.500).
             max_cloudcover: Maximum cloudcover % - e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloudcover.
@@ -171,17 +171,12 @@ class Catalog(VizTools):
             "sortby": [{"field": f"properties.{sortby}", "direction": sort_order}],
         }
 
+        if usage_type == ["purchase"]:
+            search_parameters["query"]["up42:usageType"] = {"in": ["DATA"]}
         if usage_type == ["processing"]:
-            # Non-archive data, immediately available
-            # TODO: Are all these analytics?
-            # TODO: What's up with the field "up42:usageType": {"in": ["ANALYTICS"]}}
-            search_parameters["query"]["deliveryTime"] = {"in": ["MINUTES"]}
-        elif usage_type == ["purchase"]:
-            # Archive data
-            search_parameters["query"]["deliveryTime"] = {"in": ["HOURS"]}
-        elif usage_type == ["processing", "purchase"]:
-            # Archive and non-archive data
-            search_parameters["query"]["deliveryTime"] = {"in": ["MINUTES", "HOURS"]}
+            search_parameters["query"]["up42:usageType"] = {"in": ["ANALYTICS"]}
+        elif usage_type == ["purchase", "processing"]:
+            search_parameters["query"]["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
         else:
             raise ValueError("Select correct `usage_type`")
 
