@@ -173,7 +173,7 @@ class Catalog(VizTools):
 
         if usage_type == ["purchase"]:
             search_parameters["query"]["up42:usageType"] = {"in": ["DATA"]}
-        if usage_type == ["processing"]:
+        elif usage_type == ["processing"]:
             search_parameters["query"]["up42:usageType"] = {"in": ["ANALYTICS"]}
         elif usage_type == ["purchase", "processing"]:
             search_parameters["query"]["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
