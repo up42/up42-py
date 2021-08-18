@@ -212,12 +212,31 @@ class Catalog(VizTools):
             ```
         """
         logger.info(f"Searching catalog with search_parameters: {search_parameters}")
+
+        max_limit = search_parameters["limit"]
+        if max_limit > 500:
+            search_parameters = dict(search_parameters)
+            search_parameters["limit"] = 500
+
         url = f"{self.auth._endpoint()}/catalog/stac/search"
         response_json: dict = self.auth._request("POST", url, search_parameters)
-        logger.info(f"{len(response_json['features'])} results returned.")
-        dst_crs = "EPSG:4326"
-        df = GeoDataFrame.from_features(response_json, crs=dst_crs)
+        features = response_json["features"]
 
+        # Catalog search gives results with >500 items as 50 page pagination tokens.
+        # Pagination ends when both links are the same.
+        while len(features) < max_limit:
+            url_page = response_json["links"][1]["href"]
+            if url_page == response_json["links"][0]["href"]:
+                break
+            response_json_page = self.auth._request("POST", url_page)
+            features += response_json_page["features"]
+
+        features = features[:max_limit]
+        df = GeoDataFrame.from_features(
+            FeatureCollection(features=features), crs="EPSG:4326"
+        )
+
+        logger.info(f"{df.shape[0]} results returned.")
         if as_dataframe:
             return df
         else:

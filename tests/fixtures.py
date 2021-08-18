@@ -1,4 +1,6 @@
 import os
+import json
+from pathlib import Path
 
 import pytest
 import requests_mock
@@ -838,7 +840,17 @@ def tools_live(auth_live):
 
 
 @pytest.fixture()
-def catalog_mock(auth_mock):
+def catalog_mock(auth_mock, requests_mock):
+    with open(
+        Path(__file__).resolve().parent / "mock_data/search_response.json"
+    ) as json_file:
+        json_search_response = json.load(json_file)
+    url_search = f"{auth_mock._endpoint()}/catalog/stac/search"
+    requests_mock.post(
+        url=url_search,
+        json=json_search_response,
+    )
+
     return Catalog(auth=auth_mock)
 
 
