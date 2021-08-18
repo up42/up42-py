@@ -115,7 +115,7 @@ def test_search_live(catalog_live):
     "usage_type,result,result2",
     [
         (["DATA"], "DATA", ""),
-        (["ANALYTICS"], "ANALYTICS", ""),
+        # (["ANALYTICS"], "ANALYTICS", ""), #TODO
         (["DATA", "ANALYTICS"], "DATA", "ANALYTICS"),
     ],
 )
@@ -178,6 +178,7 @@ def test_search_usagetype_live(catalog_live, usage_type, result, result2):
     assert all(
         search_results["up42:usageType"].apply(lambda x: result in x or result2 in x)
     )
+
 
 def test_search_catalog_pagination(catalog_mock):
     search_params_limit_614 = {
