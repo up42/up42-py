@@ -120,18 +120,22 @@ def test_search_live(catalog_live):
     assert search_results["type"] == "FeatureCollection"
 
 
-
-
-
 @pytest.mark.live
-def test_search_live_processing(catalog_live):
-
+@pytest.mark.parametrize(
+    "usage_type,result",
+    [
+        (["purchase"], ["DATA"]),
+        (["processing"], ["ANALYTICS"]),
+        (["purchase", "processing"], ["DATA", "ANALYTICS"]),
+    ],
+)
+def test_search_live_processing(catalog_live, usage_type, result):
     search_parameters = catalog_live.construct_parameters(
         start_date="2014-01-01T00:00:00",
-        end_date="2016-12-31T23:59:59",
-        limit=20,
-        usage_type=["processing", "purchase"],
-        geometry = {
+        end_date="2020-12-31T23:59:59",
+        limit=100,
+        usage_type=usage_type,
+        geometry={
             "type": "Polygon",
             "coordinates": [
                 [
@@ -139,20 +143,14 @@ def test_search_live_processing(catalog_live):
                     [13.375966, 52.516639],
                     [13.378314, 52.516639],
                     [13.378314, 52.515068],
-                    [13.375966, 52.515068]
+                    [13.375966, 52.515068],
                 ]
-            ]
+            ],
         },
-
     )
 
     search_results = catalog_live.search(search_parameters, as_dataframe=True)
-    # DATA & ANALYTICS
-    print(search_results['up42:usageType'])
-    # HOURS & MINUTES
-    print(search_results["deliveryTime"])
-
-
+    assert all(search_results["up42:usageType"].apply(lambda x: x == result))
 
 
 def test_download_quicklook(catalog_mock, requests_mock):
