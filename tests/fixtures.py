@@ -1,6 +1,7 @@
 import os
 import json
 from pathlib import Path
+import copy
 
 import pytest
 import requests_mock
@@ -691,12 +692,14 @@ def jobtask_mock(auth_mock, requests_mock):
     )
 
     # get_results_json
-    url = (
+    url_results_json = (
         f"{jobtask.auth._endpoint()}/projects/{jobtask.auth.project_id}/"
         f"jobs/{jobtask.job_id}/tasks/{jobtask.jobtask_id}/"
         f"outputs/data-json/"
     )
-    requests_mock.get(url, json={"type": "FeatureCollection", "features": []})
+    requests_mock.get(
+        url_results_json, json={"type": "FeatureCollection", "features": []}
+    )
 
     # get_download_url
     url_download_result = (
@@ -795,7 +798,6 @@ def asset_live(auth_live):
 
 @pytest.fixture()
 def order_mock(auth_mock, requests_mock):
-
     # order info
     url_order_info = (
         f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}"
@@ -857,6 +859,29 @@ def catalog_mock(auth_mock, requests_mock):
 @pytest.fixture()
 def catalog_live(auth_live):
     return Catalog(auth=auth_live)
+
+
+@pytest.fixture()
+def catalog_pagination_mock(auth_mock, requests_mock):
+    with open(
+        Path(__file__).resolve().parent / "mock_data/search_response.json"
+    ) as json_file:
+        search_response_json = json.load(json_file)
+    search_response_json["features"] = search_response_json["features"] * 500
+
+    pagination_response_json = copy.deepcopy(search_response_json)
+    pagination_response_json["features"] = pagination_response_json["features"][:50]
+    pagination_response_json["links"][1] = pagination_response_json["links"][
+        0
+    ]  # indicator of pagination exhaustion (after first page)
+
+    url_search = f"{auth_mock._endpoint()}/catalog/stac/search"
+    requests_mock.post(
+        url_search,
+        [{"json": search_response_json}, {"json": pagination_response_json}],
+    )
+
+    return Catalog(auth=auth_mock)
 
 
 @pytest.fixture()
