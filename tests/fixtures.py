@@ -885,6 +885,27 @@ def catalog_pagination_mock(auth_mock, requests_mock):
 
 
 @pytest.fixture()
+def catalog_usagetype_mock(auth_mock, requests_mock):
+    with open(
+        Path(__file__).resolve().parent / "mock_data/search_response.json"
+    ) as json_file:
+        search_response_json = json.load(json_file) # original response is usagetype data
+
+    response_analytics = copy.deepcopy(search_response_json)
+    response_analytics["features"][0]["properties"]["up42:usageType"] = ["ANALYTICS"]
+    response_data_and_analytics = copy.deepcopy(search_response_json)
+    response_data_and_analytics["features"][0]["properties"]["up42:usageType"] = ["DATA", "ANALYTICS"]
+
+    url_search = f"{auth_mock._endpoint()}/catalog/stac/search"
+    requests_mock.post(
+        url_search,
+        [{"json": search_response_json}, {"json": response_analytics}, {"json": response_data_and_analytics}],
+    )
+
+    return Catalog(auth=auth_mock)
+
+
+@pytest.fixture()
 def project_mock_max_concurrent_jobs(project_mock):
     def _project_mock_max_concurrent_jobs(maximum=5):
         m = requests_mock.Mocker()

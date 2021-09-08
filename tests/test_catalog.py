@@ -15,6 +15,7 @@ from .fixtures import (
     catalog_mock,
     catalog_live,
     catalog_pagination_mock,
+    catalog_usagetype_mock,
     order_mock,
     ORDER_ID,
 )
@@ -116,15 +117,19 @@ def test_search_live(catalog_live):
     "usage_type,result,result2",
     [
         (["DATA"], "DATA", ""),
-        # (["ANALYTICS"], "ANALYTICS", ""), #TODO
+        (["ANALYTICS"], "ANALYTICS", ""), #TODO
         (["DATA", "ANALYTICS"], "DATA", "ANALYTICS"),
     ],
 )
-def test_search_usagetype(catalog_mock, usage_type, result, result2):
-    search_parameters = catalog_mock.construct_parameters(
+def test_search_usagetype(catalog_usagetype_mock, usage_type, result, result2):
+    """
+    Result & Result2 are one of the combinations of "DATA" and "ANALYTICS". Result2 can
+    be None.
+    """
+    search_parameters = catalog_usagetype_mock.construct_parameters(
         start_date="2014-01-01T00:00:00",
         end_date="2020-12-31T23:59:59",
-        limit=100,
+        limit=1,
         usage_type=usage_type,
         geometry={
             "type": "Polygon",
@@ -140,7 +145,7 @@ def test_search_usagetype(catalog_mock, usage_type, result, result2):
         },
     )
 
-    search_results = catalog_mock.search(search_parameters, as_dataframe=True)
+    search_results = catalog_usagetype_mock.search(search_parameters, as_dataframe=True)
     assert all(
         search_results["up42:usageType"].apply(lambda x: result in x or result2 in x)
     )
