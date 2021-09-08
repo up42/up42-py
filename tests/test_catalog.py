@@ -14,6 +14,7 @@ from .fixtures import (
     auth_live,
     catalog_mock,
     catalog_live,
+    catalog_pagination_mock,
     order_mock,
     ORDER_ID,
 )
@@ -75,20 +76,11 @@ def test_construct_parameters_unsopported_sensor_raises(catalog_mock):
         )
 
 
-def test_search(catalog_mock, requests_mock):
-    with open(
-        Path(__file__).resolve().parent / "mock_data/search_response.json"
-    ) as json_file:
-        json_search_response = json.load(json_file)
-    url_search = f"{catalog_mock.auth._endpoint()}/catalog/stac/search"
-    requests_mock.post(
-        url=url_search,
-        json=json_search_response,
-    )
+def test_search(catalog_mock):
     search_results = catalog_mock.search(mock_search_parameters)
 
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (1, 14)
+    assert search_results.shape == (4, 14)
 
 
 @pytest.mark.live
@@ -118,6 +110,113 @@ def test_search_live(catalog_live):
     search_results = catalog_live.search(mock_search_parameters, as_dataframe=False)
     assert isinstance(search_results, dict)
     assert search_results["type"] == "FeatureCollection"
+
+
+def test_search_catalog_pagination(catalog_mock):
+    search_params_limit_614 = {
+        "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
+        "intersects": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [12.008056640625, 52.66305767075935],
+                    [16.292724609375, 52.66305767075935],
+                    [16.292724609375, 52.72963909783717],
+                    [12.008056640625, 52.72963909783717],
+                    [12.008056640625, 52.66305767075935],
+                ]
+            ],
+        },
+        "limit": 614,
+        "query": {
+            "dataBlock": {
+                "in": [
+                    "oneatlas-pleiades-fullscene",
+                    "oneatlas-pleiades-display",
+                    "oneatlas-pleiades-aoiclipped",
+                    "oneatlas-spot-fullscene",
+                    "oneatlas-spot-display",
+                    "oneatlas-spot-aoiclipped",
+                ]
+            }
+        },
+    }
+    search_results = catalog_mock.search(search_params_limit_614)
+    assert isinstance(search_results, gpd.GeoDataFrame)
+    assert search_results.shape == (614, 14)
+
+
+@pytest.mark.live
+def test_search_catalog_pagination_live(catalog_live):
+    search_params_limit_614 = {
+        "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
+        "intersects": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [12.008056640625, 52.66305767075935],
+                    [16.292724609375, 52.66305767075935],
+                    [16.292724609375, 52.72963909783717],
+                    [12.008056640625, 52.72963909783717],
+                    [12.008056640625, 52.66305767075935],
+                ]
+            ],
+        },
+        "limit": 614,
+        "query": {
+            "dataBlock": {
+                "in": [
+                    "oneatlas-pleiades-fullscene",
+                    "oneatlas-pleiades-display",
+                    "oneatlas-pleiades-aoiclipped",
+                    "oneatlas-spot-fullscene",
+                    "oneatlas-spot-display",
+                    "oneatlas-spot-aoiclipped",
+                ]
+            }
+        },
+    }
+    search_results = catalog_live.search(search_params_limit_614)
+    assert isinstance(search_results, gpd.GeoDataFrame)
+    assert search_results.shape == (614, 14)
+
+
+def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
+    """
+    Search results pagination is exhausted after 1 extra page (50 elements),
+    resulting in only 500+50 features even though the limit parameter asked for 614.
+    """
+    search_params_limit_614 = {
+        "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
+        "intersects": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [12.008056640625, 52.66305767075935],
+                    [16.292724609375, 52.66305767075935],
+                    [16.292724609375, 52.72963909783717],
+                    [12.008056640625, 52.72963909783717],
+                    [12.008056640625, 52.66305767075935],
+                ]
+            ],
+        },
+        "limit": 614,
+        "query": {
+            "dataBlock": {
+                "in": [
+                    "oneatlas-pleiades-fullscene",
+                    "oneatlas-pleiades-display",
+                    "oneatlas-pleiades-aoiclipped",
+                    "oneatlas-spot-fullscene",
+                    "oneatlas-spot-display",
+                    "oneatlas-spot-aoiclipped",
+                ]
+            }
+        },
+    }
+    search_results = catalog_pagination_mock.search(search_params_limit_614)
+    assert isinstance(search_results, gpd.GeoDataFrame)
+    assert search_results.shape == (550, 14)
 
 
 def test_download_quicklook(catalog_mock, requests_mock):

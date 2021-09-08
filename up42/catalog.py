@@ -196,12 +196,34 @@ class Catalog(VizTools):
             ```
         """
         logger.info(f"Searching catalog with search_parameters: {search_parameters}")
+
+        # The API request would fail with a limit above 500, thus 500 is forced in the initial
+        # request but additional results are handled below via pagination.
+        max_limit = search_parameters["limit"]
+        if max_limit > 500:
+            search_parameters = dict(search_parameters)
+            search_parameters["limit"] = 500
+
         url = f"{self.auth._endpoint()}/catalog/stac/search"
         response_json: dict = self.auth._request("POST", url, search_parameters)
-        logger.info(f"{len(response_json['features'])} results returned.")
-        dst_crs = "EPSG:4326"
-        df = GeoDataFrame.from_features(response_json, crs=dst_crs)
+        features = response_json["features"]
 
+        # Search results with more than 500 items are given as 50-per-page additional pages.
+        while len(features) < max_limit:
+            page_url = response_json["links"][0]["href"]
+            next_page_url = response_json["links"][1]["href"]
+            pagination_exhausted = next_page_url == page_url
+            if pagination_exhausted:
+                break
+            response_json = self.auth._request("POST", next_page_url)
+            features += response_json["features"]
+
+        features = features[:max_limit]
+        df = GeoDataFrame.from_features(
+            FeatureCollection(features=features), crs="EPSG:4326"
+        )
+
+        logger.info(f"{df.shape[0]} results returned.")
         if as_dataframe:
             return df
         else:
