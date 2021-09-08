@@ -366,6 +366,50 @@ def project_live(auth_live):
 
 
 @pytest.fixture()
+def workflow_mock_empty(auth_mock, requests_mock):
+    """
+    Only to test error handling of functions that don't correctly work on workflows
+    without tasks (blocks). For the fully mocked workflow see workflow_mock fixture.
+    """
+    # info
+    url_workflow_info = (
+        f"{auth_mock._endpoint()}/projects/"
+        f"{auth_mock.project_id}/workflows/"
+        f"{WORKFLOW_ID}"
+    )
+    json_workflow_info = {
+        "data": {
+            "name": WORKFLOW_NAME,
+            "id": WORKFLOW_ID,
+            "description": PROJECT_DESCRIPTION,
+            "createdAt": "some_date",
+            "xyz": 789,
+        },
+        "error": {},
+    }
+    requests_mock.get(url=url_workflow_info, json=json_workflow_info)
+
+    workflow = Workflow(
+        auth=auth_mock,
+        workflow_id=WORKFLOW_ID,
+        project_id=auth_mock.project_id,
+    )
+
+    # get_workflow_tasks
+    json_empty_workflow_tasks = {
+        "error": "None",
+        "data": [],
+    }
+    url_workflow_tasks = (
+        f"{workflow.auth._endpoint()}/projects/{workflow.auth.project_id}/workflows/"
+        f"{workflow.workflow_id}/tasks"
+    )
+    requests_mock.get(url=url_workflow_tasks, json=json_empty_workflow_tasks)
+
+    return workflow
+
+
+@pytest.fixture()
 def workflow_mock(auth_mock, requests_mock):
     # info
     url_workflow_info = (
