@@ -91,12 +91,15 @@ class Workflow:
 
         Currently no data blocks can be attached to other data blocks.
         """
-        tasks = self.get_workflow_tasks(basic=True)
+        tasks: dict = self.get_workflow_tasks(basic=True)  # type: ignore
         if not tasks:
-            logger.info("The workflow is empty, returning all compatible data blocks.")
-            return Tools(auth=self.auth).get_blocks(block_type="data", basic=True)
+            logger.info("The workflow is empty, returning all data blocks.")
+            data_blocks = Tools(auth=self.auth).get_blocks(
+                block_type="data", basic=True
+            )
+            return data_blocks  # type: ignore
 
-        last_task = list(tasks.keys())[-1]  # type: ignore
+        last_task = list(tasks.keys())[-1]
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/{self.workflow_id}/"
             f"compatible-blocks?parentTaskName={last_task}"
