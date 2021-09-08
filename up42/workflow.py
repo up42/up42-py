@@ -94,9 +94,12 @@ class Workflow:
         tasks: dict = self.get_workflow_tasks(basic=True)  # type: ignore
         if not tasks:
             logger.info("The workflow is empty, returning all data blocks.")
+
+            logging.getLogger("up42.tools").setLevel(logging.CRITICAL)
             data_blocks = Tools(auth=self.auth).get_blocks(
                 block_type="data", basic=True
             )
+            logging.getLogger("up42.tools").setLevel(logging.INFO)
             return data_blocks  # type: ignore
 
         last_task = list(tasks.keys())[-1]
