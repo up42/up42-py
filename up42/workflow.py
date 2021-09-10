@@ -91,7 +91,18 @@ class Workflow:
 
         Currently no data blocks can be attached to other data blocks.
         """
-        last_task = list(self.get_workflow_tasks(basic=True).keys())[-1]  # type: ignore
+        tasks: dict = self.get_workflow_tasks(basic=True)  # type: ignore
+        if not tasks:
+            logger.info("The workflow is empty, returning all data blocks.")
+
+            logging.getLogger("up42.tools").setLevel(logging.CRITICAL)
+            data_blocks = Tools(auth=self.auth).get_blocks(
+                block_type="data", basic=True
+            )
+            logging.getLogger("up42.tools").setLevel(logging.INFO)
+            return data_blocks  # type: ignore
+
+        last_task = list(tasks.keys())[-1]
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/{self.workflow_id}/"
             f"compatible-blocks?parentTaskName={last_task}"

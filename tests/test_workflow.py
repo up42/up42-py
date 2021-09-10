@@ -10,6 +10,7 @@ from .context import Workflow, Job, JobCollection, Asset
 from .fixtures import (
     auth_mock,
     auth_live,
+    workflow_mock_empty,
     workflow_mock,
     workflow_live,
     job_mock,
@@ -66,6 +67,13 @@ def test_get_compatible_blocks_live(workflow_live):
     compatible_blocks = workflow_live.get_compatible_blocks()
     assert isinstance(compatible_blocks, dict)
     assert "tiling" in list(compatible_blocks.keys())
+
+
+def test_get_compatible_blocks_empty_workflow_returns_data_blocks(workflow_mock_empty):
+    compatible_blocks = workflow_mock_empty.get_compatible_blocks()
+    assert isinstance(compatible_blocks, dict)
+    assert len(compatible_blocks) == 1
+    assert "esa-s2-l2a-gtiff-visual" in list(compatible_blocks.keys())
 
 
 def test_construct_full_workflow_tasks_dict_unkwown_block_raises(workflow_mock):
