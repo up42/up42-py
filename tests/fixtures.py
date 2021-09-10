@@ -111,16 +111,19 @@ JSON_BLOCKS = {
             "id": "4ed70368-d4e1-4462-bef6-14e768049471",
             "name": "tiling",
             "displayName": "Raster Tiling",
+            "type": "PROCESSING",
         },
         {
             "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
             "name": "sharpening",
             "displayName": "Sharpening Filter",
+            "type": "PROCESSING",
         },
         {
             "id": "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
             "name": "esa-s2-l2a-gtiff-visual",
             "displayName": "Sentinel-2 L2A Visual (GeoTIFF)",
+            "type": "DATA",
         },
     ],
     "error": {},
@@ -363,6 +366,50 @@ def project_mock(auth_mock, requests_mock):
 def project_live(auth_live):
     project = Project(auth=auth_live, project_id=auth_live.project_id)
     return project
+
+
+@pytest.fixture()
+def workflow_mock_empty(auth_mock, requests_mock):
+    """
+    Only to test error handling of functions that don't correctly work on workflows
+    without tasks (blocks). For the fully mocked workflow see workflow_mock fixture.
+    """
+    # info
+    url_workflow_info = (
+        f"{auth_mock._endpoint()}/projects/"
+        f"{auth_mock.project_id}/workflows/"
+        f"{WORKFLOW_ID}"
+    )
+    json_workflow_info = {
+        "data": {
+            "name": WORKFLOW_NAME,
+            "id": WORKFLOW_ID,
+            "description": PROJECT_DESCRIPTION,
+            "createdAt": "some_date",
+            "xyz": 789,
+        },
+        "error": {},
+    }
+    requests_mock.get(url=url_workflow_info, json=json_workflow_info)
+
+    workflow = Workflow(
+        auth=auth_mock,
+        workflow_id=WORKFLOW_ID,
+        project_id=auth_mock.project_id,
+    )
+
+    # get_workflow_tasks
+    json_empty_workflow_tasks = {
+        "error": "None",
+        "data": [],
+    }
+    url_workflow_tasks = (
+        f"{workflow.auth._endpoint()}/projects/{workflow.auth.project_id}/workflows/"
+        f"{workflow.workflow_id}/tasks"
+    )
+    requests_mock.get(url=url_workflow_tasks, json=json_empty_workflow_tasks)
+
+    return workflow
 
 
 @pytest.fixture()
