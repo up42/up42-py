@@ -36,7 +36,6 @@ pip show up42-py
 - Limit installation to Python <=3.9.4
 - Internal code improvements (e.g. project settings, retry)  
 
-## Versions
 ### [0.15.2](https://pypi.org/project/up42-py/) (2021-04-07)
 - Enables plotting of jobcollection with `.map_results()`.
 - Fixes `.cancel_job()` functionality.
