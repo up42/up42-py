@@ -362,7 +362,7 @@ class Workflow:
             Dictionary of constructed input parameters.
         """
         message = (
-            "The use of `handle_multiple_features` will be deprecated in version 0.17.0, "
+            "The use of `handle_multiple_features` will be deprecated in version 0.18.0, "
             "to guarantee feature parity with the UP42 platform. The UP42 SDK from then on "
             "will only handle single geometries!"
         )
