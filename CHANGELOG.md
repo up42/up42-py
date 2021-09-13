@@ -15,6 +15,19 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.17.0](https://pypi.org/project/up42-py/) (2021-09-10)
+- Adds `usage_type` parameter for selection of "DATA" and "ANALYTICS" data in catalog search.
+- Adds automatic handling of catalog search results pagination when requesting more 
+  than 500 results.
+- Adds support for datetime objects and all iso-format compatible time strings to 
+  `construct_parameters`.
+- Fix: `get_compatible_blocks` with an empty workflow now returns all data blocks.
+- Start deprecation for `handle_multiple_features` parameter in `construct_parameters` to 
+  guarantee parity with UP42 platform. In the future, the UP42 SDK will only handle 
+  single geometries.
+- Uses Oauth for access token handling.
+
+
 ### [0.16.0](https://pypi.org/project/up42-py/) (2021-06-30)
 - Limit memory usage for large file downloads (#237)
 - Remove deprecated job.get_status() (Replace by job.status) (#224)
@@ -23,7 +36,6 @@ pip show up42-py
 - Limit installation to Python <=3.9.4
 - Internal code improvements (e.g. project settings, retry)  
 
-## Versions
 ### [0.15.2](https://pypi.org/project/up42-py/) (2021-04-07)
 - Enables plotting of jobcollection with `.map_results()`.
 - Fixes `.cancel_job()` functionality.

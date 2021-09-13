@@ -1,4 +1,7 @@
 import os
+import json
+from pathlib import Path
+import copy
 
 import pytest
 import requests_mock
@@ -108,16 +111,19 @@ JSON_BLOCKS = {
             "id": "4ed70368-d4e1-4462-bef6-14e768049471",
             "name": "tiling",
             "displayName": "Raster Tiling",
+            "type": "PROCESSING",
         },
         {
             "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
             "name": "sharpening",
             "displayName": "Sharpening Filter",
+            "type": "PROCESSING",
         },
         {
             "id": "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
             "name": "esa-s2-l2a-gtiff-visual",
             "displayName": "Sentinel-2 L2A Visual (GeoTIFF)",
+            "type": "DATA",
         },
     ],
     "error": {},
@@ -211,12 +217,13 @@ JSON_ORDERS = {"data": {"orders": [JSON_ORDER["data"]]}, "error": None}
 @pytest.fixture()
 def auth_mock(requests_mock):
     # token for initial authentication
-    url_get_token = f"https://{PROJECT_ID}:{PROJECT_APIKEY}@api.up42.com/oauth/token"
-    json_get_token = {"data": {"accessToken": TOKEN}}
-    requests_mock.post(
-        url=url_get_token,
-        json=json_get_token,
-    )
+    url_get_token = "https://api.up42.com/oauth/token"
+    json_get_token = {
+        "data": {"accessToken": TOKEN},
+        "access_token": TOKEN,
+        "token_type": "bearer",
+    }
+    requests_mock.post(url_get_token, json=json_get_token)
 
     url_get_workspace = f"https://api.up42.com/projects/{PROJECT_ID}"
     json_get_workspace = {"data": {"workspaceId": WORKSPACE_ID}}
@@ -247,8 +254,6 @@ def auth_live():
         project_id=os.getenv("TEST_UP42_PROJECT_ID"),
         project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
-    print(os.getenv("TEST_UP42_PROJECT_ID"))
-    print(os.getenv("TEST_UP42_PROJECT_API_KEY"))
     return auth
 
 
@@ -361,6 +366,50 @@ def project_mock(auth_mock, requests_mock):
 def project_live(auth_live):
     project = Project(auth=auth_live, project_id=auth_live.project_id)
     return project
+
+
+@pytest.fixture()
+def workflow_mock_empty(auth_mock, requests_mock):
+    """
+    Only to test error handling of functions that don't correctly work on workflows
+    without tasks (blocks). For the fully mocked workflow see workflow_mock fixture.
+    """
+    # info
+    url_workflow_info = (
+        f"{auth_mock._endpoint()}/projects/"
+        f"{auth_mock.project_id}/workflows/"
+        f"{WORKFLOW_ID}"
+    )
+    json_workflow_info = {
+        "data": {
+            "name": WORKFLOW_NAME,
+            "id": WORKFLOW_ID,
+            "description": PROJECT_DESCRIPTION,
+            "createdAt": "some_date",
+            "xyz": 789,
+        },
+        "error": {},
+    }
+    requests_mock.get(url=url_workflow_info, json=json_workflow_info)
+
+    workflow = Workflow(
+        auth=auth_mock,
+        workflow_id=WORKFLOW_ID,
+        project_id=auth_mock.project_id,
+    )
+
+    # get_workflow_tasks
+    json_empty_workflow_tasks = {
+        "error": "None",
+        "data": [],
+    }
+    url_workflow_tasks = (
+        f"{workflow.auth._endpoint()}/projects/{workflow.auth.project_id}/workflows/"
+        f"{workflow.workflow_id}/tasks"
+    )
+    requests_mock.get(url=url_workflow_tasks, json=json_empty_workflow_tasks)
+
+    return workflow
 
 
 @pytest.fixture()
@@ -690,12 +739,14 @@ def jobtask_mock(auth_mock, requests_mock):
     )
 
     # get_results_json
-    url = (
+    url_results_json = (
         f"{jobtask.auth._endpoint()}/projects/{jobtask.auth.project_id}/"
         f"jobs/{jobtask.job_id}/tasks/{jobtask.jobtask_id}/"
         f"outputs/data-json/"
     )
-    requests_mock.get(url, json={"type": "FeatureCollection", "features": []})
+    requests_mock.get(
+        url_results_json, json={"type": "FeatureCollection", "features": []}
+    )
 
     # get_download_url
     url_download_result = (
@@ -794,7 +845,6 @@ def asset_live(auth_live):
 
 @pytest.fixture()
 def order_mock(auth_mock, requests_mock):
-
     # order info
     url_order_info = (
         f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}"
@@ -839,13 +889,76 @@ def tools_live(auth_live):
 
 
 @pytest.fixture()
-def catalog_mock(auth_mock):
+def catalog_mock(auth_mock, requests_mock):
+    with open(
+        Path(__file__).resolve().parent / "mock_data/search_response.json"
+    ) as json_file:
+        json_search_response = json.load(json_file)
+    url_search = f"{auth_mock._endpoint()}/catalog/stac/search"
+    requests_mock.post(
+        url=url_search,
+        json=json_search_response,
+    )
+
     return Catalog(auth=auth_mock)
 
 
 @pytest.fixture()
 def catalog_live(auth_live):
     return Catalog(auth=auth_live)
+
+
+@pytest.fixture()
+def catalog_pagination_mock(auth_mock, requests_mock):
+    with open(
+        Path(__file__).resolve().parent / "mock_data/search_response.json"
+    ) as json_file:
+        search_response_json = json.load(json_file)
+    search_response_json["features"] = search_response_json["features"] * 500
+
+    pagination_response_json = copy.deepcopy(search_response_json)
+    pagination_response_json["features"] = pagination_response_json["features"][:50]
+    pagination_response_json["links"][1] = pagination_response_json["links"][
+        0
+    ]  # indicator of pagination exhaustion (after first page)
+
+    url_search = f"{auth_mock._endpoint()}/catalog/stac/search"
+    requests_mock.post(
+        url_search,
+        [{"json": search_response_json}, {"json": pagination_response_json}],
+    )
+
+    return Catalog(auth=auth_mock)
+
+
+@pytest.fixture()
+def catalog_usagetype_mock(auth_mock, requests_mock):
+    with open(
+        Path(__file__).resolve().parent / "mock_data/search_response.json"
+    ) as json_file:
+        search_response_json = json.load(
+            json_file
+        )  # original response is usagetype data
+
+    response_analytics = copy.deepcopy(search_response_json)
+    response_analytics["features"][0]["properties"]["up42:usageType"] = ["ANALYTICS"]
+    response_data_and_analytics = copy.deepcopy(search_response_json)
+    response_data_and_analytics["features"][0]["properties"]["up42:usageType"] = [
+        "DATA",
+        "ANALYTICS",
+    ]
+
+    url_search = f"{auth_mock._endpoint()}/catalog/stac/search"
+    requests_mock.post(
+        url_search,
+        [
+            {"json": search_response_json},
+            {"json": response_analytics},
+            {"json": response_data_and_analytics},
+        ],
+    )
+
+    return Catalog(auth=auth_mock)
 
 
 @pytest.fixture()

@@ -10,6 +10,7 @@ from .context import Workflow, Job, JobCollection, Asset
 from .fixtures import (
     auth_mock,
     auth_live,
+    workflow_mock_empty,
     workflow_mock,
     workflow_live,
     job_mock,
@@ -66,6 +67,13 @@ def test_get_compatible_blocks_live(workflow_live):
     compatible_blocks = workflow_live.get_compatible_blocks()
     assert isinstance(compatible_blocks, dict)
     assert "tiling" in list(compatible_blocks.keys())
+
+
+def test_get_compatible_blocks_empty_workflow_returns_data_blocks(workflow_mock_empty):
+    compatible_blocks = workflow_mock_empty.get_compatible_blocks()
+    assert isinstance(compatible_blocks, dict)
+    assert len(compatible_blocks) == 1
+    assert "esa-s2-l2a-gtiff-visual" in list(compatible_blocks.keys())
 
 
 def test_construct_full_workflow_tasks_dict_unkwown_block_raises(workflow_mock):
@@ -182,26 +190,6 @@ def test_get_default_parameters(workflow_mock):
     }
 
 
-def test_construct_parameters(workflow_mock):
-    parameters = workflow_mock.construct_parameters(
-        geometry=shapely.geometry.point.Point(1, 3),
-        geometry_operation="bbox",
-        start_date="2014-01-01",
-        end_date="2016-12-31",
-        limit=1,
-    )
-    assert isinstance(parameters, dict)
-    assert parameters == {
-        "esa-s2-l2a-gtiff-visual:1": {
-            "ids": "None",
-            "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
-            "time": "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
-            "limit": 1,
-        },
-        "tiling:1": {"nodata": "None", "tile_width": 768},
-    }
-
-
 def test_construct_parameters_scene_ids(workflow_mock):
     parameters = workflow_mock.construct_parameters(
         geometry=shapely.geometry.point.Point(1, 3),
@@ -219,7 +207,7 @@ def test_construct_parameters_scene_ids(workflow_mock):
     }
 
 
-def test_construct_parameter_only_ids(workflow_mock):
+def test_construct_parameter_scene_ids_without_geometry(workflow_mock):
     parameters = workflow_mock.construct_parameters(
         scene_ids=["s2_123223"],
     )

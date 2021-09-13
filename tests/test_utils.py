@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 import tempfile
+from dateutil.parser import parse
 
 import geopandas as gpd
 from geopandas import GeoDataFrame
@@ -9,6 +10,7 @@ import pytest
 from shapely.geometry import Point, Polygon, LinearRing
 
 from .context import (
+    format_time_period,
     any_vector_to_fc,
     fc_to_query_geometry,
     download_results_from_gcs,
@@ -17,6 +19,76 @@ from .context import (
 
 
 POLY = Polygon([(0, 0), (1, 1), (1, 0)])
+
+
+def test_format_time_period():
+    @pytest.mark.parametrize(
+        "start_date,end_date,result_time",
+        [
+            ("2014-01-01", "2016-12-31", "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z"),
+            (
+                "2014-01-01T00:00:00",
+                "2016-12-31T10:11:12",
+                "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
+            ),
+            (
+                "2014-01-01T00:00:00",
+                "2016-12-31",
+                "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
+            ),
+            (
+                parse("2014-01-01"),
+                parse("2016-12-31T10:11:12"),
+                "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
+            ),
+            (
+                parse("2014-01-01"),
+                "2016-12-31",
+                "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
+            ),
+            (
+                parse("2014-01-01"),
+                "2016-12-31T10:11:12",
+                "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
+            ),
+        ],
+    )
+    def test_format_time_period(start_date, end_date, result_time):
+        time_period = format_time_period(
+            start_date=start_date,
+            end_date=end_date,
+        )
+        assert isinstance(time_period, str)
+        assert time_period == result_time
+
+
+@pytest.mark.parametrize(
+    "start_date,end_date",
+    [(None, "2014-01-01"), ("2014-01-01", None)],
+)
+def test_format_time_period_raises_with_missing_dates(start_date, end_date):
+    with pytest.raises(ValueError) as e:
+        format_time_period(
+            start_date=start_date,
+            end_date=end_date,
+        )
+        assert (
+            "When using dates, both start_date and end_date need to be provided."
+            in str(e.value)
+        )
+
+
+@pytest.mark.parametrize(
+    "start_date,end_date",
+    [(None, "2016-01-01"), ("2014-01-01", None)],
+)
+def test_format_time_period_raises_with_mixed_up_dates(start_date, end_date):
+    with pytest.raises(ValueError) as e:
+        format_time_period(
+            start_date=start_date,
+            end_date=end_date,
+        )
+        assert "The start_date needs to be earlier than the end_date!" in str(e.value)
 
 
 @pytest.mark.parametrize(

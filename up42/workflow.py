@@ -4,6 +4,8 @@ import copy
 from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Union, Tuple, Optional
+import warnings
+from datetime import datetime
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
@@ -22,6 +24,7 @@ from up42.utils import (
     any_vector_to_fc,
     fc_to_query_geometry,
     filter_jobs_on_mode,
+    format_time_period,
 )
 
 logger = get_logger(__name__)
@@ -88,7 +91,18 @@ class Workflow:
 
         Currently no data blocks can be attached to other data blocks.
         """
-        last_task = list(self.get_workflow_tasks(basic=True).keys())[-1]  # type: ignore
+        tasks: dict = self.get_workflow_tasks(basic=True)  # type: ignore
+        if not tasks:
+            logger.info("The workflow is empty, returning all data blocks.")
+
+            logging.getLogger("up42.tools").setLevel(logging.CRITICAL)
+            data_blocks = Tools(auth=self.auth).get_blocks(
+                block_type="data", basic=True
+            )
+            logging.getLogger("up42.tools").setLevel(logging.INFO)
+            return data_blocks  # type: ignore
+
+        last_task = list(tasks.keys())[-1]
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/{self.workflow_id}/"
             f"compatible-blocks?parentTaskName={last_task}"
@@ -318,8 +332,8 @@ class Workflow:
             Point,
         ] = None,
         geometry_operation: Optional[str] = None,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: Optional[Union[str, datetime]] = None,
+        end_date: Optional[Union[str, datetime]] = None,
         limit: Optional[int] = None,
         scene_ids: Optional[list] = None,
         assets: Optional[List[Asset]] = None,
@@ -335,8 +349,10 @@ class Workflow:
                 assume EPSG 4326.
             geometry_operation: Desired operation, One of "bbox", "intersects", "contains".
             limit: Maximum number of expected results.
-            start_date: Query period starting day, format "2020-01-01".
-            end_date: Query period ending day, format "2020-01-01".
+            start_date: Query period starting day as iso-format string or datetime object,
+                e.g. "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS".
+            end_date: Query period ending day as iso-format or datetime object,
+                e.g. "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS".
             scene_ids: List of scene_ids, if given ignores all other parameters except geometry.
             assets: Optional, can be used to incorporate existing assets in Storage (result
                 of Orders for instance) into new workflows.
@@ -344,6 +360,13 @@ class Workflow:
         Returns:
             Dictionary of constructed input parameters.
         """
+        message = (
+            "The use of `handle_multiple_features` will be deprecated in version 0.18.0, "
+            "to guarantee feature parity with the UP42 platform. The UP42 SDK from then on "
+            "will only handle single geometries!"
+        )
+        warnings.warn(message, DeprecationWarning, stacklevel=2)
+
         input_parameters = self._get_default_parameters()
         try:
             data_block_name = list(input_parameters.keys())[0]
@@ -369,9 +392,11 @@ class Workflow:
                 input_parameters[data_block_name]["ids"] = scene_ids
                 input_parameters[data_block_name]["limit"] = len(scene_ids)
                 input_parameters[data_block_name].pop("time")
-            elif start_date is not None and end_date is not None:
-                time = f"{start_date}T00:00:00Z/{end_date}T23:59:59Z"
-                input_parameters[data_block_name]["time"] = time
+            elif start_date is not None or end_date is not None:
+                time_period = format_time_period(
+                    start_date=start_date, end_date=end_date
+                )
+                input_parameters[data_block_name]["time"] = time_period
 
             if geometry is not None:
                 aoi_fc = any_vector_to_fc(
