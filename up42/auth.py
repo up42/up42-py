@@ -7,6 +7,9 @@ from typing import Dict, Optional, Union
 
 import requests
 import requests.exceptions
+from requests.auth import HTTPBasicAuth
+from requests_oauthlib import OAuth2Session
+from oauthlib.oauth2 import BackendApplicationClient, MissingTokenError
 from tenacity import (
     Retrying,
     wait_fixed,
@@ -129,27 +132,22 @@ class Auth:
         return f"https://api.up42.{self.env}"
 
     def _get_token(self):
+        """Project specific authentication via project id and project api key."""
         try:
-            self._get_token_project()
-        except requests.exceptions.HTTPError as err:
+            client = BackendApplicationClient(
+                client_id=self.project_id, client_secret=self.project_api_key
+            )
+            auth = HTTPBasicAuth(self.project_id, self.project_api_key)
+            get_token_session = OAuth2Session(client=client)
+            token_response = get_token_session.fetch_token(
+                token_url=self._endpoint() + "/oauth/token", auth=auth
+            )
+        except MissingTokenError as err:
             raise ValueError(
                 "Authentication was not successful, check the provided project credentials."
             ) from err
 
-    def _get_token_project(self) -> None:
-        """Project specific authentication via project id and project api key."""
-        url = (
-            f"https://{self.project_id}:{self.project_api_key}@api.up42.{self.env}"
-            f"/oauth/token"
-        )
-        payload = "grant_type=client_credentials"
-        headers = {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "cache-control": "no-cache",
-        }
-        token_response = requests.request("POST", url, data=payload, headers=headers)
-        token_response.raise_for_status()
-        self.token = json.loads(token_response.text)["data"]["accessToken"]
+        self.token = token_response["data"]["accessToken"]
 
     def _get_workspace(self) -> None:
         """Get workspace id belonging to authenticated project."""

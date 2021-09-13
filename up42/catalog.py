@@ -7,7 +7,6 @@ from typing import Union, List, Tuple
 
 from pandas import Series
 from geopandas import GeoDataFrame
-from shapely.geometry import shape
 from shapely.geometry import Point, Polygon
 from geojson import Feature, FeatureCollection
 from tqdm import tqdm
@@ -15,7 +14,12 @@ from tqdm import tqdm
 from up42.auth import Auth
 from up42.viztools import VizTools
 from up42.order import Order
-from up42.utils import get_logger, any_vector_to_fc, fc_to_query_geometry
+from up42.utils import (
+    get_logger,
+    any_vector_to_fc,
+    fc_to_query_geometry,
+    format_time_period,
+)
 
 logger = get_logger(__name__)
 
@@ -103,6 +107,7 @@ class Catalog(VizTools):
             "sentinel3",
             "sentinel5p",
         ],
+        usage_type: List[str] = ["DATA", "ANALYTICS"],
         limit: int = 10,
         max_cloudcover: float = 100,
         sortby: str = "acquisitionDate",
@@ -118,6 +123,11 @@ class Catalog(VizTools):
             end_date: Query period ending day, format "2020-01-01".
             sensors: The satellite sensors to search for, one or multiple of
                 ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p"]
+            usage_type: Filter for imagery that can just be purchased & downloaded or also
+                processes. ["DATA"] (can only be download), ["ANALYTICS"] (can be downloaded
+                or used directly with a processing algorithm), ["DATA", "ANALYTICS"]
+                (can be any combination). The filter is inclusive, using ["DATA"] can
+                also result in results with ["DATA", "ANALYTICS"].
             limit: The maximum number of search results to return (1-max.500).
             max_cloudcover: Maximum cloudcover % - e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloudcover.
@@ -129,7 +139,8 @@ class Catalog(VizTools):
         Returns:
             The constructed parameters dictionary.
         """
-        datetime = f"{start_date}T00:00:00Z/{end_date}T23:59:59Z"
+        time_period = format_time_period(start_date=start_date, end_date=end_date)
+
         block_filters: List[str] = []
         for sensor in sensors:
             if sensor not in list(supported_sensors.keys()):
@@ -154,12 +165,22 @@ class Catalog(VizTools):
             query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
 
         search_parameters = {
-            "datetime": datetime,
+            "datetime": time_period,
             "intersects": aoi_geometry,
             "limit": limit,
             "query": query_filters,
             "sortby": [{"field": f"properties.{sortby}", "direction": sort_order}],
         }
+
+        if usage_type == ["DATA"]:
+            search_parameters["query"]["up42:usageType"] = {"in": ["DATA"]}
+        elif usage_type == ["ANALYTICS"]:
+            search_parameters["query"]["up42:usageType"] = {"in": ["ANALYTICS"]}
+        elif usage_type == ["DATA", "ANALYTICS"]:
+            search_parameters["query"]["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
+        else:
+            raise ValueError("Select correct `usage_type`")
+
         return search_parameters
 
     def search(
@@ -191,27 +212,34 @@ class Catalog(VizTools):
             ```
         """
         logger.info(f"Searching catalog with search_parameters: {search_parameters}")
+
+        # The API request would fail with a limit above 500, thus 500 is forced in the initial
+        # request but additional results are handled below via pagination.
+        max_limit = search_parameters["limit"]
+        if max_limit > 500:
+            search_parameters = dict(search_parameters)
+            search_parameters["limit"] = 500
+
         url = f"{self.auth._endpoint()}/catalog/stac/search"
         response_json: dict = self.auth._request("POST", url, search_parameters)
-        logger.info(f"{len(response_json['features'])} results returned.")
-        dst_crs = "EPSG:4326"
-        df = GeoDataFrame.from_features(response_json, crs=dst_crs)
-        if df.empty:
-            if as_dataframe:
-                return df
-            else:
-                return df.__geo_interface__
+        features = response_json["features"]
 
-        # Filter to actual geometries intersecting the aoi (Sobloo search uses a rectangular
-        # bounds geometry, can contain scenes that touch the aoi bbox, but not the aoi.
-        # So number returned images not consistent with set limit.
-        # TODO: Resolve on backend
-        geometry = search_parameters["intersects"]
-        poly = shape(geometry)
-        df = df[df.intersects(poly)]
-        df = df.reset_index(drop=True)
-        df.crs = dst_crs  # apply resets the crs
+        # Search results with more than 500 items are given as 50-per-page additional pages.
+        while len(features) < max_limit:
+            page_url = response_json["links"][0]["href"]
+            next_page_url = response_json["links"][1]["href"]
+            pagination_exhausted = next_page_url == page_url
+            if pagination_exhausted:
+                break
+            response_json = self.auth._request("POST", next_page_url)
+            features += response_json["features"]
 
+        features = features[:max_limit]
+        df = GeoDataFrame.from_features(
+            FeatureCollection(features=features), crs="EPSG:4326"
+        )
+
+        logger.info(f"{df.shape[0]} results returned.")
         if as_dataframe:
             return df
         else:
