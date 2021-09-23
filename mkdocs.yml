@@ -125,8 +125,6 @@ plugins:
   - exclude-search:
       exclude:
         - cli-reference.md
-      ignore:
-        - cli-reference.md#command-line-interface-cli
   - mkdocstrings:
       default_handler: python
       handlers:
