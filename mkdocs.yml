@@ -94,6 +94,8 @@ theme:
   language: en
   features:
     - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.indexes
   palette:
     primary: indigo
     accent: purple
