@@ -124,6 +124,7 @@ plugins:
         - PULL_REQUEST_TEMPLATE.md
   - exclude-search:
       exclude:
+        - cli.md
         - cli-reference.md
   - mkdocstrings:
       default_handler: python
