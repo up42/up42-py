@@ -39,7 +39,7 @@ nav:
       - Ordering: ordering.md
       - Detailed Example: guides/detailed-example.ipynb
     - Examples:
-        - Examples: examples.md
+        - examples/index.md
         - Basic Data Block Examples:
             - Airbus-Global Seeps Sample: examples/data-block-examples/airbus-globalseeps.ipynb
             - ESA-Sentinel-5P Level3: examples/data-block-examples/esa-sentinel5p-l3-example.ipynb
@@ -94,6 +94,8 @@ theme:
   language: en
   features:
     - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.indexes
   palette:
     primary: indigo
     accent: purple
@@ -124,9 +126,8 @@ plugins:
         - PULL_REQUEST_TEMPLATE.md
   - exclude-search:
       exclude:
+        - cli.md
         - cli-reference.md
-      ignore:
-        - cli-reference.md#command-line-interface-cli
   - mkdocstrings:
       default_handler: python
       handlers:
@@ -139,7 +140,7 @@ plugins:
             filters:
               - "!^_"  # exlude all members starting with _
       watch:
-        - src/my_library
+        - up42
 
 ## Custom theme additions
 extra_javascript:
