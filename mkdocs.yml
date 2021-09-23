@@ -140,7 +140,7 @@ plugins:
             filters:
               - "!^_"  # exlude all members starting with _
       watch:
-        - src/my_library
+        - up42
 
 ## Custom theme additions
 extra_javascript:
