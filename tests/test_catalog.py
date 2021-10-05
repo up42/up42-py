@@ -160,6 +160,7 @@ def test_search_usagetype(catalog_usagetype_mock):
     )
 
 
+@pytest.mark.skip(reason="Flaky catalog return")
 @pytest.mark.live
 @pytest.mark.parametrize(
     "usage_type,result,result2",
