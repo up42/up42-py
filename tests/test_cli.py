@@ -370,6 +370,7 @@ def test_catalog_live(cli_runner):
     assert result.exit_code == 0
 
 
+@pytest.mark.skip(reason="Flaky platform behaviour test account")
 @PROJECT_ENVS
 @pytest.mark.live()
 def test_construct_parameters_live(cli_runner):
