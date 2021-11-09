@@ -148,7 +148,7 @@ class Tools:
         as_dataframe=False,
     ) -> Union[List[Dict], dict]:
         """
-        Gets a list of all public blocks on the marketplace.
+        Gets a list of all public blocks on the marketplace. Can not access custom blocks.
 
         Args:
             block_type: Optionally filters to "data" or "processing" blocks, default None.
@@ -204,6 +204,7 @@ class Tools:
         """
         Gets the detailed information about a specific public block from
         the server, includes all manifest.json and marketplace.json contents.
+        Can not access custom blocks.
 
         Args:
             block_id: The block id.
