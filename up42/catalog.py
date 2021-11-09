@@ -153,11 +153,7 @@ class Catalog(VizTools):
         aoi_fc = any_vector_to_fc(
             vector=geometry,
         )
-        aoi_geometry = fc_to_query_geometry(
-            fc=aoi_fc,
-            geometry_operation="intersects",
-            squash_multiple_features="union",
-        )
+        aoi_geometry = fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
 
         sort_order = "asc" if ascending else "desc"
         query_filters = {"dataBlock": {"in": block_filters}}
@@ -341,11 +337,7 @@ class Catalog(VizTools):
         aoi_fc = any_vector_to_fc(
             vector=geometry,
         )
-        aoi_geometry = fc_to_query_geometry(
-            fc=aoi_fc,
-            geometry_operation="intersects",
-            squash_multiple_features="union",
-        )
+        aoi_geometry = fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
         data_provider_name = scene.providerName
         order_params = {"id": scene.id, "aoi": aoi_geometry}
         return data_provider_name, order_params
