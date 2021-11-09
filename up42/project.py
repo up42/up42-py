@@ -70,17 +70,20 @@ class Project:
         if use_existing:
             logger.info("Getting existing workflows in project ...")
             logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
-            existing_workflows = self.get_workflows()
+            existing_workflows: list = self.get_workflows(return_json=True)
             logging.getLogger("up42.workflow").setLevel(logging.INFO)
 
-            matching_workflows = [
+            matching_workflows: list = [
                 workflow
                 for workflow in existing_workflows
-                if workflow._info["name"] == name
-                and workflow._info["description"] == description
+                if workflow["name"] == name and workflow["description"] == description
             ]
             if matching_workflows:
-                existing_workflow = matching_workflows[0]
+                existing_workflow = Workflow(
+                    self.auth,
+                    project_id=self.project_id,
+                    workflow_id=matching_workflows[0]["id"],
+                )
                 logger.info(
                     f"Using existing workflow: {name} - {existing_workflow.workflow_id}"
                 )
