@@ -96,15 +96,17 @@ class Project:
         )
         return workflow
 
-    def get_workflows(self, return_json: bool = False) -> Union[List["Workflow"], dict]:
+    def get_workflows(
+        self, return_json: bool = False
+    ) -> Union[List["Workflow"], List[dict]]:
         """
         Gets all workflows in a project as workflow objects or json.
 
         Args:
-            return_json: True returns Workflow Objects.
+            return_json: True returns infos of workflows as json instead of workflow objects.
 
         Returns:
-            Workflow objects in the project or alternatively json info of the workflows.
+            List of Workflow objects in the project or alternatively json info of the workflows.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows"
         response_json = self.auth._request(request_type="GET", url=url)
