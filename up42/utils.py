@@ -329,8 +329,8 @@ def fc_to_query_geometry(
 
     geometry_error = "The provided geometry {}, UP42 only accepts single geometries."
     if len(fc["features"]) == 1:
-        f = fc["features"][0]
-        if f["type"] == "MultiPolygon":
+        feature = fc["features"][0]
+        if feature["type"] == "MultiPolygon":
             logger.info(geometry_error.format("is a MultiPolygon"))
             raise ValueError(geometry_error.format("is a MultiPolygon"))
     else:
@@ -339,11 +339,11 @@ def fc_to_query_geometry(
 
     if geometry_operation == "bbox":
         try:
-            query_geometry = list(f["bbox"])
+            query_geometry = list(feature["bbox"])
         except KeyError:
-            query_geometry = list(shapely.geometry.shape(f["geometry"]).bounds)
+            query_geometry = list(shapely.geometry.shape(feature["geometry"]).bounds)
     elif geometry_operation in ["intersects", "contains"]:
-        query_geometry = f["geometry"]
+        query_geometry = feature["geometry"]
     else:
         raise ValueError(
             "geometry_operation needs to be one of bbox, intersects or contains!",
