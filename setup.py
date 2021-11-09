@@ -20,10 +20,6 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=parent_dir.joinpath("requirements.txt").read_text().splitlines(),
-    entry_points="""
-        [console_scripts]
-        up42=up42.cli:up42
-    """,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
