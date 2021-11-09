@@ -37,6 +37,7 @@ nav:
       - Structure: structure.md
       - Catalog Search: catalog.md
       - Ordering: ordering.md
+      - Storage: storage.md
       - Detailed Example: guides/detailed-example.ipynb
     - Examples:
         - examples/index.md
