@@ -15,6 +15,15 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.18.0](https://pypi.org/project/up42-py/) (2021-11-10)
+- Speed improvements to `workflow.create_workflow` when used with `existing=True`.
+- Removes handling of multiple features as input geometry in `.construct_parameters`. 
+  Instead, using multiple features or a MultiPolygon will now raise an error. 
+  This aligns the Python SDK with the regular UP42 platform behaviour.
+- Remove the Python SDK Command Line Interface.
+  
+
+## Versions
 ### [0.17.0](https://pypi.org/project/up42-py/) (2021-09-10)
 - Adds `usage_type` parameter for selection of "DATA" and "ANALYTICS" data in catalog search.
 - Adds automatic handling of catalog search results pagination when requesting more 
