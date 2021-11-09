@@ -62,4 +62,4 @@ assets[0].download()
 <br>
 
 !!! Success "Success!"
-    Continue with the [Storage](storage.md)!
+    Continue with the [Storage](storage.md) chapter!
