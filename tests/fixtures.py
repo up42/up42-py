@@ -277,7 +277,7 @@ def project_mock(auth_mock, requests_mock):
 
     # create_workflow.
     url_create_workflow = (
-        f"{project.auth._endpoint()}/projects/" f"{project.project_id}/workflows/"
+        f"{project.auth._endpoint()}/projects/{project.project_id}/workflows/"
     )
     json_create_workflow = {
         "error": {},
@@ -304,13 +304,23 @@ def project_mock(auth_mock, requests_mock):
         f"{project.auth._endpoint()}/projects/" f"{project.project_id}/workflows"
     )
     json_get_workflows = {
-        "data": [{"id": WORKFLOW_ID}, {"id": WORKFLOW_ID}],
+        "data": [
+            {
+                "id": WORKFLOW_ID,
+                "name": WORKFLOW_NAME,
+                "description": WORKFLOW_DESCRIPTION,
+            },
+            {
+                "id": WORKFLOW_ID,
+                "name": WORKFLOW_NAME,
+                "description": WORKFLOW_DESCRIPTION,
+            },
+        ],
         "error": {},
     }  # Same workflow_id to not have to get multiple .info
     requests_mock.get(url=url_get_workflows, json=json_get_workflows)
 
     # get_jobs. Requires job_info mock.
-
     url_get_jobs = f"{project.auth._endpoint()}/projects/{project.project_id}/jobs"
     json_get_jobs = {
         "data": [

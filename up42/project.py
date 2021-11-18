@@ -70,17 +70,20 @@ class Project:
         if use_existing:
             logger.info("Getting existing workflows in project ...")
             logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
-            existing_workflows = self.get_workflows()
+            existing_workflows: list = self.get_workflows(return_json=True)
             logging.getLogger("up42.workflow").setLevel(logging.INFO)
 
-            matching_workflows = [
+            matching_workflows: list = [
                 workflow
                 for workflow in existing_workflows
-                if workflow._info["name"] == name
-                and workflow._info["description"] == description
+                if workflow["name"] == name and workflow["description"] == description
             ]
             if matching_workflows:
-                existing_workflow = matching_workflows[0]
+                existing_workflow = Workflow(
+                    self.auth,
+                    project_id=self.project_id,
+                    workflow_id=matching_workflows[0]["id"],
+                )
                 logger.info(
                     f"Using existing workflow: {name} - {existing_workflow.workflow_id}"
                 )
@@ -96,15 +99,17 @@ class Project:
         )
         return workflow
 
-    def get_workflows(self, return_json: bool = False) -> Union[List["Workflow"], dict]:
+    def get_workflows(
+        self, return_json: bool = False
+    ) -> Union[List["Workflow"], List[dict]]:
         """
         Gets all workflows in a project as workflow objects or json.
 
         Args:
-            return_json: True returns Workflow Objects.
+            return_json: True returns infos of workflows as json instead of workflow objects.
 
         Returns:
-            Workflow objects in the project or alternatively json info of the workflows.
+            List of Workflow objects in the project or alternatively json info of the workflows.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows"
         response_json = self.auth._request(request_type="GET", url=url)
