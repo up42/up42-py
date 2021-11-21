@@ -225,34 +225,3 @@ class Tools:
             return pd.DataFrame.from_dict(details_json, orient="index").transpose()
         else:
             return details_json
-
-    def validate_manifest(self, path_or_json: Union[str, Path, dict]) -> dict:
-        """
-        Validates a block manifest json.
-
-        The block manifest is required to build a custom block on UP42 and contains
-        the metadata about the block as well as block input and output capabilities.
-        Also see the
-        [manifest chapter in the UP42 documentation](https://docs.up42.com/reference/block-manifest.html).
-
-        Args:
-            path_or_json: The input manifest, either a filepath or json string, see example.
-
-        Returns:
-            A dictionary with the validation results and potential validation errors.
-        """
-        if isinstance(path_or_json, (str, Path)):
-            with open(path_or_json) as src:
-                manifest_json = json.load(src)
-        else:
-            manifest_json = path_or_json
-        if not hasattr(self, "auth"):
-            raise Exception(
-                "Requires authentication with UP42, use up42.authenticate()!"
-            )
-        url = f"{self.auth._endpoint()}/validate-schema/block"
-        response_json = self.auth._request(
-            request_type="POST", url=url, data=manifest_json
-        )
-        logger.info("The manifest is valid.")
-        return response_json["data"]
