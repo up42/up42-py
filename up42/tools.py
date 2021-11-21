@@ -158,6 +158,14 @@ class Tools:
         Returns:
             A list of the public blocks and their metadata. Optional a simpler version
             dict.
+
+        Examples:
+            ```python
+             {
+              'tiling': 'd350aa0b-ac31-4021-bbe6-fd8da366740a',
+              'oneatlas-spot-fullscene': '0f15e07f-efcc-4598-939b-18aade349c57'
+             }
+            ```
         """
         try:
             block_type = block_type.lower()  # type: ignore
