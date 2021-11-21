@@ -46,6 +46,19 @@ class Project:
     def info(self) -> dict:
         """
         Gets the project metadata information.
+
+        ??? Example "Example Return (Click to extend)"
+            ```python
+                {'id': 'ce8793d0-b3ac-4b21-8040-54ad790db431',
+                 'displayId': 'ce8793d0',
+                 'createdAt': '2021-10-28T16:21:11.737831Z',
+                 'createdBy': {'id': '01ae36f8-9e58-4606-b6de-846cf8748a8c', 'type': 'USER'},
+                 'name': 'some project',
+                 'description': '',
+                 'workspaceId': '01ae36f3-9e58-4206-bassw-846cf8748a8c',
+                 ...
+                }
+            ```
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}"
         response_json = self.auth._request(request_type="GET", url=url)
@@ -166,6 +179,19 @@ class Project:
 
         Returns:
             The project settings.
+
+        ??? Example "Example Return (Click to extend)"
+            ```python
+                [{'name': 'MAX_CONCURRENT_JOBS',
+                  'value': '10',
+                  'range': {'min': 1, 'max': 1000}},
+                 {'name': 'JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE',
+                  'value': '20',
+                  'range': {'min': 1, 'max': 5000}},
+                 {'name': 'JOB_QUERY_MAX_AOI_SIZE',
+                  'value': '15000',
+                  'range': {'min': 1, 'max': 180000}}
+                ]
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
         response_json = self.auth._request(request_type="GET", url=url)
