@@ -115,8 +115,8 @@ class Tools:
         else:
             return example_aoi
 
-    # pylint: disable=no-self-use
-    def draw_aoi(self):
+    @staticmethod
+    def draw_aoi():
         """
         Displays an interactive map to draw an aoi by hand, returns the folium object if
         not run in a Jupyter notebook.
