@@ -159,12 +159,13 @@ class Tools:
             A list of the public blocks and their metadata. Optional a simpler version
             dict.
 
-        Examples:
+        ??? Example "Example Return (Click to extend)"
             ```python
-             {
-              'tiling': 'd350aa0b-ac31-4021-bbe6-fd8da366740a',
-              'oneatlas-spot-fullscene': '0f15e07f-efcc-4598-939b-18aade349c57'
-             }
+                {
+                    'tiling': 'd350aa0b-ac31-4021-bbe6-fd8da366740a',
+                    'oneatlas-spot-fullscene': '0f15e07f-efcc-4598-939b-18aade349c57',
+                    ...
+                }
             ```
         """
         try:
@@ -220,6 +221,25 @@ class Tools:
 
         Returns:
             A dict of the block details metadata for the specific block.
+
+        ??? Example "Example Return (Click to extend)"
+            ```python
+                {
+                 'id': 'd350aa0b-ac31-4021-bbe6-fd8da366740a',
+                 'createdAt': '2019-02-12T12:19:20.470Z',
+                 'name': 'tiling',
+                 'displayName': 'Raster Tiling',
+                 'description': 'Clips rasters into tiles for machine learning algorithms.',
+                 'inputCapabilities': [],
+                 'outputCapabilities': [],
+                 'parameters': {
+                  'tile_width': {'type': 'number',
+                   'default': 768,
+                   'required': True,
+                   'description': 'Width of a tile in pixels'}},
+                ...
+               }
+            ```
         """
         if not hasattr(self, "auth"):
             raise Exception(
@@ -248,6 +268,13 @@ class Tools:
 
         Returns:
             A dictionary with the validation results and potential validation errors.
+
+        ??? Example "Example Return (Click to extend)"
+            ```python
+                {
+                 'valid': True, 'errors': []
+                }
+            ```
         """
         if isinstance(path_or_json, (str, Path)):
             with open(path_or_json) as src:
