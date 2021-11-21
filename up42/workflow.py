@@ -64,6 +64,19 @@ class Workflow:
     def info(self) -> dict:
         """
         Gets the workflow metadata information.
+
+        ??? Example "Example Return (Click to extend)"
+            ```python
+                {'id': '58a7a285-9e06-4ea6-aa8a-0cc14ea90d77',
+                 'name': '30-seconds-workflow',
+                 'description': '',
+                 'createdAt': '2021-11-22T00:00:05.983220Z',
+                 'createdBy': {'id': 'ce8793d0-b3ac-4b21-8040-54ad790db431',
+                  'type': 'API_KEY'},
+                 'totalProcessingTime': 0,
+                 ...
+                 }
+            ```
         """
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
@@ -77,6 +90,11 @@ class Workflow:
     def workflow_tasks(self) -> Dict[str, str]:
         """
         Gets the building blocks of the workflow as a dictionary with `task_name:block-version`.
+
+        ??? Example "Example Return (Click to extend)"
+            ```python
+                {'esa-s2-l2a-gtiff-visual:1': '1.2.3', 'sharpening:1': '2.1.1'}
+            ```
         """
         logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
         workflow_tasks = self.get_workflow_tasks(basic=True)
@@ -90,6 +108,14 @@ class Workflow:
         will provide the compatible blocks for the last workflow task in the workflow.
 
         Currently no data blocks can be attached to other data blocks.
+
+        ??? Example "Example Return (Click to extend)"
+            ```python
+                {'zonal-statistics': 'a5b8b938-6fd6-4bac-92cd-dffd7f3169aa',
+                 'up42-exportdata-raster': '7ddcad20-e4d4-4ffd-9b3d-24555449275b',
+                 ...
+                }
+            ```
         """
         tasks: dict = self.get_workflow_tasks(basic=True)  # type: ignore
         if not tasks:
@@ -123,6 +149,14 @@ class Workflow:
 
         Returns:
             The workflow task info.
+
+        ??? Example "Example Return (Click to extend)"
+            ```python
+                {'zonal-statistics': 'a5b8b938-6fd6-4bac-92cd-dffd7f3169aa',
+                 'up42-exportdata-raster': '7ddcad20-e4d4-4ffd-9b3d-24555449275b',
+                 ...
+                }
+            ```
         """
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
@@ -287,6 +321,20 @@ class Workflow:
 
         Returns:
             Workflow parameters info json.
+
+        ??? Example "Example Return (Click to extend)"
+            ```python
+                {'esa-s2-l2a-gtiff-visual:1': {'ids': {'type': 'array', 'default': None},
+                  'bbox': {'type': 'array', 'default': None},
+                  'time': {'type': 'dateRange',
+                   'default': '2018-12-01T00:00:00+00:00/2021-12-31T23:59:59+00:00'},
+                  'limit': {'type': 'integer', 'default': 1, 'minimum': 1},
+                  'max_cloud_cover': {'type': 'integer',
+                   'default': 100,
+                   'maximum': 100,
+                   'minimum': 0}},
+                 'sharpening:1': {'strength': {'type': 'string', 'default': 'medium'}}}
+            ```
         """
         workflow_parameters_info = {}
         workflow_tasks = self.get_workflow_tasks()
@@ -495,6 +543,22 @@ class Workflow:
 
         Returns:
             A dictionary of estimation for each task in the workflow.
+
+        ??? Example "Example Return (Click to extend)"
+            ```python
+                {'esa-s2-l2a-gtiff-visual:1': {'blockConsumption': {'resources': {'unit': 'DATA_POINT',
+                    'min': 0,
+                    'max': 0},
+                   'credit': {'min': 0, 'max': 0}},
+                  'machineConsumption': {'duration': {'min': 0, 'max': 0},
+                   'credit': {'min': 1, 'max': 1}}},
+                 'sharpening:1': {'blockConsumption': {'resources': {'unit': 'SQUARE_KM',
+                    'min': 0.027816,
+                    'max': 0.027816},
+                   'credit': {'min': 0, 'max': 0}},
+                  'machineConsumption': {'duration': {'min': 72, 'max': 331},
+                   'credit': {'min': 1, 'max': 1}}}}
+            ```
         """
         if input_parameters is None:
             raise ValueError(

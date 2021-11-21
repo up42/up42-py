@@ -192,6 +192,7 @@ class Project:
                   'value': '15000',
                   'range': {'min': 1, 'max': 180000}}
                 ]
+            ```
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
         response_json = self.auth._request(request_type="GET", url=url)
