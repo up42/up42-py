@@ -161,10 +161,9 @@ class Tools:
 
         ??? Example "Example Return (Click to extend)"
             ```python
-                {
-                    'tiling': 'd350aa0b-ac31-4021-bbe6-fd8da366740a',
-                    'oneatlas-spot-fullscene': '0f15e07f-efcc-4598-939b-18aade349c57',
-                    ...
+                {'tiling': 'd350aa0b-ac31-4021-bbe6-fd8da366740a',
+                 'oneatlas-spot-fullscene': '0f15e07f-efcc-4598-939b-18aade349c57',
+                 ...
                 }
             ```
         """
@@ -224,8 +223,7 @@ class Tools:
 
         ??? Example "Example Return (Click to extend)"
             ```python
-                {
-                 'id': 'd350aa0b-ac31-4021-bbe6-fd8da366740a',
+                {'id': 'd350aa0b-ac31-4021-bbe6-fd8da366740a',
                  'createdAt': '2019-02-12T12:19:20.470Z',
                  'name': 'tiling',
                  'displayName': 'Raster Tiling',
@@ -237,8 +235,8 @@ class Tools:
                    'default': 768,
                    'required': True,
                    'description': 'Width of a tile in pixels'}},
-                ...
-               }
+                 ...
+                }
             ```
         """
         if not hasattr(self, "auth"):
@@ -271,9 +269,7 @@ class Tools:
 
         ??? Example "Example Return (Click to extend)"
             ```python
-                {
-                 'valid': True, 'errors': []
-                }
+                {'valid': True, 'errors': []}
             ```
         """
         if isinstance(path_or_json, (str, Path)):
