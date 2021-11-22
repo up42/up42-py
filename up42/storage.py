@@ -90,19 +90,23 @@ class Storage:
             ]
             return assets
 
-    def get_orders(self, return_json: bool = False) -> Union[List[Order], dict]:
+    def get_orders(
+        self, return_json: bool = False, limit: Optional[int] = None
+    ) -> Union[List[Order], dict]:
         """
         Gets all orders in the workspace as Order objects or json.
 
         Args:
             return_json: If set to True, returns json object.
+            limit: Optional, only return n first orders (sorted by date of creation).
+                Optimal to select if your workspace contains many orders, which would
+                slow down the query.
 
         Returns:
             Order objects in the workspace or alternatively json info of the orders.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders"
-        response_json = self.auth._request(request_type="GET", url=url)
-        orders_json = response_json["data"]["orders"]
+        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated"
+        orders_json = self._query_paginated(url, limit=limit)
         logger.info(f"Got {len(orders_json)} orders for workspace {self.workspace_id}.")
 
         if return_json:
