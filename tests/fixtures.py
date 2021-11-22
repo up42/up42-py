@@ -211,7 +211,29 @@ JSON_ORDER = {
     "error": None,
 }
 
-JSON_ORDERS = {"data": {"orders": [JSON_ORDER["data"]]}, "error": None}
+JSON_ORDERS = {
+    "data": {
+        "content": [JSON_ORDER["data"]],
+        "pageable": {
+            "sort": {"sorted": True, "unsorted": False, "empty": False},
+            "pageNumber": 0,
+            "pageSize": 10,
+            "offset": 0,
+            "paged": True,
+            "unpaged": False,
+        },
+        "totalPages": 1,
+        "totalElements": 1,
+        "last": True,
+        "sort": {"sorted": True, "unsorted": False, "empty": False},
+        "numberOfElements": 1,
+        "first": True,
+        "size": 10,
+        "number": 0,
+        "empty": False,
+    },
+    "error": None,
+}
 
 
 @pytest.fixture()
