@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional
 
 from tqdm import tqdm
 
@@ -29,40 +29,57 @@ class Storage:
         env = ", env: dev" if self.auth.env == "dev" else ""
         return f"Storage(workspace_id: {self.workspace_id}{env})"
 
-    def _paginate(self, url: str) -> List[dict]:
+    def _query_paginated(
+        self, url: str, limit: Optional[int] = None, size: int = 50
+    ) -> List[dict]:
         """
         Helper to fetch list of items in paginated endpoint.
 
         Args:
-            url (str): The base paginated endpoint.
+            url (str): The base url for paginated endpoint.
+            limit: Return n first elements sorted by date of creation, optional.
+            size: Default number of results per pagination page. Tradeoff of number
+                of results per page and API response time to query one page. Default 50.
 
         Returns:
             List[dict]: List of all paginated items.
         """
-        first_pagination_response = self.auth._request(request_type="GET", url=url)
-        output = first_pagination_response["data"]["content"]
-        num_pages = first_pagination_response["data"]["totalPages"]
-        total_items = first_pagination_response["data"]["totalElements"]
-        for page in range(1, num_pages):
-            response_json = self.auth._request(
-                request_type="GET", url=url + f"?page={page}"
-            )
-            output += response_json["data"]["content"]
-        assert len(output) == total_items, "Some paginated items are missing!"
-        return output
+        if limit is None:
+            url = url + f"&size={size}"
+        elif limit <= size:
+            url = url + f"&size={limit}"  # Most efficient page size.
 
-    def get_assets(self, return_json: bool = False) -> Union[List[Asset], dict]:
+        first_page_response = self.auth._request(request_type="GET", url=url)
+        num_pages = first_page_response["data"]["totalPages"]
+        results_list = first_page_response["data"]["content"]
+
+        if num_pages > 1:
+            for page in range(1, num_pages):
+                response_json = self.auth._request(
+                    request_type="GET", url=url + f"?page={page}"
+                )
+                results_list += response_json["data"]["content"]
+
+        results_list = results_list[:limit]
+        return results_list
+
+    def get_assets(
+        self, return_json: bool = False, limit: Optional[int] = None
+    ) -> Union[List[Asset], dict]:
         """
         Gets all assets in the workspace as Asset objects or json.
 
         Args:
             return_json: If set to True, returns json object.
+            limit: Optional, only return n first assets (sorted by date of creation).
+                Optimal to select if your workspace contains many assets, which would
+                slow down the query.
 
         Returns:
             Asset objects in the workspace or alternatively json info of the assets.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets"
-        assets_json = self._paginate(url)
+        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets?format=paginated"
+        assets_json = self._query_paginated(url, limit=limit)
         logger.info(f"Got {len(assets_json)} assets for workspace {self.workspace_id}.")
 
         if return_json:
