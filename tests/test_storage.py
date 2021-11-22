@@ -19,9 +19,7 @@ def test_init(storage_mock):
 
 
 def test_paginate(storage_mock, requests_mock):
-    url = "http://some_url/assets"
-
-    def paginated_response(page):
+    def _paginated_response(page):
         return {
             "data": {
                 "content": [{"something": "is"}, {"something": "is_not"}],
@@ -31,10 +29,12 @@ def test_paginate(storage_mock, requests_mock):
             },
         }
 
-    requests_mock.get(
-        "/assets", [{"json": paginated_response(page)} for page in range(0, 3)]
-    )
-    res = storage_mock._paginate(url)
+    list_mock_responses = [{"json": _paginated_response(page)} for page in range(0, 3)]
+
+    size = 50
+    url = "http://some_url/assets"
+    requests_mock.get(url + f"&size={size}", list_mock_responses)
+    res = storage_mock._query_paginated(url=url, limit=None, size=size)
     assert len(res) == 6
 
 
