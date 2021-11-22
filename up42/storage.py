@@ -33,7 +33,7 @@ class Storage:
         self, url: str, limit: Optional[int] = None, size: int = 50
     ) -> List[dict]:
         """
-        Helper to fetch list of items in paginated endpoint.
+        Helper to fetch list of items in paginated endpoint, e.g. assets, orders.
 
         Args:
             url (str): The base url for paginated endpoint.
@@ -79,7 +79,7 @@ class Storage:
             Asset objects in the workspace or alternatively json info of the assets.
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets?format=paginated"
-        assets_json = self._query_paginated(url, limit=limit)
+        assets_json = self._query_paginated(url=url, limit=limit)
         logger.info(f"Got {len(assets_json)} assets for workspace {self.workspace_id}.")
 
         if return_json:
@@ -106,11 +106,11 @@ class Storage:
             Order objects in the workspace or alternatively json info of the orders.
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated"
-        orders_json = self._query_paginated(url, limit=limit)
+        orders_json = self._query_paginated(url=url, limit=limit)
         logger.info(f"Got {len(orders_json)} orders for workspace {self.workspace_id}.")
 
         if return_json:
-            return orders_json
+            return orders_json  # type: ignore
         else:
             orders = [
                 Order(self.auth, order_id=order["id"]) for order in tqdm(orders_json)
