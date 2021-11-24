@@ -18,24 +18,52 @@ def test_init(storage_mock):
     assert storage_mock.workspace_id == WORKSPACE_ID
 
 
-def test_paginate(storage_mock, requests_mock):
-    url = "http://some_url/assets"
-
-    def paginated_response(page):
+def _mock_list_response_pages(total_pages, total_elements):
+    def _one_page_reponse(page_nr, total_pages, total_elements):
         return {
             "data": {
-                "content": [{"something": "is"}, {"something": "is_not"}],
-                "totalPages": 3,
-                "totalElements": 6,
-                "number": page,
+                "content": [{"something1": 1}, {"something2": 2}, {"something3": 3}],
+                "totalPages": total_pages,
+                "totalElements": total_elements,
+                "number": page_nr,
             },
         }
 
-    requests_mock.get(
-        "/assets", [{"json": paginated_response(page)} for page in range(0, 3)]
-    )
-    res = storage_mock._paginate(url)
-    assert len(res) == 6
+    return [
+        {"json": _one_page_reponse(page_nr, total_pages, total_elements)}
+        for page_nr in range(0, total_pages)
+    ]
+
+
+def test_paginate(storage_mock, requests_mock):
+    url = "http://some_url/assets"
+
+    limit = None
+    size = 3
+    total_pages = 4
+    total_elements = 12
+    expected = 12
+    mock_list_response_pages = _mock_list_response_pages(total_pages, total_elements)
+    requests_mock.get(url + f"&size={size}", mock_list_response_pages)
+    res = storage_mock._query_paginated(url=url, limit=limit, size=size)
+    assert len(res) == expected
+
+
+def test_paginate_with_limit(storage_mock, requests_mock):
+    """
+    Test pagination with smaller limit than pagination size, and smaller limit than available elements.
+    """
+    url = "http://some_url/assets"
+
+    limit = 5
+    size = 50
+    total_pages = 4
+    total_elements = 12
+    expected = 5
+    mock_list_response_pages = _mock_list_response_pages(total_pages, total_elements)
+    requests_mock.get(url + f"&size={limit}", mock_list_response_pages)
+    res = storage_mock._query_paginated(url=url, limit=limit, size=size)
+    assert len(res) == expected
 
 
 def test_get_assets(storage_mock):
