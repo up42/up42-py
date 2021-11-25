@@ -102,21 +102,32 @@ class Storage:
             return assets
 
     def get_orders(
-        self, return_json: bool = False, limit: Optional[int] = None
+        self,
+        return_json: bool = False,
+        limit: Optional[int] = None,
+        sortby: str = "createdAt",
+        descending: bool = True,
     ) -> Union[List[Order], dict]:
         """
         Gets all orders in the workspace as Order objects or json.
 
         Args:
             return_json: If set to True, returns json object.
-            limit: Optional, only return n first orders (sorted by date of creation).
-                Optimal to select if your workspace contains many orders, which would
-                slow down the query.
+            limit: Optional, only return n first assets by sorting criteria and order.
+                Optimal to select if your workspace contains many assets.
+            sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "size".
+            descending: The sorting order, True for descending (default), False for ascending.
 
         Returns:
             Order objects in the workspace or alternatively json info of the orders.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated"
+        allowed_sorting_criteria = ["createdAt", "updatedAt", "status", "dataProvider", "size"]
+        if sortby not in allowed_sorting_criteria:
+            raise ValueError(
+                f"sortby parameter must be one of {allowed_sorting_criteria}!"
+            )
+        sort = f"{sortby},{'desc' if descending else 'asc'}"
+        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}"
         orders_json = self._query_paginated(url=url, limit=limit)
         logger.info(f"Got {len(orders_json)} orders for workspace {self.workspace_id}.")
 
