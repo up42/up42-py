@@ -1,5 +1,3 @@
-from dateutil.parser import parse
-
 import pytest
 
 # pylint: disable=unused-import
