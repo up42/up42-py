@@ -1,3 +1,5 @@
+from dateutil.parser import parse
+
 import pytest
 
 # pylint: disable=unused-import
@@ -77,6 +79,10 @@ def test_get_assets(storage_mock):
 def test_get_assets_live(storage_live):
     assets = storage_live.get_assets()
     assert len(assets) >= 2
+    dates = [asset.info["createdAt"] for asset in assets]
+    # default descending, newest to oldest.
+    descending_dates = sorted(dates)[::-1]
+    assert descending_dates == dates
 
 
 def test_get_orders(storage_mock):
@@ -90,3 +96,7 @@ def test_get_orders(storage_mock):
 def test_get_orders_live(storage_live):
     orders = storage_live.get_orders()
     assert len(orders) >= 1
+    dates = [order.info["createdAt"] for order in orders]
+    # default descending, newest to oldest.
+    descending_dates = sorted(dates)[::-1]
+    assert descending_dates == dates
