@@ -750,6 +750,7 @@ def jobtask_mock(auth_mock, requests_mock):
         json={
             "data": [
                 {
+                    "id": JOBTASK_ID,
                     "xyz": 789,
                     "name": JOBTASK_NAME,
                     "status": "SUCCESSFULL",
