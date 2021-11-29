@@ -53,17 +53,16 @@ class Workflow:
         self._info = self.info
 
     def __repr__(self):
-        info = self.info
         return (
-            f"Workflow(name: {info['name']}, workflow_id: {self.workflow_id}, "
-            f"description: {info['description']}, createdAt: {info['createdAt']}, "
-            f"project_id: {self.project_id}, workflow_tasks: {self.workflow_tasks}"
+            f"Workflow(name: {self._info['name']}, workflow_id: {self.workflow_id}, "
+            f"description: {self._info['description']}, createdAt: {self._info['createdAt']}, "
+            f"project_id: {self.project_id}, workflow_tasks: {self._info['workflow_tasks']}"
         )
 
     @property
     def info(self) -> dict:
         """
-        Gets the workflow metadata information.
+        Gets or updates the workflow metadata information.
         """
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
@@ -71,7 +70,8 @@ class Workflow:
         )
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
-        return response_json["data"]
+        self._info["workflow_tasks"] = self.workflow_tasks
+        return self._info
 
     @property
     def workflow_tasks(self) -> Dict[str, str]:
