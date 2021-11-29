@@ -44,11 +44,11 @@ class Asset:
     @property
     def info(self) -> dict:
         """
-        Gets or updates the asset metadata information.
+        Gets and updates the asset metadata information.
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets/{self.asset_id}"
         response_json = self.auth._request(request_type="GET", url=url)
-        self._info = response_json
+        self._info = response_json["data"]
         return self._info
 
     @property
