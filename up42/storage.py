@@ -83,7 +83,14 @@ class Storage:
         Returns:
             Asset objects in the workspace or alternatively json info of the assets.
         """
-        allowed_sorting_criteria = ["createdAt", "updatedAt", "source", "type", "name", "size"]
+        allowed_sorting_criteria = [
+            "createdAt",
+            "updatedAt",
+            "source",
+            "type",
+            "name",
+            "size",
+        ]
         if sortby not in allowed_sorting_criteria:
             raise ValueError(
                 f"sortby parameter must be one of {allowed_sorting_criteria}!"
@@ -121,7 +128,13 @@ class Storage:
         Returns:
             Order objects in the workspace or alternatively json info of the orders.
         """
-        allowed_sorting_criteria = ["createdAt", "updatedAt", "status", "dataProvider", "size"]
+        allowed_sorting_criteria = [
+            "createdAt",
+            "updatedAt",
+            "status",
+            "dataProvider",
+            "size",
+        ]
         if sortby not in allowed_sorting_criteria:
             raise ValueError(
                 f"sortby parameter must be one of {allowed_sorting_criteria}!"
