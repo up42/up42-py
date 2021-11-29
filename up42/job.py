@@ -52,23 +52,22 @@ class Job(VizTools):
         self._info = self.info
 
     def __repr__(self):
-        info = self.info
         return (
-            f"Job(name: {info['name']}, job_id: {self.job_id}, mode: {info['mode']}, "
-            f"status: {info['status']}, startedAt: {info['startedAt']}, "
-            f"finishedAt: {info['finishedAt']}, workflow_name: {info['workflowName']}, "
-            f"input_parameters: {info['inputs']}"
+            f"Job(name: {self._info['name']}, job_id: {self.job_id}, mode: {self._info['mode']}, "
+            f"status: {self._info['status']}, startedAt: {self._info['startedAt']}, "
+            f"finishedAt: {self._info['finishedAt']}, workflow_name: {self._info['workflowName']}, "
+            f"input_parameters: {self._info['inputs']}"
         )
 
     @property
     def info(self) -> dict:
         """
-        Gets the job metadata information.
+        Gets or updates the job metadata information.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
-        return response_json["data"]
+        return self._info
 
     @property
     def status(self) -> str:
@@ -297,7 +296,7 @@ class Job(VizTools):
         self, return_json: bool = False
     ) -> Union[List["JobTask"], List[dict]]:
         """
-        Get the individual items of the job as JobTask objects or json.
+        Get the individual items of the job as a list of JobTask objects or json.
 
         Args:
             return_json: If True returns the json information of the job tasks.
