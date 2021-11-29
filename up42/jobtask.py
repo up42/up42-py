@@ -40,12 +40,11 @@ class JobTask(VizTools):
         self._info = self.info
 
     def __repr__(self):
-        info = self.info
         return (
-            f"JobTask(name: {info['name']}, jobtask_id: {self.jobtask_id}, "
-            f"status: {info['status']}, startedAt: {info['startedAt']}, "
-            f"finishedAt: {info['finishedAt']}, job_name: {info['name']}, "
-            f"block_name: {info['block']['name']}, block_version: {info['blockVersion']}"
+            f"JobTask(name: {self.info['name']}, jobtask_id: {self.jobtask_id}, "
+            f"status: {self.info['status']}, startedAt: {self.info['startedAt']}, "
+            f"finishedAt: {self.info['finishedAt']}, job_name: {self.info['name']}, "
+            f"block_name: {self.info['block']['name']}, block_version: {self.info['blockVersion']}"
         )
 
     @property
