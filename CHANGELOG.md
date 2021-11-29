@@ -16,6 +16,8 @@ pip show up42-py
 
 ## Versions
 ### [0.18.0](https://pypi.org/project/up42-py/) (2021-11-10)
+- Refactor `storage.get_orders` and `storage.get_assets` to use results pagination, add 
+  results limit, sorting criteria and sorting order parameters.
 - Speed improvements to `workflow.create_workflow` when used with `existing=True`.
 - Removes handling of multiple features as input geometry in `.construct_parameters`. 
   Instead, using multiple features or a MultiPolygon will now raise an error. 
