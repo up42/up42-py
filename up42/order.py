@@ -39,7 +39,7 @@ class Order:
     @property
     def info(self) -> dict:
         """
-        Gets or updates the order information.
+        Gets and updates the order information.
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders/{self.order_id}"
         response_json = self.auth._request(request_type="GET", url=url)

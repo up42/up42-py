@@ -50,7 +50,7 @@ class JobTask(VizTools):
     @property
     def info(self) -> dict:
         """
-        Gets or updates the jobtask metadata information.
+        Gets and updates the jobtask metadata information.
         """
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"

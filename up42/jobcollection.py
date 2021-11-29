@@ -51,7 +51,7 @@ class JobCollection(VizTools):
     @property
     def info(self) -> Dict[str, dict]:
         """
-        Gets or updates the metadata information for each job in the jobcollection,
+        Gets and updates the metadata information for each job in the jobcollection,
             dictionary of job_id : job_information.
         """
         return self.apply(lambda job: job.info, only_succeeded=False)

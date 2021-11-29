@@ -44,7 +44,7 @@ class Project:
     @property
     def info(self) -> dict:
         """
-        Gets or updates the project metadata information.
+        Gets and updates the project metadata information.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}"
         response_json = self.auth._request(request_type="GET", url=url)

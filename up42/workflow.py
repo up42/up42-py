@@ -62,7 +62,7 @@ class Workflow:
     @property
     def info(self) -> dict:
         """
-        Gets or updates the workflow metadata information.
+        Gets and updates the workflow metadata information.
         """
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"

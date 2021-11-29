@@ -62,7 +62,7 @@ class Job(VizTools):
     @property
     def info(self) -> dict:
         """
-        Gets or updates the job metadata information.
+        Gets and updates the job metadata information.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
         response_json = self.auth._request(request_type="GET", url=url)
