@@ -38,10 +38,7 @@ class Job(VizTools):
     """
 
     def __init__(
-        self,
-        auth: Auth,
-        project_id: str,
-        job_id: str,
+        self, auth: Auth, project_id: str, job_id: str, job_info: Optional[dict] = None
     ):
 
         self.auth = auth
@@ -49,7 +46,10 @@ class Job(VizTools):
         self.job_id = job_id
         self.quicklooks = None
         self.results = None
-        self._info = self.info
+        if job_info is not None:
+            self._info = job_info
+        else:
+            self._info = self.info
 
     def __repr__(self):
         return (

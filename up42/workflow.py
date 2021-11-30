@@ -46,11 +46,20 @@ class Workflow:
     ```
     """
 
-    def __init__(self, auth: Auth, project_id: str, workflow_id: str):
+    def __init__(
+        self,
+        auth: Auth,
+        project_id: str,
+        workflow_id: str,
+        workflow_info: Optional[dict] = None,
+    ):
         self.auth = auth
         self.project_id = project_id
         self.workflow_id = workflow_id
-        self._info = self.info
+        if workflow_info is not None:
+            self._info = workflow_info
+        else:
+            self._info = self.info
 
     def __repr__(self):
         return (
