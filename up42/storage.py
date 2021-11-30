@@ -45,7 +45,9 @@ class Storage:
         if limit is None:
             url = url + f"&size={size}"
         elif limit <= size:
-            url = url + f"&size={limit}"  # Most efficient page size.
+            url = url + f"&size={limit}"  # Most efficient page size for small query.
+        else:
+            url = url + f"&size={size}"
 
         first_page_response = self.auth._request(request_type="GET", url=url)
         num_pages = first_page_response["data"]["totalPages"]
