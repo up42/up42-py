@@ -4,7 +4,6 @@ import copy
 from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Union, Tuple, Optional
-import warnings
 from datetime import datetime
 
 from geopandas import GeoDataFrame
