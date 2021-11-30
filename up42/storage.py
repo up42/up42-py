@@ -86,7 +86,8 @@ class Storage:
             return assets_json  # type: ignore
         else:
             assets = [
-                Asset(self.auth, asset_id=asset["id"]) for asset in tqdm(assets_json)
+                Asset(self.auth, asset_id=asset_json["id"], asset_info=asset_json)
+                for asset_json in tqdm(assets_json)
             ]
             return assets
 
