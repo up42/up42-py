@@ -22,29 +22,38 @@ class Order:
     ```
     """
 
-    def __init__(self, auth: Auth, order_id: str, payload: Optional[dict] = None):
+    def __init__(
+        self,
+        auth: Auth,
+        order_id: str,
+        payload: Optional[dict] = None,  # dict keys dataProviderName, orderParams
+        order_info: Optional[dict] = None,
+    ):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.order_id = order_id
         self.payload = payload
-        self._info = self.info
+        if order_info is not None:
+            self._info = order_info
+        else:
+            self._info = self.info
 
     def __repr__(self):
-        info = self.info
         return (
-            f"Order(order_id: {self.order_id}, assets: {info['assets']}, dataProvider: {info['dataProvider']}, "
-            f"status: {info['status']}, createdAt: {info['createdAt']}, updatedAt: {info['updatedAt']})"
+            f"Order(order_id: {self.order_id}, assets: {self._info['assets']}, "
+            f"dataProvider: {self._info['dataProvider']}, status: {self._info['status']}, "
+            f"createdAt: {self._info['createdAt']}, updatedAt: {self._info['updatedAt']})"
         )
 
     @property
     def info(self) -> dict:
         """
-        Gets the Order information.
+        Gets and updates the order information.
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders/{self.order_id}"
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
-        return response_json["data"]
+        return self._info
 
     @property
     def status(self) -> str:

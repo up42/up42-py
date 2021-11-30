@@ -38,10 +38,7 @@ class Job(VizTools):
     """
 
     def __init__(
-        self,
-        auth: Auth,
-        project_id: str,
-        job_id: str,
+        self, auth: Auth, project_id: str, job_id: str, job_info: Optional[dict] = None
     ):
 
         self.auth = auth
@@ -49,26 +46,28 @@ class Job(VizTools):
         self.job_id = job_id
         self.quicklooks = None
         self.results = None
-        self._info = self.info
+        if job_info is not None:
+            self._info = job_info
+        else:
+            self._info = self.info
 
     def __repr__(self):
-        info = self.info
         return (
-            f"Job(name: {info['name']}, job_id: {self.job_id}, mode: {info['mode']}, "
-            f"status: {info['status']}, startedAt: {info['startedAt']}, "
-            f"finishedAt: {info['finishedAt']}, workflow_name: {info['workflowName']}, "
-            f"input_parameters: {info['inputs']}"
+            f"Job(name: {self._info['name']}, job_id: {self.job_id}, mode: {self._info['mode']}, "
+            f"status: {self._info['status']}, startedAt: {self._info['startedAt']}, "
+            f"finishedAt: {self._info['finishedAt']}, workflow_name: {self._info['workflowName']}, "
+            f"input_parameters: {self._info['inputs']}"
         )
 
     @property
     def info(self) -> dict:
         """
-        Gets the job metadata information.
+        Gets and updates the job metadata information.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
-        return response_json["data"]
+        return self._info
 
     @property
     def status(self) -> str:
@@ -297,7 +296,7 @@ class Job(VizTools):
         self, return_json: bool = False
     ) -> Union[List["JobTask"], List[dict]]:
         """
-        Get the individual items of the job as JobTask objects or json.
+        Get the individual items of the job as a list of JobTask objects or json.
 
         Args:
             return_json: If True returns the json information of the job tasks.
