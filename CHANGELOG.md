@@ -22,8 +22,8 @@ pip show up42-py
 - Significant speed improvement for:
     -`.get_jobs`, `.get_workflows`, `.get_assets`, `.get_orders` calls.
     - `workflow.create_workflow` when used with `existing=True`.
-    - Printing objects representations, which now does not trigger object info API calls.
-- Removal: Removes handling of multiple features as input geometry in `.construct_parameters`. 
+    - Printing objects representations, which now does not trigger additional object info API calls.
+- Removal: Removes deprecated handling of multiple features as input geometry in `.construct_parameters`
   Instead, using multiple features or a MultiPolygon will now raise an error. 
   This aligns the Python SDK with the regular UP42 platform behaviour.
 - Removal: Remove the Python SDK Command Line Interface.
