@@ -328,14 +328,14 @@ def fc_to_query_geometry(
         raise ValueError("Geometry argument only supports Feature Collections!") from e
 
     geometry_error = "The provided geometry {}, UP42 only accepts single geometries."
-    if len(fc["features"]) == 1:
-        feature = fc["features"][0]
-        if feature["type"] == "MultiPolygon":
-            logger.info(geometry_error.format("is a MultiPolygon"))
-            raise ValueError(geometry_error.format("is a MultiPolygon"))
-    else:
+    if len(fc["features"]) != 1:
         logger.info(geometry_error.format("contains multiple geometries"))
         raise ValueError(geometry_error.format("contains multiple geometries"))
+
+    feature = fc["features"][0]
+    if feature["geometry"]["type"] == "MultiPolygon":
+        logger.info(geometry_error.format("is a MultiPolygon"))
+        raise ValueError(geometry_error.format("is a MultiPolygon"))
 
     if geometry_operation == "bbox":
         try:
