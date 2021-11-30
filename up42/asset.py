@@ -1,6 +1,5 @@
 from pathlib import Path
-
-from typing import List, Union
+from typing import List, Union, Optional
 
 from up42.auth import Auth
 from up42.utils import (
@@ -23,16 +22,15 @@ class Asset:
     ```
     """
 
-    def __init__(
-        self,
-        auth: Auth,
-        asset_id: str,
-    ):
+    def __init__(self, auth: Auth, asset_id: str, asset_info: Optional[dict] = None):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.asset_id = asset_id
         self.results: Union[List[str], None] = None
-        self._info = self.info
+        if asset_info is not None:
+            self._info = asset_info
+        else:
+            self._info = self.info
 
     def __repr__(self):
         return (

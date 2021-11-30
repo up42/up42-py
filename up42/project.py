@@ -1,8 +1,6 @@
 import logging
 from typing import Dict, List, Union, Optional
 
-from tqdm import tqdm
-
 from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection
@@ -121,8 +119,13 @@ class Project:
             return workflows_json
         else:
             workflows = [
-                Workflow(self.auth, project_id=self.project_id, workflow_id=work["id"])
-                for work in tqdm(workflows_json)
+                Workflow(
+                    self.auth,
+                    project_id=self.project_id,
+                    workflow_id=workflow_json["id"],
+                    workflow_info=workflow_json,
+                )
+                for workflow_json in workflows_json
             ]
             return workflows
 
@@ -151,8 +154,13 @@ class Project:
             return jobs_json
         else:
             jobs = [
-                Job(self.auth, job_id=job["id"], project_id=self.project_id)
-                for job in tqdm(jobs_json)
+                Job(
+                    self.auth,
+                    job_id=job_json["id"],
+                    project_id=self.project_id,
+                    job_info=job_json,
+                )
+                for job_json in jobs_json
             ]
             jobcollection = JobCollection(
                 auth=self.auth, project_id=self.project_id, jobs=jobs

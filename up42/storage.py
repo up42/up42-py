@@ -1,7 +1,5 @@
 from typing import List, Union, Optional
 
-from tqdm import tqdm
-
 from up42.auth import Auth
 from up42.order import Order
 from up42.asset import Asset
@@ -104,7 +102,8 @@ class Storage:
             return assets_json  # type: ignore
         else:
             assets = [
-                Asset(self.auth, asset_id=asset["id"]) for asset in tqdm(assets_json)
+                Asset(self.auth, asset_id=asset_json["id"], asset_info=asset_json)
+                for asset_json in assets_json
             ]
             return assets
 
@@ -148,6 +147,7 @@ class Storage:
             return orders_json  # type: ignore
         else:
             orders = [
-                Order(self.auth, order_id=order["id"]) for order in tqdm(orders_json)
+                Order(self.auth, order_id=order_json["id"], order_info=order_json)
+                for order_json in orders_json
             ]
             return orders
