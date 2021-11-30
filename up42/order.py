@@ -26,15 +26,14 @@ class Order:
         self,
         auth: Auth,
         order_id: str,
+        payload: Optional[dict] = None,  # dict keys dataProviderName, orderParams
         order_info: Optional[dict] = None,
-        payload: Optional[dict] = None,
     ):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.order_id = order_id
         self.payload = payload
         if order_info is not None:
-            # TODO: Same as payload?
             self._info = order_info
         else:
             self._info = self.info
