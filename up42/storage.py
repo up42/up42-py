@@ -113,8 +113,8 @@ class Storage:
         if return_json:
             return orders_json  # type: ignore
         else:
-            # TODO
             orders = [
-                Order(self.auth, order_id=order["id"]) for order in tqdm(orders_json)
+                Order(self.auth, order_id=order_json["id"], order_info=order_json)
+                for order_json in orders_json
             ]
             return orders
