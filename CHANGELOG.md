@@ -15,14 +15,19 @@ pip show up42-py
 ```
 
 ## Versions
-### [0.18.0](https://pypi.org/project/up42-py/) (2021-11-10)
-- Refactor `storage.get_orders` and `storage.get_assets` to use results pagination, add 
-  results limit, sorting criteria and sorting order parameters.
-- Speed improvements to `workflow.create_workflow` when used with `existing=True`.
-- Removes handling of multiple features as input geometry in `.construct_parameters`. 
+### [0.18.0](https://pypi.org/project/up42-py/) (2021-11-10)`
+- Add sorting criteria, sorting order and results limit parameters to `storage.get_orders` 
+  and `storage.get_assets`. Now also uses results pagination which avoids timeout issues 
+  when querying large asset/order collections.
+- Significant speed improvement for:
+    -`.get_jobs`, .`get_workflows`, .`get_assets`, `.get_orders` calls.
+    - `workflow.create_workflow` when used with `existing=True`.
+    - Printing objects representations, which now does not trigger object info API calls.
+- Removal: Removes handling of multiple features as input geometry in `.construct_parameters`. 
   Instead, using multiple features or a MultiPolygon will now raise an error. 
   This aligns the Python SDK with the regular UP42 platform behaviour.
-- Remove the Python SDK Command Line Interface.
+- Removal: Remove the Python SDK Command Line Interface.
+- Fix: JobTask.info and the printout now uses the correct jobtask information.
   
 
 ## Versions
