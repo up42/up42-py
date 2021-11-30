@@ -246,6 +246,19 @@ def test_fc_to_query_geometry_multiple_raises():
     )
 
 
+def test_fc_to_query_geometry_multipolygon_raises():
+    fp = Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
+    with open(fp) as json_file:
+        fc = json.load(json_file)
+
+    with pytest.raises(ValueError) as e:
+        fc_to_query_geometry(fc=fc, geometry_operation="intersects")
+    assert (
+        str(e.value)
+        == "The provided geometry is a MultiPolygon, UP42 only accepts single geometries."
+    )
+
+
 def test_fc_to_query_geometry_raises_with_not_accepted():
     ring = LinearRing([(0, 0), (1, 1), (1, 0)])
     with pytest.raises(ValueError):
