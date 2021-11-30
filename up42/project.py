@@ -34,23 +34,22 @@ class Project:
         self._info = self.info
 
     def __repr__(self):
-        info = self.info
         env = ", env: dev" if self.auth.env == "dev" else ""
         return (
-            f"Project(name: {info['name']}, project_id: {self.project_id}, "
-            f"description: {info['description']}, createdAt: {info['createdAt']}"
+            f"Project(name: {self._info['name']}, project_id: {self.project_id}, "
+            f"description: {self._info['description']}, createdAt: {self._info['createdAt']}"
             f"{env})"
         )
 
     @property
     def info(self) -> dict:
         """
-        Gets the project metadata information.
+        Gets and updates the project metadata information.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}"
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
-        return response_json["data"]
+        return self._info
 
     def create_workflow(
         self, name: str, description: str = "", use_existing: bool = False
