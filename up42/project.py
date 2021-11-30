@@ -127,7 +127,7 @@ class Project:
                     workflow_id=workflow_json["id"],
                     workflow_info=workflow_json,
                 )
-                for workflow_json in tqdm(workflows_json)
+                for workflow_json in workflows_json
             ]
             return workflows
 
@@ -162,7 +162,7 @@ class Project:
                     project_id=self.project_id,
                     job_info=job_json,
                 )
-                for job_json in tqdm(jobs_json)
+                for job_json in jobs_json
             ]
             jobcollection = JobCollection(
                 auth=self.auth, project_id=self.project_id, jobs=jobs

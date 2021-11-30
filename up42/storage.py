@@ -87,7 +87,7 @@ class Storage:
         else:
             assets = [
                 Asset(self.auth, asset_id=asset_json["id"], asset_info=asset_json)
-                for asset_json in tqdm(assets_json)
+                for asset_json in assets_json
             ]
             return assets
 
@@ -113,6 +113,7 @@ class Storage:
         if return_json:
             return orders_json  # type: ignore
         else:
+            # TODO
             orders = [
                 Order(self.auth, order_id=order["id"]) for order in tqdm(orders_json)
             ]
