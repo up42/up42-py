@@ -20,7 +20,7 @@ pip show up42-py
   and `storage.get_assets`. Now also uses results pagination which avoids timeout issues 
   when querying large asset/order collections.
 - Significant speed improvement for:
-    -`.get_jobs`, .`get_workflows`, .`get_assets`, `.get_orders` calls.
+    -`.get_jobs`, `.get_workflows`, `.get_assets`, `.get_orders` calls.
     - `workflow.create_workflow` when used with `existing=True`.
     - Printing objects representations, which now does not trigger object info API calls.
 - Removal: Removes handling of multiple features as input geometry in `.construct_parameters`. 
