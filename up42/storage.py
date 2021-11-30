@@ -54,7 +54,7 @@ class Storage:
         if num_pages > 1:
             for page in range(1, num_pages):
                 response_json = self.auth._request(
-                    request_type="GET", url=url + f"?page={page}"
+                    request_type="GET", url=url + f"&page={page}"
                 )
                 results_list += response_json["data"]["content"]
 
