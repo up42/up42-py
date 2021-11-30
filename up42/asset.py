@@ -1,6 +1,5 @@
 from pathlib import Path
-
-from typing import List, Union
+from typing import List, Union, Optional
 
 from up42.auth import Auth
 from up42.utils import (
@@ -23,32 +22,32 @@ class Asset:
     ```
     """
 
-    def __init__(
-        self,
-        auth: Auth,
-        asset_id: str,
-    ):
+    def __init__(self, auth: Auth, asset_id: str, asset_info: Optional[dict] = None):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.asset_id = asset_id
         self.results: Union[List[str], None] = None
+        if asset_info is not None:
+            self._info = asset_info
+        else:
+            self._info = self.info
 
     def __repr__(self):
-        info = self.info
         return (
-            f"Asset(name: {info['name']}, asset_id: {self.asset_id}, type: {info['type']}, "
-            f"source: {info['source']}, createdAt: {info['createdAt']}, "
-            f"size: {info['size']})"
+            f"Asset(name: {self._info['name']}, asset_id: {self.asset_id}, type: {self._info['type']}, "
+            f"source: {self._info['source']}, createdAt: {self._info['createdAt']}, "
+            f"size: {self._info['size']})"
         )
 
     @property
     def info(self) -> dict:
         """
-        Gets the asset metadata information.
+        Gets and updates the asset metadata information.
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets/{self.asset_id}"
         response_json = self.auth._request(request_type="GET", url=url)
-        return response_json["data"]
+        self._info = response_json["data"]
+        return self._info
 
     @property
     def source(self) -> dict:

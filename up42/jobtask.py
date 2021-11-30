@@ -40,18 +40,17 @@ class JobTask(VizTools):
         self._info = self.info
 
     def __repr__(self):
-        info = self.info
         return (
-            f"JobTask(name: {info['name']}, jobtask_id: {self.jobtask_id}, "
-            f"status: {info['status']}, startedAt: {info['startedAt']}, "
-            f"finishedAt: {info['finishedAt']}, job_name: {info['name']}, "
-            f"block_name: {info['block']['name']}, block_version: {info['blockVersion']}"
+            f"JobTask(name: {self._info['name']}, jobtask_id: {self.jobtask_id}, "
+            f"status: {self._info['status']}, startedAt: {self._info['startedAt']}, "
+            f"finishedAt: {self._info['finishedAt']}, job_name: {self._info['name']}, "
+            f"block_name: {self._info['block']['name']}, block_version: {self._info['blockVersion']}"
         )
 
     @property
     def info(self) -> dict:
         """
-        Gets or updates the jobtask metadata information.
+        Gets and updates the jobtask metadata information.
         """
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"

@@ -859,7 +859,7 @@ def asset_mock(auth_mock, requests_mock):
     )
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
 
-    # url
+    # download url
     requests_mock.get(
         url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets/{ASSET_ID}/downloadUrl",
         json={"data": {"url": DOWNLOAD_URL}},

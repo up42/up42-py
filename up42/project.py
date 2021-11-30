@@ -1,8 +1,6 @@
 import logging
 from typing import Dict, List, Union, Optional
 
-from tqdm import tqdm
-
 from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection
@@ -34,23 +32,22 @@ class Project:
         self._info = self.info
 
     def __repr__(self):
-        info = self.info
         env = ", env: dev" if self.auth.env == "dev" else ""
         return (
-            f"Project(name: {info['name']}, project_id: {self.project_id}, "
-            f"description: {info['description']}, createdAt: {info['createdAt']}"
+            f"Project(name: {self._info['name']}, project_id: {self.project_id}, "
+            f"description: {self._info['description']}, createdAt: {self._info['createdAt']}"
             f"{env})"
         )
 
     @property
     def info(self) -> dict:
         """
-        Gets the project metadata information.
+        Gets and updates the project metadata information.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}"
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
-        return response_json["data"]
+        return self._info
 
     def create_workflow(
         self, name: str, description: str = "", use_existing: bool = False
@@ -122,8 +119,13 @@ class Project:
             return workflows_json
         else:
             workflows = [
-                Workflow(self.auth, project_id=self.project_id, workflow_id=work["id"])
-                for work in tqdm(workflows_json)
+                Workflow(
+                    self.auth,
+                    project_id=self.project_id,
+                    workflow_id=workflow_json["id"],
+                    workflow_info=workflow_json,
+                )
+                for workflow_json in workflows_json
             ]
             return workflows
 
@@ -152,8 +154,13 @@ class Project:
             return jobs_json
         else:
             jobs = [
-                Job(self.auth, job_id=job["id"], project_id=self.project_id)
-                for job in tqdm(jobs_json)
+                Job(
+                    self.auth,
+                    job_id=job_json["id"],
+                    project_id=self.project_id,
+                    job_info=job_json,
+                )
+                for job_json in jobs_json
             ]
             jobcollection = JobCollection(
                 auth=self.auth, project_id=self.project_id, jobs=jobs
