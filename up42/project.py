@@ -1,8 +1,6 @@
 import logging
 from typing import Dict, List, Union, Optional
 
-from tqdm import tqdm
-
 from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection

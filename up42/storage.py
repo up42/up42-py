@@ -1,7 +1,5 @@
 from typing import List, Union, Optional
 
-from tqdm import tqdm
-
 from up42.auth import Auth
 from up42.order import Order
 from up42.asset import Asset
