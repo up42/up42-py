@@ -142,9 +142,57 @@ def test_get_orders(storage_mock):
 
 @pytest.mark.live
 def test_get_orders_live(storage_live):
+    """
+    SDK test account holds too few results to query multiple pages via pagination,
+    needs to be mocked.
+    """
     orders = storage_live.get_orders()
     assert len(orders) >= 1
     dates = [order.info["createdAt"] for order in orders]
     # default descending, newest to oldest.
     descending_dates = sorted(dates)[::-1]
     assert descending_dates == dates
+
+
+def test_get_orders_raises_with_illegal_sorting_criteria(storage_mock):
+    with pytest.raises(ValueError):
+        storage_mock.get_orders(sortby="notavailable")
+
+
+def test_get_orders_pagination(auth_mock, requests_mock):
+    """
+    Mock result holds 2 pages, each with 50 results.
+    """
+    json_orders_paginated = {
+        "data": {
+            "content": [JSON_ORDER["data"]] * 50,
+            "pageable": {
+                "sort": {"sorted": True, "unsorted": False, "empty": False},
+                "pageNumber": 0,
+                "pageSize": 50,
+                "offset": 0,
+                "paged": True,
+                "unpaged": False,
+            },
+            "totalPages": 2,
+            "totalElements": 100,
+            "last": True,
+            "sort": {"sorted": True, "unsorted": False, "empty": False},
+            "numberOfElements": 100,
+            "first": True,
+            "size": 50,
+            "number": 0,
+            "empty": False,
+        },
+        "error": None,
+    }
+
+    # assets pages
+    url_storage_orders_paginated = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders?format=paginated&sort=createdAt,asc&size=50"
+    requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)
+
+    storage = Storage(auth=auth_mock)
+    orders = storage.get_orders(limit=74, sortby="createdAt", descending=False)
+    assert len(orders) == 74
+    assert isinstance(orders[0], Order)
+    assert orders[0].order_id == ORDER_ID
