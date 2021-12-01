@@ -80,7 +80,8 @@ class Storage:
             return_json: If set to True, returns json object.
             limit: Optional, only return n first assets by sorting criteria and order.
                 Optimal to select if your workspace contains many assets.
-            sortby: The sorting criteria, one of "createdAt", "updatedAt", "source", "type", "name", "size".
+            sortby: The sorting criteria, one of "createdAt", "updatedAt", "source", "type",
+                "name", "size".
             descending: The sorting order, True for descending (default), False for ascending.
 
         Returns:
@@ -92,7 +93,7 @@ class Storage:
             "source",
             "type",
             "name",
-            "size",
+            "size"
         ]
         if sortby not in allowed_sorting_criteria:
             raise ValueError(
@@ -126,7 +127,7 @@ class Storage:
             return_json: If set to True, returns json object.
             limit: Optional, only return n first assets by sorting criteria and order.
                 Optimal to select if your workspace contains many assets.
-            sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "size".
+            sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider".
             descending: The sorting order, True for descending (default), False for ascending.
 
         Returns:
@@ -135,9 +136,9 @@ class Storage:
         allowed_sorting_criteria = [
             "createdAt",
             "updatedAt",
+            "type",
             "status",
-            "dataProvider",
-            "size",
+            "dataProvider"
         ]
         if sortby not in allowed_sorting_criteria:
             raise ValueError(
