@@ -59,6 +59,14 @@ class Storage:
                     request_type="GET", url=url + f"&page={page}"
                 )
                 results_list += response_json["data"]["content"]
+        if limit is None:
+            # Also covers single page (without limit)
+            num_pages_to_query = num_pages
+        elif limit <= size:
+            return results_list[:limit]
+        else:
+            # Also covers single page (with limit)
+            num_pages_to_query = math.ceil(min(limit, num_elements) / size)
 
         results_list = results_list[:limit]
         return results_list
