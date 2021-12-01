@@ -93,7 +93,7 @@ class Storage:
             "source",
             "type",
             "name",
-            "size"
+            "size",
         ]
         if sortby not in allowed_sorting_criteria:
             raise ValueError(
@@ -138,7 +138,7 @@ class Storage:
             "updatedAt",
             "type",
             "status",
-            "dataProvider"
+            "dataProvider",
         ]
         if sortby not in allowed_sorting_criteria:
             raise ValueError(
