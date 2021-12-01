@@ -16,14 +16,14 @@ storage = up42.initialize_storage()
 Get a list of all order or asset objects in your user storage:
 
 ```python
-orders = storage.get_orders()
+orders = storage.get_orders(limit=100, sortby="createdAt")
 ```
 
 ```python
-assets = storage.get_assets()
+assets = storage.get_assets(limit=100, sortby="size", descending=False)
 ```
 
-Or access a specific order or asset via `up42.initialize_order(order_id="123")` or `up42.initialize_asset(asset_id="123")`   
+Or access a specific order or asset via `up42.initialize_order(order_id="123")` or`up42.initialize_asset(asset_id="123")`   
 
 ## Download assets
 
