@@ -20,10 +20,10 @@ def test_init(storage_mock):
     assert storage_mock.workspace_id == WORKSPACE_ID
 
 
-def _mock_one_page_reponse(page_nr, total_pages, total_elements):
+def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
     return {
         "data": {
-            "content": [{"something1": 1}, {"something2": 2}, {"something3": 3}],
+            "content": [{"something1": 1}] * size,
             "totalPages": total_pages,
             "totalElements": total_elements,
             "number": page_nr,
@@ -31,37 +31,53 @@ def _mock_one_page_reponse(page_nr, total_pages, total_elements):
     }
 
 
-def test_paginate(storage_mock, requests_mock):
+def test_paginate_one_page(storage_mock, requests_mock):
     url = "http://some_url/assets"
 
     limit = None
+    size = 50
+    total_pages = 1
+    total_elements = 30
+    expected = 30
+    requests_mock.get(
+        url + f"&size={size}",
+        json=_mock_one_page_reponse(0, expected, total_pages, total_elements),
+    )
+    res = storage_mock._query_paginated(url=url, limit=limit, size=size)
+    assert len(res) == expected
+
+
+def test_paginate_multiple_pages(storage_mock, requests_mock):
+    url = "http://some_url/assets"
+
+    limit = 20
     size = 3
     total_pages = 4
     total_elements = 12
     expected = 12
     requests_mock.get(
         url + f"&size={size}",
-        json=_mock_one_page_reponse(0, total_pages, total_elements),
+        json=_mock_one_page_reponse(0, size, total_pages, total_elements),
     )
     requests_mock.get(
         url + f"&size={size}&page=1",
-        json=_mock_one_page_reponse(1, total_pages, total_elements),
+        json=_mock_one_page_reponse(1, size, total_pages, total_elements),
     )
     requests_mock.get(
         url + f"&size={size}&page=2",
-        json=_mock_one_page_reponse(2, total_pages, total_elements),
+        json=_mock_one_page_reponse(2, size, total_pages, total_elements),
     )
     requests_mock.get(
         url + f"&size={size}&page=3",
-        json=_mock_one_page_reponse(3, total_pages, total_elements),
+        json=_mock_one_page_reponse(3, size, total_pages, total_elements),
     )
     res = storage_mock._query_paginated(url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
-def test_paginate_with_limit(storage_mock, requests_mock):
+def test_paginate_with_limit_smaller_page_size(storage_mock, requests_mock):
     """
-    Test pagination with smaller limit than pagination size, and smaller limit than available elements.
+    Test pagination with limit <= pagination size.
     """
     url = "http://some_url/assets"
 
@@ -72,11 +88,11 @@ def test_paginate_with_limit(storage_mock, requests_mock):
     expected = 5
     requests_mock.get(
         url + f"&size={limit}",
-        json=_mock_one_page_reponse(0, total_pages, total_elements),
+        json=_mock_one_page_reponse(0, size, total_pages, total_elements),
     )
     requests_mock.get(
         url + f"&size={limit}&page=1",
-        json=_mock_one_page_reponse(0, total_pages, total_elements),
+        json=_mock_one_page_reponse(0, size, total_pages, total_elements),
     )
     res = storage_mock._query_paginated(url=url, limit=limit, size=size)
     assert len(res) == expected
