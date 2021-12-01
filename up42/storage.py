@@ -1,4 +1,5 @@
 from typing import List, Union, Optional
+import math
 
 from up42.auth import Auth
 from up42.order import Order
@@ -42,23 +43,13 @@ class Storage:
         Returns:
             List[dict]: List of all paginated items.
         """
-        if limit is None:
-            url = url + f"&size={size}"
-        elif limit <= size:
-            url = url + f"&size={limit}"  # Most efficient page size for small query.
-        else:
-            url = url + f"&size={size}"
+        url = url + f"&size={size}"
 
         first_page_response = self.auth._request(request_type="GET", url=url)
         num_pages = first_page_response["data"]["totalPages"]
+        num_elements = first_page_response["data"]["totalElements"]
         results_list = first_page_response["data"]["content"]
 
-        if num_pages > 1:
-            for page in range(1, num_pages):
-                response_json = self.auth._request(
-                    request_type="GET", url=url + f"&page={page}"
-                )
-                results_list += response_json["data"]["content"]
         if limit is None:
             # Also covers single page (without limit)
             num_pages_to_query = num_pages
@@ -68,8 +59,12 @@ class Storage:
             # Also covers single page (with limit)
             num_pages_to_query = math.ceil(min(limit, num_elements) / size)
 
-        results_list = results_list[:limit]
-        return results_list
+        for page in range(1, num_pages_to_query):
+            response_json = self.auth._request(
+                request_type="GET", url=url + f"&page={page}"
+            )
+            results_list += response_json["data"]["content"]
+        return results_list[:limit]
 
     def get_assets(
         self,
