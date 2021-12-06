@@ -22,7 +22,7 @@ project = up42.initialize_project()
 # Construct workflow
 workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
 #print(up42.get_blocks(basic=True))
-input_tasks = ["Sentinel-2 L2A (GeoTIFF)",
+input_tasks = ["Sentinel-2 L2A Visual (GeoTIFF)",
                "Sharpening Filter"]
 workflow.add_workflow_tasks(input_tasks)
 
