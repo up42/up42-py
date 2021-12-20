@@ -15,7 +15,11 @@ pip show up42-py
 ```
 
 ## Versions
-### [0.18.0](https://pypi.org/project/up42-py/) (2021-11-10)`
+### [0.18.1](https://pypi.org/project/up42-py/) (2021-12-20)
+- Allow installation with Python 3.9
+
+## Versions
+### [0.18.0](https://pypi.org/project/up42-py/) (2021-11-10)
 - Add sorting criteria, sorting order and results limit parameters to `storage.get_orders` 
   and `storage.get_assets`. Now also uses results pagination which avoids timeout issues 
   when querying large asset/order collections.
@@ -28,9 +32,7 @@ pip show up42-py
   This aligns the Python SDK with the regular UP42 platform behaviour.
 - Removal: Remove the Python SDK Command Line Interface.
 - Fix: JobTask.info and the printout now uses the correct jobtask information.
-  
 
-## Versions
 ### [0.17.0](https://pypi.org/project/up42-py/) (2021-09-10)
 - Adds `usage_type` parameter for selection of "DATA" and "ANALYTICS" data in catalog search.
 - Adds automatic handling of catalog search results pagination when requesting more 
