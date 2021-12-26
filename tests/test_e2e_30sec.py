@@ -42,3 +42,7 @@ def test_e2e_30sec():
 
     job.download_results()
     # job.map_results(bands=[1])
+
+
+if __name__ == "__main__":
+    test_e2e_30sec()

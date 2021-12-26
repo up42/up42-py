@@ -21,9 +21,9 @@
 
 ## Highlights
 - Python package for easy access to **[UP42's](http://www.up42.com)** **geospatial datasets** & **processing workflows**
-- Use UP42 functionality together with your preffered Python libraries!
+- Use UP42 functionality together with your preferred Python libraries!
 - For geospatial **analysis** & **product builders**!
-- Interactive maps & **visualization**, ideal with Jupyter notebooks
+- Interactive maps & **visualizations**, ideal with Jupyter notebooks
 
 
 <img align="right" href="https://sdk.up42.com/" src="docs/assets/docs.png" alt="" height="200"/>
@@ -48,7 +48,7 @@ The UP42 Python package uses nine classes, representing the **hierarchical struc
 
 
 In this example a **new workflow** consisting of [**Sentinel-2 data**](https://marketplace.up42.com/block/018dfb34-fc19-4334-8125-14fd7535f979)
-and [**Land-Surface-Temperature**](https://marketplace.up42.com/block/34767300-5caf-472b-a684-a351212b5c14) is created.
+and [**Sharpening Filter**](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e) is created.
 The area of interest and workflow parameters are defined. After **running the job**, 
 the results are **downloaded** and visualized.
 
