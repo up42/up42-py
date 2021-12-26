@@ -38,3 +38,7 @@ def test_e2e_catalog():
     )
 
     # catalog.map_quicklooks(scenes=search_results, aoi=aoi)
+
+
+if __name__ == "__main__":
+    test_e2e_catalog()
