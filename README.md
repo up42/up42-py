@@ -21,9 +21,9 @@
 
 ## Highlights
 - Python package for easy access to **[UP42's](http://www.up42.com)** **geospatial datasets** & **processing workflows**
-- Use UP42 functionality together with your preffered Python libraries!
+- Use UP42 functionality together with your preferred Python libraries!
 - For geospatial **analysis** & **product builders**!
-- Interactive maps & **visualization**, ideal with Jupyter notebooks
+- Interactive maps & **visualizations**, ideal with Jupyter notebooks
 
 
 <img align="right" href="https://sdk.up42.com/" src="docs/assets/docs.png" alt="" height="200"/>
