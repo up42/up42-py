@@ -21,14 +21,17 @@ test[live]:
 	bash test.sh --live
 
 e2e:
-	python $(SRC)/tests/e2e.py
+	python $(SRC)/tests/test_e2e_30sec.py
+	python $(SRC)/tests/test_e2e_catalog.py
 
+# Preview of mkdocs
 serve:
 	ln -sfn $(PWD)/examples docs
 	ln -sfn $(PWD)/docs/examples/guides docs
 	ln -sfn $(PWD)/CHANGELOG.md docs
 	mkdocs serve
 
+# Publication of mkdocs. Not required, docs build pipeline is automated via github actions.
 gh-pages:
 	ln -sfn $(PWD)/examples docs
 	ln -sfn $(PWD)/docs/examples/guides docs
