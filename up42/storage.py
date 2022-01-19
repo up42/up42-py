@@ -127,7 +127,7 @@ class Storage:
             return_json: If set to True, returns json object.
             limit: Optional, only return n first assets by sorting criteria and order.
                 Optimal to select if your workspace contains many assets.
-            sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider".
+            sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "type".
             descending: The sorting order, True for descending (default), False for ascending.
 
         Returns:
