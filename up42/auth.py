@@ -29,6 +29,12 @@ class retry_if_429_error(retry_if_exception):
     """
     Altered tenacity retry strategy that retries if the exception is an ``HTTPError``
     with a 429 status code (too many requests).
+class retry_if_429_rate_limit(retry_if_exception):
+    """
+    Custom tenacity error response that enables separate retry strategy for
+    429 HTTPError (too many requests) due to UP42 rate limitation.
+    Also see https://docs.up42.com/developers/api#section/API-Usage-Constraints/Rate-limiting
+
     Adapted from https://github.com/alexwlchan/handling-http-429-with-tenacity
     """
 
@@ -173,7 +179,7 @@ class Auth:
 
     # pylint: disable=dangerous-default-value
     @retry(
-        retry=retry_if_429_error(),
+        retry=retry_if_429_rate_limit(),
         wait=wait_random_exponential(multiplier=0.5, max=180),
         reraise=True,
     )
