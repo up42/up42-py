@@ -248,8 +248,8 @@ class Auth:
                         retry_if_exception_type(requests.exceptions.HTTPError)
                         | retry_if_exception_type(requests.exceptions.ConnectionError)
                     ),
-                    after=self._get_token(),
-                    reraise=True,
+                    after=self._get_token(),  # executed after each failed call.
+                    reraise=True,  # after final failed attempt, raises last attempt's exception instead of RetryError.
                 )
                 response = retryer(
                     self._request_helper, request_type, url, data, querystring
