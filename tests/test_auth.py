@@ -264,10 +264,17 @@ def test_request_token_timeout_during_rate_limitation(auth_mock, requests_mock):
                     "error": {"code": 401, "message": "token timeout"},
                 },
             },
+            {
+                "status_code": 429,
+                "json": {
+                    "data": {},
+                    "error": {"code": 429, "message": "rate limited"},
+                },
+            },
             {"json": {"data": {"xyz": 789}, "error": {}}},
         ],
     )
 
     response_json = auth_mock._request(request_type="GET", url="http://test.com")
     assert response_json == {"data": {"xyz": 789}, "error": {}}
-    assert a.call_count == 3
+    assert a.call_count == 4
