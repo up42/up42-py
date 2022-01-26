@@ -255,23 +255,22 @@ class Auth:
         Returns:
             The API response.
         """
+        retryer_token = Retrying(
+            stop=stop_after_attempt(2),  # Original attempt + one retry
+            wait=wait_fixed(0.5),
+            retry=(
+                retry_if_401_invalid_token()
+                | retry_if_exception_type(requests.exceptions.ConnectionError)
+            ),
+            after=lambda retry_state: self._get_token,  # type:ignore
+            reraise=True,
+            # after final failed attempt, raises last attempt's exception instead of RetryError.
+        )
+
         try:
-            if self.retry:
-                retryer = Retrying(
-                    stop=stop_after_attempt(2),
-                    wait=wait_fixed(0.5),
-                    retry=(
-                        retry_if_401_invalid_token()
-                        | retry_if_exception_type(requests.exceptions.ConnectionError)
-                    ),
-                    after=self._get_token(),  # executed after each failed call.
-                    reraise=True,  # after final failed attempt, raises last attempt's exception instead of RetryError.
-                )
-                response = retryer(
-                    self._request_helper, request_type, url, data, querystring
-                )
-            else:
-                response = self._request_helper(request_type, url, data, querystring)  # type: ignore
+            response = retryer_token(
+                self._request_helper, request_type, url, data, querystring
+            )
         except requests.exceptions.RequestException as err:  # Base error class
             err_message = json.loads(err.response.text)["error"]
             if "code" in err_message:
