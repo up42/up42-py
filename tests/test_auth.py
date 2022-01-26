@@ -74,13 +74,6 @@ def test_get_token_live(auth_live):
     assert hasattr(auth_live, "token")
 
 
-@pytest.mark.live
-def test_get_token_live_timeout_5min(auth_live):
-    assert hasattr(auth_live, "token")
-    auth_live._get_workspace()
-    assert auth_live.workspace_id == WORKSPACE_ID
-
-
 def test_get_workspace(auth_mock):
     auth_mock._get_workspace()
     assert auth_mock.workspace_id == WORKSPACE_ID
