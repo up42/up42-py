@@ -139,17 +139,62 @@ def test_request_non200_raises_error_not_dict(auth_mock, requests_mock):
     assert "Not found!" in str(e.value)
 
 
-def test_request_with_retry(auth_mock, requests_mock):
+def test_request_active_retry_no_retry_required(auth_mock, requests_mock):
+    # for the tests retry is False by default
     auth_mock.retry = True
-    # Retry contains getting a new token, already mocked in fixture.
-
     requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
 
     response_json = auth_mock._request(request_type="GET", url="http://test.com")
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 
 
-def test_request_rate_limited(auth_mock, requests_mock):
+def test_request_inactive_retry_token_timed_out_raises(auth_mock, requests_mock):
+    # for the tests retry is False by default
+    auth_mock.retry = False
+    a = requests_mock.get(
+        "http://test.com",
+        [
+            {
+                "status_code": 401,
+                "json": {
+                    "data": {},
+                    "error": {"code": 401, "message": "token timeout"},
+                },
+            },
+            {"json": {"data": {"xyz": 789}, "error": {}}},
+        ],
+    )
+
+    with pytest.raises(requests.exceptions.RequestException):
+        auth_mock._request(request_type="GET", url="http://test.com")
+    assert a.call_count == 1
+
+
+def test_request_active_retry_token_timed_out(auth_mock, requests_mock):
+    # for the tests retry is False by default
+    auth_mock.retry = True
+    a = requests_mock.get(
+        "http://test.com",
+        [
+            {
+                "status_code": 401,
+                "json": {
+                    "data": {},
+                    "error": {"code": 401, "message": "token timeout"},
+                },
+            },
+            {"json": {"data": {"xyz": 789}, "error": {}}},
+        ],
+    )
+
+    response_json = auth_mock._request(request_type="GET", url="http://test.com")
+    assert response_json == {"data": {"xyz": 789}, "error": {}}
+    assert a.call_count == 2
+
+
+def test_request_rate_limited_retry(auth_mock, requests_mock):
+    # for the tests retry is False by default
+    auth_mock.retry = False
     a = requests_mock.get(
         "http://test.com",
         [
@@ -167,3 +212,69 @@ def test_request_rate_limited(auth_mock, requests_mock):
     response_json = auth_mock._request(request_type="GET", url="http://test.com")
     assert response_json == {"data": {"xyz": 789}, "error": {}}
     assert a.call_count == 2
+
+
+def test_request_token_timeout_during_rate_limitation_without_token_retry_raises(
+    auth_mock, requests_mock
+):
+    # for the tests retry is False by default
+    auth_mock.retry = False
+    a = requests_mock.get(
+        "http://test.com",
+        [
+            {
+                "status_code": 429,
+                "json": {
+                    "data": {},
+                    "error": {"code": 429, "message": "rate limited"},
+                },
+            },
+            {
+                "status_code": 401,
+                "json": {
+                    "data": {},
+                    "error": {"code": 401, "message": "token timeout"},
+                },
+            },
+            {"json": {"data": {"xyz": 789}, "error": {}}},
+        ],
+    )
+
+    with pytest.raises(requests.exceptions.RequestException):
+        auth_mock._request(request_type="GET", url="http://test.com")
+    assert a.call_count == 2
+
+
+def test_request_token_timeout_during_rate_limitation(auth_mock, requests_mock):
+    auth_mock.retry = True
+    a = requests_mock.get(
+        "http://test.com",
+        [
+            {
+                "status_code": 429,
+                "json": {
+                    "data": {},
+                    "error": {"code": 429, "message": "rate limited"},
+                },
+            },
+            {
+                "status_code": 401,
+                "json": {
+                    "data": {},
+                    "error": {"code": 401, "message": "token timeout"},
+                },
+            },
+            {
+                "status_code": 429,
+                "json": {
+                    "data": {},
+                    "error": {"code": 429, "message": "rate limited"},
+                },
+            },
+            {"json": {"data": {"xyz": 789}, "error": {}}},
+        ],
+    )
+
+    response_json = auth_mock._request(request_type="GET", url="http://test.com")
+    assert response_json == {"data": {"xyz": 789}, "error": {}}
+    assert a.call_count == 4
