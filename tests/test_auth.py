@@ -139,8 +139,7 @@ def test_request_non200_raises_error_not_dict(auth_mock, requests_mock):
     assert "Not found!" in str(e.value)
 
 
-def test_request_active_retry_no_retry_required(auth_mock, requests_mock):
-    # for the tests retry is False by default
+def test_request_active_retry_successfull_request(auth_mock, requests_mock):
     auth_mock.retry = True
     requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
 
@@ -148,9 +147,7 @@ def test_request_active_retry_no_retry_required(auth_mock, requests_mock):
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 
 
-def test_request_inactive_retry_token_timed_out_raises(auth_mock, requests_mock):
-    # for the tests retry is False by default
-    auth_mock.retry = False
+def test_request_token_timed_out_raises(auth_mock, requests_mock):
     a = requests_mock.get(
         "http://test.com",
         [
@@ -171,7 +168,6 @@ def test_request_inactive_retry_token_timed_out_raises(auth_mock, requests_mock)
 
 
 def test_request_active_retry_token_timed_out(auth_mock, requests_mock):
-    # for the tests retry is False by default
     auth_mock.retry = True
     a = requests_mock.get(
         "http://test.com",
