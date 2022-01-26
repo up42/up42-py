@@ -1,3 +1,8 @@
+"""
+IMPORTANT: For all tests, by default retry for invalid token is disabled and is
+enabled on a per test-basis to avoid unintended side-effects.
+"""
+
 import io
 import json
 from pathlib import Path
@@ -189,8 +194,6 @@ def test_request_active_retry_token_timed_out(auth_mock, requests_mock):
 
 
 def test_request_rate_limited_retry(auth_mock, requests_mock):
-    # for the tests retry is False by default
-    auth_mock.retry = False
     a = requests_mock.get(
         "http://test.com",
         [
