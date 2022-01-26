@@ -254,10 +254,7 @@ def auth_mock(requests_mock):
         json=json_get_workspace,
     )
     auth = Auth(
-        project_id=PROJECT_ID,
-        project_api_key=PROJECT_APIKEY,
-        authenticate=True,
-        retry=False,
+        project_id=PROJECT_ID, project_api_key=PROJECT_APIKEY, authenticate=True
     )
 
     # get_blocks

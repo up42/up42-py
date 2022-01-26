@@ -97,10 +97,6 @@ class Auth:
             self.authenticate: bool = kwargs["authenticate"]
         except KeyError:
             self.authenticate = True
-        try:
-            self.retry: bool = kwargs["retry"]
-        except KeyError:
-            self.retry = True
 
         if self.authenticate:
             self._find_credentials()
