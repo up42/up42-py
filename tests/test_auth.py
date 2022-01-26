@@ -213,38 +213,9 @@ def test_request_rate_limited_retry(auth_mock, requests_mock):
     assert a.call_count == 2
 
 
-def test_request_token_timeout_during_rate_limitation_without_token_retry_raises(
+def test_request_active_retry_token_timeout_during_rate_limitation(
     auth_mock, requests_mock
 ):
-    # for the tests retry is False by default
-    auth_mock.retry = False
-    a = requests_mock.get(
-        "http://test.com",
-        [
-            {
-                "status_code": 429,
-                "json": {
-                    "data": {},
-                    "error": {"code": 429, "message": "rate limited"},
-                },
-            },
-            {
-                "status_code": 401,
-                "json": {
-                    "data": {},
-                    "error": {"code": 401, "message": "token timeout"},
-                },
-            },
-            {"json": {"data": {"xyz": 789}, "error": {}}},
-        ],
-    )
-
-    with pytest.raises(requests.exceptions.RequestException):
-        auth_mock._request(request_type="GET", url="http://test.com")
-    assert a.call_count == 2
-
-
-def test_request_token_timeout_during_rate_limitation(auth_mock, requests_mock):
     auth_mock.retry = True
     a = requests_mock.get(
         "http://test.com",
