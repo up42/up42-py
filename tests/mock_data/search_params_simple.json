@@ -12,14 +12,10 @@
             ]
         ]
     },
+    "collection": ["PHR"],
     "limit": 4,
     "query": {
         "cloudCoverage": {"lte": 20},
-        "dataBlock": {
-            "in": ["oneatlas-pleiades-fullscene", "oneatlas-pleiades-display", "oneatlas-pleiades-aoiclipped",
-                   "oneatlas-spot-fullscene", "oneatlas-spot-display", "oneatlas-spot-aoiclipped",
-                   "sobloo-s1-grd-fullscene", "sobloo-s1-grd-aoiclipped", "sobloo-s1-slc-fullscene"]
-        },
         "up42:usageType":  {"in": ["DATA", "ANALYTICS"]}
     },
     "sortby": [{"field": "properties.cloudCoverage", "direction": "desc"}]
