@@ -115,7 +115,7 @@ class Catalog(VizTools):
         sort_order = "asc" if ascending else "desc"
 
         query_filters: Dict[Any, Any] = {}
-        if collection != ["sentinel1"]:
+        if collection != ["Sentinel-1"]:
             query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
 
         if usage_type == ["DATA"]:
