@@ -253,7 +253,7 @@ def test_search_catalog_pagination(catalog_mock):
     assert search_results.shape == (614, 14)
 
 
-# @pytest.mark.live
+@pytest.mark.live
 def test_search_catalog_pagination_live(catalog_live):
     search_params_limit_614 = {
         "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
