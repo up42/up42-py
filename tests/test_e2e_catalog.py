@@ -21,7 +21,7 @@ def test_e2e_catalog():
         geometry=aoi,
         start_date="2018-01-01",
         end_date="2020-12-31",
-        sensors=["pleiades"],
+        collection="PHR",
         max_cloudcover=20,
         sortby="cloudCoverage",
         limit=10,
