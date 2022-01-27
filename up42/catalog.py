@@ -3,7 +3,7 @@ Catalog search functionality
 """
 
 from pathlib import Path
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Dict, Any
 
 from pandas import Series
 from geopandas import GeoDataFrame
@@ -23,47 +23,6 @@ from up42.utils import (
 
 logger = get_logger(__name__)
 
-
-supported_sensors = {
-    "pleiades": {
-        "blocks": [
-            "oneatlas-pleiades-fullscene",
-            "oneatlas-pleiades-display",
-            "oneatlas-pleiades-aoiclipped",
-        ],
-        "provider": "oneatlas",
-    },
-    "spot": {
-        "blocks": [
-            "oneatlas-spot-fullscene",
-            "oneatlas-spot-display",
-            "oneatlas-spot-aoiclipped",
-        ],
-        "provider": "oneatlas",
-    },
-    "sentinel1": {
-        "blocks": [
-            "sobloo-s1-grd-fullscene",
-            "sobloo-s1-grd-aoiclipped",
-            "sobloo-s1-slc-fullscene",
-        ],
-        "provider": "sobloo-image",
-    },
-    "sentinel2": {
-        "blocks": [
-            "sobloo-s2-l1c-fullscene",
-            "sobloo-s2-l1c-aoiclipped",
-        ],
-        "provider": "sobloo-image",
-    },
-    "sentinel3": {"blocks": ["sobloo-s3"], "provider": "sobloo-image"},
-    "sentinel5p": {
-        "blocks": [
-            "sobloo-s5p",
-        ],
-        "provider": "sobloo-image",
-    },
-}
 
 # pylint: disable=duplicate-code
 class Catalog(VizTools):
@@ -85,9 +44,17 @@ class Catalog(VizTools):
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
 
+    def get_collections(self) -> Union[Dict, List]:
+        """
+        Get the available data collections.
+        """
+        url = f"{self.auth._endpoint()}/collections"
+        json_response = self.auth._request("GET", url)
+        return json_response["data"]
+
     # pylint: disable=dangerous-default-value
-    @staticmethod
     def construct_parameters(
+        self,
         geometry: Union[
             dict,
             Feature,
