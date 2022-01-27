@@ -27,6 +27,17 @@ with open(
     mock_search_parameters = json.load(json_file)
 
 
+def test_get_collections(catalog_mock):
+    collections = catalog_mock.get_collections()
+    assert isinstance(collections, list)
+    assert collections[0]["name"]
+
+
+@pytest.mark.live
+def test_get_collections_live(catalog_live):
+    collections = catalog_live.get_collections()
+    assert isinstance(collections, list)
+    assert collections[0]["name"]
 def test_construct_parameters(catalog_mock):
     search_parameters = catalog_mock.construct_parameters(
         geometry=mock_search_parameters["intersects"],
