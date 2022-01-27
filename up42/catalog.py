@@ -221,12 +221,21 @@ class Catalog(VizTools):
         Returns:
             List of quicklook image output file paths.
         """
+        supported_sensors = {
+            "pleiades": "oneatlas",
+            "spot": "oneatlas",
+            "sentinel1": "sobloo-image",
+            "sentinel2": "sobloo-image",
+            "sentinel3": "sobloo-image",
+            "sentinel5p": "sobloo-image",
+        }
+
         if sensor not in list(supported_sensors.keys()):
             raise ValueError(
                 f"Currently only these sensors are supported: "
                 f"{list(supported_sensors.keys())}"
             )
-        provider = supported_sensors[sensor]["provider"]
+        provider = supported_sensors[sensor]
         logger.info(
             f"Getting quicklooks from provider {provider} for image_ids: "
             f"{image_ids}"
