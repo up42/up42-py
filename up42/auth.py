@@ -25,10 +25,30 @@ from up42.utils import get_logger
 logger = get_logger(__name__)
 
 
-class retry_if_429_error(retry_if_exception):
+class retry_if_401_invalid_token(retry_if_exception):
     """
-    Altered tenacity retry strategy that retries if the exception is an ``HTTPError``
-    with a 429 status code (too many requests).
+    Custom tenacity error response that enables separate retry strategy for
+    401 HTTPError (unauthorized response) due to invalid/timed out UP42 token.
+
+    Adapted from https://github.com/alexwlchan/handling-http-429-with-tenacity
+    """
+
+    def __init__(self):
+        def is_http_401_error(exception):
+            return (
+                isinstance(exception, requests.exceptions.HTTPError)
+                and exception.response.status_code == 401
+            )
+
+        super().__init__(predicate=is_http_401_error)
+
+
+class retry_if_429_rate_limit(retry_if_exception):
+    """
+    Custom tenacity error response that enables separate retry strategy for
+    429 HTTPError (too many requests) due to UP42 rate limitation.
+    Also see https://docs.up42.com/developers/api#section/API-Usage-Constraints/Rate-limiting
+
     Adapted from https://github.com/alexwlchan/handling-http-429-with-tenacity
     """
 
@@ -77,10 +97,6 @@ class Auth:
             self.authenticate: bool = kwargs["authenticate"]
         except KeyError:
             self.authenticate = True
-        try:
-            self.retry: bool = kwargs["retry"]
-        except KeyError:
-            self.retry = True
 
         if self.authenticate:
             self._find_credentials()
@@ -173,7 +189,7 @@ class Auth:
 
     # pylint: disable=dangerous-default-value
     @retry(
-        retry=retry_if_429_error(),
+        retry=retry_if_429_rate_limit(),
         wait=wait_random_exponential(multiplier=0.5, max=180),
         reraise=True,
     )
@@ -239,23 +255,22 @@ class Auth:
         Returns:
             The API response.
         """
+        retryer_token = Retrying(
+            stop=stop_after_attempt(2),  # Original attempt + one retry
+            wait=wait_fixed(0.5),
+            retry=(
+                retry_if_401_invalid_token()
+                | retry_if_exception_type(requests.exceptions.ConnectionError)
+            ),
+            after=lambda retry_state: self._get_token,  # type:ignore
+            reraise=True,
+            # after final failed attempt, raises last attempt's exception instead of RetryError.
+        )
+
         try:
-            if self.retry:
-                retryer = Retrying(
-                    stop=stop_after_attempt(2),
-                    wait=wait_fixed(0.5),
-                    retry=(
-                        retry_if_exception_type(requests.exceptions.HTTPError)
-                        | retry_if_exception_type(requests.exceptions.ConnectionError)
-                    ),
-                    after=self._get_token(),
-                    reraise=True,
-                )
-                response = retryer(
-                    self._request_helper, request_type, url, data, querystring
-                )
-            else:
-                response = self._request_helper(request_type, url, data, querystring)  # type: ignore
+            response = retryer_token(
+                self._request_helper, request_type, url, data, querystring
+            )
         except requests.exceptions.RequestException as err:  # Base error class
             err_message = json.loads(err.response.text)["error"]
             if "code" in err_message:
