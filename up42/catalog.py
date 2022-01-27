@@ -64,16 +64,9 @@ class Catalog(VizTools):
             Point,
             Polygon,
         ],
+        collection: str,
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
-        sensors: List[str] = [
-            "pleiades",
-            "spot",
-            "sentinel1",
-            "sentinel2",
-            "sentinel3",
-            "sentinel5p",
-        ],
         usage_type: List[str] = ["DATA", "ANALYTICS"],
         limit: int = 10,
         max_cloudcover: float = 100,
@@ -88,8 +81,8 @@ class Catalog(VizTools):
                 list, GeoDataFrame, Point, Polygon.
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
-            sensors: The satellite sensors to search for, one or multiple of
-                ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p"]
+            collection: The satellite sensor collection to search for, e.g. "PHR",
+                see catalog.get_collections().
             usage_type: Filter for imagery that can just be purchased & downloaded or also
                 processes. ["DATA"] (can only be download), ["ANALYTICS"] (can be downloaded
                 or used directly with a processing algorithm), ["DATA", "ANALYTICS"]
@@ -98,7 +91,7 @@ class Catalog(VizTools):
             limit: The maximum number of search results to return (1-max.500).
             max_cloudcover: Maximum cloudcover % - e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloudcover.
-                Ignored for sensors that have no cloudcover (e.g. sentinel1).
+                Ignored for collections that have no cloudcover (e.g. sentinel1).
             sortby: The property to sort by, "cloudCoverage", "acquisitionDate",
                 "acquisitionIdentifier", "incidenceAngle", "snowCover".
             ascending: Ascending sort order by default, descending if False.
@@ -106,43 +99,42 @@ class Catalog(VizTools):
         Returns:
             The constructed parameters dictionary.
         """
+        available_collections = [
+            collection["name"] for collection in self.get_collections()
+        ]
+        if collection not in available_collections:
+            raise ValueError(
+                f"Currently only these collections/sensors are supported: "
+                f"{available_collections}. Also see catalog.get_collections."
+            )
         time_period = format_time_period(start_date=start_date, end_date=end_date)
-
-        block_filters: List[str] = []
-        for sensor in sensors:
-            if sensor not in list(supported_sensors.keys()):
-                raise ValueError(
-                    f"Currently only these sensors are supported: "
-                    f"{list(supported_sensors.keys())}"
-                )
-            block_filters.extend(supported_sensors[sensor]["blocks"])
-
         aoi_fc = any_vector_to_fc(
             vector=geometry,
         )
         aoi_geometry = fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
-
         sort_order = "asc" if ascending else "desc"
-        query_filters = {"dataBlock": {"in": block_filters}}
-        if sensors != ["sentinel1"]:
+
+        query_filters: Dict[Any, Any] = {}
+        if collection != ["sentinel1"]:
             query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
+
+        if usage_type == ["DATA"]:
+            query_filters["up42:usageType"] = {"in": ["DATA"]}
+        elif usage_type == ["ANALYTICS"]:
+            query_filters["up42:usageType"] = {"in": ["ANALYTICS"]}
+        elif usage_type == ["DATA", "ANALYTICS"]:
+            query_filters["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
+        else:
+            raise ValueError("Select correct `usage_type`")
 
         search_parameters = {
             "datetime": time_period,
             "intersects": aoi_geometry,
             "limit": limit,
+            "collections": [collection],
             "query": query_filters,
             "sortby": [{"field": f"properties.{sortby}", "direction": sort_order}],
         }
-
-        if usage_type == ["DATA"]:
-            search_parameters["query"]["up42:usageType"] = {"in": ["DATA"]}
-        elif usage_type == ["ANALYTICS"]:
-            search_parameters["query"]["up42:usageType"] = {"in": ["ANALYTICS"]}
-        elif usage_type == ["DATA", "ANALYTICS"]:
-            search_parameters["query"]["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
-        else:
-            raise ValueError("Select correct `usage_type`")
 
         return search_parameters
 
