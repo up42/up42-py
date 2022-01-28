@@ -53,8 +53,8 @@ class Catalog(VizTools):
         return json_response["data"]
 
     # pylint: disable=dangerous-default-value
+    @staticmethod
     def construct_parameters(
-        self,
         geometry: Union[
             dict,
             Feature,
