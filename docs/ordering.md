@@ -21,16 +21,17 @@ import up42
 up42.authenticate(project_id="123", project_api_key="456")
 
 catalog = up42.initialize_catalog()
+print(catalog.get_collections())
+
 aoi = up42.get_example_aoi(location="Berlin", as_dataframe=True)
 search_parameters = catalog.construct_parameters(geometry=aoi, 
                                                  start_date="2018-01-01",
                                                  end_date="2020-12-31",
-                                                 sensors=["pleiades"],
+                                                 collection=["PHR"],
                                                  max_cloudcover=5,
                                                  sortby="cloudCoverage", 
                                                  limit=1)
 search_results = catalog.search(search_parameters=search_parameters)
-
 ```
 
 ## Estimate the order price

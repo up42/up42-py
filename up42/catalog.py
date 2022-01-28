@@ -3,7 +3,7 @@ Catalog search functionality
 """
 
 from pathlib import Path
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Dict, Any
 
 from pandas import Series
 from geopandas import GeoDataFrame
@@ -23,47 +23,6 @@ from up42.utils import (
 
 logger = get_logger(__name__)
 
-
-supported_sensors = {
-    "pleiades": {
-        "blocks": [
-            "oneatlas-pleiades-fullscene",
-            "oneatlas-pleiades-display",
-            "oneatlas-pleiades-aoiclipped",
-        ],
-        "provider": "oneatlas",
-    },
-    "spot": {
-        "blocks": [
-            "oneatlas-spot-fullscene",
-            "oneatlas-spot-display",
-            "oneatlas-spot-aoiclipped",
-        ],
-        "provider": "oneatlas",
-    },
-    "sentinel1": {
-        "blocks": [
-            "sobloo-s1-grd-fullscene",
-            "sobloo-s1-grd-aoiclipped",
-            "sobloo-s1-slc-fullscene",
-        ],
-        "provider": "sobloo-image",
-    },
-    "sentinel2": {
-        "blocks": [
-            "sobloo-s2-l1c-fullscene",
-            "sobloo-s2-l1c-aoiclipped",
-        ],
-        "provider": "sobloo-image",
-    },
-    "sentinel3": {"blocks": ["sobloo-s3"], "provider": "sobloo-image"},
-    "sentinel5p": {
-        "blocks": [
-            "sobloo-s5p",
-        ],
-        "provider": "sobloo-image",
-    },
-}
 
 # pylint: disable=duplicate-code
 class Catalog(VizTools):
@@ -85,6 +44,14 @@ class Catalog(VizTools):
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
 
+    def get_collections(self) -> Union[Dict, List]:
+        """
+        Get the available data collections.
+        """
+        url = f"{self.auth._endpoint()}/collections"
+        json_response = self.auth._request("GET", url)
+        return json_response["data"]
+
     # pylint: disable=dangerous-default-value
     @staticmethod
     def construct_parameters(
@@ -97,16 +64,9 @@ class Catalog(VizTools):
             Point,
             Polygon,
         ],
+        collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
-        sensors: List[str] = [
-            "pleiades",
-            "spot",
-            "sentinel1",
-            "sentinel2",
-            "sentinel3",
-            "sentinel5p",
-        ],
         usage_type: List[str] = ["DATA", "ANALYTICS"],
         limit: int = 10,
         max_cloudcover: float = 100,
@@ -121,8 +81,8 @@ class Catalog(VizTools):
                 list, GeoDataFrame, Point, Polygon.
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
-            sensors: The satellite sensors to search for, one or multiple of
-                ["pleiades", "spot", "sentinel1", "sentinel2", "sentinel3", "sentinel5p"]
+            collection: The satellite sensor collections to search for, e.g. ["PHR"] or ["PHR", "SPOT"].
+                Also see catalog.get_collections().
             usage_type: Filter for imagery that can just be purchased & downloaded or also
                 processes. ["DATA"] (can only be download), ["ANALYTICS"] (can be downloaded
                 or used directly with a processing algorithm), ["DATA", "ANALYTICS"]
@@ -131,7 +91,7 @@ class Catalog(VizTools):
             limit: The maximum number of search results to return (1-max.500).
             max_cloudcover: Maximum cloudcover % - e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloudcover.
-                Ignored for sensors that have no cloudcover (e.g. sentinel1).
+                Ignored for collections that have no cloudcover (e.g. sentinel1).
             sortby: The property to sort by, "cloudCoverage", "acquisitionDate",
                 "acquisitionIdentifier", "incidenceAngle", "snowCover".
             ascending: Ascending sort order by default, descending if False.
@@ -140,42 +100,33 @@ class Catalog(VizTools):
             The constructed parameters dictionary.
         """
         time_period = format_time_period(start_date=start_date, end_date=end_date)
-
-        block_filters: List[str] = []
-        for sensor in sensors:
-            if sensor not in list(supported_sensors.keys()):
-                raise ValueError(
-                    f"Currently only these sensors are supported: "
-                    f"{list(supported_sensors.keys())}"
-                )
-            block_filters.extend(supported_sensors[sensor]["blocks"])
-
         aoi_fc = any_vector_to_fc(
             vector=geometry,
         )
         aoi_geometry = fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
-
         sort_order = "asc" if ascending else "desc"
-        query_filters = {"dataBlock": {"in": block_filters}}
-        if sensors != ["sentinel1"]:
+
+        query_filters: Dict[Any, Any] = {}
+        if not "Sentinel-1" in collections:
             query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
+
+        if usage_type == ["DATA"]:
+            query_filters["up42:usageType"] = {"in": ["DATA"]}
+        elif usage_type == ["ANALYTICS"]:
+            query_filters["up42:usageType"] = {"in": ["ANALYTICS"]}
+        elif usage_type == ["DATA", "ANALYTICS"]:
+            query_filters["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
+        else:
+            raise ValueError("Select correct `usage_type`")
 
         search_parameters = {
             "datetime": time_period,
             "intersects": aoi_geometry,
             "limit": limit,
+            "collections": collections,
             "query": query_filters,
             "sortby": [{"field": f"properties.{sortby}", "direction": sort_order}],
         }
-
-        if usage_type == ["DATA"]:
-            search_parameters["query"]["up42:usageType"] = {"in": ["DATA"]}
-        elif usage_type == ["ANALYTICS"]:
-            search_parameters["query"]["up42:usageType"] = {"in": ["ANALYTICS"]}
-        elif usage_type == ["DATA", "ANALYTICS"]:
-            search_parameters["query"]["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
-        else:
-            raise ValueError("Select correct `usage_type`")
 
         return search_parameters
 
@@ -262,12 +213,21 @@ class Catalog(VizTools):
         Returns:
             List of quicklook image output file paths.
         """
+        supported_sensors = {
+            "pleiades": "oneatlas",
+            "spot": "oneatlas",
+            "sentinel1": "sobloo-image",
+            "sentinel2": "sobloo-image",
+            "sentinel3": "sobloo-image",
+            "sentinel5p": "sobloo-image",
+        }
+
         if sensor not in list(supported_sensors.keys()):
             raise ValueError(
                 f"Currently only these sensors are supported: "
                 f"{list(supported_sensors.keys())}"
             )
-        provider = supported_sensors[sensor]["provider"]
+        provider = supported_sensors[sensor]
         logger.info(
             f"Getting quicklooks from provider {provider} for image_ids: "
             f"{image_ids}"

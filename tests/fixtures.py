@@ -920,6 +920,13 @@ def tools_live(auth_live):
 
 @pytest.fixture()
 def catalog_mock(auth_mock, requests_mock):
+    url_collections = f"{auth_mock._endpoint()}/collections"
+    collections_response = {"data": [{"name": "PHR"}]}
+    requests_mock.get(
+        url=url_collections,
+        json=collections_response,
+    )
+
     with open(
         Path(__file__).resolve().parent / "mock_data/search_response.json"
     ) as json_file:
@@ -940,6 +947,13 @@ def catalog_live(auth_live):
 
 @pytest.fixture()
 def catalog_pagination_mock(auth_mock, requests_mock):
+    url_collections = f"{auth_mock._endpoint()}/collections"
+    collections_response = {"data": [{"name": "PHR"}]}
+    requests_mock.get(
+        url=url_collections,
+        json=collections_response,
+    )
+
     with open(
         Path(__file__).resolve().parent / "mock_data/search_response.json"
     ) as json_file:
@@ -963,6 +977,13 @@ def catalog_pagination_mock(auth_mock, requests_mock):
 
 @pytest.fixture()
 def catalog_usagetype_mock(auth_mock, requests_mock):
+    url_collections = f"{auth_mock._endpoint()}/collections"
+    collections_response = {"data": [{"name": "PHR"}]}
+    requests_mock.get(
+        url=url_collections,
+        json=collections_response,
+    )
+
     with open(
         Path(__file__).resolve().parent / "mock_data/search_response.json"
     ) as json_file:
