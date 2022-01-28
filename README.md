@@ -74,7 +74,7 @@ input_parameters = workflow.construct_parameters(geometry=aoi,
                                                  start_date="2018-01-01",
                                                  end_date="2020-12-31",
                                                  limit=1)
-input_parameters["esa-s2-l2a-gtiff:1"].update({"max_cloud_cover":5})
+input_parameters["esa-s2-l2a-gtiff-visual:1"].update({"max_cloud_cover":5})
 
 # Price estimation
 workflow.estimate_job(input_parameters)
