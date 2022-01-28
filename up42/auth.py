@@ -28,7 +28,7 @@ logger = get_logger(__name__)
 class retry_if_401_invalid_token(retry_if_exception):
     """
     Custom tenacity error response that enables separate retry strategy for
-    401 HTTPError (unauthorized response) due to invalid/timed out UP42 token.
+    401 error (unauthorized response, unable decode JWT) due to invalid/timed out UP42 token.
 
     Adapted from https://github.com/alexwlchan/handling-http-429-with-tenacity
     """
@@ -36,7 +36,13 @@ class retry_if_401_invalid_token(retry_if_exception):
     def __init__(self):
         def is_http_401_error(exception):
             return (
-                isinstance(exception, requests.exceptions.HTTPError)
+                isinstance(
+                    exception,
+                    (
+                        requests.exceptions.HTTPError,
+                        requests.exceptions.RequestException,
+                    ),
+                )
                 and exception.response.status_code == 401
             )
 
@@ -262,7 +268,7 @@ class Auth:
                 retry_if_401_invalid_token()
                 | retry_if_exception_type(requests.exceptions.ConnectionError)
             ),
-            after=lambda retry_state: self._get_token,  # type:ignore
+            after=lambda retry_state: self._get_token(),  # type:ignore
             reraise=True,
             # after final failed attempt, raises last attempt's exception instead of RetryError.
         )
