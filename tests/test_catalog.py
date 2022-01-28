@@ -45,7 +45,7 @@ def test_construct_parameters(catalog_mock):
         geometry=mock_search_parameters["intersects"],
         start_date="2014-01-01",
         end_date="2016-12-31",
-        collection="PHR",
+        collections=["PHR"],
         max_cloudcover=20,
         sortby="cloudCoverage",
         limit=4,
@@ -72,7 +72,7 @@ def test_construct_parameters_fc_multiple_features_raises(catalog_mock):
             geometry=fc,
             start_date="2020-01-01",
             end_date="2020-08-10",
-            collection="PHR",
+            collections=["PHR"],
             limit=10,
             max_cloudcover=15,
             sortby="acquisitionDate",
@@ -82,14 +82,6 @@ def test_construct_parameters_fc_multiple_features_raises(catalog_mock):
         str(e.value)
         == "The provided geometry contains multiple geometries, UP42 only accepts single geometries."
     )
-
-
-def test_construct_parameters_unsopported_sensor_raises(catalog_mock):
-    with pytest.raises(ValueError):
-        catalog_mock.construct_parameters(
-            geometry=mock_search_parameters["intersects"],
-            collection="some_unsupported_collection",
-        )
 
 
 def test_search(catalog_mock):
@@ -151,7 +143,7 @@ def test_search_usagetype(catalog_usagetype_mock):
         search_parameters = catalog_usagetype_mock.construct_parameters(
             start_date="2014-01-01T00:00:00",
             end_date="2020-12-31T23:59:59",
-            collection="PHR",
+            collections=["PHR"],
             limit=1,
             usage_type=params["usage_type"],
             geometry={
@@ -257,7 +249,7 @@ def test_search_catalog_pagination(catalog_mock):
 def test_search_catalog_pagination_live(catalog_live):
     search_params_limit_614 = {
         "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
-        "collection": ["PHR", "SPOT"],
+        "collections": ["PHR", "SPOT"],
         "intersects": {
             "type": "Polygon",
             "coordinates": [
@@ -297,7 +289,7 @@ def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
             ],
         },
         "limit": 614,
-        "collection": ["PHR", "SPOT"],
+        "collections": ["PHR", "SPOT"],
     }
     search_results = catalog_pagination_mock.search(search_params_limit_614)
     assert isinstance(search_results, gpd.GeoDataFrame)

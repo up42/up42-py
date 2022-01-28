@@ -64,7 +64,7 @@ class Catalog(VizTools):
             Point,
             Polygon,
         ],
-        collection: str,
+        collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
         usage_type: List[str] = ["DATA", "ANALYTICS"],
@@ -81,8 +81,8 @@ class Catalog(VizTools):
                 list, GeoDataFrame, Point, Polygon.
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
-            collection: The satellite sensor collection to search for, e.g. "PHR",
-                see catalog.get_collections().
+            collection: The satellite sensor collections to search for, e.g. ["PHR"] or ["PHR", "SPOT"].
+                Also see catalog.get_collections().
             usage_type: Filter for imagery that can just be purchased & downloaded or also
                 processes. ["DATA"] (can only be download), ["ANALYTICS"] (can be downloaded
                 or used directly with a processing algorithm), ["DATA", "ANALYTICS"]
@@ -99,14 +99,6 @@ class Catalog(VizTools):
         Returns:
             The constructed parameters dictionary.
         """
-        available_collections = [
-            collection["name"] for collection in self.get_collections()
-        ]
-        if collection not in available_collections:
-            raise ValueError(
-                f"Currently only these collections/sensors are supported: "
-                f"{available_collections}. Also see catalog.get_collections."
-            )
         time_period = format_time_period(start_date=start_date, end_date=end_date)
         aoi_fc = any_vector_to_fc(
             vector=geometry,
@@ -115,7 +107,7 @@ class Catalog(VizTools):
         sort_order = "asc" if ascending else "desc"
 
         query_filters: Dict[Any, Any] = {}
-        if collection != ["Sentinel-1"]:
+        if not "Sentinel-1" in collections:
             query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
 
         if usage_type == ["DATA"]:
@@ -131,7 +123,7 @@ class Catalog(VizTools):
             "datetime": time_period,
             "intersects": aoi_geometry,
             "limit": limit,
-            "collections": [collection],
+            "collections": collections,
             "query": query_filters,
             "sortby": [{"field": f"properties.{sortby}", "direction": sort_order}],
         }

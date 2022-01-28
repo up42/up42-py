@@ -12,7 +12,7 @@
             ]
         ]
     },
-    "collection": ["PHR"],
+    "collections": ["PHR"],
     "limit": 4,
     "query": {
         "cloudCoverage": {"lte": 20},
