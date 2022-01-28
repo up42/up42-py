@@ -3,10 +3,6 @@
 **Check data availability & download image preview quicklooks** via the catalog search. 
 You can filter by various parameters e.g. time period, area of interest, cloud cover etc.
 
-!!! Info "Supported Sensors"
-    Currently the UP42 catalog search supports these sensors: **Pleiades, Spot, Sentinel1, 
-    Sentinel2, Sentinel3, Sentinel5p**.
-
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Fcatalog.ipynb)
 
@@ -18,6 +14,12 @@ up42.authenticate(project_id="123", project_api_key="456")
 #up42.authenticate(cfg_file="config.json")
 
 catalog = up42.initialize_catalog()
+```
+
+## See the available data collections
+
+```python
+catalog.get_collections()
 ```
 
 ## Search scenes in aoi
@@ -32,7 +34,7 @@ aoi = up42.get_example_aoi(location="Berlin", as_dataframe=True)
 search_parameters = catalog.construct_parameters(geometry=aoi, 
                                                  start_date="2018-01-01",
                                                  end_date="2020-12-31",
-                                                 sensors=["pleiades"],
+                                                 collection=["PHR"],
                                                  max_cloudcover=20,
                                                  sortby="cloudCoverage", 
                                                  limit=10)
