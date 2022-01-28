@@ -16,7 +16,7 @@ pip show up42-py
 
 ## Versions
 ### [0.19.0](https://pypi.org/project/up42-py/) (2022-01-28)
-- Add support for UP42 data collections via `up42.get_collections`.
+- Add support for UP42 data collections via `catalog.get_collections`.
 - Switch `catalog.construct_parameters` to use `collection` instead of `sensor` for 
   the dataset selection.
 - Refactor retry mechanism. Resolves issue of unintended token renewals & further limits 
