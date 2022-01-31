@@ -56,7 +56,7 @@ until the order is either finished, cancelled or failed!
 ## Query and download the resulting assets of the order
 
 ```python
-assets = order.get_assets(limit=100, sortby="createdAt")
+assets = order.get_assets()
 assets[0].download()
 ```
 
