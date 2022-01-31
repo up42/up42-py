@@ -15,10 +15,17 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.19.0](https://pypi.org/project/up42-py/) (2022-01-28)
+- Add support for UP42 data collections via `catalog.get_collections`.
+- Switch `catalog.construct_parameters` to use `collection` instead of `sensor` for 
+  the dataset selection.
+- Refactor retry mechanism. Resolves issue of unintended token renewals & further limits 
+  retries.
+
+
 ### [0.18.1](https://pypi.org/project/up42-py/) (2021-12-20)
 - Allow installation with Python 3.9
 
-## Versions
 ### [0.18.0](https://pypi.org/project/up42-py/) (2021-11-10)
 - Add sorting criteria, sorting order and results limit parameters to `storage.get_orders` 
   and `storage.get_assets`. Now also uses results pagination which avoids timeout issues 
