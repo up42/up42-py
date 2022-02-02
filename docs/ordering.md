@@ -27,7 +27,7 @@ aoi = up42.get_example_aoi(location="Berlin", as_dataframe=True)
 search_parameters = catalog.construct_parameters(geometry=aoi, 
                                                  start_date="2018-01-01",
                                                  end_date="2020-12-31",
-                                                 collection=["PHR"],
+                                                 collections=["PHR"],
                                                  max_cloudcover=5,
                                                  sortby="cloudCoverage", 
                                                  limit=1)
