@@ -237,27 +237,27 @@ def test_search_catalog_pagination(catalog_mock):
 
 @pytest.mark.live
 def test_search_catalog_pagination_live(catalog_live):
-    search_params_limit_614 = {
-        "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
+    search_params_limit_720 = {
+        "datetime": "2018-01-01T00:00:00Z/2019-12-31T23:59:59Z",
         "collections": ["PHR", "SPOT"],
-        "intersects": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [12.008056640625, 52.66305767075935],
-                    [16.292724609375, 52.66305767075935],
-                    [16.292724609375, 52.72963909783717],
-                    [12.008056640625, 52.72963909783717],
-                    [12.008056640625, 52.66305767075935],
-                ]
-            ],
-        },
-        "limit": 614,
+        "bbox": [
+            -125.859375,
+            32.93492866908233,
+            -116.82861328125001,
+            41.65649719441145,
+        ],
+        "limit": 720,
     }
-    search_results = catalog_live.search(search_params_limit_614)
+    search_results = catalog_live.search(search_params_limit_720)
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (614, 14)
+    assert search_results.shape == (720, 14)
+    assert search_results.collection.nunique() == 2
     assert all(search_results.collection.isin(["PHR", "SPOT"]))
+    period_column = pd.to_datetime(search_results.acquisitionDate)
+    assert all(
+        (period_column > pd.to_datetime("2018-01-01T00:00:00Z"))
+        & (period_column <= pd.to_datetime("2019-12-31T23:59:59Z"))
+    )
 
 
 @pytest.mark.live
@@ -285,40 +285,6 @@ def test_search_catalog_pagination_no_results(catalog_live):
     search_results = catalog_live.search(search_params_no_results)
     assert isinstance(search_results, gpd.GeoDataFrame)
     assert search_results.empty
-
-
-@pytest.mark.live
-def test_search_catalog_pagination_correct_filters(catalog_live):
-    """
-    Sanity check that the pagination loop does not introduce undesired results outside
-    of the search parameter filters.
-    """
-    search_params_no_results = {
-        "datetime": "2021-01-01T00:00:00Z/2021-12-31T23:59:59Z",
-        "collections": ["PHR", "Sentinel-1"],
-        "intersects": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [12.008056640625, 52.66305767075935],
-                    [16.292724609375, 52.66305767075935],
-                    [16.292724609375, 52.72963909783717],
-                    [12.008056640625, 52.72963909783717],
-                    [12.008056640625, 52.66305767075935],
-                ]
-            ],
-        },
-        "limit": 700,
-    }
-    search_results = catalog_live.search(search_params_no_results)
-    assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (700, 14)
-    assert all(search_results.collection.isin(["PHR", "Sentinel-1"]))
-    period_column = pd.to_datetime(search_results.acquisitionDate)
-    assert all(
-        (period_column > pd.to_datetime("2021-01-01T00:00:00Z"))
-        & (period_column <= pd.to_datetime("2021-12-31T23:59:59Z"))
-    )
 
 
 def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
