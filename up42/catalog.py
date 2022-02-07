@@ -79,10 +79,10 @@ class Catalog(VizTools):
         Args:
             geometry: The search geometry, one of dict, Feature, FeatureCollection,
                 list, GeoDataFrame, Point, Polygon.
+            collections: The satellite sensor collections to search for, e.g. ["PHR"] or ["PHR", "SPOT"].
+                Also see catalog.get_collections().
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
-            collection: The satellite sensor collections to search for, e.g. ["PHR"] or ["PHR", "SPOT"].
-                Also see catalog.get_collections().
             usage_type: Filter for imagery that can just be purchased & downloaded or also
                 processes. ["DATA"] (can only be download), ["ANALYTICS"] (can be downloaded
                 or used directly with a processing algorithm), ["DATA", "ANALYTICS"]
@@ -171,6 +171,9 @@ class Catalog(VizTools):
         response_json: dict = self.auth._request("POST", url, search_parameters)
         features = response_json["features"]
 
+        # A request with no results will still include a (non-exhausted) pagination token.
+        # Only the first pagination token request will then indicate search exhausted.
+
         # Search results with more than 500 items are given as 50-per-page additional pages.
         while len(features) < max_limit:
             page_url = response_json["links"][0]["href"]
@@ -178,7 +181,7 @@ class Catalog(VizTools):
             pagination_exhausted = next_page_url == page_url
             if pagination_exhausted:
                 break
-            response_json = self.auth._request("POST", next_page_url)
+            response_json = self.auth._request("POST", next_page_url, search_parameters)
             features += response_json["features"]
 
         features = features[:max_limit]

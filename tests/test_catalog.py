@@ -4,6 +4,7 @@ import tempfile
 
 import pytest
 import geopandas as gpd
+import pandas as pd
 
 from .context import Order
 
@@ -227,18 +228,7 @@ def test_search_catalog_pagination(catalog_mock):
             ],
         },
         "limit": 614,
-        "query": {
-            "dataBlock": {
-                "in": [
-                    "oneatlas-pleiades-fullscene",
-                    "oneatlas-pleiades-display",
-                    "oneatlas-pleiades-aoiclipped",
-                    "oneatlas-spot-fullscene",
-                    "oneatlas-spot-display",
-                    "oneatlas-spot-aoiclipped",
-                ]
-            }
-        },
+        "collections": ["PHR", "SPOT"],
     }
     search_results = catalog_mock.search(search_params_limit_614)
     assert isinstance(search_results, gpd.GeoDataFrame)
@@ -247,8 +237,36 @@ def test_search_catalog_pagination(catalog_mock):
 
 @pytest.mark.live
 def test_search_catalog_pagination_live(catalog_live):
-    search_params_limit_614 = {
-        "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
+    search_params_limit_720 = {
+        "datetime": "2018-01-01T00:00:00Z/2019-12-31T23:59:59Z",
+        "collections": ["PHR", "SPOT"],
+        "bbox": [
+            -125.859375,
+            32.93492866908233,
+            -116.82861328125001,
+            41.65649719441145,
+        ],
+        "limit": 720,
+    }
+    search_results = catalog_live.search(search_params_limit_720)
+    assert isinstance(search_results, gpd.GeoDataFrame)
+    assert search_results.shape == (720, 14)
+    assert search_results.collection.nunique() == 2
+    assert all(search_results.collection.isin(["PHR", "SPOT"]))
+    period_column = pd.to_datetime(search_results.acquisitionDate)
+    assert all(
+        (period_column > pd.to_datetime("2018-01-01T00:00:00Z"))
+        & (period_column <= pd.to_datetime("2019-12-31T23:59:59Z"))
+    )
+
+
+@pytest.mark.live
+def test_search_catalog_pagination_no_results(catalog_live):
+    """
+    Sanity check that the pagination loop does not introduce undesired results.
+    """
+    search_params_no_results = {
+        "datetime": "2018-01-01T00:00:00Z/2018-01-02T23:59:59Z",
         "collections": ["PHR", "SPOT"],
         "intersects": {
             "type": "Polygon",
@@ -262,11 +280,11 @@ def test_search_catalog_pagination_live(catalog_live):
                 ]
             ],
         },
-        "limit": 614,
+        "limit": 10,
     }
-    search_results = catalog_live.search(search_params_limit_614)
+    search_results = catalog_live.search(search_params_no_results)
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (614, 14)
+    assert search_results.empty
 
 
 def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
@@ -294,6 +312,7 @@ def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
     search_results = catalog_pagination_mock.search(search_params_limit_614)
     assert isinstance(search_results, gpd.GeoDataFrame)
     assert search_results.shape == (550, 14)
+    assert all(search_results.collection.isin(["PHR", "SPOT"]))
 
 
 def test_download_quicklook(catalog_mock, requests_mock):
