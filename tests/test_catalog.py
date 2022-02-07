@@ -228,18 +228,7 @@ def test_search_catalog_pagination(catalog_mock):
             ],
         },
         "limit": 614,
-        "query": {
-            "dataBlock": {
-                "in": [
-                    "oneatlas-pleiades-fullscene",
-                    "oneatlas-pleiades-display",
-                    "oneatlas-pleiades-aoiclipped",
-                    "oneatlas-spot-fullscene",
-                    "oneatlas-spot-display",
-                    "oneatlas-spot-aoiclipped",
-                ]
-            }
-        },
+        "collections": ["PHR", "SPOT"],
     }
     search_results = catalog_mock.search(search_params_limit_614)
     assert isinstance(search_results, gpd.GeoDataFrame)
