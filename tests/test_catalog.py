@@ -357,7 +357,7 @@ def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
 def test_download_quicklook_live(catalog_live):
     with tempfile.TemporaryDirectory() as tempdir:
         out_paths = catalog_live.download_quicklooks(
-            image_ids=["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"],
+            image_ids=["ca507c1b-ffc8-4a0a-b103-84f7b8b8a11a"],
             sensor="pleiades",
             output_directory=tempdir,
         )
