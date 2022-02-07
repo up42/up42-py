@@ -171,6 +171,9 @@ class Catalog(VizTools):
         response_json: dict = self.auth._request("POST", url, search_parameters)
         features = response_json["features"]
 
+        # A request with no results will still include a (non-exhausted) pagination token.
+        # Only the first pagination token request will then indicate search exhausted.
+
         # Search results with more than 500 items are given as 50-per-page additional pages.
         while len(features) < max_limit:
             page_url = response_json["links"][0]["href"]
