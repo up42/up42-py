@@ -186,6 +186,13 @@ def test_job_download_result_nounpacking(job_mock, requests_mock):
         assert len(out_files) == 1
 
 
+def test_get_job_credits_mock(job_mock):
+    out_files = job_mock.get_job_credits()
+
+    assert isinstance(out_files, dict)
+    assert out_files == {"creditsUsed": 100}
+
+
 @pytest.mark.skip(reason="Sometimes takes quite long to cancel the job on the server.")
 @pytest.mark.live
 def test_cancel_job_live(workflow_live):
@@ -265,3 +272,11 @@ def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live)
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 490
+
+
+@pytest.mark.live
+def test_get_job_credits(job_live):
+    out_files = job_live.get_job_credits()
+
+    assert isinstance(out_files, dict)
+    assert out_files == {"creditsUsed": 2}
