@@ -349,7 +349,7 @@ class Job(VizTools):
 
     def get_job_credits(self) -> dict:
         """
-        Convenience function to get the credit consumption of the job.
+        Convenience function that gets number of credits consumed in job.
 
         Returns:
             The consumed credits for the job.
