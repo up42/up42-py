@@ -234,6 +234,16 @@ JSON_ORDERS = {
     },
     "error": None,
 }
+MOCK_CREDITS = {
+    "data": {
+        "projectId": "20adecb9-97f6-42c0-8ba8-f1e2fa0bff39",
+        "projectDisplayId": "20adecb9",
+        "jobId": "feace0bb-ea26-4161-9026-852f26e46bc5",
+        "jobDisplayId": "feace0bb",
+        "creditsUsed": 100,
+    },
+    "error": None,
+}
 
 
 @pytest.fixture()
@@ -608,16 +618,7 @@ def job_mock(auth_mock, requests_mock):
     )
     requests_mock.get(
         url_download_result,
-        json={
-            "data": {
-                "projectId": "20adecb9-97f6-42c0-8ba8-f1e2fa0bff39",
-                "projectDisplayId": "20adecb9",
-                "jobId": "feace0bb-ea26-4161-9026-852f26e46bc5",
-                "jobDisplayId": "feace0bb",
-                "creditsUsed": 100,
-            },
-            "error": None,
-        },
+        json=MOCK_CREDITS,
     )
 
     return job
