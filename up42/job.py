@@ -332,7 +332,7 @@ class Job(VizTools):
         in a dictionary of strings.
 
         Returns:
-            The data.json of alle single job tasks.
+            The data.json of all single job tasks.
         """
         jobtasks: List[dict] = self.get_jobtasks(return_json=True)  # type: ignore
         jobtasks_ids = [task["id"] for task in jobtasks]
@@ -346,3 +346,17 @@ class Job(VizTools):
 
             jobtasks_results_json[jobtask_id] = response_json
         return jobtasks_results_json
+
+    def get_job_credits(self) -> dict:
+        """
+        Convenience function that gets number of credits consumed in job.
+
+        Returns:
+            The consumed credits for the job.
+        """
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}/credits"
+        response_json = self.auth._request(request_type="GET", url=url)
+        credits_used = response_json["data"]["creditsUsed"]
+        credits_used_dict = {"creditsUsed": credits_used}
+
+        return credits_used_dict
