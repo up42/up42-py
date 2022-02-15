@@ -15,8 +15,8 @@ pip show up42-py
 ```
 
 ## Versions
-### [0.19.1](https://pypi.org/project/up42-py/) (2022-02-07)
-- Fix issue with catalog search pagination not using the correct search parameters.
+### [0.20.0](https://pypi.org/project/up42-py/) (2022-02-15)
+- Enables getting credits consumed by a job via `job.get_credits`.
   
 ### [0.19.0](https://pypi.org/project/up42-py/) (2022-01-28)
 - Add support for UP42 data collections via `catalog.get_collections`.

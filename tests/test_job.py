@@ -186,8 +186,8 @@ def test_job_download_result_nounpacking(job_mock, requests_mock):
         assert len(out_files) == 1
 
 
-def test_get_job_credits_mock(job_mock):
-    out_files = job_mock.get_job_credits()
+def test_get_credits_mock(job_mock):
+    out_files = job_mock.get_credits()
 
     assert isinstance(out_files, dict)
     assert out_files == {"creditsUsed": 100}
@@ -275,8 +275,8 @@ def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live)
 
 
 @pytest.mark.live
-def test_get_job_credits(job_live):
-    out_files = job_live.get_job_credits()
+def test_get_credits(job_live):
+    out_files = job_live.get_credits()
 
     assert isinstance(out_files, dict)
-    assert out_files == {"creditsUsed": 2}
+    assert 1 < out_files["creditsUsed"] < 10
