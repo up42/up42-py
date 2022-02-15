@@ -40,7 +40,7 @@ nav:
       - Storage: storage.md
       - Detailed Example: guides/detailed-example.ipynb
     - Examples:
-        - examples/index.md
+        - examples/example_index.md
         - Basic Data Block Examples:
             - Airbus-Global Seeps Sample: examples/data-block-examples/airbus-globalseeps.ipynb
             - ESA-Sentinel-5P Level3: examples/data-block-examples/esa-sentinel5p-l3-example.ipynb
