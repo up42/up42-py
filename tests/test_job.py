@@ -279,4 +279,4 @@ def test_get_credits(job_live):
     out_files = job_live.get_credits()
 
     assert isinstance(out_files, dict)
-    assert out_files == {"creditsUsed": 2}
+    assert 1 < out_files["creditsUsed"] < 10

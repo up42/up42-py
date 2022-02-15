@@ -15,7 +15,7 @@ pip show up42-py
 ```
 
 ## Versions
-### [0.19.2](https://pypi.org/project/up42-py/) (2022-02-14)
+### [0.20.0](https://pypi.org/project/up42-py/) (2022-02-15)
 - Enables getting credits consumed by a job via `job.get_credits`.
   
 ### [0.19.0](https://pypi.org/project/up42-py/) (2022-01-28)
