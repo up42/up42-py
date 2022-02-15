@@ -347,9 +347,15 @@ class Job(VizTools):
             jobtasks_results_json[jobtask_id] = response_json
         return jobtasks_results_json
 
+<<<<<<< HEAD
     def get_credits(self) -> dict:
         """
         Gets the credit costs of the job.
+=======
+    def get_job_credits(self) -> dict:
+        """
+        Convenience function that gets number of credits consumed in job.
+>>>>>>> master
 
         Returns:
             The consumed credits for the job.
