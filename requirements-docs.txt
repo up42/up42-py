@@ -5,5 +5,5 @@ mkdocs-autolinks-plugin==0.4.0
 mkdocs-jupyter==0.18.2
 mkdocs-exclude==1.0.2
 mkdocs-macros-plugin==0.6.0
-mkdocstrings==0.16.2
+mkdocstrings==0.17.0
 
