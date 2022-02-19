@@ -14,7 +14,7 @@ copyright: UP42 2020
 ## Social Media
 extra:
   social:
-    - icon: fontawesome/solid/home
+    - icon: fontawesome/solid/house
       link: https://up42.com
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/up42_
@@ -26,6 +26,9 @@ extra:
       link: https://hub.docker.com/u/up42
     - icon: fontawesome/solid/envelope
       link: mailto:support@up42.com
+  analytics:
+    provider: google
+    property: 'UA-132885718-1'
 
 ## Page tree
 nav:
@@ -167,13 +170,11 @@ markdown_extensions:
   - pymdownx.snippets:
       check_paths: true
   - pymdownx.superfences
-  - pymdownx.tabbed
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
   - pymdownx.tabbed
   - mkdocs-click
 
-google_analytics:
-  - 'UA-132885718-1'
-  - 'auto'
