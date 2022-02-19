@@ -134,7 +134,7 @@ plugins:
             show_category_heading: true
           selection:
             filters:
-              - "!^_"  # exlude all members starting with _
+              - "!^_"  # exclude all members starting with _
       watch:
         - up42
 
@@ -175,6 +175,4 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
-  - pymdownx.tabbed
-  - mkdocs-click
 
