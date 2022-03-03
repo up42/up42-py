@@ -361,7 +361,7 @@ class Workflow:
             end_date: Query period ending day as iso-format or datetime object,
                 e.g. "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS".
             scene_ids: List of scene_ids, if given ignores all other parameters except geometry.
-            assets: Optional, can be used to incorporate existing assets in Storage (result
+            asset_ids: Optional, can be used to incorporate existing assets in Storage (result
                 of Orders for instance) into new workflows.
 
         Returns:
