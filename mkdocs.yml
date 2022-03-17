@@ -34,9 +34,10 @@ extra:
 nav:
     - Home: index.md
     - Getting Started:
+      - Quickstart:
+        - Installation: installation.md
+        - Authentication: authentication.md
       - 30 Second Example: 30-second-example.md
-      - Installation: installation.md
-      - Authentication: authentication.md
       - Structure: structure.md
       - Catalog Search: catalog.md
       - Ordering: ordering.md

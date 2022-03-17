@@ -11,6 +11,8 @@ Update an existing installation to the **newest version** via:
 ```bash
 pip install up42-py --upgrade
 ```
+!!! Note
+    The latest development version of Up42 is on [GitHub](https://github.com/up42/up42-py).
 
 !!! Help "Installation issues"
     If you are using Windows and experience dependency issues (rasterio, gdal, ...), 
