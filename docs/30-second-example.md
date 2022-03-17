@@ -12,20 +12,24 @@ and [**Sharpening Filter**](https://marketplace.up42.com/block/e374ea64-dc3b-450
 The area of interest and workflow parameters are defined. After **running the job**, 
 the results are **downloaded** and visualized.
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
+[![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
 
 ```python
 import up42
 up42.authenticate(project_id="12345", project_api_key="67890")
 project = up42.initialize_project()
+```
 
+```python
 # Construct workflow
 workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
 #print(up42.get_blocks(basic=True))
 input_tasks = ["Sentinel-2 L2A Visual (GeoTIFF)",
                "Sharpening Filter"]
 workflow.add_workflow_tasks(input_tasks)
+```
 
+```python
 # Define the aoi and input parameters of the workflow to run it.
 aoi = up42.get_example_aoi(as_dataframe=True)
 # Or use up42.draw_aoi(), up42.read_vector_file(), FeatureCollection, GeoDataFrame etc.
@@ -35,13 +39,19 @@ input_parameters = workflow.construct_parameters(geometry=aoi,
                                                  end_date="2020-12-31",
                                                  limit=1)
 input_parameters["esa-s2-l2a-gtiff-visual:1"].update({"max_cloud_cover":5})
+```
 
+```python
 # Price estimation
 workflow.estimate_job(input_parameters)
+```
 
+```python
 # Run a test job to query data availability and check the configuration.
 test_job = workflow.test_job(input_parameters, track_status=True)
+```
 
+```python
 # Run the actual job.
 job = workflow.run_job(input_parameters, track_status=True)
 
