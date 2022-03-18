@@ -14,11 +14,13 @@ the results are **downloaded** and visualized.
 
 [![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
 
+
 ```python
 import up42
 up42.authenticate(project_id="12345", project_api_key="67890")
 project = up42.initialize_project()
 ```
+
 
 ```python
 # Construct workflow
