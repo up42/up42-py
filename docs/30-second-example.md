@@ -15,12 +15,18 @@ the results are **downloaded** and visualized.
 [![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
 
 
+### **Authentication**
+
+The initial steps of installing and authentication were covered in the previous sections. After, we need to create a project to set up and configuring the workflow of the application.
+
 ```python
 import up42
-up42.authenticate(project_id="12345", project_api_key="67890")
+up42.authenticate(project_id="12345", project_api_key="67890") # inline authentication (also possible with json file)
 project = up42.initialize_project()
 ```
+### **Creating a workflow**
 
+Creating a workflow only consists of adding a workflow name, and adding some input tasks. The lists for all the input tasks can be found in the documentation. 
 
 ```python
 # Construct workflow
@@ -43,6 +49,8 @@ input_parameters = workflow.construct_parameters(geometry=aoi,
 input_parameters["esa-s2-l2a-gtiff-visual:1"].update({"max_cloud_cover":5})
 ```
 
+Price estimation is an important feature that allows to estimate the actual costs of your workflow before you run your application. Estimating costs are reported in credits units that you can check on your account dashboard.
+
 ```python
 # Price estimation
 workflow.estimate_job(input_parameters)
@@ -52,6 +60,8 @@ workflow.estimate_job(input_parameters)
 # Run a test job to query data availability and check the configuration.
 test_job = workflow.test_job(input_parameters, track_status=True)
 ```
+
+Finally, the job run is added by passing the input parameters and enabling the tracking status feature for having status logs of our workflow. The last two lines download our resulting images and display them in the notebook interface.
 
 ```python
 # Run the actual job.
