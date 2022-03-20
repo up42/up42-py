@@ -37,7 +37,7 @@ nav:
       - Quickstart:
         - Installation: installation.md
         - Authentication: authentication.md
-      - Quick sample tutorial: 30-second-example.md
+        - Quick sample tutorial: 30-second-example.md
       - Structure: structure.md
       - Catalog Search: catalog.md
       - Ordering: ordering.md

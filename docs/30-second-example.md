@@ -37,7 +37,7 @@ input_tasks = ["Sentinel-2 L2A Visual (GeoTIFF)",
 workflow.add_workflow_tasks(input_tasks)
 ```
 
-### **Defining the input parameters for the workflow**
+### **Defining the input parameters**
 
 Input tasks are not enough to completely define our workflow. Also, input parameters should be defined which include the AOI (area of interest), dates of analysis, among others. The AOI can be added into the workflow by different methods, external geometry files, and operations as well as some example AOI included in our package. 
 
@@ -59,6 +59,8 @@ Price estimation is an important feature that allows to estimate the actual cost
 # Price estimation
 workflow.estimate_job(input_parameters)
 ```
+
+### **Pre-testing**
 Prior a final run of our workflow we can test the configuration and availability of the tasks included in our pipeline. This is done by running test jobs before the final run.
 
 ```python
@@ -66,6 +68,8 @@ Prior a final run of our workflow we can test the configuration and availability
 test_job = workflow.test_job(input_parameters, track_status=True)
 ```
 
+
+### **Final run**
 Finally, the job run is added by passing the input parameters and enabling the tracking status feature for having status logs of our workflow. The last two lines download our resulting images and display them in the notebook interface.
 
 ```python
@@ -76,6 +80,8 @@ job.download_results()
 job.plot_results(figsize=(6,6))
 ```
 
+### **Results**
+
 After running our quick tutorial the expected result should be similar to the following.
 
 ![Expected Result](assets/results_quick_sample.jpg){ width="300" }
@@ -83,4 +89,4 @@ After running our quick tutorial the expected result should be similar to the fo
 <br>
 
 !!! Success "Success!"
-    If you were able to complete this tutorial you can continue with the basic and advanced examples to explore further capabilities of our SDK, or also continue with the with the [Structure chapter](structure.md)!
+    If you were able to complete this tutorial you can continue with the [detailed example](/up42-py/guides/detailed-example/)! for further explanation of the basic flow of our SKD, or also continue with the with the [Structure chapter](structure.md)!
