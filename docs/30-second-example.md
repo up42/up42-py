@@ -7,7 +7,7 @@ The UP42 Python package uses nine classes, representing the **hierarchical struc
 
 ------------------------
 
-In this example a **new workflow** consisting of [**Sentinel-2 L2A data**](https://marketplace.up42.com/block/4471e5ef-90f1-4bf0-9243-66bc9d8b4c99)
+In this example a **new workflow** consisting of [**Sentinel-2 L2A data**](https://up42.com/marketplace/blocks/data/aws-s2-l2a)
 and [**Sharpening Filter**](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e) is created.
 The area of interest and workflow parameters are defined. After **running the job**, 
 the results are **downloaded** and visualized.
@@ -17,16 +17,16 @@ the results are **downloaded** and visualized.
 
 ### **Authentication**
 
-The initial steps of installing and authentication were covered in the previous sections. After, we need to create a project to set up and configuring the workflow of the application.
+The initial steps for [installing](installation.md) and [authentication](authentication.md) were covered in the previous sections. After, we need to create a project to set up and configuring the workflow of the application.
 
 ```python
 import up42
-up42.authenticate(project_id="12345", project_api_key="67890") # inline authentication (also possible with json file)
+up42.authenticate(project_id="project ID string", project_api_key="project-API-key") # inline authentication (also possible with json file)
 project = up42.initialize_project()
 ```
 ### **Creating a workflow**
 
-Creating a workflow only consists of adding a workflow name, and adding some input tasks. The lists for all the input tasks can be found in the documentation. 
+Creating a workflow only consists of adding a workflow name, and adding some input tasks. The lists for all the input tasks can be found in the documentation [**processing blocks section**](https://up42.com/marketplace/blocks/processing). 
 
 ```python
 # Construct workflow
@@ -36,6 +36,10 @@ input_tasks = ["Sentinel-2 L2A Visual (GeoTIFF)",
                "Sharpening Filter"]
 workflow.add_workflow_tasks(input_tasks)
 ```
+
+### **Defining the input parameters for the workflow**
+
+Input tasks are not enough to completely define our workflow. Also, input parameters should be defined which include the AOI (area of interest), dates of analysis, among others. The AOI can be added into the workflow by different methods, external geometry files, and operations as well as some example AOI included in our package. 
 
 ```python
 # Define the aoi and input parameters of the workflow to run it.
@@ -55,6 +59,7 @@ Price estimation is an important feature that allows to estimate the actual cost
 # Price estimation
 workflow.estimate_job(input_parameters)
 ```
+Prior a final run of our workflow we can test the configuration and availability of the tasks included in our pipeline. This is done by running test jobs before the final run.
 
 ```python
 # Run a test job to query data availability and check the configuration.
@@ -71,7 +76,11 @@ job.download_results()
 job.plot_results(figsize=(6,6))
 ```
 
+After running our quick tutorial the expected result should be similar to the following.
+
+![Expected Result](assets/results_quick_sample.jpg){ width="300" }
+
 <br>
 
 !!! Success "Success!"
-    Continue with the [Installation chapter](installation.md)!
+    If you were able to complete this tutorial you can continue with the basic and advanced examples to explore further capabilities of our SDK, or also continue with the with the [Structure chapter](structure.md)!
