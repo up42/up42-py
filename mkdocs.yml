@@ -59,7 +59,7 @@ nav:
             - Sentinel-2 L2A Analytic (GeoTIFF): examples/data-block-examples/sentinel2-l2-a-geotiff-example.ipynb
             - Sobloo Sentinel-1 L1 SLC (SAFE): examples/data-block-examples/sobloo-sentinel1-l1-example.ipynb
         - Advanced Examples:
-          - Aircraft Detection: examples/aircraft-detection.ipynb
+          # - Aircraft Detection: examples/aircraft-detection.ipynb
           - Radar Processing: examples/radar_processing_1.ipynb
           - Flood Mapping: examples/flood_mapping.ipynb
           - Catalog Quicklooks: examples/catalog-quicklooks.ipynb
