@@ -39,7 +39,7 @@ workflow.add_workflow_tasks(input_tasks)
 
 ### **Defining the input parameters**
 
-Input tasks are not enough to completely define our workflow. Also, input parameters should be defined which include the AOI (area of interest), dates of analysis, among others. The AOI can be added into the workflow by different methods, external geometry files, and operations as well as some example AOI included in our package. 
+To further configure the workflow, we provide workflow input parameters, e.g. the AOI (area of interest), dates of analysis, among others. The AOI geometry can be read via various methods (e.g. `up42.draw_aoi()`, `up42.read_vector_file()`) and provided as multiple formats (e.g. GeoJSON, shapely Polygon, GeoDataFrame).
 
 ```python
 # Define the aoi and input parameters of the workflow to run it.
