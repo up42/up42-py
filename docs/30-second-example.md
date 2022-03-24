@@ -52,7 +52,7 @@ input_parameters = workflow.construct_parameters(geometry=aoi,
                                                  limit=1)
 input_parameters["esa-s2-l2a-gtiff-visual:1"].update({"max_cloud_cover":5})
 ```
-
+### **Price Estimation and Pre-testing**
 Price estimation is an important feature that allows to estimate the actual costs of your workflow before you run your application. Estimating costs are reported in credits units that you can check on your account dashboard.
 
 ```python
