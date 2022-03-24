@@ -10,15 +10,7 @@ You can filter by various parameters e.g. time period, area of interest, cloud c
 
 ```python
 import up42
-up42.authenticate(project_id="123", project_api_key="456")
-catalog = up42.initialize_catalog()
-```
-
-Alternatively, if you want to authenticate with a config file (make sure config.json file is on the current folder or set the path)
-
-```python
-import up42
-up42.authenticate(cfg_file="config.json")
+up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
 catalog = up42.initialize_catalog()
 ```
 

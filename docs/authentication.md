@@ -16,7 +16,7 @@ Authenticate by providing the project credentials (see step above) **directly in
 
 ``` py title="Inline authentication"
 import up42
-up42.authenticate(project_id="project ID string", project_api_key="project-API-key")
+up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
 ```
 
 <br>
@@ -25,8 +25,8 @@ Or create a simple **configuration json file** and provide its file path:
  
 ``` json title="conf.json"
 {
-  "project_id": "project ID string",
-  "project_api_key": "project-api-key"
+  "project_id": "your project ID",
+  "project_api_key": "your-project-api-key"
 }
 ```
 
