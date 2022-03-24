@@ -12,7 +12,7 @@ In the project's **Developers section** you can find the **project_id** and **pr
  
 ## Authenticate  
 
-Authenticate by providing the project credentials **directly in the code**, (note that the project ID string and the project-API-key come from the your account credentials in the previous step):
+Authenticate by providing the project credentials (see step above) **directly in the code**:
 
 ``` py title="Inline authentication"
 import up42
