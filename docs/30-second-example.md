@@ -60,7 +60,6 @@ Price estimation is an important feature that allows to estimate the actual cost
 workflow.estimate_job(input_parameters)
 ```
 
-### **Pre-testing**
 Prior a final run of our workflow we can test the configuration and availability of the tasks included in our pipeline. This is done by running test jobs before the final run.
 
 ```python
