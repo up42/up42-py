@@ -69,7 +69,7 @@ test_job = workflow.test_job(input_parameters, track_status=True)
 ```
 
 
-### **Final run**
+### **Running the Workflow**
 Finally, the job run is added by passing the input parameters and enabling the tracking status feature for having status logs of our workflow. The last two lines download our resulting images and display them in the notebook interface.
 
 ```python
