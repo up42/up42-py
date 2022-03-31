@@ -1,4 +1,5 @@
 mkdocs-material==8.2.1
+jinja2==3.0.0
 pygments==2.11.2
 pymdown-extensions==9.2
 mkdocs-autolinks-plugin==0.4.0
