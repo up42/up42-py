@@ -15,6 +15,11 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.20.1](https://pypi.org/project/up42-py/) (2022-02-15)
+- Update documentation for latest changes on the user console.
+- Remove outdated examples.
+- Add required files on the dist version for allowing creation of conda meta files. 
+
 ### [0.20.0](https://pypi.org/project/up42-py/) (2022-02-15)
 - Enables getting credits consumed by a job via `job.get_credits`.
   
