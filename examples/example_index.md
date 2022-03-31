@@ -20,7 +20,6 @@ interactively with Binder [![Binder](https://mybinder.org/badge_logo.svg)](https
 [Sobloo Sentinel-1 L1 SLC (SAFE)](https://sdk.up42.com/examples/data-block-examples/sobloo-sentinel1-l1-example)      
 
 ## Advanced Examples
-:airplane: [Aircraft Detection](https://sdk.up42.com/examples/aircraft-detection)   
 :satellite: [Radar Processing](https://sdk.up42.com/examples/radar_processing_1/)  
 :droplet: [Flood Mapping](https://sdk.up42.com/examples/flood_mapping/)  
 🖼️ [Image mosaicking](https://github.com/up42/mosaicking)  

@@ -12,32 +12,36 @@ In the project's **Developers section** you can find the **project_id** and **pr
  
 ## Authenticate  
 
-Authenticate by providing the project credentials **directly in the code**:
+Authenticate by providing the project credentials (see step above) **directly in the code**:
 
-```python
+``` py title="Inline authentication"
 import up42
-up42.authenticate(project_id="123", project_api_key="456")
+up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
 ```
 
 <br>
 
 Or create a simple **configuration json file** and provide its file path:
  
-```json
+``` json title="conf.json"
 {
-  "project_id": "123",
-  "project_api_key": "456"
+  "project_id": "your project ID",
+  "project_api_key": "your-project-api-key"
 }
 ```
 
-```python
+``` py title="Authentication from conf.json file"
 import up42
 up42.authenticate(cfg_file="config.json")
 ```
 
+If everything went well, you should receive a confirmation message
 
+!!! Success "Expected output"  
+	```
+	YYYY-MM-DD HH:MM:SS - Got credentials from config file.
+	YYYY-MM-DD HH:MM:SS - Authentication with UP42 successful!
+	```
 <br>
 
-
-!!! Success "Success!"
-    Continue with the [Structure chapter](structure.md)!
+Continue with the [Structure chapter](structure.md)!
