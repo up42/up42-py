@@ -85,9 +85,13 @@ def test_get_workspace_live(auth_live):
 
 
 def test_generate_headers(auth_mock):
-    version = io.open(
-        Path(__file__).resolve().parents[1] / "up42/_version.txt", encoding="utf-8"
-    ).read()
+    version = (
+        io.open(
+            Path(__file__).resolve().parents[1] / "up42/_version.txt", encoding="utf-8"
+        )
+        .read()
+        .strip()
+    )
     expected_headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer token_1011",
