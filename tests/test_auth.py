@@ -1,5 +1,4 @@
 import json
-import re
 from pathlib import Path
 
 import pytest
@@ -92,7 +91,9 @@ def test_generate_headers(auth_mock):
         .joinpath("up42/_version.txt")
         .read_text(encoding="utf-8")
     )
-    assert isinstance(version, str) and re.match(r"[^\r\n]", version)
+    assert (
+        isinstance(version, str) and "\n" not in version
+    ), "check integrity of your version file"
     expected_headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer token_1011",
