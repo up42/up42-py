@@ -184,7 +184,7 @@ class Auth:
             .resolve()
             .parent.joinpath("_version.txt")
             .read_text(encoding="utf-8")
-        ).strip()
+        )
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
