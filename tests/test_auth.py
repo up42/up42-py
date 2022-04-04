@@ -1,5 +1,5 @@
-import io
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -86,12 +86,13 @@ def test_get_workspace_live(auth_live):
 
 def test_generate_headers(auth_mock):
     version = (
-        io.open(
-            Path(__file__).resolve().parents[1] / "up42/_version.txt", encoding="utf-8"
-        )
-        .read()
-        .strip()
+        Path(__file__)
+        .resolve()
+        .parents[1]
+        .joinpath("up42/_version.txt")
+        .read_text(encoding="utf-8")
     )
+    assert isinstance(version, str) and re.match(r"[^\r\n]", version)
     expected_headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer token_1011",
