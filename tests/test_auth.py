@@ -1,4 +1,3 @@
-import io
 import json
 from pathlib import Path
 
@@ -85,9 +84,16 @@ def test_get_workspace_live(auth_live):
 
 
 def test_generate_headers(auth_mock):
-    version = io.open(
-        Path(__file__).resolve().parents[1] / "up42/_version.txt", encoding="utf-8"
-    ).read()
+    version = (
+        Path(__file__)
+        .resolve()
+        .parents[1]
+        .joinpath("up42/_version.txt")
+        .read_text(encoding="utf-8")
+    )
+    assert (
+        isinstance(version, str) and "\n" not in version
+    ), "check integrity of your version file"
     expected_headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer token_1011",
