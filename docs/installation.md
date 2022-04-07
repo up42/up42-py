@@ -1,6 +1,6 @@
 # :floppy_disk: Installation
 
-**Install via pip**. The package requires Python version >3.6 & <3.10.
+**Install via pip**. The package requires Python version >3.6. Python 3.10 is not yet supported.
 
 ```bash
 pip install up42-py
