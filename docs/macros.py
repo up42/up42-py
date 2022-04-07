@@ -19,19 +19,6 @@ import up42
 def define_env(env):
     """
     This is the hook for defining variables, macros and filters.
-
-    Examples:
-            # Use a variable, e.g. {{ some_variable }}
-            env.variables.some_variable = "John Doe"
-
-            # Use a Python function e.g. {{ calculation(x=5) }}
-            @env.macro
-            def calculation(x):
-                    return (2.3 * x) + 7
-
-            # Export some predefined function
-            import math
-            env.macro(math.floor) # will be exported as 'floor'
     """
 
     def indent(input_string: str):
