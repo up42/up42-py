@@ -17,12 +17,8 @@ pip show up42-py
 ## Versions
 ### [0.20.2](https://pypi.org/project/up42-py/) (2022-04-10)
 - Update documentation
-- Move test.sh commands into makefile
-- Remove click from dependencies
-- Update doc requirements
-- Remove subdependencies that are installed by other packages
-- Remove inline examples as this would already trigger the macro usage
-- Enabling the getexampleaoi function for conda version
+- Non functional changes to enable conda release
+- Update requirements and removing overlapping subdependencies 
 
 ### [0.20.1](https://pypi.org/project/up42-py/) (2022-04-05)
 - Update documentation for latest changes on the user console.
