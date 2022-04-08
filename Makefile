@@ -15,10 +15,15 @@ install[dev]:
 	unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
 
 test:
-	bash test.sh
+	-rm -r .pytest_cache
+	black .
+	python -m pytest --pylint --pylint-rcfile=../../pylintrc --mypy --mypy-ignore-missing-imports --cov=up42/ --durations=3
+	coverage-badge -f -o coverage.svg
 
 test[live]:
-	bash test.sh --live
+	-rm -r .pytest_cache
+	black .
+	python -m pytest --pylint --pylint-rcfile=../../pylintrc --mypy --mypy-ignore-missing-imports --cov=up42/ --runlive --durations=5
 
 e2e:
 	rm -rf project_20abe*/

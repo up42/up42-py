@@ -1,7 +1,6 @@
 requests
 requests-oauthlib
 tenacity
-click
 tqdm
 geojson
 rasterio
