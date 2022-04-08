@@ -15,6 +15,11 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.20.2](https://pypi.org/project/up42-py/) (2022-04-10)
+- Update documentation
+- Non functional changes to enable conda release
+- Update requirements and removing overlapping subdependencies 
+
 ### [0.20.1](https://pypi.org/project/up42-py/) (2022-04-05)
 - Update documentation for latest changes on the user console.
 - Remove outdated examples.
