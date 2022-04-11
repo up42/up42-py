@@ -97,6 +97,7 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.indexes
+    - navigation.expand
   palette:
     primary: indigo
     accent: purple
