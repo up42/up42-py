@@ -104,6 +104,13 @@ def test_get_block_details_live(tools_live):
     assert "createdAt" in details
 
 
+# @pytest.mark.live
+def test_get_credits_balance_live(tools_live):
+    balance = tools_live.get_credits_balance()
+    assert isinstance(balance, dict)
+    print(balance)
+
+
 def test_validate_manifest(tools_mock, requests_mock):
     fp = Path(__file__).resolve().parent / "mock_data/manifest.json"
     url_validate_mainfest = f"{tools_mock.auth._endpoint()}/validate-schema/block"

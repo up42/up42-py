@@ -224,6 +224,38 @@ class Tools:
         else:
             return details_json
 
+    def get_credits_balance(self) -> dict:
+        """
+        Display the overall credits available in your account.
+
+        Returns:
+            A dict with the balance of credits available in your account.
+        """
+        if not hasattr(self, "auth"):
+            raise Exception(
+                "Requires authentication with UP42, use up42.authenticate()!"
+            )
+        endpoint_url = f"{self.auth._endpoint()}/accounts/me/credits/balance"
+        response_json = self.auth._request(request_type="GET", url=endpoint_url)
+        details_json = response_json["data"]
+        return details_json
+
+    def get_credits_history(self, start_date: str, end_date: str) -> dict:
+        """
+        Display the overall credits consumed in your account. The consumption history will be displayed per workspace ID.
+
+        Args:
+            start_date: The start date for the credit consumption search.
+            end_date: The end date for the credit consumption search.
+
+        Returns:
+            A dict with the information of the credit consumption of the jobs
+            run by each workspace ID sorted by date.
+
+        """
+        result = {}
+        return result
+
     def validate_manifest(self, path_or_json: Union[str, Path, dict]) -> dict:
         """
         Validates a block manifest json.
