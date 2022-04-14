@@ -6,6 +6,7 @@ import geopandas as gpd
 import pandas as pd
 import requests
 
+
 # pylint: disable=unused-import
 from .fixtures import (
     auth_mock,
@@ -104,11 +105,17 @@ def test_get_block_details_live(tools_live):
     assert "createdAt" in details
 
 
-# @pytest.mark.live
+def test_get_credits_balance(tools_mock):
+    balance = tools_mock.get_credits_balance()
+    assert isinstance(balance, dict)
+    assert 'balance' in balance
+
+
+@pytest.mark.live
 def test_get_credits_balance_live(tools_live):
     balance = tools_live.get_credits_balance()
     assert isinstance(balance, dict)
-    print(balance)
+    assert 'balance' in balance
 
 
 def test_validate_manifest(tools_mock, requests_mock):
