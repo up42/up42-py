@@ -168,8 +168,7 @@ def test_job_download_result(job_mock, requests_mock):
         assert out_paths[1].parent.is_dir()
 
 
-def test_job_download_result_nounpacking(job_mock, requests_mock):
-
+def test_job_download_result_without_unpacking(job_mock, requests_mock):
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as src_tgz:
         out_tgz_file = src_tgz.read()
@@ -186,7 +185,7 @@ def test_job_download_result_nounpacking(job_mock, requests_mock):
         assert len(out_files) == 1
 
 
-def test_get_credits_mock(job_mock):
+def test_job_get_credits(job_mock):
     out_files = job_mock.get_credits()
 
     assert isinstance(out_files, dict)
