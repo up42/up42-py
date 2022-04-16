@@ -265,7 +265,7 @@ def test_job_download_result_dimap_live(auth_live):
         assert len(out_files) == 54
 
 
-@pytest.mark.skip
+@pytest.mark.skip(reason="2gb download takes long")
 @pytest.mark.live
 def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live):
     job = Job(

@@ -494,11 +494,10 @@ def test_helper_run_parallel_jobs_one_fails(
         }
 
 
-@pytest.mark.skip
+@pytest.mark.skip(reason="Takes 100sec")
 def test_helper_run_parallel_jobs_default(
     workflow_mock, project_mock_max_concurrent_jobs
 ):
-    """Takes 100sec."""
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
