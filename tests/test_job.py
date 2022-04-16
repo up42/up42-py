@@ -16,8 +16,9 @@ from .fixtures import (
     job_live,
     jobtask_mock,
     workflow_live,
+    DOWNLOAD_URL,
+    JOBTASK_ID,
 )
-from .fixtures import DOWNLOAD_URL, JOBTASK_ID
 
 
 def test_job_info(job_mock):
@@ -27,7 +28,6 @@ def test_job_info(job_mock):
     assert job_mock._info["xyz"] == 789
 
 
-# pylint: disable=unused-argument
 @pytest.mark.parametrize("status", ["NOT STARTED", "PENDING", "RUNNING"])
 def test_job_status(job_mock, status, requests_mock):
     del job_mock._info

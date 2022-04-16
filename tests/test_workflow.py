@@ -19,8 +19,6 @@ from .fixtures import (
     project_mock,
     project_mock_max_concurrent_jobs,
     asset_mock,
-)
-from .fixtures import (
     JOB_ID,
     JOB_NAME,
     JOBTASK_ID,

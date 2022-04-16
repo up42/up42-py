@@ -9,9 +9,6 @@ from .fixtures import (
     project_mock,
     project_live,
     project_mock_max_concurrent_jobs,
-)
-from .fixtures import (
-    WORKFLOW_ID,
     WORKFLOW_NAME,
     WORKFLOW_DESCRIPTION,
     JOB_ID,

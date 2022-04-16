@@ -17,8 +17,6 @@ from .fixtures import (
     auth_live,
     jobs_live,
     jobcollection_live,
-)
-from .fixtures import (
     JOB_ID,
     JOB_ID_2,
 )

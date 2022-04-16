@@ -108,7 +108,7 @@ def test_get_assets(storage_mock):
 @pytest.mark.live
 def test_get_assets_live(storage_live):
     """
-    SDK test account holds too few results to query multiple pages via pagination,
+    SDK test account holds too few assets to query multiple pages via pagination,
     needs to be mocked.
     """
     assets = storage_live.get_assets()
