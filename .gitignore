@@ -141,6 +141,7 @@ docs/examples
 docs/CHANGELOG.md
 /dev
 docs/mkdocs_macros
+docs/guides
 /examples/project*
 project_*/
 
