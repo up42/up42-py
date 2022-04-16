@@ -37,12 +37,13 @@ def test_workflow_info(workflow_mock):
     assert workflow_mock._info["xyz"] == 789
 
 
-def test_get_workflow_tasks_normal_and_basic(workflow_mock):
+def test_get_workflow_tasks(workflow_mock):
     tasks = workflow_mock.get_workflow_tasks(basic=False)
-
     assert len(tasks) == 2
     assert tasks[0] == JSON_WORKFLOW_TASKS["data"][0]
 
+
+def test_get_workflow_tasks_basic(workflow_mock):
     tasks = workflow_mock.get_workflow_tasks(basic=True)
     assert len(tasks) == 2
     assert tasks["esa-s2-l2a-gtiff-visual:1"] == "1.0.1"
@@ -50,7 +51,7 @@ def test_get_workflow_tasks_normal_and_basic(workflow_mock):
 
 
 @pytest.mark.live
-def test_get_workflow_tasks_live(workflow_live):
+def test_get_workflow_tasks_basic_live(workflow_live):
     workflow_tasks = workflow_live.get_workflow_tasks(basic=True)
     assert isinstance(workflow_tasks, dict)
     assert "esa-s2-l2a-gtiff-visual:1" in list(workflow_tasks.keys())
@@ -76,7 +77,7 @@ def test_get_compatible_blocks_empty_workflow_returns_data_blocks(workflow_mock_
     assert "esa-s2-l2a-gtiff-visual" in list(compatible_blocks.keys())
 
 
-def test_construct_full_workflow_tasks_dict_unkwown_block_raises(workflow_mock):
+def test_construct_full_workflow_tasks_dict_unknown_block_raises(workflow_mock):
     input_tasks = ["some_block"]
     with pytest.raises(ValueError):
         workflow_mock._construct_full_workflow_tasks_dict(input_tasks=input_tasks)
@@ -138,7 +139,6 @@ def test_add_workflow_tasks_full(workflow_mock, requests_mock):
     requests_mock.post(url=job_url, status_code=200)
 
     workflow_mock.add_workflow_tasks(input_tasks_full)
-    # TODO:caplog, capture logger
 
 
 @pytest.mark.live
@@ -665,7 +665,6 @@ def test_get_jobs(workflow_mock, requests_mock):
         f"{workflow_mock.auth._endpoint()}/projects/"
         f"{workflow_mock.project_id}/jobs/{JOB_ID}"
     )
-
     requests_mock.get(
         url=url_job_info,
         json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
@@ -680,10 +679,11 @@ def test_get_jobs(workflow_mock, requests_mock):
     )  # Filters out the job that is not associated with the workflow object
 
 
-@pytest.mark.skip
+@pytest.mark.skip(
+    reason="too many jobs in test project, triggers too many job info requests."
+)
 @pytest.mark.live
 def test_get_jobs_live(workflow_live):
-    # Skip by default as too many jobs in test project, triggers too many job info requests.
     jobcollection = workflow_live.get_jobs()
     assert isinstance(jobcollection, list)
     assert isinstance(jobcollection.jobs[0], Job)
@@ -705,7 +705,6 @@ def test_update_name(workflow_mock, requests_mock):
     )
 
     workflow_mock.update_name(name=new_name)
-    # TODO:caplog, capture logger
 
 
 def test_delete(workflow_mock, requests_mock):
@@ -716,4 +715,3 @@ def test_delete(workflow_mock, requests_mock):
     requests_mock.delete(url=delete_url)
 
     workflow_mock.delete()
-    # TODO:caplog, capture logger
