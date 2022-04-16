@@ -21,45 +21,44 @@ from .context import (
 POLY = Polygon([(0, 0), (1, 1), (1, 0)])
 
 
-def test_format_time_period():
-    @pytest.mark.parametrize(
-        "start_date,end_date,result_time",
-        [
-            ("2014-01-01", "2016-12-31", "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z"),
-            (
-                "2014-01-01T00:00:00",
-                "2016-12-31T10:11:12",
-                "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
-            ),
-            (
-                "2014-01-01T00:00:00",
-                "2016-12-31",
-                "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
-            ),
-            (
-                parse("2014-01-01"),
-                parse("2016-12-31T10:11:12"),
-                "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
-            ),
-            (
-                parse("2014-01-01"),
-                "2016-12-31",
-                "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
-            ),
-            (
-                parse("2014-01-01"),
-                "2016-12-31T10:11:12",
-                "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
-            ),
-        ],
+@pytest.mark.parametrize(
+    "start_date,end_date,result_time",
+    [
+        ("2014-01-01", "2016-12-31", "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z"),
+        (
+            "2014-01-01T00:00:00",
+            "2016-12-31T10:11:12",
+            "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
+        ),
+        (
+            "2014-01-01T00:00:00",
+            "2016-12-31",
+            "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
+        ),
+        (
+            parse("2014-01-01"),
+            parse("2016-12-31T10:11:12"),
+            "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
+        ),
+        (
+            parse("2014-01-01"),
+            "2016-12-31",
+            "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
+        ),
+        (
+            parse("2014-01-01"),
+            "2016-12-31T10:11:12",
+            "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
+        ),
+    ],
+)
+def test_format_time_period(start_date, end_date, result_time):
+    time_period = format_time_period(
+        start_date=start_date,
+        end_date=end_date,
     )
-    def test_format_time_period(start_date, end_date, result_time):
-        time_period = format_time_period(
-            start_date=start_date,
-            end_date=end_date,
-        )
-        assert isinstance(time_period, str)
-        assert time_period == result_time
+    assert isinstance(time_period, str)
+    assert time_period == result_time
 
 
 @pytest.mark.parametrize(
@@ -189,7 +188,7 @@ def test_any_vector_to_fc(len_fc, in_vector):
     assert df.crs.to_string() == "EPSG:4326"
 
 
-def test_any_vector_to_fc_raises_with_not_accepted():
+def test_any_vector_to_fc_raises_with_unaccepted_geometry_type():
     ring = LinearRing([(0, 0), (1, 1), (1, 0)])
     with pytest.raises(ValueError):
         any_vector_to_fc(ring)
