@@ -192,6 +192,13 @@ def test_job_get_credits(job_mock):
     assert out_files == {"creditsUsed": 100}
 
 
+@pytest.mark.live
+def test_job_get_credits_live(job_live):
+    out_files = job_live.get_credits()
+    assert isinstance(out_files, dict)
+    assert out_files == {"creditsUsed": 5}
+
+
 @pytest.mark.skip(reason="Sometimes takes quite long to cancel the job on the server.")
 @pytest.mark.live
 def test_cancel_job_live(workflow_live):
