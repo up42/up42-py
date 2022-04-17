@@ -19,8 +19,7 @@ setup(
     },
     data_files=[
         ("", ["requirements.txt", "up42/_version.txt"]),
-        ("data", ["up42/data/aoi_berlin.geojson",
-                  "up42/data/aoi_washington.geojson"])
+        ("data", ["up42/data/aoi_berlin.geojson", "up42/data/aoi_washington.geojson"]),
     ],
     include_package_data=True,
     zip_safe=False,

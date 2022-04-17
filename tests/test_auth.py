@@ -10,8 +10,11 @@ from .context import Auth
 from .fixtures import (
     auth_mock,
     auth_live,
+    TOKEN,
+    PROJECT_ID,
+    PROJECT_APIKEY,
+    WORKSPACE_ID,
 )
-from .fixtures import TOKEN, PROJECT_ID, PROJECT_APIKEY, WORKSPACE_ID
 
 
 def test_auth_kwargs():

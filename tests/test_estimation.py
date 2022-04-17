@@ -45,7 +45,6 @@ def test_estimate_price_live(auth_live):
         },
         "tiling:1": {"tile_width": 768, "tile_height": 768},
     }
-
     input_tasks = [
         {
             "name": "esa-s2-l2a-gtiff-visual:1",

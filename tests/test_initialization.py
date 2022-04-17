@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import pytest
 
 # pylint: disable=unused-import
@@ -35,7 +33,7 @@ from .fixtures import (
 import up42  # pylint: disable=wrong-import-order
 
 
-def test_initialize_object_wo_auth_raises():
+def test_initialize_object_without_auth_raises():
     with pytest.raises(RuntimeError):
         up42.initialize_project()
     with pytest.raises(RuntimeError):

@@ -16,8 +16,9 @@ from .fixtures import (
     job_live,
     jobtask_mock,
     workflow_live,
+    DOWNLOAD_URL,
+    JOBTASK_ID,
 )
-from .fixtures import DOWNLOAD_URL, JOBTASK_ID
 
 
 def test_job_info(job_mock):
@@ -27,7 +28,6 @@ def test_job_info(job_mock):
     assert job_mock._info["xyz"] == 789
 
 
-# pylint: disable=unused-argument
 @pytest.mark.parametrize("status", ["NOT STARTED", "PENDING", "RUNNING"])
 def test_job_status(job_mock, status, requests_mock):
     del job_mock._info
@@ -168,8 +168,7 @@ def test_job_download_result(job_mock, requests_mock):
         assert out_paths[1].parent.is_dir()
 
 
-def test_job_download_result_nounpacking(job_mock, requests_mock):
-
+def test_job_download_result_without_unpacking(job_mock, requests_mock):
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as src_tgz:
         out_tgz_file = src_tgz.read()
@@ -186,11 +185,18 @@ def test_job_download_result_nounpacking(job_mock, requests_mock):
         assert len(out_files) == 1
 
 
-def test_get_credits_mock(job_mock):
+def test_job_get_credits(job_mock):
     out_files = job_mock.get_credits()
 
     assert isinstance(out_files, dict)
     assert out_files == {"creditsUsed": 100}
+
+
+@pytest.mark.live
+def test_job_get_credits_live(job_live):
+    out_files = job_live.get_credits()
+    assert isinstance(out_files, dict)
+    assert out_files == {"creditsUsed": 5}
 
 
 @pytest.mark.skip(reason="Sometimes takes quite long to cancel the job on the server.")
@@ -259,7 +265,7 @@ def test_job_download_result_dimap_live(auth_live):
         assert len(out_files) == 54
 
 
-@pytest.mark.skip
+@pytest.mark.skip(reason="2gb download takes long")
 @pytest.mark.live
 def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live):
     job = Job(
