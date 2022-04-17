@@ -166,7 +166,7 @@ def test_place_order_wrong_provider(
 
 @pytest.mark.skip(reason="Placing orders costs credits.")
 @pytest.mark.live
-def test_place_order_live(order_payload):
+def test_place_order_live(auth_mock, order_payload):
     order = Order.place(
         auth_mock, order_payload["dataProviderName"], order_payload["orderParams"]
     )

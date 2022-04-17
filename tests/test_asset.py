@@ -83,8 +83,7 @@ def test_asset_download(asset_mock, requests_mock):
         assert out_paths[1].parent.is_dir()
 
 
-def test_asset_download_nounpacking(asset_mock, requests_mock):
-
+def test_asset_download_no_unpacking(asset_mock, requests_mock):
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as src_tgz:
         out_tgz_file = src_tgz.read()

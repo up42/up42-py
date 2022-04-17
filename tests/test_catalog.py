@@ -492,9 +492,7 @@ def test_estimate_order_from_catalog_live(catalog_live):
 
 @pytest.mark.skip(reason="Placing orders costs credits.")
 @pytest.mark.live
-def test_order_from_catalog_live(
-    order_payload, order_mock, catalog_mock, requests_mock
-):
+def test_order_from_catalog_live(order_payload, order_mock, catalog_mock):
     search_results = catalog_live.search(mock_search_parameters)
     order = catalog_live.place_order(
         mock_search_parameters["intersects"], search_results.loc[0]

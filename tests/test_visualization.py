@@ -101,8 +101,7 @@ def test_map_images_2_scenes():
 
     m = VizTools()._map_images(plot_file_format, gdf, filepaths)
     m._repr_html_()
-    # Render does not return an object but an html document, as expected
-    # Disabling pylint to avoid error
+    # Render does not return an object but an html document (as expected)
     out = m._parent.render()  # pylint: disable=assignment-from-no-return
 
     assert "Image 1 - f8c03432-cec1-41b7-a203-4d871a03290f" in out
@@ -188,7 +187,6 @@ def test_map_results_jobcollection(job_mock):
         "jobid_456": [str(fp_tif), f"{str(fp_tgz.parent)}/output/data.json"],
         "merged_result": [fp_merged],
     }
-
     job_mock.results = my_dict
     map_object = job_mock.map_results()
 

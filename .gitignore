@@ -141,8 +141,8 @@ docs/examples
 docs/CHANGELOG.md
 /dev
 docs/mkdocs_macros
+docs/guides
 /examples/project*
-- "*swagger*"
-- "*redoc*"
+project_*/
 
 .DS_Store
