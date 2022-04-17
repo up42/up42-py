@@ -106,6 +106,7 @@ def test_get_block_details_live(tools_live):
 
 
 def test_get_credits_balance(tools_mock):
+    blocks = tools_mock.get_blocks()
     balance = tools_mock.get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance

@@ -274,6 +274,18 @@ def auth_mock(requests_mock):
         json=JSON_BLOCKS,
     )
 
+    # get_credits_balance
+    url_get_credits_balance = f"{auth._endpoint()}/accounts/me/credits/balance"
+    requests_mock.get(
+        url=url_get_credits_balance,
+        json = {
+            "data":
+            {
+                "balance": 10693
+            }
+        },
+    )
+
     return auth
 
 
