@@ -286,6 +286,18 @@ def auth_mock(requests_mock):
         },
     )
 
+    # get_credits_history
+    url_get_credits_history = f"{auth._endpoint()}/accounts/me/credits/history"
+    requests_mock.get(
+        url=url_get_credits_history,
+        json = {
+            "data":
+            {
+                "balance": 10693
+            }
+        },
+    )
+
     return auth
 
 

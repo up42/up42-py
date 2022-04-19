@@ -15,7 +15,8 @@ from .fixtures import (
     tools_live,
 )
 from .context import Tools
-
+from typing import List
+from datetime import date, timedelta
 
 @pytest.mark.parametrize("vector_format", ["geojson", "kml", "wkt"])
 def test_read_vector_file_different_formats(tools_mock, vector_format):
@@ -110,13 +111,33 @@ def test_get_credits_balance(tools_mock):
     assert isinstance(balance, dict)
     assert "balance" in balance
 
-
 @pytest.mark.live
 def test_get_credits_balance_live(tools_live):
     balance = tools_live.get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
 
+def test_get_credits_history(tools_mock):
+    balance_history = tools_mock.get_credits_history()
+    assert True
+
+@pytest.mark.live
+def test_get_credits_history_live(tools_live):
+    yesterday = date.today() - timedelta(days = 1)
+    yesterday_formatted = yesterday.strftime("%Y-%m-%d")
+    balance_history = tools_live.get_credits_history(
+        start_date = '2022-03-01',
+        end_date='2022-03-02'
+    )
+    assert isinstance(balance_history, dict)
+    balance_history_no_enddate = tools_live.get_credits_history(
+        start_date = yesterday_formatted
+    )
+    assert isinstance(balance_history_no_enddate, dict)
+    balance_history_no_startdate = tools_live.get_credits_history(
+        end_date = "2019-01-01"
+    )
+    assert isinstance(balance_history_no_startdate, dict)
 
 def test_validate_manifest(tools_mock, requests_mock):
     fp = Path(__file__).resolve().parent / "mock_data/manifest.json"

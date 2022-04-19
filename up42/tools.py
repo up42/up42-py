@@ -6,6 +6,7 @@ not bound to a specific higher level UP42 object.
 import json
 from pathlib import Path
 from typing import List, Union, Dict, Optional
+from datetime import date, timedelta, datetime
 
 from geopandas import GeoDataFrame
 import geopandas as gpd
@@ -15,6 +16,7 @@ import shapely
 from up42.viztools import folium_base_map, DrawFoliumOverride
 from up42.utils import (
     get_logger,
+    format_time_period
 )
 
 try:
@@ -240,7 +242,9 @@ class Tools:
         details_json = response_json["data"]
         return details_json
 
-    def get_credits_history(self, start_date: str, end_date: str) -> dict:
+    def get_credits_history(self, start_date: Optional[Union[str, datetime]] =
+                            None,
+                            end_date: Optional[Union[str, datetime]] = None) -> dict:
         """
         Display the overall credits consumed in your account. The consumption history will be displayed per workspace ID.
 
@@ -251,9 +255,52 @@ class Tools:
         Returns:
             A dict with the information of the credit consumption of the jobs
             run by each workspace ID sorted by date.
-
+            e.g. {
+                "content": Array of all history of
+                test_get_credits_balance_live
+            }
         """
-        result = {}
+        if not hasattr(self, "auth"):
+            raise Exception(
+            "Requires authentication with UP42, use up42.authenticate()!"
+        )
+        # extending format_time_period for accepting only start_date or
+        # end_date
+        if start_date is None:
+            start_date = "2000-01-01"
+        if end_date is None:
+            end_date = date.today() + timedelta(days=1)
+            end_date = end_date.strftime("%Y-%m-%d")
+        [start_formatted_date, end_formatted_date] = format_time_period(
+            start_date=start_date,
+            end_date=end_date
+        ).split("/")
+        search_parameters = dict({
+            "from":start_formatted_date,
+            "to":end_formatted_date,
+            "size":100,
+            "page":0,
+        })
+        endpoint_url = f"{self.auth._endpoint()}/accounts/me/credits/history"
+        response_json: dict = self.auth._request(
+                                            request_type = "GET",
+                                            url = endpoint_url,
+                                            querystring = search_parameters
+                                          )
+        isLastPage = response_json["data"]["last"]
+        credit_history = response_json["data"]["content"]
+        result = dict(response_json["data"])
+        del result["content"]
+        while not(isLastPage):
+            search_parameters["page"] += 1
+            response_json: dict = self.auth._request(
+                                            request_type = "GET",
+                                            url = endpoint_url,
+                                            querystring = search_parameters
+                                          )
+            isLastPage = response_json["data"]["last"]
+            credit_history.extend(response_json["data"]["content"])
+        result["content"] = credit_history
         return result
 
     def validate_manifest(self, path_or_json: Union[str, Path, dict]) -> dict:
