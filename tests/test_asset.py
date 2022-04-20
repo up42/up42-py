@@ -106,4 +106,4 @@ def test_asset_download_live(asset_live):
         out_files = asset_live.download(Path(tempdir))
         for file in out_files:
             assert Path(file).exists()
-        assert len(out_files) == 54
+        assert len(out_files) == 44
