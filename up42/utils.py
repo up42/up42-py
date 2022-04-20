@@ -8,7 +8,7 @@ import tarfile
 import zipfile
 import warnings
 import functools
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from datetime import time as datetime_time
 
 from geopandas import GeoDataFrame
@@ -221,6 +221,36 @@ def format_time_period(
     time_period = f"{start_dt.strftime(formatting)}Z/{end_dt.strftime(formatting)}Z"
 
     return time_period
+
+
+def flexible_formatter(formatter):
+    """
+    Decorator for allowing users to use
+    time_period_formatter with no
+    start_dates or end_dates
+    """
+
+    def inner(start_date=None, end_date=None):
+        if start_date is None:
+            start_date = "2000-01-01"
+        if end_date is None:
+            tomorrow_date = date.today() + timedelta(days=1)
+            tomorrow_datetime = datetime(
+                year=tomorrow_date.year,
+                month=tomorrow_date.month,
+                day=tomorrow_date.day,
+            )
+            end_date = tomorrow_datetime.strftime("%Y-%m-%d")
+        return formatter(start_date, end_date)
+
+    return inner
+
+
+@flexible_formatter
+def format_time_period_flex(
+    start_date: Optional[Union[str, datetime]], end_date: Optional[Union[str, datetime]]
+):
+    return copy.deepcopy(format_time_period(start_date, end_date))
 
 
 def any_vector_to_fc(

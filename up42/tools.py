@@ -6,7 +6,7 @@ not bound to a specific higher level UP42 object.
 import json
 from pathlib import Path
 from typing import List, Union, Dict, Optional
-from datetime import date, timedelta, datetime
+from datetime import datetime
 
 from geopandas import GeoDataFrame
 import geopandas as gpd
@@ -14,7 +14,7 @@ import pandas as pd
 import shapely
 
 from up42.viztools import folium_base_map, DrawFoliumOverride
-from up42.utils import get_logger, format_time_period
+from up42.utils import get_logger, format_time_period_flex
 
 try:
     from IPython import get_ipython
@@ -265,18 +265,7 @@ class Tools:
                 "Requires authentication with UP42, use up42.authenticate()!"
             )
 
-        if start_date is None:
-            start_date = "2000-01-01"
-        if end_date is None:
-            tomorrow_date = date.today() + timedelta(days=1)
-            tomorrow_datetime = datetime(
-                year=tomorrow_date.year,
-                month=tomorrow_date.month,
-                day=tomorrow_date.day,
-            )
-            end_date = tomorrow_datetime.strftime("%Y-%m-%d")
-
-        [start_formatted_date, end_formatted_date] = format_time_period(
+        [start_formatted_date, end_formatted_date] = format_time_period_flex(
             start_date=start_date, end_date=end_date
         ).split("/")
         search_parameters = dict(
