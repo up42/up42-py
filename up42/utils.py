@@ -105,7 +105,7 @@ def download_results_from_gcs(
                 f"Connection error, please try again! {err}"
             )
 
-    # Unpack and avoid output/ .. directory
+    # Unpack and avoid inherent output/ .. directory
     out_filepaths = []
     if tarfile.is_tarfile(compressed_file):
         with tarfile.open(compressed_file) as tar_file:
@@ -130,8 +130,8 @@ def download_results_from_gcs(
         f"Download successful of {len(out_filepaths)} files to output_directory "
         f"'{output_directory}': {[p.name for p in out_filepaths]}"
     )
-    out_filepaths = [str(p) for p in out_filepaths]
-    return out_filepaths
+    out_filepaths = [str(p) for p in out_filepaths]  # type: ignore
+    return out_filepaths  # type: ignore
 
 
 def download_results_from_gcs_without_unpacking(
