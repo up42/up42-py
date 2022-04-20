@@ -75,7 +75,9 @@ def test_get_jobs(project_mock, requests_mock):
     assert jobcollection.jobs[0].job_id == JOB_ID
 
 
-@pytest.mark.skip(reason="too many jobs in test project, triggers too many job info requests.")
+@pytest.mark.skip(
+    reason="too many jobs in test project, triggers too many job info requests."
+)
 @pytest.mark.live
 def test_get_jobs_live(project_live):
     jobcollection = project_live.get_jobs()
