@@ -262,7 +262,7 @@ def test_job_download_result_dimap_live(auth_live):
         assert Path(out_files[20]).exists()
         assert Path(out_files[-1]).exists()
         assert "data.json" in [Path(of).name for of in out_files]
-        assert len(out_files) == 54
+        assert len(out_files) == 44
 
 
 @pytest.mark.skip(reason="2gb download takes long")
