@@ -14,10 +14,7 @@ import pandas as pd
 import shapely
 
 from up42.viztools import folium_base_map, DrawFoliumOverride
-from up42.utils import (
-    get_logger,
-    format_time_period
-)
+from up42.utils import get_logger, format_time_period
 
 try:
     from IPython import get_ipython
@@ -242,11 +239,14 @@ class Tools:
         details_json = response_json["data"]
         return details_json
 
-    def get_credits_history(self, start_date: Optional[Union[str, datetime]] =
-                            None,
-                            end_date: Optional[Union[str, datetime]] = None) -> dict:
+    def get_credits_history(
+        self,
+        start_date: Optional[Union[str, datetime]] = None,
+        end_date: Optional[Union[str, datetime]] = None,
+    ) -> dict:
         """
-        Display the overall credits consumed in your account. The consumption history will be displayed per workspace ID.
+        Display the overall credits consumed in your account.
+        The consumption history will be displayed per workspace ID.
 
         Args:
             start_date: The start date for the credit consumption search.
@@ -262,42 +262,44 @@ class Tools:
         """
         if not hasattr(self, "auth"):
             raise Exception(
-            "Requires authentication with UP42, use up42.authenticate()!"
-        )
-        # extending format_time_period for accepting only start_date or
-        # end_date
+                "Requires authentication with UP42, use up42.authenticate()!"
+            )
+
         if start_date is None:
             start_date = "2000-01-01"
         if end_date is None:
-            end_date = date.today() + timedelta(days=1)
-            end_date = end_date.strftime("%Y-%m-%d")
+            tomorrow_date = date.today() + timedelta(days=1)
+            tomorrow_datetime = datetime(
+                year=tomorrow_date.year,
+                month=tomorrow_date.month,
+                day=tomorrow_date.day,
+            )
+            end_date = tomorrow_datetime.strftime("%Y-%m-%d")
+
         [start_formatted_date, end_formatted_date] = format_time_period(
-            start_date=start_date,
-            end_date=end_date
+            start_date=start_date, end_date=end_date
         ).split("/")
-        search_parameters = dict({
-            "from":start_formatted_date,
-            "to":end_formatted_date,
-            "size":100,
-            "page":0,
-        })
+        search_parameters = dict(
+            {
+                "from": start_formatted_date,
+                "to": end_formatted_date,
+                "size": 100,
+                "page": 0,
+            }
+        )
         endpoint_url = f"{self.auth._endpoint()}/accounts/me/credits/history"
         response_json: dict = self.auth._request(
-                                            request_type = "GET",
-                                            url = endpoint_url,
-                                            querystring = search_parameters
-                                          )
+            request_type="GET", url=endpoint_url, querystring=search_parameters
+        )
         isLastPage = response_json["data"]["last"]
         credit_history = response_json["data"]["content"]
         result = dict(response_json["data"])
         del result["content"]
-        while not(isLastPage):
+        while not isLastPage:
             search_parameters["page"] += 1
-            response_json: dict = self.auth._request(
-                                            request_type = "GET",
-                                            url = endpoint_url,
-                                            querystring = search_parameters
-                                          )
+            response_json = self.auth._request(
+                request_type="GET", url=endpoint_url, querystring=search_parameters
+            )
             isLastPage = response_json["data"]["last"]
             credit_history.extend(response_json["data"]["content"])
         result["content"] = credit_history

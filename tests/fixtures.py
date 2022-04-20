@@ -234,6 +234,11 @@ JSON_ORDERS = {
     },
     "error": None,
 }
+
+JSON_BALANCE = {"data": {"balance": 10693}}
+
+JSON_CREDITS_HISTORY = JSON_ORDERS
+
 MOCK_CREDITS = {
     "data": {
         "projectId": "20adecb9-97f6-42c0-8ba8-f1e2fa0bff39",
@@ -278,24 +283,14 @@ def auth_mock(requests_mock):
     url_get_credits_balance = f"{auth._endpoint()}/accounts/me/credits/balance"
     requests_mock.get(
         url=url_get_credits_balance,
-        json = {
-            "data":
-            {
-                "balance": 10693
-            }
-        },
+        json=JSON_BALANCE,
     )
 
     # get_credits_history
     url_get_credits_history = f"{auth._endpoint()}/accounts/me/credits/history"
     requests_mock.get(
         url=url_get_credits_history,
-        json = {
-            "data":
-            {
-                "balance": 10693
-            }
-        },
+        json=JSON_CREDITS_HISTORY,
     )
 
     return auth
