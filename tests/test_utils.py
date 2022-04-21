@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 import tempfile
 
-from datetime import date, datetime, timedelta
 from dateutil.parser import parse
 
 import geopandas as gpd
@@ -21,14 +20,6 @@ from .context import (
 
 
 POLY = Polygon([(0, 0), (1, 1), (1, 0)])
-
-tomorrow_date = date.today() + timedelta(days=1)
-tomorrow_datetime = datetime(
-    year=tomorrow_date.year,
-    month=tomorrow_date.month,
-    day=tomorrow_date.day,
-)
-tomorrow_datetime_str = tomorrow_datetime.strftime("%Y-%m-%d")
 
 
 @pytest.mark.parametrize(

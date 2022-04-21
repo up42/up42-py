@@ -8,7 +8,7 @@ import tarfile
 import zipfile
 import warnings
 import functools
-from datetime import datetime, date, timedelta
+from datetime import datetime
 from datetime import time as datetime_time
 
 from geopandas import GeoDataFrame
@@ -175,6 +175,7 @@ def download_results_from_gcs_without_unpacking(
     )
     return out_filepaths
 
+
 def format_time_period(
     start_date: Optional[Union[str, datetime]], end_date: Optional[Union[str, datetime]]
 ):
@@ -220,6 +221,7 @@ def format_time_period(
     time_period = f"{start_dt.strftime(formatting)}Z/{end_dt.strftime(formatting)}Z"
 
     return time_period
+
 
 def any_vector_to_fc(
     vector: Union[

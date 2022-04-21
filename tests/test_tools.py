@@ -135,6 +135,7 @@ def test_get_credits_history_live(tools_live):
     assert "content" in balance_history
     assert isinstance(balance_history["content"], list)
 
+
 @pytest.mark.live
 def test_get_credits_history_no_bounds_live(tools_live):
     yesterday = date.today() - timedelta(days=1)
@@ -149,6 +150,7 @@ def test_get_credits_history_no_bounds_live(tools_live):
     assert isinstance(balance_history_no_startdate, dict)
     assert "content" in balance_history_no_startdate
     assert isinstance(balance_history_no_startdate["content"], list)
+
 
 def test_validate_manifest(tools_mock, requests_mock):
     fp = Path(__file__).resolve().parent / "mock_data/manifest.json"
