@@ -87,4 +87,5 @@ After running our quick tutorial the expected result should be similar to the fo
 <br>
 
 !!! Success "Success!"
-    If you were able to complete this tutorial you can continue with the [detailed example](/guides/detailed-example/)! for further explanation of the basic flow of our SKD, or also continue with the with the [Structure chapter](structure.md)!
+    If you were able to complete this tutorial you can continue with the [detailed example](https://sdk.up42.com/guides/detailed-example/)! for 
+    further explanation of the basic flow of our SKD, or also continue with the with the [Structure chapter](structure.md)!
