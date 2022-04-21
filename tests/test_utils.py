@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 import tempfile
+
+from datetime import date, datetime, timedelta
 from dateutil.parser import parse
 
 import geopandas as gpd
@@ -11,6 +13,7 @@ from shapely.geometry import Point, Polygon, LinearRing
 
 from .context import (
     format_time_period,
+    format_time_period_flex,
     any_vector_to_fc,
     fc_to_query_geometry,
     download_results_from_gcs,
@@ -19,6 +22,14 @@ from .context import (
 
 
 POLY = Polygon([(0, 0), (1, 1), (1, 0)])
+
+tomorrow_date = date.today() + timedelta(days=1)
+tomorrow_datetime = datetime(
+    year=tomorrow_date.year,
+    month=tomorrow_date.month,
+    day=tomorrow_date.day,
+)
+tomorrow_datetime_str = tomorrow_datetime.strftime("%Y-%m-%d")
 
 
 @pytest.mark.parametrize(
@@ -88,6 +99,23 @@ def test_format_time_period_raises_with_mixed_up_dates(start_date, end_date):
             end_date=end_date,
         )
         assert "The start_date needs to be earlier than the end_date!" in str(e.value)
+
+
+@pytest.mark.parametrize(
+    "start_date,end_date,result_time",
+    [
+        (None, "2016-12-31", "2000-01-01T00:00:00Z/2016-12-31T23:59:59Z"),
+        ("2014-01-01", None, f"2014-01-01T00:00:00Z/{tomorrow_datetime_str}T23:59:59Z"),
+        (None, None, f"2000-01-01T00:00:00Z/{tomorrow_datetime_str}T23:59:59Z"),
+    ],
+)
+def test_format_time_period_flex_with_missing_dates(start_date, end_date, result_time):
+    time_period = format_time_period_flex(
+        start_date=start_date,
+        end_date=end_date,
+    )
+    assert isinstance(time_period, str)
+    assert time_period == result_time
 
 
 @pytest.mark.parametrize(
