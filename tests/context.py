@@ -10,7 +10,6 @@ from up42.tools import Tools
 from up42.viztools import folium_base_map, VizTools
 from up42.utils import (
     format_time_period,
-    format_time_period_flex,
     any_vector_to_fc,
     fc_to_query_geometry,
     download_results_from_gcs,
