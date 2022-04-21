@@ -34,4 +34,4 @@ assets[0].download()
 <br>
 
 !!! Success "Success!"
-    Continue with the [Detailed Example](/guides/detailed-example/)!
+    Continue with the [Detailed Example](https://sdk.up42.com/guides/detailed-example/)!
