@@ -245,20 +245,21 @@ class Tools:
         end_date: Optional[Union[str, datetime]] = None,
     ) -> dict:
         """
-        Display the overall credits consumed in your account.
-        The consumption history will be displayed per workspace ID.
-
+        Display the overall credits history consumed in your account.
+        The consumption history will be returned for all workspace_ids on your
+        account.
         Args:
             start_date: The start date for the credit consumption search.
+            (start_date=None set start_date to 2000-01-01)
             end_date: The end date for the credit consumption search.
+            (end_date=None set end_date to the current date)
 
         Returns:
-            A dict with the information of the credit consumption of the jobs
-            run by each workspace ID sorted by date.
-            e.g. {
-                "content": Array of all history of
-                test_get_credits_balance_live
-            }
+            A dict with the information of the credit consumption records for
+            all the users linked by the account_id. The result match the endpoint
+            response with all records on the content key.
+            (see https://docs.up42.com/developers/api#operation/getHistory for
+            output description)
         """
         if not hasattr(self, "auth"):
             raise Exception(
@@ -272,7 +273,7 @@ class Tools:
             {
                 "from": start_formatted_date,
                 "to": end_formatted_date,
-                "size": 100,
+                "size": 2000,
                 "page": 0,
             }
         )
