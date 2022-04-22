@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 import tempfile
-
 from dateutil.parser import parse
 
 import geopandas as gpd
