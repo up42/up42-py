@@ -283,7 +283,7 @@ class Tools:
             {
                 "from": start_formatted_date,
                 "to": end_formatted_date,
-                "size": 2000,
+                "size": 2000,  # 2000 is the maximum page size for this call
                 "page": 0,
             }
         )
