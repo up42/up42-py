@@ -2,7 +2,6 @@ import copy
 import logging
 from typing import List, Union, Optional
 from pathlib import Path
-import shutil
 import tempfile
 import tarfile
 import zipfile
@@ -91,8 +90,6 @@ def download_results_from_gcs(
         output_directory: The file output directory, defaults to the current working
             directory.
     """
-    output_directory = Path(output_directory)
-
     # Download
     compressed_file = tempfile.mktemp()
     with open(compressed_file, "wb") as dst_tgz:
@@ -108,34 +105,33 @@ def download_results_from_gcs(
                 f"Connection error, please try again! {err}"
             )
 
+    # Unpack and avoid inherent output/ .. directory
+    out_filepaths = []
     if tarfile.is_tarfile(compressed_file):
-        unpack = tarfile.open
+        with tarfile.open(compressed_file) as tar_file:
+            for tar_member in tar_file.getmembers():
+                if tar_member.isfile():
+                    new_name = tar_member.name.split("output/")[1]
+                    tar_member.name = new_name
+                    tar_file.extract(tar_member, output_directory)
+                    out_filepaths.append(Path(output_directory) / new_name)
     elif zipfile.is_zipfile(compressed_file):
-        unpack = zipfile.ZipFile  # type: ignore
+        with zipfile.ZipFile(compressed_file) as zip_file:
+            for zip_info in zip_file.infolist():
+                if not zip_info.filename.endswith("/"):
+                    new_name = zip_info.filename.split("output/")[1]
+                    zip_info.filename = new_name
+                    zip_file.extract(zip_info, output_directory)
+                    out_filepaths.append(Path(output_directory) / new_name)
     else:
         raise ValueError("Downloaded file is not a TAR or ZIP archive.")
 
-    with unpack(compressed_file) as f:
-        f.extractall(path=output_directory)
-        output_folder_path = output_directory / "output"
-        out_filepaths = []
-        if output_folder_path.exists():
-            for src_path in output_folder_path.glob("**/*"):
-                dst_path = output_directory / src_path.relative_to(output_folder_path)
-                shutil.move(str(src_path), str(dst_path))
-                if dst_path.is_dir():
-                    out_filepaths += [str(x) for x in dst_path.glob("**/*")]
-                elif dst_path.is_file():
-                    out_filepaths.append(str(dst_path))
-            output_folder_path.rmdir()
-        else:
-            out_filepaths += [str(x) for x in output_directory.glob("**/*")]
-
     logger.info(
         f"Download successful of {len(out_filepaths)} files to output_directory "
-        f"'{output_directory}': {[Path(p).name for p in out_filepaths]}"
+        f"'{output_directory}': {[p.name for p in out_filepaths]}"
     )
-    return out_filepaths
+    out_filepaths = [str(p) for p in out_filepaths]  # type: ignore
+    return out_filepaths  # type: ignore
 
 
 def download_results_from_gcs_without_unpacking(
