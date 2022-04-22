@@ -109,7 +109,6 @@ def test_get_credits_balance(tools_mock):
     balance = tools_mock.get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
-    assert True
 
 
 @pytest.mark.live
