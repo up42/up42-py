@@ -124,6 +124,7 @@ def test_get_credits_history(tools_mock):
     assert isinstance(credits_history, dict)
     assert "content" in credits_history
     assert isinstance(credits_history["content"], list)
+    assert len(credits_history["content"]) == 1
 
 
 @pytest.mark.live
