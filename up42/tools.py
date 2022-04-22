@@ -243,16 +243,16 @@ class Tools:
         self,
         start_date: Optional[Union[str, datetime]] = None,
         end_date: Optional[Union[str, datetime]] = None,
-    ) -> dict:
+    ) -> Dict[str, Union[str, int, Dict]]:
         """
         Display the overall credits history consumed in your account.
         The consumption history will be returned for all workspace_ids on your
         account.
         Args:
-            start_date: The start date for the credit consumption search.
-            (start_date=None set start_date to 2000-01-01)
-            end_date: The end date for the credit consumption search.
-            (end_date=None set end_date to the current date)
+            start_date: The start date for the credit consumption search e.g.
+            2021-12-01. Default start_date None uses 2000-01-01.
+            end_date: The end date for the credit consumption search e.g.
+            2021-12-31. Default end_date None uses current date.
 
         Returns:
             A dict with the information of the credit consumption records for
@@ -275,6 +275,7 @@ class Tools:
                 day=tomorrow_date.day,
             )
             end_date = tomorrow_datetime.strftime("%Y-%m-%d")
+
         [start_formatted_date, end_formatted_date] = format_time_period(
             start_date=start_date, end_date=end_date
         ).split("/")
