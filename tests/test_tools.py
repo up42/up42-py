@@ -133,6 +133,7 @@ def test_get_credits_history_live(tools_live):
     )
     assert isinstance(balance_history, dict)
     assert "content" in balance_history
+    assert len(balance_history["content"]) == 32
     assert isinstance(balance_history["content"], list)
 
 
