@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from datetime import date, timedelta
 
 import pytest
 import geopandas as gpd
@@ -123,7 +122,22 @@ def test_get_credits_history(tools_mock):
     assert isinstance(credits_history, dict)
     assert "content" in credits_history
     assert isinstance(credits_history["content"], list)
-    assert len(credits_history["content"]) == 1
+    assert len(credits_history["content"]) == 2
+
+
+@pytest.mark.parametrize(
+    "start_date,end_date",
+    [(None, "2014-01-01"), ("2014-01-01", None)],
+)
+def test_get_credits_history_no_bounds(tools_mock, start_date, end_date):
+    balance_history_no_enddate = tools_mock.get_credits_history(start_date=start_date)
+    assert isinstance(balance_history_no_enddate, dict)
+    assert "content" in balance_history_no_enddate
+    assert isinstance(balance_history_no_enddate["content"], list)
+    balance_history_no_startdate = tools_mock.get_credits_history(end_date=end_date)
+    assert isinstance(balance_history_no_startdate, dict)
+    assert "content" in balance_history_no_startdate
+    assert isinstance(balance_history_no_startdate["content"], list)
 
 
 @pytest.mark.live
@@ -135,22 +149,6 @@ def test_get_credits_history_live(tools_live):
     assert "content" in balance_history
     assert len(balance_history["content"]) == 32
     assert isinstance(balance_history["content"], list)
-
-
-@pytest.mark.live
-def test_get_credits_history_no_bounds_live(tools_live):
-    yesterday = date.today() - timedelta(days=1)
-    yesterday_formatted = yesterday.strftime("%Y-%m-%d")
-    balance_history_no_enddate = tools_live.get_credits_history(
-        start_date=yesterday_formatted
-    )
-    assert isinstance(balance_history_no_enddate, dict)
-    assert "content" in balance_history_no_enddate
-    assert isinstance(balance_history_no_enddate["content"], list)
-    balance_history_no_startdate = tools_live.get_credits_history(end_date="2019-01-01")
-    assert isinstance(balance_history_no_startdate, dict)
-    assert "content" in balance_history_no_startdate
-    assert isinstance(balance_history_no_startdate["content"], list)
 
 
 def test_validate_manifest(tools_mock, requests_mock):

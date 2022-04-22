@@ -243,6 +243,7 @@ class Tools:
         self,
         start_date: Optional[Union[str, datetime]] = None,
         end_date: Optional[Union[str, datetime]] = None,
+        size: int = 2000,
     ) -> Dict[str, Union[str, int, Dict]]:
         """
         Display the overall credits history consumed in your account.
@@ -256,8 +257,7 @@ class Tools:
 
         Returns:
             A dict with the information of the credit consumption records for
-            all the users linked by the account_id. The result match the endpoint
-            response with all records on the content key.
+            all the users linked by the account_id.
             (see https://docs.up42.com/developers/api#operation/getHistory for
             output description)
         """
@@ -283,7 +283,7 @@ class Tools:
             {
                 "from": start_formatted_date,
                 "to": end_formatted_date,
-                "size": 2000,  # 2000 is the maximum page size for this call
+                "size": size,  # 2000 is the maximum page size for this call
                 "page": 0,
             }
         )
@@ -292,7 +292,7 @@ class Tools:
             request_type="GET", url=endpoint_url, querystring=search_parameters
         )
         isLastPage = response_json["data"]["last"]
-        credit_history = response_json["data"]["content"]
+        credit_history = response_json["data"]["content"].copy()
         result = dict(response_json["data"])
         del result["content"]
         while not isLastPage:
@@ -301,7 +301,7 @@ class Tools:
                 request_type="GET", url=endpoint_url, querystring=search_parameters
             )
             isLastPage = response_json["data"]["last"]
-            credit_history.extend(response_json["data"]["content"])
+            credit_history.extend(response_json["data"]["content"].copy())
         result["content"] = credit_history
         return result
 

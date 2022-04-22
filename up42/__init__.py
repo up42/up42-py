@@ -203,9 +203,10 @@ def get_credits_balance() -> dict:
 def get_credits_history(
     start_date: Optional[Union[str, datetime]] = None,
     end_date: Optional[Union[str, datetime]] = None,
+    size: int = 2000,
 ) -> Dict[str, Union[str, int, Dict]]:
     tools = Tools(auth=_auth)
-    return tools.get_credits_history(start_date, end_date)
+    return tools.get_credits_history(start_date, end_date, size)
 
 
 def validate_manifest(path_or_json: Union[str, Path, dict]) -> dict:
