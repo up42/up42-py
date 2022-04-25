@@ -302,11 +302,34 @@ def credits_history_mock(auth_mock, requests_mock):
         Path(__file__).resolve().parent / "mock_data/credits_history.json"
     ) as json_file:
         credits_history_response_json = json.load(json_file)
-    pagination_response_json = copy.deepcopy(credits_history_response_json)
+    response_json = copy.deepcopy(credits_history_response_json)
     url_get_credits_history = f"{auth_mock._endpoint()}/accounts/me/credits/history"
     requests_mock.get(
         url=url_get_credits_history,
+        json=response_json,
+    )
+    # Pagination (from 1 to 5)
+    temp_content = copy.deepcopy(response_json["data"]["content"])
+    pagination_response_json = copy.deepcopy(response_json)
+    pagination_response_json["data"]["last"] = False
+    pagination_response_json["data"]["content"] = temp_content[:5]
+    url_get_credits_history_size = (
+        f"{auth_mock._endpoint()}/accounts/me/credits/history?size=5&page=0"
+    )
+    requests_mock.get(
+        url=url_get_credits_history_size,
         json=pagination_response_json,
+    )
+    # Pagination (from 5 to 10)
+    pagination_response_json_last = copy.deepcopy(response_json)
+    pagination_response_json_last["data"]["last"] = True
+    pagination_response_json_last["data"]["content"] = temp_content[5:]
+    url_get_credits_history_size_last = (
+        f"{auth_mock._endpoint()}/accounts/me/credits/history?size=5&page=1"
+    )
+    requests_mock.get(
+        url=url_get_credits_history_size_last,
+        json=pagination_response_json_last,
     )
     return Tools(auth=auth_mock)
 

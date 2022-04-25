@@ -126,6 +126,14 @@ def test_get_credits_history(credits_history_mock):
     assert len(credits_history["content"]) == 10
 
 
+def test_get_credits_history_pagination(credits_history_mock):
+    credits_history = credits_history_mock.get_credits_history(size=5)
+    assert isinstance(credits_history, dict)
+    assert "content" in credits_history
+    assert isinstance(credits_history["content"], list)
+    assert len(credits_history["content"]) == 10
+
+
 @pytest.mark.parametrize(
     "start_date,end_date",
     [(None, "2014-01-01"), ("2014-01-01", None)],
