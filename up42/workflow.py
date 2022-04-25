@@ -7,7 +7,7 @@ from typing import Dict, List, Union, Tuple, Optional
 from datetime import datetime
 
 from geopandas import GeoDataFrame
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Polygon
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 from tqdm import tqdm
@@ -336,7 +336,6 @@ class Workflow:
             list,
             GeoDataFrame,
             Polygon,
-            Point,
         ] = None,
         geometry_operation: Optional[str] = None,
         start_date: Optional[Union[str, datetime]] = None,
@@ -352,8 +351,7 @@ class Workflow:
 
         Args:
             geometry: One of Dict, FeatureCollection, Feature, List,
-                GeoDataFrame, shapely.geometry.Polygon, shapely.geometry.Point. All
-                assume EPSG 4326.
+                GeoDataFrame, shapely.geometry.Polygon. All assume EPSG 4326.
             geometry_operation: Desired operation, One of "bbox", "intersects", "contains".
             limit: Maximum number of expected results.
             start_date: Query period starting day as iso-format string or datetime object,
@@ -418,7 +416,6 @@ class Workflow:
                 Feature,
                 geojson_Polygon,
                 Polygon,
-                Point,
             ]
         ] = None,
         interval_dates: List[Tuple[str, str]] = None,

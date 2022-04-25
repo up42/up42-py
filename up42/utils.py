@@ -12,7 +12,7 @@ from datetime import time as datetime_time
 
 from geopandas import GeoDataFrame
 import shapely
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Polygon
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 import requests
@@ -227,7 +227,6 @@ def any_vector_to_fc(
         list,
         GeoDataFrame,
         Polygon,
-        Point,
     ],
     as_dataframe: bool = False,
 ) -> Union[dict, GeoDataFrame]:
@@ -236,7 +235,7 @@ def any_vector_to_fc(
 
     Args:
         vector: One of dict, FeatureCollection, Feature, list of bounds coordinates,
-            GeoDataFrame, shapely.geometry.Polygon, shapely.geometry.Point.
+            GeoDataFrame, shapely.geometry.Polygon.
             All assume EPSG 4326 and Polygons!
         as_dataframe: GeoDataFrame output with as_dataframe=True.
     """
@@ -250,22 +249,19 @@ def any_vector_to_fc(
             list,
             GeoDataFrame,
             Polygon,
-            Point,
         ),
     ):
         raise ValueError(
             "The provided geometry muste be a FeatureCollection, Feature, dict, geopandas "
-            "Dataframe, shapely Polygon, shapely Point or a list of 4 bounds coordinates."
+            "Dataframe, shapely Polygon or a list of 4 bounds coordinates."
         )
 
-    ## Transform all possible input geometries to a uniform feature collection.
-    vector = copy.deepcopy(vector)  # otherwise changes input geometry.
+    vector = copy.deepcopy(vector)  # avoid altering input geometry
     if isinstance(vector, (dict, FeatureCollection, Feature)):
         try:
             if vector["type"] == "FeatureCollection":
                 df = GeoDataFrame.from_features(vector, crs=4326)
             elif vector["type"] == "Feature":
-                # TODO: Handle point features?
                 df = GeoDataFrame.from_features(FeatureCollection([vector]), crs=4326)
             elif vector["type"] == "Polygon":  # Geojson geometry
                 df = GeoDataFrame.from_features(
@@ -284,10 +280,6 @@ def any_vector_to_fc(
                 raise ValueError("The list requires 4 bounds coordinates.")
         elif isinstance(vector, Polygon):
             df = GeoDataFrame({"geometry": [vector]}, crs=4326)
-        elif isinstance(vector, Point):
-            df = GeoDataFrame(
-                {"geometry": [vector.buffer(0.00001)]}, crs=4326
-            )  # Around 1m buffer # TODO: Find better solution than small buffer?
         elif isinstance(vector, GeoDataFrame):
             df = vector
             try:

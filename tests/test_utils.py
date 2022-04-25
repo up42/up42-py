@@ -7,7 +7,7 @@ import geopandas as gpd
 from geopandas import GeoDataFrame
 import pandas as pd
 import pytest
-from shapely.geometry import Point, Polygon, LinearRing
+from shapely.geometry import Polygon, LinearRing
 
 from .context import (
     format_time_period,
@@ -93,7 +93,6 @@ def test_format_time_period_raises_with_mixed_up_dates(start_date, end_date):
 @pytest.mark.parametrize(
     "len_fc, in_vector",
     [
-        (1, Point((10, 6))),
         (1, POLY),
         (
             1,

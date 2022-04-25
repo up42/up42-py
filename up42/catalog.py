@@ -7,7 +7,7 @@ from typing import Union, List, Tuple, Dict, Any
 
 from pandas import Series
 from geopandas import GeoDataFrame
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Polygon
 from geojson import Feature, FeatureCollection
 from tqdm import tqdm
 
@@ -61,7 +61,6 @@ class Catalog(VizTools):
             FeatureCollection,
             list,
             GeoDataFrame,
-            Point,
             Polygon,
         ],
         collections: List[str],
@@ -78,7 +77,7 @@ class Catalog(VizTools):
 
         Args:
             geometry: The search geometry, one of dict, Feature, FeatureCollection,
-                list, GeoDataFrame, Point, Polygon.
+                list, GeoDataFrame, Polygon.
             collections: The satellite sensor collections to search for, e.g. ["PHR"] or ["PHR", "SPOT"].
                 Also see catalog.get_collections().
             start_date: Query period starting day, format "2020-01-01".
@@ -275,7 +274,6 @@ class Catalog(VizTools):
             FeatureCollection,
             list,
             GeoDataFrame,
-            Point,
             Polygon,
         ],
         scene: Series,
@@ -284,10 +282,10 @@ class Catalog(VizTools):
         Helper that constructs necessary parameters for `Order.place` and `Order.estimate`.
 
         Args:
-            geometry (Union[ dict, Feature, FeatureCollection, list, GeoDataFrame, Point, Polygon, ]): The intended
-                output AOI of the order.
-            scene (GeoSeries): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
-                for the first scene of a catalog search result.
+            geometry: The intended output AOI of the order, one of dict, Feature, FeatureCollection, list,
+                GeoDataFrame, Polygon.
+            scene: A geopandas series with a  single item/row of the result of `Catalog.search`. For instance,
+                search_results.loc[0] for the first scene of a catalog search result.
 
         Returns:
             str, dict: A tuple including a provider name and order parameters.
@@ -313,7 +311,6 @@ class Catalog(VizTools):
             FeatureCollection,
             list,
             GeoDataFrame,
-            Point,
             Polygon,
         ],
         scene: Series,
@@ -322,10 +319,10 @@ class Catalog(VizTools):
         Estimate the cost of an order from an item/row in a result of `Catalog.search`.
 
         Args:
-            geometry (Union[ dict, Feature, FeatureCollection, list, GeoDataFrame, Point, Polygon, ]): The intended
-                output AOI of the order.
-            scene (Series): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
-                for the first scene of a catalog search result.
+            geometry: The intended output AOI of the order, one of dict, Feature, FeatureCollection, list,
+                GeoDataFrame, Polygon.
+            scene: A geopandas series with a  single item/row of the result of `Catalog.search`. For instance,
+                search_results.loc[0] for the first scene of a catalog search result.
 
         Returns:
             int: An estimated cost for the order in UP42 credits.
@@ -341,7 +338,6 @@ class Catalog(VizTools):
             FeatureCollection,
             list,
             GeoDataFrame,
-            Point,
             Polygon,
         ],
         scene: Series,
@@ -352,19 +348,17 @@ class Catalog(VizTools):
         Place an order from an item/row in a result of `Catalog.search`.
 
         Args:
-            geometry (Union[ dict, Feature, FeatureCollection, list, GeoDataFrame, Point, Polygon, ]): The intended
-                output AOI of the order.
-            scene (Series): A single item/row of the result of `Catalog.search`. For instance, search_results.loc[0]
-                for the first scene of a catalog search result.
+            geometry: The intended output AOI of the order, one of dict, Feature, FeatureCollection, list,
+                GeoDataFrame, Polygon.
+            scene: A geopandas series with a  single item/row of the result of `Catalog.search`. For instance,
+                search_results.loc[0] for the first scene of a catalog search result.
             track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
-            report_time (int): The intervall (in seconds) when to get the order status,
-                if `track_status` is set to True.
+            report_time (int): The interval (in seconds) to query the order status if `track_status` is True.
 
          Warning:
             When placing orders of items that are in archive or cold storage,
             the order fulfillment can happen up to **24h after order placement**.
-            In such cases,
-            please make sure to set an appropriate `report_time`.
+            In such cases, please make sure to set an appropriate `report_time`.
             You can also use `Order.track_status` on the returned object to track the status later.
 
         Returns:
