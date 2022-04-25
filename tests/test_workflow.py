@@ -3,7 +3,7 @@ import json
 import copy
 
 import pytest
-import shapely
+from shapely.geometry import box
 
 # pylint: disable=unused-import,wrong-import-order
 from .context import Workflow, Job, JobCollection, Asset
@@ -190,7 +190,7 @@ def test_get_default_parameters(workflow_mock):
 
 def test_construct_parameters_scene_ids(workflow_mock):
     parameters = workflow_mock.construct_parameters(
-        geometry=shapely.geometry.point.Point(1, 3),
+        geometry=box(0.99999, 2.99999, 1.00001, 3.00001),
         geometry_operation="bbox",
         scene_ids=["s2_123223"],
     )
@@ -245,8 +245,8 @@ def test_construct_parameter_assets(workflow_mock, asset_mock, monkeypatch):
 def test_construct_parameters_parallel(workflow_mock):
     parameters_list = workflow_mock.construct_parameters_parallel(
         geometries=[
-            shapely.geometry.point.Point(1, 3),
-            shapely.geometry.point.Point(1, 5),
+            box(0.99999, 2.99999, 1.00001, 3.00001),
+            box(0.99999, 4.99999, 1.00001, 5.00001),
         ],
         interval_dates=[("2014-01-01", "2016-12-31")],
         geometry_operation="bbox",
@@ -267,8 +267,8 @@ def test_construct_parameters_parallel(workflow_mock):
 def test_construct_parameters_parallel_multiple_intervals(workflow_mock):
     parameters_list = workflow_mock.construct_parameters_parallel(
         geometries=[
-            shapely.geometry.point.Point(1, 3),
-            shapely.geometry.point.Point(1, 5),
+            box(0.99999, 2.99999, 1.00001, 3.00001),
+            box(0.99999, 4.99999, 1.00001, 5.00001),
         ],
         interval_dates=[("2014-01-01", "2016-12-31"), ("2017-01-01", "2019-12-31")],
         geometry_operation="bbox",
