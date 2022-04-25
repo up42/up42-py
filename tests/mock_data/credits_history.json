@@ -1,0 +1,398 @@
+{
+    "data" : {
+               "content":[
+                  {
+                     "createdAt":"2022-03-02T22:12:09.948732Z",
+                     "createdBy":{
+                        "id":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                        "type":"USER"
+                     },
+                     "delta":-1,
+                     "details":{
+                        "allocation":"None",
+                        "consumption":{
+                           "accountId":"3c86279b-610a-4dba-ad12-abe3bdc51428",
+                           "blockDisplayName":"Flood Finder Pléiades/SPOT",
+                           "blockId":"f23ccfe4-16b0-46a2-8fe2-4203daa1f267",
+                           "blockName":"up42-waterfinder-flood",
+                           "blockVersion":"1.0.1",
+                           "cpu":2000,
+                           "createdAt":"2022-03-02T22:12:09.948732Z",
+                           "creditsUsed":1,
+                           "duration":89000,
+                           "id":"9d4b69a1-3e65-4139-aea2-eaea9c33e157",
+                           "jobId":"b2f9b570-ab63-4d7e-97fb-237b9fa7e83b",
+                           "jobName":"b2f9b570",
+                           "jobTaskId":"7f3aae25-affa-47df-a31b-a1e9204d18e3",
+                           "machineName":"LARGE",
+                           "memory":10737418240,
+                           "projectId":"ffe9a288-aeb7-49ab-a8a4-73990d59a5d9",
+                           "projectName":"Flood Mapping",
+                           "userId":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                           "workflowId":"7b4e3d3b-8f29-4629-a25a-7ce8d97da2d5",
+                           "workflowName":"Pleiades > Pan > Flood finder",
+                           "workspaceId":"eb1626d2-8015-43e9-acab-fbfaee89466c"
+                        },
+                        "description":"Consumption for 7f3aae25-affa-47df-a31b-a1e9204d18e3",
+                        "id":"7f3aae25-affa-47df-a31b-a1e9204d18e3"
+                     },
+                     "type":"JOB_TASK"
+                  },
+                  {
+                     "createdAt":"2022-03-02T22:11:47.852788Z",
+                     "createdBy":{
+                        "id":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                        "type":"USER"
+                     },
+                     "delta":-296,
+                     "details":{
+                        "allocation":"None",
+                        "consumption":{
+                           "accountId":"3c86279b-610a-4dba-ad12-abe3bdc51428",
+                           "blockDisplayName":"Flood Finder Pléiades/SPOT",
+                           "blockId":"f23ccfe4-16b0-46a2-8fe2-4203daa1f267",
+                           "blockName":"up42-waterfinder-flood",
+                           "blockVersion":"1.0.1",
+                           "createdAt":"2022-03-02T22:11:47.852788Z",
+                           "creditsUsed":296,
+                           "id":"989b92c4-daa0-4bbe-a4f1-55ef76f7fb66",
+                           "jobId":"b2f9b570-ab63-4d7e-97fb-237b9fa7e83b",
+                           "jobName":"b2f9b570",
+                           "jobTaskId":"7f3aae25-affa-47df-a31b-a1e9204d18e3",
+                           "machineName":"LARGE",
+                           "projectId":"ffe9a288-aeb7-49ab-a8a4-73990d59a5d9",
+                           "projectName":"Flood Mapping",
+                           "quantity":5905713,
+                           "unit":"SQUARE_METERS",
+                           "userId":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                           "workflowId":"7b4e3d3b-8f29-4629-a25a-7ce8d97da2d5",
+                           "workflowName":"Pleiades > Pan > Flood finder",
+                           "workspaceId":"eb1626d2-8015-43e9-acab-fbfaee89466c"
+                        },
+                        "description":"Consumption for 7f3aae25-affa-47df-a31b-a1e9204d18e3",
+                        "id":"7f3aae25-affa-47df-a31b-a1e9204d18e3"
+                     },
+                     "type":"JOB_TASK"
+                  },
+                  {
+                     "createdAt":"2022-03-02T22:10:18.960811Z",
+                     "createdBy":{
+                        "id":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                        "type":"USER"
+                     },
+                     "delta":-1,
+                     "details":{
+                        "allocation":"None",
+                        "consumption":{
+                           "accountId":"3c86279b-610a-4dba-ad12-abe3bdc51428",
+                           "blockDisplayName":"Pan-sharpening",
+                           "blockId":"903f0435-d638-475e-bbe9-53b5664a22a8",
+                           "blockName":"pansharpen",
+                           "blockVersion":"2.4.2",
+                           "cpu":2000,
+                           "createdAt":"2022-03-02T22:10:18.960811Z",
+                           "creditsUsed":1,
+                           "duration":68000,
+                           "id":"962f3ff8-bd21-43f2-ad6a-5dc9d12c9480",
+                           "jobId":"b2f9b570-ab63-4d7e-97fb-237b9fa7e83b",
+                           "jobName":"b2f9b570",
+                           "jobTaskId":"f2d4a9ee-dd67-4e73-b8e4-103175c3ae59",
+                           "machineName":"LARGE",
+                           "memory":10737418240,
+                           "projectId":"ffe9a288-aeb7-49ab-a8a4-73990d59a5d9",
+                           "projectName":"Flood Mapping",
+                           "userId":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                           "workflowId":"7b4e3d3b-8f29-4629-a25a-7ce8d97da2d5",
+                           "workflowName":"Pleiades > Pan > Flood finder",
+                           "workspaceId":"eb1626d2-8015-43e9-acab-fbfaee89466c"
+                        },
+                        "description":"Consumption for f2d4a9ee-dd67-4e73-b8e4-103175c3ae59",
+                        "id":"f2d4a9ee-dd67-4e73-b8e4-103175c3ae59"
+                     },
+                     "type":"JOB_TASK"
+                  },
+                  {
+                     "createdAt":"2022-03-02T22:09:41.923115Z",
+                     "createdBy":{
+                        "id":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                        "type":"USER"
+                     },
+                     "delta":0,
+                     "details":{
+                        "allocation":"None",
+                        "consumption":{
+                           "accountId":"3c86279b-610a-4dba-ad12-abe3bdc51428",
+                           "blockDisplayName":"Pan-sharpening",
+                           "blockId":"903f0435-d638-475e-bbe9-53b5664a22a8",
+                           "blockName":"pansharpen",
+                           "blockVersion":"2.4.2",
+                           "createdAt":"2022-03-02T22:09:41.923115Z",
+                           "creditsUsed":0,
+                           "id":"9261d900-c6e7-4476-88ab-75700cfc8d99",
+                           "jobId":"b2f9b570-ab63-4d7e-97fb-237b9fa7e83b",
+                           "jobName":"b2f9b570",
+                           "jobTaskId":"f2d4a9ee-dd67-4e73-b8e4-103175c3ae59",
+                           "machineName":"LARGE",
+                           "projectId":"ffe9a288-aeb7-49ab-a8a4-73990d59a5d9",
+                           "projectName":"Flood Mapping",
+                           "quantity":5905713,
+                           "unit":"SQUARE_METERS",
+                           "userId":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                           "workflowId":"7b4e3d3b-8f29-4629-a25a-7ce8d97da2d5",
+                           "workflowName":"Pleiades > Pan > Flood finder",
+                           "workspaceId":"eb1626d2-8015-43e9-acab-fbfaee89466c"
+                        },
+                        "description":"Consumption for f2d4a9ee-dd67-4e73-b8e4-103175c3ae59",
+                        "id":"f2d4a9ee-dd67-4e73-b8e4-103175c3ae59"
+                     },
+                     "type":"JOB_TASK"
+                  },
+                  {
+                     "createdAt":"2022-03-02T22:09:00.918339Z",
+                     "createdBy":{
+                        "id":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                        "type":"USER"
+                     },
+                     "delta":-1,
+                     "details":{
+                        "allocation":"None",
+                        "consumption":{
+                           "accountId":"3c86279b-610a-4dba-ad12-abe3bdc51428",
+                           "blockDisplayName":"Pléiades Reflectance (Download)",
+                           "blockId":"defb134b-ca00-4e16-afa0-639c6dc0c5fe",
+                           "blockName":"oneatlas-pleiades-fullscene",
+                           "blockVersion":"2.5.7",
+                           "cpu":500,
+                           "createdAt":"2022-03-02T22:09:00.918339Z",
+                           "creditsUsed":1,
+                           "duration":499000,
+                           "id":"db28d5d9-122e-4843-8fd8-d9754cc28403",
+                           "jobId":"b2f9b570-ab63-4d7e-97fb-237b9fa7e83b",
+                           "jobName":"b2f9b570",
+                           "jobTaskId":"f1866f66-1ec8-45db-b97e-404ae2199c24",
+                           "machineName":"SMALL",
+                           "memory":2147483648,
+                           "projectId":"ffe9a288-aeb7-49ab-a8a4-73990d59a5d9",
+                           "projectName":"Flood Mapping",
+                           "userId":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                           "workflowId":"7b4e3d3b-8f29-4629-a25a-7ce8d97da2d5",
+                           "workflowName":"Pleiades > Pan > Flood finder",
+                           "workspaceId":"eb1626d2-8015-43e9-acab-fbfaee89466c"
+                        },
+                        "description":"Consumption for f1866f66-1ec8-45db-b97e-404ae2199c24",
+                        "id":"f1866f66-1ec8-45db-b97e-404ae2199c24"
+                     },
+                     "type":"JOB_TASK"
+                  },
+                  {
+                     "createdAt":"2022-03-02T22:08:36.419275Z",
+                     "createdBy":{
+                        "id":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                        "type":"USER"
+                     },
+                     "delta":-5906,
+                     "details":{
+                        "allocation":"None",
+                        "consumption":{
+                           "accountId":"3c86279b-610a-4dba-ad12-abe3bdc51428",
+                           "blockDisplayName":"Pléiades Reflectance (Download)",
+                           "blockId":"defb134b-ca00-4e16-afa0-639c6dc0c5fe",
+                           "blockName":"oneatlas-pleiades-fullscene",
+                           "blockVersion":"2.5.7",
+                           "createdAt":"2022-03-02T22:08:36.419275Z",
+                           "creditsUsed":5906,
+                           "id":"e756e7d4-a340-40d7-8ab0-4206a96d7faa",
+                           "jobId":"b2f9b570-ab63-4d7e-97fb-237b9fa7e83b",
+                           "jobName":"b2f9b570",
+                           "jobTaskId":"f1866f66-1ec8-45db-b97e-404ae2199c24",
+                           "machineName":"SMALL",
+                           "projectId":"ffe9a288-aeb7-49ab-a8a4-73990d59a5d9",
+                           "projectName":"Flood Mapping",
+                           "quantity":5905713,
+                           "unit":"SQUARE_METERS",
+                           "userId":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                           "workflowId":"7b4e3d3b-8f29-4629-a25a-7ce8d97da2d5",
+                           "workflowName":"Pleiades > Pan > Flood finder",
+                           "workspaceId":"eb1626d2-8015-43e9-acab-fbfaee89466c"
+                        },
+                        "description":"Consumption for f1866f66-1ec8-45db-b97e-404ae2199c24",
+                        "id":"f1866f66-1ec8-45db-b97e-404ae2199c24"
+                     },
+                     "type":"JOB_TASK"
+                  },
+                  {
+                     "createdAt":"2022-03-02T17:06:45.404922Z",
+                     "createdBy":{
+                        "id":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                        "type":"USER"
+                     },
+                     "delta":-1,
+                     "details":{
+                        "allocation":"None",
+                        "consumption":{
+                           "accountId":"3c86279b-610a-4dba-ad12-abe3bdc51428",
+                           "blockDisplayName":"SNAP Polarimetric Processing Sentinel-1",
+                           "blockId":"8c6baae9-d50e-406c-b4ac-e211caa6229d",
+                           "blockName":"snap-polarimetric",
+                           "blockVersion":"2.2.6",
+                           "cpu":4000,
+                           "createdAt":"2022-03-02T17:06:45.404922Z",
+                           "creditsUsed":1,
+                           "duration":75000,
+                           "id":"7fdbd2f9-d1e7-4572-a8ba-52f85a493a85",
+                           "jobId":"97b5b632-2b4b-4417-a665-40f0a5e1b59a",
+                           "jobName":"97b5b632",
+                           "jobTaskId":"47c97744-02f9-4aac-a510-b772a51839f3",
+                           "machineName":"XLARGE",
+                           "memory":21474836480,
+                           "projectId":"ffe9a288-aeb7-49ab-a8a4-73990d59a5d9",
+                           "projectName":"Flood Mapping",
+                           "userId":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                           "workflowId":"091eecc0-4eed-43bb-bec0-6688ff8bf901",
+                           "workflowName":"Sentinel1> Snap Poli",
+                           "workspaceId":"eb1626d2-8015-43e9-acab-fbfaee89466c"
+                        },
+                        "description":"Consumption for 47c97744-02f9-4aac-a510-b772a51839f3",
+                        "id":"47c97744-02f9-4aac-a510-b772a51839f3"
+                     },
+                     "type":"JOB_TASK"
+                  },
+                  {
+                     "createdAt":"2022-03-02T17:05:29.178712Z",
+                     "createdBy":{
+                        "id":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                        "type":"USER"
+                     },
+                     "delta":-1,
+                     "details":{
+                        "allocation":"None",
+                        "consumption":{
+                           "accountId":"3c86279b-610a-4dba-ad12-abe3bdc51428",
+                           "blockDisplayName":"Sentinel-1 L1 GRD (SAFE)",
+                           "blockId":"b623400c-c5ac-40af-bda2-0d2734aa9dd1",
+                           "blockName":"sobloo-s1-grd-fullscene",
+                           "blockVersion":"2.1.10",
+                           "cpu":500,
+                           "createdAt":"2022-03-02T17:05:29.178712Z",
+                           "creditsUsed":1,
+                           "duration":118000,
+                           "id":"17c3d508-7271-44aa-a1a5-15c624b4d413",
+                           "jobId":"97b5b632-2b4b-4417-a665-40f0a5e1b59a",
+                           "jobName":"97b5b632",
+                           "jobTaskId":"4c8551da-3ffe-44cc-8d69-3f863df7f848",
+                           "machineName":"SMALL",
+                           "memory":2147483648,
+                           "projectId":"ffe9a288-aeb7-49ab-a8a4-73990d59a5d9",
+                           "projectName":"Flood Mapping",
+                           "userId":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                           "workflowId":"091eecc0-4eed-43bb-bec0-6688ff8bf901",
+                           "workflowName":"Sentinel1> Snap Poli",
+                           "workspaceId":"eb1626d2-8015-43e9-acab-fbfaee89466c"
+                        },
+                        "description":"Consumption for 4c8551da-3ffe-44cc-8d69-3f863df7f848",
+                        "id":"4c8551da-3ffe-44cc-8d69-3f863df7f848"
+                     },
+                     "type":"JOB_TASK"
+                  },
+                  {
+                     "createdAt":"2022-03-02T17:04:22.005684Z",
+                     "createdBy":{
+                        "id":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                        "type":"USER"
+                     },
+                     "delta":0,
+                     "details":{
+                        "allocation":"None",
+                        "consumption":{
+                           "accountId":"3c86279b-610a-4dba-ad12-abe3bdc51428",
+                           "blockDisplayName":"Sentinel-1 L1 GRD (SAFE)",
+                           "blockId":"b623400c-c5ac-40af-bda2-0d2734aa9dd1",
+                           "blockName":"sobloo-s1-grd-fullscene",
+                           "blockVersion":"2.1.10",
+                           "createdAt":"2022-03-02T17:04:22.005684Z",
+                           "creditsUsed":0,
+                           "id":"fb588e4c-4be2-48e5-bd4e-95d24c103256",
+                           "jobId":"97b5b632-2b4b-4417-a665-40f0a5e1b59a",
+                           "jobName":"97b5b632",
+                           "jobTaskId":"4c8551da-3ffe-44cc-8d69-3f863df7f848",
+                           "machineName":"SMALL",
+                           "projectId":"ffe9a288-aeb7-49ab-a8a4-73990d59a5d9",
+                           "projectName":"Flood Mapping",
+                           "quantity":960558983,
+                           "unit":"BYTES",
+                           "userId":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                           "workflowId":"091eecc0-4eed-43bb-bec0-6688ff8bf901",
+                           "workflowName":"Sentinel1> Snap Poli",
+                           "workspaceId":"eb1626d2-8015-43e9-acab-fbfaee89466c"
+                        },
+                        "description":"Consumption for 4c8551da-3ffe-44cc-8d69-3f863df7f848",
+                        "id":"4c8551da-3ffe-44cc-8d69-3f863df7f848"
+                     },
+                     "type":"JOB_TASK"
+                  },
+                  {
+                     "createdAt":"2022-03-02T16:54:14.571590Z",
+                     "createdBy":{
+                        "id":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                        "type":"USER"
+                     },
+                     "delta":-1,
+                     "details":{
+                        "allocation":"None",
+                        "consumption":{
+                           "accountId":"3c86279b-610a-4dba-ad12-abe3bdc51428",
+                           "blockDisplayName":"SNAP Polarimetric Processing Sentinel-1",
+                           "blockId":"8c6baae9-d50e-406c-b4ac-e211caa6229d",
+                           "blockName":"snap-polarimetric",
+                           "blockVersion":"2.2.6",
+                           "cpu":4000,
+                           "createdAt":"2022-03-02T16:54:14.571590Z",
+                           "creditsUsed":1,
+                           "duration":60000,
+                           "id":"b4478c7e-7f98-4db4-ac6f-3ca59cab535c",
+                           "jobId":"edf5e339-0335-4627-8c5f-e065c8d4a066",
+                           "jobName":"edf5e339",
+                           "jobTaskId":"56048117-ec03-492a-be6a-bb0cc97df85f",
+                           "machineName":"XLARGE",
+                           "memory":21474836480,
+                           "projectId":"ffe9a288-aeb7-49ab-a8a4-73990d59a5d9",
+                           "projectName":"Flood Mapping",
+                           "userId":"eb1626d2-8015-43e9-acab-fbfaee89466c",
+                           "workflowId":"091eecc0-4eed-43bb-bec0-6688ff8bf901",
+                           "workflowName":"Sentinel1> Snap Poli",
+                           "workspaceId":"eb1626d2-8015-43e9-acab-fbfaee89466c"
+                        },
+                        "description":"Consumption for 56048117-ec03-492a-be6a-bb0cc97df85f",
+                        "id":"56048117-ec03-492a-be6a-bb0cc97df85f"
+                     },
+                     "type":"JOB_TASK"
+                  }
+               ],
+               "empty":false,
+               "first":true,
+               "last":true,
+               "number":0,
+               "numberOfElements":10,
+               "pageable":{
+                  "offset":0,
+                  "pageNumber":0,
+                  "pageSize":10,
+                  "paged":true,
+                  "sort":{
+                     "empty":false,
+                     "sorted":true,
+                     "unsorted":false
+                  },
+                  "unpaged":false
+               },
+               "size":10,
+               "sort":{
+                  "empty":false,
+                  "sorted":true,
+                  "unsorted":false
+               },
+               "totalElements":10,
+               "totalPages":1
+            },
+    "error": null
+}

@@ -12,6 +12,7 @@ from .fixtures import (
     tools_mock,
     auth_live,
     tools_live,
+    credits_history_mock,
 )
 from .context import Tools
 
@@ -117,24 +118,28 @@ def test_get_credits_balance_live(tools_live):
     assert "balance" in balance
 
 
-def test_get_credits_history(tools_mock):
-    credits_history = tools_mock.get_credits_history()
+def test_get_credits_history(credits_history_mock):
+    credits_history = credits_history_mock.get_credits_history()
     assert isinstance(credits_history, dict)
     assert "content" in credits_history
     assert isinstance(credits_history["content"], list)
-    assert len(credits_history["content"]) == 2
+    assert len(credits_history["content"]) == 10
 
 
 @pytest.mark.parametrize(
     "start_date,end_date",
     [(None, "2014-01-01"), ("2014-01-01", None)],
 )
-def test_get_credits_history_no_bounds(tools_mock, start_date, end_date):
-    balance_history_no_enddate = tools_mock.get_credits_history(start_date=start_date)
+def test_get_credits_history_no_bounds(credits_history_mock, start_date, end_date):
+    balance_history_no_enddate = credits_history_mock.get_credits_history(
+        start_date=start_date
+    )
     assert isinstance(balance_history_no_enddate, dict)
     assert "content" in balance_history_no_enddate
     assert isinstance(balance_history_no_enddate["content"], list)
-    balance_history_no_startdate = tools_mock.get_credits_history(end_date=end_date)
+    balance_history_no_startdate = credits_history_mock.get_credits_history(
+        end_date=end_date
+    )
     assert isinstance(balance_history_no_startdate, dict)
     assert "content" in balance_history_no_startdate
     assert isinstance(balance_history_no_startdate["content"], list)

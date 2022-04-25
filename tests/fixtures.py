@@ -237,71 +237,6 @@ JSON_ORDERS = {
 
 JSON_BALANCE = {"data": {"balance": 10693}}
 
-JSON_CREDITS_HISTORY = {
-    "data": {
-        "content": [
-            {
-                "type": "JOB_TASK",
-                "createdAt": "2022-03-02T00:21:27.561087Z",
-                "createdBy": {
-                    "id": "20adecb9-97f6-42c0-8ba8-f1e2fa0bff39",
-                    "type": "API_KEY",
-                },
-                "details": {
-                    "id": "461ac743-a436-452d-8d92-6779abe83f88",
-                    "description": "Consumption for 461ac743-a436-452d-8d92-6779abe83f88",
-                    "consumption": {
-                        "id": "5db85c37-70b9-4a04-bbe3-1b8ad98c6fed",
-                        "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-                        "workspaceId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-                        "accountId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-                        "creditsUsed": 0,
-                        "createdAt": "2022-03-02T00:21:27.561087Z",
-                        "workflowId": "6b42b8c4-0e93-4a78-8543-2c166f58e862",
-                    },
-                },
-            },
-            {
-                "type": "JOB_TASK",
-                "createdAt": "2022-03-02T00:21:23.864562Z",
-                "createdBy": {
-                    "id": "20adecb9-97f6-42c0-8ba8-f1e2fa0bff39",
-                    "type": "API_KEY",
-                },
-                "details": {
-                    "id": "461ac743-a436-452d-8d92-6779abe83f88",
-                    "description": "Consumption for 461ac743-a436-452d-8d92-6779abe83f88",
-                    "consumption": {
-                        "id": "1a72ac1f-b15c-4cec-a6f1-4f8220e784d4",
-                        "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-                        "workspaceId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-                        "accountId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-                        "creditsUsed": 1,
-                        "createdAt": "2022-03-02T00:21:23.864562Z",
-                        "workflowId": "6b42b8c4-0e93-4a78-8543-2c166f58e862",
-                    },
-                },
-            },
-        ],
-        "pageable": {
-            "sort": {"empty": False, "sorted": True, "unsorted": False},
-            "pageNumber": 0,
-            "pageSize": 2000,
-            "unpaged": False,
-            "paged": True,
-        },
-        "totalPages": 1,
-        "totalElements": 2,
-        "last": True,
-        "size": 2000,
-        "sort": {"empty": False, "sorted": True, "unsorted": False},
-        "numberOfElements": 2,
-        "first": True,
-        "empty": False,
-    },
-    "error": "None",
-}
-
 MOCK_CREDITS = {
     "data": {
         "projectId": "20adecb9-97f6-42c0-8ba8-f1e2fa0bff39",
@@ -349,13 +284,6 @@ def auth_mock(requests_mock):
         json=JSON_BALANCE,
     )
 
-    # get_credits_history
-    url_get_credits_history = f"{auth._endpoint()}/accounts/me/credits/history"
-    requests_mock.get(
-        url=url_get_credits_history,
-        json=JSON_CREDITS_HISTORY,
-    )
-
     return auth
 
 
@@ -366,6 +294,21 @@ def auth_live():
         project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
     return auth
+
+
+@pytest.fixture()
+def credits_history_mock(auth_mock, requests_mock):
+    with open(
+        Path(__file__).resolve().parent / "mock_data/credits_history.json"
+    ) as json_file:
+        credits_history_response_json = json.load(json_file)
+    pagination_response_json = copy.deepcopy(credits_history_response_json)
+    url_get_credits_history = f"{auth_mock._endpoint()}/accounts/me/credits/history"
+    requests_mock.get(
+        url=url_get_credits_history,
+        json=pagination_response_json,
+    )
+    return Tools(auth=auth_mock)
 
 
 @pytest.fixture()
