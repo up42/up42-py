@@ -254,7 +254,9 @@ class Tools:
             2021-12-01. Default start_date None uses 2000-01-01.
             end_date: The end date for the credit consumption search e.g.
             2021-12-31. Default end_date None uses current date.
-
+            size: The number of items read for each API http request. Default
+            set to 2000.
+            request.
         Returns:
             A dict with the information of the credit consumption records for
             all the users linked by the account_id.
