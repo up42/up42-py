@@ -243,7 +243,6 @@ class Tools:
         self,
         start_date: Optional[Union[str, datetime]] = None,
         end_date: Optional[Union[str, datetime]] = None,
-        size: int = 2000,
     ) -> Dict[str, Union[str, int, Dict]]:
         """
         Display the overall credits history consumed in your account.
@@ -285,7 +284,7 @@ class Tools:
             {
                 "from": start_formatted_date,
                 "to": end_formatted_date,
-                "size": size,  # 2000 is the maximum page size for this call
+                "size": 2000,  # 2000 is the maximum page size for this call
                 "page": 0,
             }
         )

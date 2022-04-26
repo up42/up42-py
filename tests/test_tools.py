@@ -13,6 +13,7 @@ from .fixtures import (
     auth_live,
     tools_live,
     credits_history_mock,
+    credits_history_pagination_mock,
 )
 from .context import Tools
 
@@ -126,12 +127,12 @@ def test_get_credits_history(credits_history_mock):
     assert len(credits_history["content"]) == 10
 
 
-def test_get_credits_history_pagination(credits_history_mock):
-    credits_history = credits_history_mock.get_credits_history(size=5)
+def test_get_credits_history_pagination(credits_history_pagination_mock):
+    credits_history = credits_history_pagination_mock.get_credits_history()
     assert isinstance(credits_history, dict)
     assert "content" in credits_history
     assert isinstance(credits_history["content"], list)
-    assert len(credits_history["content"]) == 10
+    assert len(credits_history["content"]) == 2500
 
 
 @pytest.mark.parametrize(
