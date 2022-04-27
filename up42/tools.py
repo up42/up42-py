@@ -6,6 +6,7 @@ not bound to a specific higher level UP42 object.
 import json
 from pathlib import Path
 from typing import List, Union, Dict, Optional
+from datetime import date, datetime, timedelta
 
 from geopandas import GeoDataFrame
 import geopandas as gpd
@@ -13,9 +14,7 @@ import pandas as pd
 import shapely
 
 from up42.viztools import folium_base_map, DrawFoliumOverride
-from up42.utils import (
-    get_logger,
-)
+from up42.utils import get_logger, format_time_period
 
 try:
     from IPython import get_ipython
@@ -223,6 +222,86 @@ class Tools:
             return pd.DataFrame.from_dict(details_json, orient="index").transpose()
         else:
             return details_json
+
+    def get_credits_balance(self) -> dict:
+        """
+        Display the overall credits available in your account.
+
+        Returns:
+            A dict with the balance of credits available in your account.
+        """
+        if not hasattr(self, "auth"):
+            raise Exception(
+                "Requires authentication with UP42, use up42.authenticate()!"
+            )
+        endpoint_url = f"{self.auth._endpoint()}/accounts/me/credits/balance"
+        response_json = self.auth._request(request_type="GET", url=endpoint_url)
+        details_json = response_json["data"]
+        return details_json
+
+    def get_credits_history(
+        self,
+        start_date: Optional[Union[str, datetime]] = None,
+        end_date: Optional[Union[str, datetime]] = None,
+    ) -> Dict[str, Union[str, int, Dict]]:
+        """
+        Display the overall credits history consumed in your account.
+        The consumption history will be returned for all workspace_ids on your
+        account.
+        Args:
+            start_date: The start date for the credit consumption search e.g.
+            2021-12-01. Default start_date None uses 2000-01-01.
+            end_date: The end date for the credit consumption search e.g.
+            2021-12-31. Default end_date None uses current date.
+        Returns:
+            A dict with the information of the credit consumption records for
+            all the users linked by the account_id.
+            (see https://docs.up42.com/developers/api#operation/getHistory for
+            output description)
+        """
+        if not hasattr(self, "auth"):
+            raise Exception(
+                "Requires authentication with UP42, use up42.authenticate()!"
+            )
+        if start_date is None:
+            start_date = "2000-01-01"
+        if end_date is None:
+            tomorrow_date = date.today() + timedelta(days=1)
+            tomorrow_datetime = datetime(
+                year=tomorrow_date.year,
+                month=tomorrow_date.month,
+                day=tomorrow_date.day,
+            )
+            end_date = tomorrow_datetime.strftime("%Y-%m-%d")
+
+        [start_formatted_date, end_formatted_date] = format_time_period(
+            start_date=start_date, end_date=end_date
+        ).split("/")
+        search_parameters = dict(
+            {
+                "from": start_formatted_date,
+                "to": end_formatted_date,
+                "size": 2000,  # 2000 is the maximum page size for this call
+                "page": 0,
+            }
+        )
+        endpoint_url = f"{self.auth._endpoint()}/accounts/me/credits/history"
+        response_json: dict = self.auth._request(
+            request_type="GET", url=endpoint_url, querystring=search_parameters
+        )
+        isLastPage = response_json["data"]["last"]
+        credit_history = response_json["data"]["content"].copy()
+        result = dict(response_json["data"])
+        del result["content"]
+        while not isLastPage:
+            search_parameters["page"] += 1
+            response_json = self.auth._request(
+                request_type="GET", url=endpoint_url, querystring=search_parameters
+            )
+            isLastPage = response_json["data"]["last"]
+            credit_history.extend(response_json["data"]["content"].copy())
+        result["content"] = credit_history
+        return result
 
     def validate_manifest(self, path_or_json: Union[str, Path, dict]) -> dict:
         """

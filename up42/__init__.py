@@ -14,7 +14,7 @@ import warnings
 from pathlib import Path
 from typing import Union, Tuple, List, Optional, Dict
 import logging
-
+from datetime import datetime, date
 from geopandas import GeoDataFrame
 
 # pylint: disable=wrong-import-position
@@ -193,6 +193,19 @@ def get_blocks(
 def get_block_details(block_id: str, as_dataframe=False) -> dict:
     tools = Tools(auth=_auth)
     return tools.get_block_details(block_id, as_dataframe)
+
+
+def get_credits_balance() -> dict:
+    tools = Tools(auth=_auth)
+    return tools.get_credits_balance()
+
+
+def get_credits_history(
+    start_date: Optional[Union[str, datetime]] = None,
+    end_date: Optional[Union[str, datetime]] = None,
+) -> Dict[str, Union[str, int, Dict]]:
+    tools = Tools(auth=_auth)
+    return tools.get_credits_history(start_date, end_date)
 
 
 def validate_manifest(path_or_json: Union[str, Path, dict]) -> dict:
