@@ -321,6 +321,7 @@ def credits_history_mock(auth_mock, requests_mock):
     )
     return Tools(auth=auth_mock)
 
+
 @pytest.fixture()
 def credits_history_pagination_mock(auth_mock, requests_mock):
     with open(
