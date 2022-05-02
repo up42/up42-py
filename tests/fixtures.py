@@ -301,8 +301,8 @@ def auth_live():
 @pytest.fixture()
 def auth_credentials_live():
     auth = AuthCredentials(
-        username="andres.hernandez-camacho@up42.com",
-        user_password="cek_WOOX3chuc.touy",
+        username=os.getenv("USER_UP42_ACCOUNT_EMAIL"),
+        user_password=os.getenv("USER_UP42_ACCOUNT_PDSW"),
     )
     return auth
 
