@@ -20,7 +20,10 @@ from geopandas import GeoDataFrame
 # pylint: disable=wrong-import-position
 from up42.tools import Tools
 from up42.viztools import VizTools
-from up42.auth import Auth
+from up42.auth import (
+    Auth,
+    AuthCredentials,
+)
 from up42.project import Project
 from up42.workspace import Workspace
 from up42.workflow import Workflow
@@ -37,7 +40,7 @@ logger = get_logger(__name__, level=logging.INFO)
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-_auth: Union[Auth, None] = None
+_auth: Union[Auth, AuthCredentials, None] = None
 
 
 def authenticate(
@@ -70,7 +73,7 @@ def initialize_workspace() -> "Workspace":
     """
     Return a Workspace object
     """
-    return Workspace(auth=_auth)
+    return Workspace(auth=_auth)  # type: ignore
 
 
 def initialize_catalog() -> "Catalog":

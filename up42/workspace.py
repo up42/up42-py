@@ -7,12 +7,14 @@ from up42.utils import (
 
 logger = get_logger(__name__)
 
+
 class Workspace:
     """
     The workspace class lets you query existing workspaces and configure
     environments related to the account workspace.
     """
-    def __init__(self, auth: AuthCredentials ):
+
+    def __init__(self, auth: AuthCredentials):
         self.auth = auth
 
     def get_workspaces(self) -> Dict[str, Union[str, Dict]]:
@@ -22,7 +24,5 @@ class Workspace:
         url = f"{self.auth._endpoint()}/accounts/me/workspaces"
         response_json = self.auth._request(request_type="GET", url=url)
         workspaces_json = response_json["data"]
-        logger.info(
-            f"Got {len(workspaces_json)} workspaces in your account"
-        )
+        logger.info(f"Got {len(workspaces_json)} workspaces in your account")
         return workspaces_json

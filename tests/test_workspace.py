@@ -2,15 +2,12 @@ from typing import Dict
 
 import pytest
 
-from up42.utils import (
-    get_logger
-)
+from up42.utils import get_logger
 
-from .fixtures import (
+from .fixtures import (  # pylint: disable=unused-import
     auth_credentials_live,
     workspace_live,
 )
-
 
 logger = get_logger(__name__)
 

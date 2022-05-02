@@ -2,6 +2,7 @@
 UP42 authentication mechanism and base requests functionality
 """
 import json
+import os
 from pathlib import Path
 from typing import Dict, Optional, Union
 
@@ -312,17 +313,13 @@ class AuthCredentials(Auth):
     Get token for basic authentication
     """
 
-    access_platform = "frontend-app"
-    access_secret = "secret"
-    token=""
-    env=""
-
     def __init__(
-            self,
-            username: str,
-            user_password: str,
-            **kwargs,
-        ):
+        self,
+        username: str,
+        user_password: str,
+        **kwargs,
+    ):
+
         self.username = username
         self.user_password = user_password
         try:
@@ -336,25 +333,34 @@ class AuthCredentials(Auth):
         return f"https://api.up42.{self.env}"
 
     def _get_token(self):
-        """Project specific authentication via project id and project api key."""
+        """Project specific authentication via console user id email and
+        password."""
         try:
             token_headers = {
-                'Content-Type':'application/x-www-form-urlencoded',
+                "Content-Type": "application/x-www-form-urlencoded",
             }
-            token_url = self._endpoint()+"/oauth/token"
-            data_params = dict({
-                'grant_type':'password',
-                'username':self.username,
-                'password':self.user_password,
-            })
+            token_url = self._endpoint() + "/oauth/token"
+            data_params = dict(
+                {
+                    "grant_type": "password",
+                    "username": self.username,
+                    "password": self.user_password,
+                }
+            )
             PTOKEN = requests.post(
-                auth=HTTPBasicAuth('frontend-app', 'secret'),
+                auth=HTTPBasicAuth(
+                    os.getenv("ACCESS_USER"), os.getenv("ACCESS_SECRET")
+                ),
                 url=token_url,
                 headers=token_headers,
                 data=data_params,
             )
             response = PTOKEN.json()
-            access_token = response['access_token']
+            access_token = response["access_token"]
             self.token = access_token
         except KeyError as e:
-            print("access_token not found: ", e)
+            print(
+                "access_token not found check you have set all credentials \
+                  on your env variables: ",
+                e,
+            )
