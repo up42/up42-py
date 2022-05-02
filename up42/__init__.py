@@ -22,6 +22,7 @@ from up42.tools import Tools
 from up42.viztools import VizTools
 from up42.auth import Auth
 from up42.project import Project
+from up42.workspace import Workspace
 from up42.workflow import Workflow
 from up42.job import Job
 from up42.jobtask import JobTask
@@ -63,6 +64,13 @@ def initialize_project() -> "Project":
     project = Project(auth=_auth, project_id=str(_auth.project_id))
     logger.info(f"Initialized {project}")
     return project
+
+
+def initialize_workspace() -> "Workspace":
+    """
+    Return a Workspace object
+    """
+    return Workspace(auth=_auth)
 
 
 def initialize_catalog() -> "Catalog":

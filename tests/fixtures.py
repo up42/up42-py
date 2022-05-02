@@ -8,8 +8,10 @@ import requests_mock
 
 from .context import (
     Auth,
+    AuthCredentials,
     Project,
     Workflow,
+    Workspace,
     Job,
     JobCollection,
     JobTask,
@@ -292,6 +294,15 @@ def auth_live():
     auth = Auth(
         project_id=os.getenv("TEST_UP42_PROJECT_ID"),
         project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
+    )
+    return auth
+
+
+@pytest.fixture()
+def auth_credentials_live():
+    auth = AuthCredentials(
+        username="andres.hernandez-camacho@up42.com",
+        user_password="cek_WOOX3chuc.touy",
     )
     return auth
 
@@ -600,6 +611,12 @@ def workflow_live(auth_live):
         workflow_id=os.getenv("TEST_UP42_WORKFLOW_ID"),
     )
     return workflow
+
+
+@pytest.fixture()
+def workspace_live(auth_credentials_live):
+    workspace = Workspace(auth=auth_credentials_live)
+    return workspace
 
 
 @pytest.fixture()

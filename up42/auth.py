@@ -305,3 +305,56 @@ class Auth:
 
         else:  # E.g. for DELETE
             return response
+
+
+class AuthCredentials(Auth):
+    """
+    Get token for basic authentication
+    """
+
+    access_platform = "frontend-app"
+    access_secret = "secret"
+    token=""
+    env=""
+
+    def __init__(
+            self,
+            username: str,
+            user_password: str,
+            **kwargs,
+        ):
+        self.username = username
+        self.user_password = user_password
+        try:
+            self.env: str = kwargs["env"]
+        except KeyError:
+            self.env = "com"
+        self._get_token()
+
+    def _endpoint(self) -> str:
+        """Gets the endpoint."""
+        return f"https://api.up42.{self.env}"
+
+    def _get_token(self):
+        """Project specific authentication via project id and project api key."""
+        try:
+            token_headers = {
+                'Content-Type':'application/x-www-form-urlencoded',
+            }
+            token_url = self._endpoint()+"/oauth/token"
+            data_params = dict({
+                'grant_type':'password',
+                'username':self.username,
+                'password':self.user_password,
+            })
+            PTOKEN = requests.post(
+                auth=HTTPBasicAuth('frontend-app', 'secret'),
+                url=token_url,
+                headers=token_headers,
+                data=data_params,
+            )
+            response = PTOKEN.json()
+            access_token = response['access_token']
+            self.token = access_token
+        except KeyError as e:
+            print("access_token not found: ", e)

@@ -15,9 +15,13 @@ from up42.utils import (
     download_results_from_gcs,
     filter_jobs_on_mode,
 )
-from up42.auth import Auth
+from up42.auth import (
+    Auth,
+    AuthCredentials,
+)
 from up42.project import Project
 from up42.workflow import Workflow
+from up42.workspace import Workspace
 from up42.job import Job
 from up42.jobcollection import JobCollection
 from up42.jobtask import JobTask
@@ -31,6 +35,7 @@ from up42.__init__ import (
     initialize_project,
     initialize_catalog,
     initialize_workflow,
+    initialize_workspace,
     initialize_job,
     initialize_jobtask,
     initialize_storage,
