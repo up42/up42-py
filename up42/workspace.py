@@ -87,11 +87,47 @@ class Workspace:
                 }
             )
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/environments"
-        self.auth._request(
-            request_type="POST",
-            url=url,
-            data=environment,
-        )
-        self.get_workspace_envs()
-        return self
+        if "name" not in environment:
+            logger.info("new env name not found in your input")
+            return self
+        if environment["name"] not in [
+            envon["name"] for envon in self.get_workspace_envs()
+        ]:
+            url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/environments"
+            self.auth._request(
+                request_type="POST",
+                url=url,
+                data=environment,
+            )
+            self.get_workspace_envs()
+            return self
+        else:
+            raise ValueError(
+                "environment name already exist in the selected\
+                             workspace"
+            )
+
+    @check_workspace
+    def delete_env(self, environment_id: str) -> "Workspace":
+        """
+        Remove an environment from the selected workspace.
+        The function checks if the env exists on the workspace
+        else it raise a ValueError.
+        Args:
+            - env_id: An string with the Id of the environment to be remove.
+        """
+        if environment_id in [envon["id"] for envon in self.get_workspace_envs()]:
+            url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/environments/{environment_id}"
+            data = {"workspace_id": self.workspace_id, "environment_id": environment_id}
+            self.auth._request(
+                request_type="DELETE",
+                url=url,
+                data=data,
+            )
+            self.get_workspace_envs()
+            return self
+        else:
+            raise ValueError(
+                "Selected environment not in the current\
+                             workspace."
+            )
