@@ -310,7 +310,7 @@ class Auth:
 
 class AuthCredentials(Auth):
     """
-    Get token for basic authentication
+    This class extends Auth for allowing console user/password authentication.
     """
 
     def __init__(
@@ -319,7 +319,6 @@ class AuthCredentials(Auth):
         user_password: str,
         **kwargs,
     ):
-
         self.username = username
         self.user_password = user_password
         try:
@@ -328,13 +327,11 @@ class AuthCredentials(Auth):
             self.env = "com"
         self._get_token()
 
-    def _endpoint(self) -> str:
-        """Gets the endpoint."""
-        return f"https://api.up42.{self.env}"
-
     def _get_token(self):
-        """Project specific authentication via console user id email and
-        password."""
+        """
+        Authentication via console user id email and
+        password.
+        """
         try:
             token_headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
