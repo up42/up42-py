@@ -96,6 +96,23 @@ def test_get_block_details(tools_mock, requests_mock):
     assert "createdAt" in details
 
 
+def test_get_block_coverage(tools_mock, requests_mock):
+    block_id = "273612-13"
+    url_get_blocks_details = f"{tools_mock.auth._endpoint()}/blocks/{block_id}/coverage"
+    requests_mock.get(
+        url=url_get_blocks_details,
+        json={
+            "data": {
+                "url": "https://storage.googleapis.com/coverage-area-interstellar-prod/ coverage.json?\n"
+            },
+            "error": {},
+        },
+    )
+    coverage = tools_mock.get_block_coverage(block_id=block_id)
+    assert isinstance(coverage, dict)
+    assert "url" in coverage
+
+
 @pytest.mark.live
 def test_get_block_details_live(tools_live):
     tiling_id = "3e146dd6-2b67-4d6e-a422-bb3d973e32ff"
