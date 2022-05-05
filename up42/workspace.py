@@ -14,11 +14,13 @@ def check_workspace(func, *args):
         if not self.workspace_id:
             raise ValueError("Please set your workspace_id first.")
         return func(self, *args)
+
     return inner
+
 
 def check_environment(func, *args):
     # pylint: disable=unused-argument
-    def inner(self, environment_id:str, *args):
+    def inner(self, environment_id: str, *args):
         print(f"check_environment {environment_id}")
         if environment_id not in [envon["id"] for envon in self.get_workspace_envs()]:
             raise ValueError(
@@ -26,6 +28,7 @@ def check_environment(func, *args):
                              workspace."
             )
         return func(self, environment_id, *args)
+
     return inner
 
 
@@ -118,7 +121,6 @@ class Workspace:
                              workspace"
             )
 
-
     @check_environment
     @check_workspace
     def delete_env(self, environment_id: str) -> "Workspace":
@@ -139,10 +141,10 @@ class Workspace:
         self.get_workspace_envs()
         return self
 
-
     @check_environment
     @check_workspace
     def add_secret(self, environment_id: str, secret_data: Dict) -> "Workspace":
+        # pylint: disable=unused-argument
         """
         Add a secret to the selected environment.
         Args:
