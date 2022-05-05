@@ -14,7 +14,18 @@ def check_workspace(func, *args):
         if not self.workspace_id:
             raise ValueError("Please set your workspace_id first.")
         return func(self, *args)
+    return inner
 
+def check_environment(func, *args):
+    # pylint: disable=unused-argument
+    def inner(self, environment_id:str, *args):
+        print(f"check_environment {environment_id}")
+        if environment_id not in [envon["id"] for envon in self.get_workspace_envs()]:
+            raise ValueError(
+                "Selected environment not in the current\
+                             workspace."
+            )
+        return func(self, environment_id, *args)
     return inner
 
 
@@ -107,6 +118,8 @@ class Workspace:
                              workspace"
             )
 
+
+    @check_environment
     @check_workspace
     def delete_env(self, environment_id: str) -> "Workspace":
         """
@@ -116,18 +129,33 @@ class Workspace:
         Args:
             - env_id: An string with the Id of the environment to be remove.
         """
-        if environment_id in [envon["id"] for envon in self.get_workspace_envs()]:
-            url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/environments/{environment_id}"
-            data = {"workspace_id": self.workspace_id, "environment_id": environment_id}
-            self.auth._request(
-                request_type="DELETE",
-                url=url,
-                data=data,
+        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/environments/{environment_id}"
+        data = {"workspace_id": self.workspace_id, "environment_id": environment_id}
+        self.auth._request(
+            request_type="DELETE",
+            url=url,
+            data=data,
+        )
+        self.get_workspace_envs()
+        return self
+
+
+    @check_environment
+    @check_workspace
+    def add_secret(self, environment_id: str, secret_data: Dict) -> "Workspace":
+        """
+        Add a secret to the selected environment.
+        Args:
+            environment_id: Id of the environment to add the key, value pair
+            secret_data: Data to be added to the environment.
+            (e.g
+                {
+                    "name": "env_name",
+                    "secret": {
+                        "var1_name": "var1_value",
+                        "var2_name": "var2_value"
+                    }
+                }
             )
-            self.get_workspace_envs()
-            return self
-        else:
-            raise ValueError(
-                "Selected environment not in the current\
-                             workspace."
-            )
+        """
+        return self
