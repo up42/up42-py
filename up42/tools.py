@@ -230,12 +230,17 @@ class Tools:
             return details_json
 
     @check_auth
-    def get_block_coverage(self, block_id: str) -> Dict[str, str]:
+    def get_block_coverage(self, block_id: str) -> Dict[str, Optional[str]]:
         # pylint: disable=unused-argument
-        url = f"{self.auth._endpoint()}/blocks/{block_id}/coverage"  # public blocks
-        response_json = self.auth._request(request_type="GET", url=url)
-        details_json = response_json["data"]
-        return details_json
+        try:
+            url = f"{self.auth._endpoint()}/blocks/{block_id}/coverage"  # public blocks
+            response_json = self.auth._request(request_type="GET", url=url)
+            details_json = response_json["data"]
+            return details_json
+        except Exception as e:  # pylint: disable=broad-except
+            logger.info("Block coverage not found for block id {block_id}")
+            logger.info(f"error: {e}")
+            return {"url": None}
 
     @check_auth
     def get_credits_balance(self) -> dict:

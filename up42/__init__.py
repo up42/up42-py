@@ -195,6 +195,11 @@ def get_block_details(block_id: str, as_dataframe=False) -> dict:
     return tools.get_block_details(block_id, as_dataframe)
 
 
+def get_block_coverage(block_id: str) -> dict:
+    tools = Tools(auth=_auth)
+    return tools.get_block_coverage(block_id)
+
+
 def get_credits_balance() -> dict:
     tools = Tools(auth=_auth)
     return tools.get_credits_balance()

@@ -96,6 +96,16 @@ def test_get_block_details(tools_mock, requests_mock):
     assert "createdAt" in details
 
 
+@pytest.mark.live
+def test_get_block_details_live(tools_live):
+    tiling_id = "3e146dd6-2b67-4d6e-a422-bb3d973e32ff"
+
+    details = tools_live.get_block_details(block_id=tiling_id)
+    assert isinstance(details, dict)
+    assert details["id"] == tiling_id
+    assert "createdAt" in details
+
+
 def test_get_block_coverage(tools_mock, requests_mock):
     block_id = "273612-13"
     url_get_blocks_details = f"{tools_mock.auth._endpoint()}/blocks/{block_id}/coverage"
@@ -114,13 +124,20 @@ def test_get_block_coverage(tools_mock, requests_mock):
 
 
 @pytest.mark.live
-def test_get_block_details_live(tools_live):
-    tiling_id = "3e146dd6-2b67-4d6e-a422-bb3d973e32ff"
+def test_get_block_coverage_live(tools_live):
+    tiling_id = "625fd923-8ae6-4ac3-8e13-f51d3c977222"
+    coverage = tools_live.get_block_coverage(block_id=tiling_id)
+    assert isinstance(coverage, dict)
+    assert "url" in coverage
 
-    details = tools_live.get_block_details(block_id=tiling_id)
-    assert isinstance(details, dict)
-    assert details["id"] == tiling_id
-    assert "createdAt" in details
+
+@pytest.mark.live
+def test_get_block_coverage_noresults_live(tools_live):
+    tiling_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
+    coverage = tools_live.get_block_coverage(block_id=tiling_id)
+    assert isinstance(coverage, dict)
+    assert "url" in coverage
+    assert coverage["url"] is None
 
 
 def test_get_credits_balance(tools_mock):
