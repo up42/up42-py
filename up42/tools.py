@@ -240,7 +240,7 @@ class Tools:
             details_json = response_json["data"]
             return details_json
         except requests.exceptions.RequestException as err:
-            logger.info("Block coverage not found for block id {block_id}")
+            logger.info(f"Block coverage not found for block id {block_id}")
             logger.info(f"error: {err}")
             return {"url": None}
 
