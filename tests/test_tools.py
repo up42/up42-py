@@ -113,7 +113,7 @@ def test_get_block_coverage(tools_mock, requests_mock):
         url=url_get_blocks_details,
         json={
             "data": {
-                "url": "https://storage.googleapis.com/coverage-area-interstellar-prod/ coverage.json?\n"
+                "url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json?\n"
             },
             "error": {},
         },
