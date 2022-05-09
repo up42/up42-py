@@ -140,6 +140,13 @@ def test_get_block_coverage_noresults_live(tools_live):
     assert coverage["url"] is None
 
 
+@pytest.mark.live
+def test_get_block_coverage_json_live(tools_live):
+    block_id = "625fd923-8ae6-4ac3-8e13-f51d3c977222"
+    coverage = tools_live.get_block_coverage(block_id=block_id, as_geojson=True)
+    assert isinstance(coverage, dict)
+
+
 def test_get_credits_balance(tools_mock):
     balance = tools_mock.get_credits_balance()
     assert isinstance(balance, dict)

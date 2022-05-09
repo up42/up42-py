@@ -232,12 +232,27 @@ class Tools:
             return details_json
 
     @check_auth
-    def get_block_coverage(self, block_id: str) -> Dict[str, Optional[str]]:
+    def get_block_coverage(self, block_id: str, as_geojson: bool = False) -> dict:
         # pylint: disable=unused-argument
+        """
+        Gets the spatial coverage of a data/processing block as
+        url or GeoJson Feature Collection.
+
+        Args:
+            block_id: The block id.
+            as_geojson: boolean to set result as a Geojson Feature Collection
+            or url (default).
+
+        Returns:
+            A dict of the spatial coverage for the specific block.
+        """
         try:
-            url = f"{self.auth._endpoint()}/blocks/{block_id}/coverage"  # public blocks
+            url = f"{self.auth._endpoint()}/blocks/{block_id}/coverage"
             response_json = self.auth._request(request_type="GET", url=url)
             details_json = response_json["data"]
+            if as_geojson:
+                response_coverage = requests.get(details_json["url"]).json()
+                return response_coverage
             return details_json
         except requests.exceptions.RequestException as err:
             logger.info(f"Block coverage not found for block id {block_id}")
