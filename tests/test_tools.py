@@ -125,16 +125,16 @@ def test_get_block_coverage(tools_mock, requests_mock):
 
 @pytest.mark.live
 def test_get_block_coverage_live(tools_live):
-    tiling_id = "625fd923-8ae6-4ac3-8e13-f51d3c977222"
-    coverage = tools_live.get_block_coverage(block_id=tiling_id)
+    block_id = "625fd923-8ae6-4ac3-8e13-f51d3c977222"
+    coverage = tools_live.get_block_coverage(block_id=block_id)
     assert isinstance(coverage, dict)
     assert "url" in coverage
 
 
 @pytest.mark.live
 def test_get_block_coverage_noresults_live(tools_live):
-    tiling_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
-    coverage = tools_live.get_block_coverage(block_id=tiling_id)
+    block_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
+    coverage = tools_live.get_block_coverage(block_id=block_id)
     assert isinstance(coverage, dict)
     assert "url" in coverage
     assert coverage["url"] is None

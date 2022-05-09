@@ -4,11 +4,13 @@ not bound to a specific higher level UP42 object.
 """
 
 import json
+
 from pathlib import Path
 from typing import List, Union, Dict, Optional
 from datetime import date, datetime, timedelta
-
 from geopandas import GeoDataFrame
+
+import requests.exceptions
 import geopandas as gpd
 import pandas as pd
 import shapely
@@ -237,9 +239,9 @@ class Tools:
             response_json = self.auth._request(request_type="GET", url=url)
             details_json = response_json["data"]
             return details_json
-        except Exception as e:  # pylint: disable=broad-except
+        except requests.exceptions.RequestException as err:
             logger.info("Block coverage not found for block id {block_id}")
-            logger.info(f"error: {e}")
+            logger.info(f"error: {err}")
             return {"url": None}
 
     @check_auth
