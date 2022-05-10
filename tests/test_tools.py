@@ -108,19 +108,42 @@ def test_get_block_details_live(tools_live):
 
 def test_get_block_coverage(tools_mock, requests_mock):
     block_id = "273612-13"
-    url_get_blocks_details = f"{tools_mock.auth._endpoint()}/blocks/{block_id}/coverage"
+    url_get_blocks_coverage = (
+        f"{tools_mock.auth._endpoint()}/blocks/{block_id}/coverage"
+    )
     requests_mock.get(
-        url=url_get_blocks_details,
+        url=url_get_blocks_coverage,
         json={
             "data": {
-                "url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json?\n"
+                "url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
             },
             "error": {},
         },
     )
+    url_geojson_response = (
+        "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
+    )
+    requests_mock.get(
+        url=url_geojson_response,
+        json={
+            "type": "FeatureCollection",
+            "name": "bundle6m",
+            "crs": {
+                "type": "name",
+                "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"},
+            },
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": {},
+                    "geometry": {"type": "MultiPolygon", "coordinates": []},
+                }
+            ],
+        },
+    )
     coverage = tools_mock.get_block_coverage(block_id=block_id)
     assert isinstance(coverage, dict)
-    assert "url" in coverage
+    assert "features" in coverage
 
 
 @pytest.mark.live
@@ -128,23 +151,19 @@ def test_get_block_coverage_live(tools_live):
     block_id = "625fd923-8ae6-4ac3-8e13-f51d3c977222"
     coverage = tools_live.get_block_coverage(block_id=block_id)
     assert isinstance(coverage, dict)
-    assert "url" in coverage
+    assert "features" in coverage
 
 
 @pytest.mark.live
 def test_get_block_coverage_noresults_live(tools_live):
-    block_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
-    coverage = tools_live.get_block_coverage(block_id=block_id)
-    assert isinstance(coverage, dict)
-    assert "url" in coverage
-    assert coverage["url"] is None
-
-
-@pytest.mark.live
-def test_get_block_coverage_json_live(tools_live):
-    block_id = "625fd923-8ae6-4ac3-8e13-f51d3c977222"
-    coverage = tools_live.get_block_coverage(block_id=block_id, as_geojson=True)
-    assert isinstance(coverage, dict)
+    # pylint: disable=unused-variable
+    try:
+        block_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
+        coverage = tools_live.get_block_coverage(block_id=block_id)
+    except requests.exceptions.RequestException as err:
+        assert True
+        return
+    assert False
 
 
 def test_get_credits_balance(tools_mock):

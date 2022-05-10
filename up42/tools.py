@@ -232,7 +232,7 @@ class Tools:
             return details_json
 
     @check_auth
-    def get_block_coverage(self, block_id: str, as_geojson: bool = False) -> dict:
+    def get_block_coverage(self, block_id: str) -> dict:
         # pylint: disable=unused-argument
         """
         Gets the spatial coverage of a data/processing block as
@@ -246,18 +246,11 @@ class Tools:
         Returns:
             A dict of the spatial coverage for the specific block.
         """
-        try:
-            url = f"{self.auth._endpoint()}/blocks/{block_id}/coverage"
-            response_json = self.auth._request(request_type="GET", url=url)
-            details_json = response_json["data"]
-            if as_geojson:
-                response_coverage = requests.get(details_json["url"]).json()
-                return response_coverage
-            return details_json
-        except requests.exceptions.RequestException as err:
-            logger.info(f"Block coverage not found for block id {block_id}")
-            logger.info(f"error: {err}")
-            return {"url": None}
+        url = f"{self.auth._endpoint()}/blocks/{block_id}/coverage"
+        response_json = self.auth._request(request_type="GET", url=url)
+        details_json = response_json["data"]
+        response_coverage = requests.get(details_json["url"]).json()
+        return response_coverage
 
     @check_auth
     def get_credits_balance(self) -> dict:
