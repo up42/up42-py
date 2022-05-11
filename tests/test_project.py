@@ -75,6 +75,14 @@ def test_get_jobs(project_mock, requests_mock):
     assert jobcollection.jobs[0].job_id == JOB_ID
 
 
+def test_get_jobs_pagination(project_mock):
+    jobcollection = project_mock.get_jobs()
+    assert isinstance(jobcollection.jobs, list)
+    assert isinstance(jobcollection.jobs[0], Job)
+    assert jobcollection.jobs[0].job_id == JOB_ID
+    assert len(jobcollection.jobs) == 120
+
+
 @pytest.mark.skip(
     reason="too many jobs in test project, triggers too many job info requests."
 )
