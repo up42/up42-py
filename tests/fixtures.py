@@ -407,21 +407,6 @@ def project_mock(auth_mock, requests_mock):
     }  # Same workflow_id to not have to get multiple .info
     requests_mock.get(url=url_get_workflows, json=json_get_workflows)
 
-    # get_jobs. Requires job_info mock.
-    url_get_jobs = f"{project.auth._endpoint()}/projects/{project.project_id}/jobs"
-    json_get_jobs = {
-        "data": [
-            {
-                "id": JOB_ID,
-                "status": "SUCCEEDED",
-                "inputs": {},
-                "error": {},
-                "mode": "DEFAULT",
-            }
-        ]
-    }
-    requests_mock.get(url=url_get_jobs, json=json_get_jobs)
-
     # get_jobs_pagination.
     # page 0
     url_get_jobs_page_0 = (

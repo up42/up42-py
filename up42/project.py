@@ -152,6 +152,7 @@ class Project:
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
 
+        # API get jobs pagination exhaustion is indicated by empty next page (no last page flag)
         while len(response_json["data"]) > 0:
             page += 1
             url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs?page={page}"
