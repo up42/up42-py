@@ -101,7 +101,7 @@ def test_generate_headers(auth_mock):
         "Content-Type": "application/json",
         "Authorization": "Bearer token_1011",
         "cache-control": "no-cache",
-        "X-UP42-info": f"python/{version}",
+        "User-Agent": f"up42-py/{version} (https://github.com/up42/up42-py)",
     }
     assert auth_mock._generate_headers(token="token_1011") == expected_headers
 

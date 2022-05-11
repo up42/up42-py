@@ -189,7 +189,7 @@ class Auth:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
             "cache-control": "no-cache",
-            "X-UP42-info": f"python/{version}",
+            "User-Agent": f"up42-py/{version} (https://github.com/up42/up42-py)",
         }
         return headers
 
