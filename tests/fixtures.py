@@ -310,6 +310,7 @@ def credits_history_mock(auth_mock, requests_mock):
     )
     return Tools(auth=auth_mock)
 
+
 @pytest.fixture()
 def credits_history_pagination_mock(auth_mock, requests_mock):
     with open(
@@ -406,9 +407,12 @@ def project_mock(auth_mock, requests_mock):
     }  # Same workflow_id to not have to get multiple .info
     requests_mock.get(url=url_get_workflows, json=json_get_workflows)
 
-    # get_jobs. Requires job_info mock.
-    url_get_jobs = f"{project.auth._endpoint()}/projects/{project.project_id}/jobs"
-    json_get_jobs = {
+    # get_jobs_pagination.
+    # page 0
+    url_get_jobs_page_0 = (
+        f"{project.auth._endpoint()}/projects/{project.project_id}/jobs?page=0"
+    )
+    json_get_jobs_page_0 = {
         "data": [
             {
                 "id": JOB_ID,
@@ -418,8 +422,32 @@ def project_mock(auth_mock, requests_mock):
                 "mode": "DEFAULT",
             }
         ]
+        * 100
     }
-    requests_mock.get(url=url_get_jobs, json=json_get_jobs)
+    requests_mock.get(url=url_get_jobs_page_0, json=json_get_jobs_page_0)
+    # page 1
+    url_get_jobs_page_1 = (
+        f"{project.auth._endpoint()}/projects/{project.project_id}/jobs?page=1"
+    )
+    json_get_jobs_page_1 = {
+        "data": [
+            {
+                "id": JOB_ID,
+                "status": "SUCCEEDED",
+                "inputs": {},
+                "error": {},
+                "mode": "DEFAULT",
+            }
+        ]
+        * 20
+    }
+    requests_mock.get(url=url_get_jobs_page_1, json=json_get_jobs_page_1)
+    # page 2
+    url_get_jobs_page_2 = (
+        f"{project.auth._endpoint()}/projects/{project.project_id}/jobs?page=2"
+    )
+    json_get_jobs_page_2 = {"data": []}
+    requests_mock.get(url=url_get_jobs_page_2, json=json_get_jobs_page_2)
 
     # project_settings
     url_project_settings = (

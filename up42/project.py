@@ -147,9 +147,20 @@ class Project:
         Returns:
             All job objects in a JobCollection, or alternatively the jobs info as json.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
+        page = 0
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs?page={page}"
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
+
+        # API get jobs pagination exhaustion is indicated by empty next page (no last page flag)
+        while len(response_json["data"]) > 0:
+            page += 1
+            url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs?page={page}"
+            response_json = self.auth._request(request_type="GET", url=url)
+            if len(response_json["data"]) > 0:
+                jobs_json.extend(
+                    filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
+                )
         logger.info(f"Got {len(jobs_json)} jobs in project {self.project_id}.")
         if return_json:
             return jobs_json
