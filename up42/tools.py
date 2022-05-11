@@ -240,8 +240,6 @@ class Tools:
 
         Args:
             block_id: The block id.
-            as_geojson: boolean to set result as a Geojson Feature Collection
-            or url (default).
 
         Returns:
             A dict of the spatial coverage for the specific block.
