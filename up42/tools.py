@@ -4,11 +4,13 @@ not bound to a specific higher level UP42 object.
 """
 
 import json
+
 from pathlib import Path
 from typing import List, Union, Dict, Optional
 from datetime import date, datetime, timedelta
-
 from geopandas import GeoDataFrame
+
+import requests.exceptions
 import geopandas as gpd
 import pandas as pd
 import shapely
@@ -25,6 +27,18 @@ except (ImportError, AttributeError):
     pass
 
 logger = get_logger(__name__)
+
+
+def check_auth(func, *args, **kwargs):
+    # pylint: disable=unused-argument
+    def inner(self, *args, **kwargs):
+        if not hasattr(self, "auth"):
+            raise Exception(
+                "Requires authentication with UP42, use up42.authenticate()!"
+            )
+        return func(self, *args, **kwargs)
+
+    return inner
 
 
 # pylint: disable=no-member, duplicate-code
@@ -138,6 +152,7 @@ class Tools:
         ).add_to(m)
         return m
 
+    @check_auth
     def get_blocks(
         self,
         block_type: Optional[str] = None,
@@ -160,10 +175,6 @@ class Tools:
             block_type = block_type.lower()  # type: ignore
         except AttributeError:
             pass
-        if not hasattr(self, "auth"):
-            raise Exception(
-                "Requires authentication with UP42, use up42.authenticate()!"
-            )
         url = f"{self.auth._endpoint()}/blocks"
         response_json = self.auth._request(request_type="GET", url=url)
         public_blocks_json = response_json["data"]
@@ -197,6 +208,7 @@ class Tools:
             else:
                 return blocks_json
 
+    @check_auth
     def get_block_details(self, block_id: str, as_dataframe: bool = False) -> dict:
         """
         Gets the detailed information about a specific public block from
@@ -210,10 +222,6 @@ class Tools:
         Returns:
             A dict of the block details metadata for the specific block.
         """
-        if not hasattr(self, "auth"):
-            raise Exception(
-                "Requires authentication with UP42, use up42.authenticate()!"
-            )
         url = f"{self.auth._endpoint()}/blocks/{block_id}"  # public blocks
         response_json = self.auth._request(request_type="GET", url=url)
         details_json = response_json["data"]
@@ -223,6 +231,26 @@ class Tools:
         else:
             return details_json
 
+    @check_auth
+    def get_block_coverage(self, block_id: str) -> dict:
+        # pylint: disable=unused-argument
+        """
+        Gets the spatial coverage of a data/processing block as
+        url or GeoJson Feature Collection.
+
+        Args:
+            block_id: The block id.
+
+        Returns:
+            A dict of the spatial coverage for the specific block.
+        """
+        url = f"{self.auth._endpoint()}/blocks/{block_id}/coverage"
+        response_json = self.auth._request(request_type="GET", url=url)
+        details_json = response_json["data"]
+        response_coverage = requests.get(details_json["url"]).json()
+        return response_coverage
+
+    @check_auth
     def get_credits_balance(self) -> dict:
         """
         Display the overall credits available in your account.
@@ -230,15 +258,12 @@ class Tools:
         Returns:
             A dict with the balance of credits available in your account.
         """
-        if not hasattr(self, "auth"):
-            raise Exception(
-                "Requires authentication with UP42, use up42.authenticate()!"
-            )
         endpoint_url = f"{self.auth._endpoint()}/accounts/me/credits/balance"
         response_json = self.auth._request(request_type="GET", url=endpoint_url)
         details_json = response_json["data"]
         return details_json
 
+    @check_auth
     def get_credits_history(
         self,
         start_date: Optional[Union[str, datetime]] = None,
@@ -259,10 +284,6 @@ class Tools:
             (see https://docs.up42.com/developers/api#operation/getHistory for
             output description)
         """
-        if not hasattr(self, "auth"):
-            raise Exception(
-                "Requires authentication with UP42, use up42.authenticate()!"
-            )
         if start_date is None:
             start_date = "2000-01-01"
         if end_date is None:
@@ -303,6 +324,7 @@ class Tools:
         result["content"] = credit_history
         return result
 
+    @check_auth
     def validate_manifest(self, path_or_json: Union[str, Path, dict]) -> dict:
         """
         Validates a block manifest json.
@@ -323,10 +345,6 @@ class Tools:
                 manifest_json = json.load(src)
         else:
             manifest_json = path_or_json
-        if not hasattr(self, "auth"):
-            raise Exception(
-                "Requires authentication with UP42, use up42.authenticate()!"
-            )
         url = f"{self.auth._endpoint()}/validate-schema/block"
         response_json = self.auth._request(
             request_type="POST", url=url, data=manifest_json
