@@ -15,6 +15,12 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.21.0](https://pypi.org/project/up42-py/) (2022-05-12)
+- Adding `get_balance` and `get_credits_history` features for allowing account information retrieval.
+- Adding `get_block_coverage` features for retrieval of the catalog blocks' coverage as geojson.
+- Fixing the `project.get_jobs` limitation for returning more than 100 results.
+- Internal code improvements (e.g. FAQ additions, broken links, etc.) 
+
 ### [0.20.2](https://pypi.org/project/up42-py/) (2022-04-10)
 - Update documentation
 - Non functional changes to enable conda release
