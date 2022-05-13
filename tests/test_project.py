@@ -83,6 +83,11 @@ def test_get_jobs_pagination(project_mock):
     assert len(jobcollection.jobs) == 120
 
 
+def test_get_jobs_pagination_limit(project_mock):
+    jobcollection = project_mock.get_jobs(limit=110)
+    assert len(jobcollection.jobs) == 110
+
+
 @pytest.mark.skip(
     reason="too many jobs in test project, triggers too many job info requests."
 )
