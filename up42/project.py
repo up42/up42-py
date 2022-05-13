@@ -149,8 +149,7 @@ class Project:
             return_json: If true, returns the job info jsons instead of JobCollection.
             test_jobs: Return test jobs or test queries.
             real_jobs: Return real jobs.
-            limit: Optional, only return n first assets by sorting criteria and order.
-                Optimal to select if your workspace contains many assets.
+            limit: Only return n first jobs by sorting criteria and order, default 500.
             sortby: The sorting criteria, one of "createdAt", "name", "id", "mode", "status", "startedAt", "finishedAt".
             descending: The sorting order, True for descending (default), False for ascending.
 
