@@ -166,7 +166,29 @@ class Catalog(VizTools):
             search_parameters = dict(search_parameters)
             search_parameters["limit"] = 500
 
-        url = f"{self.auth._endpoint()}/catalog/stac/search"
+        # UP42 API can query multiple collections of the same host at once.
+        collections = self.get_collections()
+        hosts = []
+        for selected_collection in search_parameters["collections"]:
+            try:
+                hostname = [
+                    c["hostName"]
+                    for c in collections
+                    if c["name"] == selected_collection
+                ][0]
+                hosts.append(hostname)
+            except IndexError as e:
+                raise ValueError(
+                    f"Selected collections {selected_collection} in the search_parameters is not a "
+                    f"valid UP42 collection. See catalog.get_collections."
+                ) from e
+        if len(set(hosts)) > 1:
+            raise ValueError(
+                "Only collections with the same host can be searched at the same time. Please adjust the "
+                "collections in the search_parameters!"
+            )
+
+        url = f"{self.auth._endpoint()}/catalog/hosts/{hosts[0]}/stac/search"
         response_json: dict = self.auth._request("POST", url, search_parameters)
         features = response_json["features"]
 
