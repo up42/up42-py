@@ -186,20 +186,16 @@ class Catalog(VizTools):
         else:
             host = hosts[0]
 
-        url = f"{self.auth._endpoint()}/catalog/hosts/{host}/stac/search"
+        url = f"{self.auth._endpoint()}/catalog/hosts/{host}/stac/search"  # ?format=paginated  #&page=0
         response_json: dict = self.auth._request("POST", url, search_parameters)
         features = response_json["features"]
 
-        # A request with no results will still include a (non-exhausted) pagination token.
-        # Only the first pagination token request will then indicate search exhausted.
-
         # Search results with more than 500 items are given as 50-per-page additional pages.
         while len(features) < max_limit:
-            page_url = response_json["links"][0]["href"]
-            next_page_url = response_json["links"][1]["href"]
-            pagination_exhausted = next_page_url == page_url
+            pagination_exhausted = len(response_json["links"]) == 1
             if pagination_exhausted:
                 break
+            next_page_url = response_json["links"][1]["href"]
             response_json = self.auth._request("POST", next_page_url, search_parameters)
             features += response_json["features"]
 
