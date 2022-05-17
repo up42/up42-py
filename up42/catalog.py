@@ -185,7 +185,7 @@ class Catalog(VizTools):
             )
         host = hosts[0]
 
-        url = f"{self.auth._endpoint()}/catalog/hosts/{host}/stac/search"  # ?format=paginated  #&page=0
+        url = f"{self.auth._endpoint()}/catalog/hosts/{host}/stac/search"
         response_json: dict = self.auth._request("POST", url, search_parameters)
         features = response_json["features"]
 
