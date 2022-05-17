@@ -46,7 +46,7 @@ def test_construct_parameters(catalog_mock):
         geometry=mock_search_parameters["intersects"],
         start_date="2014-01-01",
         end_date="2016-12-31",
-        collections=["PHR"],
+        collections=["phr"],
         max_cloudcover=20,
         sortby="cloudCoverage",
         limit=4,
@@ -73,7 +73,7 @@ def test_construct_parameters_fc_multiple_features_raises(catalog_mock):
             geometry=fc,
             start_date="2020-01-01",
             end_date="2020-08-10",
-            collections=["PHR"],
+            collections=["phr"],
             limit=10,
             max_cloudcover=15,
             sortby="acquisitionDate",
@@ -144,7 +144,7 @@ def test_search_usagetype(catalog_usagetype_mock):
         search_parameters = catalog_usagetype_mock.construct_parameters(
             start_date="2014-01-01T00:00:00",
             end_date="2020-12-31T23:59:59",
-            collections=["PHR"],
+            collections=["phr"],
             limit=1,
             usage_type=params["usage_type"],
             geometry={
@@ -190,6 +190,7 @@ def test_search_usagetype_live(catalog_live, usage_type, result, result2):
     search_parameters = catalog_live.construct_parameters(
         start_date="2014-01-01T00:00:00",
         end_date="2020-12-31T23:59:59",
+        collections=["phr"],
         limit=100,
         usage_type=usage_type,
         geometry={
@@ -228,7 +229,7 @@ def test_search_catalog_pagination(catalog_mock):
             ],
         },
         "limit": 614,
-        "collections": ["PHR", "SPOT"],
+        "collections": ["phr", "spot"],
     }
     search_results = catalog_mock.search(search_params_limit_614)
     assert isinstance(search_results, gpd.GeoDataFrame)
@@ -239,7 +240,7 @@ def test_search_catalog_pagination(catalog_mock):
 def test_search_catalog_pagination_live(catalog_live):
     search_params_limit_720 = {
         "datetime": "2018-01-01T00:00:00Z/2019-12-31T23:59:59Z",
-        "collections": ["PHR", "SPOT"],
+        "collections": ["phr", "spot"],
         "bbox": [
             -125.859375,
             32.93492866908233,
@@ -252,7 +253,7 @@ def test_search_catalog_pagination_live(catalog_live):
     assert isinstance(search_results, gpd.GeoDataFrame)
     assert search_results.shape == (720, 14)
     assert search_results.collection.nunique() == 2
-    assert all(search_results.collection.isin(["PHR", "SPOT"]))
+    assert all(search_results.collection.isin(["phr", "spot"]))
     period_column = pd.to_datetime(search_results.acquisitionDate)
     assert all(
         (period_column > pd.to_datetime("2018-01-01T00:00:00Z"))
@@ -267,7 +268,7 @@ def test_search_catalog_pagination_no_results(catalog_live):
     """
     search_params_no_results = {
         "datetime": "2018-01-01T00:00:00Z/2018-01-02T23:59:59Z",
-        "collections": ["PHR", "SPOT"],
+        "collections": ["phr", "spot"],
         "intersects": {
             "type": "Polygon",
             "coordinates": [
@@ -307,12 +308,12 @@ def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
             ],
         },
         "limit": 614,
-        "collections": ["PHR", "SPOT"],
+        "collections": ["phr", "spot"],
     }
     search_results = catalog_pagination_mock.search(search_params_limit_614)
     assert isinstance(search_results, gpd.GeoDataFrame)
     assert search_results.shape == (550, 14)
-    assert all(search_results.collection.isin(["PHR", "SPOT"]))
+    assert all(search_results.collection.isin(["phr", "spot"]))
 
 
 def test_download_quicklook(catalog_mock, requests_mock):
@@ -393,7 +394,7 @@ def test_estimate_order_from_catalog(
         Path(__file__).resolve().parent / "mock_data/search_response.json"
     ) as json_file:
         json_search_response = json.load(json_file)
-    url_search = f"{catalog_mock.auth._endpoint()}/catalog/stac/search"
+    url_search = f"{catalog_mock.auth._endpoint()}/catalog/hosts/oneatlas/stac/search"
     requests_mock.post(
         url=url_search,
         json=json_search_response,
@@ -416,7 +417,7 @@ def test_order_from_catalog(order_payload, order_mock, catalog_mock, requests_mo
         Path(__file__).resolve().parent / "mock_data/search_response.json"
     ) as json_file:
         json_search_response = json.load(json_file)
-    url_search = f"{catalog_mock.auth._endpoint()}/catalog/stac/search"
+    url_search = f"{catalog_mock.auth._endpoint()}/catalog/hosts/oneatlas/stac/search"
     requests_mock.post(
         url=url_search,
         json=json_search_response,
@@ -444,7 +445,7 @@ def test_order_from_catalog_track_status(
         Path(__file__).resolve().parent / "mock_data/search_response.json"
     ) as json_file:
         json_search_response = json.load(json_file)
-    url_search = f"{catalog_mock.auth._endpoint()}/catalog/stac/search"
+    url_search = f"{catalog_mock.auth._endpoint()}/catalog/hosts/oneatlas/stac/search"
     requests_mock.post(
         url=url_search,
         json=json_search_response,
