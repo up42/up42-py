@@ -178,13 +178,12 @@ class Catalog(VizTools):
                 f"Selected collections {search_parameters['collections']} are not valid. See "
                 f"catalog.get_collections."
             )
-        elif len(set(hosts)) > 1:
+        if len(set(hosts)) > 1:
             raise ValueError(
                 "Only collections with the same host can be searched at the same time. Please adjust the "
                 "collections in the search_parameters!"
             )
-        else:
-            host = hosts[0]
+        host = hosts[0]
 
         url = f"{self.auth._endpoint()}/catalog/hosts/{host}/stac/search"  # ?format=paginated  #&page=0
         response_json: dict = self.auth._request("POST", url, search_parameters)
