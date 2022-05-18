@@ -166,20 +166,35 @@ class Catalog(VizTools):
             search_parameters = dict(search_parameters)
             search_parameters["limit"] = 500
 
-        url = f"{self.auth._endpoint()}/catalog/stac/search"
+        # UP42 API can query multiple collections of the same host at once.
+        collections = self.get_collections()
+        hosts = [
+            c["hostName"]
+            for c in collections
+            if c["name"] in search_parameters["collections"]
+        ]
+        if not hosts:
+            raise ValueError(
+                f"Selected collections {search_parameters['collections']} are not valid. See "
+                f"catalog.get_collections."
+            )
+        if len(set(hosts)) > 1:
+            raise ValueError(
+                "Only collections with the same host can be searched at the same time. Please adjust the "
+                "collections in the search_parameters!"
+            )
+        host = hosts[0]
+
+        url = f"{self.auth._endpoint()}/catalog/hosts/{host}/stac/search"
         response_json: dict = self.auth._request("POST", url, search_parameters)
         features = response_json["features"]
 
-        # A request with no results will still include a (non-exhausted) pagination token.
-        # Only the first pagination token request will then indicate search exhausted.
-
         # Search results with more than 500 items are given as 50-per-page additional pages.
         while len(features) < max_limit:
-            page_url = response_json["links"][0]["href"]
-            next_page_url = response_json["links"][1]["href"]
-            pagination_exhausted = next_page_url == page_url
+            pagination_exhausted = len(response_json["links"]) == 1
             if pagination_exhausted:
                 break
+            next_page_url = response_json["links"][1]["href"]
             response_json = self.auth._request("POST", next_page_url, search_parameters)
             features += response_json["features"]
 

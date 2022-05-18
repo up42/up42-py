@@ -1026,7 +1026,7 @@ def tools_live(auth_live):
 @pytest.fixture()
 def catalog_mock(auth_mock, requests_mock):
     url_collections = f"{auth_mock._endpoint()}/collections"
-    collections_response = {"data": [{"name": "PHR"}]}
+    collections_response = {"data": [{"name": "phr", "hostName": "oneatlas"}]}
     requests_mock.get(
         url=url_collections,
         json=collections_response,
@@ -1036,7 +1036,7 @@ def catalog_mock(auth_mock, requests_mock):
         Path(__file__).resolve().parent / "mock_data/search_response.json"
     ) as json_file:
         json_search_response = json.load(json_file)
-    url_search = f"{auth_mock._endpoint()}/catalog/stac/search"
+    url_search = f"{auth_mock._endpoint()}/catalog/hosts/oneatlas/stac/search"
     requests_mock.post(
         url=url_search,
         json=json_search_response,
@@ -1053,7 +1053,7 @@ def catalog_live(auth_live):
 @pytest.fixture()
 def catalog_pagination_mock(auth_mock, requests_mock):
     url_collections = f"{auth_mock._endpoint()}/collections"
-    collections_response = {"data": [{"name": "PHR"}]}
+    collections_response = {"data": [{"name": "phr", "hostName": "oneatlas"}]}
     requests_mock.get(
         url=url_collections,
         json=collections_response,
@@ -1067,11 +1067,11 @@ def catalog_pagination_mock(auth_mock, requests_mock):
 
     pagination_response_json = copy.deepcopy(search_response_json)
     pagination_response_json["features"] = pagination_response_json["features"][:50]
-    pagination_response_json["links"][1] = pagination_response_json["links"][
-        0
+    del pagination_response_json["links"][
+        1
     ]  # indicator of pagination exhaustion (after first page)
 
-    url_search = f"{auth_mock._endpoint()}/catalog/stac/search"
+    url_search = f"{auth_mock._endpoint()}/catalog/hosts/oneatlas/stac/search"
     requests_mock.post(
         url_search,
         [{"json": search_response_json}, {"json": pagination_response_json}],
@@ -1083,7 +1083,7 @@ def catalog_pagination_mock(auth_mock, requests_mock):
 @pytest.fixture()
 def catalog_usagetype_mock(auth_mock, requests_mock):
     url_collections = f"{auth_mock._endpoint()}/collections"
-    collections_response = {"data": [{"name": "PHR"}]}
+    collections_response = {"data": [{"name": "phr", "hostName": "oneatlas"}]}
     requests_mock.get(
         url=url_collections,
         json=collections_response,
@@ -1104,7 +1104,7 @@ def catalog_usagetype_mock(auth_mock, requests_mock):
         "ANALYTICS",
     ]
 
-    url_search = f"{auth_mock._endpoint()}/catalog/stac/search"
+    url_search = f"{auth_mock._endpoint()}/catalog/hosts/oneatlas/stac/search"
     requests_mock.post(
         url_search,
         [
