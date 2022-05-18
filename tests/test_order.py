@@ -240,4 +240,4 @@ def test_estimate_order_live(order_payload, auth_live):
         auth_live, order_payload["dataProviderName"], order_payload["orderParams"]
     )
     assert isinstance(estimation, int)
-    assert estimation == 105
+    assert estimation == 100
