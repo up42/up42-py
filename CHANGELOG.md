@@ -15,6 +15,13 @@ pip show up42-py
 ```
 
 ## Versions
+### [0.21.0](https://pypi.org/project/up42-py/) (2022-05-12)
+- Adding `up42.get_balance` and `up42.get_credits_history` features for allowing account information retrieval.
+- Adding `up42.get_block_coverage` features for retrieval of the catalog blocks' coverage as geojson.
+- `project.get_jobs` now has sorting criteria, sorting order and limit parameters.
+- Catalog search now enables search for Pleiades Neo etc. (uses host specific API endpoints)
+- Fix: `project.get_jobs` now correctly queries the full number of jobs.
+
 ### [0.20.2](https://pypi.org/project/up42-py/) (2022-04-10)
 - Update documentation
 - Non functional changes to enable conda release
