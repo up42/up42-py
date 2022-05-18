@@ -16,9 +16,15 @@ catalog = up42.initialize_catalog()
 
 ## See the available data collections
 
+Filter on the "name" key to see the available collections.
+
 ```python
 catalog.get_collections()
+
+[c["name"] for c in collections]
 ```
+
+
 
 ## Search scenes in aoi
 
@@ -32,7 +38,7 @@ aoi = up42.get_example_aoi(location="Berlin", as_dataframe=True)
 search_parameters = catalog.construct_parameters(geometry=aoi, 
                                                  start_date="2018-01-01",
                                                  end_date="2020-12-31",
-                                                 collections=["PHR"],
+                                                 collections=["phr"],
                                                  max_cloudcover=20,
                                                  sortby="cloudCoverage", 
                                                  limit=10)
