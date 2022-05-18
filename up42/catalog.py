@@ -78,7 +78,7 @@ class Catalog(VizTools):
         Args:
             geometry: The search geometry, one of dict, Feature, FeatureCollection,
                 list, GeoDataFrame, Polygon.
-            collections: The satellite sensor collections to search for, e.g. ["PHR"] or ["PHR", "SPOT"].
+            collections: The satellite sensor collections to search for, e.g. ["phr"] or ["phr", "spot"].
                 Also see catalog.get_collections().
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
@@ -147,6 +147,7 @@ class Catalog(VizTools):
             ```python
                 search_parameters={
                     "datetime": "2019-01-01T00:00:00Z/2019-01-15T23:59:59Z",
+                    "collections": ["phr"],
                     "intersects": {
                         "type": "Polygon",
                         "coordinates": [[[13.32113746,52.73971768],[13.15981158,52.2092959],
