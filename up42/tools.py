@@ -251,6 +251,7 @@ class Tools:
         response_coverage = requests.get(details_json["url"]).json()
         return response_coverage
 
+    @check_auth
     def get_credits_balance(self) -> dict:
         """
         Display the overall credits available in your account.
