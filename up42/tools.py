@@ -4,14 +4,14 @@ not bound to a specific higher level UP42 object.
 """
 
 import json
-
+from functools import wraps
 from pathlib import Path
 from typing import List, Union, Dict, Optional
 from datetime import date, datetime, timedelta
-from geopandas import GeoDataFrame
 
 import requests.exceptions
 import geopandas as gpd
+from geopandas import GeoDataFrame
 import pandas as pd
 import shapely
 
@@ -31,6 +31,7 @@ logger = get_logger(__name__)
 
 def check_auth(func, *args, **kwargs):
     # pylint: disable=unused-argument
+    @wraps(func)  # required for mkdocstrings
     def inner(self, *args, **kwargs):
         if not hasattr(self, "auth"):
             raise Exception(
@@ -250,7 +251,6 @@ class Tools:
         response_coverage = requests.get(details_json["url"]).json()
         return response_coverage
 
-    @check_auth
     def get_credits_balance(self) -> dict:
         """
         Display the overall credits available in your account.
