@@ -257,12 +257,6 @@ def test_fc_to_query_geometry_multipolygon_raises():
     )
 
 
-def test_fc_to_query_geometry_raises_with_not_accepted():
-    ring = LinearRing([(0, 0), (1, 1), (1, 0)])
-    with pytest.raises(ValueError):
-        fc_to_query_geometry(ring, geometry_operation="bbox")
-
-
 def test_download_result_from_gcs(requests_mock):
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
