@@ -158,7 +158,7 @@ class Tools:
         self,
         block_type: Optional[str] = None,
         basic: bool = True,
-        as_dataframe=False,
+        as_dataframe: bool=False,
     ) -> Union[List[Dict], dict]:
         """
         Gets a list of all public blocks on the marketplace. Can not access custom blocks.
@@ -276,9 +276,10 @@ class Tools:
         account.
         Args:
             start_date: The start date for the credit consumption search e.g.
-            2021-12-01. Default start_date None uses 2000-01-01.
+                2021-12-01. Default start_date None uses 2000-01-01.
             end_date: The end date for the credit consumption search e.g.
-            2021-12-31. Default end_date None uses current date.
+                2021-12-31. Default end_date None uses current date.
+
         Returns:
             A dict with the information of the credit consumption records for
             all the users linked by the account_id.
