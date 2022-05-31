@@ -295,6 +295,21 @@ def any_vector_to_fc(
         return fc
 
 
+def validate_fc_up42_requirements(fc: Union[dict, FeatureCollection]):
+    """
+    Validate the feature collection if it fits UP42 geometry requirements.
+    """
+    geometry_error = "UP42 only accepts single geometries, the provided geometry {}."
+    if len(fc["features"]) != 1:
+        logger.info(geometry_error.format("contains multiple geometries"))
+        raise ValueError(geometry_error.format("contains multiple geometries"))
+
+    fc_type = fc["features"][0]["geometry"]["type"]
+    if fc_type != "Polygon":
+        logger.info(geometry_error.format(f"is a {fc_type}"))
+        raise ValueError(geometry_error.format(f"is a {fc_type}"))
+
+
 def fc_to_query_geometry(
     fc: Union[dict, FeatureCollection], geometry_operation: str
 ) -> Union[List, dict]:
