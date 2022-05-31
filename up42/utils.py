@@ -269,7 +269,7 @@ def any_vector_to_fc(
                 )
         except KeyError as e:
             raise ValueError(
-                "Provided geometry dictionary has to include a featurecollection or feature."
+                "Provided geometry dictionary has to include a FeatureCollection or Feature."
             ) from e
     else:
         if isinstance(vector, list):
@@ -324,21 +324,8 @@ def fc_to_query_geometry(
     Returns:
         The feature as a list of bounds coordinates or a geojson Polygon (as dict)
     """
-    try:
-        if fc["type"] != "FeatureCollection":
-            raise ValueError("Geometry argument only supports Feature Collections!")
-    except (KeyError, TypeError) as e:
-        raise ValueError("Geometry argument only supports Feature Collections!") from e
-
-    geometry_error = "The provided geometry {}, UP42 only accepts single geometries."
-    if len(fc["features"]) != 1:
-        logger.info(geometry_error.format("contains multiple geometries"))
-        raise ValueError(geometry_error.format("contains multiple geometries"))
-
+    validate_fc_up42_requirements(fc)
     feature = fc["features"][0]
-    if feature["geometry"]["type"] == "MultiPolygon":
-        logger.info(geometry_error.format("is a MultiPolygon"))
-        raise ValueError(geometry_error.format("is a MultiPolygon"))
 
     if geometry_operation == "bbox":
         try:
