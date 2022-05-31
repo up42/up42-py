@@ -260,7 +260,7 @@ def plot_results(
     VizTools().plot_results(figsize=figsize, filepaths=filepaths, titles=titles)
 
 
-def settings(log: bool=True):
+def settings(log: bool = True):
     """
     Configures settings about logging etc. when using the up42-py package.
 

@@ -263,7 +263,7 @@ def any_vector_to_fc(
                 df = GeoDataFrame.from_features(vector, crs=4326)
             elif vector["type"] == "Feature":
                 df = GeoDataFrame.from_features(FeatureCollection([vector]), crs=4326)
-            elif vector["type"] == "Polygon":  # Geojson geometry
+            else:  # Only geometry dict of Feature
                 df = GeoDataFrame.from_features(
                     FeatureCollection([Feature(geometry=vector)]), crs=4326
                 )
