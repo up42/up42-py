@@ -1031,6 +1031,14 @@ def webhooks_mock(auth_mock, requests_mock):
     events_json = {"data": [{"name": "job.status"}], "error": None}
     requests_mock.get(url=url_events, json=events_json)
 
+    # webhooks
+    url_webhooks = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks"
+    )
+    webhooks_json = {"data": [], "error": None}
+    # TODO: fill
+    requests_mock.get(url=url_webhooks, json=webhooks_json)
+
     return Webhooks(auth=auth_mock)
 
 
