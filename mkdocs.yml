@@ -76,6 +76,7 @@ nav:
         - Storage: reference/storage-reference.md
         - Order: reference/order-reference.md
         - Asset: reference/asset-reference.md
+        - Webhooks: reference/webhooks-reference.md
     -  Changelog & FAQ:
         - Changelog: CHANGELOG.md
         - FAQ & Support: support-faq.md
