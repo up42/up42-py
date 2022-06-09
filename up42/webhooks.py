@@ -1,7 +1,6 @@
 from typing import List, Optional
 
 from up42.auth import Auth
-from up42.tools import check_auth
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
@@ -9,7 +8,8 @@ logger = get_logger(__name__)
 
 class Webhooks:
     """
-    Contains UP42 webhooks functionality to set up a custom callback e.g. when an order is finished.
+    Contains UP42 webhooks functionality to set up a custom callback e.g. when an order is finished
+    he webhook is triggered and an event notification is transmitted via HTTPS to a specific URL.
 
     Also see the [full webhook documentation](https://docs.up42.com/account/webhooks).
 
@@ -34,6 +34,22 @@ class Webhooks:
         response_json = self.auth._request(request_type="GET", url=url)
         return response_json["data"]
 
+    def get_webhook(self, webhook_id: str) -> dict:
+        """
+        Gets a specific webhook by its id.
+
+        Args:
+            webhook_id: Id of a specific webhook to query.
+
+        Returns:
+            A dict of the specified webhook in this workspace.
+        """
+        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{webhook_id}"
+        response_json = self.auth._request(request_type="GET", url=url)
+        webhook = response_json["data"]
+        logger.info(f"Queried webhook with id {webhook['id']}.")
+        return webhook
+
     def get_webhooks(self) -> dict:
         """
         Gets all registered webhooks for this workspace.
@@ -44,29 +60,27 @@ class Webhooks:
         # TODO: pagination?
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks"
         response_json = self.auth._request(request_type="GET", url=url)
-        return response_json["data"]
-
-    def get_webhook(self, webhook_id: str) -> dict:
-        """
-        Gets a specific webhook by its id.
-
-        Returns:
-            A dict of the specified webhook in this workspace.
-        """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{webhook_id}"
-        response_json = self.auth._request(request_type="GET", url=url)
-        return response_json["data"]
+        webhooks = response_json["data"]
+        logger.info(f"Queried {len(webhooks)} webhooks.")
+        return webhooks
 
     def create_webhook(
         self,
         name: str,
         url: str,
         events: List[str],
-        secret: Optional[str] = None,
         active: bool = False,
+        secret: Optional[str] = None,
     ) -> dict:
         """
         Registers a new webhook in the system.
+
+        Args:
+            name: Webhook name
+            url: Unique URL where the webhook will send the message (HTTPS required)
+            events: List of event types (order status / job task status)
+            active: Webhook status.
+            secret: String that acts as signature to the https request sent to the url.
 
         Returns:
             A dict with details of the registered webhook.
@@ -92,11 +106,19 @@ class Webhooks:
         name: str,
         url: str,
         events: List[str],
-        secret: Optional[str] = None,
         active: bool = False,
+        secret: Optional[str] = None,
     ) -> dict:
         """
         Updates a registered webhook.
+
+        Args:
+            webhook_id: Id of a specific webhook to update.
+            name: Webhook name
+            url: Unique URL where the webhook will send the message (HTTPS required)
+            events: List of event types (order status / job task status)
+            active: Webhook status.
+            secret: String that acts as signature to the https request sent to the url.
 
         Returns:
             A dict with details of the updated webhook.

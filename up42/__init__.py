@@ -14,7 +14,7 @@ import warnings
 from pathlib import Path
 from typing import Union, Tuple, List, Optional, Dict
 import logging
-from datetime import datetime, date
+from datetime import datetime
 from geopandas import GeoDataFrame
 
 # pylint: disable=wrong-import-position
@@ -30,6 +30,7 @@ from up42.catalog import Catalog
 from up42.storage import Storage
 from up42.order import Order
 from up42.asset import Asset
+from up42.webhooks import Webhooks
 from up42.utils import get_logger
 
 logger = get_logger(__name__, level=logging.INFO)
@@ -260,7 +261,7 @@ def plot_results(
     VizTools().plot_results(figsize=figsize, filepaths=filepaths, titles=titles)
 
 
-def settings(log: bool=True):
+def settings(log: bool = True):
     """
     Configures settings about logging etc. when using the up42-py package.
 
@@ -279,3 +280,8 @@ def settings(log: bool=True):
         setattr(logging.getLogger(name), "disabled", not log)
         for name in logging.root.manager.loggerDict
     ]
+
+
+def get_webhook_events() -> dict:
+    webhook_events = Webhooks(auth=_auth).get_webhook_events()
+    return webhook_events
