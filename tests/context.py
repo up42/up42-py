@@ -26,6 +26,7 @@ from up42.estimation import Estimation
 from up42.storage import Storage
 from up42.asset import Asset
 from up42.order import Order
+from up42.webhooks import Webhooks
 from up42.__init__ import (
     authenticate,
     initialize_project,

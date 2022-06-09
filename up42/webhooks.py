@@ -30,7 +30,7 @@ class Webhooks:
         Returns:
             A dict of the available webhook events.
         """
-        url = f"{self.auth._endpoint()}/webhook/events"
+        url = f"{self.auth._endpoint()}/webhooks/events"
         response_json = self.auth._request(request_type="GET", url=url)
         return response_json["data"]
 
@@ -73,10 +73,10 @@ class Webhooks:
         """
         input_parameters = {
             "name": name,
-            url: url,
-            events: events,
-            secret: secret,
-            active: False,
+            "url": url,
+            "events": events,
+            "secret": secret,
+            "active": active,
         }
         url_post = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks"
         response_json = self.auth._request(
@@ -103,10 +103,10 @@ class Webhooks:
         """
         input_parameters = {
             "name": name,
-            url: url,
-            events: events,
-            secret: secret,
-            active: False,
+            "url": url,
+            "events": events,
+            "secret": secret,
+            "active": active,
         }
         url_post = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{webhook_id}"
         response_json = self.auth._request(

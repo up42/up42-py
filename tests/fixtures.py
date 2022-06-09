@@ -19,6 +19,7 @@ from .context import (
     Storage,
     Asset,
     Order,
+    Webhooks,
 )
 
 
@@ -1021,6 +1022,21 @@ def tools_mock(auth_mock):
 @pytest.fixture()
 def tools_live(auth_live):
     return Tools(auth=auth_live)
+
+
+@pytest.fixture()
+def webhooks_mock(auth_mock, requests_mock):
+    # events
+    url_events = f"{auth_mock._endpoint()}/webhooks/events"
+    events_json = {"data": [{"name": "job.status"}], "error": None}
+    requests_mock.get(url=url_events, json=events_json)
+
+    return Webhooks(auth=auth_mock)
+
+
+@pytest.fixture()
+def webhooks_live(auth_live):
+    return Webhooks(auth=auth_live)
 
 
 @pytest.fixture()
