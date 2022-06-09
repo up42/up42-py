@@ -30,7 +30,7 @@ from up42.catalog import Catalog
 from up42.storage import Storage
 from up42.order import Order
 from up42.asset import Asset
-from up42.webhooks import Webhooks
+from up42.webhooks import Webhooks, Webhook
 from up42.utils import get_logger
 
 logger = get_logger(__name__, level=logging.INFO)
@@ -280,6 +280,29 @@ def settings(log: bool = True):
         setattr(logging.getLogger(name), "disabled", not log)
         for name in logging.root.manager.loggerDict
     ]
+
+
+def initialize_webhook(webhook_id: str) -> Webhook:
+    """
+    Returns a Webhook object (has to exist on UP42).
+
+    Args:
+        webhook_id: The UP42 webhook_id
+    """
+    if _auth is None:
+        raise RuntimeError("Not authenticated, call up42.authenticate() first")
+    webhook = Webhook(auth=_auth, webhook_id=webhook_id)
+    logger.info(f"Initialized {webhook}")
+    return webhook
+
+
+def get_webhooks() -> list:
+    webhooks = Webhooks(auth=_auth).get_webhooks()
+    return webhooks
+
+
+def create_webhook():
+    pass
 
 
 def get_webhook_events() -> dict:
