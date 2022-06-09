@@ -158,7 +158,7 @@ class Tools:
         self,
         block_type: Optional[str] = None,
         basic: bool = True,
-        as_dataframe: bool=False,
+        as_dataframe: bool = False,
     ) -> Union[List[Dict], dict]:
         """
         Gets a list of all public blocks on the marketplace. Can not access custom blocks.

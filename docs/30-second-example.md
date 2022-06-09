@@ -4,7 +4,6 @@ The UP42 Python package uses nine classes, representing the **hierarchical struc
 **Project > Workflow > Job > JobTask** | **JobCollection** | **Catalog > Order** | **Storage > Asset**
 
 ![](assets/vizualisations.jpg)
-
 ------------------------
 
 In this example a **new workflow** consisting of [**Sentinel-2 L2A data**](https://up42.com/marketplace/blocks/data/aws-s2-l2a)

@@ -260,7 +260,7 @@ def plot_results(
     VizTools().plot_results(figsize=figsize, filepaths=filepaths, titles=titles)
 
 
-def settings(log: bool=True):
+def settings(log: bool = True) -> None:
     """
     Configures settings about logging etc. when using the up42-py package.
 
@@ -274,8 +274,5 @@ def settings(log: bool=True):
     else:
         logger.info("Logging disabled - use up42.settings(log=True) to reactivate.")
 
-    # pylint: disable=expression-not-assigned,no-member
-    [
+    for name in logging.root.manager.loggerDict:
         setattr(logging.getLogger(name), "disabled", not log)
-        for name in logging.root.manager.loggerDict
-    ]
