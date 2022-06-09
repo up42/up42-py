@@ -5,14 +5,15 @@ from up42.tools import check_auth
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
-# TODO: logger
 
 
 class Webhooks:
     """
-    The webhooks class contains UP42 webhooks functionality.
+    Contains UP42 webhooks functionality to set up a custom callback e.g. when an order is finished.
 
-    Use the webhooks:
+    Also see the [full webhook documentation](https://docs.up42.com/account/webhooks).
+
+    All webhook functionality in the Python SDK is accessible via the `up42` object, e.g.
     ```python
     up42.get_webhook_events()
     ```
@@ -33,7 +34,6 @@ class Webhooks:
         response_json = self.auth._request(request_type="GET", url=url)
         return response_json["data"]
 
-    @check_auth
     def get_webhooks(self) -> dict:
         """
         Gets all registered webhooks for this workspace.
@@ -41,11 +41,11 @@ class Webhooks:
         Returns:
             A dict of the registered webhooks for this workspace.
         """
+        # TODO: pagination?
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks"
         response_json = self.auth._request(request_type="GET", url=url)
         return response_json["data"]
 
-    @check_auth
     def get_webhook(self, webhook_id: str) -> dict:
         """
         Gets a specific webhook by its id.
@@ -55,10 +55,8 @@ class Webhooks:
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{webhook_id}"
         response_json = self.auth._request(request_type="GET", url=url)
-
         return response_json["data"]
 
-    @check_auth
     def create_webhook(
         self,
         name: str,
@@ -84,9 +82,10 @@ class Webhooks:
         response_json = self.auth._request(
             request_type="POST", url=url_post, data=input_parameters
         )
+        # TODO
+        logger.info("Created webhook")
         return response_json["data"]
 
-    @check_auth
     def update_webhook(
         self,
         webhook_id: str,
@@ -115,15 +114,15 @@ class Webhooks:
         )
         return response_json["data"]
 
-    @check_auth
     def delete_webhook(self, webhook_id: str) -> None:
         """
         Deletes a registered webhook.
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{webhook_id}"
         self.auth._request(request_type="DELETE", url=url)
+        # TODO
+        logger.info(f"Successfully deleted Webhook: ")
 
-    @check_auth
     def trigger_webhook_test_event(self, webhook_id: str) -> dict:
         """
         Triggers webhook test event to test your receiving side. The UP42 server will Our server will send test
