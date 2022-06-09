@@ -19,9 +19,8 @@ class Webhooks:
     """
 
     def __init__(self, auth: Auth):
-        if auth:
-            self.auth = auth
-            self.workspace_id = auth.workspace_id
+        self.auth = auth
+        self.workspace_id = auth.workspace_id
 
     def get_webhook_events(self) -> dict:
         """

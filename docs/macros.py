@@ -110,3 +110,4 @@ def define_env(env):
     env.variables.funcs_order = get_methods(up42.Order)
     env.variables.funcs_storage = get_methods(up42.Storage)
     env.variables.funcs_asset = get_methods(up42.Asset)
+    env.variables.funcs_webhooks = get_methods(up42.Webhooks)
