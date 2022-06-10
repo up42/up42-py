@@ -13,15 +13,17 @@ class Webhooks:
 
     Also see the [full webhook documentation](https://docs.up42.com/account/webhooks).
 
-    All functionality to create new webhooks or query existing webhooks is accessible via the `up42`
-    object, e.g.
+    Create a new webhook or query a existing ones via the `up42` object, e.g.
     ```python
-    webhook = up42.get_webhook(webhook_id = "...")
+    webhooks = up42.get_webhooks()
+    ```
+    ```python
+    webhook = up42.initialize_webhook(webhook_id = "...")
     ```
 
-    The webhook object can then be further modified, e.g.
+    The resulting Webhook object lets you modify, test or delete the specific webhook, e.g.
     ```python
-    webhook.trigger_test_event()
+    webhook = webhook.trigger_test_event()
     ```
     """
 
@@ -39,22 +41,6 @@ class Webhooks:
         url = f"{self.auth._endpoint()}/webhooks/events"
         response_json = self.auth._request(request_type="GET", url=url)
         return response_json["data"]
-
-    # def get_webhook(self, webhook_id: str) -> dict:
-    #     """
-    #     Gets a specific webhook by its id.
-    #
-    #     Args:
-    #         webhook_id: Id of a specific webhook to query.
-    #
-    #     Returns:
-    #         A dict of the specified webhook in this workspace.
-    #     """
-    #     url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{webhook_id}"
-    #     response_json = self.auth._request(request_type="GET", url=url)
-    #     webhook = Webhook(auth=self.auth, webhook_id=webhook_id, webhook_info=response_json["data"])
-    #     logger.info(f"Queried webhook with id {webhook_id}")
-    #     return webhook
 
     def get_webhooks(self) -> list:
         """
@@ -114,7 +100,12 @@ class Webhooks:
 
 class Webhook:
     """
-    A specific UP42 webhook.
+    # Webhook
+
+    Webhook class to control a specific UP42 webhook, e.g. modify, test or delete the specific webhook.
+    ```python
+    webhook = webhook.trigger_test_event()
+    ```
     """
 
     def __init__(self, auth: Auth, webhook_id: str, webhook_info: dict = None):
@@ -141,7 +132,7 @@ class Webhook:
 
     def trigger_test_event(self, webhook_id: str) -> dict:
         """
-        Triggers webhook test event to test your receiving side. The UP42 server will Our server will send test
+        Triggers webhook test event to test your receiving side. The UP42 server will send test
         messages for each subscribed event to the specified webhook URL.
 
         Returns:
