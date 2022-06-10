@@ -1,8 +1,3 @@
-import os
-from pathlib import Path
-import tempfile
-import pytest
-
 # pylint: disable=unused-import
 from .context import Webhooks
 from .fixtures import (
@@ -30,9 +25,4 @@ def test_get_webhooks(webhooks_mock):
 
 def test_get_webhooks_live(webhooks_live):
     webhooks = webhooks_live.get_webhooks()
-    assert isinstance(webhooks, list)
-
-
-def test_get_webhook(webhooks_live):
-    webhooks = webhooks_live.get_webhook()
     assert isinstance(webhooks, list)

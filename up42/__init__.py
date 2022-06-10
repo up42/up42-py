@@ -37,7 +37,7 @@ logger = get_logger(__name__, level=logging.INFO)
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-_auth: Union[Auth, None] = None
+_auth: Auth = None  # type: ignore
 
 
 def authenticate(

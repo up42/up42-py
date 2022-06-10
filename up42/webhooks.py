@@ -182,11 +182,11 @@ class Webhook:
         )
         return response_json["data"]
 
-    def delete(self, webhook_id: str) -> None:
+    def delete(self) -> None:
         """
         Deletes a registered webhook.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{webhook_id}"
+        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
         self.auth._request(request_type="DELETE", url=url)
         # TODO
-        logger.info(f"Successfully deleted Webhook: ")
+        logger.info(f"Successfully deleted Webhook: {self.webhook_id}")
