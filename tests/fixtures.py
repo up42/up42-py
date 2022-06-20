@@ -245,7 +245,7 @@ JSON_WEBHOOK = {
         "name": "test_info_webhook",
         "active": False,
         "events": ["job.status"],
-        "id": "8a8dcb5f-a991-4387-b9ad-fff23095cd05",
+        "id": WEBHOOK_ID,
         "secret": "",
         "createdAt": "2022-06-20T04:05:31.755744Z",
         "updatedAt": "2022-06-20T04:05:31.755744Z",
