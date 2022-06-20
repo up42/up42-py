@@ -81,7 +81,7 @@ def test_construct_parameters_fc_multiple_features_raises(catalog_mock):
         )
     assert (
         str(e.value)
-        == "The provided geometry contains multiple geometries, UP42 only accepts single geometries."
+        == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
     )
 
 
@@ -488,7 +488,7 @@ def test_estimate_order_from_catalog_live(catalog_live):
         mock_search_parameters["intersects"], search_results.loc[0]
     )
     assert isinstance(estimation, int)
-    assert estimation == 32
+    assert estimation == 30
 
 
 @pytest.mark.skip(reason="Placing orders costs credits.")

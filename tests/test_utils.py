@@ -233,14 +233,14 @@ def test_fc_to_query_geometry_multiple_raises():
         fc_to_query_geometry(fc=fc, geometry_operation="intersects")
     assert (
         str(e.value)
-        == "The provided geometry contains multiple geometries, UP42 only accepts single geometries."
+        == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
     )
 
     with pytest.raises(ValueError) as e:
         fc_to_query_geometry(fc=fc, geometry_operation="bbox")
     assert (
         str(e.value)
-        == "The provided geometry contains multiple geometries, UP42 only accepts single geometries."
+        == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
     )
 
 
@@ -253,14 +253,8 @@ def test_fc_to_query_geometry_multipolygon_raises():
         fc_to_query_geometry(fc=fc, geometry_operation="intersects")
     assert (
         str(e.value)
-        == "The provided geometry is a MultiPolygon, UP42 only accepts single geometries."
+        == "UP42 only accepts single geometries, the provided geometry is a MultiPolygon."
     )
-
-
-def test_fc_to_query_geometry_raises_with_not_accepted():
-    ring = LinearRing([(0, 0), (1, 1), (1, 0)])
-    with pytest.raises(ValueError):
-        fc_to_query_geometry(ring, geometry_operation="bbox")
 
 
 def test_download_result_from_gcs(requests_mock):

@@ -104,7 +104,7 @@ def initialize_job(job_id: str) -> "Job":
     return job
 
 
-def initialize_jobtask(jobtask_id, job_id) -> "JobTask":
+def initialize_jobtask(jobtask_id: str, job_id: str) -> "JobTask":
     """
     Returns a JobTask object (has to exist on UP42).
 
@@ -260,7 +260,7 @@ def plot_results(
     VizTools().plot_results(figsize=figsize, filepaths=filepaths, titles=titles)
 
 
-def settings(log=True):
+def settings(log: bool = True) -> None:
     """
     Configures settings about logging etc. when using the up42-py package.
 
@@ -274,8 +274,5 @@ def settings(log=True):
     else:
         logger.info("Logging disabled - use up42.settings(log=True) to reactivate.")
 
-    # pylint: disable=expression-not-assigned,no-member
-    [
+    for name in logging.root.manager.loggerDict:
         setattr(logging.getLogger(name), "disabled", not log)
-        for name in logging.root.manager.loggerDict
-    ]
