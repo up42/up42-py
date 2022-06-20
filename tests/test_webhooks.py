@@ -1,8 +1,11 @@
+import os
+
 import pytest
 
 # pylint: disable=unused-import
 from .context import Webhooks, Webhook
 from .fixtures import (
+    WEBHOOK_ID,
     webhook_mock,
     webhooks_mock,
     webhook_live,
@@ -18,17 +21,13 @@ def test_webhook_initiate(webhook_mock):
 
 def test_webhook_info(webhook_mock):
     assert webhook_mock.info
-    # assert webhook_mock.info["id"] == ORDER_ID
-    # assert webhook_mock.info["dataProvider"] == JSON_ORDER["data"]["dataProvider"]
-    # assert webhook_mock.info["assets"][0] == ASSET_ID
+    assert webhook_live.info["id"] == WEBHOOK_ID
 
 
-# @pytest.mark.live
+@pytest.mark.live
 def test_webhook_info_live(webhook_live):
     assert webhook_live.info
-    assert webhook_mock.info["id"] == 123
-    # assert webhook_mock.info["dataProvider"] == JSON_ORDER["data"]["dataProvider"]
-    # assert webhook_mock.info["assets"][0] == ASSET_ID
+    assert webhook_live.info["id"] == os.getenv("TEST_UP42_WEBHOOK_ID")
 
 
 def test_get_webhook_events(webhooks_mock):
@@ -56,7 +55,9 @@ def test_get_webhooks_return_json(webhooks_mock):
     assert isinstance(webhooks[0], dict)
 
 
-# @pytest.mark.live
+@pytest.mark.live
 def test_get_webhooks_live(webhooks_live):
     webhooks = webhooks_live.get_webhooks()
     assert isinstance(webhooks, list)
+    assert len(webhooks)
+    assert isinstance(webhooks[0], Webhook)

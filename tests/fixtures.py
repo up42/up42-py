@@ -47,6 +47,8 @@ JOBTASK_NAME = "jobtask_name_123"
 ORDER_ID = "order_id_123"
 ASSET_ID = "asset_id_123"
 
+WEBHOOK_ID = "123"
+
 JSON_WORKFLOW_TASKS = {
     "error": "None",
     "data": [
@@ -237,7 +239,18 @@ JSON_ORDERS = {
     "error": None,
 }
 
-JSON_WEBHOOK = {"data": {"someinfo": 123}}
+JSON_WEBHOOK = {
+    "data": {
+        "url": "https://test-info-webhook.com",
+        "name": "test_info_webhook",
+        "active": False,
+        "events": ["job.status"],
+        "id": "8a8dcb5f-a991-4387-b9ad-fff23095cd05",
+        "secret": "",
+        "createdAt": "2022-06-20T04:05:31.755744Z",
+        "updatedAt": "2022-06-20T04:05:31.755744Z",
+    }
+}
 
 JSON_BALANCE = {"data": {"balance": 10693}}
 
@@ -1030,17 +1043,15 @@ def tools_live(auth_live):
 @pytest.fixture()
 def webhook_mock(auth_mock, requests_mock):
     # webhook info
-    webhook_id = "123"
-    url_webhook_info = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks/{webhook_id}"
+    url_webhook_info = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks/{WEBHOOK_ID}"
     requests_mock.get(url=url_webhook_info, json=JSON_WEBHOOK)
 
-    return Webhook(auth=auth_mock, webhook_id=webhook_id)
+    return Webhook(auth=auth_mock, webhook_id=WEBHOOK_ID)
 
 
 @pytest.fixture()
 def webhook_live(auth_live):
-    webhook_id = "123"
-    return Webhook(auth=auth_mock, webhook_id=webhook_id)
+    return Webhook(auth=auth_live, webhook_id=os.getenv("TEST_UP42_WEBHOOK_ID"))
 
 
 @pytest.fixture()
