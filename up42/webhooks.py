@@ -37,7 +37,7 @@ class Webhook:
         self._info = response_json["data"]
         return self._info
 
-    def trigger_test_event(self, webhook_id: str) -> dict:
+    def trigger_test_event(self) -> dict:
         """
         Triggers webhook test event to test your receiving side. The UP42 server will send test
         messages for each subscribed event to the specified webhook URL.
@@ -46,7 +46,7 @@ class Webhook:
             A dict with details of the updated webhook.
         """
         # TODO: Event names specification
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{webhook_id}/tests"
+        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}/tests"
         response_json = self.auth._request(
             request_type="POST",
             url=url,
@@ -55,38 +55,37 @@ class Webhook:
 
     def update(
         self,
-        webhook_id: str,
-        name: str,
-        url: str,
-        events: List[str],
-        active: bool = False,
+        name: Optional[str] = None,
+        url: Optional[str] = None,
+        events: Optional[List[str]] = None,
+        active: Optional[bool] = None,
         secret: Optional[str] = None,
     ) -> dict:
         """
         Updates a registered webhook.
 
         Args:
-            webhook_id: Id of a specific webhook to update.
-            name: Webhook name
-            url: Unique URL where the webhook will send the message (HTTPS required)
-            events: List of event types (order status / job task status)
-            active: Webhook status.
-            secret: String that acts as signature to the https request sent to the url.
+            name: Updated webhook name
+            url: Updated unique URL where the webhook will send the message (HTTPS required)
+            events: Updated list of event types (order status / job task status)
+            active: Updated webhook status.
+            secret: Updated string that acts as signature to the https request sent to the url.
 
         Returns:
             A dict with details of the updated webhook.
         """
         input_parameters = {
-            "name": name,
-            "url": url,
-            "events": events,
-            "secret": secret,
-            "active": active,
+            "name": name if name is not None else self._info["name"],
+            "url": url if url is not None else self._info["url"],
+            "events": events if events is not None else self._info["events"],
+            "secret": secret if secret is not None else self._info["secret"],
+            "active": active if active is not None else self._info["active"],
         }
-        url_post = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{webhook_id}"
+        url_post = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
         response_json = self.auth._request(
-            request_type="POST", url=url_post, data=input_parameters
+            request_type="PUT", url=url_post, data=input_parameters
         )
+        self._info = response_json["data"]
         return response_json["data"]
 
     def delete(self) -> None:
@@ -95,7 +94,6 @@ class Webhook:
         """
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
         self.auth._request(request_type="DELETE", url=url)
-        # TODO
         logger.info(f"Successfully deleted Webhook: {self.webhook_id}")
 
 
@@ -145,7 +143,6 @@ class Webhooks:
         Returns:
             A list of the registered webhooks for this workspace.
         """
-        # TODO: pagination?
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks"
         response_json = self.auth._request(request_type="GET", url=url)
         logger.info(f"Queried {len(response_json['data'])} webhooks.")
