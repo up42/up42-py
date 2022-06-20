@@ -1046,6 +1046,17 @@ def webhook_mock(auth_mock, requests_mock):
     url_webhook_info = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks/{WEBHOOK_ID}"
     requests_mock.get(url=url_webhook_info, json=JSON_WEBHOOK)
 
+    # test event
+    url_test_event = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks/{WEBHOOK_ID}/tests"
+    json_test_event = {
+        "data": {
+            "startedAt": "2022-06-20T04:33:48.770826Z",
+            "testsRun": 2,
+            "testsSucceeded": 0,
+        }
+    }
+    requests_mock.post(url=url_test_event, json=json_test_event)
+
     return Webhook(auth=auth_mock, webhook_id=WEBHOOK_ID)
 
 
