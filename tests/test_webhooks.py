@@ -6,6 +6,7 @@ import pytest
 from .context import Webhooks, Webhook
 from .fixtures import (
     WEBHOOK_ID,
+    WORKSPACE_ID,
     webhook_mock,
     webhooks_mock,
     webhook_live,
@@ -16,7 +17,9 @@ from .fixtures import (
 
 
 def test_webhook_initiate(webhook_mock):
-    pass
+    assert isinstance(webhook_mock, Webhook)
+    assert webhook_mock.webhook_id == WEBHOOK_ID
+    assert webhook_mock.workspace_id == WORKSPACE_ID
 
 
 def test_webhook_info(webhook_mock):
