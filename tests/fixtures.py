@@ -19,6 +19,7 @@ from .context import (
     Storage,
     Asset,
     Order,
+    Webhook,
     Webhooks,
 )
 
@@ -235,6 +236,8 @@ JSON_ORDERS = {
     },
     "error": None,
 }
+
+JSON_WEBHOOK = {"data": {"someinfo": 123}}
 
 JSON_BALANCE = {"data": {"balance": 10693}}
 
@@ -1022,6 +1025,22 @@ def tools_mock(auth_mock):
 @pytest.fixture()
 def tools_live(auth_live):
     return Tools(auth=auth_live)
+
+
+@pytest.fixture()
+def webhook_mock(auth_mock, requests_mock):
+    # webhook info
+    webhook_id = "123"
+    url_webhook_info = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks/{webhook_id}"
+    requests_mock.get(url=url_webhook_info, json=JSON_WEBHOOK)
+
+    return Webhook(auth=auth_mock, webhook_id=webhook_id)
+
+
+@pytest.fixture()
+def webhook_live(auth_live):
+    webhook_id = "123"
+    return Webhook(auth=auth_mock, webhook_id=webhook_id)
 
 
 @pytest.fixture()
