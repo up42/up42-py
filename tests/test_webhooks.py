@@ -21,7 +21,7 @@ def test_webhook_initiate(webhook_mock):
 
 def test_webhook_info(webhook_mock):
     assert webhook_mock.info
-    assert webhook_live.info["id"] == WEBHOOK_ID
+    assert webhook_mock.info["id"] == WEBHOOK_ID
 
 
 @pytest.mark.live
