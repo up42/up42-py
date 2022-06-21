@@ -8,6 +8,8 @@ logger = get_logger(__name__)
 
 class Webhook:
     """
+    # Webhook
+
     Webhook class to control a specific UP42 webhook, e.g. modify, test or delete the specific webhook.
 
     ```python

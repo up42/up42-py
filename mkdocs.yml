@@ -132,9 +132,11 @@ plugins:
       handlers:
         python:
           rendering:
+            members_order: source
             show_root_heading: false
             show_source: true
             show_category_heading: true
+            show_bases: False
           selection:
             filters:
               - "!^_"  # exclude all members starting with _
