@@ -986,22 +986,6 @@ def order_mock(auth_mock, requests_mock):
     )
     requests_mock.get(url=url_order_info, json=JSON_ORDER)
 
-    # metadata
-    requests_mock.get(
-        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}/metadata",
-        json={
-            "data": {
-                "id": ORDER_ID,
-                "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-                "customerReference": "158e8ca9-c5e9-4705-8f44-7aefee1d33ff",
-                "sqKmArea": 0.1,
-                "createdAt": "2021-01-18T16:18:19.395198Z",
-                "updatedAt": "2021-01-18T16:18:19.395198Z",
-            },
-            "error": None,
-        },
-    )
-
     order = Order(auth=auth_mock, order_id=ORDER_ID)
 
     return order
