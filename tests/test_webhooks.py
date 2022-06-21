@@ -36,14 +36,14 @@ def test_webhook_info_live(webhook_live):
 def test_webhook_trigger_test_event(webhook_mock):
     test_event_info = webhook_mock.trigger_test_events()
     assert isinstance(test_event_info, dict)
-    assert test_event_info["testsRun"] > 1
+    assert test_event_info["testsRun"] >= 1
 
 
 @pytest.mark.live
 def test_webhook_trigger_test_event_live(webhook_live):
     test_event_info = webhook_live.trigger_test_events()
     assert isinstance(test_event_info, dict)
-    assert test_event_info["testsRun"] > 1
+    assert test_event_info["testsRun"] >= 1
 
 
 def test_webhook_update(webhook_mock):
@@ -54,11 +54,11 @@ def test_webhook_update(webhook_mock):
 
 @pytest.mark.live
 def test_webhook_update_live(webhook_live):
-    updated_info = webhook_live.update(
+    updated_webhook = webhook_live.update(
         name="test_info_webhook"
     )  # "Updates" to the old name for consistency.
-    assert isinstance(updated_info, dict)
-    assert webhook_live._info["name"] == "test_info_webhook"
+    assert isinstance(updated_webhook, Webhook)
+    assert updated_webhook._info["name"] == "test_info_webhook"
 
 
 def test_webhook_delete(webhook_mock):
