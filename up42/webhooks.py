@@ -75,6 +75,7 @@ class Webhook:
         Returns:
             The updated webhook object.
         """
+        self.info  # _info could be outdated. #pylint: disable=pointless-statement
         input_parameters = {
             "name": name if name is not None else self._info["name"],
             "url": url if url is not None else self._info["url"],

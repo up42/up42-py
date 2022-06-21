@@ -307,11 +307,13 @@ def get_webhooks(return_json: bool = False) -> List[Webhook]:
     return webhooks
 
 
-def create_webhook(name: str,
-                   url: str,
-                   events: List[str],
-                   active: bool = False,
-                   secret: Optional[str] = None):
+def create_webhook(
+    name: str,
+    url: str,
+    events: List[str],
+    active: bool = False,
+    secret: Optional[str] = None,
+):
     """
     Registers a new webhook in the system.
 
@@ -325,7 +327,9 @@ def create_webhook(name: str,
     Returns:
         A dict with details of the registered webhook.
     """
-    webhook = Webhooks(auth=_auth).create_webhook(name=name, url=url, events=events, active=active, secret=secret)
+    webhook = Webhooks(auth=_auth).create_webhook(
+        name=name, url=url, events=events, active=active, secret=secret
+    )
     return webhook
 
 
