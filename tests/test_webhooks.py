@@ -33,15 +33,15 @@ def test_webhook_info_live(webhook_live):
     assert webhook_live.info["id"] == os.getenv("TEST_UP42_WEBHOOK_ID")
 
 
-def test_webhook_test_event(webhook_mock):
-    test_event_info = webhook_mock.trigger_test_event()
+def test_webhook_trigger_test_event(webhook_mock):
+    test_event_info = webhook_mock.trigger_test_events()
     assert isinstance(test_event_info, dict)
     assert test_event_info["testsRun"] > 1
 
 
 @pytest.mark.live
-def test_webhook_test_event_live(webhook_live):
-    test_event_info = webhook_live.trigger_test_event()
+def test_webhook_trigger_test_event_live(webhook_live):
+    test_event_info = webhook_live.trigger_test_events()
     assert isinstance(test_event_info, dict)
     assert test_event_info["testsRun"] > 1
 
@@ -71,7 +71,7 @@ def test_get_webhook_events(webhooks_mock):
     assert len(webhook_events)
 
 
-@pytest.mark.live
+# @pytest.mark.live
 def test_get_webhook_events_live(webhooks_live):
     webhook_events = webhooks_live.get_webhook_events()
     assert isinstance(webhook_events, list)

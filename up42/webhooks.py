@@ -37,15 +37,14 @@ class Webhook:
         self._info = response_json["data"]
         return self._info
 
-    def trigger_test_event(self) -> dict:
+    def trigger_test_events(self) -> dict:
         """
         Triggers webhook test event to test your receiving side. The UP42 server will send test
         messages for each subscribed event to the specified webhook URL.
 
         Returns:
-            A dict with details of the updated webhook.
+            A dict with information about the test events.
         """
-        # TODO: Event names specification
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}/tests"
         response_json = self.auth._request(
             request_type="POST",
