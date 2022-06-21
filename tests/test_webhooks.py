@@ -54,13 +54,15 @@ def test_webhook_update(webhook_mock):
 
 @pytest.mark.live
 def test_webhook_update_live(webhook_live):
-    updated_info = webhook_live.update(name="test_info_webhook")  # "Updates" to the old name for consistency.
+    updated_info = webhook_live.update(
+        name="test_info_webhook"
+    )  # "Updates" to the old name for consistency.
     assert isinstance(updated_info, dict)
     assert webhook_live._info["name"] == "test_info_webhook"
 
 
 def test_webhook_delete(webhook_mock):
-    assert webhook_mock.delete()
+    webhook_mock.delete()
 
 
 def test_get_webhook_events(webhooks_mock):

@@ -1057,9 +1057,13 @@ def webhook_mock(auth_mock, requests_mock):
     }
     requests_mock.post(url=url_test_event, json=json_test_event)
 
-    #update
+    # update
     url_update = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks/{WEBHOOK_ID}"
     requests_mock.put(url=url_update, json=JSON_WEBHOOK)
+
+    # delete
+    url_delete = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks/{WEBHOOK_ID}"
+    requests_mock.delete(url=url_delete)
 
     return Webhook(auth=auth_mock, webhook_id=WEBHOOK_ID)
 
