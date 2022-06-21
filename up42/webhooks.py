@@ -82,9 +82,9 @@ class Webhook:
             "secret": secret if secret is not None else self._info["secret"],
             "active": active if active is not None else self._info["active"],
         }
-        url_post = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
+        url_put = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
         response_json = self.auth._request(
-            request_type="PUT", url=url_post, data=input_parameters
+            request_type="PUT", url=url_put, data=input_parameters
         )
         self._info = response_json["data"]
         logger.info(f"Updated webhook {self}")
