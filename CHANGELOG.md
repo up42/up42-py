@@ -1,18 +1,32 @@
 # :calendar: Changelog & Release Notes
 
-## Upgrading
+To update your installation to the latest version use:
 
-To upgrade to the latest version of `up42-py` use `pip`:
+=== "pip"
 
-```bash
-pip install up42-py --upgrade
-```
+    ```bash
+    pip install up42-py --upgrade
+    ```
 
-You can determine your currently installed version using this command:
+=== "conda"
 
-```bash
-pip show up42-py
-```
+    ```bash
+    conda update -c conda-forge up42-py
+    ```
+
+You can determine your currently installed version via:
+
+=== "pip"
+
+    ```bash
+    pip show up42-py
+    ```
+
+=== "conda"
+
+    ```bash
+    conda search up42-py
+    ```
 
 ## Versions
 ### [0.21.0](https://pypi.org/project/up42-py/) (2022-05-12)

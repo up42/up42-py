@@ -263,13 +263,13 @@ def any_vector_to_fc(
                 df = GeoDataFrame.from_features(vector, crs=4326)
             elif vector["type"] == "Feature":
                 df = GeoDataFrame.from_features(FeatureCollection([vector]), crs=4326)
-            elif vector["type"] == "Polygon":  # Geojson geometry
+            else:  # Only geometry dict of Feature
                 df = GeoDataFrame.from_features(
                     FeatureCollection([Feature(geometry=vector)]), crs=4326
                 )
         except KeyError as e:
             raise ValueError(
-                "Provided geometry dictionary has to include a featurecollection or feature."
+                "Provided geometry dictionary has to include a FeatureCollection or Feature."
             ) from e
     else:
         if isinstance(vector, list):
@@ -295,6 +295,21 @@ def any_vector_to_fc(
         return fc
 
 
+def validate_fc_up42_requirements(fc: Union[dict, FeatureCollection]):
+    """
+    Validate the feature collection if it fits UP42 geometry requirements.
+    """
+    geometry_error = "UP42 only accepts single geometries, the provided geometry {}."
+    if len(fc["features"]) != 1:
+        logger.info(geometry_error.format("contains multiple geometries"))
+        raise ValueError(geometry_error.format("contains multiple geometries"))
+
+    fc_type = fc["features"][0]["geometry"]["type"]
+    if fc_type != "Polygon":
+        logger.info(geometry_error.format(f"is a {fc_type}"))
+        raise ValueError(geometry_error.format(f"is a {fc_type}"))
+
+
 def fc_to_query_geometry(
     fc: Union[dict, FeatureCollection], geometry_operation: str
 ) -> Union[List, dict]:
@@ -309,21 +324,8 @@ def fc_to_query_geometry(
     Returns:
         The feature as a list of bounds coordinates or a geojson Polygon (as dict)
     """
-    try:
-        if fc["type"] != "FeatureCollection":
-            raise ValueError("Geometry argument only supports Feature Collections!")
-    except (KeyError, TypeError) as e:
-        raise ValueError("Geometry argument only supports Feature Collections!") from e
-
-    geometry_error = "The provided geometry {}, UP42 only accepts single geometries."
-    if len(fc["features"]) != 1:
-        logger.info(geometry_error.format("contains multiple geometries"))
-        raise ValueError(geometry_error.format("contains multiple geometries"))
-
+    validate_fc_up42_requirements(fc)
     feature = fc["features"][0]
-    if feature["geometry"]["type"] == "MultiPolygon":
-        logger.info(geometry_error.format("is a MultiPolygon"))
-        raise ValueError(geometry_error.format("is a MultiPolygon"))
 
     if geometry_operation == "bbox":
         try:
