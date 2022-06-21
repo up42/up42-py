@@ -59,7 +59,7 @@ class Webhook:
         events: Optional[List[str]] = None,
         active: Optional[bool] = None,
         secret: Optional[str] = None,
-    ) -> dict:
+    ) -> "Webhook":
         """
         Updates a registered webhook.
 
@@ -71,7 +71,7 @@ class Webhook:
             secret: Updated string that acts as signature to the https request sent to the url.
 
         Returns:
-            A dict with details of the updated webhook.
+            The updated webhook object.
         """
         input_parameters = {
             "name": name if name is not None else self._info["name"],
@@ -85,7 +85,8 @@ class Webhook:
             request_type="PUT", url=url_post, data=input_parameters
         )
         self._info = response_json["data"]
-        return response_json["data"]
+        logger.info(f"Updated webhook {self}")
+        return self
 
     def delete(self) -> None:
         """
@@ -163,7 +164,7 @@ class Webhooks:
         events: List[str],
         active: bool = False,
         secret: Optional[str] = None,
-    ) -> dict:
+    ) -> Webhook:
         """
         Registers a new webhook in the system.
 
@@ -188,6 +189,10 @@ class Webhooks:
         response_json = self.auth._request(
             request_type="POST", url=url_post, data=input_parameters
         )
-        # TODO
-        logger.info("Created webhook")
-        return response_json["data"]
+        webhook = Webhook(
+            auth=self.auth,
+            webhook_id=response_json["data"]["id"],
+            webhook_info=response_json["data"],
+        )
+        logger.info(f"Created webhook {webhook}")
+        return webhook

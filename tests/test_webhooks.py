@@ -24,13 +24,13 @@ def test_webhook_initiate(webhook_mock):
 
 def test_webhook_info(webhook_mock):
     assert webhook_mock.info
-    assert webhook_mock.info["id"] == WEBHOOK_ID
+    assert webhook_mock._info["id"] == WEBHOOK_ID
 
 
 @pytest.mark.live
 def test_webhook_info_live(webhook_live):
     assert webhook_live.info
-    assert webhook_live.info["id"] == os.getenv("TEST_UP42_WEBHOOK_ID")
+    assert webhook_live._info["id"] == os.getenv("TEST_UP42_WEBHOOK_ID")
 
 
 def test_webhook_trigger_test_event(webhook_mock):
@@ -47,9 +47,9 @@ def test_webhook_trigger_test_event_live(webhook_live):
 
 
 def test_webhook_update(webhook_mock):
-    updated_info = webhook_mock.update(name="test_info_webhook")
-    assert isinstance(updated_info, dict)
-    assert webhook_mock._info["name"] == "test_info_webhook"
+    updated_webhook = webhook_mock.update(name="test_info_webhook")
+    assert isinstance(updated_webhook, Webhook)
+    assert updated_webhook._info["name"] == "test_info_webhook"
 
 
 @pytest.mark.live
@@ -71,7 +71,7 @@ def test_get_webhook_events(webhooks_mock):
     assert len(webhook_events)
 
 
-# @pytest.mark.live
+@pytest.mark.live
 def test_get_webhook_events_live(webhooks_live):
     webhook_events = webhooks_live.get_webhook_events()
     assert isinstance(webhook_events, list)
@@ -96,3 +96,23 @@ def test_get_webhooks_live(webhooks_live):
     assert isinstance(webhooks, list)
     assert len(webhooks)
     assert isinstance(webhooks[0], Webhook)
+
+
+def test_create_webhook(webhooks_mock):
+    new_webhook = webhooks_mock.create_webhook(
+        name="test_info_webhook",
+        url="https://test-webhook-creation.com",
+        events=["job.status"],
+    )
+    assert new_webhook._info["name"] == "test_info_webhook"
+
+
+@pytest.mark.live
+def test_create_webhook_live(webhooks_live):
+    new_webhook = webhooks_live.create_webhook(
+        name="test_webhook_creation",
+        url="https://test-webhook-creation.com",
+        events=["job.status"],
+    )
+    assert new_webhook._info["name"] == "test_webhook_creation"
+    new_webhook.delete()
