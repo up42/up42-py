@@ -55,18 +55,6 @@ def test_is_fulfilled(order_mock, status, expected, monkeypatch):
     assert order_mock.is_fulfilled == expected
 
 
-def test_order_metadata(order_mock):
-    assert order_mock.metadata
-    assert order_mock.metadata["id"] == ORDER_ID
-    assert order_mock.metadata["sqKmArea"] == 0.1
-
-
-@pytest.mark.live
-def test_order_metadata_live(order_live):
-    assert order_live.metadata
-    assert order_live.metadata["id"] == os.getenv("TEST_UP42_ORDER_ID")
-
-
 def test_order_payload(order_mock):
     assert not order_mock.payload
 
