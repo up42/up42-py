@@ -87,6 +87,7 @@ def define_env(env):
     env.variables.docstring_order = indent(up42.Order.__doc__)
     env.variables.docstring_storage = indent(up42.Storage.__doc__)
     env.variables.docstring_asset = indent(up42.Asset.__doc__)
+    env.variables.docstring_webhooks = indent(up42.Webhooks.__doc__)
 
     # Class functions for reference and structure chapter
     env.variables.funcs_up42 = get_methods(up42, exclude_viztools=True)
@@ -110,3 +111,5 @@ def define_env(env):
     env.variables.funcs_order = get_methods(up42.Order)
     env.variables.funcs_storage = get_methods(up42.Storage)
     env.variables.funcs_asset = get_methods(up42.Asset)
+    env.variables.funcs_webhooks = get_methods(up42.Webhooks)
+    env.variables.funcs_webhook = get_methods(up42.Webhook)

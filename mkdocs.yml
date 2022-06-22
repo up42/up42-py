@@ -76,6 +76,7 @@ nav:
         - Storage: reference/storage-reference.md
         - Order: reference/order-reference.md
         - Asset: reference/asset-reference.md
+        - Webhooks: reference/webhooks-reference.md
     -  Changelog & FAQ:
         - Changelog: CHANGELOG.md
         - FAQ & Support: support-faq.md
@@ -131,9 +132,11 @@ plugins:
       handlers:
         python:
           rendering:
+            members_order: source
             show_root_heading: false
             show_source: true
             show_category_heading: true
+            show_bases: False
           selection:
             filters:
               - "!^_"  # exclude all members starting with _

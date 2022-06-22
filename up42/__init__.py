@@ -14,7 +14,7 @@ import warnings
 from pathlib import Path
 from typing import Union, Tuple, List, Optional, Dict
 import logging
-from datetime import datetime, date
+from datetime import datetime
 from geopandas import GeoDataFrame
 
 # pylint: disable=wrong-import-position
@@ -30,13 +30,14 @@ from up42.catalog import Catalog
 from up42.storage import Storage
 from up42.order import Order
 from up42.asset import Asset
+from up42.webhooks import Webhooks, Webhook
 from up42.utils import get_logger
 
 logger = get_logger(__name__, level=logging.INFO)
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-_auth: Union[Auth, None] = None
+_auth: Auth = None  # type: ignore
 
 
 def authenticate(
@@ -276,3 +277,68 @@ def settings(log: bool = True) -> None:
 
     for name in logging.root.manager.loggerDict:
         setattr(logging.getLogger(name), "disabled", not log)
+
+
+def initialize_webhook(webhook_id: str) -> Webhook:
+    """
+    Returns a Webhook object (has to exist on UP42).
+
+    Args:
+        webhook_id: The UP42 webhook_id
+    """
+    if _auth is None:
+        raise RuntimeError("Not authenticated, call up42.authenticate() first")
+    webhook = Webhook(auth=_auth, webhook_id=webhook_id)
+    logger.info(f"Initialized {webhook}")
+    return webhook
+
+
+def get_webhooks(return_json: bool = False) -> List[Webhook]:
+    """
+    Gets all registered webhooks for this workspace.
+
+    Args:
+        return_json: If true returns the webhooks information as json instead of webhook class objects.
+
+    Returns:
+        A list of the registered webhooks for this workspace.
+    """
+    webhooks = Webhooks(auth=_auth).get_webhooks(return_json=return_json)
+    return webhooks
+
+
+def create_webhook(
+    name: str,
+    url: str,
+    events: List[str],
+    active: bool = False,
+    secret: Optional[str] = None,
+):
+    """
+    Registers a new webhook in the system.
+
+    Args:
+        name: Webhook name
+        url: Unique URL where the webhook will send the message (HTTPS required)
+        events: List of event types (order status / job task status)
+        active: Webhook status.
+        secret: String that acts as signature to the https request sent to the url.
+
+    Returns:
+        A dict with details of the registered webhook.
+    """
+    webhook = Webhooks(auth=_auth).create_webhook(
+        name=name, url=url, events=events, active=active, secret=secret
+    )
+    return webhook
+
+
+def get_webhook_events() -> dict:
+    """
+    Gets all available webhook events.
+
+    Returns:
+        A dict of the available webhook events.
+    """
+    webhook_events = Webhooks(auth=_auth).get_webhook_events()
+    return webhook_events

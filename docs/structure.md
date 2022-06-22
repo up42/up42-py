@@ -15,9 +15,8 @@
 
 ## Functionality
 
-A quick overview how the different class objects are **created, used and which functionality** they offer.
-If a workflow etc. already exists on UP42, you can also **initialize** and access it directly using its `id`.
-
+A quick overview how the different class objects are **created, used and which functionality** they offer. More detail
+in the tutorials and [code reference](up42-reference.md).
 
 !!! example "Available Functionality"
     === "up42"
@@ -89,6 +88,13 @@ If a workflow etc. already exists on UP42, you can also **initialize** and acces
         <br>
         Available functions, see also [**Asset reference**](asset-reference.md): 
         {{ format_funcs(funcs_asset) }}
+
+    === "Webhook"
+
+        {{ docstring_webhooks }}
+        <br>
+        Available functions, see also [**Webhooks reference**](webhooks-reference.md): 
+        {{ format_funcs(funcs_webhook) }}
 
 <br>
 
