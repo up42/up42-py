@@ -72,15 +72,6 @@ class Order:
         """
         return self.status == "FULFILLED"
 
-    @property
-    def metadata(self) -> dict:
-        """
-        Gets the Order metadata.
-        """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders/{self.order_id}/metadata"
-        response_json = self.auth._request(request_type="GET", url=url)
-        return response_json["data"]
-
     def get_assets(self) -> List[Asset]:
         """
         Gets the Order assets or results.
