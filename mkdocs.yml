@@ -34,17 +34,18 @@ extra:
 nav:
     - Home: index.md
     - Getting Started:
-      - Quickstart:
-        - Installation: installation.md
-        - Authentication: authentication.md
-        - Quick sample tutorial: 30-second-example.md
-      - Structure: structure.md
+      - Installation: installation.md
+      - Authentication: authentication.md
+      - Search & Order data: search_order.md
+      - Run a workflow: 30-second-example.md
       - Catalog Search: catalog.md
       - Ordering: ordering.md
       - Storage: storage.md
       - Detailed Example: guides/detailed-example.ipynb
-    - Examples:
-        - examples/example_index.md
+    - Advanced:
+        - Structure: structure.md
+        - Set up Webhooks: webhooks.md
+        - Examples: examples/example_index.md
         - Basic Data Block Examples:
             - Airbus-Global Seeps Sample: examples/data-block-examples/airbus-globalseeps.ipynb
             - ESA-Sentinel-5P Level3: examples/data-block-examples/esa-sentinel5p-l3-example.ipynb

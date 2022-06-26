@@ -1,0 +1,67 @@
+# :world_map: Search & Order data
+
+**Search for data in the UP42 catalog and order selected images.**
+
+[![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Fcatalog.ipynb)
+
+### Authenticate
+
+```python
+import up42
+up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
+```
+
+### See the available data collections
+
+
+
+```python
+catalog = up42.initialize_catalog()
+catalog.get_collections()
+
+[c["name"] for c in collections]
+```
+
+
+
+## Search scenes in aoi
+
+```python
+aoi = up42.get_example_aoi(location="Berlin", as_dataframe=True)
+#aoi = up42.read_vector_file("data/aoi_washington.geojson", 
+#                            as_dataframe=False)
+```
+
+```python
+search_parameters = catalog.construct_parameters(geometry=aoi, 
+                                                 start_date="2018-01-01",
+                                                 end_date="2020-12-31",
+                                                 collections=["phr"],
+                                                 max_cloudcover=20,
+                                                 sortby="cloudCoverage", 
+                                                 limit=10)
+search_results = catalog.search(search_parameters=search_parameters)
+display(search_results.head())
+```
+
+
+```python
+catalog.plot_coverage(scenes=search_results, 
+                      aoi=aoi, 
+                      legend_column="sceneId")
+```
+
+## Download & visualize quicklooks
+
+
+```python
+catalog.download_quicklooks(image_ids=search_results.id.to_list(), 
+                            sensor="pleiades")
+
+catalog.map_quicklooks(scenes=search_results, aoi=aoi)
+```
+
+<br>
+
+!!! Success "Success!"
+Continue with [Ordering](ordering.md)!
