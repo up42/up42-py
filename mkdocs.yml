@@ -37,12 +37,10 @@ nav:
       - Installation: installation.md
       - Authentication: authentication.md
       - Search & Order data: search_order.md
+      - Storage: storage.md
       - Run Analytics Workflow: analytics_workflow.md
     - Advanced:
         - Structure: structure.md
-        - Catalog Search: catalog.md
-        - Ordering: ordering.md
-        - Storage: storage.md
         - Detailed Example: guides/detailed-example.ipynb
 
         - Set up Webhooks: webhooks.md
