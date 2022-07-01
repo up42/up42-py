@@ -40,30 +40,20 @@ nav:
       - Storage: storage.md
       - Run Analytics Workflow: analytics_workflow.md
     - Advanced:
-        - Structure: structure.md
+        - Functionality: structure.md
         - Detailed Example: guides/detailed-example.ipynb
         - Set up Webhooks: webhooks.md
         - Examples: examples/example_index.md
-        - Basic Data Block Examples:
-            - Airbus-Global Seeps Sample: examples/data-block-examples/airbus-globalseeps.ipynb
-            - ESA-Sentinel-5P Level3: examples/data-block-examples/esa-sentinel5p-l3-example.ipynb
-            - ExactEarth Historical Vessel Tracks: examples/data-block-examples/exactearth-hvt.ipynb
-            - Hexagon 30cm Download: examples/data-block-examples/hexagon-hxgn-content-30cm-download-example.ipynb
-            - Landsat-8 Level1 (GeoTIFF): examples/data-block-examples/landsat8-geotiff-example.ipynb
-            - Meteomatics Weather / Ocean Data and Forecasts: examples/data-block-examples/meteomatics-example.ipynb
-            - NEXTMap One - Elevation Data (Streaming) and Viewshed: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
-            - OneAtlas WorldDEM: examples/data-block-examples/oneatlas-worlddem-12m-example.ipynb
-            - Open Street Map: examples/data-block-examples/osm-example.ipynb
-            - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
-            - Sentinel-2 L2A Analytic (GeoTIFF): examples/data-block-examples/sentinel2-l2-a-geotiff-example.ipynb
-            - Sobloo Sentinel-1 L1 SLC (SAFE): examples/data-block-examples/sobloo-sentinel1-l1-example.ipynb
-        - Advanced Examples:
-          # - Aircraft Detection: examples/aircraft-detection.ipynb
           - Radar Processing: examples/radar_processing_1.ipynb
           - Flood Mapping: examples/flood_mapping.ipynb
-          - Catalog Quicklooks: examples/catalog-quicklooks.ipynb
           - Ship Identification: examples/ship-identification.ipynb
-          - Lake Monitoring: examples/lake-monitoring.ipynb
+          - ExactEarth Historical Vessel Tracks: examples/data-block-examples/exactearth-hvt.ipynb
+          - Landsat-8 Level1 (GeoTIFF): examples/data-block-examples/landsat8-geotiff-example.ipynb
+          - NEXTMap One - Elevation Data (Streaming) and Viewshed: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
+          - Open Street Map: examples/data-block-examples/osm-example.ipynb
+          - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
+          - Sobloo Sentinel-1 L1 SLC (SAFE): examples/data-block-examples/sobloo-sentinel1-l1-example.ipynb
+
     - Code Reference:
         - up42: reference/up42-reference.md
         - Project: reference/project-reference.md
