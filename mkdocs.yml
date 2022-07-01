@@ -42,7 +42,6 @@ nav:
     - Advanced:
         - Structure: structure.md
         - Detailed Example: guides/detailed-example.ipynb
-
         - Set up Webhooks: webhooks.md
         - Examples: examples/example_index.md
         - Basic Data Block Examples:
