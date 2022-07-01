@@ -32,7 +32,7 @@ up42.authenticate(project_id="your-project-ID",
 YYYY-MM-DD HH:MM:SS - Authentication with UP42 successful!
 ```
 
-### Use configuration file
+### Optional: Use configuration file
 
 In order to hide your credentials, you can also read your credentials from a configuration JSON file.
 
@@ -52,4 +52,4 @@ up42.authenticate(cfg_file="config.json")
 
 <br>
 
-Continue with the [Structure chapter](structure.md)!
+Continue with the [Search & Order data chapter](search_order.md)!
