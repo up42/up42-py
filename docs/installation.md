@@ -26,10 +26,12 @@ To test the successful installation, import it in Python:
 import up42
 ```
 
-!!! Help "Installation issues"
+!!! Warning "Issues with Windows"
     If you are using Windows we recommend the installation via conda. If you still experience issues,
     please follow [guide 1](http://www.acgeospatial.co.uk/python-geospatial-workflows-prt1-anaconda/) or
     [guide 2](https://chrieke.medium.com/howto-install-python-for-geospatial-applications-1dbc82433c05)
     to set up your Python environment with Anaconda for working with geospatial libraries.
 
-Continue with the [Authentication chapter](authentication.md)!
+<br>
+
+⏭️ Continue with the [Authentication chapter](authentication.md)!

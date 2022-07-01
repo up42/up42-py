@@ -71,6 +71,4 @@ job.plot_results()
 
 <br>
 
-!!! Success "Success!"
-Also see the advanced examples & code reference or continue with the [Advanced Section](structure.md)
-chapter!
+⏭️ Continue with the [Advanced Section](structure.md) or see the advanced examples & code reference.

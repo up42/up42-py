@@ -74,10 +74,6 @@ assets = order.get_assets()
 assets[0].download()
 ```
 
-
-
 <br>
 
-!!! Success "Success!"
-Also see the advanced examples & code reference or continue with the [Run an analytics workflow](30-second-example.md) 
-chapter!
+⏭️ Continue with the [Run an analytics workflow](30-second-example.md) chapter or see the advanced section!
