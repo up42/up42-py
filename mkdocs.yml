@@ -154,6 +154,7 @@ extra_css:
 markdown_extensions:
   - markdown.extensions.admonition
   - markdown.extensions.attr_list
+  - markdown.extensions.md_in_html
   - markdown.extensions.def_list
   - markdown.extensions.footnotes
   - markdown.extensions.meta
