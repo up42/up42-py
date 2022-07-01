@@ -32,13 +32,4 @@ import up42
     [guide 2](https://chrieke.medium.com/howto-install-python-for-geospatial-applications-1dbc82433c05)
     to set up your Python environment with Anaconda for working with geospatial libraries.
 
-!!! Info "Optional: Install Jupyter Lab"
-    The UP42 Python SDK is even more comfortable to use in a **Jupyter notebook**!
-    To install and start [Jupyter Lab](https://jupyter.org/):
-
-    ```bash
-    pip install jupyterlab
-    jupyter lab
-    ```
-
 Continue with the [Authentication chapter](authentication.md)!

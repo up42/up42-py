@@ -37,7 +37,7 @@ YYYY-MM-DD HH:MM:SS - Authentication with UP42 successful!
 In order to hide your credentials, you can also read your credentials from a configuration JSON file.
 
  
-```json title="Create *config.json* file"
+```json title="Create a config.json file"
 {
   "project_id": "your-project-ID",
   "project_api_key": "your-project-api-key"
