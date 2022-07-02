@@ -32,7 +32,3 @@ You can download an asset via:
 ```python
 assets[0].download()
 ```
-
-<br>
-
-⏭️ Continue with the [Run Analytics workflow](https://sdk.up42.com/guides/detailed-example/) chapter.

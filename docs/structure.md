@@ -95,7 +95,3 @@ in the [code reference](up42-reference.md).
         <br>
         Available functions, see also [**Webhooks reference**](webhooks-reference.md): 
         {{ format_funcs(funcs_webhook) }}
-
-<br>
-
-⏭️ Continue with the [Catalog Search chapter](catalog.md)!
