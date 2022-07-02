@@ -71,4 +71,4 @@ job.plot_results()
 
 <br>
 
-⏭️ Continue with the [Advanced Section](structure.md) or see the advanced examples & code reference.
+⏭️ Continue with the [Advanced section](structure.md) or see the advanced examples & code reference.

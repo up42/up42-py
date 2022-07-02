@@ -76,4 +76,4 @@ assets[0].download()
 
 <br>
 
-⏭️ Continue with the [Run an analytics workflow](30-second-example.md) chapter or see the advanced section!
+⏭️ Continue with the [Run an analytics workflow](30-second-example.md) chapter or see the advanced section.

@@ -52,4 +52,4 @@ up42.authenticate(cfg_file="config.json")
 
 <br>
 
-⏭️ Continue with the [Search & Order data chapter](search_order.md)!
+⏭️ Continue with the [Search & Order data chapter](search_order.md).

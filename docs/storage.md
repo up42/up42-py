@@ -35,4 +35,4 @@ assets[0].download()
 
 <br>
 
-⏭️ Continue with the [Detailed Example](https://sdk.up42.com/guides/detailed-example/)!
+⏭️ Continue with the [Run Analytics workflow](https://sdk.up42.com/guides/detailed-example/) chapter.
