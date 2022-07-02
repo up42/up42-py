@@ -1,6 +1,6 @@
 # :card_box: Functionality
 
-## Hierarchy
+## Structure
 
 - The Python SDK uses multiple classes, representing the **hierarchical structure of UP42**:
     - **Catalog > Order**
@@ -98,5 +98,4 @@ in the [code reference](up42-reference.md).
 
 <br>
 
-!!! Success "Success!"
-    Continue with the [Catalog Search chapter](catalog.md)!
+⏭️ Continue with the [Catalog Search chapter](catalog.md)!
