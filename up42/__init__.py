@@ -232,7 +232,7 @@ def get_example_aoi(
 
 
 def draw_aoi() -> None:
-    return Tools().draw_aoi()
+    return VizTools().draw_aoi()
 
 
 # pylint: disable=duplicate-code

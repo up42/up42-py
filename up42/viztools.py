@@ -13,12 +13,19 @@ import numpy as np
 from shapely.geometry import box
 import geopandas as gpd
 from geopandas import GeoDataFrame
-import matplotlib.pyplot as plt
-import rasterio
-from rasterio.plot import show
-from rasterio.vrt import WarpedVRT
-import folium
-from folium.plugins import Draw
+
+try:
+    import rasterio
+    from rasterio.plot import show
+    from rasterio.vrt import WarpedVRT
+    import folium
+    from folium.plugins import Draw
+    import matplotlib.pyplot as plt
+except ImportError:
+    _viz_installed = False
+else:
+    _viz_installed = True
+
 
 from up42.utils import (
     get_logger,
@@ -39,9 +46,6 @@ HIGHLIGHT_STYLE = {
     "dashArray": "5, 5",
 }
 
-# ignore warnings
-warnings.filterwarnings("ignore", category=rasterio.errors.NotGeoreferencedWarning)
-
 try:
     from IPython import get_ipython
 
@@ -50,8 +54,19 @@ except (ImportError, AttributeError):
     # No Ipython installed, Installed but run in shell
     pass
 
-
 logger = get_logger(__name__)
+
+
+def requires_viz(func):
+    def wrapper_func(*args, **kwargs):
+        if not _viz_installed:
+            raise ImportError(
+                "Some dependencies for the optional up42-py visualizations are missing. "
+                "You can install them via `install up42py[viz]`."
+            )
+        return func(*args, **kwargs)
+
+    return wrapper_func
 
 
 # pylint: disable=no-member, duplicate-code
@@ -63,6 +78,7 @@ class VizTools:
         self.quicklooks = None
         self.results: Union[list, dict, None] = None
 
+    @requires_viz
     def plot_results(
         self,
         figsize: Tuple[int, int] = (14, 8),
@@ -87,6 +103,10 @@ class VizTools:
                 [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show),
                  e.g. matplotlib cmap etc.
         """
+        warnings.filterwarnings(
+            "ignore", category=rasterio.errors.NotGeoreferencedWarning
+        )
+
         if filepaths is None:
             if self.results is None:
                 raise ValueError("You first need to download the results!")
@@ -147,6 +167,7 @@ class VizTools:
         plt.tight_layout()
         plt.show()
 
+    @requires_viz
     def plot_quicklooks(
         self,
         figsize: Tuple[int, int] = (8, 8),
@@ -187,7 +208,7 @@ class VizTools:
         show_features=False,
         name_column: str = "id",
         save_html: Optional[Path] = None,
-    ) -> folium.Map:
+    ) -> "folium.Map":
         """
         Displays data.json, and if available, one or multiple results geotiffs.
         Args:
@@ -201,6 +222,10 @@ class VizTools:
             name_column: Name of the feature property that provides the Feature/Layer name.
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
+        warnings.filterwarnings(
+            "ignore", category=rasterio.errors.NotGeoreferencedWarning
+        )
+
         if result_df.shape[0] > 100:
             result_df = result_df.iloc[:100]
             logger.info(
@@ -296,6 +321,7 @@ class VizTools:
                 f.write(m._repr_html_())
         return m
 
+    @requires_viz
     def map_results(
         self,
         bands=[1, 2, 3],
@@ -304,7 +330,7 @@ class VizTools:
         show_features: bool = True,
         name_column: str = "uid",
         save_html: Path = None,
-    ) -> folium.Map:
+    ) -> "folium.Map":
         """
         Displays data.json, and if available, one or multiple results geotiffs.
 
@@ -361,6 +387,7 @@ class VizTools:
 
         return m
 
+    @requires_viz
     def map_quicklooks(
         self,
         scenes: GeoDataFrame,
@@ -370,7 +397,7 @@ class VizTools:
         filepaths: Optional[list] = None,
         name_column: str = "id",
         save_html: Optional[Path] = None,
-    ) -> folium.Map:
+    ) -> "folium.Map":
         """
         TODO: Currently only implemented for catalog!
 
@@ -405,6 +432,7 @@ class VizTools:
         return m
 
     @staticmethod
+    @requires_viz
     def plot_coverage(
         scenes: GeoDataFrame,
         aoi: Optional[GeoDataFrame] = None,
@@ -446,112 +474,140 @@ class VizTools:
         ax.set_axis_off()
         plt.show()
 
-
-def folium_base_map(
-    lat: float = 52.49190032214706,
-    lon: float = 13.39117252959244,
-    zoom_start: int = 14,
-    width_percent: str = "95%",
-    layer_control: bool = False,
-) -> folium.Map:
-    """Provides a folium map with basic features and UP42 logo."""
-    mapfigure = folium.Figure(width=width_percent)
-    m = folium.Map(location=[lat, lon], zoom_start=zoom_start, crs="EPSG3857").add_to(
-        mapfigure
-    )
-
-    tiles = (
-        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery"
-        "/MapServer/tile/{z}/{y}/{x}.png"
-    )
-    attr = (
-        "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, "
-        "AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the "
-        "GIS User Community"
-    )
-    folium.TileLayer(tiles=tiles, attr=attr, name="Satellite - ESRI").add_to(m)
-
-    formatter = "function(num) {return L.Util.formatNum(num, 4) + ' ';};"
-    folium.plugins.MousePosition(
-        position="bottomright",
-        separator=" | ",
-        empty_string="NaN",
-        lng_first=True,
-        num_digits=20,
-        prefix="lon/lat:",
-        lat_formatter=formatter,
-        lng_formatter=formatter,
-    ).add_to(m)
-
-    folium.plugins.MiniMap(
-        tile_layer="OpenStreetMap", position="bottomright", zoom_level_offset=-6
-    ).add_to(m)
-    folium.plugins.Fullscreen().add_to(m)
-    folium.plugins.FloatImage(
-        image="https://cdn-images-1.medium.com/max/140/1*XJ_B7ur_c8bYKniXpKVpWg@2x.png",
-        bottom=90,
-        left=88,
-    ).add_to(m)
-
-    if layer_control:
-        folium.LayerControl(position="bottomleft", collapsed=False, zindex=100).add_to(
-            m
-        )
-        # If adding additional layers outside of the folium base map function, don't
-        # use this one here. Causes an empty map.
-    return m
-
-
-class DrawFoliumOverride(Draw):
-    def render(self, **kwargs):
-        # pylint: disable=import-outside-toplevel
-        from branca.element import CssLink, Element, Figure, JavascriptLink
-
-        super().render(**kwargs)
-
-        figure = self.get_root()
-        assert isinstance(figure, Figure), (
-            "You cannot render this Element " "if it is not in a Figure."
-        )
-
-        figure.header.add_child(
-            JavascriptLink(
-                "https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/"
-                "leaflet.draw.js"
-            )
-        )  # noqa
-        figure.header.add_child(
-            CssLink(
-                "https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/"
-                "leaflet.draw.css"
-            )
-        )  # noqa
-
-        export_style = """
-            <style>
-                #export {
-                    position: absolute;
-                    top: 270px;
-                    left: 11px;
-                    z-index: 999;
-                    padding: 6px;
-                    border-radius: 3px;
-                    box-sizing: border-box;
-                    color: #333;
-                    background-color: #fff;
-                    border: 2px solid rgba(0,0,0,0.5);
-                    box-shadow: None;
-                    font-family: 'Helvetica Neue';
-                    cursor: pointer;
-                    font-size: 17px;
-                    text-decoration: none;
-                    text-align: center;
-                    font-weight: bold;
-                }
-            </style>
+    @staticmethod
+    @requires_viz
+    def draw_aoi() -> "folium.Map":
         """
-        # TODO: How to change hover color?
-        export_button = """<a href='#' id='export'>Export as<br/>GeoJson</a>"""
-        if self.export:
-            figure.header.add_child(Element(export_style), name="export")
-            figure.html.add_child(Element(export_button), name="export_button")
+        Displays an interactive map to draw an aoi by hand, returns the folium object if
+        not run in a Jupyter notebook.
+
+        Export the drawn aoi via the export button, then read the geometries via
+        read_aoi_file().
+        """
+        m = folium_base_map(layer_control=True)
+        DrawFoliumOverride(
+            export=True,
+            filename="aoi.geojson",
+            position="topleft",
+            draw_options={
+                "rectangle": {"repeatMode": False, "showArea": True},
+                "polygon": {"showArea": True, "allowIntersection": False},
+                "polyline": False,
+                "circle": False,
+                "marker": False,
+                "circlemarker": False,
+            },
+            edit_options={"polygon": {"allowIntersection": False}},
+        ).add_to(m)
+        return m
+
+
+if _viz_installed:
+
+    def folium_base_map(
+        lat: float = 52.49190032214706,
+        lon: float = 13.39117252959244,
+        zoom_start: int = 14,
+        width_percent: str = "95%",
+        layer_control: bool = False,
+    ) -> "folium.Map":
+        """Provides a folium map with basic features and UP42 logo."""
+        mapfigure = folium.Figure(width=width_percent)
+        m = folium.Map(
+            location=[lat, lon], zoom_start=zoom_start, crs="EPSG3857"
+        ).add_to(mapfigure)
+
+        tiles = (
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery"
+            "/MapServer/tile/{z}/{y}/{x}.png"
+        )
+        attr = (
+            "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, "
+            "AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the "
+            "GIS User Community"
+        )
+        folium.TileLayer(tiles=tiles, attr=attr, name="Satellite - ESRI").add_to(m)
+
+        formatter = "function(num) {return L.Util.formatNum(num, 4) + ' ';};"
+        folium.plugins.MousePosition(
+            position="bottomright",
+            separator=" | ",
+            empty_string="NaN",
+            lng_first=True,
+            num_digits=20,
+            prefix="lon/lat:",
+            lat_formatter=formatter,
+            lng_formatter=formatter,
+        ).add_to(m)
+
+        folium.plugins.MiniMap(
+            tile_layer="OpenStreetMap", position="bottomright", zoom_level_offset=-6
+        ).add_to(m)
+        folium.plugins.Fullscreen().add_to(m)
+        folium.plugins.FloatImage(
+            image="https://cdn-images-1.medium.com/max/140/1*XJ_B7ur_c8bYKniXpKVpWg@2x.png",
+            bottom=90,
+            left=88,
+        ).add_to(m)
+
+        if layer_control:
+            folium.LayerControl(
+                position="bottomleft", collapsed=False, zindex=100
+            ).add_to(m)
+            # If adding additional layers outside of the folium base map function, don't
+            # use this one here. Causes an empty map.
+        return m
+
+    class DrawFoliumOverride(Draw):
+        def render(self, **kwargs):
+            # pylint: disable=import-outside-toplevel
+            from branca.element import CssLink, Element, Figure, JavascriptLink
+
+            super().render(**kwargs)
+
+            figure = self.get_root()
+            assert isinstance(figure, Figure), (
+                "You cannot render this Element " "if it is not in a Figure."
+            )
+
+            figure.header.add_child(
+                JavascriptLink(
+                    "https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/"
+                    "leaflet.draw.js"
+                )
+            )  # noqa
+            figure.header.add_child(
+                CssLink(
+                    "https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/"
+                    "leaflet.draw.css"
+                )
+            )  # noqa
+
+            export_style = """
+                <style>
+                    #export {
+                        position: absolute;
+                        top: 270px;
+                        left: 11px;
+                        z-index: 999;
+                        padding: 6px;
+                        border-radius: 3px;
+                        box-sizing: border-box;
+                        color: #333;
+                        background-color: #fff;
+                        border: 2px solid rgba(0,0,0,0.5);
+                        box-shadow: None;
+                        font-family: 'Helvetica Neue';
+                        cursor: pointer;
+                        font-size: 17px;
+                        text-decoration: none;
+                        text-align: center;
+                        font-weight: bold;
+                    }
+                </style>
+            """
+            # TODO: How to change hover color?
+            export_button = """<a href='#' id='export'>Export as<br/>GeoJson</a>"""
+            if self.export:
+                figure.header.add_child(Element(export_style), name="export")
+                figure.html.add_child(Element(export_button), name="export_button")

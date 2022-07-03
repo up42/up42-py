@@ -15,16 +15,7 @@ from geopandas import GeoDataFrame
 import pandas as pd
 import shapely
 
-from up42.viztools import folium_base_map, DrawFoliumOverride
 from up42.utils import get_logger, format_time_period
-
-try:
-    from IPython import get_ipython
-
-    get_ipython().run_line_magic("matplotlib", "inline")
-except (ImportError, AttributeError):
-    # No Ipython installed, Installed but run in shell
-    pass
 
 logger = get_logger(__name__)
 
@@ -130,32 +121,6 @@ class Tools:
             return df
         else:
             return example_aoi
-
-    @staticmethod
-    def draw_aoi():
-        """
-        Displays an interactive map to draw an aoi by hand, returns the folium object if
-        not run in a Jupyter notebook.
-
-        Export the drawn aoi via the export button, then read the geometries via
-        read_aoi_file().
-        """
-        m = folium_base_map(layer_control=True)
-        DrawFoliumOverride(
-            export=True,
-            filename="aoi.geojson",
-            position="topleft",
-            draw_options={
-                "rectangle": {"repeatMode": False, "showArea": True},
-                "polygon": {"showArea": True, "allowIntersection": False},
-                "polyline": False,
-                "circle": False,
-                "marker": False,
-                "circlemarker": False,
-            },
-            edit_options={"polygon": {"allowIntersection": False}},
-        ).add_to(m)
-        return m
 
     @check_auth
     def get_blocks(
