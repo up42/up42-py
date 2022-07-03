@@ -5,7 +5,6 @@
 ![](docs/assets/github-banner-3.jpg)
 
 <p align="center">
-    <a href="https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides" title="Binder"><img src="https://mybinder.org/badge_logo.svg"></a>
     <a href="https://pypi.org/project/up42-py/" title="up42-py on pypi"><img src="https://img.shields.io/pypi/v/up42-py?color=brightgreen"></a>
     <img src="./coverage.svg">
     <a href="https://twitter.com/UP42_" title="UP42 on Twitter"><img src="https://img.shields.io/twitter/follow/UP42_.svg?style=social"></a>
