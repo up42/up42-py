@@ -13,12 +13,19 @@ import numpy as np
 from shapely.geometry import box
 import geopandas as gpd
 from geopandas import GeoDataFrame
-import matplotlib.pyplot as plt
-import rasterio
-from rasterio.plot import show
-from rasterio.vrt import WarpedVRT
-import folium
-from folium.plugins import Draw
+
+try:
+    import matplotlib.pyplot as plt
+    import rasterio
+    from rasterio.plot import show
+    from rasterio.vrt import WarpedVRT
+    import folium
+    from folium.plugins import Draw
+except ImportError:
+    _viz_installed = False
+else:
+    _viz_installed = True
+
 
 from up42.utils import (
     get_logger,
@@ -38,9 +45,6 @@ HIGHLIGHT_STYLE = {
     "weight": 3.5,
     "dashArray": "5, 5",
 }
-
-# ignore warnings
-warnings.filterwarnings("ignore", category=rasterio.errors.NotGeoreferencedWarning)
 
 try:
     from IPython import get_ipython
@@ -62,6 +66,16 @@ class VizTools:
         """
         self.quicklooks = None
         self.results: Union[list, dict, None] = None
+
+        if not _viz_installed:
+            raise ImportError(
+                "Some dependencies for the optional up42-py vizualizations are missing. "
+                "You can install them via `install up42py[viz]`."
+            )
+
+        warnings.filterwarnings(
+            "ignore", category=rasterio.errors.NotGeoreferencedWarning
+        )
 
     def plot_results(
         self,
@@ -187,7 +201,7 @@ class VizTools:
         show_features=False,
         name_column: str = "id",
         save_html: Optional[Path] = None,
-    ) -> folium.Map:
+    ) -> "folium.Map":
         """
         Displays data.json, and if available, one or multiple results geotiffs.
         Args:
@@ -304,7 +318,7 @@ class VizTools:
         show_features: bool = True,
         name_column: str = "uid",
         save_html: Path = None,
-    ) -> folium.Map:
+    ) -> "folium.Map":
         """
         Displays data.json, and if available, one or multiple results geotiffs.
 
@@ -370,7 +384,7 @@ class VizTools:
         filepaths: Optional[list] = None,
         name_column: str = "id",
         save_html: Optional[Path] = None,
-    ) -> folium.Map:
+    ) -> "folium.Map":
         """
         TODO: Currently only implemented for catalog!
 
