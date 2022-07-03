@@ -4,19 +4,26 @@
 
 === "pip"
 
-    ```bash
+    ```bash title="Installation"
     pip install up42-py
-    
-    # Or update to the newest version:
+    ```
+    ```bash title="Installation with plotting functionality (Optional)"
+    pip install up42-py[viz]
+    ```
+    ```bash title="Update to the newest version"
     pip install up42-py --upgrade
     ```
 
 === "conda"
 
-    ```bash
+    ```bash title="Installation"
     conda install -c conda-forge up42-py
-
-    # Or update to the newest version:
+    ```
+    ```bash title="Installation with plotting functionality (Optional)"
+    conda install -c conda-forge up42-py
+    conda install -c conda-forge rasterio folium branca matplotlib descartes
+    ```
+    ```bash title="Update to the newest version"
     conda update -c conda-forge up42-py
     ```
 
