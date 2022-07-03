@@ -15,12 +15,12 @@ import geopandas as gpd
 from geopandas import GeoDataFrame
 
 try:
-    import matplotlib.pyplot as plt
     import rasterio
     from rasterio.plot import show
     from rasterio.vrt import WarpedVRT
     import folium
     from folium.plugins import Draw
+    import matplotlib.pyplot as plt
 except ImportError:
     _viz_installed = False
 else:
@@ -54,8 +54,19 @@ except (ImportError, AttributeError):
     # No Ipython installed, Installed but run in shell
     pass
 
-
 logger = get_logger(__name__)
+
+
+def requires_viz(func):
+    def wrapper_func(*args, **kwargs):
+        if not _viz_installed:
+            raise ImportError(
+                "Some dependencies for the optional up42-py visualizations are missing. "
+                "You can install them via `install up42py[viz]`."
+            )
+        func(*args, **kwargs)
+
+    return wrapper_func
 
 
 # pylint: disable=no-member, duplicate-code
@@ -67,16 +78,7 @@ class VizTools:
         self.quicklooks = None
         self.results: Union[list, dict, None] = None
 
-        if not _viz_installed:
-            raise ImportError(
-                "Some dependencies for the optional up42-py vizualizations are missing. "
-                "You can install them via `install up42py[viz]`."
-            )
-
-        warnings.filterwarnings(
-            "ignore", category=rasterio.errors.NotGeoreferencedWarning
-        )
-
+    @requires_viz
     def plot_results(
         self,
         figsize: Tuple[int, int] = (14, 8),
@@ -101,6 +103,10 @@ class VizTools:
                 [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show),
                  e.g. matplotlib cmap etc.
         """
+        warnings.filterwarnings(
+            "ignore", category=rasterio.errors.NotGeoreferencedWarning
+        )
+
         if filepaths is None:
             if self.results is None:
                 raise ValueError("You first need to download the results!")
@@ -161,6 +167,7 @@ class VizTools:
         plt.tight_layout()
         plt.show()
 
+    @requires_viz
     def plot_quicklooks(
         self,
         figsize: Tuple[int, int] = (8, 8),
@@ -215,6 +222,10 @@ class VizTools:
             name_column: Name of the feature property that provides the Feature/Layer name.
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
+        warnings.filterwarnings(
+            "ignore", category=rasterio.errors.NotGeoreferencedWarning
+        )
+
         if result_df.shape[0] > 100:
             result_df = result_df.iloc[:100]
             logger.info(
@@ -310,6 +321,7 @@ class VizTools:
                 f.write(m._repr_html_())
         return m
 
+    @requires_viz
     def map_results(
         self,
         bands=[1, 2, 3],
@@ -375,6 +387,7 @@ class VizTools:
 
         return m
 
+    @requires_viz
     def map_quicklooks(
         self,
         scenes: GeoDataFrame,
@@ -419,6 +432,7 @@ class VizTools:
         return m
 
     @staticmethod
+    @requires_viz
     def plot_coverage(
         scenes: GeoDataFrame,
         aoi: Optional[GeoDataFrame] = None,
@@ -461,6 +475,7 @@ class VizTools:
         plt.show()
 
     @staticmethod
+    @requires_viz
     def draw_aoi() -> "folium.Map":
         """
         Displays an interactive map to draw an aoi by hand, returns the folium object if
