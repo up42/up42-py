@@ -24,6 +24,9 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=parent_dir.joinpath("requirements.txt").read_text().splitlines(),
+    extras_require={
+        "viz": parent_dir.joinpath("requirements-viz.txt").read_text().splitlines(),
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
