@@ -20,11 +20,13 @@
 </p>
 
 ## Highlights
-- Python package for easy access to **[UP42's](http://www.up42.com)** **geospatial datasets** & **processing workflows**
+- Python package for easy access to **[UP42's](http://www.up42.com)** **geospatial datasets** & **analytics workflows**
 - Use UP42 functionality together with your preferred Python libraries!
-- For geospatial **analysis** & **product builders**!
-- Interactive maps & **visualizations**, ideal with Jupyter notebooks
+- Interactive maps & **visualizations** of your UP42 assets
 
+![](docs/assets/vizualisations.jpg)
+
+<br>
 
 <img align="right" href="https://sdk.up42.com/" src="docs/assets/docs.png" alt="" height="200"/>
 
@@ -42,16 +44,9 @@ pip install up42-py
 conda install -c conda-forge up42-py
 ```
 
-<br>
-
 ## 30-second Example
 
-![](docs/assets/vizualisations.jpg)
-
-
-In this example 
-
-Try this example without installation! [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
+Search & order satellite images from the UP42 catalog.
 
 ```python
 import up42
