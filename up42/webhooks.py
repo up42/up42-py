@@ -68,7 +68,7 @@ class Webhook:
         Args:
             name: Updated webhook name
             url: Updated unique URL where the webhook will send the message (HTTPS required)
-            events: Updated list of event types (order status / job task status)
+            events: Updated list of event types [order.status, job.status].
             active: Updated webhook status.
             secret: Updated string that acts as signature to the https request sent to the url.
 
@@ -174,7 +174,7 @@ class Webhooks:
         Args:
             name: Webhook name
             url: Unique URL where the webhook will send the message (HTTPS required)
-            events: List of event types (order status / job task status)
+            events: List of event types e.g. [order.status, job.status]
             active: Webhook status.
             secret: String that acts as signature to the https request sent to the url.
 
