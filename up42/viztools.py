@@ -64,7 +64,7 @@ def requires_viz(func):
                 "Some dependencies for the optional up42-py visualizations are missing. "
                 "You can install them via `install up42py[viz]`."
             )
-        func(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper_func
 
