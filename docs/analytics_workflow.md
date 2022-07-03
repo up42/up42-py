@@ -17,7 +17,8 @@ up42.authenticate(project_id="your project ID", project_api_key="your-project-AP
 
 This simple workflow consists of [Sentinel-2 L2A data](https://up42.com/marketplace/blocks/data/aws-s2-l2a)
 and [Sharpening Filter](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e).
-See the UP42 marketplace for all other [data](https://up42.com/marketplace/search?type=DATA&type=ARCHIVE) and 
+See `up42.get_blocks` or the UP42 marketplace for all other [data](https://up42.com/marketplace/search?
+type=DATA&type=ARCHIVE) and 
 [analytics](https://up42.com/marketplace/search?type=PROCESSING) tasks.
 
 
