@@ -41,9 +41,8 @@ nav:
       - Run Analytics Workflow: analytics_workflow.md
     - Advanced:
         - Functionality: structure.md
-        - Detailed Example: guides/detailed-example.ipynb
         - Visualizations: visualizations.md
-        - Set up Webhooks: webhooks.md
+        - Webhooks: webhooks.md
         - Example Notebooks:
           - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
           - NEXTMap One - Elevation Data (Streaming) and Viewshed: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
