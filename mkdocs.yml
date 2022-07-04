@@ -42,6 +42,7 @@ nav:
     - Advanced:
         - Functionality: structure.md
         - Detailed Example: guides/detailed-example.ipynb
+        - Visualizations: visualizations.md
         - Set up Webhooks: webhooks.md
         - Example Notebooks:
           - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
