@@ -26,8 +26,12 @@ webhooks[0].trigger_test_event()
 
 ## **Create a new webhook**
 
+
 ```python
 events = up42.get_webhook_events() #[e.g. "job.status", "order.status"]
-webhook = up42.create_webhook(name="new-webhook", url="https://receiving-url.com", events=events, active=True)
+webhook = up42.create_webhook(name="new-webhook", 
+                              url="https://receiving-url.com", 
+                              events=events, 
+                              active=True)
 webhook.trigger_test_event()
 ```
