@@ -29,6 +29,14 @@ You can determine your currently installed version via:
     ```
 
 ## Versions
+### [0.22.0](https://pypi.org/project/up42-py/) (2022-07-05)
+- Adds webhooks functionality to the SDK, see new [webhooks docs chapter](https://sdk.up42.com/webhooks/).
+- Introduces optional installation option for the visualization functionalities. The required dependencies are now 
+  not installed by default. See the new [visualization docs chapter] (https://sdk.up42.com/visualizations/).
+- Removes `order.metadata` property, as removed from UP42 API. 
+- Fix: Using a MultiPolygon geometry in construct_parameters will now correctly raise an error as not accepted.
+- Documentation overhaul & various improvements
+
 ### [0.21.0](https://pypi.org/project/up42-py/) (2022-05-12)
 - Adding `up42.get_balance` and `up42.get_credits_history` features for allowing account information retrieval.
 - Adding `up42.get_block_coverage` features for retrieval of the catalog blocks' coverage as geojson.
