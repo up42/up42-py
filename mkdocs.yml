@@ -34,37 +34,20 @@ extra:
 nav:
     - Home: index.md
     - Getting Started:
-      - Quickstart:
-        - Installation: installation.md
-        - Authentication: authentication.md
-        - Quick sample tutorial: 30-second-example.md
-      - Structure: structure.md
-      - Catalog Search: catalog.md
-      - Ordering: ordering.md
+      - Installation: installation.md
+      - Authentication: authentication.md
+      - Search & Order data: search_order.md
       - Storage: storage.md
-      - Detailed Example: guides/detailed-example.ipynb
-    - Examples:
-        - examples/example_index.md
-        - Basic Data Block Examples:
-            - Airbus-Global Seeps Sample: examples/data-block-examples/airbus-globalseeps.ipynb
-            - ESA-Sentinel-5P Level3: examples/data-block-examples/esa-sentinel5p-l3-example.ipynb
-            - ExactEarth Historical Vessel Tracks: examples/data-block-examples/exactearth-hvt.ipynb
-            - Hexagon 30cm Download: examples/data-block-examples/hexagon-hxgn-content-30cm-download-example.ipynb
-            - Landsat-8 Level1 (GeoTIFF): examples/data-block-examples/landsat8-geotiff-example.ipynb
-            - Meteomatics Weather / Ocean Data and Forecasts: examples/data-block-examples/meteomatics-example.ipynb
-            - NEXTMap One - Elevation Data (Streaming) and Viewshed: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
-            - OneAtlas WorldDEM: examples/data-block-examples/oneatlas-worlddem-12m-example.ipynb
-            - Open Street Map: examples/data-block-examples/osm-example.ipynb
-            - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
-            - Sentinel-2 L2A Analytic (GeoTIFF): examples/data-block-examples/sentinel2-l2-a-geotiff-example.ipynb
-            - Sobloo Sentinel-1 L1 SLC (SAFE): examples/data-block-examples/sobloo-sentinel1-l1-example.ipynb
-        - Advanced Examples:
-          # - Aircraft Detection: examples/aircraft-detection.ipynb
-          - Radar Processing: examples/radar_processing_1.ipynb
-          - Flood Mapping: examples/flood_mapping.ipynb
-          - Catalog Quicklooks: examples/catalog-quicklooks.ipynb
+      - Run Analytics Workflow: analytics_workflow.md
+    - Advanced:
+        - Functionality: structure.md
+        - Visualizations: visualizations.md
+        - Webhooks: webhooks.md
+        - Example Notebooks:
+          - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
+          - NEXTMap One - Elevation Data (Streaming) and Viewshed: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
+          - Open Street Map: examples/data-block-examples/osm-example.ipynb
           - Ship Identification: examples/ship-identification.ipynb
-          - Lake Monitoring: examples/lake-monitoring.ipynb
     - Code Reference:
         - up42: reference/up42-reference.md
         - Project: reference/project-reference.md
@@ -153,6 +136,7 @@ extra_css:
 markdown_extensions:
   - markdown.extensions.admonition
   - markdown.extensions.attr_list
+  - markdown.extensions.md_in_html
   - markdown.extensions.def_list
   - markdown.extensions.footnotes
   - markdown.extensions.meta

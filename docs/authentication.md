@@ -1,47 +1,55 @@
 # :key: Authentication
 
-To create and run a workflow, you first need to authenticate with **UP42** via your **project credentials**.
+To use the UP42 Python SDK, you first need to authenticate with **UP42** via your **project credentials**:
 
-## Get your Project credentials
-
-Log in to **[UP42.com](https://console.up42.com)** and create a new project or select an existing one.
-In the project's **Developers section** you can find the **project_id** and **project_api_key**.
-
-![](assets/auth.png)
-
- 
-## Authenticate  
-
-Authenticate by providing the project credentials (see step above) **directly in the code**:
-
-``` py title="Inline authentication"
+```python
 import up42
-up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
+up42.authenticate(project_id="your-project-ID", 
+                  project_api_key="your-project-API-key")
 ```
 
-<br>
+### Get your Project credentials
 
-Or create a simple **configuration json file** and provide its file path:
+Log in to **[UP42.com](https://console.up42.com)** and select a **Project**.
+In the project's **Developers section** you can find the **Project ID** and **Project API key**.
+
+<figure markdown>
+  ![Image title](assets/auth.png){ width="680" }
+</figure>
+
+### Authenticate
+
+The most simple way to authenticate is to enter the project credentials directly in
+your code. After successful authentication you will receive a confirmation message.
+
+```python
+import up42
+up42.authenticate(project_id="your-project-ID", 
+                  project_api_key="your-project-API-key")
+```
+
+```
+YYYY-MM-DD HH:MM:SS - Authentication with UP42 successful!
+```
+
+### Optional: Use configuration file
+
+In order to hide your credentials, you can also read your credentials from a configuration JSON file.
+
  
-``` json title="conf.json"
+```json title="Create a config.json file"
 {
-  "project_id": "your project ID",
+  "project_id": "your-project-ID",
   "project_api_key": "your-project-api-key"
 }
 ```
 
-``` py title="Authentication from conf.json file"
+```python title="Authentication from config.json file"
 import up42
 up42.authenticate(cfg_file="config.json")
 ```
 
-If everything went well, you should receive a confirmation message
 
-!!! Success "Expected output"  
-	```
-	YYYY-MM-DD HH:MM:SS - Got credentials from config file.
-	YYYY-MM-DD HH:MM:SS - Authentication with UP42 successful!
-	```
 <br>
 
-Continue with the [Structure chapter](structure.md)!
+⏭️ Continue with the [Search & Order data chapter](search_order.md).

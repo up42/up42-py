@@ -1,12 +1,12 @@
-# :card_box: Structure
+# :card_box: Functionality
 
-## Hierarchy
+## Structure
 
-- The Python SDK uses nine classes, representing the **hierarchical structure of UP42**:
-    - **Project > Workflow > Job > JobTask**
-    - **JobCollection**
+- The Python SDK uses multiple classes, representing the **hierarchical structure of UP42**:
     - **Catalog > Order**
     - **Storage > Asset**
+    - **Project > Workflow > Job/JobCollection > JobTask**
+
 - Each class object can **spawn elements of one level below**, e.g.
     - `project = up42.initialize_project()`
     - `workflow = project.create_workflow()`
@@ -16,7 +16,7 @@
 ## Functionality
 
 A quick overview how the different class objects are **created, used and which functionality** they offer. More detail
-in the tutorials and [code reference](up42-reference.md).
+in the [code reference](up42-reference.md).
 
 !!! example "Available Functionality"
     === "up42"
@@ -95,8 +95,3 @@ in the tutorials and [code reference](up42-reference.md).
         <br>
         Available functions, see also [**Webhooks reference**](webhooks-reference.md): 
         {{ format_funcs(funcs_webhook) }}
-
-<br>
-
-!!! Success "Success!"
-    Continue with the [Catalog Search chapter](catalog.md)!

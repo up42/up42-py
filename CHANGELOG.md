@@ -1,4 +1,4 @@
-# :calendar: Changelog & Release Notes
+# :calendar: Changelog
 
 To update your installation to the latest version use:
 

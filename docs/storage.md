@@ -1,21 +1,23 @@
 # :file_cabinet: Storage
 
-**Access all previous orders or assets in your account.**
+Access all previous orders or assets in your account.
 
-## Initialize Storage
+## **Authenticate**
+
+First connect with UP42 as explained in the [authentication chapter](authentication.md).
 
 ```python
 import up42
-up42.authenticate(project_id="123", project_api_key="456")
-
-storage = up42.initialize_storage()
+up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
 ```
 
-## Access orders or assets
 
-Get a list of all order or asset objects in your user storage:
+## **Access & Download Assets**
+
+Get a list of all order or asset objects in your user storage.
 
 ```python
+storage = up42.initialize_storage()
 orders = storage.get_orders(limit=100, sortby="createdAt")
 ```
 
@@ -25,13 +27,8 @@ assets = storage.get_assets(limit=100, sortby="size", descending=False)
 
 Or access a specific order or asset via `up42.initialize_order(order_id="123")` or`up42.initialize_asset(asset_id="123")`   
 
-## Download assets
+You can download an asset via:
 
 ```python
 assets[0].download()
 ```
-
-<br>
-
-!!! Success "Success!"
-    Continue with the [Detailed Example](https://sdk.up42.com/guides/detailed-example/)!
