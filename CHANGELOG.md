@@ -29,6 +29,9 @@ You can determine your currently installed version via:
     ```
 
 ## Versions
+### [0.22.1](https://pypi.org/project/up42-py/) (2022-07-19)
+- Fix conda release (include requirements-viz file)
+
 ### [0.22.0](https://pypi.org/project/up42-py/) (2022-07-05)
 - Adds webhooks functionality to the SDK, see new [webhooks docs chapter](https://sdk.up42.com/webhooks/).
 - Introduces optional installation option for the visualization functionalities. The required dependencies are now 
