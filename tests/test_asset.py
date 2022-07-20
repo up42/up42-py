@@ -85,11 +85,27 @@ def test_asset_download(asset_mock, requests_mock):
 
 @pytest.mark.live
 def test_asset_download_live(asset_live):
+    """
+    tgz from block (storage)
+    """
     with tempfile.TemporaryDirectory() as tempdir:
         out_files = asset_live.download(Path(tempdir))
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 44
+
+
+@pytest.mark.live
+def test_asset_download_live_2(asset_live):
+    """
+    zip from order (storage)
+    """
+    asset_live.asset_id = os.getenv("TEST_UP42_ASSET_ID_2_zip")
+    with tempfile.TemporaryDirectory() as tempdir:
+        out_files = asset_live.download(Path(tempdir))
+        for file in out_files:
+            assert Path(file).exists()
+        assert len(out_files) == 42
 
 
 def test_asset_download_no_unpacking(asset_mock, requests_mock):
