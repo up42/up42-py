@@ -29,6 +29,10 @@ You can determine your currently installed version via:
     ```
 
 ## Versions
+
+### [0.22.2](https://pypi.org/project/up42-py/) (2022-07-21)
+- Fix unpacking of order assets if no output topfolder inherent in archive
+
 ### [0.22.1](https://pypi.org/project/up42-py/) (2022-07-19)
 - Fix conda release (include requirements-viz file)
 
