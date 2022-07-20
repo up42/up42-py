@@ -83,6 +83,15 @@ def test_asset_download(asset_mock, requests_mock):
         assert out_paths[1].parent.is_dir()
 
 
+@pytest.mark.live
+def test_asset_download_live(asset_live):
+    with tempfile.TemporaryDirectory() as tempdir:
+        out_files = asset_live.download(Path(tempdir))
+        for file in out_files:
+            assert Path(file).exists()
+        assert len(out_files) == 44
+
+
 def test_asset_download_no_unpacking(asset_mock, requests_mock):
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as src_tgz:
@@ -98,12 +107,3 @@ def test_asset_download_no_unpacking(asset_mock, requests_mock):
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 1
-
-
-@pytest.mark.live
-def test_asset_download_live(asset_live):
-    with tempfile.TemporaryDirectory() as tempdir:
-        out_files = asset_live.download(Path(tempdir))
-        for file in out_files:
-            assert Path(file).exists()
-        assert len(out_files) == 44
