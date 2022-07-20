@@ -12,8 +12,8 @@ from up42.jobtask import JobTask
 from up42.viztools import VizTools
 from up42.utils import (
     get_logger,
-    download_results_from_gcs,
-    download_results_from_gcs_without_unpacking,
+    download_from_gcs_unpack,
+    download_gcs_not_unpack,
 )
 
 logger = get_logger(__name__)
@@ -212,12 +212,12 @@ class Job(VizTools):
 
         download_url = self._get_download_url()
         if unpacking:
-            out_filepaths = download_results_from_gcs(
+            out_filepaths = download_from_gcs_unpack(
                 download_url=download_url,
                 output_directory=output_directory,
             )
         else:
-            out_filepaths = download_results_from_gcs_without_unpacking(
+            out_filepaths = download_gcs_not_unpack(
                 download_url=download_url,
                 output_directory=output_directory,
             )

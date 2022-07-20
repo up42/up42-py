@@ -12,7 +12,7 @@ from up42.utils import (
     format_time_period,
     any_vector_to_fc,
     fc_to_query_geometry,
-    download_results_from_gcs,
+    download_from_gcs_unpack,
     filter_jobs_on_mode,
 )
 from up42.auth import Auth
