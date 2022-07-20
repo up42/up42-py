@@ -105,25 +105,27 @@ def download_from_gcs_unpack(
             logger.debug(error_message)
             raise requests.exceptions.HTTPError(error_message)
 
-    # Unpack and avoid inherent output/ .. directory
+    # Unpack
     # Order results are zip, job results are tgz(tar.gzipped)
     out_filepaths: List[Path] = []
     if tarfile.is_tarfile(out_temp):
         with tarfile.open(out_temp) as tar_file:
             for tar_member in tar_file.getmembers():
                 if tar_member.isfile():
-                    new_name = tar_member.name.split("output/")[1]
-                    tar_member.name = new_name
+                    # Avoid up42 inherent output/ .. directory
+                    if "output/" in tar_member.name:
+                        tar_member.name = tar_member.name.split("output/")[1]
                     tar_file.extract(tar_member, output_directory)
-                    out_filepaths.append(Path(output_directory) / new_name)
+                    out_filepaths.append(Path(output_directory) / tar_member.name)
     elif zipfile.is_zipfile(out_temp):
         with zipfile.ZipFile(out_temp) as zip_file:
             for zip_info in zip_file.infolist():
                 if not zip_info.filename.endswith("/"):
-                    new_name = zip_info.filename.split("output/")[1]
-                    zip_info.filename = new_name
+                    # Avoid up42 inherent output/ .. directory
+                    if "output/" in zip_info.filename:
+                        zip_info.filename = zip_info.filename.split("output/")[1]
                     zip_file.extract(zip_info, output_directory)
-                    out_filepaths.append(Path(output_directory) / new_name)
+                    out_filepaths.append(Path(output_directory) / zip_info.filename)
     else:
         raise ValueError("Downloaded file is not a TGZ/TAR or ZIP archive.")
 
