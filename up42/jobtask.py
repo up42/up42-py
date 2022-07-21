@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from up42.auth import Auth
 from up42.viztools import VizTools
-from up42.utils import get_logger, download_results_from_gcs
+from up42.utils import get_logger, download_from_gcs_unpack
 
 logger = get_logger(__name__)
 
@@ -121,7 +121,7 @@ class JobTask(VizTools):
         logger.info(f"Download directory: {str(output_directory)}")
 
         download_url = self._get_download_url()
-        out_filepaths = download_results_from_gcs(
+        out_filepaths = download_from_gcs_unpack(
             download_url=download_url,
             output_directory=output_directory,
         )
