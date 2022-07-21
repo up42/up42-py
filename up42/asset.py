@@ -4,8 +4,8 @@ from typing import List, Union, Optional
 from up42.auth import Auth
 from up42.utils import (
     get_logger,
-    download_results_from_gcs,
-    download_results_from_gcs_without_unpacking,
+    download_from_gcs_unpack,
+    download_gcs_not_unpack,
 )
 
 logger = get_logger(__name__)
@@ -73,7 +73,7 @@ class Asset:
         Args:
             output_directory: The file output directory, defaults to the current working
                 directory.
-            unpacking: By default the final result which is in TAR or ZIP archive format will be unpacked.
+            unpacking: By default the download TGZ/TAR or ZIP archive file will be unpacked.
 
         Returns:
             List of the downloaded asset filepaths.
@@ -91,12 +91,12 @@ class Asset:
 
         download_url = self._get_download_url()
         if unpacking:
-            out_filepaths = download_results_from_gcs(
+            out_filepaths = download_from_gcs_unpack(
                 download_url=download_url,
                 output_directory=output_directory,
             )
         else:
-            out_filepaths = download_results_from_gcs_without_unpacking(
+            out_filepaths = download_gcs_not_unpack(
                 download_url=download_url,
                 output_directory=output_directory,
             )

@@ -25,7 +25,7 @@ from .context import (
 
 
 TOKEN = "token_123"
-DOWNLOAD_URL = "http://up42.api.com/abcdef"
+DOWNLOAD_URL = "http://up42.api.com/abcdef.tgz"
 
 PROJECT_ID = "project_id_123"
 PROJECT_APIKEY = "project_apikey_123"

@@ -78,11 +78,12 @@ def deprecation(
     return actual_decorator
 
 
-def download_results_from_gcs(
-    download_url: str, output_directory: Union[str, Path]
+def download_from_gcs_unpack(
+    download_url: str,
+    output_directory: Union[str, Path],
 ) -> List[str]:
     """
-    General download function for results of job and jobtask from cloud storage
+    General download function for results of storage assets, job & jobtask from cloud storage
     provider.
 
     Args:
@@ -91,40 +92,42 @@ def download_results_from_gcs(
             directory.
     """
     # Download
-    compressed_file = tempfile.mktemp()
-    with open(compressed_file, "wb") as dst_tgz:
+    out_temp = tempfile.mktemp()
+    with open(out_temp, "wb") as dst:
         try:
             r = requests.get(download_url, stream=True)
             r.raise_for_status()
             for chunk in tqdm(r.iter_content(chunk_size=1024)):
                 if chunk:  # filter out keep-alive new chunks
-                    dst_tgz.write(chunk)
+                    dst.write(chunk)
         except requests.exceptions.HTTPError as err:
-            logger.debug(f"Connection error, please try again! {err}")
-            raise requests.exceptions.HTTPError(
-                f"Connection error, please try again! {err}"
-            )
+            error_message = f"Connection error, please try again! {err}"
+            logger.debug(error_message)
+            raise requests.exceptions.HTTPError(error_message)
 
-    # Unpack and avoid inherent output/ .. directory
-    out_filepaths = []
-    if tarfile.is_tarfile(compressed_file):
-        with tarfile.open(compressed_file) as tar_file:
+    # Unpack
+    # Order results are zip, job results are tgz(tar.gzipped)
+    out_filepaths: List[Path] = []
+    if tarfile.is_tarfile(out_temp):
+        with tarfile.open(out_temp) as tar_file:
             for tar_member in tar_file.getmembers():
                 if tar_member.isfile():
-                    new_name = tar_member.name.split("output/")[1]
-                    tar_member.name = new_name
+                    # Avoid up42 inherent output/ .. directory
+                    if "output/" in tar_member.name:
+                        tar_member.name = tar_member.name.split("output/")[1]
                     tar_file.extract(tar_member, output_directory)
-                    out_filepaths.append(Path(output_directory) / new_name)
-    elif zipfile.is_zipfile(compressed_file):
-        with zipfile.ZipFile(compressed_file) as zip_file:
+                    out_filepaths.append(Path(output_directory) / tar_member.name)
+    elif zipfile.is_zipfile(out_temp):
+        with zipfile.ZipFile(out_temp) as zip_file:
             for zip_info in zip_file.infolist():
                 if not zip_info.filename.endswith("/"):
-                    new_name = zip_info.filename.split("output/")[1]
-                    zip_info.filename = new_name
+                    # Avoid up42 inherent output/ .. directory
+                    if "output/" in zip_info.filename:
+                        zip_info.filename = zip_info.filename.split("output/")[1]
                     zip_file.extract(zip_info, output_directory)
-                    out_filepaths.append(Path(output_directory) / new_name)
+                    out_filepaths.append(Path(output_directory) / zip_info.filename)
     else:
-        raise ValueError("Downloaded file is not a TAR or ZIP archive.")
+        raise ValueError("Downloaded file is not a TGZ/TAR or ZIP archive.")
 
     logger.info(
         f"Download successful of {len(out_filepaths)} files to output_directory "
@@ -134,11 +137,11 @@ def download_results_from_gcs(
     return out_filepaths  # type: ignore
 
 
-def download_results_from_gcs_without_unpacking(
+def download_gcs_not_unpack(
     download_url: str, output_directory: Union[str, Path]
 ) -> List[str]:
     """
-    General download function for results of job and jobtask from cloud storage
+    General download function for assets, job and jobtasks from cloud storage
     provider.
 
     Args:
@@ -146,11 +149,15 @@ def download_results_from_gcs_without_unpacking(
         output_directory: The file output directory, defaults to the current working
             directory.
     """
-    output_directory = Path(output_directory)
+    if ".tgz" in download_url:
+        file_ending = ".tgz"
+    elif ".zip" in download_url:
+        file_ending = ".zip"
+    else:
+        ValueError("To be downloaded file is not a TGZ/TAR or ZIP archive.")
+    out_fp = Path().joinpath(output_directory, f"output.{file_ending}")
 
     # Download
-    out_filepaths: List[str] = []
-    out_fp = Path().joinpath(output_directory, "output.tgz")
     with open(out_fp, "wb") as dst:
         try:
             r = requests.get(download_url, stream=True)
@@ -158,7 +165,6 @@ def download_results_from_gcs_without_unpacking(
             for chunk in tqdm(r.iter_content(chunk_size=1024)):
                 if chunk:  # filter out keep-alive new chunks
                     dst.write(chunk)
-            out_filepaths.append(str(out_fp))
         except requests.exceptions.HTTPError as err:
             logger.debug(f"Connection error, please try again! {err}")
             raise requests.exceptions.HTTPError(
@@ -166,9 +172,10 @@ def download_results_from_gcs_without_unpacking(
             )
 
     logger.info(
-        f"Download successful of {len(out_filepaths)} files to output_directory"
-        f" '{output_directory}': {[Path(p).name for p in out_filepaths]}"
+        f"Download successful of original archive file to output_directory"
+        f" '{output_directory}': {out_fp.name}. To automatically unpack the archive use `unpacking=True`"
     )
+    out_filepaths = [str(out_fp)]
     return out_filepaths
 
 

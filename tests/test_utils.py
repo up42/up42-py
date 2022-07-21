@@ -13,7 +13,7 @@ from .context import (
     format_time_period,
     any_vector_to_fc,
     fc_to_query_geometry,
-    download_results_from_gcs,
+    download_from_gcs_unpack,
     filter_jobs_on_mode,
 )
 
@@ -257,7 +257,7 @@ def test_fc_to_query_geometry_multipolygon_raises():
     )
 
 
-def test_download_result_from_gcs(requests_mock):
+def test_download_gcs_unpack_tgz(requests_mock):
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
@@ -270,7 +270,7 @@ def test_download_result_from_gcs(requests_mock):
     with tempfile.TemporaryDirectory() as tempdir:
         with open(Path(tempdir) / "dummy.txt", "w") as fp:
             fp.write("dummy")
-        out_files = download_results_from_gcs(
+        out_files = download_from_gcs_unpack(
             download_url=cloud_storage_url,
             output_directory=tempdir,
         )
@@ -281,7 +281,7 @@ def test_download_result_from_gcs(requests_mock):
         assert not (Path(tempdir) / "output").exists()
 
 
-def test_download_result_from_gcs_zip(requests_mock):
+def test_download_gcs_unpack_zip(requests_mock):
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
     out_zip = Path(__file__).resolve().parent / "mock_data/result_tif.zip"
@@ -295,7 +295,7 @@ def test_download_result_from_gcs_zip(requests_mock):
     with tempfile.TemporaryDirectory() as tempdir:
         with open(Path(tempdir) / "dummy.txt", "w") as fp:
             fp.write("dummy")
-        out_files = download_results_from_gcs(
+        out_files = download_from_gcs_unpack(
             download_url=cloud_storage_url,
             output_directory=tempdir,
         )
@@ -306,7 +306,7 @@ def test_download_result_from_gcs_zip(requests_mock):
         assert not (Path(tempdir) / "output").exists()
 
 
-def test_download_result_from_gcs_not_compressed(requests_mock):
+def test_download_gcs_not_unpack(requests_mock):
     cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
     out_zip = Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
@@ -321,7 +321,7 @@ def test_download_result_from_gcs_not_compressed(requests_mock):
         with open(Path(tempdir) / "dummy.txt", "w") as fp:
             fp.write("dummy")
         with pytest.raises(ValueError):
-            download_results_from_gcs(
+            download_from_gcs_unpack(
                 download_url=cloud_storage_url,
                 output_directory=tempdir,
             )
