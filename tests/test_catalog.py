@@ -92,7 +92,7 @@ def test_search(catalog_mock):
     assert search_results.shape == (4, 15)
 
 
-# @pytest.mark.live
+@pytest.mark.live
 def test_search_live(catalog_live):
     search_results = catalog_live.search(mock_search_parameters)
     assert isinstance(search_results, gpd.GeoDataFrame)
