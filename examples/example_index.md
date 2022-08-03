@@ -6,7 +6,6 @@ This section provides more extensive examples & use cases for the UP42 Python SD
 interactively with Binder [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples) !
 
 ## Basic Data Block Examples
-[Airbus-Global Seeps Sample](https://sdk.up42.com/examples/data-block-examples/airbus-globalseeps)  
 [ESA-Sentinel-5P Level3](https://sdk.up42.com/examples/data-block-examples/esa-sentinel5p-l3-example)  
 [ExactEarth Historical Vessel Tracks](https://sdk.up42.com/examples/data-block-examples/exactearth-hvt)  
 [Hexagon 30cm Download](https://sdk.up42.com/examples/data-block-examples/hexagon-hxgn-content-30cm-download-example)  
