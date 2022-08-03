@@ -55,10 +55,11 @@
       "properties": {
         "id": "a6f99ad8-493b-46ed-9f93-94f06bc1ab1e",
         "acquisitionDate": "2015-06-04T14:43:40Z",
+        "start_datetime": null,
+        "end_datetime": null,
         "constellation": "phr",
         "collection": "phr",
         "providerName": "oneatlas",
-        "blockNames": [],
         "cloudCoverage": 8.0,
         "up42:usageType": [
           "DATA"
