@@ -89,29 +89,30 @@ def test_search(catalog_mock):
     search_results = catalog_mock.search(mock_search_parameters)
 
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (4, 14)
+    assert search_results.shape == (4, 15)
 
 
 @pytest.mark.live
 def test_search_live(catalog_live):
     search_results = catalog_live.search(mock_search_parameters)
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (4, 14)
+    assert search_results.shape == (4, 15)
     assert list(search_results.columns) == [
         "geometry",
         "id",
-        "acquisitionDate",
         "constellation",
         "collection",
         "providerName",
-        "blockNames",
-        "cloudCoverage",
         "up42:usageType",
         "providerProperties",
         "sceneId",
+        "producer",
+        "acquisitionDate",
+        "start_datetime",
+        "end_datetime",
+        "cloudCoverage",
         "resolution",
         "deliveryTime",
-        "producer",
     ]
     assert list(search_results.index) == list(range(search_results.shape[0]))
 
@@ -233,7 +234,7 @@ def test_search_catalog_pagination(catalog_mock):
     }
     search_results = catalog_mock.search(search_params_limit_614)
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (614, 14)
+    assert search_results.shape == (614, 15)
 
 
 @pytest.mark.live
@@ -251,7 +252,7 @@ def test_search_catalog_pagination_live(catalog_live):
     }
     search_results = catalog_live.search(search_params_limit_720)
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (720, 14)
+    assert search_results.shape == (720, 15)
     assert search_results.collection.nunique() == 2
     assert all(search_results.collection.isin(["phr", "spot"]))
     period_column = pd.to_datetime(search_results.acquisitionDate)
@@ -312,7 +313,7 @@ def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
     }
     search_results = catalog_pagination_mock.search(search_params_limit_614)
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (550, 14)
+    assert search_results.shape == (550, 15)
     assert all(search_results.collection.isin(["phr", "spot"]))
 
 
