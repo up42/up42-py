@@ -1,10 +1,19 @@
 version: 2.1
 
+orbs:
+  sonarcloud: sonarsource/sonarcloud@1.0.3
+
+# variables
+workspace: &workspace-dir /tmp/workspace
+
 jobs:
   test:
+    working_directory: *workspace-dir
     docker:
       - image: circleci/python:3.7
     steps:
+      - attach_workspace:
+          at: *workspace-dir
       - checkout
       - run:
           name: Install requirements
@@ -15,10 +24,26 @@ jobs:
       - run:
           name: Runnning tests
           command: make test
+      - store_artifacts:
+          path: .coverage-reports/coverage.xml
+      - store_artifacts:
+          path: .coverage
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - up42-py
+            - poetry.lock
+            - pyproject.toml
+            - Dockerfile
+            - .coverage-reports
+            - .circleci
+            - sonar-project.properties
   test_live:
     docker:
       - image: circleci/python:3.7
     steps:
+      - attach_workspace:
+          at: *workspace-dir
       - checkout
       - run:
           name: Install requirements
@@ -28,7 +53,22 @@ jobs:
             pip install -r requirements-dev.txt
       - run:
           name: Runnning tests
-          command: python -m pytest --runlive --durations=5
+          command: python -m pytest --runlive --durations=5 --cov=up42\
+                   --cov-report=xml:.coverage-reports/coverage.xml
+      - store_artifacts:
+          path: .coverage-reports/coverage.xml
+      - store_artifacts:
+          path: .coverage
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - up42-py
+            - poetry.lock
+            - pyproject.toml
+            - Dockerfile
+            - .coverage-reports
+            - .circleci
+            - sonar-project.properties
   deploy:
     docker:
       - image: circleci/python:3.7
@@ -50,6 +90,10 @@ workflows:
   test_and_deploy:
     jobs:
       - test
+      - sonar:
+          context: up42-py
+          requires:
+            - test
       - hold_before_deploy:
           type: approval
           requires:
@@ -74,4 +118,12 @@ workflows:
     jobs:
       - test_live:
           context: up42-py-live-testing
-    
+      sonar:
+        working_directory: *workspace-dir
+        docker:
+          - image: cimg/base:2021.04
+        steps:
+          - attach_workspace:
+            at: *workspace-dir
+          - sonarcloud/scan:
+              sonar_token_variable_name: SONAR_TOKEN

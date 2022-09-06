@@ -18,7 +18,7 @@ test:
 	-rm -r .pytest_cache
 	black .
 	python -m pytest --pylint --pylint-rcfile=../../pylintrc --mypy --mypy-ignore-missing-imports --cov=up42/ --durations=3
-	coverage-badge -f -o coverage.svg
+	coverage-badge -f -o coverage.svg --cov-report=xml:.coverage-reports/coverage.xml
 
 test[live]:
 	-rm -r .pytest_cache
