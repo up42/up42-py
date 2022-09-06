@@ -38,6 +38,15 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
+  sonar:
+    working_directory: *workspace-dir
+    docker:
+      - image: cimg/base:2021.04
+    steps:
+      - attach_workspace:
+          at: *workspace-dir
+      - sonarcloud/scan:
+          sonar_token_variable_name: SONAR_TOKEN
   test_live:
     docker:
       - image: circleci/python:3.7
@@ -91,7 +100,6 @@ workflows:
     jobs:
       - test
       - sonar:
-          context: up42-py
           requires:
             - test
       - hold_before_deploy:
@@ -118,12 +126,3 @@ workflows:
     jobs:
       - test_live:
           context: up42-py-live-testing
-      sonar:
-        working_directory: *workspace-dir
-        docker:
-          - image: cimg/base:2021.04
-        steps:
-          - attach_workspace:
-            at: *workspace-dir
-          - sonarcloud/scan:
-              sonar_token_variable_name: SONAR_TOKEN
