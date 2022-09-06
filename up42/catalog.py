@@ -44,6 +44,17 @@ class Catalog(VizTools):
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
 
+    def get_data_products(self) -> Union[Dict, List]:
+        """
+        Get the available data products (combination of collection and data configuration, e.g.
+        Pleiades Display product. If a collection offers data products configurations, those options are available
+        for each image in the collection (e.g. Oneatlas phr display & reflectance). Otherwise they are split into
+        independent collections.
+        """
+        url = f"{self.auth._endpoint()}/data-products"
+        json_response = self.auth._request("GET", url)
+        return json_response["data"]
+
     def get_collections(self) -> Union[Dict, List]:
         """
         Get the available data collections.

@@ -1118,11 +1118,18 @@ def catalog_mock(auth_mock, requests_mock):
         json=collections_response,
     )
 
+    url_data_products = f"{auth_mock._endpoint()}/data-products"
+    with open(
+        Path(__file__).resolve().parent / "mock_data/data_products.json"
+    ) as json_file:
+        json_data_products = json.load(json_file)
+        requests_mock.get(url=url_data_products, json={"data": json_data_products})
+
+    url_search = f"{auth_mock._endpoint()}/catalog/hosts/oneatlas/stac/search"
     with open(
         Path(__file__).resolve().parent / "mock_data/search_response.json"
     ) as json_file:
         json_search_response = json.load(json_file)
-    url_search = f"{auth_mock._endpoint()}/catalog/hosts/oneatlas/stac/search"
     requests_mock.post(
         url=url_search,
         json=json_search_response,

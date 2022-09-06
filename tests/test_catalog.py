@@ -41,6 +41,19 @@ def test_get_collections_live(catalog_live):
     assert collections[0]["name"]
 
 
+def test_get_data_products(catalog_mock):
+    data_products = catalog_mock.get_data_products()
+    assert isinstance(data_products, list)
+    assert data_products[0]["id"]
+
+
+@pytest.mark.live
+def test_get_data_products_live(catalog_live):
+    data_products = catalog_live.get_data_products()
+    assert isinstance(data_products, list)
+    assert data_products[0]["id"]
+
+
 def test_construct_parameters(catalog_mock):
     search_parameters = catalog_mock.construct_parameters(
         geometry=mock_search_parameters["intersects"],
