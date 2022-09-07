@@ -51,8 +51,6 @@ jobs:
     docker:
       - image: circleci/python:3.7
     steps:
-      - attach_workspace:
-          at: *workspace-dir
       - checkout
       - run:
           name: Install requirements
@@ -62,22 +60,9 @@ jobs:
             pip install -r requirements-dev.txt
       - run:
           name: Runnning tests
-          command: python -m pytest --runlive --durations=5 --cov=up42\
-                   --cov-report=xml:.coverage-reports/coverage.xml
+          command: python -m pytest --runlive --durations=5 --cov=up42
       - store_artifacts:
           path: .coverage-reports/coverage.xml
-      - store_artifacts:
-          path: .coverage
-      - persist_to_workspace:
-          root: ./
-          paths:
-            - up42-py
-            - poetry.lock
-            - pyproject.toml
-            - Dockerfile
-            - .coverage-reports
-            - .circleci
-            - sonar-project.properties
   deploy:
     docker:
       - image: circleci/python:3.7
