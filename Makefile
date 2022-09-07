@@ -17,8 +17,8 @@ install[dev]:
 test:
 	-rm -r .pytest_cache
 	black .
-	python -m pytest --pylint --pylint-rcfile=../../pylintrc --mypy --mypy-ignore-missing-imports --cov=up42/ --durations=3
-	coverage-badge -f -o coverage.svg --cov-report=xml:.coverage-reports/coverage.xml
+	python -m pytest --pylint --pylint-rcfile=../../pylintrc --mypy --mypy-ignore-missing-imports --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
+	coverage-badge -f -o coverage.svg
 
 test[live]:
 	-rm -r .pytest_cache
