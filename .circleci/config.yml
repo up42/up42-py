@@ -31,10 +31,7 @@ jobs:
       - persist_to_workspace:
           root: ./
           paths:
-            - up42-py
-            - poetry.lock
-            - pyproject.toml
-            - Dockerfile
+            - up42
             - .coverage-reports
             - .circleci
             - sonar-project.properties
