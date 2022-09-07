@@ -57,9 +57,7 @@ jobs:
             pip install -r requirements-dev.txt
       - run:
           name: Runnning tests
-          command: python -m pytest --runlive --durations=5 --cov=up42
-      - store_artifacts:
-          path: .coverage-reports/coverage.xml
+          command: python -m pytest --runlive --durations=5
   deploy:
     docker:
       - image: circleci/python:3.7
