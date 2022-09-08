@@ -565,9 +565,9 @@ if _viz_installed:
             super().render(**kwargs)
 
             figure = self.get_root()
-            assert isinstance(figure, Figure), (
-                "You cannot render this Element if it is not in a Figure."
-            )
+            assert isinstance(
+                figure, Figure
+            ), "You cannot render this Element if it is not in a Figure."
 
             figure.header.add_child(
                 JavascriptLink(
