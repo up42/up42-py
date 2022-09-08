@@ -29,7 +29,7 @@ def check_auth_tools(func, *args, **kwargs):
     @wraps(func)  # required for mkdocstrings
     def inner(self, *args, **kwargs):
         if not hasattr(self, "auth"):
-            raise Exception(
+            raise RuntimeError(
                 "Requires authentication with UP42, use up42.authenticate()!"
             )
         return func(self, *args, **kwargs)
