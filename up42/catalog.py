@@ -44,7 +44,7 @@ class Catalog(VizTools):
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
 
-    def get_data_products(self) -> Union[Dict, List]:
+    def get_data_products(self, basic: bool=True) -> Union[Dict, List]:
         """
         Get the available data products (combination of collection and data configuration, e.g.
         Pleiades Display product. If a collection offers data products configurations, those options are available
@@ -53,7 +53,21 @@ class Catalog(VizTools):
         """
         url = f"{self.auth._endpoint()}/data-products"
         json_response = self.auth._request("GET", url)
-        return json_response["data"]
+        products = json_response["data"]
+
+        if basic:
+            collection_names = list(set([p["collectionName"] for p in products if p["collection"]["isIntegrated"]]))
+            collection_overview = {}
+            for c in collection_names:
+                products_for_collection = [p for p in products if p["collectionName"] == c and p["productConfiguration"]["isIntegrated"]]
+                if products_for_collection:
+                    title = products_for_collection[0]["collection"]["title"]
+                    host = products_for_collection[0]["collection"]["host"]["name"]
+                    data_products = {p["productConfiguration"]["title"] : p["id"] for p in products_for_collection}
+                collection_overview[title] = {"collection": c, "host": host, "data_products": data_products}
+            return collection_overview
+        else:
+            return products
 
     def get_collections(self) -> Union[Dict, List]:
         """
