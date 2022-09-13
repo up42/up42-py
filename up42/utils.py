@@ -92,7 +92,7 @@ def download_from_gcs_unpack(
             directory.
     """
     # Download
-    out_temp = tempfile.mktemp()
+    out_temp = tempfile.mkstemp()[1]
     with open(out_temp, "wb") as dst:
         try:
             r = requests.get(download_url, stream=True)

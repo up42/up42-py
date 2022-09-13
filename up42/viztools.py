@@ -342,7 +342,6 @@ class VizTools:
             name_column: Name of the feature property that provides the Feature/Layer name.
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
-        # TODO: Surface optional filepaths? or remove option alltogether?
         if self.results is None:
             raise ValueError(
                 "You first need to download the results via job.download_results()!"
@@ -566,9 +565,9 @@ if _viz_installed:
             super().render(**kwargs)
 
             figure = self.get_root()
-            assert isinstance(figure, Figure), (
-                "You cannot render this Element " "if it is not in a Figure."
-            )
+            assert isinstance(
+                figure, Figure
+            ), "You cannot render this Element if it is not in a Figure."
 
             figure.header.add_child(
                 JavascriptLink(
@@ -606,7 +605,6 @@ if _viz_installed:
                     }
                 </style>
             """
-            # TODO: How to change hover color?
             export_button = """<a href='#' id='export'>Export as<br/>GeoJson</a>"""
             if self.export:
                 figure.header.add_child(Element(export_style), name="export")
