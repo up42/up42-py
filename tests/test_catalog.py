@@ -64,8 +64,8 @@ def test_get_data_products_live(catalog_live):
     assert data_products[0]["id"]
 
 
-def test_construct_parameters(catalog_mock):
-    search_parameters = catalog_mock.construct_parameters(
+def test_construct_search_parameters(catalog_mock):
+    search_parameters = catalog_mock.construct_search_parameters(
         geometry=mock_search_parameters["intersects"],
         start_date="2014-01-01",
         end_date="2016-12-31",
@@ -85,14 +85,14 @@ def test_construct_parameters(catalog_mock):
     assert search_parameters["sortby"] == mock_search_parameters["sortby"]
 
 
-def test_construct_parameters_fc_multiple_features_raises(catalog_mock):
+def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
     with open(
         Path(__file__).resolve().parent / "mock_data/search_footprints.geojson"
     ) as json_file:
         fc = json.load(json_file)
 
     with pytest.raises(ValueError) as e:
-        catalog_mock.construct_parameters(
+        catalog_mock.construct_search_parameters(
             geometry=fc,
             start_date="2020-01-01",
             end_date="2020-08-10",
@@ -165,7 +165,7 @@ def test_search_usagetype(catalog_usagetype_mock):
     }
 
     for params in [params1, params2, params3]:
-        search_parameters = catalog_usagetype_mock.construct_parameters(
+        search_parameters = catalog_usagetype_mock.construct_search_parameters(
             start_date="2014-01-01T00:00:00",
             end_date="2020-12-31T23:59:59",
             collections=["phr"],
@@ -211,7 +211,7 @@ def test_search_usagetype_live(catalog_live, usage_type, result, result2):
     The result assertion needs to allow multiple combinations, e.g. when searching for
     ["DATA", "ANALYTICS"], the result can be ["DATA"], ["ANALYTICS"] or ["DATA", "ANALYTICS"].
     """
-    search_parameters = catalog_live.construct_parameters(
+    search_parameters = catalog_live.construct_search_parameters(
         start_date="2014-01-01T00:00:00",
         end_date="2020-12-31T23:59:59",
         collections=["phr"],

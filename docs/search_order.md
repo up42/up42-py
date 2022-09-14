@@ -35,13 +35,13 @@ aoi = up42.read_vector_file("data/aoi_washington.geojson")
 ```
 
 ```python
-search_parameters = catalog.construct_parameters(geometry=aoi, 
-                                                 start_date="2019-01-01",
-                                                 end_date="2021-12-31",
-                                                 collections=["phr"],
-                                                 max_cloudcover=20,
-                                                 sortby="cloudCoverage", 
-                                                 limit=10)
+search_parameters = catalog.construct_search_parameters(geometry=aoi,
+                                                        start_date="2019-01-01",
+                                                        end_date="2021-12-31",
+                                                        collections=["phr"],
+                                                        max_cloudcover=20,
+                                                        sortby="cloudCoverage",
+                                                        limit=10)
 ```
 ```python
 search_results = catalog.search(search_parameters=search_parameters)

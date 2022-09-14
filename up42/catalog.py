@@ -107,7 +107,7 @@ class Catalog(VizTools):
 
     # pylint: disable=dangerous-default-value
     @staticmethod
-    def construct_parameters(
+    def construct_search_parameters(
         geometry: Union[
             dict,
             Feature,
