@@ -58,21 +58,25 @@ class Catalog(VizTools):
         if not basic:
             return products
         else:
-            collection_names = list(
-                {
-                    product["collectionName"]
-                    for product in products
-                    if product["collection"]["isIntegrated"]
-                }
-            )
+            collection_names = set()
+            for product in products:
+                try:
+                    # isIntegrated potentially removed from future public API
+                    if product["collection"]["isIntegrated"]:
+                        collection_names.add(product["collectionName"])
+                except KeyError:
+                    collection_names.add(product["collectionName"])
+            collection_names = list(collection_names)
+
             collection_overview = {}
             for collection_name in collection_names:
-                products_for_collection = [
-                    product
-                    for product in products
-                    if product["collectionName"] == collection_name
-                    and product["productConfiguration"]["isIntegrated"]
-                ]
+                products_for_collection = []
+                for product in products:
+                    try:
+                        if product["productConfiguration"]["isIntegrated"]:
+                            products_for_collection.append(product)
+                    except KeyError:
+                        products_for_collection.append(product)
                 if products_for_collection:
                     title = products_for_collection[0]["collection"]["title"]
                     host = products_for_collection[0]["collection"]["host"]["name"]
@@ -362,32 +366,33 @@ class Catalog(VizTools):
         order_params = {"id": scene.id, "aoi": aoi_geometry}
         return data_provider_name, order_params
 
-    def estimate_order(
-        self,
-        geometry: Union[
-            dict,
-            Feature,
-            FeatureCollection,
-            list,
-            GeoDataFrame,
-            Polygon,
-        ],
-        scene: Series,
-    ) -> int:
+    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
         """
-        Estimate the cost of an order from an item/row in a result of `Catalog.search`.
+        Estimate the cost of an order.
 
         Args:
-            geometry: The intended output AOI of the order, one of dict, Feature, FeatureCollection, list,
-                GeoDataFrame, Polygon.
-            scene: A geopandas series with a  single item/row of the result of `Catalog.search`. For instance,
-                search_results.loc[0] for the first scene of a catalog search result.
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
 
         Returns:
             int: An estimated cost for the order in UP42 credits.
         """
-        data_provider_name, order_params = self._order_payload(geometry, scene)
-        return Order.estimate(self.auth, data_provider_name, order_params)
+        if order_parameters is not None:
+            pass
+        elif "scene" in kwargs and "geometry" in kwargs:
+            # Deprecated, to be removed, use order_parameters.
+            """
+            geometry: The intended output AOI of the order, one of
+            scene: A geopandas series with a  single item/row of the result of `Catalog.search`. For instance,
+                search_results.loc[0] for the first scene of a catalog search result.
+            """
+            scene: Series = kwargs.get("scene")
+            geometry: Union[
+                dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon
+            ] = kwargs.get("geometry")
+            data_provider_name, order_params = self._order_payload(geometry, scene)
+            return Order.estimate(self.auth, data_provider_name, order_params)
+        else:
+            logger.warning("Please provider order_parameters!")
 
     def place_order(
         self,
