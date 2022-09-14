@@ -58,37 +58,36 @@ class Catalog(VizTools):
         if not basic:
             return products
         else:
-            collection_names = set()
+            collection_overview = {}
+
             for product in products:
                 try:
-                    # isIntegrated potentially removed from future public API
-                    if product["collection"]["isIntegrated"]:
-                        collection_names.add(product["collectionName"])
+                    if not product["collection"]["isIntegrated"]:
+                        continue
+                except KeyError:  # isIntegrated potentially removed from future public API
+                    pass
+                try:
+                    if not product["productConfiguration"]["isIntegrated"]:
+                        continue
                 except KeyError:
-                    collection_names.add(product["collectionName"])
-            collection_names = list(collection_names)  # type: ignore
+                    pass
 
-            collection_overview = {}
-            for collection_name in collection_names:
-                products_for_collection = []
-                for product in products:
-                    try:
-                        if product["productConfiguration"]["isIntegrated"]:
-                            products_for_collection.append(product)
-                    except KeyError:
-                        products_for_collection.append(product)
-                if products_for_collection:
-                    title = products_for_collection[0]["collection"]["title"]
-                    host = products_for_collection[0]["collection"]["host"]["name"]
-                    data_products = {
-                        product["productConfiguration"]["title"]: product["id"]
-                        for product in products_for_collection
+                collection_title = product["collection"]["title"]
+                collection_name = product["collectionName"]
+                host = product["collection"]["host"]["name"]
+                data_product = {product["productConfiguration"]["title"]: product["id"]}
+
+                if collection_title not in collection_overview:
+                    collection_overview[collection_title] = {
+                        "collection": collection_name,
+                        "host": host,
+                        "data_products": data_product,
                     }
-                collection_overview[title] = {
-                    "collection": collection_name,
-                    "host": host,
-                    "data_products": data_products,
-                }
+                else:
+                    collection_overview[collection_title]["data_products"][
+                        product["productConfiguration"]["title"]
+                    ] = product["id"]
+
             return collection_overview
 
     def get_collections(self) -> Union[Dict, List]:
