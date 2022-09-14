@@ -55,7 +55,11 @@ class Catalog(VizTools):
         json_response = self.auth._request("GET", url)
         products = json_response["data"]
         if not basic:
-            products = [product for product in products if product["collection"]["type"]=="ARCHIVE"]
+            products = [
+                product
+                for product in products
+                if product["collection"]["type"] == "ARCHIVE"
+            ]
             return products
         else:
             collection_overview = {}
@@ -104,6 +108,11 @@ class Catalog(VizTools):
         url = f"{self.auth._endpoint()}/collections"
         json_response = self.auth._request("GET", url)
         return json_response["data"]
+
+    def construct_parameters(self, **kwargs):
+        message = "'catalog.construct_parameters has been replaced by 'catalog.construct_search_parameters'!"
+        warnings.warn(message, DeprecationWarning, stacklevel=2)
+        return self.construct_search_parameters(**kwargs)
 
     # pylint: disable=dangerous-default-value
     @staticmethod
