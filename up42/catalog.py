@@ -3,10 +3,9 @@ Catalog search functionality
 """
 
 from pathlib import Path
-from typing import Union, List, Tuple, Dict, Any
+from typing import Union, List, Dict, Any
 import warnings
 
-from pandas import Series
 from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
 from geojson import Feature, FeatureCollection
@@ -330,43 +329,6 @@ class Catalog(VizTools):
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
 
-    @staticmethod
-    def _order_payload(
-        geometry: Union[
-            dict,
-            Feature,
-            FeatureCollection,
-            list,
-            GeoDataFrame,
-            Polygon,
-        ],
-        scene: Series,
-    ) -> Tuple[str, dict]:
-        """
-        Helper that constructs necessary parameters for `Order.place` and `Order.estimate`.
-
-        Args:
-            geometry: The intended output AOI of the order, one of dict, Feature, FeatureCollection, list,
-                GeoDataFrame, Polygon.
-            scene: A geopandas series with a  single item/row of the result of `Catalog.search`. For instance,
-                search_results.loc[0] for the first scene of a catalog search result.
-
-        Returns:
-            str, dict: A tuple including a provider name and order parameters.
-        """
-        if not isinstance(scene, Series):
-            raise ValueError(
-                "`scene` parameter must be a GeoSeries, or a single item/row of a GeoDataFrame. "
-                "For instance, search_results.loc[0] returns a GeoSeries."
-            )
-        aoi_fc = any_vector_to_fc(
-            vector=geometry,
-        )
-        aoi_geometry = fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
-        data_provider_name = scene.providerName
-        order_params = {"id": scene.id, "aoi": aoi_geometry}
-        return data_provider_name, order_params
-
     def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
         """
         Estimate the cost of an order.
@@ -383,14 +345,14 @@ class Catalog(VizTools):
         """
         if "scene" in kwargs or "geometry" in kwargs:
             # Deprecated, to be removed, use order_parameters.
-            logger.warning(
+            message = (
                 "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
                 "Please use the new 'order_parameters' parameter."
             )
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
-            logger.warning("Please provide the 'order_parameters' parameter!")
-        else:
-            return Order.estimate(self.auth, order_parameters)
+            raise ValueError("Please provide the 'order_parameters' parameter!")
+        return Order.estimate(self.auth, order_parameters)  # type: ignore
 
     def place_order(
         self,
@@ -422,15 +384,15 @@ class Catalog(VizTools):
         """
         if "scene" in kwargs or "geometry" in kwargs:
             # Deprecated, to be removed, use order_parameters.
-            logger.warning(
-                "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
+            message = (
+                "The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. "
                 "Please use the new 'order_parameters' parameter."
             )
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
-            logger.warning("Please provide the 'order_parameters' parameter!")
-        else:
+            raise ValueError("Please provide the 'order_parameters' parameter!")
 
-            order = Order.place(self.auth, order_parameters)
-            if track_status:
-                order.track_status(report_time)
-            return order
+        order = Order.place(self.auth, order_parameters)  # type: ignore
+        if track_status:
+            order.track_status(report_time)
+        return order

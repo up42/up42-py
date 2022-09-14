@@ -26,13 +26,13 @@ class Order:
         self,
         auth: Auth,
         order_id: str,
-        payload: Optional[dict] = None,  # dict keys dataProviderName, orderParams
+        order_parameters: Optional[dict] = None,
         order_info: Optional[dict] = None,
     ):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.order_id = order_id
-        self.payload = payload
+        self.order_parameters = order_parameters
         if order_info is not None:
             self._info = order_info
         else:
@@ -84,61 +84,49 @@ class Order:
         )
 
     @classmethod
-    def place(cls, auth: Auth, data_provider_name: str, order_params: dict) -> "Order":
+    def place(cls, auth: Auth, order_parameters: dict) -> "Order":
         """
         Places an order.
 
         Args:
             auth: An authentication object.
-            data_provider_name: The data provider name. Currently only `oneatlas` is a supported provider.
-            order_params: Order definition, including `id` and `aoi`.
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
 
         Returns:
             Order: The placed order.
         """
-        assert (
-            data_provider_name in DATA_PROVIDERS
-        ), f"Currently only {DATA_PROVIDERS} are supported as a data provider."
-        order_payload = {
-            "dataProviderName": data_provider_name,
-            "orderParams": order_params,
-        }
         url = f"{auth._endpoint()}/workspaces/{auth.workspace_id}/orders"
-        response_json = auth._request(request_type="POST", url=url, data=order_payload)
+        response_json = auth._request(
+            request_type="POST", url=url, data=order_parameters
+        )
         try:
             order_id = response_json["data"]["id"]  # type: ignore
         except KeyError as e:
             raise ValueError(f"Order was not placed: {response_json}") from e
-        order = cls(auth=auth, order_id=order_id, payload=order_payload)
+        order = cls(auth=auth, order_id=order_id, order_parameters=order_parameters)
         logger.info(f"Order {order.order_id} is now {order.status}.")
         return order
 
     @staticmethod
-    def estimate(auth: Auth, data_provider_name: str, order_params: dict) -> int:
+    def estimate(auth: Auth, order_parameters: dict) -> int:
         """
         Returns an estimation of the cost of an order.
 
         Args:
             auth: An authentication object.
-            data_provider_name: The data provider name. Currently only `oneatlas` is a supported provider.
-            order_params: Order definition, including `id` and `aoi`.
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
 
         Returns:
             int: The estimated cost of the order
         """
-        assert (
-            data_provider_name in DATA_PROVIDERS
-        ), f"Currently only {DATA_PROVIDERS} are supported as a data provider."
         url = f"{auth._endpoint()}/workspaces/{auth.workspace_id}/orders/estimate"
-        payload = {
-            "dataProviderName": data_provider_name,
-            "orderParams": order_params,
-        }
 
-        response_json = auth._request(request_type="POST", url=url, data=payload)
+        response_json = auth._request(
+            request_type="POST", url=url, data=order_parameters
+        )
         estimated_credits: int = response_json["data"]["credits"]  # type: ignore
         logger.info(
-            f"Order with order parameters {payload} is estimated to cost {estimated_credits} UP42 credits."
+            f"Order is estimated to cost {estimated_credits} UP42 credits (order_parameters: {order_parameters})"
         )
         return estimated_credits
 
