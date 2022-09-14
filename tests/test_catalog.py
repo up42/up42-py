@@ -472,12 +472,12 @@ def test_order_from_catalog_track_status(
 def test_estimate_order_from_catalog_live(order_parameters, catalog_live):
     estimation = catalog_live.estimate_order(order_parameters)
     assert isinstance(estimation, int)
-    assert estimation == 30
+    assert estimation == 100
 
 
 @pytest.mark.skip(reason="Placing orders costs credits.")
 @pytest.mark.live
-def test_order_from_catalog_live(order_parameters, order_mock, catalog_mock):
+def test_order_from_catalog_live(order_parameters, catalog_live):
     order = catalog_live.place_order(order_parameters)
     assert isinstance(order, Order)
     assert order.order_id
