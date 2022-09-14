@@ -6,7 +6,7 @@
 
 <p align="center">
     <a href="https://pypi.org/project/up42-py/" title="up42-py on pypi"><img src="https://img.shields.io/pypi/v/up42-py?color=brightgreen"></a>
-    <img src="./coverage.svg">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=up42_up42-py&metric=coverage">
     <a href="https://twitter.com/UP42_" title="UP42 on Twitter"><img src="https://img.shields.io/twitter/follow/UP42_.svg?style=social"></a>
 </p>
 

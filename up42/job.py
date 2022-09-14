@@ -108,7 +108,6 @@ class Job(VizTools):
             status = self.status
             logger.setLevel(logging.INFO)
 
-            # TODO: Add statuses as constants (maybe objects?)
             if status in ["NOT STARTED", "PENDING", "RUNNING"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info(f"Job is {status}! - {self.job_id}")

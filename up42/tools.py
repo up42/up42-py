@@ -20,7 +20,7 @@ from up42.utils import get_logger, format_time_period
 logger = get_logger(__name__)
 
 
-def check_auth(func, *args, **kwargs):
+def check_auth_tools(func, *args, **kwargs):
     """
     Some functionality of the up42 import object (which integrates Tools functions) can theoretically be used
     before authentication with UP42, so the auth needs to be checked first.
@@ -29,7 +29,7 @@ def check_auth(func, *args, **kwargs):
     @wraps(func)  # required for mkdocstrings
     def inner(self, *args, **kwargs):
         if not hasattr(self, "auth"):
-            raise Exception(
+            raise RuntimeError(
                 "Requires authentication with UP42, use up42.authenticate()!"
             )
         return func(self, *args, **kwargs)
@@ -122,7 +122,7 @@ class Tools:
         else:
             return example_aoi
 
-    @check_auth
+    @check_auth_tools
     def get_blocks(
         self,
         block_type: Optional[str] = None,
@@ -178,7 +178,7 @@ class Tools:
             else:
                 return blocks_json
 
-    @check_auth
+    @check_auth_tools
     def get_block_details(self, block_id: str, as_dataframe: bool = False) -> dict:
         """
         Gets the detailed information about a specific public block from
@@ -201,7 +201,7 @@ class Tools:
         else:
             return details_json
 
-    @check_auth
+    @check_auth_tools
     def get_block_coverage(self, block_id: str) -> dict:
         # pylint: disable=unused-argument
         """
@@ -220,7 +220,7 @@ class Tools:
         response_coverage = requests.get(details_json["url"]).json()
         return response_coverage
 
-    @check_auth
+    @check_auth_tools
     def get_credits_balance(self) -> dict:
         """
         Display the overall credits available in your account.
@@ -233,7 +233,7 @@ class Tools:
         details_json = response_json["data"]
         return details_json
 
-    @check_auth
+    @check_auth_tools
     def get_credits_history(
         self,
         start_date: Optional[Union[str, datetime]] = None,
@@ -295,7 +295,7 @@ class Tools:
         result["content"] = credit_history
         return result
 
-    @check_auth
+    @check_auth_tools
     def validate_manifest(self, path_or_json: Union[str, Path, dict]) -> dict:
         """
         Validates a block manifest json.

@@ -15,6 +15,8 @@ from pathlib import Path
 from typing import Union, Tuple, List, Optional, Dict
 import logging
 from datetime import datetime
+from functools import wraps
+
 from geopandas import GeoDataFrame
 
 # pylint: disable=wrong-import-position
@@ -40,6 +42,21 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 _auth: Auth = None  # type: ignore
 
 
+def check_auth_init(func, *args, **kwargs):
+    """
+    Some functionality of the up42 import object can theoretically be used
+    before authentication with UP42, so the auth needs to be checked first.
+    """
+    # pylint: disable=unused-argument
+    @wraps(func)  # required for mkdocstrings
+    def inner(*args, **kwargs):
+        if _auth is None:
+            raise RuntimeError("Not authenticated, call up42.authenticate() first")
+        return func(*args, **kwargs)
+
+    return inner
+
+
 def authenticate(
     cfg_file: Union[str, Path] = None,
     project_id: Optional[str] = None,
@@ -55,26 +72,25 @@ def authenticate(
     )
 
 
+@check_auth_init
 def initialize_project() -> "Project":
     """
     Returns the correct Project object (has to exist on UP42).
     """
-    if _auth is None:
-        raise RuntimeError("Not authenticated, call up42.authenticate() first")
     project = Project(auth=_auth, project_id=str(_auth.project_id))
     logger.info(f"Initialized {project}")
     return project
 
 
+@check_auth_init
 def initialize_catalog() -> "Catalog":
     """
     Returns a Catalog object for using the catalog search.
     """
-    if _auth is None:
-        raise RuntimeError("Not authenticated, call up42.authenticate() first")
     return Catalog(auth=_auth)
 
 
+@check_auth_init
 def initialize_workflow(workflow_id: str) -> "Workflow":
     """
     Returns a Workflow object (has to exist on UP42).
@@ -82,8 +98,6 @@ def initialize_workflow(workflow_id: str) -> "Workflow":
     Args:
         workflow_id: The UP42 workflow_id
     """
-    if _auth is None:
-        raise RuntimeError("Not authenticated, call up42.authenticate() first")
     workflow = Workflow(
         auth=_auth, workflow_id=workflow_id, project_id=str(_auth.project_id)
     )
@@ -91,6 +105,7 @@ def initialize_workflow(workflow_id: str) -> "Workflow":
     return workflow
 
 
+@check_auth_init
 def initialize_job(job_id: str) -> "Job":
     """
     Returns a Job object (has to exist on UP42).
@@ -98,13 +113,12 @@ def initialize_job(job_id: str) -> "Job":
     Args:
         job_id: The UP42 job_id
     """
-    if _auth is None:
-        raise RuntimeError("Not authenticated, call up42.authenticate() first")
     job = Job(auth=_auth, job_id=job_id, project_id=str(_auth.project_id))
     logger.info(f"Initialized {job}")
     return job
 
 
+@check_auth_init
 def initialize_jobtask(jobtask_id: str, job_id: str) -> "JobTask":
     """
     Returns a JobTask object (has to exist on UP42).
@@ -113,8 +127,6 @@ def initialize_jobtask(jobtask_id: str, job_id: str) -> "JobTask":
         jobtask_id: The UP42 jobtask_id
         job_id: The UP42 job_id
     """
-    if _auth is None:
-        raise RuntimeError("Not authenticated, call up42.authenticate() first")
     jobtask = JobTask(
         auth=_auth,
         jobtask_id=jobtask_id,
@@ -125,6 +137,7 @@ def initialize_jobtask(jobtask_id: str, job_id: str) -> "JobTask":
     return jobtask
 
 
+@check_auth_init
 def initialize_jobcollection(job_ids: List[str]) -> "JobCollection":
     """
     Returns a JobCollection object (the referenced jobs have to exist on UP42).
@@ -132,8 +145,6 @@ def initialize_jobcollection(job_ids: List[str]) -> "JobCollection":
     Args:
         job_ids: List of UP42 job_ids
     """
-    if _auth is None:
-        raise RuntimeError("Not authenticated, call up42.authenticate() first")
     jobs = [
         Job(auth=_auth, job_id=job_id, project_id=str(_auth.project_id))
         for job_id in job_ids
@@ -145,15 +156,15 @@ def initialize_jobcollection(job_ids: List[str]) -> "JobCollection":
     return jobcollection
 
 
+@check_auth_init
 def initialize_storage() -> "Storage":
     """
     Returns a Storage object to list orders and assets.
     """
-    if _auth is None:
-        raise RuntimeError("Not authenticated, call up42.authenticate() first")
     return Storage(auth=_auth)
 
 
+@check_auth_init
 def initialize_order(order_id: str) -> "Order":
     """
     Returns an Order object (has to exist on UP42).
@@ -161,13 +172,12 @@ def initialize_order(order_id: str) -> "Order":
     Args:
         order_id: The UP42 order_id
     """
-    if _auth is None:
-        raise RuntimeError("Not authenticated, call up42.authenticate() first")
     order = Order(auth=_auth, order_id=order_id)
     logger.info(f"Initialized {order}")
     return order
 
 
+@check_auth_init
 def initialize_asset(asset_id: str) -> "Asset":
     """
     Returns an Asset object (has to exist on UP42).
@@ -175,8 +185,6 @@ def initialize_asset(asset_id: str) -> "Asset":
     Args:
         asset_id: The UP42 asset_id
     """
-    if _auth is None:
-        raise RuntimeError("Not authenticated, call up42.authenticate() first")
     asset = Asset(auth=_auth, asset_id=asset_id)
     logger.info(f"Initialized {asset}")
     return asset
