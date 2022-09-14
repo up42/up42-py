@@ -4,6 +4,7 @@ Catalog search functionality
 
 from pathlib import Path
 from typing import Union, List, Tuple, Dict, Any
+import warnings
 
 from pandas import Series
 from geopandas import GeoDataFrame
@@ -66,7 +67,7 @@ class Catalog(VizTools):
                         collection_names.add(product["collectionName"])
                 except KeyError:
                     collection_names.add(product["collectionName"])
-            collection_names = list(collection_names)
+            collection_names = list(collection_names)  # type: ignore
 
             collection_overview = {}
             for collection_name in collection_names:
@@ -375,49 +376,40 @@ class Catalog(VizTools):
 
         Returns:
             int: An estimated cost for the order in UP42 credits.
+
+        Warning "Deprecated order parameters"
+            The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. Please use the new
+            order_parameters parameter as described above.
         """
-        if order_parameters is not None:
-            pass
-        elif "scene" in kwargs and "geometry" in kwargs:
+        if "scene" in kwargs or "geometry" in kwargs:
             # Deprecated, to be removed, use order_parameters.
-            """
-            geometry: The intended output AOI of the order, one of
-            scene: A geopandas series with a  single item/row of the result of `Catalog.search`. For instance,
-                search_results.loc[0] for the first scene of a catalog search result.
-            """
-            scene: Series = kwargs.get("scene")
-            geometry: Union[
-                dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon
-            ] = kwargs.get("geometry")
-            data_provider_name, order_params = self._order_payload(geometry, scene)
-            return Order.estimate(self.auth, data_provider_name, order_params)
+            logger.warning(
+                "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
+                "Please use the new 'order_parameters' parameter."
+            )
+        elif order_parameters is None:
+            logger.warning("Please provide the 'order_parameters' parameter!")
         else:
-            logger.warning("Please provider order_parameters!")
+            return Order.estimate(self.auth, order_parameters)
 
     def place_order(
         self,
-        geometry: Union[
-            dict,
-            Feature,
-            FeatureCollection,
-            list,
-            GeoDataFrame,
-            Polygon,
-        ],
-        scene: Series,
+        order_parameters: Union[dict, None],
         track_status: bool = False,
         report_time: int = 120,
+        **kwargs,
     ) -> "Order":
         """
-        Place an order from an item/row in a result of `Catalog.search`.
+        Place an order.
 
         Args:
-            geometry: The intended output AOI of the order, one of dict, Feature, FeatureCollection, list,
-                GeoDataFrame, Polygon.
-            scene: A geopandas series with a  single item/row of the result of `Catalog.search`. For instance,
-                search_results.loc[0] for the first scene of a catalog search result.
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
             track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
             report_time (int): The interval (in seconds) to query the order status if `track_status` is True.
+
+        Warning "Deprecated order parameters"
+            The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. Please use the new
+            order_parameters parameter as described above.
 
          Warning:
             When placing orders of items that are in archive or cold storage,
@@ -428,8 +420,17 @@ class Catalog(VizTools):
         Returns:
             Order: The placed order.
         """
-        data_provider_name, order_params = self._order_payload(geometry, scene)
-        order = Order.place(self.auth, data_provider_name, order_params)
-        if track_status:
-            order.track_status(report_time)
-        return order
+        if "scene" in kwargs or "geometry" in kwargs:
+            # Deprecated, to be removed, use order_parameters.
+            logger.warning(
+                "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
+                "Please use the new 'order_parameters' parameter."
+            )
+        elif order_parameters is None:
+            logger.warning("Please provide the 'order_parameters' parameter!")
+        else:
+
+            order = Order.place(self.auth, order_parameters)
+            if track_status:
+                order.track_status(report_time)
+            return order
