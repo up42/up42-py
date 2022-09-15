@@ -48,16 +48,14 @@ logger = get_logger(__name__)
 
 
 def deprecation(
-    function_name: str,
     replacement_name: str,
-    version: str = "0.13.0",
+    version: str,
     extra_message: str = "",
 ):
     """
     Decorator for custom deprecation warnings.
 
     Args:
-        function_name: Name of the to be deprecated function.
         replacement_name: Name of the replacement function.
         version: The package version in which the deprecation will happen.
         extra_message: Optional message after default deprecation warning.
@@ -67,7 +65,7 @@ def deprecation(
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             message = (
-                f"`{function_name}` will be deprecated in version {version}, "
+                f"`{func.__name__}` will be deprecated in version {version}, "
                 f"use `{replacement_name}` instead! {extra_message}"
             )
             warnings.warn(message, DeprecationWarning, stacklevel=2)
