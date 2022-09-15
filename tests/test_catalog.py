@@ -410,6 +410,14 @@ def test_download_quicklook_live(catalog_live):
         assert Path(out_paths[0]).suffix == ".jpg"
 
 
+def test_construct_order_parameters(catalog_mock):
+    order_parameters = catalog_mock.construct_order_parameters(
+        data_product_id="123", image_id="123", aoi=mock_search_parameters["intersects"]
+    )
+    assert isinstance(order_parameters, dict)
+    assert list(order_parameters.keys()) == ["dataProduct", "params"]
+
+
 # pylint: disable=unused-argument
 def test_estimate_order_from_catalog(
     order_parameters, order_mock, catalog_mock, requests_mock

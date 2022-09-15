@@ -19,7 +19,7 @@ from up42.utils import (
     any_vector_to_fc,
     fc_to_query_geometry,
     format_time_period,
-    deprecation
+    deprecation,
 )
 
 logger = get_logger(__name__)
@@ -343,6 +343,30 @@ class Catalog(VizTools):
 
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
+
+    def construct_order_parameters(
+        self,
+        data_product_id: str,
+        image_id: str,
+        aoi: Union[
+            dict,
+            Feature,
+            FeatureCollection,
+            list,
+            GeoDataFrame,
+            Polygon,
+        ],
+    ):
+        aoi = any_vector_to_fc(vector=aoi)
+        aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
+        order_parameters = {
+            "dataProduct": data_product_id,
+            "params": {
+                "id": image_id,
+                "aoi": aoi,
+            },
+        }
+        return order_parameters
 
     def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
         """
