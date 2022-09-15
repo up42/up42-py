@@ -19,6 +19,7 @@ from up42.utils import (
     any_vector_to_fc,
     fc_to_query_geometry,
     format_time_period,
+    deprecation
 )
 
 logger = get_logger(__name__)
@@ -109,9 +110,8 @@ class Catalog(VizTools):
         json_response = self.auth._request("GET", url)
         return json_response["data"]
 
+    @deprecation("construct_search_parameters", "0.24.0")
     def construct_parameters(self, **kwargs):
-        message = "'catalog.construct_parameters has been replaced by 'catalog.construct_search_parameters'!"
-        warnings.warn(message, DeprecationWarning, stacklevel=2)
         return self.construct_search_parameters(**kwargs)
 
     # pylint: disable=dangerous-default-value
