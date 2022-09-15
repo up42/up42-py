@@ -41,8 +41,8 @@ def test_get_collections_live(catalog_live):
     assert collections[0]["name"]
 
 
-def test_get_data_products_basic(catalog_mock):
-    data_products_basic = catalog_mock.get_data_products()
+def test_get_products_basic(catalog_mock):
+    data_products_basic = catalog_mock.get_products()
     assert isinstance(data_products_basic, dict)
     basic_keys = ["data_products", "host", "collection"]
     assert all(
@@ -51,15 +51,15 @@ def test_get_data_products_basic(catalog_mock):
     )
 
 
-def test_get_data_products(catalog_mock):
-    data_products = catalog_mock.get_data_products(basic=False)
+def test_get_products(catalog_mock):
+    data_products = catalog_mock.get_products(basic=False)
     assert isinstance(data_products, list)
     assert data_products[0]["id"]
 
 
 @pytest.mark.live
-def test_get_data_products_live(catalog_live):
-    data_products = catalog_live.get_data_products(basic=False)
+def test_get_products_live(catalog_live):
+    data_products = catalog_live.get_products(basic=False)
     assert isinstance(data_products, list)
     assert data_products[0]["id"]
 

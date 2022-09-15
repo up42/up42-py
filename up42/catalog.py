@@ -45,7 +45,7 @@ class Catalog(VizTools):
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
 
-    def get_data_products(self, basic: bool = True) -> Union[Dict, List]:
+    def get_products(self, basic: bool = True) -> Union[Dict, List]:
         """
         Get the available data products (combination of collection and data configuration, e.g.
         Pleiades Display product. If a collection offers data products configurations, those options are available
