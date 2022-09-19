@@ -30,6 +30,9 @@ You can determine your currently installed version via:
 
 ## Versions
 
+### [0.23.0](https://pypi.org/project/up42-py/) (2022-09-20)
+- ...
+
 ### [0.22.2](https://pypi.org/project/up42-py/) (2022-07-21)
 - Fix unpacking of order assets if no output topfolder inherent in archive
 
