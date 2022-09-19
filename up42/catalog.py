@@ -48,9 +48,11 @@ class Catalog(VizTools):
     def get_data_products(self, basic: bool = True) -> Union[Dict, List]:
         """
         Get the available data products (combination of collection and data configuration, e.g.
-        Pleiades Display product. If a collection offers data products configurations, those options are available
-        for each image in the collection (e.g. Oneatlas phr display & reflectance). Otherwise they are split into
-        independent collections.
+        Pleiades Display product).
+
+        Args:
+            basic: A more basic dictionary containing only the collection title, name, host and available
+                data product configurations.
         """
         url = f"{self.auth._endpoint()}/data-products"
         json_response = self.auth._request("GET", url)
@@ -79,7 +81,7 @@ class Catalog(VizTools):
 
                 # Only include archive products in catalog call
                 try:
-                    if not product["collection"]["type"] == "ARCHIVE":
+                    if product["collection"]["type"] != "ARCHIVE":
                         continue
                 except KeyError:
                     pass

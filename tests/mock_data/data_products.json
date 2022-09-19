@@ -106,5 +106,37 @@
     "isIntegrated": true,
     "createdAt": "2022-02-10T16:50:54.956134Z",
     "updatedAt": "2022-04-04T10:36:54.428442Z"
+  },
+  {
+    "id": "123_not_integrated",
+    "productConfiguration": {
+      "host": {
+        "name": "not",
+        "isIntegrated": false
+      },
+      "hostName": "notIntegrated",
+      "title": "not",
+      "configuration": {},
+      "isIntegrated": false
+    },
+    "productConfigurationId": "12345",
+    "collection": {
+      "name": "not_integrated",
+      "title": "test_not_integrated",
+      "type": "ARCHIVE",
+      "restricted": true,
+      "host": {
+        "name": "not",
+        "isIntegrated": false
+      },
+      "hostName": "capellaspace",
+      "producer": {
+        "name": "test_not_integrated",
+        "isIntegrated": false
+      },
+      "producerName": "test_not_integrated"
+    },
+    "collectionName": "test_not_integrated",
+    "isIntegrated": false
   }
 ]
