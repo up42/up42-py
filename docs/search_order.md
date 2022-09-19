@@ -13,7 +13,7 @@ import up42
 up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
 ```
 
-**Decide on dataset**
+## **Decide on dataset**
 
 We look at the available data products and decide to order a *"Pléiades"* satellite image in the 
 *"Display"* configuration (*Pansharpened RGB-NIR bands, 8bit,*
@@ -83,6 +83,16 @@ order_parameters = catalog.construct_order_parameters(data_product_id=data_produ
                                                       image_id=image_id, 
                                                       aoi=aoi_geometry)
 ```
+```json
+{"dataProduct": "647780db-5a06-4b61-b525-577a8b68bb54",
+  "params": {"id": "6434e7af-2d41-4ded-a789-fb1b2447ac92",
+    "aoi": {"type": "Polygon",
+      "coordinates": (((13.375966, 52.515068),
+      (13.375966, 52.516639),
+      (13.378314, 52.516639),
+      (13.378314, 52.515068),
+      (13.375966, 52.515068)),)}}}
+```
 
 
 ```python
@@ -107,4 +117,4 @@ assets[0].download()
 
 <br>
 
-⏭️ Continue with the [Run an analytics workflow](30-second-example.md) chapter or see the advanced section.
+⏭️ Continue with the [Storage](storage.md) chapter.
