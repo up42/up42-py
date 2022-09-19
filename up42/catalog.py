@@ -344,8 +344,8 @@ class Catalog(VizTools):
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
 
+    @staticmethod
     def construct_order_parameters(
-        self,
         data_product_id: str,
         image_id: str,
         aoi: Union[
