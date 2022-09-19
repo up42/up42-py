@@ -50,6 +50,10 @@ def test_get_data_products_basic(catalog_mock):
         for k in basic_keys
     )
 
+    assert "test_not_integrated" not in data_products_basic
+    assert len(data_products_basic) == 2
+
+
 
 def test_get_data_products(catalog_mock):
     data_products = catalog_mock.get_data_products(basic=False)
