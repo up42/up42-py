@@ -54,7 +54,6 @@ def test_get_data_products_basic(catalog_mock):
     assert len(data_products_basic) == 2
 
 
-
 def test_get_data_products(catalog_mock):
     data_products = catalog_mock.get_data_products(basic=False)
     assert isinstance(data_products, list)
