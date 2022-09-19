@@ -113,7 +113,7 @@ class Catalog(VizTools):
         return json_response["data"]
 
     @deprecation("construct_search_parameters", "0.24.0")
-    def construct_parameters(self, **kwargs):
+    def construct_parameters(self, **kwargs):  # pragma: no cover
         return self.construct_search_parameters(**kwargs)
 
     # pylint: disable=dangerous-default-value
