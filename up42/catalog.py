@@ -58,11 +58,6 @@ class Catalog(VizTools):
         json_response = self.auth._request("GET", url)
         products = json_response["data"]
         if not basic:
-            products = [
-                product
-                for product in products
-                if product["collection"]["type"] == "ARCHIVE"
-            ]
             return products
         else:
             collection_overview = {}
@@ -75,13 +70,6 @@ class Catalog(VizTools):
                     pass
                 try:
                     if not product["productConfiguration"]["isIntegrated"]:
-                        continue
-                except KeyError:
-                    pass
-
-                # Only include archive products in catalog call
-                try:
-                    if product["collection"]["type"] != "ARCHIVE":
                         continue
                 except KeyError:
                     pass
