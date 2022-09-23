@@ -51,8 +51,8 @@ class Catalog(VizTools):
         Pleiades Display product).
 
         Args:
-            basic: A more basic dictionary containing only the collection title, name, host and available
-                data product configurations.
+            basic: A dictionary containing only the collection title, name, host and available
+                data product configurations, default True.
         """
         url = f"{self.auth._endpoint()}/data-products"
         json_response = self.auth._request("GET", url)
