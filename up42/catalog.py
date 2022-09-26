@@ -102,6 +102,7 @@ class Catalog(VizTools):
 
     @deprecation("construct_search_parameters", "0.25.0")
     def construct_parameters(self, **kwargs):  # pragma: no cover
+        """Deprecated, see construct_search_parameters"""
         return self.construct_search_parameters(**kwargs)
 
     # pylint: disable=dangerous-default-value
@@ -125,7 +126,7 @@ class Catalog(VizTools):
         ascending: bool = True,
     ) -> dict:
         """
-        Follows STAC principles and property names.
+        Helps constructing the parameters dictionary required for the search.
 
         Args:
             geometry: The search geometry, one of dict, Feature, FeatureCollection,
@@ -350,6 +351,30 @@ class Catalog(VizTools):
             Polygon,
         ],
     ):
+        """
+        Helps constructing the parameters dictionary required for the search.
+
+        Args:
+            data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
+            image_id: The id of the desired image (from search results)
+            aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
+                list, GeoDataFrame, Polygon.
+
+        Returns:
+            The constructed parameters dictionary.
+
+        Example:
+            ```python
+            order_parameters = catalog.construct_order_parameters(data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
+                                                                  image_id='6434e7af-2d41-4ded-a789-fb1b2447ac92',
+                                                                  aoi={'type': 'Polygon',
+                                                                    'coordinates': (((13.375966, 52.515068),
+                                                                      (13.375966, 52.516639),
+                                                                      (13.378314, 52.516639),
+                                                                      (13.378314, 52.515068),
+                                                                      (13.375966, 52.515068)),)})
+            ```
+        """
         aoi = any_vector_to_fc(vector=aoi)
         aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
         order_parameters = {
