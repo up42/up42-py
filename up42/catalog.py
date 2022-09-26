@@ -252,9 +252,12 @@ class Catalog(VizTools):
             features += response_json["features"]
 
         features = features[:max_limit]
-        df = GeoDataFrame.from_features(
-            FeatureCollection(features=features), crs="EPSG:4326"
-        )
+        if not features:
+            df = GeoDataFrame(columns=["geometry"], geometry="geometry")
+        else:
+            df = GeoDataFrame.from_features(
+                FeatureCollection(features=features), crs="EPSG:4326"
+            )
 
         logger.info(f"{df.shape[0]} results returned.")
         if as_dataframe:
