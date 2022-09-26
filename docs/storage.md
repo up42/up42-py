@@ -32,3 +32,5 @@ You can download an asset via:
 ```python
 assets[0].download()
 ```
+
+⏭️ Continue with the [Run an analytics workflow](30-second-example.md) chapter.
