@@ -31,15 +31,18 @@ You can determine your currently installed version via:
 ## Versions
 
 ### [0.23.0](https://pypi.org/project/up42-py/) (2022-09-20)
-- **Breaking change!** Integrates the UP42 [data products](https://docs.up42.com/developers/api#tag/data-products), 
-  e.g. the selection "Display" and "Reflectance" configuration in the ordering process.
-  See the updated [Search & Order data](https://sdk.up42.com/search_order/) documentation chapter.
-  - Newly added function `catalog.get_data_products`
-  - Newly added function `catalog.construct_order_parameters`
-  - `catalog.construct_search_parameters` replaces `catalog.construct_parameters` which is deprecated and will be 
-    removed in v0.25.0
-  - The order_parameters parameter of `catalog.estimate_order` and `catalog.place_order` now has a 
-    [different structure](https://sdk.up42.com/reference/catalog-reference/#up42.catalog.Catalog.place_order) 
+- Integrates the UP42 [data products](https://docs.up42.com/developers/api#tag/data-products), 
+  e.g. the selection "Display" and "Reflectance" configuration in the ordering process. The new ordering process 
+  requires the selection of a specific data product, see the updated 
+  [Search & Order data](https://sdk.up42.com/search_order/) documentation chapter.
+- The `order_parameters` argument for `catalog.estimate_order` and `catalog.place_order` now has a
+  [different structure](https://sdk.up42.com/reference/catalog-reference/#up42.catalog.Catalog.place_order).
+  **The previous option to just specify the collection name will soon be deactivated in the UP42 API!** 
+- New function `catalog.get_data_products`
+- New function `catalog.construct_order_parameters`
+- `catalog.construct_search_parameters` replaces `catalog.construct_parameters` which is deprecated and will be 
+  removed in v0.25.0
+
 
 
 ### [0.22.2](https://pypi.org/project/up42-py/) (2022-07-21)
