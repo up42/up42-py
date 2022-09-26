@@ -53,6 +53,9 @@ import up42
 up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
 catalog = up42.initialize_catalog()
 
+# See the available data products and collections
+catalog.get_data_products(basic=True)
+
 # Search in the catalog with your search parameters
 aoi = up42.read_vector_file("data/aoi_washington.geojson")
 search_parameters = catalog.construct_search_parameters(geometry=aoi,
@@ -64,8 +67,12 @@ search_parameters = catalog.construct_search_parameters(geometry=aoi,
 search_results = catalog.search(search_parameters=search_parameters)
 
 # Estimate the order price and place the order
-catalog.estimate_order(geometry=aoi, scene=search_results.loc[0])
-order = catalog.place_order(geometry=aoi, scene=search_results.loc[0])
+order_parameters = catalog.construct_order_parameters(data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
+                                                      image_id='6434e7af-2d41-4ded-a789-fb1b2447ac92',
+                                                      aoi=aoi)
+
+catalog.estimate_order(order_parameters)
+order = catalog.place_order(order_parameters)
 
 # Download the finished order
 assets = order.get_assets()
