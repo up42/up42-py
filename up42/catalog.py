@@ -3,9 +3,9 @@ Catalog search functionality
 """
 
 from pathlib import Path
-from typing import Union, List, Tuple, Dict, Any
+from typing import Union, List, Dict, Any
+import warnings
 
-from pandas import Series
 from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
 from geojson import Feature, FeatureCollection
@@ -19,6 +19,7 @@ from up42.utils import (
     any_vector_to_fc,
     fc_to_query_geometry,
     format_time_period,
+    deprecation,
 )
 
 logger = get_logger(__name__)
@@ -44,6 +45,53 @@ class Catalog(VizTools):
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
 
+    def get_data_products(self, basic: bool = True) -> Union[Dict, List]:
+        """
+        Get the available data products (combination of collection and data configuration, e.g.
+        Pleiades Display product).
+
+        Args:
+            basic: A dictionary containing only the collection title, name, host and available
+                data product configurations, default True.
+        """
+        url = f"{self.auth._endpoint()}/data-products"
+        json_response = self.auth._request("GET", url)
+        products = json_response["data"]
+        if not basic:
+            return products
+        else:
+            collection_overview = {}
+
+            for product in products:
+                try:
+                    if not product["collection"]["isIntegrated"]:
+                        continue
+                except KeyError:  # isIntegrated potentially removed from future public API
+                    pass
+                try:
+                    if not product["productConfiguration"]["isIntegrated"]:
+                        continue
+                except KeyError:
+                    pass
+
+                collection_title = product["collection"]["title"]
+                collection_name = product["collectionName"]
+                host = product["collection"]["host"]["name"]
+                data_product = {product["productConfiguration"]["title"]: product["id"]}
+
+                if collection_title not in collection_overview:
+                    collection_overview[collection_title] = {
+                        "collection": collection_name,
+                        "host": host,
+                        "data_products": data_product,
+                    }
+                else:
+                    collection_overview[collection_title]["data_products"][
+                        product["productConfiguration"]["title"]
+                    ] = product["id"]
+
+            return collection_overview
+
     def get_collections(self) -> Union[Dict, List]:
         """
         Get the available data collections.
@@ -52,9 +100,13 @@ class Catalog(VizTools):
         json_response = self.auth._request("GET", url)
         return json_response["data"]
 
+    @deprecation("construct_search_parameters", "0.24.0")
+    def construct_parameters(self, **kwargs):  # pragma: no cover
+        return self.construct_search_parameters(**kwargs)
+
     # pylint: disable=dangerous-default-value
     @staticmethod
-    def construct_parameters(
+    def construct_search_parameters(
         geometry: Union[
             dict,
             Feature,
@@ -200,9 +252,12 @@ class Catalog(VizTools):
             features += response_json["features"]
 
         features = features[:max_limit]
-        df = GeoDataFrame.from_features(
-            FeatureCollection(features=features), crs="EPSG:4326"
-        )
+        if not features:
+            df = GeoDataFrame(columns=["geometry"], geometry="geometry")
+        else:
+            df = GeoDataFrame.from_features(
+                FeatureCollection(features=features), crs="EPSG:4326"
+            )
 
         logger.info(f"{df.shape[0]} results returned.")
         if as_dataframe:
@@ -283,8 +338,10 @@ class Catalog(VizTools):
         return out_paths
 
     @staticmethod
-    def _order_payload(
-        geometry: Union[
+    def construct_order_parameters(
+        data_product_id: str,
+        image_id: str,
+        aoi: Union[
             dict,
             Feature,
             FeatureCollection,
@@ -292,84 +349,61 @@ class Catalog(VizTools):
             GeoDataFrame,
             Polygon,
         ],
-        scene: Series,
-    ) -> Tuple[str, dict]:
+    ):
+        aoi = any_vector_to_fc(vector=aoi)
+        aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
+        order_parameters = {
+            "dataProduct": data_product_id,
+            "params": {
+                "id": image_id,
+                "aoi": aoi,
+            },
+        }
+        return order_parameters
+
+    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
         """
-        Helper that constructs necessary parameters for `Order.place` and `Order.estimate`.
+        Estimate the cost of an order.
 
         Args:
-            geometry: The intended output AOI of the order, one of dict, Feature, FeatureCollection, list,
-                GeoDataFrame, Polygon.
-            scene: A geopandas series with a  single item/row of the result of `Catalog.search`. For instance,
-                search_results.loc[0] for the first scene of a catalog search result.
-
-        Returns:
-            str, dict: A tuple including a provider name and order parameters.
-        """
-        if not isinstance(scene, Series):
-            raise ValueError(
-                "`scene` parameter must be a GeoSeries, or a single item/row of a GeoDataFrame. "
-                "For instance, search_results.loc[0] returns a GeoSeries."
-            )
-        aoi_fc = any_vector_to_fc(
-            vector=geometry,
-        )
-        aoi_geometry = fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
-        data_provider_name = scene.providerName
-        order_params = {"id": scene.id, "aoi": aoi_geometry}
-        return data_provider_name, order_params
-
-    def estimate_order(
-        self,
-        geometry: Union[
-            dict,
-            Feature,
-            FeatureCollection,
-            list,
-            GeoDataFrame,
-            Polygon,
-        ],
-        scene: Series,
-    ) -> int:
-        """
-        Estimate the cost of an order from an item/row in a result of `Catalog.search`.
-
-        Args:
-            geometry: The intended output AOI of the order, one of dict, Feature, FeatureCollection, list,
-                GeoDataFrame, Polygon.
-            scene: A geopandas series with a  single item/row of the result of `Catalog.search`. For instance,
-                search_results.loc[0] for the first scene of a catalog search result.
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
 
         Returns:
             int: An estimated cost for the order in UP42 credits.
+
+        Warning "Deprecated order parameters"
+            The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. Please use the new
+            order_parameters parameter as described above.
         """
-        data_provider_name, order_params = self._order_payload(geometry, scene)
-        return Order.estimate(self.auth, data_provider_name, order_params)
+        if "scene" in kwargs or "geometry" in kwargs:
+            # Deprecated, to be removed, use order_parameters.
+            message = (
+                "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
+                "Please use the new 'order_parameters' parameter."
+            )
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
+        elif order_parameters is None:
+            raise ValueError("Please provide the 'order_parameters' parameter!")
+        return Order.estimate(self.auth, order_parameters)  # type: ignore
 
     def place_order(
         self,
-        geometry: Union[
-            dict,
-            Feature,
-            FeatureCollection,
-            list,
-            GeoDataFrame,
-            Polygon,
-        ],
-        scene: Series,
+        order_parameters: Union[dict, None],
         track_status: bool = False,
         report_time: int = 120,
+        **kwargs,
     ) -> "Order":
         """
-        Place an order from an item/row in a result of `Catalog.search`.
+        Place an order.
 
         Args:
-            geometry: The intended output AOI of the order, one of dict, Feature, FeatureCollection, list,
-                GeoDataFrame, Polygon.
-            scene: A geopandas series with a  single item/row of the result of `Catalog.search`. For instance,
-                search_results.loc[0] for the first scene of a catalog search result.
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
             track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
             report_time (int): The interval (in seconds) to query the order status if `track_status` is True.
+
+        Warning "Deprecated order parameters"
+            The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. Please use the new
+            order_parameters parameter as described above.
 
          Warning:
             When placing orders of items that are in archive or cold storage,
@@ -380,8 +414,17 @@ class Catalog(VizTools):
         Returns:
             Order: The placed order.
         """
-        data_provider_name, order_params = self._order_payload(geometry, scene)
-        order = Order.place(self.auth, data_provider_name, order_params)
+        if "scene" in kwargs or "geometry" in kwargs:
+            # Deprecated, to be removed, use order_parameters.
+            message = (
+                "The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. "
+                "Please use the new 'order_parameters' parameter."
+            )
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
+        elif order_parameters is None:
+            raise ValueError("Please provide the 'order_parameters' parameter!")
+
+        order = Order.place(self.auth, order_parameters)  # type: ignore
         if track_status:
             order.track_status(report_time)
         return order

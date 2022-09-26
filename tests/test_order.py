@@ -55,13 +55,13 @@ def test_is_fulfilled(order_mock, status, expected, monkeypatch):
     assert order_mock.is_fulfilled == expected
 
 
-def test_order_payload(order_mock):
-    assert not order_mock.payload
+def test_order_parameters(order_mock):
+    assert not order_mock.order_parameters
 
 
 @pytest.mark.live
-def test_order_payload_live(order_live):
-    assert not order_live.payload
+def test_order_parameters_live(order_live):
+    assert not order_live.order_parameters
 
 
 def test_get_assets(order_mock, asset_mock):
@@ -85,10 +85,10 @@ def test_get_assets_live(order_live, asset_live):
 
 
 @pytest.fixture
-def order_payload():
+def order_parameters():
     return {
-        "dataProviderName": "oneatlas",
-        "orderParams": {
+        "dataProduct": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
+        "params": {
             "id": "1cc21a92-2485-413f-b60e-55f1da1f6975",
             "aoi": {
                 "type": "Polygon",
@@ -108,7 +108,7 @@ def order_payload():
     }
 
 
-def test_place_order(order_payload, auth_mock, order_mock, requests_mock):
+def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
         url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
         json={
@@ -116,15 +116,13 @@ def test_place_order(order_payload, auth_mock, order_mock, requests_mock):
             "error": {},
         },
     )
-    order = Order.place(
-        auth_mock, order_payload["dataProviderName"], order_payload["orderParams"]
-    )
+    order = Order.place(auth_mock, order_parameters)
     assert isinstance(order, Order)
     assert order.order_id == ORDER_ID
-    assert order.payload == order_payload
+    assert order.order_parameters == order_parameters
 
 
-def test_place_order_no_id(order_payload, auth_mock, order_mock, requests_mock):
+def test_place_order_no_id(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
         url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
         json={
@@ -133,33 +131,15 @@ def test_place_order_no_id(order_payload, auth_mock, order_mock, requests_mock):
         },
     )
     with pytest.raises(ValueError):
-        Order.place(
-            auth_mock, order_payload["dataProviderName"], order_payload["orderParams"]
-        )
-
-
-def test_place_order_wrong_provider(
-    order_payload, auth_mock, order_mock, requests_mock
-):
-    requests_mock.post(
-        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
-        json={
-            "data": {"xyz": 892},
-            "error": {},
-        },
-    )
-    with pytest.raises(AssertionError):
-        Order.place(auth_mock, "some_provider", order_payload["orderParams"])
+        Order.place(auth_mock, order_parameters)
 
 
 @pytest.mark.skip(reason="Placing orders costs credits.")
 @pytest.mark.live
-def test_place_order_live(auth_mock, order_payload):
-    order = Order.place(
-        auth_mock, order_payload["dataProviderName"], order_payload["orderParams"]
-    )
+def test_place_order_live(auth_mock, order_parameters):
+    order = Order.place(auth_mock, order_parameters)
     assert order.status == "PLACED"
-    assert order.payload == order_payload
+    assert order.order_parameters == order_parameters
 
 
 def test_track_status_running(order_mock, requests_mock):
@@ -210,22 +190,18 @@ def test_track_status_fail(order_mock, status, requests_mock):
         order_mock.track_status()
 
 
-def test_estimate_order(order_payload, auth_mock, requests_mock):
+def test_estimate_order(order_parameters, auth_mock, requests_mock):
     url_order_estimation = (
         f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/estimate"
     )
     requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
-    estimation = Order.estimate(
-        auth_mock, order_payload["dataProviderName"], order_payload["orderParams"]
-    )
+    estimation = Order.estimate(auth_mock, order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
 
 
 @pytest.mark.live
-def test_estimate_order_live(order_payload, auth_live):
-    estimation = Order.estimate(
-        auth_live, order_payload["dataProviderName"], order_payload["orderParams"]
-    )
+def test_estimate_order_live(order_parameters, auth_live):
+    estimation = Order.estimate(auth_live, order_parameters=order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100

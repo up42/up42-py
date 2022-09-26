@@ -1,0 +1,142 @@
+[
+  {
+    "id": "7131f727-cdbb-46d4-a1e7-77ac38b7bd02",
+    "productConfiguration": {
+      "host": {
+        "name": "nearspacelabs",
+        "title": "Near Space Labs",
+        "description": "A commercial stratospheric imagery provider offering analytics-ready, very high-resolution images captured from sub-daily flights.",
+        "isIntegrated": true,
+        "createdAt": "2022-02-02T11:06:09.581868Z",
+        "updatedAt": "2022-02-02T11:06:09.581868Z"
+      },
+      "hostName": "nearspacelabs",
+      "title": "Display Full Scene",
+      "description": "Monoscopic imagery with fast non-local means denoising, sigmoidal contrast and white balancing, image-based atmospheric correction, and georeferencing accuracy of 10m CE90.",
+      "id": "eb2ca5fd-2880-43b0-91c9-b6d164ec3973",
+      "configuration": {},
+      "isIntegrated": true,
+      "createdAt": "2022-02-10T15:38:18.598392Z",
+      "updatedAt": "2022-02-10T15:38:18.598392Z"
+    },
+    "productConfigurationId": "eb2ca5fd-2880-43b0-91c9-b6d164ec3973",
+    "collection": {
+      "name": "nsl-30cm",
+      "title": "Near Space Labs - 30cm",
+      "description": "Analytics-ready, 30cm high-resolution stratospheric images captured from sub-daily flights.",
+      "type": "ARCHIVE",
+      "restricted": false,
+      "host": {
+        "name": "nearspacelabs",
+        "title": "Near Space Labs",
+        "description": "A commercial stratospheric imagery provider offering analytics-ready, very high-resolution images captured from sub-daily flights.",
+        "isIntegrated": true,
+        "createdAt": "2022-02-02T11:06:09.581868Z",
+        "updatedAt": "2022-02-02T11:06:09.581868Z"
+      },
+      "hostName": "nearspacelabs",
+      "producer": {
+        "name": "near-space-labs",
+        "title": "Near Space Labs",
+        "description": "A commercial stratospheric imagery provider offering analytics-ready, very high-resolution images captured from sub-daily flights.",
+        "isIntegrated": true,
+        "createdAt": "2022-02-02T11:06:09.581868Z",
+        "updatedAt": "2022-02-02T11:06:09.581868Z"
+      },
+      "producerName": "near-space-labs",
+      "isIntegrated": true,
+      "createdAt": "2022-02-02T11:06:09.581868Z",
+      "updatedAt": "2022-02-15T11:39:27.090748Z"
+    },
+    "collectionName": "nsl-30cm",
+    "isIntegrated": true,
+    "createdAt": "2022-02-10T15:38:18.804420Z",
+    "updatedAt": "2022-02-10T15:38:18.804420Z"
+  },
+  {
+    "id": "96072809-d820-4cf9-86dd-d3bff3337c35",
+    "productConfiguration": {
+      "host": {
+        "name": "capellaspace",
+        "title": "Capella Space",
+        "description": "",
+        "isIntegrated": true,
+        "createdAt": "2021-11-02T13:09:03.676213Z",
+        "updatedAt": "2021-11-02T13:09:03.676213Z"
+      },
+      "hostName": "capellaspace",
+      "title": "Full Scene",
+      "description": "Single-polarization data product. Format and product type defined by selected collection.",
+      "id": "b6898048-8006-4c0d-a1e8-c5aee49e33c5",
+      "configuration": {},
+      "isIntegrated": true,
+      "createdAt": "2022-02-10T16:50:54.778715Z",
+      "updatedAt": "2022-02-10T16:50:54.778715Z"
+    },
+    "productConfigurationId": "b6898048-8006-4c0d-a1e8-c5aee49e33c5",
+    "collection": {
+      "name": "capella-gec",
+      "title": "Capella Space GEC",
+      "description": "Capella’s satellites offer high-quality, very high resolution (VHR) SAR imagery. GEC is a geocoded product flattened to a single elevation to reduce visual distortions. This is analysis-ready, though it also contains layover and foreshortening. Great for visual interpretation.",
+      "type": "ARCHIVE",
+      "restricted": true,
+      "host": {
+        "name": "capellaspace",
+        "title": "Capella Space",
+        "description": "",
+        "isIntegrated": true,
+        "createdAt": "2021-11-02T13:09:03.676213Z",
+        "updatedAt": "2021-11-02T13:09:03.676213Z"
+      },
+      "hostName": "capellaspace",
+      "producer": {
+        "name": "capella-space",
+        "title": "Capella Space",
+        "description": "A California-based commercial startup offering a constellation of X-SAR satellites, providing global coverage, high revisit, and a high level of quality.",
+        "isIntegrated": true,
+        "createdAt": "2021-12-03T12:40:39.247442Z",
+        "updatedAt": "2022-04-04T11:14:49.600778Z"
+      },
+      "producerName": "capella-space",
+      "isIntegrated": true,
+      "createdAt": "2021-12-03T12:40:39.361770Z",
+      "updatedAt": "2021-12-03T12:40:39.361770Z"
+    },
+    "collectionName": "capella-gec",
+    "isIntegrated": true,
+    "createdAt": "2022-02-10T16:50:54.956134Z",
+    "updatedAt": "2022-04-04T10:36:54.428442Z"
+  },
+  {
+    "id": "123_not_integrated",
+    "productConfiguration": {
+      "host": {
+        "name": "not",
+        "isIntegrated": false
+      },
+      "hostName": "notIntegrated",
+      "title": "not",
+      "configuration": {},
+      "isIntegrated": false
+    },
+    "productConfigurationId": "12345",
+    "collection": {
+      "name": "not_integrated",
+      "title": "test_not_integrated",
+      "type": "ARCHIVE",
+      "restricted": true,
+      "host": {
+        "name": "not",
+        "isIntegrated": false
+      },
+      "hostName": "capellaspace",
+      "producer": {
+        "name": "test_not_integrated",
+        "isIntegrated": false
+      },
+      "producerName": "test_not_integrated"
+    },
+    "collectionName": "test_not_integrated",
+    "isIntegrated": false
+  }
+]

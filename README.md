@@ -49,17 +49,18 @@ Search & order satellite images from the UP42 catalog.
 
 ```python
 import up42
+
 up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
 catalog = up42.initialize_catalog()
 
 # Search in the catalog with your search parameters
 aoi = up42.read_vector_file("data/aoi_washington.geojson")
-search_parameters = catalog.construct_parameters(geometry=aoi,
-                                                 start_date="2019-01-01",
-                                                 end_date="2021-12-31",
-                                                 collections=["phr"],
-                                                 max_cloudcover=20,
-                                                 limit=10)
+search_parameters = catalog.construct_search_parameters(geometry=aoi,
+                                                        start_date="2019-01-01",
+                                                        end_date="2021-12-31",
+                                                        collections=["phr"],
+                                                        max_cloudcover=20,
+                                                        limit=10)
 search_results = catalog.search(search_parameters=search_parameters)
 
 # Estimate the order price and place the order
