@@ -11,6 +11,7 @@ install[dev]:
 	pip install -r $(SRC)/requirements.txt
 	pip install -e .
 	pip install -r $(SRC)/requirements-dev.txt
+	pip install -r $(SRC)/requirements-viz.txt
 	pip install -r $(SRC)/requirements-docs.txt
 	unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
 
