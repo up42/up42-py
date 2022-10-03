@@ -29,6 +29,7 @@ from up42.job import Job
 from up42.jobtask import JobTask
 from up42.jobcollection import JobCollection
 from up42.catalog import Catalog
+from up42.tasking import Tasking
 from up42.storage import Storage
 from up42.order import Order
 from up42.asset import Asset
@@ -88,6 +89,14 @@ def initialize_catalog() -> "Catalog":
     Returns a Catalog object for using the catalog search.
     """
     return Catalog(auth=_auth)
+
+
+@check_auth_init
+def initialize_tasking() -> "Tasking":
+    """
+    Returns a Catalog object for using the catalog search.
+    """
+    return Tasking(auth=_auth)
 
 
 @check_auth_init
