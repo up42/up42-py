@@ -26,24 +26,14 @@ logger = get_logger(__name__)
 
 
 # pylint: disable=duplicate-code
-class Catalog(VizTools):
+class CatalogBase:
     """
-    The Catalog class enables access to the UP42 catalog search. You can search
-    for satellite image scenes (for different sensors and criteria like cloud cover),
-    plot the scene coverage and download and plot the scene quicklooks.
-
-    Use the catalog:
-    ```python
-    catalog = up42.initialize_catalog()
-    ```
+    The base for Catalog and Tasking class, shared functions.
     """
 
     def __init__(self, auth: Auth):
         self.auth = auth
-        self.quicklooks = None
-
-    def __repr__(self):
-        return f"Catalog(auth={self.auth})"
+        self.type = None
 
     def get_data_products(self, basic: bool = True) -> Union[Dict, List]:
         """
@@ -98,7 +88,145 @@ class Catalog(VizTools):
         """
         url = f"{self.auth._endpoint()}/collections"
         json_response = self.auth._request("GET", url)
-        return json_response["data"]
+        collections = [c for c in json_response["data"] if c["type"] == self.type]
+        return collections
+
+    def get_data_product_schema(self, data_product_id: str):
+        url = f"{self.auth._endpoint()}/orders/schema/{data_product_id}"
+        json_response = self.auth._request("GET", url)
+        return json_response
+
+    def construct_order_parameters(
+        self,
+        data_product_id: str,
+        image_id: str,
+        aoi: Union[
+            dict,
+            Feature,
+            FeatureCollection,
+            list,
+            GeoDataFrame,
+            Polygon,
+        ] = None
+    ):
+        """
+        Helps constructing the parameters dictionary required for the search.
+
+        Args:
+            data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
+            image_id: The id of the desired image (from search results)
+            aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
+                list, GeoDataFrame, Polygon.
+
+        Returns:
+            The constructed parameters dictionary.
+
+        Example:
+            ```python
+            order_parameters = catalog.construct_order_parameters(data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
+                                                                  image_id='6434e7af-2d41-4ded-a789-fb1b2447ac92',
+                                                                  aoi={'type': 'Polygon',
+                                                                    'coordinates': (((13.375966, 52.515068),
+                                                                      (13.375966, 52.516639),
+                                                                      (13.378314, 52.516639),
+                                                                      (13.378314, 52.515068),
+                                                                      (13.375966, 52.515068)),)})
+            ```
+        """
+        schema = self.get_data_product_schema(data_product_id)
+        required_params = list(schema["properties"].keys())
+        logger.info(f"This data product requires order_parameters {required_params}. Also see "
+                    f".get_data_product_schema()")
+
+        order_parameters = {
+            "dataProduct": data_product_id,
+            "params": {
+                "id": image_id,
+            },
+        }
+        if aoi is not None:
+            aoi = any_vector_to_fc(vector=aoi)
+            aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
+            order_parameters["params"]["aoi"] = aoi
+        return order_parameters
+
+    def place_order(
+        self,
+        order_parameters: Union[dict, None],
+        track_status: bool = False,
+        report_time: int = 120,
+        **kwargs,
+    ) -> "Order":
+        """
+        Place an order.
+
+        Args:
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
+            report_time (int): The interval (in seconds) to query the order status if `track_status` is True.
+
+        Warning "Deprecated order parameters"
+            The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. Please use the new
+            order_parameters parameter as described above.
+
+         Warning:
+            When placing orders of items that are in archive or cold storage,
+            the order fulfillment can happen up to **24h after order placement**.
+            In such cases, please make sure to set an appropriate `report_time`.
+            You can also use `Order.track_status` on the returned object to track the status later.
+
+        Returns:
+            Order: The placed order.
+        """
+        if "scene" in kwargs or "geometry" in kwargs:
+            # Deprecated, to be removed, use order_parameters.
+            message = (
+                "The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. "
+                "Please use the new 'order_parameters' parameter."
+            )
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
+        elif order_parameters is None:
+            raise ValueError("Please provide the 'order_parameters' parameter!")
+
+        order = Order.place(self.auth, order_parameters)  # type: ignore
+        if track_status:
+            order.track_status(report_time)
+        return order
+
+
+class Catalog(CatalogBase, VizTools):
+    def __init__(self, auth: Auth):
+        self.auth = auth
+        self.quicklooks = None
+        self.type = "ARCHIVE"
+
+    def __repr__(self):
+        return f"Catalog(auth={self.auth})"
+
+    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
+        """
+        Estimate the cost of an order.
+
+        Args:
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+
+        Returns:
+            int: An estimated cost for the order in UP42 credits.
+
+        Warning "Deprecated order parameters"
+            The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. Please use the new
+            order_parameters parameter as described above.
+        """
+        if "scene" in kwargs or "geometry" in kwargs:
+            # Deprecated, to be removed, use order_parameters.
+            message = (
+                "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
+                "Please use the new 'order_parameters' parameter."
+            )
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
+        elif order_parameters is None:
+            raise ValueError("Please provide the 'order_parameters' parameter!")
+        return Order.estimate(self.auth, order_parameters)  # type: ignore
 
     @deprecation("construct_search_parameters", "0.25.0")
     def construct_parameters(self, **kwargs):  # pragma: no cover
@@ -337,119 +465,3 @@ class Catalog(VizTools):
 
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
-
-    @staticmethod
-    def construct_order_parameters(
-        data_product_id: str,
-        image_id: str,
-        aoi: Union[
-            dict,
-            Feature,
-            FeatureCollection,
-            list,
-            GeoDataFrame,
-            Polygon,
-        ],
-    ):
-        """
-        Helps constructing the parameters dictionary required for the search.
-
-        Args:
-            data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
-            image_id: The id of the desired image (from search results)
-            aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
-                list, GeoDataFrame, Polygon.
-
-        Returns:
-            The constructed parameters dictionary.
-
-        Example:
-            ```python
-            order_parameters = catalog.construct_order_parameters(data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
-                                                                  image_id='6434e7af-2d41-4ded-a789-fb1b2447ac92',
-                                                                  aoi={'type': 'Polygon',
-                                                                    'coordinates': (((13.375966, 52.515068),
-                                                                      (13.375966, 52.516639),
-                                                                      (13.378314, 52.516639),
-                                                                      (13.378314, 52.515068),
-                                                                      (13.375966, 52.515068)),)})
-            ```
-        """
-        aoi = any_vector_to_fc(vector=aoi)
-        aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
-        order_parameters = {
-            "dataProduct": data_product_id,
-            "params": {
-                "id": image_id,
-                "aoi": aoi,
-            },
-        }
-        return order_parameters
-
-    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
-        """
-        Estimate the cost of an order.
-
-        Args:
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
-
-        Returns:
-            int: An estimated cost for the order in UP42 credits.
-
-        Warning "Deprecated order parameters"
-            The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. Please use the new
-            order_parameters parameter as described above.
-        """
-        if "scene" in kwargs or "geometry" in kwargs:
-            # Deprecated, to be removed, use order_parameters.
-            message = (
-                "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
-                "Please use the new 'order_parameters' parameter."
-            )
-            warnings.warn(message, DeprecationWarning, stacklevel=2)
-        elif order_parameters is None:
-            raise ValueError("Please provide the 'order_parameters' parameter!")
-        return Order.estimate(self.auth, order_parameters)  # type: ignore
-
-    def place_order(
-        self,
-        order_parameters: Union[dict, None],
-        track_status: bool = False,
-        report_time: int = 120,
-        **kwargs,
-    ) -> "Order":
-        """
-        Place an order.
-
-        Args:
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
-            track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
-            report_time (int): The interval (in seconds) to query the order status if `track_status` is True.
-
-        Warning "Deprecated order parameters"
-            The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. Please use the new
-            order_parameters parameter as described above.
-
-         Warning:
-            When placing orders of items that are in archive or cold storage,
-            the order fulfillment can happen up to **24h after order placement**.
-            In such cases, please make sure to set an appropriate `report_time`.
-            You can also use `Order.track_status` on the returned object to track the status later.
-
-        Returns:
-            Order: The placed order.
-        """
-        if "scene" in kwargs or "geometry" in kwargs:
-            # Deprecated, to be removed, use order_parameters.
-            message = (
-                "The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. "
-                "Please use the new 'order_parameters' parameter."
-            )
-            warnings.warn(message, DeprecationWarning, stacklevel=2)
-        elif order_parameters is None:
-            raise ValueError("Please provide the 'order_parameters' parameter!")
-
-        order = Order.place(self.auth, order_parameters)  # type: ignore
-        if track_status:
-            order.track_status(report_time)
-        return order
