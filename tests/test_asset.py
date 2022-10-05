@@ -122,4 +122,5 @@ def test_asset_download_no_unpacking(asset_mock, requests_mock):
         out_files = asset_mock.download(tempdir, unpacking=False)
         for file in out_files:
             assert Path(file).exists()
+            assert Path(file).name == "output.tgz"
         assert len(out_files) == 1
