@@ -30,6 +30,10 @@ You can determine your currently installed version via:
 
 ## Versions
 
+### [0.23.1](https://pypi.org/project/up42-py/) (2022-10-05)
+- Fixes issue with filename of downloaded assets containing two suffix `.` e.g. `./output..zip`. 
+  Resolves [#350](https://github.com/up42/up42-py/issues/350)
+
 ### [0.23.0](https://pypi.org/project/up42-py/) (2022-09-20)
 - Integrates the UP42 [data products](https://docs.up42.com/developers/api#tag/data-products), 
   e.g. the selection "Display" and "Reflectance" configuration in the ordering process. The new ordering process 
