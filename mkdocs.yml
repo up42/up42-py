@@ -99,6 +99,10 @@ plugins:
   - mkdocs-jupyter:
       include_source: False
       ignore_h1_titles: True
+      include: ["examples/data-block-examples/pleiades-download-example.ipynb",
+                "examples/data-block-examples/nextmapone-viewshed-data-example.ipynb",
+                "examples/data-block-examples/osm-example.ipynb",
+                "examples/ship-identification.ipynb"]
   - macros:
       module_name: docs/macros
   - exclude:
