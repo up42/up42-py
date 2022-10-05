@@ -365,7 +365,7 @@ class Catalog(VizTools):
 
         Example:
             ```python
-            order_parameters = catalog.construct_order_parameters(data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
+            order_parameters=catalog.construct_order_parameters(data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
                                                                   image_id='6434e7af-2d41-4ded-a789-fb1b2447ac92',
                                                                   aoi={'type': 'Polygon',
                                                                     'coordinates': (((13.375966, 52.515068),
