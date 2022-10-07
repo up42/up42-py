@@ -158,7 +158,29 @@ def test_map_images_1_scene():
 def test_map_results(job_mock):
     fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with tarfile.open(fp_tgz) as tar:
-        tar.extractall(fp_tgz.parent)
+        
+        import os
+        
+        def is_within_directory(directory, target):
+            
+            abs_directory = os.path.abspath(directory)
+            abs_target = os.path.abspath(target)
+        
+            prefix = os.path.commonprefix([abs_directory, abs_target])
+            
+            return prefix == abs_directory
+        
+        def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+        
+            for member in tar.getmembers():
+                member_path = os.path.join(path, member.name)
+                if not is_within_directory(path, member_path):
+                    raise Exception("Attempted Path Traversal in Tar File")
+        
+            tar.extractall(path, members, numeric_owner=numeric_owner) 
+            
+        
+        safe_extract(tar, fp_tgz.parent)
     fp_tif = (
         fp_tgz.parent
         / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
@@ -176,7 +198,26 @@ def test_map_results_jobcollection(job_mock):
         Path(__file__).resolve().parent / "mock_data/job_collection_merged_result.json"
     )
     with tarfile.open(fp_tgz) as tar:
-        tar.extractall(fp_tgz.parent)
+        def is_within_directory(directory, target):
+            
+            abs_directory = os.path.abspath(directory)
+            abs_target = os.path.abspath(target)
+        
+            prefix = os.path.commonprefix([abs_directory, abs_target])
+            
+            return prefix == abs_directory
+        
+        def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+        
+            for member in tar.getmembers():
+                member_path = os.path.join(path, member.name)
+                if not is_within_directory(path, member_path):
+                    raise Exception("Attempted Path Traversal in Tar File")
+        
+            tar.extractall(path, members, numeric_owner=numeric_owner) 
+            
+        
+        safe_extract(tar, fp_tgz.parent)
     fp_tif = (
         fp_tgz.parent
         / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
@@ -196,7 +237,26 @@ def test_map_results_jobcollection(job_mock):
 def test_map_results_additional_geojson(job_mock):
     fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with tarfile.open(fp_tgz) as tar:
-        tar.extractall(fp_tgz.parent)
+        def is_within_directory(directory, target):
+            
+            abs_directory = os.path.abspath(directory)
+            abs_target = os.path.abspath(target)
+        
+            prefix = os.path.commonprefix([abs_directory, abs_target])
+            
+            return prefix == abs_directory
+        
+        def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+        
+            for member in tar.getmembers():
+                member_path = os.path.join(path, member.name)
+                if not is_within_directory(path, member_path):
+                    raise Exception("Attempted Path Traversal in Tar File")
+        
+            tar.extractall(path, members, numeric_owner=numeric_owner) 
+            
+        
+        safe_extract(tar, fp_tgz.parent)
     fp_tif = (
         fp_tgz.parent
         / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
