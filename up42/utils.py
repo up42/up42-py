@@ -148,9 +148,9 @@ def download_gcs_not_unpack(
             directory.
     """
     if ".tgz" in download_url:
-        file_ending = ".tgz"
+        file_ending = "tgz"
     elif ".zip" in download_url:
-        file_ending = ".zip"
+        file_ending = "zip"
     else:
         ValueError("To be downloaded file is not a TGZ/TAR or ZIP archive.")
     out_fp = Path().joinpath(output_directory, f"output.{file_ending}")
