@@ -53,6 +53,9 @@ class CatalogBase:
             collection_overview = {}
 
             for product in products:
+                if product["type"] != self.type:
+                    continue
+
                 try:
                     if not product["collection"]["isIntegrated"]:
                         continue

@@ -1112,7 +1112,9 @@ def webhooks_live(auth_live):
 @pytest.fixture()
 def catalog_mock(auth_mock, requests_mock):
     url_collections = f"{auth_mock._endpoint()}/collections"
-    collections_response = {"data": [{"name": "phr", "hostName": "oneatlas"}]}
+    collections_response = {
+        "data": [{"name": "phr", "hostName": "oneatlas", "type": "ARCHIVE"}]
+    }
     requests_mock.get(
         url=url_collections,
         json=collections_response,
