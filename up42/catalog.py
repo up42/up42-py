@@ -53,7 +53,7 @@ class CatalogBase:
             collection_overview = {}
 
             for product in products:
-                if product["type"] != self.type:
+                if product["collection"]["type"] != self.type:
                     continue
 
                 try:
