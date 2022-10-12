@@ -278,10 +278,9 @@ class Auth:
                 self._request_helper, request_type, url, data, querystring
             )
         except requests.exceptions.RequestException as err:  # Base error class
-            err_message = json.loads(err.response.text)["error"]
-            if "code" in err_message:
-                err_message = f"{err_message['code']} Error - {err_message['message']}!"
-            logger.error(err_message)
+            # Raising the original `err` error would not surface the relevant error message (contained in API response)
+            err_message = err.response.json()["error"]
+            logger.error(f"Error {err_message}")
             raise requests.exceptions.RequestException(err_message) from err
 
         # Handle response text.
