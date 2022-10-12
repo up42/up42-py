@@ -40,17 +40,17 @@ class Tasking(CatalogBase):
         self.type = "TASKING"
 
     def construct_order_parameters(
-            self,
-            data_product_id: str,
-            image_id: str,
-            aoi: Union[
-                dict,
-                Feature,
-                FeatureCollection,
-                list,
-                GeoDataFrame,
-                Polygon,
-            ] = None
+        self,
+        data_product_id: str,
+        image_id: str,
+        aoi: Union[
+            dict,
+            Feature,
+            FeatureCollection,
+            list,
+            GeoDataFrame,
+            Polygon,
+        ] = None,
     ):
         """
         Helps constructing the parameters dictionary required for the search.
@@ -78,8 +78,10 @@ class Tasking(CatalogBase):
         """
         schema = self.get_data_product_schema(data_product_id)
         required_params = list(schema["properties"].keys())
-        logger.info(f"This data product requires order_parameters {required_params}. Also see "
-                    f".get_data_product_schema()")
+        logger.info(
+            f"This data product requires order_parameters {required_params}. Also see "
+            f".get_data_product_schema()"
+        )
 
         order_parameters = {
             "dataProduct": data_product_id,

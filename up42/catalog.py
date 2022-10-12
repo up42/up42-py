@@ -28,7 +28,7 @@ logger = get_logger(__name__)
 # pylint: disable=duplicate-code
 class CatalogBase:
     """
-    The base for Catalog and Tasking class, shared functions.
+    The base for Catalog and Tasking class, shared functionality.
     """
 
     def __init__(self, auth: Auth):
@@ -110,7 +110,7 @@ class CatalogBase:
             list,
             GeoDataFrame,
             Polygon,
-        ] = None
+        ] = None,
     ):
         """
         Helps constructing the parameters dictionary required for the search.
@@ -138,8 +138,10 @@ class CatalogBase:
         """
         schema = self.get_data_product_schema(data_product_id)
         required_params = list(schema["properties"].keys())
-        logger.info(f"This data product requires order_parameters {required_params}. Also see "
-                    f".get_data_product_schema()")
+        logger.info(
+            f"This data product requires order_parameters {required_params}. Also see "
+            f".get_data_product_schema()"
+        )
 
         order_parameters = {
             "dataProduct": data_product_id,
