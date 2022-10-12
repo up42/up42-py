@@ -1,7 +1,7 @@
 """
 Tasking functionality
 """
-from typing import Union, List, Dict, Any
+from typing import Union
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
