@@ -33,7 +33,7 @@ class CatalogBase:
 
     def __init__(self, auth: Auth):
         self.auth = auth
-        self.type = None
+        self.type: Union[str, None] = None
 
     def get_data_products(self, basic: bool = True) -> Union[Dict, List]:
         """
@@ -97,7 +97,7 @@ class CatalogBase:
     def get_data_product_schema(self, data_product_id: str):
         url = f"{self.auth._endpoint()}/orders/schema/{data_product_id}"
         json_response = self.auth._request("GET", url)
-        return json_response
+        return json_response  # Does not contain usual "data" key
 
     def place_order(
         self,
@@ -372,14 +372,15 @@ class Catalog(CatalogBase, VizTools):
 
         Example:
             ```python
-            order_parameters = catalog.construct_order_parameters(data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
-                                                                  image_id='6434e7af-2d41-4ded-a789-fb1b2447ac92',
-                                                                  aoi={'type': 'Polygon',
-                                                                    'coordinates': (((13.375966, 52.515068),
-                                                                      (13.375966, 52.516639),
-                                                                      (13.378314, 52.516639),
-                                                                      (13.378314, 52.515068),
-                                                                      (13.375966, 52.515068)),)})
+            order_parameters = catalog.construct_order_parameters(
+                data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
+                image_id='6434e7af-2d41-4ded-a789-fb1b2447ac92',
+                aoi={'type': 'Polygon',
+                'coordinates': (((13.375966, 52.515068),
+                  (13.375966, 52.516639),
+                  (13.378314, 52.516639),
+                  (13.378314, 52.515068),
+                  (13.375966, 52.515068)),)})
             ```
         """
         order_parameters = {
@@ -392,6 +393,7 @@ class Catalog(CatalogBase, VizTools):
             order_parameters["params"]["aoi"] = aoi
 
         schema = self.get_data_product_schema(data_product_id)
+        print(schema)
         required_params = list(schema["properties"].keys())
         logger.info(
             f"Required order parameters for this data product: {required_params}. Also see "

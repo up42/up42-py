@@ -6,8 +6,6 @@ from up42.auth import Auth
 from up42.catalog import CatalogBase
 from up42.utils import (
     get_logger,
-    any_vector_to_fc,
-    fc_to_query_geometry,
 )
 
 logger = get_logger(__name__)
@@ -45,7 +43,8 @@ class Tasking(CatalogBase):
 
         Example:
             ```python
-            order_parameters = tasking.construct_order_parameters(data_product_id='647780db-5a06-4b61-b525-577a8b68bb54')
+            order_parameters = tasking.construct_order_parameters(
+                data_product_id='647780db-5a06-4b61-b525-577a8b68bb54')
             ```
         """
         order_parameters = {

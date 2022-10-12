@@ -415,7 +415,9 @@ def test_download_quicklook_live(catalog_live):
 
 def test_construct_order_parameters(catalog_mock):
     order_parameters = catalog_mock.construct_order_parameters(
-        data_product_id="123", image_id="123", aoi=mock_search_parameters["intersects"]
+        data_product_id="data_product_id_123",
+        image_id="123",
+        aoi=mock_search_parameters["intersects"],
     )
     assert isinstance(order_parameters, dict)
     assert list(order_parameters.keys()) == ["dataProduct", "params"]
