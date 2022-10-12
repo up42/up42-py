@@ -11,6 +11,9 @@ from up42.auth import Auth
 from up42.catalog import CatalogBase
 from up42.utils import (
     get_logger,
+    format_time_period,
+    any_vector_to_fc,
+    fc_to_query_geometry,
 )
 
 logger = get_logger(__name__)
@@ -67,6 +70,12 @@ class Tasking(CatalogBase):
                 data_product_id='647780db-5a06-4b61-b525-577a8b68bb54')
             ```
         """
+        start_date, end_date = format_time_period(
+            start_date=start_date, end_date=end_date
+        ).split("/")
+        geometry = any_vector_to_fc(vector=geometry)
+        geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
+
         order_parameters = {
             "dataProduct": data_product_id,
             "params": {
