@@ -1,6 +1,6 @@
 # 🔍 Search & Order Data
 
-A basic example on how to search & purchase data from the UP42 catalog. 
+A basic example on how to search & purchase data from the UP42 catalog.
 
 [![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Fsearch_order_data.ipynb)
 
