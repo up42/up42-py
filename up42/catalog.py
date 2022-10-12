@@ -393,14 +393,22 @@ class Catalog(CatalogBase, VizTools):
             order_parameters["params"]["aoi"] = aoi  # type:ignore
 
         schema = self.get_data_product_schema(data_product_id)
-        print(schema)
-        required_params = list(schema["properties"].keys())
-        logger.info(
-            f"Required order parameters for this data product: {required_params}. Also see "
-            f"catalog.get_data_product_schema()"
+        required_params = schema["required"]
+        optional_params = list(
+            set(list(schema["properties"].keys())).difference(required_params)
         )
-        missing_params = set(required_params).difference(order_parameters["params"])
-        redundant_params = set(order_parameters["params"]).difference(required_params)
+        logger.info(
+            f"Order parameters for this data product - Required: {required_params} - Optional: {optional_params}. "
+            f"Also see catalog.get_data_product_schema()"
+        )
+        missing_params = list(
+            set(required_params).difference(order_parameters["params"])
+        )
+        redundant_params = list(
+            set(order_parameters["params"]).difference(
+                required_params + optional_params
+            )
+        )
 
         if not missing_params and not redundant_params:
             logger.info("Correct order parameters!")
