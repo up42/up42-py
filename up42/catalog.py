@@ -390,7 +390,7 @@ class Catalog(CatalogBase, VizTools):
         if aoi is not None:
             aoi = any_vector_to_fc(vector=aoi)
             aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
-            order_parameters["params"]["aoi"] = aoi
+            order_parameters["params"]["aoi"] = aoi  # type:ignore
 
         schema = self.get_data_product_schema(data_product_id)
         print(schema)
