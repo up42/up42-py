@@ -86,7 +86,6 @@ class Tasking(CatalogBase):
                 **kwargs,
             },
         }
-        # TODO: geometry handling, additional kwargs
 
         schema = self.get_data_product_schema(data_product_id)
         required_params = schema["required"]
