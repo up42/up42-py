@@ -42,7 +42,7 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 _auth: Auth = None  # type: ignore
 
 
-def check_auth_init(func, *args, **kwargs):
+def _check_auth_init(func, *args, **kwargs):
     """
     Some functionality of the up42 import object can theoretically be used
     before authentication with UP42, so the auth needs to be checked first.
@@ -72,7 +72,7 @@ def authenticate(
     )
 
 
-@check_auth_init
+@_check_auth_init
 def initialize_project() -> "Project":
     """
     Returns the correct Project object (has to exist on UP42).
@@ -82,7 +82,7 @@ def initialize_project() -> "Project":
     return project
 
 
-@check_auth_init
+@_check_auth_init
 def initialize_catalog() -> "Catalog":
     """
     Returns a Catalog object for using the catalog search.
@@ -90,7 +90,7 @@ def initialize_catalog() -> "Catalog":
     return Catalog(auth=_auth)
 
 
-@check_auth_init
+@_check_auth_init
 def initialize_workflow(workflow_id: str) -> "Workflow":
     """
     Returns a Workflow object (has to exist on UP42).
@@ -105,7 +105,7 @@ def initialize_workflow(workflow_id: str) -> "Workflow":
     return workflow
 
 
-@check_auth_init
+@_check_auth_init
 def initialize_job(job_id: str) -> "Job":
     """
     Returns a Job object (has to exist on UP42).
@@ -118,7 +118,7 @@ def initialize_job(job_id: str) -> "Job":
     return job
 
 
-@check_auth_init
+@_check_auth_init
 def initialize_jobtask(jobtask_id: str, job_id: str) -> "JobTask":
     """
     Returns a JobTask object (has to exist on UP42).
@@ -137,7 +137,7 @@ def initialize_jobtask(jobtask_id: str, job_id: str) -> "JobTask":
     return jobtask
 
 
-@check_auth_init
+@_check_auth_init
 def initialize_jobcollection(job_ids: List[str]) -> "JobCollection":
     """
     Returns a JobCollection object (the referenced jobs have to exist on UP42).
@@ -156,7 +156,7 @@ def initialize_jobcollection(job_ids: List[str]) -> "JobCollection":
     return jobcollection
 
 
-@check_auth_init
+@_check_auth_init
 def initialize_storage() -> "Storage":
     """
     Returns a Storage object to list orders and assets.
@@ -164,7 +164,7 @@ def initialize_storage() -> "Storage":
     return Storage(auth=_auth)
 
 
-@check_auth_init
+@_check_auth_init
 def initialize_order(order_id: str) -> "Order":
     """
     Returns an Order object (has to exist on UP42).
@@ -177,7 +177,7 @@ def initialize_order(order_id: str) -> "Order":
     return order
 
 
-@check_auth_init
+@_check_auth_init
 def initialize_asset(asset_id: str) -> "Asset":
     """
     Returns an Asset object (has to exist on UP42).

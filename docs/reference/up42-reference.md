@@ -1,6 +1,6 @@
 # up42
 
-::: up42
+::: up42.__init__
     rendering:
         show_root_toc_entry: False
         show_if_no_docstring: False
