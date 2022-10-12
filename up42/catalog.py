@@ -144,6 +144,15 @@ class CatalogBase:
 
 
 class Catalog(CatalogBase, VizTools):
+    """
+    The Catalog class enables access to the UP42 catalog functionality (data archive search & ordering).
+
+    Use tasking:
+    ```python
+    catalog = up42.initialize_catalog()
+    ```
+    """
+
     def __init__(self, auth: Auth):
         self.auth = auth
         self.quicklooks = None

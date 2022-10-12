@@ -1,6 +1,6 @@
-# :satellite: **Create Tasking Order**
+# :satellite: **Create Satellite Tasking Order**
 
-A basic example on how to create a tasking order on UP42
+A basic example on how to create a tasking order on UP42.
 
 ## **Authenticate**
 
