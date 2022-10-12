@@ -51,15 +51,16 @@ nav:
           - Ship Identification: examples/ship-identification.ipynb
     - Code Reference:
         - up42: reference/up42-reference.md
+        - Catalog: reference/catalog-reference.md
+        - Tasking: reference/catalog-reference.md
+        - Storage: reference/storage-reference.md
+        - Order: reference/order-reference.md
+        - Asset: reference/asset-reference.md
         - Project: reference/project-reference.md
         - Workflow: reference/workflow-reference.md
         - Job: reference/job-reference.md
         - JobCollection: reference/jobcollection-reference.md
         - JobTask: reference/jobtask-reference.md
-        - Catalog: reference/catalog-reference.md
-        - Storage: reference/storage-reference.md
-        - Order: reference/order-reference.md
-        - Asset: reference/asset-reference.md
         - Webhooks: reference/webhooks-reference.md
     -  Changelog & FAQ:
         - Changelog: CHANGELOG.md
