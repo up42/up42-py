@@ -290,10 +290,6 @@ class Catalog(VizTools):
         supported_sensors = {
             "pleiades": "oneatlas",
             "spot": "oneatlas",
-            "sentinel1": "sobloo-image",
-            "sentinel2": "sobloo-image",
-            "sentinel3": "sobloo-image",
-            "sentinel5p": "sobloo-image",
         }
 
         if sensor not in list(supported_sensors.keys()):
