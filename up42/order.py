@@ -9,8 +9,6 @@ from up42.utils import (
 
 logger = get_logger(__name__)
 
-DATA_PROVIDERS = ["oneatlas"]
-
 
 class Order:
     """
