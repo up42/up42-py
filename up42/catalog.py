@@ -290,6 +290,10 @@ class Catalog(VizTools):
         supported_sensors = {
             "pleiades": "oneatlas",
             "spot": "oneatlas",
+            "capella-gec": "capellaspace",
+            "capella-geo": "capellaspace",
+            "capella-sicd": "capellaspace",
+            "capella-slc": "capellaspace",
         }
 
         if sensor not in list(supported_sensors.keys()):
