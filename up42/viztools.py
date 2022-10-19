@@ -201,12 +201,13 @@ class VizTools:
             titles=titles,
         )
 
+    # pylint: disable=too-many-statements
     @staticmethod
     def _map_images(
         plot_file_format: List[str],
         result_df: GeoDataFrame,
         filepaths: List[Union[str, Path]],
-        bands: List[int] = [1, 2, 3],
+        bands: Optional[List[int]] = None,
         aoi: Optional[GeoDataFrame] = None,
         show_images=True,
         show_features=False,
@@ -221,6 +222,7 @@ class VizTools:
             aoi: GeoDataFrame of aoi.
             filepaths: Paths to images to plot. Optional, by default picks up the last
                 downloaded results.
+            bands: Image bands and order to plot, e.g. [1,2,3]. First band is 1.
             show_images: Shows images if True (default).
             show_features: Show features if True. For quicklooks maps is set to False.
             name_column: Name of the feature property that provides the Feature/Layer name.
@@ -283,10 +285,14 @@ class VizTools:
                 f.add_to(m)
 
         if show_images and raster_filepaths:
-            if len(bands) != 3:
-                if len(bands) == 1:
-                    bands = bands * 3  # plot as grayband
-                else:
+            if bands is None:
+                with rasterio.open(raster_filepaths[0]) as src:
+                    if src.count == 1:
+                        bands = [1]
+                        bands = bands * 3  # visualize as grayband in folium
+                    else:
+                        bands = [1, 2, 3]
+                if len(bands) not in [1, 3]:
                     raise ValueError(
                         "Parameter bands can only contain one or three bands."
                     )
@@ -328,8 +334,8 @@ class VizTools:
     @requires_viz
     def map_results(
         self,
-        bands=[1, 2, 3],
-        aoi: GeoDataFrame = None,
+        bands: Optional[List[int]] = None,
+        aoi: Optional[GeoDataFrame] = None,
         show_images: bool = True,
         show_features: bool = True,
         name_column: str = "uid",
@@ -339,7 +345,7 @@ class VizTools:
         Displays data.json, and if available, one or multiple results geotiffs.
 
         Args:
-            bands: Image bands and order to plot, default [1,2,3]. First band is 1.
+            bands: Image bands and order to plot, e.g. [1,2,3]. First band is 1.
             aoi: Optional visualization of aoi boundaries when given GeoDataFrame of aoi.
             show_images: Shows images if True (default).
             show_features: Shows features if True (default).
