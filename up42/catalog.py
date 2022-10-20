@@ -3,7 +3,7 @@ Catalog search functionality
 """
 
 from pathlib import Path
-from typing import Union, List, Dict, Any
+from typing import Union, List, Dict, Any, Optional
 import warnings
 
 from geopandas import GeoDataFrame
@@ -356,14 +356,16 @@ class Catalog(CatalogBase, VizTools):
     def construct_order_parameters(
         data_product_id: str,
         image_id: str,
-        aoi: Union[
-            dict,
-            Feature,
-            FeatureCollection,
-            list,
-            GeoDataFrame,
-            Polygon,
-        ],
+        aoi: Optional[
+            Union[
+                dict,
+                Feature,
+                FeatureCollection,
+                list,
+                GeoDataFrame,
+                Polygon,
+            ]
+        ] = None,
     ):
         """
         Helps constructing the parameters dictionary required for the catalog order.
@@ -389,15 +391,16 @@ class Catalog(CatalogBase, VizTools):
                                                                       (13.375966, 52.515068)),)})
             ```
         """
-        aoi = any_vector_to_fc(vector=aoi)
-        aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
         order_parameters = {
             "dataProduct": data_product_id,
-            "params": {
-                "id": image_id,
-                "aoi": aoi,
-            },
+            "params": {"id": image_id},
         }
+
+        if aoi is not None:
+            aoi = any_vector_to_fc(vector=aoi)
+            aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
+            order_parameters["params"]["aoi"] = aoi  # type:ignore
+
         return order_parameters
 
     def download_quicklooks(
