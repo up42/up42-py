@@ -87,12 +87,13 @@ def test_get_data_products_live(catalog_live):
 def test_construct_search_parameters(catalog_mock):
     search_parameters = catalog_mock.construct_search_parameters(
         geometry=mock_search_parameters["intersects"],
+        collections=["phr"],
         start_date="2014-01-01",
         end_date="2016-12-31",
-        collections=["phr"],
+        usage_type=["DATA", "ANALYTICS"],
+        limit=4,
         max_cloudcover=20,
         sortby="cloudCoverage",
-        limit=4,
         ascending=False,
     )
     assert isinstance(search_parameters, dict)
