@@ -205,7 +205,7 @@ class Catalog(CatalogBase, VizTools):
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
-        usage_type: List[str] = ["DATA", "ANALYTICS"],
+        usage_type: List[str] = None,
         limit: int = 10,
         max_cloudcover: Optional[int] = None,
         sortby: str = "acquisitionDate",
@@ -247,14 +247,15 @@ class Catalog(CatalogBase, VizTools):
         if max_cloudcover is not None:
             query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
 
-        if usage_type == ["DATA"]:
-            query_filters["up42:usageType"] = {"in": ["DATA"]}
-        elif usage_type == ["ANALYTICS"]:
-            query_filters["up42:usageType"] = {"in": ["ANALYTICS"]}
-        elif usage_type == ["DATA", "ANALYTICS"]:
-            query_filters["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
-        else:
-            raise ValueError("Select correct `usage_type`")
+        if usage_type is not None:
+            if usage_type == ["DATA"]:
+                query_filters["up42:usageType"] = {"in": ["DATA"]}
+            elif usage_type == ["ANALYTICS"]:
+                query_filters["up42:usageType"] = {"in": ["ANALYTICS"]}
+            elif usage_type == ["DATA", "ANALYTICS"]:
+                query_filters["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
+            else:
+                raise ValueError("Select correct `usage_type`")
 
         search_parameters = {
             "datetime": time_period,
