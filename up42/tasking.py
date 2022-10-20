@@ -54,10 +54,10 @@ class Tasking(CatalogBase):
 
         Args:
             data_product_id: Id of the desired UP42 data product, see `tasking.get_data_products`
-            name:
-            acquisition_start:
-            acquisition_end:
-            geometry:
+            name: Name of the tasking order project.
+            acquisition_start: Start date of the acquisition period, e.g. "2022-11-01"
+            acquisition_end: End date of the acquisition period, e.g. "2022-11-01"
+            geometry: Polgon geometry of the area to be captured.
 
         Returns:
             The constructed parameters dictionary.
@@ -74,40 +74,35 @@ class Tasking(CatalogBase):
         geometry = any_vector_to_fc(vector=geometry)
         geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
 
+        params = {
+            "displayName": name,
+            "acquisitionStart": start_date,
+            "acquisitionEnd": end_date,
+            "geometry": geometry,
+        }
+        schema = self.get_data_product_schema(data_product_id)
+        additional_params = {
+            param: None for param in schema["required"] if param not in params
+        }
         order_parameters = {
             "dataProduct": data_product_id,
-            "params": {
-                "displayName": name,
-                "acquisitionStart": start_date,
-                "acquisitionEnd": end_date,
-                "geometry": geometry,
-            },
+            "params": dict(params, **additional_params),
         }
 
-        schema = self.get_data_product_schema(data_product_id)
-        required_params = schema["required"]
-        optional_params = list(
-            set(list(schema["properties"].keys())).difference(required_params)
-        )
         logger.info(
-            f"Order parameters for this data product - Required: {required_params} - Optional: {optional_params}. "
-            f"Also see catalog.get_data_product_schema()"
-        )
-        missing_params = list(
-            set(required_params).difference(order_parameters["params"])
-        )
-        redundant_params = list(
-            set(order_parameters["params"]).difference(
-                required_params + optional_params
-            )
+            "See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options"
         )
 
-        if not missing_params and not redundant_params:
-            logger.info("Correct order parameters!")
-        elif missing_params:
-            logger.info(f"Missing order parameters: {missing_params}")
-        else:
-            logger.info(f"Incorrect order parameters: {redundant_params}")
+        # Log message help for parameter selection
+        for param, value in additional_params.items():
+            if "allOf" in schema["properties"][param]:
+                potential_values = [
+                    x["id"] for x in schema["definitions"][param]["enum"]
+                ]
+                logger.info(f"As `{param}` select one of {potential_values}")
+            else:
+                del schema["properties"][param]["title"]
+                logger.info(f"As `{param}` select `{schema['properties'][param]}`")
 
         return order_parameters
 
