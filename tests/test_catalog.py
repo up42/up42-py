@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 import tempfile
+import os
 
 import pytest
 import geopandas as gpd
@@ -19,6 +20,7 @@ from .fixtures import (
     catalog_usagetype_mock,
     order_mock,
     ORDER_ID,
+    DATA_PRODUCT_ID,
 )
 
 
@@ -39,6 +41,21 @@ def test_get_collections_live(catalog_live):
     collections = catalog_live.get_collections()
     assert isinstance(collections, list)
     assert collections[0]["name"]
+
+
+def test_get_data_product_schema(catalog_mock):
+    data_product_schema = catalog_mock.get_data_product_schema(DATA_PRODUCT_ID)
+    assert isinstance(data_product_schema, dict)
+    assert data_product_schema["properties"]
+
+
+@pytest.mark.live
+def test_get_data_product_schema_live(catalog_live):
+    data_product_schema = catalog_live.get_data_product_schema(
+        os.getenv("TEST_UP42_DATA_PRODUCT_ID")
+    )
+    assert isinstance(data_product_schema, dict)
+    assert data_product_schema["properties"]
 
 
 def test_get_data_products_basic(catalog_mock):
