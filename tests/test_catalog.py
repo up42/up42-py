@@ -363,7 +363,7 @@ def test_download_quicklook(catalog_mock, requests_mock):
 
 def test_download_no_quicklook(catalog_mock, requests_mock):
     sel_id = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
-    provider = "sobloo-image"
+    provider = "oneatlas"
     url_quicklook = (
         f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
     )
@@ -371,7 +371,7 @@ def test_download_no_quicklook(catalog_mock, requests_mock):
 
     with tempfile.TemporaryDirectory() as tempdir:
         out_paths = catalog_mock.download_quicklooks(
-            image_ids=[sel_id], sensor="sentinel5p", output_directory=tempdir
+            image_ids=[sel_id], sensor="pleiades", output_directory=tempdir
         )
         assert len(out_paths) == 0
 
@@ -379,7 +379,7 @@ def test_download_no_quicklook(catalog_mock, requests_mock):
 def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
     sel_id_no = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
-    provider = "sobloo-image"
+    provider = "oneatlas"
     url_no_quicklook = f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id_no}/quicklook"
     requests_mock.get(url_no_quicklook, status_code=404)
 
@@ -392,7 +392,7 @@ def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
     with tempfile.TemporaryDirectory() as tempdir:
         out_paths = catalog_mock.download_quicklooks(
             image_ids=[sel_id, sel_id_no],
-            sensor="sentinel5p",
+            sensor="pleiades",
             output_directory=tempdir,
         )
         assert len(out_paths) == 1
