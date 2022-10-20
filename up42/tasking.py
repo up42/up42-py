@@ -48,7 +48,6 @@ class Tasking(CatalogBase):
             GeoDataFrame,
             Polygon,
         ],
-        **kwargs,
     ):
         """
         Helps constructing the parameters dictionary required for the tasking order.
@@ -83,7 +82,6 @@ class Tasking(CatalogBase):
                 "acquisitionStart": start_date,
                 "acquisitionEnd": end_date,
                 "geometry": geometry,
-                **kwargs,
             },
         }
 
