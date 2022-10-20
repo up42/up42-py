@@ -38,8 +38,8 @@ class Tasking(CatalogBase):
         self,
         data_product_id: str,
         name: str,
-        start_date: str,
-        end_date: str,
+        acquisition_start: str,
+        acquisition_end: str,
         geometry: Union[
             dict,
             Feature,
@@ -55,10 +55,9 @@ class Tasking(CatalogBase):
         Args:
             data_product_id: Id of the desired UP42 data product, see `tasking.get_data_products`
             name:
-            start_date:
-            end_date:
+            acquisition_start:
+            acquisition_end:
             geometry:
-            kwargs: Any additional required order parameters.
 
         Returns:
             The constructed parameters dictionary.
@@ -70,7 +69,7 @@ class Tasking(CatalogBase):
             ```
         """
         start_date, end_date = format_time_period(
-            start_date=start_date, end_date=end_date
+            start_date=acquisition_start, end_date=acquisition_end
         ).split("/")
         geometry = any_vector_to_fc(vector=geometry)
         geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
