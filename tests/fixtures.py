@@ -44,6 +44,8 @@ JOB_NAME = "job_name_123"
 JOBTASK_ID = "jobtask_id_123"
 JOBTASK_NAME = "jobtask_name_123"
 
+DATA_PRODUCT_ID = "data_product_id_123"
+
 ORDER_ID = "order_id_123"
 ASSET_ID = "asset_id_123"
 
@@ -1112,7 +1114,9 @@ def webhooks_live(auth_live):
 @pytest.fixture()
 def catalog_mock(auth_mock, requests_mock):
     url_collections = f"{auth_mock._endpoint()}/collections"
-    collections_response = {"data": [{"name": "phr", "hostName": "oneatlas"}]}
+    collections_response = {
+        "data": [{"name": "phr", "hostName": "oneatlas", "type": "ARCHIVE"}]
+    }
     requests_mock.get(
         url=url_collections,
         json=collections_response,
@@ -1146,7 +1150,9 @@ def catalog_live(auth_live):
 @pytest.fixture()
 def catalog_pagination_mock(auth_mock, requests_mock):
     url_collections = f"{auth_mock._endpoint()}/collections"
-    collections_response = {"data": [{"name": "phr", "hostName": "oneatlas"}]}
+    collections_response = {
+        "data": [{"name": "phr", "hostName": "oneatlas", "type": "ARCHIVE"}]
+    }
     requests_mock.get(
         url=url_collections,
         json=collections_response,
@@ -1176,7 +1182,9 @@ def catalog_pagination_mock(auth_mock, requests_mock):
 @pytest.fixture()
 def catalog_usagetype_mock(auth_mock, requests_mock):
     url_collections = f"{auth_mock._endpoint()}/collections"
-    collections_response = {"data": [{"name": "phr", "hostName": "oneatlas"}]}
+    collections_response = {
+        "data": [{"name": "phr", "hostName": "oneatlas", "type": "ARCHIVE"}]
+    }
     requests_mock.get(
         url=url_collections,
         json=collections_response,
