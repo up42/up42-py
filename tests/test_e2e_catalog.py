@@ -18,7 +18,7 @@ def test_e2e_catalog():
     search_parameters = catalog.construct_search_parameters(
         geometry=aoi,
         start_date="2018-01-01",
-        end_date="2020-12-31",
+        end_date="2022-12-31",
         collections=["phr"],
         max_cloudcover=20,
         sortby="cloudCoverage",

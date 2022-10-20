@@ -301,9 +301,13 @@ class Catalog(CatalogBase, VizTools):
 
         # The API request would fail with a limit above 500, thus 500 is forced in the initial
         # request but additional results are handled below via pagination.
-        max_limit = search_parameters["limit"]
+        try:
+            max_limit = search_parameters["limit"]
+        except KeyError:
+            logger.info("No `limit` parameter in search_parameters, using default 500.")
+            max_limit = 500
+
         if max_limit > 500:
-            search_parameters = dict(search_parameters)
             search_parameters["limit"] = 500
 
         # UP42 API can query multiple collections of the same host at once.

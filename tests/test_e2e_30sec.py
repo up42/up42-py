@@ -24,7 +24,7 @@ def test_e2e_30sec():
         geometry=aoi,
         geometry_operation="bbox",
         start_date="2018-01-01",
-        end_date="2020-12-31",
+        end_date="2022-12-31",
         limit=1,
     )
     input_parameters["esa-s2-l2a-gtiff-visual:1"].update({"max_cloud_cover": 5})
