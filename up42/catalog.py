@@ -207,7 +207,7 @@ class Catalog(CatalogBase, VizTools):
         end_date: str = "2020-01-30",
         usage_type: List[str] = ["DATA", "ANALYTICS"],
         limit: int = 10,
-        max_cloudcover: float = 100,
+        max_cloudcover: Optional[int] = None,
         sortby: str = "acquisitionDate",
         ascending: bool = True,
     ) -> dict:
@@ -228,8 +228,7 @@ class Catalog(CatalogBase, VizTools):
                 also result in results with ["DATA", "ANALYTICS"].
             limit: The maximum number of search results to return (1-max.500).
             max_cloudcover: Maximum cloudcover % - e.g. 100 will return all scenes,
-                8.4 will return all scenes with 8.4 or less cloudcover.
-                Ignored for collections that have no cloudcover (e.g. sentinel1).
+                8.4 will return all scenes with 8.4 or less cloudcover. Optional.
             sortby: The property to sort by, "cloudCoverage", "acquisitionDate",
                 "acquisitionIdentifier", "incidenceAngle", "snowCover".
             ascending: Ascending sort order by default, descending if False.
@@ -245,7 +244,7 @@ class Catalog(CatalogBase, VizTools):
         sort_order = "asc" if ascending else "desc"
 
         query_filters: Dict[Any, Any] = {}
-        if "Sentinel-1" not in collections:
+        if max_cloudcover is not None:
             query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
 
         if usage_type == ["DATA"]:
