@@ -50,22 +50,34 @@ class Tasking(CatalogBase):
         ],
     ):
         """
-        Helps constructing the parameters dictionary required for the tasking order.
+        Helps constructing the parameters dictionary required for the tasking order. Each sensor has additional
+        parameters that are added to the output dictionary with value None. The potential values for to select from
+        are given in the logs, for more detail on the parameter use `tasking.get_data_product_schema()`.
 
         Args:
             data_product_id: Id of the desired UP42 data product, see `tasking.get_data_products`
             name: Name of the tasking order project.
             acquisition_start: Start date of the acquisition period, e.g. "2022-11-01"
             acquisition_end: End date of the acquisition period, e.g. "2022-11-01"
-            geometry: Polgon geometry of the area to be captured.
+            geometry: Polygon geometry of the area to be captured.
 
         Returns:
-            The constructed parameters dictionary.
+            The constructed order parameters dictionary.
 
         Example:
             ```python
             order_parameters = tasking.construct_order_parameters(
-                data_product_id='647780db-5a06-4b61-b525-577a8b68bb54')
+                data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
+                name="My tasking order",
+                acquisition_start=2022-11-01,
+                acquisition_end=2022-12-01,
+                geometry={'type': 'Polygon',
+                   'coordinates': (((13.375966, 52.515068),
+                     (13.375966, 52.516639),
+                     (13.378314, 52.516639),
+                     (13.378314, 52.515068),
+                     (13.375966, 52.515068)),)}
+                )
             ```
         """
         start_date, end_date = format_time_period(
@@ -90,11 +102,11 @@ class Tasking(CatalogBase):
         }
 
         logger.info(
-            "See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options"
+            "See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options."
         )
 
         # Log message help for parameter selection
-        for param, value in additional_params.items():
+        for param in additional_params.keys():
             if "allOf" in schema["properties"][param]:
                 potential_values = [
                     x["id"] for x in schema["definitions"][param]["enum"]
