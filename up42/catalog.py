@@ -375,7 +375,6 @@ class Catalog(CatalogBase, VizTools):
             aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
                 list, GeoDataFrame, Polygon.
             kwargs: Any additional required order parameters.
-
         Returns:
             The constructed parameters dictionary.
 
