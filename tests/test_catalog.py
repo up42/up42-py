@@ -140,7 +140,8 @@ def test_search(catalog_mock):
 def test_search_live(catalog_live):
     search_results = catalog_live.search(mock_search_parameters)
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (4, 15)
+    assert search_results.shape[0] != 0
+    assert search_results.shape[1] > 10
     assert list(search_results.columns) == [
         "geometry",
         "id",
@@ -422,7 +423,7 @@ def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
 def test_download_quicklook_live(catalog_live):
     with tempfile.TemporaryDirectory() as tempdir:
         out_paths = catalog_live.download_quicklooks(
-            image_ids=["ca507c1b-ffc8-4a0a-b103-84f7b8b8a11a"],
+            image_ids=["36f52f1f-6de1-4079-b116-5d1215091339"],
             sensor="pleiades",
             output_directory=tempdir,
         )
