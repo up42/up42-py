@@ -3,7 +3,7 @@ Catalog search functionality
 """
 
 from pathlib import Path
-from typing import Union, List, Dict, Any
+from typing import Union, List, Dict, Any, Optional
 import warnings
 
 from geopandas import GeoDataFrame
@@ -205,9 +205,9 @@ class Catalog(CatalogBase, VizTools):
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
-        usage_type: List[str] = ["DATA", "ANALYTICS"],
+        usage_type: List[str] = None,
         limit: int = 10,
-        max_cloudcover: float = 100,
+        max_cloudcover: Optional[int] = None,
         sortby: str = "acquisitionDate",
         ascending: bool = True,
     ) -> dict:
@@ -221,15 +221,14 @@ class Catalog(CatalogBase, VizTools):
                 Also see catalog.get_collections().
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
-            usage_type: Filter for imagery that can just be purchased & downloaded or also
+            usage_type: Optional. Filter for imagery that can just be purchased & downloaded or also
                 processes. ["DATA"] (can only be download), ["ANALYTICS"] (can be downloaded
                 or used directly with a processing algorithm), ["DATA", "ANALYTICS"]
                 (can be any combination). The filter is inclusive, using ["DATA"] can
                 also result in results with ["DATA", "ANALYTICS"].
             limit: The maximum number of search results to return (1-max.500).
-            max_cloudcover: Maximum cloudcover % - e.g. 100 will return all scenes,
+            max_cloudcover: Optional. Maximum cloudcover % - e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloudcover.
-                Ignored for collections that have no cloudcover (e.g. sentinel1).
             sortby: The property to sort by, "cloudCoverage", "acquisitionDate",
                 "acquisitionIdentifier", "incidenceAngle", "snowCover".
             ascending: Ascending sort order by default, descending if False.
@@ -245,17 +244,18 @@ class Catalog(CatalogBase, VizTools):
         sort_order = "asc" if ascending else "desc"
 
         query_filters: Dict[Any, Any] = {}
-        if "Sentinel-1" not in collections:
+        if max_cloudcover is not None:
             query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
 
-        if usage_type == ["DATA"]:
-            query_filters["up42:usageType"] = {"in": ["DATA"]}
-        elif usage_type == ["ANALYTICS"]:
-            query_filters["up42:usageType"] = {"in": ["ANALYTICS"]}
-        elif usage_type == ["DATA", "ANALYTICS"]:
-            query_filters["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
-        else:
-            raise ValueError("Select correct `usage_type`")
+        if usage_type is not None:
+            if usage_type == ["DATA"]:
+                query_filters["up42:usageType"] = {"in": ["DATA"]}
+            elif usage_type == ["ANALYTICS"]:
+                query_filters["up42:usageType"] = {"in": ["ANALYTICS"]}
+            elif usage_type == ["DATA", "ANALYTICS"]:
+                query_filters["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
+            else:
+                raise ValueError("Select correct `usage_type`")
 
         search_parameters = {
             "datetime": time_period,
@@ -373,7 +373,7 @@ class Catalog(CatalogBase, VizTools):
             data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
             image_id: The id of the desired image (from search results)
             aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
-                list, GeoDataFrame, Polygon.
+                list, GeoDataFrame, Polygon. Not required for full-image products.
             kwargs: Any additional required order parameters.
         Returns:
             The constructed parameters dictionary.
@@ -395,6 +395,7 @@ class Catalog(CatalogBase, VizTools):
             "dataProduct": data_product_id,
             "params": {"id": image_id, **kwargs},
         }
+
         if aoi is not None:
             aoi = any_vector_to_fc(vector=aoi)
             aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
