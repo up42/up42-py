@@ -140,7 +140,7 @@ def test_search(catalog_mock):
 def test_search_live(catalog_live):
     search_results = catalog_live.search(mock_search_parameters)
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (4, 15)
+    assert search_results.shape[0] != 0
     assert list(search_results.columns) == [
         "geometry",
         "id",
