@@ -221,14 +221,14 @@ class Catalog(CatalogBase, VizTools):
                 Also see catalog.get_collections().
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
-            usage_type: Filter for imagery that can just be purchased & downloaded or also
+            usage_type: Optional. Filter for imagery that can just be purchased & downloaded or also
                 processes. ["DATA"] (can only be download), ["ANALYTICS"] (can be downloaded
                 or used directly with a processing algorithm), ["DATA", "ANALYTICS"]
                 (can be any combination). The filter is inclusive, using ["DATA"] can
                 also result in results with ["DATA", "ANALYTICS"].
             limit: The maximum number of search results to return (1-max.500).
-            max_cloudcover: Maximum cloudcover % - e.g. 100 will return all scenes,
-                8.4 will return all scenes with 8.4 or less cloudcover. Optional.
+            max_cloudcover: Optional. Maximum cloudcover % - e.g. 100 will return all scenes,
+                8.4 will return all scenes with 8.4 or less cloudcover.
             sortby: The property to sort by, "cloudCoverage", "acquisitionDate",
                 "acquisitionIdentifier", "incidenceAngle", "snowCover".
             ascending: Ascending sort order by default, descending if False.
@@ -374,7 +374,7 @@ class Catalog(CatalogBase, VizTools):
             data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
             image_id: The id of the desired image (from search results)
             aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
-                list, GeoDataFrame, Polygon.
+                list, GeoDataFrame, Polygon. Not required for full-image products.
 
         Returns:
             The constructed parameters dictionary.
