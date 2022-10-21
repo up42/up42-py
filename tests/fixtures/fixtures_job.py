@@ -12,12 +12,8 @@ from .globals import (
     JOB_ID_2,
 )
 
-from .context import (
-    Auth,
-    Project,
-    Workflow,
+from ..context import (
     Job,
-    JobCollection,
 )
 
 
