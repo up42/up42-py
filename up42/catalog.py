@@ -414,7 +414,6 @@ class Catalog(CatalogBase, VizTools):
         image_ids: List[str],
         collection: str,
         output_directory: Union[str, Path, None] = None,
-        **kwargs
     ) -> List[str]:
         """
         Gets the quicklooks of scenes from a single sensor. After download, can
@@ -430,10 +429,6 @@ class Catalog(CatalogBase, VizTools):
         Returns:
             List of quicklook image output file paths.
         """
-        #TODO: WHAT IF COLLECTION DOESNT HAVE QUICKLOOKS?
-        if "sensor" in kwargs:
-            logger.info("Parameter `sensor` will be deprecated, use the `collection` name instead.")
-
         if self.data_products is None:
             self.data_products = self.get_data_products(basic=True)  # type: ignore
         host = [
