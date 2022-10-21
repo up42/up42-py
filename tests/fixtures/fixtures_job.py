@@ -9,7 +9,7 @@ from .globals import (
     JOBTASK_ID,
     DOWNLOAD_URL,
     MOCK_CREDITS,
-    JOB_ID_2
+    JOB_ID_2,
 )
 
 from .context import (
@@ -19,6 +19,7 @@ from .context import (
     Job,
     JobCollection,
 )
+
 
 @pytest.fixture()
 def job_mock(auth_mock, requests_mock):
