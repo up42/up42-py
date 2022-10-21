@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from .globals import WEBHOOK_ID, JSON_WEBHOOK
+from .fixtures_globals import WEBHOOK_ID, JSON_WEBHOOK
 
 from ..context import (
     Webhook,

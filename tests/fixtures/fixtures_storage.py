@@ -1,6 +1,6 @@
 import pytest
 
-from .globals import (
+from .fixtures_globals import (
     JSON_ASSETS,
     JSON_ASSET,
     ASSET_ID,

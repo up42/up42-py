@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from .globals import ASSET_ID, JSON_ASSET, DOWNLOAD_URL
+from .fixtures_globals import ASSET_ID, JSON_ASSET, DOWNLOAD_URL
 
 from ..context import (
     Asset,

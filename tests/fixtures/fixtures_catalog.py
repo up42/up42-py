@@ -4,7 +4,7 @@ import copy
 
 import pytest
 
-from .globals import DATA_PRODUCT_ID
+from .fixtures_globals import DATA_PRODUCT_ID
 
 from ..context import (
     Catalog,

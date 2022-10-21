@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from .globals import JOB_ID, JOBTASK_ID, JOBTASK_NAME, DOWNLOAD_URL
+from .fixtures_globals import JOB_ID, JOBTASK_ID, JOBTASK_NAME, DOWNLOAD_URL
 
 from ..context import (
     JobTask,

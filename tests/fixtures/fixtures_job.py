@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from .globals import (
+from .fixtures_globals import (
     WORKFLOW_NAME,
     JOB_ID,
     JOB_NAME,

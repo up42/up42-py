@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from .globals import (
+from .fixtures_globals import (
     TOKEN,
     PROJECT_ID,
     WORKSPACE_ID,

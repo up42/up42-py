@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from .globals import ORDER_ID, JSON_ORDER
+from .fixtures_globals import ORDER_ID, JSON_ORDER
 
 from ..context import (
     Order,

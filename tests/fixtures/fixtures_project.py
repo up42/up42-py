@@ -1,7 +1,7 @@
 import pytest
 import requests_mock
 
-from .globals import (
+from .fixtures_globals import (
     WORKSPACE_ID,
     PROJECT_NAME,
     PROJECT_DESCRIPTION,
