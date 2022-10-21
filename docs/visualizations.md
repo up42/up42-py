@@ -44,7 +44,7 @@ Works best in a [Jupyter notebook](https://jupyter.org/)!
 
 === "Catalog Quicklooks"
     ```python
-    catalog.download_quicklooks(image_ids=search_results.id.to_list(), sensor="pleiades")
+    catalog.download_quicklooks(image_ids=list(search_results.id), collection="pleiades")
     catalog.map_quicklooks(scenes=search_results, aoi=aoi)
     ```
 
@@ -53,7 +53,7 @@ Works best in a [Jupyter notebook](https://jupyter.org/)!
 
 === "Catalog Quicklooks"
     ```python
-    catalog.download_quicklooks(image_ids=search_results.id.to_list(), sensor="pleiades")
+    catalog.download_quicklooks(image_ids=list(search_results.id), collection="pleiades")
     catalog.plot_quicklooks(scenes=search_results, aoi=aoi)
     ```
 
