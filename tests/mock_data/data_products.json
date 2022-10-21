@@ -1,54 +1,39 @@
 [
   {
-    "id": "7131f727-cdbb-46d4-a1e7-77ac38b7bd02",
+    "id": "12345",
     "productConfiguration": {
       "host": {
-        "name": "nearspacelabs",
-        "title": "Near Space Labs",
-        "description": "A commercial stratospheric imagery provider offering analytics-ready, very high-resolution images captured from sub-daily flights.",
-        "isIntegrated": true,
-        "createdAt": "2022-02-02T11:06:09.581868Z",
-        "updatedAt": "2022-02-02T11:06:09.581868Z"
+        "name": "oneatlas",
+        "title": "Oneatlas",
+        "isIntegrated": true
       },
-      "hostName": "nearspacelabs",
-      "title": "Display Full Scene",
-      "description": "Monoscopic imagery with fast non-local means denoising, sigmoidal contrast and white balancing, image-based atmospheric correction, and georeferencing accuracy of 10m CE90.",
-      "id": "eb2ca5fd-2880-43b0-91c9-b6d164ec3973",
+      "hostName": "oneatlas",
+      "title": "Something",
+      "id": "456789",
       "configuration": {},
-      "isIntegrated": true,
-      "createdAt": "2022-02-10T15:38:18.598392Z",
-      "updatedAt": "2022-02-10T15:38:18.598392Z"
+      "isIntegrated": true
     },
-    "productConfigurationId": "eb2ca5fd-2880-43b0-91c9-b6d164ec3973",
+    "productConfigurationId": "92332",
     "collection": {
-      "name": "nsl-30cm",
-      "title": "Near Space Labs - 30cm",
-      "description": "Analytics-ready, 30cm high-resolution stratospheric images captured from sub-daily flights.",
+      "name": "phr",
+      "title": "Pleiades",
       "type": "ARCHIVE",
       "restricted": false,
       "host": {
-        "name": "nearspacelabs",
-        "title": "Near Space Labs",
-        "description": "A commercial stratospheric imagery provider offering analytics-ready, very high-resolution images captured from sub-daily flights.",
-        "isIntegrated": true,
-        "createdAt": "2022-02-02T11:06:09.581868Z",
-        "updatedAt": "2022-02-02T11:06:09.581868Z"
+        "name": "oneatlas",
+        "title": "Oneatlas",
+        "isIntegrated": true
       },
-      "hostName": "nearspacelabs",
+      "hostName": "oneatlas",
       "producer": {
-        "name": "near-space-labs",
-        "title": "Near Space Labs",
-        "description": "A commercial stratospheric imagery provider offering analytics-ready, very high-resolution images captured from sub-daily flights.",
-        "isIntegrated": true,
-        "createdAt": "2022-02-02T11:06:09.581868Z",
-        "updatedAt": "2022-02-02T11:06:09.581868Z"
+        "name": "oneatlas",
+        "title": "Oneatlas",
+        "isIntegrated": true
       },
-      "producerName": "near-space-labs",
-      "isIntegrated": true,
-      "createdAt": "2022-02-02T11:06:09.581868Z",
-      "updatedAt": "2022-02-15T11:39:27.090748Z"
+      "producerName": "oneatlas",
+      "isIntegrated": true
     },
-    "collectionName": "nsl-30cm",
+    "collectionName": "phr",
     "isIntegrated": true,
     "createdAt": "2022-02-10T15:38:18.804420Z",
     "updatedAt": "2022-02-10T15:38:18.804420Z"
