@@ -30,6 +30,13 @@ You can determine your currently installed version via:
 
 ## Versions
 
+### [0.24.0](https://pypi.org/project/up42-py/) (2022-10-20)
+- Add `catalog.get_data_product_schema()` for details on the order parameters
+- Switches parameter `sensor` to `collection` in `catalog.download_quicklooks`.
+- Various small improvements e.g. quicklooks automatic band selection, Reduced use of default parameters in 
+  constructor methods, error message display, optimized API call handling for parameter validation etc.
+- Internal: Separation of Catalog and CatalogBase to prepare addition of Tasking class, reorganize test fixtures.
+
 ### [0.23.1](https://pypi.org/project/up42-py/) (2022-10-05)
 - Fixes issue with filename of downloaded assets containing two suffix `.` e.g. `./output..zip`. 
   Resolves [#350](https://github.com/up42/up42-py/issues/350)
