@@ -157,7 +157,7 @@ class Catalog(CatalogBase, VizTools):
         self.auth = auth
         self.quicklooks = None
         self.type = "ARCHIVE"
-        self.data_products: Union[dict, None] = None
+        self.data_products: Union[None, dict] = None
 
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
@@ -313,12 +313,12 @@ class Catalog(CatalogBase, VizTools):
 
         # UP42 API can query multiple collections of the same host at once.
         if self.data_products is None:
-            self.data_products = self.get_data_products(basic=True)
+            self.data_products = self.get_data_products(basic=True)  # type: ignore
         hosts = [
             v["host"]
-            for v in self.data_products.values()
+            for v in self.data_products.values()  # type: ignore
             if v["collection"] in search_parameters["collections"]
-        ]
+        ]  # type: ignore
         if not hosts:
             raise ValueError(
                 f"Selected collections {search_parameters['collections']} are not valid. See "
