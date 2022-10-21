@@ -22,7 +22,7 @@ def tools_live(auth_live):
 @pytest.fixture()
 def credits_history_mock(auth_mock, requests_mock):
     with open(
-        Path(__file__).resolve().parent / "mock_data/credits_history.json"
+        Path(__file__).resolve().parents[1] / "mock_data/credits_history.json"
     ) as json_file:
         credits_history_response_json = json.load(json_file)
     response_json = copy.deepcopy(credits_history_response_json)
@@ -37,7 +37,7 @@ def credits_history_mock(auth_mock, requests_mock):
 @pytest.fixture()
 def credits_history_pagination_mock(auth_mock, requests_mock):
     with open(
-        Path(__file__).resolve().parent / "mock_data/credits_history.json"
+        Path(__file__).resolve().parents[1] / "mock_data/credits_history.json"
     ) as json_file:
         credits_history_response_json = json.load(json_file)
 

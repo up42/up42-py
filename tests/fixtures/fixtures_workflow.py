@@ -3,10 +3,9 @@ import os
 import pytest
 
 from .fixtures_globals import (
-    WORKSPACE_ID,
+    PROJECT_DESCRIPTION,
     WORKFLOW_ID,
     WORKFLOW_NAME,
-    WORKFLOW_DESCRIPTION,
     JOB_ID,
     JSON_WORKFLOW_TASKS,
     JOB_NAME,
