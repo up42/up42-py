@@ -85,6 +85,11 @@ class CatalogBase:
 
             return collection_overview
 
+    def get_data_product_schema(self, data_product_id: str):
+        url = f"{self.auth._endpoint()}/orders/schema/{data_product_id}"
+        json_response = self.auth._request("GET", url)
+        return json_response  # Does not contain usual "data" key
+
     def get_collections(self) -> Union[Dict, List]:
         """
         Get the available data collections.
@@ -93,11 +98,6 @@ class CatalogBase:
         json_response = self.auth._request("GET", url)
         collections = [c for c in json_response["data"] if c["type"] == self.type]
         return collections
-
-    def get_data_product_schema(self, data_product_id: str):
-        url = f"{self.auth._endpoint()}/orders/schema/{data_product_id}"
-        json_response = self.auth._request("GET", url)
-        return json_response  # Does not contain usual "data" key
 
     def place_order(
         self,
@@ -157,6 +157,7 @@ class Catalog(CatalogBase, VizTools):
         self.auth = auth
         self.quicklooks = None
         self.type = "ARCHIVE"
+        self.data_products: Union[None, dict] = None
 
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
@@ -311,12 +312,13 @@ class Catalog(CatalogBase, VizTools):
             search_parameters["limit"] = 500
 
         # UP42 API can query multiple collections of the same host at once.
-        collections = self.get_collections()
+        if self.data_products is None:
+            self.data_products = self.get_data_products(basic=True)  # type: ignore
         hosts = [
-            c["hostName"]
-            for c in collections
-            if c["name"] in search_parameters["collections"]
-        ]
+            v["host"]
+            for v in self.data_products.values()  # type: ignore
+            if v["collection"] in search_parameters["collections"]
+        ]  # type: ignore
         if not hosts:
             raise ValueError(
                 f"Selected collections {search_parameters['collections']} are not valid. See "

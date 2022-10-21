@@ -1165,6 +1165,13 @@ def catalog_pagination_mock(auth_mock, requests_mock):
         json=collections_response,
     )
 
+    url_data_products = f"{auth_mock._endpoint()}/data-products"
+    with open(
+        Path(__file__).resolve().parent / "mock_data/data_products.json"
+    ) as json_file:
+        json_data_products = json.load(json_file)
+        requests_mock.get(url=url_data_products, json={"data": json_data_products})
+
     with open(
         Path(__file__).resolve().parent / "mock_data/search_response.json"
     ) as json_file:
@@ -1196,6 +1203,13 @@ def catalog_usagetype_mock(auth_mock, requests_mock):
         url=url_collections,
         json=collections_response,
     )
+
+    url_data_products = f"{auth_mock._endpoint()}/data-products"
+    with open(
+        Path(__file__).resolve().parent / "mock_data/data_products.json"
+    ) as json_file:
+        json_data_products = json.load(json_file)
+        requests_mock.get(url=url_data_products, json={"data": json_data_products})
 
     with open(
         Path(__file__).resolve().parent / "mock_data/search_response.json"
