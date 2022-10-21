@@ -85,6 +85,11 @@ class CatalogBase:
 
             return collection_overview
 
+    def get_data_product_schema(self, data_product_id: str):
+        url = f"{self.auth._endpoint()}/orders/schema/{data_product_id}"
+        json_response = self.auth._request("GET", url)
+        return json_response  # Does not contain usual "data" key
+
     def get_collections(self) -> Union[Dict, List]:
         """
         Get the available data collections.
@@ -93,11 +98,6 @@ class CatalogBase:
         json_response = self.auth._request("GET", url)
         collections = [c for c in json_response["data"] if c["type"] == self.type]
         return collections
-
-    def get_data_product_schema(self, data_product_id: str):
-        url = f"{self.auth._endpoint()}/orders/schema/{data_product_id}"
-        json_response = self.auth._request("GET", url)
-        return json_response  # Does not contain usual "data" key
 
     def place_order(
         self,
