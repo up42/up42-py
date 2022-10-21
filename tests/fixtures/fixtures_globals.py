@@ -1,3 +1,4 @@
+TOKEN = "token_123"
 DOWNLOAD_URL = "http://up42.api.com/abcdef.tgz"
 
 PROJECT_ID = "project_id_123"
