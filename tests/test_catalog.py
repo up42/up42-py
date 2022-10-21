@@ -89,7 +89,7 @@ def test_construct_search_parameters(catalog_mock):
         geometry=mock_search_parameters["intersects"],
         collections=["phr"],
         start_date="2014-01-01",
-        end_date="2016-12-31",
+        end_date="2022-12-31",
         usage_type=["DATA", "ANALYTICS"],
         limit=4,
         max_cloudcover=20,
@@ -140,7 +140,8 @@ def test_search(catalog_mock):
 def test_search_live(catalog_live):
     search_results = catalog_live.search(mock_search_parameters)
     assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (4, 15)
+    assert search_results.shape[0] != 0
+    assert search_results.shape[1] > 10
     assert list(search_results.columns) == [
         "geometry",
         "id",
@@ -363,16 +364,16 @@ def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
 
 def test_download_quicklook(catalog_mock, requests_mock):
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
-    provider = "oneatlas"
+    host = "oneatlas"
     url_quicklooks = (
-        f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
+        f"{catalog_mock.auth._endpoint()}/catalog/{host}/image/{sel_id}/quicklook"
     )
     quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
     requests_mock.get(url_quicklooks, content=open(quicklook_file, "rb").read())
 
     with tempfile.TemporaryDirectory() as tempdir:
         out_paths = catalog_mock.download_quicklooks(
-            image_ids=[sel_id], sensor="pleiades", output_directory=tempdir
+            image_ids=[sel_id], collection="phr", output_directory=tempdir
         )
         assert len(out_paths) == 1
         assert Path(out_paths[0]).exists()
@@ -381,15 +382,15 @@ def test_download_quicklook(catalog_mock, requests_mock):
 
 def test_download_no_quicklook(catalog_mock, requests_mock):
     sel_id = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
-    provider = "oneatlas"
+    host = "oneatlas"
     url_quicklook = (
-        f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
+        f"{catalog_mock.auth._endpoint()}/catalog/{host}/image/{sel_id}/quicklook"
     )
     requests_mock.get(url_quicklook, status_code=404)
 
     with tempfile.TemporaryDirectory() as tempdir:
         out_paths = catalog_mock.download_quicklooks(
-            image_ids=[sel_id], sensor="pleiades", output_directory=tempdir
+            image_ids=[sel_id], collection="phr", output_directory=tempdir
         )
         assert len(out_paths) == 0
 
@@ -397,12 +398,14 @@ def test_download_no_quicklook(catalog_mock, requests_mock):
 def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
     sel_id_no = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
-    provider = "oneatlas"
-    url_no_quicklook = f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id_no}/quicklook"
+    host = "oneatlas"
+    url_no_quicklook = (
+        f"{catalog_mock.auth._endpoint()}/catalog/{host}/image/{sel_id_no}/quicklook"
+    )
     requests_mock.get(url_no_quicklook, status_code=404)
 
     url_quicklook = (
-        f"{catalog_mock.auth._endpoint()}/catalog/{provider}/image/{sel_id}/quicklook"
+        f"{catalog_mock.auth._endpoint()}/catalog/{host}/image/{sel_id}/quicklook"
     )
     quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
     requests_mock.get(url_quicklook, content=open(quicklook_file, "rb").read())
@@ -410,7 +413,7 @@ def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
     with tempfile.TemporaryDirectory() as tempdir:
         out_paths = catalog_mock.download_quicklooks(
             image_ids=[sel_id, sel_id_no],
-            sensor="pleiades",
+            collection="phr",
             output_directory=tempdir,
         )
         assert len(out_paths) == 1
@@ -422,8 +425,8 @@ def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
 def test_download_quicklook_live(catalog_live):
     with tempfile.TemporaryDirectory() as tempdir:
         out_paths = catalog_live.download_quicklooks(
-            image_ids=["ca507c1b-ffc8-4a0a-b103-84f7b8b8a11a"],
-            sensor="pleiades",
+            image_ids=["36f52f1f-6de1-4079-b116-5d1215091339"],
+            collection="phr",
             output_directory=tempdir,
         )
         assert len(out_paths) == 1
