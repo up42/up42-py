@@ -318,7 +318,7 @@ class Catalog(CatalogBase, VizTools):
             v["host"]
             for v in self.data_products.values()  # type: ignore
             if v["collection"] in search_parameters["collections"]
-        ]  # type: ignore
+        ]
         if not hosts:
             raise ValueError(
                 f"Selected collections {search_parameters['collections']} are not valid. See "
@@ -412,43 +412,41 @@ class Catalog(CatalogBase, VizTools):
     def download_quicklooks(
         self,
         image_ids: List[str],
-        sensor: str,
+        collection: str,
         output_directory: Union[str, Path, None] = None,
+        **kwargs
     ) -> List[str]:
         """
         Gets the quicklooks of scenes from a single sensor. After download, can
-        be plotted via catalog.plot_quicklooks() or catalog.map_quicklooks().
+        be plotted via catalog.map_quicklooks() or catalog.plot_quicklooks().
 
         Args:
             image_ids: List of provider image_ids e.g. ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"].
                 Access the search results id column via `list(search_results.id)`.
-            sensor: The satellite sensor of the image_ids, one of "pleiades", "spot",
-                "sentinel1", "sentinel2", "sentinel3", "sentinel5p".
+            collection: The data collection corresponding to the image ids.
             output_directory: The file output directory, defaults to the current working
                 directory.
 
         Returns:
             List of quicklook image output file paths.
         """
-        supported_sensors = {
-            "pleiades": "oneatlas",
-            "spot": "oneatlas",
-            "capella-gec": "capellaspace",
-            "capella-geo": "capellaspace",
-            "capella-sicd": "capellaspace",
-            "capella-slc": "capellaspace",
-        }
+        #TODO: WHAT IF COLLECTION DOESNT HAVE QUICKLOOKS?
+        if "sensor" in kwargs:
+            logger.info("Parameter `sensor` will be deprecated, use the `collection` name instead.")
 
-        if sensor not in list(supported_sensors.keys()):
+        if self.data_products is None:
+            self.data_products = self.get_data_products(basic=True)  # type: ignore
+        host = [
+            v["host"]
+            for v in self.data_products.values()  # type: ignore
+            if v["collection"] == collection
+        ]
+        if not host:
             raise ValueError(
-                f"Currently only these sensors are supported: "
-                f"{list(supported_sensors.keys())}"
+                f"Selected collections {collection} is not valid. See catalog.get_collections."
             )
-        provider = supported_sensors[sensor]
-        logger.info(
-            f"Getting quicklooks from provider {provider} for image_ids: "
-            f"{image_ids}"
-        )
+        host = host[0]
+        logger.info(f"Downloading quicklooks from provider {host}.")
 
         if output_directory is None:
             output_directory = Path.cwd() / f"project_{self.auth.project_id}/catalog"
@@ -463,8 +461,9 @@ class Catalog(CatalogBase, VizTools):
         out_paths: List[str] = []
         for image_id in tqdm(image_ids):
             try:
-                url = f"{self.auth._endpoint()}/catalog/{provider}/image/{image_id}/quicklook"
-
+                url = (
+                    f"{self.auth._endpoint()}/catalog/{host}/image/{image_id}/quicklook"
+                )
                 response = self.auth._request(
                     request_type="GET", url=url, return_text=False
                 )

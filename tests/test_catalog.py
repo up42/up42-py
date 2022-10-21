@@ -426,7 +426,7 @@ def test_download_quicklook_live(catalog_live):
     with tempfile.TemporaryDirectory() as tempdir:
         out_paths = catalog_live.download_quicklooks(
             image_ids=["36f52f1f-6de1-4079-b116-5d1215091339"],
-            sensor="pleiades",
+            collection="phr",
             output_directory=tempdir,
         )
         assert len(out_paths) == 1
