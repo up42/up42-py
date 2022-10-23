@@ -20,6 +20,7 @@ from up42.utils import (
     fc_to_query_geometry,
     format_time_period,
     deprecation,
+    autocomplete_order_parameters,
 )
 
 logger = get_logger(__name__)
@@ -370,19 +371,19 @@ class Catalog(CatalogBase, VizTools):
             GeoDataFrame,
             Polygon,
         ] = None,
-        **kwargs,
     ):
         """
-        Helps constructing the parameters dictionary required for the catalog order.
+        Helps constructing the parameters dictionary required for the catalog order. Some datasets have
+        additional parameters that are added to the output dictionary with value None. The potential values to
+        select from are given in the logs, for more detail on the parameter use `catalog.get_data_product_schema()`.
 
         Args:
             data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
             image_id: The id of the desired image (from search results)
             aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
-                list, GeoDataFrame, Polygon. Not required for full-image products.
-            kwargs: Any additional required order parameters.
+                list, GeoDataFrame, Polygon. Optional for "full-image products".
         Returns:
-            The constructed parameters dictionary.
+            The order parameters dictionary.
 
         Example:
             ```python
@@ -397,41 +398,17 @@ class Catalog(CatalogBase, VizTools):
                   (13.375966, 52.515068)),)})
             ```
         """
-        order_parameters = {
-            "dataProduct": data_product_id,
-            "params": {"id": image_id, **kwargs},
-        }
-
+        params = {"id": image_id}
         if aoi is not None:
             aoi = any_vector_to_fc(vector=aoi)
             aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
-            order_parameters["params"]["aoi"] = aoi  # type:ignore
+            params["aoi"] = aoi  # type:ignore
 
         schema = self.get_data_product_schema(data_product_id)
-        required_params = schema["required"]
-        optional_params = list(
-            set(list(schema["properties"].keys())).difference(required_params)
-        )
+        order_parameters = autocomplete_order_parameters(data_product_id, schema, params)
         logger.info(
-            f"Order parameters for this data product - Required: {required_params} - Optional: {optional_params}. "
-            f"Also see catalog.get_data_product_schema()"
+            "See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options."
         )
-        missing_params = list(
-            set(required_params).difference(order_parameters["params"])
-        )
-        redundant_params = list(
-            set(order_parameters["params"]).difference(
-                required_params + optional_params
-            )
-        )
-
-        if not missing_params and not redundant_params:
-            logger.info("Correct order parameters!")
-        elif missing_params:
-            logger.info(f"Missing order parameters: {missing_params}")
-        else:
-            logger.info(f"Incorrect order parameters: {redundant_params}")
-
         return order_parameters
 
     def download_quicklooks(
