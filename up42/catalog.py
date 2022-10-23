@@ -408,7 +408,9 @@ class Catalog(CatalogBase, VizTools):
             "See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options."
         )
         schema = self.get_data_product_schema(data_product_id)
-        order_parameters = autocomplete_order_parameters(data_product_id, schema, params)
+        order_parameters = autocomplete_order_parameters(
+            data_product_id, schema, params
+        )
 
         return order_parameters
 

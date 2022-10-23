@@ -400,6 +400,9 @@ def autocomplete_order_parameters(data_product_id: str, schema: dict, params: di
         if "allOf" in schema["properties"][param]:
             potential_values = [x["id"] for x in schema["definitions"][param]["enum"]]
             logger.info(f"As `{param}` select one of {potential_values}")
+        elif param in ["aoi", "geometry"]:
+            geom_type = schema["properties"][param]["$ref"].split("/definitions/")[1]
+            logger.info(f"As `aoi` select {geom_type}.")
         else:
             del schema["properties"][param]["title"]
             logger.info(f"As `{param}` select `{schema['properties'][param]}`")
