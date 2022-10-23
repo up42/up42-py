@@ -404,11 +404,12 @@ class Catalog(CatalogBase, VizTools):
             aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
             params["aoi"] = aoi  # type:ignore
 
-        schema = self.get_data_product_schema(data_product_id)
-        order_parameters = autocomplete_order_parameters(data_product_id, schema, params)
         logger.info(
             "See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options."
         )
+        schema = self.get_data_product_schema(data_product_id)
+        order_parameters = autocomplete_order_parameters(data_product_id, schema, params)
+
         return order_parameters
 
     def download_quicklooks(
