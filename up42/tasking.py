@@ -80,6 +80,7 @@ class Tasking(CatalogBase):
                 )
             ```
         """
+        # TODO: Balcksky optional parameters?
         start_date, end_date = format_time_period(
             start_date=acquisition_start, end_date=acquisition_end
         ).split("/")
