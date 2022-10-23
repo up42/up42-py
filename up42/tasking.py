@@ -14,6 +14,7 @@ from up42.utils import (
     format_time_period,
     any_vector_to_fc,
     fc_to_query_geometry,
+    autocomplete_order_parameters,
 )
 
 logger = get_logger(__name__)
@@ -94,28 +95,12 @@ class Tasking(CatalogBase):
             "geometry": geometry,
         }
         schema = self.get_data_product_schema(data_product_id)
-        additional_params = {
-            param: None for param in schema["required"] if param not in params
-        }
-        order_parameters = {
-            "dataProduct": data_product_id,
-            "params": dict(params, **additional_params),
-        }
-
         logger.info(
             "See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options."
         )
-
-        # Log message help for parameter selection
-        for param in additional_params.keys():
-            if "allOf" in schema["properties"][param]:
-                potential_values = [
-                    x["id"] for x in schema["definitions"][param]["enum"]
-                ]
-                logger.info(f"As `{param}` select one of {potential_values}")
-            else:
-                del schema["properties"][param]["title"]
-                logger.info(f"As `{param}` select `{schema['properties'][param]}`")
+        order_parameters = autocomplete_order_parameters(
+            data_product_id, schema, params
+        )
 
         return order_parameters
 
