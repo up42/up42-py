@@ -14,6 +14,7 @@ from up42.utils import (
     fc_to_query_geometry,
     download_from_gcs_unpack,
     filter_jobs_on_mode,
+    autocomplete_order_parameters,
 )
 from up42.auth import Auth
 from up42.project import Project
