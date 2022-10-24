@@ -15,6 +15,7 @@ from .context import (
     fc_to_query_geometry,
     download_from_gcs_unpack,
     filter_jobs_on_mode,
+    autocomplete_order_parameters,
 )
 
 
@@ -337,3 +338,19 @@ def test_filter_jobs_on_mode():
     assert len(r) == 1
     with pytest.raises(ValueError):
         filter_jobs_on_mode(job_json, test_jobs=False, real_jobs=False)
+
+
+def test_autocomplete_order_parameters():
+    with open(
+        Path(__file__).resolve().parent / "mock_data/data_product_schema.json"
+    ) as json_file:
+        json_data_product_schema = json.load(json_file)
+    params = {"existing_param1": "abc"}
+    order_parameters = autocomplete_order_parameters(
+        data_product_id="123", schema=json_data_product_schema, params=params
+    )
+
+    assert "dataProduct" in order_parameters
+    assert order_parameters["params"]["aoi"] is None
+    assert order_parameters["params"]["acquisitionMode"] is None
+    assert order_parameters["params"]["id"] is None

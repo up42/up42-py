@@ -20,6 +20,7 @@ from up42.utils import (
     fc_to_query_geometry,
     format_time_period,
     deprecation,
+    autocomplete_order_parameters,
 )
 
 logger = get_logger(__name__)
@@ -147,7 +148,7 @@ class Catalog(CatalogBase, VizTools):
     """
     The Catalog class enables access to the UP42 catalog functionality (data archive search & ordering).
 
-    Use tasking:
+    Use catalog:
     ```python
     catalog = up42.initialize_catalog()
     ```
@@ -358,54 +359,58 @@ class Catalog(CatalogBase, VizTools):
         else:
             return df.__geo_interface__
 
-    @staticmethod
     def construct_order_parameters(
+        self,
         data_product_id: str,
         image_id: str,
-        aoi: Optional[
-            Union[
-                dict,
-                Feature,
-                FeatureCollection,
-                list,
-                GeoDataFrame,
-                Polygon,
-            ]
+        aoi: Union[
+            dict,
+            Feature,
+            FeatureCollection,
+            list,
+            GeoDataFrame,
+            Polygon,
         ] = None,
     ):
         """
-        Helps constructing the parameters dictionary required for the catalog order.
+        Helps constructing the parameters dictionary required for the catalog order. Some datasets have
+        additional parameters that are added to the output dictionary with value None. The potential values to
+        select from are given in the logs, for more detail on the parameter use `catalog.get_data_product_schema()`.
 
         Args:
             data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
             image_id: The id of the desired image (from search results)
             aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
-                list, GeoDataFrame, Polygon. Not required for full-image products.
-
+                list, GeoDataFrame, Polygon. Optional for "full-image products".
         Returns:
-            The constructed parameters dictionary.
+            The order parameters dictionary.
 
         Example:
             ```python
-            order_parameters=catalog.construct_order_parameters(data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
-                                                                  image_id='6434e7af-2d41-4ded-a789-fb1b2447ac92',
-                                                                  aoi={'type': 'Polygon',
-                                                                    'coordinates': (((13.375966, 52.515068),
-                                                                      (13.375966, 52.516639),
-                                                                      (13.378314, 52.516639),
-                                                                      (13.378314, 52.515068),
-                                                                      (13.375966, 52.515068)),)})
+            order_parameters = catalog.construct_order_parameters(
+                data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
+                image_id='6434e7af-2d41-4ded-a789-fb1b2447ac92',
+                aoi={'type': 'Polygon',
+                'coordinates': (((13.375966, 52.515068),
+                  (13.375966, 52.516639),
+                  (13.378314, 52.516639),
+                  (13.378314, 52.515068),
+                  (13.375966, 52.515068)),)})
             ```
         """
-        order_parameters = {
-            "dataProduct": data_product_id,
-            "params": {"id": image_id},
-        }
-
+        params = {"id": image_id}
         if aoi is not None:
             aoi = any_vector_to_fc(vector=aoi)
             aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
-            order_parameters["params"]["aoi"] = aoi  # type:ignore
+            params["aoi"] = aoi  # type:ignore
+
+        logger.info(
+            "See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options."
+        )
+        schema = self.get_data_product_schema(data_product_id)
+        order_parameters = autocomplete_order_parameters(
+            data_product_id, schema, params
+        )
 
         return order_parameters
 
