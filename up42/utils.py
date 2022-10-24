@@ -374,3 +374,37 @@ def filter_jobs_on_mode(
     jobs_json = [job for job in jobs_json if job["mode"] in selected_modes]
     logger.info(f"Returning {selected_modes} jobs.")
     return jobs_json
+
+
+def autocomplete_order_parameters(data_product_id: str, schema: dict, params: dict):
+    """
+    Adds missing required catalog/tasking order parameters and logs parameter suggestions.
+
+    Args:
+        data_product_id: The id of a data product
+        schema: The data product parameter schema from .get_data_product_schema
+        The existing order parameter params
+
+    Returns:
+        The order parameters with complete params
+    """
+    additional_params = {
+        param: None for param in schema["required"] if param not in params
+    }
+    order_parameters = {
+        "dataProduct": data_product_id,
+        "params": dict(params, **additional_params),
+    }
+    # Log message help for parameter selection
+    for param in additional_params.keys():
+        if param in ["aoi", "geometry"]:
+            geom_type = schema["properties"][param]["$ref"].split("/definitions/")[1]
+            logger.info(f"As `aoi` select a {geom_type}.")
+        elif "allOf" in schema["properties"][param]:  # has further definitions key
+            potential_values = [x["id"] for x in schema["definitions"][param]["enum"]]
+            logger.info(f"As `{param}` select one of {potential_values}")
+        else:
+            # Full information for simple parameters
+            del schema["properties"][param]["title"]
+            logger.info(f"As `{param}` select `{schema['properties'][param]}`")
+    return order_parameters
