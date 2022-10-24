@@ -1,6 +1,7 @@
 from .fixtures_asset import *
 from .fixtures_auth import *
 from .fixtures_catalog import *
+from .fixtures_tasking import *
 from .fixtures_estimation import *
 from .fixtures_job import *
 from .fixtures_jobcollection import *
