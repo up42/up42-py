@@ -7,7 +7,7 @@ from .fixtures import (
 )
 
 with open(
-        Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
+    Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
 ) as json_file:
     mock_search_parameters = json.load(json_file)
 
