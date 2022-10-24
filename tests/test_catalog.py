@@ -442,6 +442,7 @@ def test_construct_order_parameters(catalog_mock):
     )
     assert isinstance(order_parameters, dict)
     assert list(order_parameters.keys()) == ["dataProduct", "params"]
+    assert order_parameters["params"]["acquisitionMode"] is None
 
 
 # pylint: disable=unused-argument

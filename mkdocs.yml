@@ -37,6 +37,7 @@ nav:
       - Installation: installation.md
       - Authentication: authentication.md
       - Search & Order data: search_order.md
+      - Satellite Tasking: tasking.md
       - Storage: storage.md
       - Run Analytics Workflow: analytics_workflow.md
     - Advanced:
@@ -50,15 +51,16 @@ nav:
           - Ship Identification: examples/ship-identification.ipynb
     - Code Reference:
         - up42: reference/up42-reference.md
+        - Catalog: reference/catalog-reference.md
+        - Task a Satellite: reference/tasking-reference.md
+        - Storage: reference/storage-reference.md
+        - Order: reference/order-reference.md
+        - Asset: reference/asset-reference.md
         - Project: reference/project-reference.md
         - Workflow: reference/workflow-reference.md
         - Job: reference/job-reference.md
         - JobCollection: reference/jobcollection-reference.md
         - JobTask: reference/jobtask-reference.md
-        - Catalog: reference/catalog-reference.md
-        - Storage: reference/storage-reference.md
-        - Order: reference/order-reference.md
-        - Asset: reference/asset-reference.md
         - Webhooks: reference/webhooks-reference.md
     -  Changelog & FAQ:
         - Changelog: CHANGELOG.md

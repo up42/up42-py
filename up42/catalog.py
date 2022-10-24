@@ -87,6 +87,12 @@ class CatalogBase:
             return collection_overview
 
     def get_data_product_schema(self, data_product_id: str):
+        """
+        Gets the schema of a data product to help with the construction of the catalog/tasking order parameters.
+
+        Args:
+            data_product_id: The id of a catalog/tasking data product.
+        """
         url = f"{self.auth._endpoint()}/orders/schema/{data_product_id}"
         json_response = self.auth._request("GET", url)
         return json_response  # Does not contain usual "data" key

@@ -77,6 +77,7 @@ def define_env(env):
 
     # Class docstrings variables for use in the structure chapter.
     # (In code reference added automatically by mkdocstrings).
+    # Every class requires a docstring, otherwise mkdocs fails!
     env.variables.docstring_up42 = indent(up42.__doc__)  # init module docstring
     env.variables.docstring_project = indent(up42.Project.__doc__)
     env.variables.docstring_workflow = indent(up42.Workflow.__doc__)
@@ -84,6 +85,7 @@ def define_env(env):
     env.variables.docstring_jobtask = indent(up42.JobTask.__doc__)
     env.variables.docstring_jobcollection = indent(up42.JobCollection.__doc__)
     env.variables.docstring_catalog = indent(up42.Catalog.__doc__)
+    env.variables.docstring_tasking = indent(up42.Tasking.__doc__)
     env.variables.docstring_order = indent(up42.Order.__doc__)
     env.variables.docstring_storage = indent(up42.Storage.__doc__)
     env.variables.docstring_asset = indent(up42.Asset.__doc__)
@@ -108,6 +110,7 @@ def define_env(env):
     env.variables.funcs_catalog = get_methods(
         up42.Catalog, exclude=["plot_results", "map_results"]
     )
+    env.variables.funcs_tasking = get_methods(up42.Tasking)
     env.variables.funcs_order = get_methods(up42.Order)
     env.variables.funcs_storage = get_methods(up42.Storage)
     env.variables.funcs_asset = get_methods(up42.Asset)
