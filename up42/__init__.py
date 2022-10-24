@@ -94,7 +94,7 @@ def initialize_catalog() -> "Catalog":
 @_check_auth_init
 def initialize_tasking() -> "Tasking":
     """
-    Returns a Catalog object for using the catalog search.
+    Returns a Tasking object for creating satellite tasking orders.
     """
     return Tasking(auth=_auth)
 
