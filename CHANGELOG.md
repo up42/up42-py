@@ -30,6 +30,13 @@ You can determine your currently installed version via:
 
 ## Versions
 
+### [0.25.0](https://pypi.org/project/up42-py/) (2022-10-25)
+- Add dedicated tasking class for improved handling of satellite tasking orders. See 
+  [new example](https://sdk.up42.com/tasking/) in the documentation.
+- `construct_order_parameters` now also adds the parameters specific to the selected data-product, and suggests 
+  possible values based on the data-product schema.
+
+
 ### [0.24.0](https://pypi.org/project/up42-py/) (2022-10-20)
 - Add `catalog.get_data_product_schema()` for details on the order parameters
 - Switches parameter `sensor` to `collection` in `catalog.download_quicklooks`.
