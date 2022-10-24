@@ -58,8 +58,8 @@ To help with the order parameters we can use `tasking.construct_order_parameters
 ```python
 order_parameters = tasking.construct_order_parameters(data_product_id=terrasar_product_id,
                                                       name="My Terrasar tasking order",
-                                                      start_date= "2022-10-12",
-                                                      end_date= "2022-10-19",
+                                                      acquisition_start= "2022-11-01",
+                                                      acquisition_end= "2023-03-20",
                                                       geometry=geometry)
 ```
 
