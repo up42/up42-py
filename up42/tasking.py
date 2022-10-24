@@ -98,6 +98,7 @@ class Tasking(CatalogBase):
         logger.info(
             "See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options."
         )
+
         order_parameters = autocomplete_order_parameters(
             data_product_id, schema, params
         )

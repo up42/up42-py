@@ -391,15 +391,17 @@ def autocomplete_order_parameters(data_product_id: str, schema: dict, params: di
     additional_params = {
         param: None for param in schema["required"] if param not in params
     }
+
     order_parameters = {
         "dataProduct": data_product_id,
         "params": dict(params, **additional_params),
     }
     # Log message help for parameter selection
     for param in additional_params.keys():
-        if param in ["aoi", "geometry"]:
+        if param == "aoi":
             geom_type = schema["properties"][param]["$ref"].split("/definitions/")[1]
             logger.info(f"As `aoi` select a {geom_type}.")
+            # check for `geometry` (tasking) not required as mandatory parameter in construct_order_parameters
         elif "allOf" in schema["properties"][param]:  # has further definitions key
             potential_values = [x["id"] for x in schema["definitions"][param]["enum"]]
             logger.info(f"As `{param}` select one of {potential_values}")
