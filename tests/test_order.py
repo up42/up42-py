@@ -89,7 +89,7 @@ def order_parameters():
     return {
         "dataProduct": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
         "params": {
-            "id": "1cc21a92-2485-413f-b60e-55f1da1f6975",
+            "id": "aa1b5abf-8864-4092-9b65-35f8d0d413bb",
             "aoi": {
                 "type": "Polygon",
                 "coordinates": [
