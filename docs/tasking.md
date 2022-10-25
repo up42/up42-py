@@ -52,7 +52,9 @@ geometry = {"type": "Polygon",
      (13.375966, 52.515068)),)}
 ```
 
-To help with the order parameters we can use `tasking.construct_order_parameters`.
+To help with the order parameters we can use `tasking.construct_order_parameters`. 
+It will also show you how to adjust parameters that are specific to the selected data product as log messages. 
+Use `tasking.get_data_product_schema(data_product_id)` for more details.
 
 
 ```python
