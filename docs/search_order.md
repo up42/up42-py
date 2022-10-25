@@ -28,15 +28,13 @@ products = catalog.get_data_products(basic=True)
 
 ```json
 {
-  "Pléiades": {
-    "collection": "phr",
+  "Pléiades": {"collection": "phr",
     "host": "oneatlas",
-    "data_products": {"Analytic": "691aef62-5641-471f-b63e-55c5503d0c51", 
-                      "Display": "8d5983a3-412d-47b4-92be-cd4dacf4570c"}},
-  "Pléiades Neo": {
-    "collection": "pneo",
+    "data_products": {"Analytic": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
+      "Display": "647780db-5a06-4b61-b525-577a8b68bb54"}},
+  "Pléiades Neo": {"collection": "pneo",
     "host": "oneatlas",
-    "data_products": {"Display": "57a9e1f8-a847-47ad-a358-688a8c2bf63a"}}
+    "data_products": {"Display": "17745de8-6e7d-4751-99cd-3f8e9e9d290e"}}
 }
 ```
 
@@ -49,14 +47,15 @@ The search outputs a dataframe (or optional json) with the available satellite i
 
 
 ```python
-aoi_geometry = up42.read_vector_file("data/aoi_washington.geojson")
+#aoi_geometry = up42.read_vector_file("data/aoi_berlin.geojson")
+aoi_geometry = up42.get_example_aoi()
 ```
 
 ```python
 search_parameters = catalog.construct_search_parameters(collections=["phr"],
                                                         geometry=aoi_geometry,
-                                                        start_date="2019-01-01",
-                                                        end_date="2021-12-31",
+                                                        start_date="2022-06-01",
+                                                        end_date="2022-12-31",
                                                         max_cloudcover=20,
                                                         sortby="cloudCoverage",
                                                         limit=10)
@@ -76,7 +75,7 @@ Before ordering the image, estimate the order price. After the order is finished
 available in the UP42 user storage.
 
 ```python
-data_product_id = products["Pléiades"]["data_products"]["Display"]
+data_product_id = "647780db-5a06-4b61-b525-577a8b68bb54"
 image_id = search_results.iloc[0]["id"]
 
 order_parameters = catalog.construct_order_parameters(data_product_id=data_product_id,
@@ -85,13 +84,13 @@ order_parameters = catalog.construct_order_parameters(data_product_id=data_produ
 ```
 ```json
 {"dataProduct": "647780db-5a06-4b61-b525-577a8b68bb54",
-  "params": {"id": "6434e7af-2d41-4ded-a789-fb1b2447ac92",
+  "params": {"id": "7de4ca8b-0ef1-40e5-abb7-420424e3b2fd",
     "aoi": {"type": "Polygon",
-      "coordinates": (((13.375966, 52.515068),
-      (13.375966, 52.516639),
-      (13.378314, 52.516639),
-      (13.378314, 52.515068),
-      (13.375966, 52.515068)),)}}}
+      "coordinates": (((-77.0099106405591, 38.89137361624094),
+      (-77.0099106405591, 38.888274637541656),
+      (-77.00563036412206, 38.888274637541656),
+      (-77.00563036412206, 38.89137361624094),
+      (-77.0099106405591, 38.89137361624094)),)}}}
 ```
 
 
@@ -99,14 +98,19 @@ order_parameters = catalog.construct_order_parameters(data_product_id=data_produ
 catalog.estimate_order(order_parameters)
 ```
 
+```text
+log: Order is estimated to cost 150 UP42 credits.
+150
+```
+
 ```python
 order = catalog.place_order(order_parameters)
 ```
 
-## **Download the image**
-
 You can check the status of the order via `order.status`. If you want to continuously track the
-order status until it is finished, use `order.track_status()`. 
+order status until it is finished, use `order.track_status()`.
+
+## **Download the image**
 
 After the order is finished, download the image assets from the user storage via:
 
