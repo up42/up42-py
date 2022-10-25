@@ -16,4 +16,3 @@ pytest-cov
 pytest-mypy
 mock
 twine
-jupyter
