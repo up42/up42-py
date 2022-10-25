@@ -35,13 +35,14 @@ Provide workflow input parameters to configure the workflow, e.g. the area of in
 with the help of the [construct_parameters](workflow-reference.md#up42.workflow.Workflow.construct_parameters) function.
 
 ```python
-aoi = up42.read_vector_file("data/aoi_washington.geojson")
+aoi = up42.read_vector_file("data/aoi_berlin.geojson")
+aoi = up42.get_example_aoi()
 ```
 ```python
 input_parameters = workflow.construct_parameters(geometry=aoi, 
                                                  geometry_operation="bbox", 
-                                                 start_date="2018-01-01",
-                                                 end_date="2020-12-31",
+                                                 start_date="2020-01-01",
+                                                 end_date="2022-12-31",
                                                  limit=1)
 input_parameters["esa-s2-l2a-gtiff-visual:1"].update({"max_cloud_cover":5})
 ```
