@@ -146,7 +146,7 @@ class Workflow:
             return tasks
 
     def _construct_full_workflow_tasks_dict(
-        self, input_tasks: Union[List]
+        self, input_tasks: Union[List[str], List[dict]]
     ) -> List[dict]:
         """
         Constructs the full workflow task definition from a simplified version.
