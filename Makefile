@@ -34,14 +34,12 @@ e2e:
 # Preview of mkdocs
 serve:
 	ln -sfn $(PWD)/examples docs
-	ln -sfn $(PWD)/docs/examples/guides docs
 	ln -sfn $(PWD)/CHANGELOG.md docs
 	mkdocs serve
 
 # Publication of mkdocs. Not required, docs build pipeline is automated via github actions.
 gh-pages:
 	ln -sfn $(PWD)/examples docs
-	ln -sfn $(PWD)/docs/examples/guides docs
 	ln -sfn $(PWD)/CHANGELOG.md docs
 	mkdocs gh-deploy -m "update gh-pages [ci skip]"
 

@@ -36,4 +36,4 @@ You can download an asset via:
 assets[0].download()
 ```
 
-⏭️ Continue with the [Run an analytics workflow](30-second-example.md) chapter.
+⏭️ Continue with the [Run an analytics workflow](analytics_workflow.md) chapter.

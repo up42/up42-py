@@ -113,7 +113,6 @@ plugins:
         - "*cfg*.json"
         - ".ipynb_checkpoints"
         - "*examples/project*"
-        - "*examples/guides/*"
         - "*swagger*"
         - PULL_REQUEST_TEMPLATE.md
   - mkdocstrings:

@@ -120,3 +120,7 @@ order.status
 
 After the order placed, the UP42 customer support team will reach out to you via email with the results of the
 tasking feasibility study and pricing options.
+
+<br>
+
+⏭️ Continue with the [Storage](storage.md) chapter.
