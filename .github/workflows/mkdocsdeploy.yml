@@ -34,9 +34,7 @@ jobs:
       - name: Create symlinks for examples and changelog
         run: |
               ls
-              mkdir docs/guides
               mkdir docs/examples
-              mv examples/guides/* docs/guides
               mv examples/* docs/examples
               mv CHANGELOG.md docs
 
