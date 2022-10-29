@@ -145,7 +145,9 @@ class Workflow:
         else:
             return tasks
 
-    def _construct_full_workflow_tasks_dict(self, input_tasks: List[str]) -> List[dict]:
+    def _construct_full_workflow_tasks_dict(
+        self, input_tasks: Union[List]
+    ) -> List[dict]:
         """
         Constructs the full workflow task definition from a simplified version.
         Accepts blocks ids, block names, block display names & combinations of them.
