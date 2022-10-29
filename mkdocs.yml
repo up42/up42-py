@@ -48,7 +48,7 @@ nav:
           - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
           - NEXTMap One - Elevation Data (Streaming) and Viewshed: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
           - Open Street Map: examples/data-block-examples/osm-example.ipynb
-          - Ship Identification: examples/ship-identification.ipynb
+          - Ship Identification: examples/advanced/ship-identification.ipynb
     - Code Reference:
         - up42: reference/up42-reference.md
         - Catalog: reference/catalog-reference.md
