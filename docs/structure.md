@@ -4,6 +4,7 @@
 
 - The Python SDK uses multiple classes, representing the **hierarchical structure of UP42**:
     - **Catalog > Order**
+    - **Tasking > Order**
     - **Storage > Asset**
     - **Project > Workflow > Job/JobCollection > JobTask**
 
@@ -25,6 +26,41 @@ in the [code reference](up42-reference.md).
         <br>
         Available functions, see also [**up42 reference**](up42-reference.md):
         {{ format_funcs(funcs_up42) }}
+
+    === "Catalog"
+
+        {{ docstring_catalog }}
+        <br>
+        Available functions, see also [**Catalog reference**](catalog-reference.md):
+        {{ format_funcs(funcs_catalog) }}
+
+    === "Tasking"
+
+        {{ docstring_tasking }}
+        <br>
+        Available functions, see also [**Tasking reference**](tasking-reference.md):
+        {{ format_funcs(funcs_tasking) }}
+
+    === "Storage"
+
+        {{ docstring_storage }}
+        <br>
+        Available functions, see also [**Storage reference**](storage-reference.md):
+        {{ format_funcs(funcs_storage) }}
+    
+    === "Order"
+
+        {{ docstring_order }}
+        <br>
+        Available functions, see also [**Order reference**](order-reference.md):
+        {{ format_funcs(funcs_order) }}
+    
+    === "Asset"
+
+        {{ docstring_asset }}
+        <br>
+        Available functions, see also [**Asset reference**](asset-reference.md): 
+        {{ format_funcs(funcs_asset) }}
 
     === "Project"
 
@@ -60,34 +96,6 @@ in the [code reference](up42-reference.md).
         <br>
         Available functions, see also [**JobCollection reference**](jobcollection-reference.md):
         {{ format_funcs(funcs_jobcollection) }}
-        
-    === "Catalog"
-
-        {{ docstring_catalog }}
-        <br>
-        Available functions, see also [**Catalog reference**](catalog-reference.md):
-        {{ format_funcs(funcs_catalog) }}
-
-    === "Storage"
-
-        {{ docstring_storage }}
-        <br>
-        Available functions, see also [**Storage reference**](storage-reference.md):
-        {{ format_funcs(funcs_storage) }}
-    
-    === "Order"
-
-        {{ docstring_order }}
-        <br>
-        Available functions, see also [**Order reference**](order-reference.md):
-        {{ format_funcs(funcs_order) }}
-    
-    === "Asset"
-
-        {{ docstring_asset }}
-        <br>
-        Available functions, see also [**Asset reference**](asset-reference.md): 
-        {{ format_funcs(funcs_asset) }}
 
     === "Webhook"
 
