@@ -48,11 +48,11 @@ nav:
           - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
           - NEXTMap One - Elevation Data (Streaming) and Viewshed: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
           - Open Street Map: examples/data-block-examples/osm-example.ipynb
-          - Ship Identification: examples/ship-identification.ipynb
+          - Ship Identification: examples/advanced/ship-identification.ipynb
     - Code Reference:
         - up42: reference/up42-reference.md
         - Catalog: reference/catalog-reference.md
-        - Task a Satellite: reference/tasking-reference.md
+        - Tasking: reference/tasking-reference.md
         - Storage: reference/storage-reference.md
         - Order: reference/order-reference.md
         - Asset: reference/asset-reference.md
@@ -113,7 +113,6 @@ plugins:
         - "*cfg*.json"
         - ".ipynb_checkpoints"
         - "*examples/project*"
-        - "*examples/guides/*"
         - "*swagger*"
         - PULL_REQUEST_TEMPLATE.md
   - mkdocstrings:

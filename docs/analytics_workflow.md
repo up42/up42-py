@@ -2,7 +2,7 @@
 
 This chapter shows how to create and run workflow with a data source and analytics/processing algorithm.
 
-[![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2F30-seconds-example.ipynb)
+[![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2F4_analtics_workflow.ipynb)
 
 ## **Authenticate**
 
@@ -10,7 +10,10 @@ First connect with UP42 as explained in the [authentication chapter](authenticat
 
 ```python
 import up42
-up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
+up42.authenticate(
+    project_id="your-project-ID",
+    project_api_key="your-project-API-key"
+)
 ```
 
 ## **Create a workflow**

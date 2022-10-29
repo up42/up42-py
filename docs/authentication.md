@@ -4,8 +4,10 @@ To use the UP42 Python SDK, you first need to authenticate with **UP42** via you
 
 ```python
 import up42
-up42.authenticate(project_id="your-project-ID", 
-                  project_api_key="your-project-API-key")
+up42.authenticate(
+    project_id="your-project-ID",
+    project_api_key="your-project-API-key"
+)
 ```
 
 ### Get your Project credentials
@@ -24,8 +26,10 @@ your code. After successful authentication you will receive a confirmation messa
 
 ```python
 import up42
-up42.authenticate(project_id="your-project-ID", 
-                  project_api_key="your-project-API-key")
+up42.authenticate(
+    project_id="your-project-ID",
+    project_api_key="your-project-API-key"
+)
 ```
 
 ```

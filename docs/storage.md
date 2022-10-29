@@ -8,7 +8,10 @@ First connect with UP42 as explained in the [authentication chapter](authenticat
 
 ```python
 import up42
-up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
+up42.authenticate(
+    project_id="your-project-ID",
+    project_api_key="your-project-API-key"
+)
 ```
 
 
@@ -33,4 +36,4 @@ You can download an asset via:
 assets[0].download()
 ```
 
-⏭️ Continue with the [Run an analytics workflow](30-second-example.md) chapter.
+⏭️ Continue with the [Run an analytics workflow](analytics_workflow.md) chapter.

@@ -8,7 +8,10 @@ First connect with UP42 as explained in the [authentication chapter](authenticat
 
 ```python
 import up42
-up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
+up42.authenticate(
+    project_id="your-project-ID",
+    project_api_key="your-project-API-key"
+)
 ```
 
 ## **Decide on the satellite dataset**
@@ -117,3 +120,7 @@ order.status
 
 After the order placed, the UP42 customer support team will reach out to you via email with the results of the
 tasking feasibility study and pricing options.
+
+<br>
+
+⏭️ Continue with the [Storage](storage.md) chapter.

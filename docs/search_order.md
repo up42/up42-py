@@ -2,7 +2,7 @@
 
 A basic example on how to search & purchase data from the UP42 catalog.
 
-[![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2Fguides%2Fsearch_order_data.ipynb)
+[![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2F1_search_order_data.ipynb)
 
 ## **Authenticate**
 
@@ -10,7 +10,10 @@ First connect with UP42 as explained in the [authentication chapter](authenticat
 
 ```python
 import up42
-up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
+up42.authenticate(
+    project_id="your-project-ID",
+    project_api_key="your-project-API-key"
+)
 ```
 
 ## **Decide on dataset**
@@ -121,4 +124,4 @@ assets[0].download()
 
 <br>
 
-⏭️ Continue with the [Storage](storage.md) chapter.
+⏭️ Continue with the [Tasking](tasking.md) chapter.

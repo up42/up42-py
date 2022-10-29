@@ -44,7 +44,7 @@ Works best in a [Jupyter notebook](https://jupyter.org/)!
 
 === "Catalog Quicklooks"
     ```python
-    catalog.download_quicklooks(image_ids=list(search_results.id), collection="pleiades")
+    catalog.download_quicklooks(image_ids=list(search_results.id), collection="phr")
     catalog.map_quicklooks(scenes=search_results, aoi=aoi)
     ```
 
@@ -53,8 +53,8 @@ Works best in a [Jupyter notebook](https://jupyter.org/)!
 
 === "Catalog Quicklooks"
     ```python
-    catalog.download_quicklooks(image_ids=list(search_results.id), collection="pleiades")
-    catalog.plot_quicklooks(scenes=search_results, aoi=aoi)
+    catalog.download_quicklooks(image_ids=list(search_results.id), collection="phr")
+    catalog.plot_quicklooks()
     ```
 
 === "Catalog scene coverage"
