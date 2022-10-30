@@ -5,8 +5,28 @@
         show_root_toc_entry: False
         show_if_no_docstring: False
         group_by_category: False
-        
-::: up42.tools.Tools
+
+::: up42.main
+    selection:
+        members:
+            - "authenticate"
+    rendering:
+       show_root_toc_entry: False
+       show_if_no_docstring: False
+       group_by_category: False
+
+::: up42.initialization
     rendering:
         show_root_toc_entry: False
+        show_if_no_docstring: False
+        group_by_category: False
+
+::: up42.main
+    selection:
+        filters:
+            - "!authenticate"
+            - "!^_"
+    rendering:
+        show_root_toc_entry: False
+        show_if_no_docstring: False
         group_by_category: False

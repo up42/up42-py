@@ -16,7 +16,7 @@ from up42.auth import Auth
 from up42.job import Job
 from up42.estimation import Estimation
 from up42.jobcollection import JobCollection
-from up42.tools import Tools
+
 from up42.utils import (
     get_logger,
     any_vector_to_fc,
@@ -24,6 +24,7 @@ from up42.utils import (
     filter_jobs_on_mode,
     format_time_period,
 )
+import up42.main as main
 
 logger = get_logger(__name__)
 
@@ -101,11 +102,9 @@ class Workflow:
         if not tasks:
             logger.info("The workflow is empty, returning all data blocks.")
 
-            logging.getLogger("up42.tools").setLevel(logging.CRITICAL)
-            data_blocks = Tools(auth=self.auth).get_blocks(
-                block_type="data", basic=True
-            )
-            logging.getLogger("up42.tools").setLevel(logging.INFO)
+            logging.getLogger("up42.main").setLevel(logging.CRITICAL)
+            data_blocks = main.get_blocks(block_type="data", basic=True)
+            logging.getLogger("up42.main").setLevel(logging.INFO)
             return data_blocks  # type: ignore
 
         last_task = list(tasks.keys())[-1]
@@ -144,8 +143,9 @@ class Workflow:
         else:
             return tasks
 
+    @staticmethod
     def _construct_full_workflow_tasks_dict(
-        self, input_tasks: Union[List[str], List[dict]]
+        input_tasks: Union[List[str], List[dict]]
     ) -> List[dict]:
         """
         Constructs the full workflow task definition from a simplified version.
@@ -176,9 +176,9 @@ class Workflow:
         full_input_tasks_definition = []
 
         # Get public + custom blocks.
-        logging.getLogger("up42.tools").setLevel(logging.CRITICAL)
-        blocks: dict = Tools(auth=self.auth).get_blocks(basic=False)  # type: ignore
-        logging.getLogger("up42.tools").setLevel(logging.INFO)
+        logging.getLogger("up42.main").setLevel(logging.CRITICAL)
+        blocks: dict = main.get_blocks(basic=False)  # type: ignore
+        logging.getLogger("up42.main").setLevel(logging.INFO)
 
         # Get ids of the input tasks, regardless of the specified format.
         blocks_id_name = {block["id"]: block["name"] for block in blocks}

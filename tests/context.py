@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../u
 
 # Import the required classes and functions
 # pylint: disable=unused-import,wrong-import-position
-from up42.tools import Tools
+from up42.tools import read_vector_file, get_example_aoi
 from up42.viztools import folium_base_map, VizTools
 from up42.utils import (
     format_time_period,
@@ -29,14 +29,29 @@ from up42.storage import Storage
 from up42.asset import Asset
 from up42.order import Order
 from up42.webhooks import Webhooks, Webhook
-from up42.__init__ import (
+from up42 import main
+from up42.main import (
     authenticate,
+    get_webhooks,
+    create_webhook,
+    get_webhook_events,
+    get_blocks,
+    get_block_details,
+    get_block_coverage,
+    get_credits_balance,
+    get_credits_history,
+    validate_manifest,
+)
+from up42.initialization import (
     initialize_project,
     initialize_catalog,
+    initialize_tasking,
     initialize_workflow,
     initialize_job,
     initialize_jobtask,
+    initialize_jobcollection,
     initialize_storage,
     initialize_order,
     initialize_asset,
+    initialize_webhook,
 )

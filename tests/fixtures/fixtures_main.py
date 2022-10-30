@@ -4,20 +4,6 @@ import copy
 
 import pytest
 
-from ..context import (
-    Tools,
-)
-
-
-@pytest.fixture()
-def tools_mock(auth_mock):
-    return Tools(auth=auth_mock)
-
-
-@pytest.fixture()
-def tools_live(auth_live):
-    return Tools(auth=auth_live)
-
 
 @pytest.fixture()
 def credits_history_mock(auth_mock, requests_mock):
@@ -31,7 +17,7 @@ def credits_history_mock(auth_mock, requests_mock):
         url=url_get_credits_history,
         json=response_json,
     )
-    return Tools(auth=auth_mock)
+    return auth_mock
 
 
 @pytest.fixture()
@@ -64,4 +50,4 @@ def credits_history_pagination_mock(auth_mock, requests_mock):
         url=url_get_credits_history_size_last,
         json=pagination_response_json_last,
     )
-    return Tools(auth=auth_mock)
+    return auth_mock
