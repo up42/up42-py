@@ -54,7 +54,7 @@ def define_env(env):
 
         if exclude_viztools:
             function_methods = [
-                f for f in function_methods if f not in dir(up42.VizTools)
+                f for f in function_methods if f not in dir(up42.viztools.VizTools)
             ]
         if exclude:
             function_methods = [f for f in function_methods if f not in exclude]
@@ -79,28 +79,30 @@ def define_env(env):
     # (In code reference added automatically by mkdocstrings).
     # Every class requires a docstring, otherwise mkdocs fails!
     env.variables.docstring_up42 = indent(up42.__doc__)  # init module docstring
-    env.variables.docstring_project = indent(up42.Project.__doc__)
-    env.variables.docstring_workflow = indent(up42.Workflow.__doc__)
-    env.variables.docstring_job = indent(up42.Job.__doc__)
-    env.variables.docstring_jobtask = indent(up42.JobTask.__doc__)
-    env.variables.docstring_jobcollection = indent(up42.JobCollection.__doc__)
-    env.variables.docstring_catalog = indent(up42.Catalog.__doc__)
-    env.variables.docstring_tasking = indent(up42.Tasking.__doc__)
-    env.variables.docstring_order = indent(up42.Order.__doc__)
-    env.variables.docstring_storage = indent(up42.Storage.__doc__)
-    env.variables.docstring_asset = indent(up42.Asset.__doc__)
-    env.variables.docstring_webhooks = indent(up42.Webhooks.__doc__)
+    env.variables.docstring_project = indent(up42.project.Project.__doc__)
+    env.variables.docstring_workflow = indent(up42.workflow.Workflow.__doc__)
+    env.variables.docstring_job = indent(up42.job.Job.__doc__)
+    env.variables.docstring_jobtask = indent(up42.jobtask.JobTask.__doc__)
+    env.variables.docstring_jobcollection = indent(
+        up42.jobcollection.JobCollection.__doc__
+    )
+    env.variables.docstring_catalog = indent(up42.catalog.Catalog.__doc__)
+    env.variables.docstring_tasking = indent(up42.tasking.Tasking.__doc__)
+    env.variables.docstring_order = indent(up42.order.Order.__doc__)
+    env.variables.docstring_storage = indent(up42.storage.Storage.__doc__)
+    env.variables.docstring_asset = indent(up42.asset.Asset.__doc__)
+    env.variables.docstring_webhooks = indent(up42.webhooks.Webhooks.__doc__)
 
     # Class functions for reference and structure chapter
     env.variables.funcs_up42 = get_methods(up42, exclude_viztools=True)
-    env.variables.funcs_project = get_methods(up42.Project)
-    env.variables.funcs_workflow = get_methods(up42.Workflow)
-    env.variables.funcs_job = get_methods(up42.Job)
+    env.variables.funcs_project = get_methods(up42.project.Project)
+    env.variables.funcs_workflow = get_methods(up42.workflow.Workflow)
+    env.variables.funcs_job = get_methods(up42.job.Job)
     env.variables.funcs_jobtask = get_methods(
-        up42.JobTask, exclude=["map_quicklooks", "plot_coverage"]
+        up42.jobtask.JobTask, exclude=["map_quicklooks", "plot_coverage"]
     )
     env.variables.funcs_jobcollection = get_methods(
-        up42.JobCollection,
+        up42.jobcollection.JobCollection,
         exclude=[
             "plot_quicklooks",
             "map_quicklooks",
@@ -108,11 +110,11 @@ def define_env(env):
         ],
     )
     env.variables.funcs_catalog = get_methods(
-        up42.Catalog, exclude=["plot_results", "map_results"]
+        up42.catalog.Catalog, exclude=["plot_results", "map_results"]
     )
-    env.variables.funcs_tasking = get_methods(up42.Tasking)
-    env.variables.funcs_order = get_methods(up42.Order)
-    env.variables.funcs_storage = get_methods(up42.Storage)
-    env.variables.funcs_asset = get_methods(up42.Asset)
-    env.variables.funcs_webhooks = get_methods(up42.Webhooks)
-    env.variables.funcs_webhook = get_methods(up42.Webhook)
+    env.variables.funcs_tasking = get_methods(up42.tasking.Tasking)
+    env.variables.funcs_order = get_methods(up42.order.Order)
+    env.variables.funcs_storage = get_methods(up42.storage.Storage)
+    env.variables.funcs_asset = get_methods(up42.asset.Asset)
+    env.variables.funcs_webhooks = get_methods(up42.webhooks.Webhooks)
+    env.variables.funcs_webhook = get_methods(up42.webhooks.Webhook)
