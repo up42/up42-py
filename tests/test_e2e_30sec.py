@@ -1,9 +1,11 @@
 import os
 
+import pytest
+
 import up42
 
 
-# @pytest.mark.live()
+@pytest.mark.live()
 def test_e2e_30sec():
     up42.authenticate(
         project_id=os.getenv("TEST_UP42_PROJECT_ID"),

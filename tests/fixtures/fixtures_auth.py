@@ -51,7 +51,7 @@ def auth_mock(requests_mock):
     return auth
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def auth_live():
     auth = Auth(
         project_id=os.getenv("TEST_UP42_PROJECT_ID"),
