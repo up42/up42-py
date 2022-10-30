@@ -9,7 +9,7 @@ from .fixtures_jobtask import *
 from .fixtures_order import *
 from .fixtures_project import *
 from .fixtures_storage import *
-from .fixtures_tools import *
+from .fixtures_main import *
 from .fixtures_webhook import *
 from .fixtures_workflow import *
 from .fixtures_globals import *
