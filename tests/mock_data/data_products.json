@@ -123,5 +123,37 @@
     },
     "collectionName": "test_not_integrated",
     "isIntegrated": false
+  },
+  {
+    "id": "123_tasking_should_be_filtered_in_catalog_test",
+    "productConfiguration": {
+      "host": {
+        "name": "tasking_a",
+        "isIntegrated": true
+      },
+      "hostName": "taskingName",
+      "title": "tasking_b",
+      "configuration": {},
+      "isIntegrated": true
+    },
+    "productConfigurationId": "654321",
+    "collection": {
+      "name": "tasking_c",
+      "title": "tasking_should_be_filtered_in_catalog_test",
+      "type": "TASKING",
+      "restricted": false,
+      "host": {
+        "name": "not",
+        "isIntegrated": true
+      },
+      "hostName": "sometaskingprovider",
+      "producer": {
+        "name": "tasking_e",
+        "isIntegrated": true
+      },
+      "producerName": "taskingproducer"
+    },
+    "collectionName": "taskingname",
+    "isIntegrated": true
   }
 ]
