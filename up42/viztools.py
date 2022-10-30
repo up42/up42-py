@@ -69,6 +69,33 @@ def requires_viz(func):
     return wrapper_func
 
 
+@requires_viz
+def draw_aoi() -> "folium.Map":
+    """
+    Displays an interactive map to draw an aoi by hand, returns the folium object if
+    not run in a Jupyter notebook.
+
+    Export the drawn aoi via the export button, then read the geometries via
+    read_aoi_file().
+    """
+    m = folium_base_map(layer_control=True)
+    DrawFoliumOverride(
+        export=True,
+        filename="aoi.geojson",
+        position="topleft",
+        draw_options={
+            "rectangle": {"repeatMode": False, "showArea": True},
+            "polygon": {"showArea": True, "allowIntersection": False},
+            "polyline": False,
+            "circle": False,
+            "marker": False,
+            "circlemarker": False,
+        },
+        edit_options={"polygon": {"allowIntersection": False}},
+    ).add_to(m)
+    return m
+
+
 # pylint: disable=no-member, duplicate-code
 class VizTools:
     def __init__(self):
@@ -482,33 +509,6 @@ class VizTools:
             ) from e
         ax.set_axis_off()
         plt.show()
-
-    @staticmethod
-    @requires_viz
-    def draw_aoi() -> "folium.Map":
-        """
-        Displays an interactive map to draw an aoi by hand, returns the folium object if
-        not run in a Jupyter notebook.
-
-        Export the drawn aoi via the export button, then read the geometries via
-        read_aoi_file().
-        """
-        m = folium_base_map(layer_control=True)
-        DrawFoliumOverride(
-            export=True,
-            filename="aoi.geojson",
-            position="topleft",
-            draw_options={
-                "rectangle": {"repeatMode": False, "showArea": True},
-                "polygon": {"showArea": True, "allowIntersection": False},
-                "polyline": False,
-                "circle": False,
-                "marker": False,
-                "circlemarker": False,
-            },
-            edit_options={"polygon": {"allowIntersection": False}},
-        ).add_to(m)
-        return m
 
 
 if _viz_installed:

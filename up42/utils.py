@@ -6,9 +6,9 @@ import tempfile
 import tarfile
 import zipfile
 import warnings
-import functools
 from datetime import datetime
 from datetime import time as datetime_time
+from functools import wraps
 
 from geopandas import GeoDataFrame
 import shapely
@@ -62,7 +62,7 @@ def deprecation(
     """
 
     def actual_decorator(func):
-        @functools.wraps(func)
+        @wraps(func)
         def wrapper(*args, **kwargs):
             message = (
                 f"`{func.__name__}` will be deprecated in version {version}, "

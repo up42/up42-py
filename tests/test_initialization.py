@@ -2,15 +2,24 @@ import pytest
 
 # pylint: disable=unused-import
 from .context import (
-    authenticate,
     initialize_project,
     initialize_catalog,
     initialize_workflow,
     initialize_job,
     initialize_jobtask,
+    initialize_jobcollection,
     initialize_storage,
     initialize_order,
     initialize_asset,
+    Project,
+    Catalog,
+    Workflow,
+    Job,
+    JobTask,
+    JobCollection,
+    Storage,
+    Order,
+    Asset,
 )
 from .fixtures import (
     PROJECT_ID,
@@ -35,23 +44,23 @@ import up42  # pylint: disable=wrong-import-order
 
 def test_initialize_object_without_auth_raises():
     with pytest.raises(RuntimeError):
-        up42.initialize_project()
+        initialize_project()
     with pytest.raises(RuntimeError):
-        up42.initialize_catalog()
+        initialize_catalog()
     with pytest.raises(RuntimeError):
-        up42.initialize_workflow(workflow_id=WORKFLOW_ID)
+        initialize_workflow(workflow_id=WORKFLOW_ID)
     with pytest.raises(RuntimeError):
-        up42.initialize_job(job_id=JOB_ID)
+        initialize_job(job_id=JOB_ID)
     with pytest.raises(RuntimeError):
-        up42.initialize_jobtask(job_id=JOB_ID, jobtask_id=JOBTASK_ID)
+        initialize_jobtask(job_id=JOB_ID, jobtask_id=JOBTASK_ID)
     with pytest.raises(RuntimeError):
-        up42.initialize_jobcollection(job_ids=[JOB_ID, JOB_ID])
+        initialize_jobcollection(job_ids=[JOB_ID, JOB_ID])
     with pytest.raises(RuntimeError):
-        up42.initialize_storage()
+        initialize_storage()
     with pytest.raises(RuntimeError):
-        up42.initialize_order(order_id=ORDER_ID)
+        initialize_order(order_id=ORDER_ID)
     with pytest.raises(RuntimeError):
-        up42.initialize_asset(asset_id=ASSET_ID)
+        initialize_asset(asset_id=ASSET_ID)
 
 
 # pylint: disable=unused-argument
@@ -73,21 +82,21 @@ def test_global_auth_initialize_objects(
         get_info=False,
         retry=False,
     )
-    project = up42.initialize_project()
-    assert isinstance(project, up42.Project)
-    catalog = up42.initialize_catalog()
-    assert isinstance(catalog, up42.Catalog)
-    workflow = up42.initialize_workflow(workflow_id=WORKFLOW_ID)
-    assert isinstance(workflow, up42.Workflow)
-    job = up42.initialize_job(job_id=JOB_ID)
-    assert isinstance(job, up42.Job)
-    jobtask = up42.initialize_jobtask(job_id=JOB_ID, jobtask_id=JOBTASK_ID)
-    assert isinstance(jobtask, up42.JobTask)
-    jobcollection = up42.initialize_jobcollection(job_ids=[JOB_ID, JOB_ID])
-    assert isinstance(jobcollection, up42.JobCollection)
-    storage = up42.initialize_storage()
-    assert isinstance(storage, up42.Storage)
-    order = up42.initialize_order(order_id=ORDER_ID)
-    assert isinstance(order, up42.Order)
-    asset = up42.initialize_asset(asset_id=ASSET_ID)
-    assert isinstance(asset, up42.Asset)
+    project = initialize_project()
+    assert isinstance(project, Project)
+    catalog = initialize_catalog()
+    assert isinstance(catalog, Catalog)
+    workflow = initialize_workflow(workflow_id=WORKFLOW_ID)
+    assert isinstance(workflow, Workflow)
+    job = initialize_job(job_id=JOB_ID)
+    assert isinstance(job, Job)
+    jobtask = initialize_jobtask(job_id=JOB_ID, jobtask_id=JOBTASK_ID)
+    assert isinstance(jobtask, JobTask)
+    jobcollection = initialize_jobcollection(job_ids=[JOB_ID, JOB_ID])
+    assert isinstance(jobcollection, JobCollection)
+    storage = initialize_storage()
+    assert isinstance(storage, Storage)
+    order = initialize_order(order_id=ORDER_ID)
+    assert isinstance(order, Order)
+    asset = initialize_asset(asset_id=ASSET_ID)
+    assert isinstance(asset, Asset)
