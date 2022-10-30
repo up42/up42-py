@@ -10,9 +10,7 @@ from .fixtures_globals import (
     JSON_BLOCKS,
     JSON_BALANCE,
 )
-from ..context import (
-    Auth,
-)
+from ..context import Auth, main
 
 
 @pytest.fixture()
@@ -59,4 +57,5 @@ def auth_live():
         project_id=os.getenv("TEST_UP42_PROJECT_ID"),
         project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
+    main._auth = auth  # instead of authenticate()
     return auth
