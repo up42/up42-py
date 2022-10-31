@@ -6,7 +6,8 @@ import pytest
 from shapely.geometry import box
 
 # pylint: disable=unused-import,wrong-import-order
-from .context import Workflow, Job, JobCollection, Asset
+from .context import Workflow, Job, JobCollection
+
 from .fixtures import (
     auth_mock,
     auth_live,
@@ -19,6 +20,7 @@ from .fixtures import (
     project_mock,
     project_mock_max_concurrent_jobs,
     asset_mock,
+    ASSET_ID,
     JOB_ID,
     JOB_NAME,
     JOBTASK_ID,
@@ -220,15 +222,15 @@ def test_construct_parameter_scene_ids_without_geometry(workflow_mock):
     }
 
 
-def test_construct_parameter_assets(workflow_mock, asset_mock, monkeypatch):
-    parameters = workflow_mock.construct_parameters(assets=[asset_mock])
+def test_construct_parameter_assets(workflow_mock, asset_mock):
+    parameters = workflow_mock.construct_parameters(asset_ids=[ASSET_ID])
     assert isinstance(parameters, dict)
     assert parameters == {
         "esa-s2-l2a-gtiff-visual:1": {"asset_ids": [asset_mock.asset_id]},
         "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
-    parameters = workflow_mock.construct_parameters(assets=[asset_mock, asset_mock])
+    parameters = workflow_mock.construct_parameters(asset_ids=[ASSET_ID, ASSET_ID])
     assert isinstance(parameters, dict)
     assert parameters == {
         "esa-s2-l2a-gtiff-visual:1": {
@@ -237,9 +239,13 @@ def test_construct_parameter_assets(workflow_mock, asset_mock, monkeypatch):
         "tiling:1": {"nodata": "None", "tile_width": 768},
     }
 
-    monkeypatch.setattr(Asset, "source", property(lambda self: "ORDER"))
-    with pytest.raises(ValueError):
-        workflow_mock.construct_parameters(assets=[asset_mock])
+    # To be deprecated
+    parameters = workflow_mock.construct_parameters(assets=[asset_mock])
+    assert isinstance(parameters, dict)
+    assert parameters == {
+        "esa-s2-l2a-gtiff-visual:1": {"asset_ids": [asset_mock.asset_id]},
+        "tiling:1": {"nodata": "None", "tile_width": 768},
+    }
 
 
 def test_construct_parameters_parallel(workflow_mock):

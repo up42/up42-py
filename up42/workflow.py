@@ -16,7 +16,7 @@ from up42.auth import Auth
 from up42.job import Job
 from up42.estimation import Estimation
 from up42.jobcollection import JobCollection
-from up42.asset import Asset
+
 from up42.utils import (
     get_logger,
     any_vector_to_fc,
@@ -144,7 +144,9 @@ class Workflow:
             return tasks
 
     @staticmethod
-    def _construct_full_workflow_tasks_dict(input_tasks: Union[List]) -> List[dict]:
+    def _construct_full_workflow_tasks_dict(
+        input_tasks: Union[List[str], List[dict]]
+    ) -> List[dict]:
         """
         Constructs the full workflow task definition from a simplified version.
         Accepts blocks ids, block names, block display names & combinations of them.
@@ -339,7 +341,8 @@ class Workflow:
         end_date: Optional[Union[str, datetime]] = None,
         limit: Optional[int] = None,
         scene_ids: Optional[list] = None,
-        assets: Optional[List[Asset]] = None,
+        asset_ids: Optional[List[str]] = None,
+        **kwargs,
     ) -> dict:
         """
         Constructs workflow input parameters with a specified aoi, the default input parameters, and
@@ -356,7 +359,7 @@ class Workflow:
             end_date: Query period ending day as iso-format or datetime object,
                 e.g. "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM:SS".
             scene_ids: List of scene_ids, if given ignores all other parameters except geometry.
-            assets: Optional, can be used to incorporate existing assets in Storage (result
+            asset_ids: Optional, can be used to incorporate existing assets in Storage (result
                 of Orders for instance) into new workflows.
 
         Returns:
@@ -368,14 +371,15 @@ class Workflow:
         except IndexError as e:
             raise ValueError("The Workflow has no workflow tasks.") from e
 
-        if assets is not None:
-            # Needs to be handled in this function(not run_job) as it is only
-            # relevant for the data block.
-            asset_ids = [asset.asset_id for asset in assets if asset.source == "BLOCK"]
-            if not asset_ids:
-                raise ValueError(
-                    "None of the assets are usable in a workflow since the source is not `BLOCK`."
-                )
+        if asset_ids is not None:
+            input_parameters[data_block_name] = {"asset_ids": asset_ids}
+        elif "assets" in kwargs:
+            logger.warning(
+                "The use of the parameter `assets` is deprecated and will be removed in v0.26.0, "
+                "use `asset_ids` as a list of ids instead!"
+            )
+            assets = kwargs["assets"]
+            asset_ids = [asset.asset_id for asset in assets]
             input_parameters[data_block_name] = {"asset_ids": asset_ids}
         else:
             if limit is not None:
