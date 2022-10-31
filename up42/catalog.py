@@ -39,7 +39,7 @@ class CatalogBase:
     def get_data_products(self, basic: bool = True) -> Union[Dict, List]:
         """
         Get the available data products (combination of collection and data configuration, e.g.
-        Pleiades Display product).
+        Pleiades Display product) for catalog or tasking.
 
         Args:
             basic: A dictionary containing only the collection title, name, host and available
@@ -47,27 +47,29 @@ class CatalogBase:
         """
         url = f"{self.auth._endpoint()}/data-products"
         json_response = self.auth._request("GET", url)
-        products = json_response["data"]
+        unfiltered_products: list = json_response["data"]
+
+        products = []
+        for product in unfiltered_products:
+            if product["collection"]["type"] != self.type:
+                continue
+            try:
+                if not product["collection"]["isIntegrated"]:
+                    continue
+            except KeyError:  # isIntegrated potentially removed from future public API
+                pass
+            try:
+                if not product["productConfiguration"]["isIntegrated"]:
+                    continue
+            except KeyError:
+                pass
+            products.append(product)
+
         if not basic:
             return products
         else:
             collection_overview = {}
-
             for product in products:
-                if product["collection"]["type"] != self.type:
-                    continue
-
-                try:
-                    if not product["collection"]["isIntegrated"]:
-                        continue
-                except KeyError:  # isIntegrated potentially removed from future public API
-                    pass
-                try:
-                    if not product["productConfiguration"]["isIntegrated"]:
-                        continue
-                except KeyError:
-                    pass
-
                 collection_title = product["collection"]["title"]
                 collection_name = product["collectionName"]
                 host = product["collection"]["host"]["name"]
@@ -80,6 +82,7 @@ class CatalogBase:
                         "data_products": data_product,
                     }
                 else:
+                    # Add additional products for same collection
                     collection_overview[collection_title]["data_products"][
                         product["productConfiguration"]["title"]
                     ] = product["id"]
