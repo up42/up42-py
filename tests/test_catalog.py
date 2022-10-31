@@ -67,6 +67,7 @@ def test_get_data_products_basic(catalog_mock):
         for k in basic_keys
     )
 
+    assert "tasking_should_be_filtered_in_catalog_test" not in data_products_basic
     assert "test_not_integrated" not in data_products_basic
     assert len(data_products_basic) == 2
 
@@ -75,6 +76,13 @@ def test_get_data_products(catalog_mock):
     data_products = catalog_mock.get_data_products(basic=False)
     assert isinstance(data_products, list)
     assert data_products[0]["id"]
+
+    for product in data_products:
+        assert product["collection"]["title"] not in [
+            "tasking_should_be_filtered_in_catalog_test",
+            "test_not_integrated",
+        ]
+    assert len(data_products) == 2
 
 
 @pytest.mark.live
