@@ -10,9 +10,7 @@ from .fixtures_globals import (
     JSON_BLOCKS,
     JSON_BALANCE,
 )
-from ..context import (
-    Auth,
-)
+from ..context import Auth, main
 
 
 @pytest.fixture()
@@ -53,10 +51,11 @@ def auth_mock(requests_mock):
     return auth
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def auth_live():
     auth = Auth(
         project_id=os.getenv("TEST_UP42_PROJECT_ID"),
         project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
+    main._auth = auth  # instead of authenticate()
     return auth
