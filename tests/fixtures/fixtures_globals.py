@@ -39,8 +39,8 @@ JSON_WORKFLOW_TASKS = {
                 "name": "esa-s2-l2a-gtiff-visual",
                 "displayName": "Sentinel-2 L2A Visual (GeoTIFF)",
                 "parameters": {
-                    "ids": {"type": "array", "default": "None"},
-                    "bbox": {"type": "array", "default": "None"},
+                    "ids": {"type": "array", "default": None},
+                    "bbox": {"type": "array", "default": None},
                     "time": {
                         "type": "dateRange",
                         "default": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
@@ -50,7 +50,7 @@ JSON_WORKFLOW_TASKS = {
                 "isDryRunSupported": True,
                 "version": "1.0.1",
             },
-            "environment": "None",
+            "environment": None,
         },
         {
             "id": "24375b2a-288b-46c8-b404-53e48d4e7b25",
@@ -65,7 +65,7 @@ JSON_WORKFLOW_TASKS = {
                 "parameters": {
                     "nodata": {
                         "type": "number",
-                        "default": "None",
+                        "default": None,
                         "required": False,
                         "description": "Value representing ...",
                     },

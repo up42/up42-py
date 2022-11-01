@@ -182,10 +182,10 @@ def test_get_default_parameters(workflow_mock):
         x in list(default_parameters.keys())
         for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"]
     )
-    assert default_parameters["tiling:1"] == {"nodata": "None", "tile_width": 768}
+    assert default_parameters["tiling:1"] == {"nodata": None, "tile_width": 768}
     assert default_parameters["esa-s2-l2a-gtiff-visual:1"] == {
-        "ids": "None",
-        "bbox": "None",
+        "ids": None,
+        "bbox": None,
         "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
     }
 
