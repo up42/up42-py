@@ -407,19 +407,19 @@ class Catalog(CatalogBase, VizTools):
                   (13.375966, 52.515068)),)})
             ```
         """
-        params = {"id": image_id}
         if aoi is not None:
             aoi = any_vector_to_fc(vector=aoi)
             aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
-            params["aoi"] = aoi  # type:ignore
 
+        order_parameters = {
+            "dataProduct": data_product_id,
+            "params": {"id": image_id, "aoi": aoi},
+        }
         logger.info(
             "See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options."
         )
         schema = self.get_data_product_schema(data_product_id)
-        order_parameters = autocomplete_order_parameters(
-            data_product_id, schema, params
-        )
+        order_parameters = autocomplete_order_parameters(order_parameters, schema)
 
         return order_parameters
 

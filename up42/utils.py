@@ -376,12 +376,13 @@ def filter_jobs_on_mode(
     return jobs_json
 
 
-def autocomplete_order_parameters(data_product_id: str, schema: dict, params: dict):
+def autocomplete_order_parameters(order_parameters: dict, schema: dict):
     """
     Adds missing required catalog/tasking order parameters and logs parameter suggestions.
 
     Args:
-        data_product_id: The id of a data product
+        order_parameters: The initial order_parameters, in format
+            {"dataProduct": data_product_id, "params" : {...}}
         schema: The data product parameter schema from .get_data_product_schema
         The existing order parameter params
 
@@ -389,13 +390,12 @@ def autocomplete_order_parameters(data_product_id: str, schema: dict, params: di
         The order parameters with complete params
     """
     additional_params = {
-        param: None for param in schema["required"] if param not in params
+        param: None
+        for param in schema["required"]
+        if param not in order_parameters["params"]
     }
+    order_parameters["params"] = dict(order_parameters["params"], **additional_params)
 
-    order_parameters = {
-        "dataProduct": data_product_id,
-        "params": dict(params, **additional_params),
-    }
     # Log message help for parameter selection
     for param in additional_params.keys():
         if param == "aoi":
