@@ -387,8 +387,6 @@ class Workflow:
                 input_parameters[data_block_name]["limit"] = limit
 
             if scene_ids is not None:
-                if not isinstance(scene_ids, list):
-                    scene_ids = [scene_ids]
                 input_parameters[data_block_name]["ids"] = scene_ids
                 input_parameters[data_block_name]["limit"] = len(scene_ids)
                 input_parameters[data_block_name].pop("time")
