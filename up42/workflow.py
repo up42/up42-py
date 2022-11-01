@@ -315,12 +315,13 @@ class Workflow:
         for task in workflow_tasks:
             task_name = task["name"]
             task_parameters = task["block"]["parameters"]
-
             default_task_parameters = {}
 
             for param_name, param_values in task_parameters.items():
-                if "default" in param_values and param_values["default"] is not None:
+                if "default" in param_values:
                     default_task_parameters[param_name] = param_values["default"]
+                else:
+                    default_task_parameters[param_name] = None
 
             default_workflow_parameters[task_name] = default_task_parameters
         return default_workflow_parameters
@@ -340,7 +341,7 @@ class Workflow:
         start_date: Optional[Union[str, datetime]] = None,
         end_date: Optional[Union[str, datetime]] = None,
         limit: Optional[int] = None,
-        scene_ids: Optional[list] = None,
+        scene_ids: Optional[List[str]] = None,
         asset_ids: Optional[List[str]] = None,
         **kwargs,
     ) -> dict:
