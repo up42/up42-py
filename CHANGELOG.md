@@ -30,16 +30,15 @@ You can determine your currently installed version via:
 
 ## Versions
 
-### [0.26.0](https://pypi.org/project/up42-py/) (2022-11-03)
-- Remove upper Python version requirement
-- Fix: `get_data_products` with `basic=False` now correctly returns only tasking or catalog products.
-- Deprecates `assets` (list of asset objects) in `workflow.construct_parameters`, instead use `asset_ids` (list of 
-  asset_ids).
-- When using the processing-from-storage block, removes limitation of using only assets created from blocks in 
-  `workflow.construct_parameters` (enforced previous platform limitation). Now also supports assets from 
-  catalog/tasking.
-  Previously processing-from-storage only supported assets created from blocks (enforced in the SDK).
-- Internal: up42&tools module restructure, 
+### [0.26.0](https://pypi.org/project/up42-py/) (2022-11-02)
+- Remove Python version upper bound, this will enable immediate but untested installation with any new Python version. 
+- In `workflow.construct_parameters` deprecates the `assets` parameter (list of asset objects), instead use `asset_ids` 
+  (list of asset_ids).
+- When using the "processing-from-storage" block, `workflow.construct_parameters` now also supports assets originating
+  from catalog&tasking in addition to blocks.
+- `workflow.construct_parameters` now adds all required parameters and default value optional parameters.
+- Fix: `get_data_products` with `basic=False` now correctly returns only tasking OR catalog products.
+- The up42 object now correctly does not give access to third party imports anymore (restructured init module).
 
 
 ### [0.25.0](https://pypi.org/project/up42-py/) (2022-10-25)
