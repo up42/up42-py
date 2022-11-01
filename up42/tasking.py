@@ -81,27 +81,29 @@ class Tasking(CatalogBase):
                 )
             ```
         """
-        # TODO: Balcksky optional parameters?
+        # TODO: Blacksky optional parameters?
         start_date, end_date = format_time_period(
             start_date=acquisition_start, end_date=acquisition_end
         ).split("/")
         geometry = any_vector_to_fc(vector=geometry)
         geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
 
-        params = {
-            "displayName": name,
-            "acquisitionStart": start_date,
-            "acquisitionEnd": end_date,
-            "geometry": geometry,
+        order_parameters = {
+            "dataProduct": data_product_id,
+            "params": {
+                "displayName": name,
+                "acquisitionStart": start_date,
+                "acquisitionEnd": end_date,
+                "geometry": geometry,
+            },
         }
+
         schema = self.get_data_product_schema(data_product_id)
         logger.info(
             "See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options."
         )
 
-        order_parameters = autocomplete_order_parameters(
-            data_product_id, schema, params
-        )
+        order_parameters = autocomplete_order_parameters(order_parameters, schema)
 
         return order_parameters
 

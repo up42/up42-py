@@ -345,12 +345,16 @@ def test_autocomplete_order_parameters():
         Path(__file__).resolve().parent / "mock_data/data_product_schema.json"
     ) as json_file:
         json_data_product_schema = json.load(json_file)
-    params = {"existing_param1": "abc"}
+    order_parameters = {
+        "dataProduct": "123",
+        "params": {"existing_param1": "abc"},
+    }
     order_parameters = autocomplete_order_parameters(
-        data_product_id="123", schema=json_data_product_schema, params=params
+        order_parameters=order_parameters, schema=json_data_product_schema
     )
 
     assert "dataProduct" in order_parameters
+    assert order_parameters["params"]["existing_param1"] is not None
     assert order_parameters["params"]["aoi"] is None
     assert order_parameters["params"]["acquisitionMode"] is None
     assert order_parameters["params"]["id"] is None
