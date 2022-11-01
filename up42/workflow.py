@@ -305,7 +305,7 @@ class Workflow:
     def _get_default_parameters(self) -> dict:
         """
         Gets the default parameters for the workflow that can be directly used to
-        run a job. Excludes geometry operation and geometry of the data block.
+        run a job.
         """
         default_workflow_parameters = {}
 
@@ -315,13 +315,19 @@ class Workflow:
         for task in workflow_tasks:
             task_name = task["name"]
             task_parameters = task["block"]["parameters"]
-            default_task_parameters = {}
 
+            default_task_parameters = {}
+            # Add parameters if they have non-None default or are required (use default or otherwise None)
             for param_name, param_values in task_parameters.items():
                 if "default" in param_values:
                     default_task_parameters[param_name] = param_values["default"]
-                else:
-                    default_task_parameters[param_name] = None
+                if (
+                    "required" in param_values
+                    and param_name not in default_task_parameters
+                ):
+                    # required without default key, add as placeholder
+                    if param_values["required"]:
+                        default_task_parameters[param_name] = None
 
             default_workflow_parameters[task_name] = default_task_parameters
         return default_workflow_parameters
@@ -366,6 +372,10 @@ class Workflow:
         Returns:
             Dictionary of constructed input parameters.
         """
+        logger.info(
+            "See `workflow.get_workflow_tasks() for more detail on the parameters options."
+        )
+
         input_parameters = self._get_default_parameters()
         try:
             data_block_name = list(input_parameters.keys())[0]
@@ -404,7 +414,6 @@ class Workflow:
                     fc=aoi_fc,
                     geometry_operation=geometry_operation,  # type: ignore
                 )
-
                 input_parameters[data_block_name][geometry_operation] = aoi_feature
         return input_parameters
 
