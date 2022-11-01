@@ -354,6 +354,7 @@ def test_autocomplete_order_parameters():
     )
 
     assert "dataProduct" in order_parameters
+    assert order_parameters["params"]["existing_param1"] is not None
     assert order_parameters["params"]["aoi"] is None
     assert order_parameters["params"]["acquisitionMode"] is None
     assert order_parameters["params"]["id"] is None
