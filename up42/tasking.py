@@ -102,9 +102,17 @@ class Tasking(CatalogBase):
         order_parameters = autocomplete_order_parameters(order_parameters, schema)
 
         # Tasking (e.g. Blacksky) can require point geometry, but UP42 default is Polygon
-        geom_type = schema["properties"]["geometry"]["allOf"][0]["$ref"].split(
-            "/definitions/"
-        )[1]
+        try:
+            geom_type = schema["properties"]["geometry"]["$ref"].split("/definitions/")[
+                1
+            ]
+        except KeyError:
+            geom_types = schema["properties"]["geometry"]["allOf"]
+            if len(geom_types) >= 2:
+                geom_type = "Polygon"
+            else:
+                geom_type = geom_types[0]["$ref"].split("/definitions/")[1]
+
         if geom_type == "Point":
             point_example = "`{'type': 'Point','coordinates': [lon,lat]}`"
             logger.info(
