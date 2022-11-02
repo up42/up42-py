@@ -12,7 +12,7 @@ from functools import wraps
 
 from geopandas import GeoDataFrame
 import shapely
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, Point
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 import requests
@@ -225,14 +225,7 @@ def format_time_period(
 
 
 def any_vector_to_fc(
-    vector: Union[
-        dict,
-        Feature,
-        FeatureCollection,
-        list,
-        GeoDataFrame,
-        Polygon,
-    ],
+    vector: Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon, Point],
     as_dataframe: bool = False,
 ) -> Union[dict, GeoDataFrame]:
     """
@@ -240,8 +233,7 @@ def any_vector_to_fc(
 
     Args:
         vector: One of dict, FeatureCollection, Feature, list of bounds coordinates,
-            GeoDataFrame, shapely.geometry.Polygon.
-            All assume EPSG 4326 and Polygons!
+            GeoDataFrame, shapely.Polygon, shapely.Point. All assume EPSG 4326!
         as_dataframe: GeoDataFrame output with as_dataframe=True.
     """
     if not isinstance(
@@ -254,11 +246,12 @@ def any_vector_to_fc(
             list,
             GeoDataFrame,
             Polygon,
+            Point,
         ),
     ):
         raise ValueError(
             "The provided geometry muste be a FeatureCollection, Feature, dict, geopandas "
-            "Dataframe, shapely Polygon or a list of 4 bounds coordinates."
+            "Dataframe, shapely Polygon, Point or a list of 4 bounds coordinates."
         )
 
     vector = copy.deepcopy(vector)  # avoid altering input geometry
@@ -283,7 +276,7 @@ def any_vector_to_fc(
                 df = GeoDataFrame({"geometry": [box_poly]}, crs=4326)
             else:
                 raise ValueError("The list requires 4 bounds coordinates.")
-        elif isinstance(vector, Polygon):
+        elif isinstance(vector, (Polygon, Point)):
             df = GeoDataFrame({"geometry": [vector]}, crs=4326)
         elif isinstance(vector, GeoDataFrame):
             df = vector
@@ -399,7 +392,7 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
     # Log message help for parameter selection
     for param in additional_params.keys():
         if param in ["aoi", "geometry"]:
-            continue  # Handled in catalog/tasking construct_order_parameters
+            continue
         elif "allOf" in schema["properties"][param]:  # has further definitions key
             potential_values = [x["id"] for x in schema["definitions"][param]["enum"]]
             logger.info(f"As `{param}` select one of {potential_values}")
