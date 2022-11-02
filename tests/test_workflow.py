@@ -182,12 +182,19 @@ def test_get_default_parameters(workflow_mock):
         x in list(default_parameters.keys())
         for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"]
     )
-    assert default_parameters["tiling:1"] == {"nodata": "None", "tile_width": 768}
+    assert default_parameters["tiling:1"] == {
+        "nodata": None,
+        "tile_width": 768,
+        "required_but_no_default": None,
+    }
+    assert "not_required_no_default" not in default_parameters["tiling:1"]
+
     assert default_parameters["esa-s2-l2a-gtiff-visual:1"] == {
-        "ids": "None",
-        "bbox": "None",
+        "ids": None,
+        "bbox": None,
         "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
     }
+    assert "intersects" not in default_parameters["esa-s2-l2a-gtiff-visual:1"]
 
 
 def test_construct_parameters_scene_ids(workflow_mock):
@@ -203,7 +210,11 @@ def test_construct_parameters_scene_ids(workflow_mock):
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
             "limit": 1,
         },
-        "tiling:1": {"nodata": "None", "tile_width": 768},
+        "tiling:1": {
+            "nodata": None,
+            "tile_width": 768,
+            "required_but_no_default": None,
+        },
     }
 
 
@@ -215,10 +226,14 @@ def test_construct_parameter_scene_ids_without_geometry(workflow_mock):
     assert parameters == {
         "esa-s2-l2a-gtiff-visual:1": {
             "ids": ["s2_123223"],
-            "bbox": "None",
+            "bbox": None,
             "limit": 1,
         },
-        "tiling:1": {"nodata": "None", "tile_width": 768},
+        "tiling:1": {
+            "nodata": None,
+            "tile_width": 768,
+            "required_but_no_default": None,
+        },
     }
 
 
@@ -227,7 +242,11 @@ def test_construct_parameter_assets(workflow_mock, asset_mock):
     assert isinstance(parameters, dict)
     assert parameters == {
         "esa-s2-l2a-gtiff-visual:1": {"asset_ids": [asset_mock.asset_id]},
-        "tiling:1": {"nodata": "None", "tile_width": 768},
+        "tiling:1": {
+            "nodata": None,
+            "tile_width": 768,
+            "required_but_no_default": None,
+        },
     }
 
     parameters = workflow_mock.construct_parameters(asset_ids=[ASSET_ID, ASSET_ID])
@@ -236,15 +255,23 @@ def test_construct_parameter_assets(workflow_mock, asset_mock):
         "esa-s2-l2a-gtiff-visual:1": {
             "asset_ids": [asset_mock.asset_id, asset_mock.asset_id]
         },
-        "tiling:1": {"nodata": "None", "tile_width": 768},
+        "tiling:1": {
+            "nodata": None,
+            "tile_width": 768,
+            "required_but_no_default": None,
+        },
     }
 
-    # To be deprecated
+    # Use of asset object to be deprecated
     parameters = workflow_mock.construct_parameters(assets=[asset_mock])
     assert isinstance(parameters, dict)
     assert parameters == {
         "esa-s2-l2a-gtiff-visual:1": {"asset_ids": [asset_mock.asset_id]},
-        "tiling:1": {"nodata": "None", "tile_width": 768},
+        "tiling:1": {
+            "nodata": None,
+            "tile_width": 768,
+            "required_but_no_default": None,
+        },
     }
 
 
@@ -261,12 +288,16 @@ def test_construct_parameters_parallel(workflow_mock):
     assert len(parameters_list) == 2
     assert parameters_list[0] == {
         "esa-s2-l2a-gtiff-visual:1": {
-            "ids": "None",
+            "ids": None,
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
             "time": "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
             "limit": 1,
         },
-        "tiling:1": {"nodata": "None", "tile_width": 768},
+        "tiling:1": {
+            "nodata": None,
+            "tile_width": 768,
+            "required_but_no_default": None,
+        },
     }
 
 
@@ -282,12 +313,16 @@ def test_construct_parameters_parallel_multiple_intervals(workflow_mock):
     assert len(parameters_list) == 4
     assert parameters_list[0] == {
         "esa-s2-l2a-gtiff-visual:1": {
-            "ids": "None",
+            "ids": None,
             "bbox": [0.99999, 2.99999, 1.00001, 3.00001],
             "time": "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
             "limit": 1,
         },
-        "tiling:1": {"nodata": "None", "tile_width": 768},
+        "tiling:1": {
+            "nodata": None,
+            "tile_width": 768,
+            "required_but_no_default": None,
+        },
     }
 
     with pytest.raises(ValueError):
@@ -300,8 +335,12 @@ def test_construct_parameters_parallel_scene_ids(workflow_mock):
     )
     assert len(parameters_list) == 2
     assert parameters_list[0] == {
-        "esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "bbox": "None", "limit": 1},
-        "tiling:1": {"nodata": "None", "tile_width": 768},
+        "esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "bbox": None, "limit": 1},
+        "tiling:1": {
+            "nodata": None,
+            "tile_width": 768,
+            "required_but_no_default": None,
+        },
     }
 
 
