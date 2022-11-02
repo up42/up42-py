@@ -398,10 +398,8 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
 
     # Log message help for parameter selection
     for param in additional_params.keys():
-        if param == "aoi":
-            geom_type = schema["properties"][param]["$ref"].split("/definitions/")[1]
-            logger.info(f"As `aoi` select a {geom_type}.")
-            # check for `geometry` (tasking) not required as mandatory parameter in construct_order_parameters
+        if param in ["aoi", "geometry"]:
+            continue  # Handled in catalog/tasking construct_order_parameters
         elif "allOf" in schema["properties"][param]:  # has further definitions key
             potential_values = [x["id"] for x in schema["definitions"][param]["enum"]]
             logger.info(f"As `{param}` select one of {potential_values}")

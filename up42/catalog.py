@@ -417,17 +417,21 @@ class Catalog(CatalogBase, VizTools):
         schema = self.get_data_product_schema(data_product_id)
         order_parameters = autocomplete_order_parameters(order_parameters, schema)
 
-        if aoi is not None:
-            if "aoi" in order_parameters["params"]:
-                # Some catalog orders, e.g. Capella don't require aoi (full image order)
+        if "aoi" in order_parameters["params"]:
+            if aoi is None:
+                logger.info(
+                    "This data product requires selecting `aoi` parameter, a Polygon geometry."
+                )
+            else:
                 aoi = any_vector_to_fc(vector=aoi)
                 aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
                 order_parameters["params"]["aoi"] = aoi  # type: ignore
-            else:
-                # Also will raise API error when creating an order for this case.
-                logger.info(
-                    "This data product is a full image order, no `aoi` parameter required!"
-                )
+        else:
+            # Some catalog orders, e.g. Capella don't require aoi (full image order)
+            # Also will raise API error when creating an order for this case.
+            logger.info(
+                "This data product is a full image order, no `aoi` parameter required!"
+            )
 
         return order_parameters
 
