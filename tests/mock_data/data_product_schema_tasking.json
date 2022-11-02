@@ -1,7 +1,7 @@
 {"$schema": "http://json-schema.org/schema#",
   "type": "object",
   "properties": {"id": {"title": "Id", "type": "string"},
-    "geometry": {"$ref": "#/definitions/Polygon"},
+    "geometry": {"title": "Geometry", "allOf":[{"$ref": "#/definitions/Polygon"}]},
     "acquisitionMode": {"title": "Acquisition Mode",
       "type": "string",
       "allOf": [{"$ref": ",#/definitions/acquisitionMode"}]}},
