@@ -85,8 +85,6 @@ class Tasking(CatalogBase):
         start_date, end_date = format_time_period(
             start_date=acquisition_start, end_date=acquisition_end
         ).split("/")
-        geometry = any_vector_to_fc(vector=geometry)
-        geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
 
         order_parameters = {
             "dataProduct": data_product_id,
@@ -94,7 +92,6 @@ class Tasking(CatalogBase):
                 "displayName": name,
                 "acquisitionStart": start_date,
                 "acquisitionEnd": end_date,
-                "geometry": geometry,
             },
         }
 
@@ -102,8 +99,32 @@ class Tasking(CatalogBase):
         logger.info(
             "See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options."
         )
-
         order_parameters = autocomplete_order_parameters(order_parameters, schema)
+
+        # Tasking (e.g. Blacksky) can require point geometry, but UP42 default is Polygon
+        try:
+            geom_type = schema["properties"]["geometry"]["$ref"].split("/definitions/")[
+                1
+            ]
+        except KeyError:
+            geom_types = schema["properties"]["geometry"]["allOf"]
+            if len(geom_types) >= 2:
+                geom_type = "Polygon"
+            else:
+                geom_type = geom_types[0]["$ref"].split("/definitions/")[1]
+
+        if geom_type == "Point":
+            point_example = "`{'type': 'Point','coordinates': [lon,lat]}`"
+            logger.info(
+                f"This data product requires a Point as the `geometry` parameter! Example {point_example}"
+            )
+            order_parameters["params"]["geometry"] = geometry  # type: ignore
+        else:
+            geometry = any_vector_to_fc(vector=geometry)
+            geometry = fc_to_query_geometry(
+                fc=geometry, geometry_operation="intersects"
+            )
+        order_parameters["params"]["geometry"] = geometry  # type: ignore
 
         return order_parameters
 
