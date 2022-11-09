@@ -37,6 +37,7 @@ You can determine your currently installed version via:
 - When using the "processing-from-storage" block, `workflow.construct_parameters` now also supports assets originating
   from catalog&tasking in addition to blocks.
 - `workflow.construct_parameters` now adds all required parameters and default value optional parameters.
+- `tasking.construct_order_parameters` now accepts a Point feature.
 - Fix: `get_data_products` with `basic=False` now correctly returns only tasking OR catalog products.
 - The up42 object now correctly does not give access to third party imports anymore (restructured init module).
 
