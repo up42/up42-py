@@ -4,7 +4,7 @@ Tasking functionality
 from typing import Union
 
 from geopandas import GeoDataFrame
-from shapely.geometry import Polygon, Point
+from shapely.geometry import Polygon
 from geojson import Feature, FeatureCollection
 
 from up42.auth import Auth
@@ -41,9 +41,7 @@ class Tasking(CatalogBase):
         name: str,
         acquisition_start: str,
         acquisition_end: str,
-        geometry: Union[
-            dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon, Point
-        ],
+        geometry: Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon],
     ):
         """
         Helps constructing the parameters dictionary required for the tasking order. Each sensor has additional
@@ -55,7 +53,8 @@ class Tasking(CatalogBase):
             name: Name of the tasking order project.
             acquisition_start: Start date of the acquisition period, e.g. "2022-11-01"
             acquisition_end: End date of the acquisition period, e.g. "2022-11-01"
-            geometry: Polygon geometry of the area to be captured.
+            geometry: Geometry of the area to be captured, default a Polygon. Allows Point feature for specific
+                data products.
 
         Returns:
             The constructed order parameters dictionary.
