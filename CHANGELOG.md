@@ -30,6 +30,18 @@ You can determine your currently installed version via:
 
 ## Versions
 
+### [0.26.0](https://pypi.org/project/up42-py/) (2022-11-02)
+- Remove Python version upper bound, this will enable immediate but untested installation with any new Python version. 
+- Changes to `workflow.construct_parameters`:
+  - Deprecates the `assets` parameter (list of asset objects), instead use `asset_ids` (list of asset_ids).
+  - Removes limitation of using only assets originating from blocks, now also supports assets from catalog & 
+    tasking.
+  - In addition to required parameters, now adds all optional parameters that have default values.
+- `tasking.construct_order_parameters` now accepts a Point feature (e.g. use with Blacksky).
+- Fix: `get_data_products` with `basic=False` now correctly returns only tasking OR catalog products.
+- The up42 object now correctly does not give access to third party imports anymore (restructured init module).
+
+
 ### [0.25.0](https://pypi.org/project/up42-py/) (2022-10-25)
 - Add dedicated tasking class for improved handling of satellite tasking orders. See 
   [new example](https://sdk.up42.com/tasking/) in the documentation.
