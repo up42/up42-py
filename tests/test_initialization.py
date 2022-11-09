@@ -1,5 +1,3 @@
-import importlib
-
 import pytest
 
 # pylint: disable=unused-import
@@ -36,11 +34,10 @@ from .fixtures import (
 # pylint: disable=wrong-import-order
 import up42
 
-# pylint: disable=wrong-import-order
-importlib.reload(up42)  # global auth attached from other tests
-
 
 def test_initialize_object_without_auth_raises():
+    up42.main._auth = None
+
     with pytest.raises(RuntimeError):
         up42.initialize_project()
     with pytest.raises(RuntimeError):
