@@ -26,6 +26,8 @@ orders = storage.get_orders(limit=100, sortby="createdAt")
 
 ```python
 assets = storage.get_assets(limit=100, sortby="size", descending=False)
+
+print(assets[0].info) # Dictionary with the asset metadata
 ```
 
 Or access a specific order or asset via `up42.initialize_order(order_id="123")` or`up42.initialize_asset(asset_id="123")`   

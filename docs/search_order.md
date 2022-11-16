@@ -115,10 +115,18 @@ order status until it is finished, use `order.track_status()`.
 
 ## **Download the image**
 
-After the order is finished, download the image assets from the user storage via:
+After the order is finished, access the asset created from the order. To access all assets in your user storage see 
+the [Storage](storage.md) chapter.
 
 ```python
 assets = order.get_assets()
+
+print(assets[0].info) # Dictionary with the asset metadata
+```
+
+Download the asset to your current working directory, or provide the `output_directory` parameter.
+
+```python
 assets[0].download()
 ```
 
