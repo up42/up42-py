@@ -8,7 +8,7 @@
     pip install up42-py
     ```
     ```bash title="Installation with plotting functionality (Optional)"
-    pip install up42-py[viz]
+    pip install "up42-py[viz]"
     ```
     ```bash title="Update to the newest version"
     pip install up42-py --upgrade
