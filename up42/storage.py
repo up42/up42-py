@@ -100,7 +100,7 @@ class Storage:
                 f"sortby parameter must be one of {allowed_sorting_criteria}!"
             )
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets?format=paginated&sort={sort}"
+        url = f"{self.auth._endpoint()}/assets?format=paginated&sort={sort}"
         assets_json = self._query_paginated(url=url, limit=limit)
         logger.info(f"Got {len(assets_json)} assets for workspace {self.workspace_id}.")
 
