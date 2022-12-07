@@ -52,20 +52,16 @@ class Asset:
         self._info = response_json
         return self._info
 
-    @property
-    def source(self) -> dict:
-        """
-        Gets the source of the Asset. One of `TASKING`, `ORDER`, `BLOCK`, `UPLOAD`.
-        """
-        source = self.info["source"]
-        logger.info(f"Asset source is {source}")
-        return source
-
     def _get_download_url(self) -> str:
         url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/download-url"
         response_json = self.auth._request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
         return download_url
+
+    def update_metadata(self):
+        # TODO
+        # Any checks in place etc? Overwrite anything? also size?
+        pass
 
     def download(
         self, output_directory: Union[str, Path, None] = None, unpacking: bool = True
