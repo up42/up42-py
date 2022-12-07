@@ -24,7 +24,6 @@ class Asset:
 
     def __init__(self, auth: Auth, asset_id: str, asset_info: Optional[dict] = None):
         self.auth = auth
-        self.workspace_id = auth.workspace_id
         self.asset_id = asset_id
         self.results: Union[List[str], None] = None
         if asset_info is not None:
@@ -44,9 +43,9 @@ class Asset:
         """
         Gets and updates the asset metadata information.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets/{self.asset_id}"
+        url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
         response_json = self.auth._request(request_type="GET", url=url)
-        self._info = response_json["data"]
+        self._info = response_json
         return self._info
 
     @property
