@@ -68,6 +68,8 @@ class Storage:
             response_json = self.auth._request(
                 request_type="GET", url=url + f"&page={page}"
             )
+            if "data" in response_json:
+                response_json = response_json["data"]
             results_list += response_json["content"]
         return results_list[:limit]
 
