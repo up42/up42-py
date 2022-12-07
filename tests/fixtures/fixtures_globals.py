@@ -147,37 +147,37 @@ JSON_WORKFLOW_ESTIMATION = {
 }
 
 JSON_ASSET = {
-        "id": ASSET_ID,
-        "workspaceId": WORKSPACE_ID,
-        "createdAt": "2020-12-17T10:41:24.774111Z",
-        "type": "ARCHIVED",
-        "source": "BLOCK",
-        "name": "DS_PHR1B_201903161028440_FR1_PX_E008N47_0606_04372",
-        "size": 3920650,
-        "createdBy": {"id": "system", "type": "INTERNAL"},
-        "updatedBy": {"id": "system", "type": "INTERNAL"},
-        "updatedAt": "2020-12-17T10:41:24.774111Z"
+    "id": ASSET_ID,
+    "workspaceId": WORKSPACE_ID,
+    "createdAt": "2020-12-17T10:41:24.774111Z",
+    "type": "ARCHIVED",
+    "source": "BLOCK",
+    "name": "DS_PHR1B_201903161028440_FR1_PX_E008N47_0606_04372",
+    "size": 3920650,
+    "createdBy": {"id": "system", "type": "INTERNAL"},
+    "updatedBy": {"id": "system", "type": "INTERNAL"},
+    "updatedAt": "2020-12-17T10:41:24.774111Z",
 }
 
 JSON_ASSETS = {
-        "content": [JSON_ASSET],
-        "pageable": {
-            "sort": {"sorted": True, "unsorted": False, "empty": False},
-            "pageNumber": 0,
-            "pageSize": 10,
-            "offset": 0,
-            "paged": True,
-            "unpaged": False,
-        },
-        "totalPages": 1,
-        "totalElements": 1,
-        "last": True,
+    "content": [JSON_ASSET],
+    "pageable": {
         "sort": {"sorted": True, "unsorted": False, "empty": False},
-        "numberOfElements": 1,
-        "first": True,
-        "size": 10,
-        "number": 0,
-        "empty": False,
+        "pageNumber": 0,
+        "pageSize": 10,
+        "offset": 0,
+        "paged": True,
+        "unpaged": False,
+    },
+    "totalPages": 1,
+    "totalElements": 1,
+    "last": True,
+    "sort": {"sorted": True, "unsorted": False, "empty": False},
+    "numberOfElements": 1,
+    "first": True,
+    "size": 10,
+    "number": 0,
+    "empty": False,
 }
 
 JSON_ORDER = {

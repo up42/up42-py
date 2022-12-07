@@ -35,7 +35,9 @@ def test_asset_info_live(asset_live):
 
 
 def test_asset_update_metadata(asset_mock):
-    updated_info = asset_mock.update_metadata(title="some_other_title", tags=["othertag1", "othertag2"])
+    updated_info = asset_mock.update_metadata(
+        title="some_other_title", tags=["othertag1", "othertag2"]
+    )
     assert updated_info["title"] == "some_other_title"
 
 

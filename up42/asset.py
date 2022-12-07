@@ -52,14 +52,12 @@ class Asset:
         self._info = response_json
         return self._info
 
-    def update_metadata(self, title: str=None, tags: List[str] = None, **kwargs):
+    def update_metadata(self, title: str = None, tags: List[str] = None, **kwargs):
         url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
-        body_update = {
-            "title": title,
-            "tags": tags,
-            **kwargs
-        }
-        response_json = self.auth._request(request_type="POST", url=url, data=body_update)
+        body_update = {"title": title, "tags": tags, **kwargs}
+        response_json = self.auth._request(
+            request_type="POST", url=url, data=body_update
+        )
         self._info = response_json
         return self._info
 
