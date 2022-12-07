@@ -32,11 +32,13 @@ class Asset:
             self._info = self.info
 
     def __repr__(self):
-        return (
-            f"Asset(name: {self._info['name']}, asset_id: {self.asset_id}, type: {self._info['type']}, "
-            f"source: {self._info['source']}, createdAt: {self._info['createdAt']}, "
-            f"size: {self._info['size']})"
-        )
+        repr = f"Asset(name: {self._info['name']}, asset_id: {self.asset_id}, created: {self._info['created']}, " \
+               f"size: {self._info['size']})"
+        if "source" in self._info:
+            repr += f", source: {self._info['source']}"
+        if "contentType" in self._info:
+            repr += f", contentType: {self._info['contentType']}"
+        return repr
 
     @property
     def info(self) -> dict:
