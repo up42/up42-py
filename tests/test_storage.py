@@ -124,38 +124,34 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     Mock result holds 2 pages, each with 50 results.
     """
     json_assets_paginated = {
-        "data": {
-            "content": [JSON_ASSET["data"]] * 50,
-            "pageable": {
-                "sort": {"sorted": True, "unsorted": False, "empty": False},
-                "pageNumber": 0,
-                "pageSize": 50,
-                "offset": 0,
-                "paged": True,
-                "unpaged": False,
-            },
-            "totalPages": 2,
-            "totalElements": 100,
-            "last": True,
+        "content": [JSON_ASSET] * 50,
+        "pageable": {
             "sort": {"sorted": True, "unsorted": False, "empty": False},
-            "numberOfElements": 100,
-            "first": True,
-            "size": 50,
-            "number": 0,
-            "empty": False,
+            "pageNumber": 0,
+            "pageSize": 50,
+            "offset": 0,
+            "paged": True,
+            "unpaged": False,
         },
-        "error": None,
+        "totalPages": 2,
+        "totalElements": 100,
+        "last": True,
+        "sort": {"sorted": True, "unsorted": False, "empty": False},
+        "numberOfElements": 100,
+        "first": True,
+        "size": 50,
+        "number": 0,
+        "empty": False,
     }
 
     # assets pages
     url_storage_assets_paginated = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/"
-        f"assets?format=paginated&sort=createdAt,asc&size=50"
+        f"{auth_mock._endpoint()}/v2/assets?format=paginated&sort=created,asc&size=50"
     )
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
     storage = Storage(auth=auth_mock)
-    assets = storage.get_assets(limit=74, sortby="createdAt", descending=False)
+    assets = storage.get_assets(limit=74, sortby="created", descending=False)
     assert len(assets) == 74
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ID
