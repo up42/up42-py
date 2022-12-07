@@ -114,6 +114,12 @@ class Storage:
             )
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/v2/assets?format=paginated&sort={sort}"
+        if created_after is not None:
+            url += f"&{created_after}"
+        if created_before is not None:
+            url += f"{created_before}"
+        if workspace_id is not None:
+            url += f"{workspace_id}"
         assets_json = self._query_paginated(url=url, limit=limit)
         logger.info(f"Got {len(assets_json)} assets for workspace {self.workspace_id}.")
 
