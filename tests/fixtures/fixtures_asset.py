@@ -18,6 +18,12 @@ def asset_mock(auth_mock, requests_mock):
     )
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
 
+    # asset update
+    updated_json_asset = JSON_ASSET.copy()
+    updated_json_asset["title"] = "some_other_title"
+    updated_json_asset["tags"] = ["othertag1", "othertag2"]
+    requests_mock.post(url=url_asset_info, json=updated_json_asset)
+
     # download url
     requests_mock.get(
         url=f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/download-url",

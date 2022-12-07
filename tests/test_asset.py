@@ -34,13 +34,9 @@ def test_asset_info_live(asset_live):
     assert asset_live.info["name"]
 
 
-def test_asset_source(asset_mock):
-    assert asset_mock.source == "BLOCK"
-
-
-@pytest.mark.live
-def test_asset_source_live(asset_live):
-    assert asset_live.source == "BLOCK"
+def test_asset_update_metadata(asset_mock):
+    updated_info = asset_mock.update_metadata(title="some_other_title", tags=["othertag1", "othertag2"])
+    assert updated_info["title"] == "some_other_title"
 
 
 def test_asset_get_download_url(asset_mock):

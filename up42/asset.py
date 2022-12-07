@@ -52,16 +52,22 @@ class Asset:
         self._info = response_json
         return self._info
 
+    def update_metadata(self, title: str=None, tags: List[str] = None, **kwargs):
+        url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
+        body_update = {
+            "title": title,
+            "tags": tags,
+            **kwargs
+        }
+        response_json = self.auth._request(request_type="POST", url=url, data=body_update)
+        self._info = response_json
+        return self._info
+
     def _get_download_url(self) -> str:
         url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/download-url"
         response_json = self.auth._request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
         return download_url
-
-    def update_metadata(self):
-        # TODO
-        # Any checks in place etc? Overwrite anything? also size?
-        pass
 
     def download(
         self, output_directory: Union[str, Path, None] = None, unpacking: bool = True
