@@ -46,7 +46,9 @@ class Storage:
         url = url + f"&size={size}"
 
         first_page_response = self.auth._request(request_type="GET", url=url)
-        if "data" in first_page_response: #UP42 API v2 convention without data key, but still in e.g. get order
+        if (
+            "data" in first_page_response
+        ):  # UP42 API v2 convention without data key, but still in e.g. get order
             # endpoint
             first_page_response = first_page_response["data"]
         num_pages = first_page_response["totalPages"]
