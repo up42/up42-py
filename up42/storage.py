@@ -82,7 +82,7 @@ class Storage:
         return_json: bool = False,
     ) -> Union[List[Asset], dict]:
         """
-        Gets all assets in the workspace as Asset objects or json.
+        Gets all assets in all your accessible workspaces as Asset objects or json.
 
         Args:
             created_after: Only assets that are created strictly after the provided timestamp, e.g. "2020-01-01",

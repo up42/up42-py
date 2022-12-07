@@ -62,7 +62,7 @@ class Asset:
         return source
 
     def _get_download_url(self) -> str:
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets/{self.asset_id}/downloadUrl"
+        url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/download-url"
         response_json = self.auth._request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
         return download_url
