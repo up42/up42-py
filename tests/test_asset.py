@@ -24,7 +24,7 @@ def test_init(asset_mock):
 def test_asset_info(asset_mock):
     assert asset_mock.info
     assert asset_mock.info["id"] == ASSET_ID
-    assert asset_mock.info["name"] == JSON_ASSET["data"]["name"]
+    assert asset_mock.info["name"] == JSON_ASSET["name"]
 
 
 @pytest.mark.live

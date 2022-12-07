@@ -147,7 +147,6 @@ JSON_WORKFLOW_ESTIMATION = {
 }
 
 JSON_ASSET = {
-    "data": {
         "id": ASSET_ID,
         "workspaceId": WORKSPACE_ID,
         "createdAt": "2020-12-17T10:41:24.774111Z",
@@ -157,14 +156,11 @@ JSON_ASSET = {
         "size": 3920650,
         "createdBy": {"id": "system", "type": "INTERNAL"},
         "updatedBy": {"id": "system", "type": "INTERNAL"},
-        "updatedAt": "2020-12-17T10:41:24.774111Z",
-    },
-    "error": None,
+        "updatedAt": "2020-12-17T10:41:24.774111Z"
 }
 
 JSON_ASSETS = {
-    "data": {
-        "content": [JSON_ASSET["data"]],
+        "content": [JSON_ASSET],
         "pageable": {
             "sort": {"sorted": True, "unsorted": False, "empty": False},
             "pageNumber": 0,
@@ -182,8 +178,6 @@ JSON_ASSETS = {
         "size": 10,
         "number": 0,
         "empty": False,
-    },
-    "error": None,
 }
 
 JSON_ORDER = {
