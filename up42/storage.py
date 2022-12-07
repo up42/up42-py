@@ -46,9 +46,12 @@ class Storage:
         url = url + f"&size={size}"
 
         first_page_response = self.auth._request(request_type="GET", url=url)
-        num_pages = first_page_response["data"]["totalPages"]
-        num_elements = first_page_response["data"]["totalElements"]
-        results_list = first_page_response["data"]["content"]
+        if "data" in first_page_response: #UP42 API v2 convention without data key, but still in e.g. get order
+            # endpoint
+            first_page_response = first_page_response["data"]
+        num_pages = first_page_response["totalPages"]
+        num_elements = first_page_response["totalElements"]
+        results_list = first_page_response["content"]
 
         if limit is None:
             # Also covers single page (without limit)
@@ -63,34 +66,40 @@ class Storage:
             response_json = self.auth._request(
                 request_type="GET", url=url + f"&page={page}"
             )
-            results_list += response_json["data"]["content"]
+            results_list += response_json["content"]
         return results_list[:limit]
 
     def get_assets(
         self,
-        return_json: bool = False,
+        created_after: Optional[str] = None,
+        created_before: Optional[str] = None,
+        workspace_id: Optional[str] = None,
         limit: Optional[int] = None,
-        sortby: str = "createdAt",
+        sortby: str = "created",
         descending: bool = True,
+        return_json: bool = False,
     ) -> Union[List[Asset], dict]:
         """
         Gets all assets in the workspace as Asset objects or json.
 
         Args:
-            return_json: If set to True, returns json object.
+            created_after: Only assets that are created strictly after the provided timestamp, e.g. "2020-01-01",
+            created_before: Only assets that are created strictly before the provided timestamp, e.g. "2020-01-30"
+            workspace_id: Only assets that belong to the provided workspace. Use `storage.workspace_id` to limit to
+                your own workspace.
             limit: Optional, only return n first assets by sorting criteria and order.
                 Optimal to select if your workspace contains many assets.
-            sortby: The sorting criteria, one of "createdAt", "updatedAt", "source", "type",
-                "name", "size".
+            sortby: The sorting criteria, one of "created", "updated", "workspaceId", "name", "size".
             descending: The sorting order, True for descending (default), False for ascending.
+            return_json: If set to True, returns json object.
 
         Returns:
             Asset objects in the workspace or alternatively json info of the assets.
         """
         allowed_sorting_criteria = [
-            "createdAt",
-            "updatedAt",
-            "source",
+            "created",
+            "updated",
+            "workspaceId",
             "type",
             "name",
             "size",
@@ -100,7 +109,7 @@ class Storage:
                 f"sortby parameter must be one of {allowed_sorting_criteria}!"
             )
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/assets?format=paginated&sort={sort}"
+        url = f"{self.auth._endpoint()}/v2/assets?format=paginated&sort={sort}"
         assets_json = self._query_paginated(url=url, limit=limit)
         logger.info(f"Got {len(assets_json)} assets for workspace {self.workspace_id}.")
 
