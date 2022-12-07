@@ -32,15 +32,15 @@ class Asset:
             self._info = self.info
 
     def __repr__(self):
-        repr = (
+        representation = (
             f"Asset(name: {self._info['name']}, asset_id: {self.asset_id}, created: {self._info['created']}, "
             f"size: {self._info['size']})"
         )
         if "source" in self._info:
-            repr += f", source: {self._info['source']}"
+            representation += f", source: {self._info['source']}"
         if "contentType" in self._info:
-            repr += f", contentType: {self._info['contentType']}"
-        return repr
+            representation += f", contentType: {self._info['contentType']}"
+        return representation
 
     @property
     def info(self) -> dict:
