@@ -64,7 +64,7 @@ class Asset:
     def _get_download_url(self) -> str:
         url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/download-url"
         response_json = self.auth._request(request_type="POST", url=url)
-        download_url = response_json["data"]["url"]
+        download_url = response_json["url"]
         return download_url
 
     def download(

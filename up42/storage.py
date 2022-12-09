@@ -1,10 +1,11 @@
 from typing import List, Union, Optional
 import math
+from datetime import datetime
 
 from up42.auth import Auth
 from up42.order import Order
 from up42.asset import Asset
-from up42.utils import get_logger
+from up42.utils import get_logger, format_time
 
 logger = get_logger(__name__)
 
@@ -75,8 +76,8 @@ class Storage:
 
     def get_assets(
         self,
-        created_after: Optional[str] = None,
-        created_before: Optional[str] = None,
+        created_after: Optional[Union[str, datetime]] = None,
+        created_before: Optional[Union[str, datetime]] = None,
         workspace_id: Optional[str] = None,
         limit: Optional[int] = None,
         sortby: str = "created",
@@ -89,8 +90,8 @@ class Storage:
         Args:
             created_after: Only assets that are created strictly after the provided timestamp, e.g. "2020-01-01",
             created_before: Only assets that are created strictly before the provided timestamp, e.g. "2020-01-30"
-            workspace_id: Only assets that belong to the provided workspace. Use `storage.workspace_id` to limit to
-                your own workspace.
+            workspace_id: Only assets that belong to the provided workspace. You can use `storage.workspace_id` here
+                to limit to your own workspace.
             limit: Optional, only return n first assets by sorting criteria and order.
                 Optimal to select if your workspace contains many assets.
             sortby: The sorting criteria, one of "created", "updated", "title", "name", "size", "contentType",
@@ -104,13 +105,17 @@ class Storage:
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/v2/assets?sort={sort}"
         if created_after is not None:
-            url += f"&{created_after}"
+            url += f"&createdAfter={format_time(created_after)}"
         if created_before is not None:
-            url += f"{created_before}"
+            url += f"&createdBefore={format_time(created_before)}"
         if workspace_id is not None:
-            url += f"{workspace_id}"
+            url += f"&workspaceId={workspace_id}"
+
         assets_json = self._query_paginated(url=url, limit=limit)
-        logger.info(f"Got {len(assets_json)} assets for workspace {self.workspace_id}.")
+        if workspace_id is not None:
+            logger.info(f"Queried {len(assets_json)} assets for workspace {self.workspace_id}.")
+        else:
+            logger.info(f"Queried {len(assets_json)} assets from all workspaces in account.")
 
         if return_json:
             return assets_json  # type: ignore
