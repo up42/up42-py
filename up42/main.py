@@ -26,7 +26,7 @@ import pandas as pd
 # pylint: disable=wrong-import-position
 from up42.auth import Auth
 from up42.webhooks import Webhooks, Webhook
-from up42.utils import get_logger, format_time_period
+from up42.utils import get_logger, format_time
 
 logger = get_logger(__name__, level=logging.INFO)
 
@@ -258,16 +258,14 @@ def get_credits_history(
     The consumption history will be returned for all workspace_ids on your account.
 
     Args:
-        start_date: The start date for the credit consumption search e.g.
+        start_date: The start date for the credit consumption search, datetime or isoformat string e.g.
             2021-12-01. Default start_date None uses 2000-01-01.
-        end_date: The end date for the credit consumption search e.g.
+        end_date: The end date for the credit consumption search, datetime or isoformat string e.g.
             2021-12-31. Default end_date None uses current date.
 
     Returns:
-        A dict with the information of the credit consumption records for
-        all the users linked by the account_id.
-        (see https://docs.up42.com/developers/api#operation/getHistory for
-        output description)
+        A dict with the information of the credit consumption records for all the users linked by the account_id.
+        (see https://docs.up42.com/developers/api#operation/getHistory for output description)
     """
     if start_date is None:
         start_date = "2000-01-01"
@@ -280,13 +278,10 @@ def get_credits_history(
         )
         end_date = tomorrow_datetime.strftime("%Y-%m-%d")
 
-    [start_formatted_date, end_formatted_date] = format_time_period(
-        start_date=start_date, end_date=end_date
-    ).split("/")
     search_parameters = dict(
         {
-            "from": start_formatted_date,
-            "to": end_formatted_date,
+            "from": format_time(start_date),
+            "to": format_time(end_date, set_end_of_day=True),
             "size": 2000,  # 2000 is the maximum page size for this call
             "page": 0,
         }
