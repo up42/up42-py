@@ -187,9 +187,9 @@ def format_time(date: Optional[Union[str, datetime]], set_end_of_day=False):
             type date string without time, e.g. "YYYY-MM-DD", not explicit datetime object or time of day.
     """
     if isinstance(date, str):
-        has_time_of_date = len(date) > 11
+        has_time_of_day = len(date) > 11
         date = datetime.fromisoformat(date)  # type: ignore
-        if not has_time_of_date and set_end_of_day:
+        if not has_time_of_day and set_end_of_day:
             date = datetime.combine(date.date(), datetime_time(23, 59, 59, 999999))
     elif isinstance(date, datetime):
         pass
