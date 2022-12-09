@@ -10,6 +10,7 @@ import pytest
 from shapely.geometry import Polygon, LinearRing
 
 from .context import (
+    format_time,
     format_time_period,
     any_vector_to_fc,
     fc_to_query_geometry,
@@ -20,6 +21,22 @@ from .context import (
 
 
 POLY = Polygon([(0, 0), (1, 1), (1, 0)])
+
+
+@pytest.mark.parametrize(
+    "date,result_time",
+    [
+        ("2014-01-01", "2014-01-01T00:00:00Z"),
+        ("2014-01-01T00:00:00", "2014-01-01T00:00:00Z"),
+        (parse("2014-01-01"), "2014-01-01T00:00:00Z"),
+    ],
+)
+def test_format_time(date, result_time):
+    formatted_time = format_time(
+        date=date,
+    )
+    assert isinstance(formatted_time, str)
+    assert formatted_time == result_time
 
 
 @pytest.mark.parametrize(

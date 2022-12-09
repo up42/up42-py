@@ -177,6 +177,13 @@ def download_gcs_not_unpack(
     return out_filepaths
 
 
+def format_time(date: Optional[Union[str, datetime]]):
+    formatting = "%Y-%m-%dT%H:%M:%S"
+    if not isinstance(date, datetime):
+        date = datetime.fromisoformat(date)  # type: ignore
+    return f"{date.strftime(formatting)}Z"
+
+
 def format_time_period(
     start_date: Optional[Union[str, datetime]], end_date: Optional[Union[str, datetime]]
 ):
