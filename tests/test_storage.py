@@ -157,11 +157,6 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     assert assets[0].asset_id == ASSET_ID
 
 
-def test_get_assets_raises_with_illegal_sorting_criteria(storage_mock):
-    with pytest.raises(ValueError):
-        storage_mock.get_assets(sortby="notavailable")
-
-
 def test_get_orders(storage_mock):
     orders = storage_mock.get_orders()
     assert len(orders) == 1
