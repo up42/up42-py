@@ -18,9 +18,9 @@ from up42.utils import (
     get_logger,
     any_vector_to_fc,
     fc_to_query_geometry,
-    format_time_period,
     deprecation,
     autocomplete_order_parameters,
+    format_time,
 )
 
 logger = get_logger(__name__)
@@ -247,7 +247,9 @@ class Catalog(CatalogBase, VizTools):
         Returns:
             The constructed parameters dictionary.
         """
-        time_period = format_time_period(start_date=start_date, end_date=end_date)
+        time_period = (
+            f"{format_time(start_date)}/{format_time(end_date, set_end_of_day=True)}"
+        )
         aoi_fc = any_vector_to_fc(
             vector=geometry,
         )

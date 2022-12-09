@@ -22,7 +22,7 @@ from up42.utils import (
     any_vector_to_fc,
     fc_to_query_geometry,
     filter_jobs_on_mode,
-    format_time_period,
+    format_time,
 )
 import up42.main as main
 
@@ -401,9 +401,11 @@ class Workflow:
                 input_parameters[data_block_name]["limit"] = len(scene_ids)
                 input_parameters[data_block_name].pop("time")
             elif start_date is not None or end_date is not None:
-                time_period = format_time_period(
-                    start_date=start_date, end_date=end_date
-                )
+                if start_date is None or end_date is None:
+                    raise ValueError(
+                        "If using dates both `start_date` and `end_date` need to be provided!"
+                    )
+                time_period = f"{format_time(start_date)}/{format_time(end_date, set_end_of_day=True)}"
                 input_parameters[data_block_name]["time"] = time_period
 
             if geometry is not None:

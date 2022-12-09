@@ -2,6 +2,7 @@
 Tasking functionality
 """
 from typing import Union
+from datetime import datetime
 
 from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
@@ -11,7 +12,7 @@ from up42.auth import Auth
 from up42.catalog import CatalogBase
 from up42.utils import (
     get_logger,
-    format_time_period,
+    format_time,
     any_vector_to_fc,
     fc_to_query_geometry,
     autocomplete_order_parameters,
@@ -39,8 +40,8 @@ class Tasking(CatalogBase):
         self,
         data_product_id: str,
         name: str,
-        acquisition_start: str,
-        acquisition_end: str,
+        acquisition_start: Union[str, datetime],
+        acquisition_end: Union[str, datetime],
         geometry: Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon],
     ):
         """
@@ -51,8 +52,8 @@ class Tasking(CatalogBase):
         Args:
             data_product_id: Id of the desired UP42 data product, see `tasking.get_data_products`
             name: Name of the tasking order project.
-            acquisition_start: Start date of the acquisition period, e.g. "2022-11-01"
-            acquisition_end: End date of the acquisition period, e.g. "2022-11-01"
+            acquisition_start: Start date of the acquisition period, datetime or isoformat string e.g. "2022-11-01"
+            acquisition_end: End date of the acquisition period, datetime or isoformat string e.g. "2022-11-01"
             geometry: Geometry of the area to be captured, default a Polygon. Allows Point feature for specific
                 data products.
 
@@ -75,16 +76,12 @@ class Tasking(CatalogBase):
                 )
             ```
         """
-        start_date, end_date = format_time_period(
-            start_date=acquisition_start, end_date=acquisition_end
-        ).split("/")
-
         order_parameters = {
             "dataProduct": data_product_id,
             "params": {
                 "displayName": name,
-                "acquisitionStart": start_date,
-                "acquisitionEnd": end_date,
+                "acquisitionStart": format_time(acquisition_start),
+                "acquisitionEnd": format_time(acquisition_end, set_end_of_day=True),
             },
         }
 
