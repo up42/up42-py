@@ -88,8 +88,10 @@ class Storage:
         Gets all assets in all your accessible workspaces as Asset objects or json.
 
         Args:
-            created_after: Only assets that are created strictly after the provided timestamp, e.g. "2020-01-01",
-            created_before: Only assets that are created strictly before the provided timestamp, e.g. "2020-01-30"
+            created_after: Only assets that are created strictly after the provided timestamp, datetime or
+                isoformat string e.g. "2022-01-01",
+            created_before: Only assets that are created strictly before the provided timestamp, datetime or
+                isoformat string e.g. "2022-01-30"
             workspace_id: Only assets that belong to the provided workspace. You can use `storage.workspace_id` here
                 to limit to your own workspace.
             limit: Optional, only return n first assets by sorting criteria and order.
@@ -113,9 +115,13 @@ class Storage:
 
         assets_json = self._query_paginated(url=url, limit=limit)
         if workspace_id is not None:
-            logger.info(f"Queried {len(assets_json)} assets for workspace {self.workspace_id}.")
+            logger.info(
+                f"Queried {len(assets_json)} assets for workspace {self.workspace_id}."
+            )
         else:
-            logger.info(f"Queried {len(assets_json)} assets from all workspaces in account.")
+            logger.info(
+                f"Queried {len(assets_json)} assets from all workspaces in account."
+            )
 
         if return_json:
             return assets_json  # type: ignore

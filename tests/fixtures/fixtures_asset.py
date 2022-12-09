@@ -25,7 +25,7 @@ def asset_mock(auth_mock, requests_mock):
     # download url
     requests_mock.post(
         url=f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/download-url",
-        json={"data": {"url": DOWNLOAD_URL}},
+        json={"url": DOWNLOAD_URL},
     )
 
     asset = Asset(auth=auth_mock, asset_id=ASSET_ID)
