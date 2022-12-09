@@ -39,6 +39,7 @@ def test_asset_update_metadata(asset_mock):
         title="some_other_title", tags=["othertag1", "othertag2"]
     )
     assert updated_info["title"] == "some_other_title"
+    assert updated_info["tags"] == ["othertag1", "othertag2"]
 
 
 def test_asset_get_download_url(asset_mock):
