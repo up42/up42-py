@@ -11,7 +11,6 @@ from shapely.geometry import Polygon, LinearRing
 
 from .context import (
     format_time,
-    format_time_period,
     any_vector_to_fc,
     fc_to_query_geometry,
     download_from_gcs_unpack,
@@ -24,88 +23,20 @@ POLY = Polygon([(0, 0), (1, 1), (1, 0)])
 
 
 @pytest.mark.parametrize(
-    "date,result_time",
+    "date,set_end_of_day,result_time",
     [
-        ("2014-01-01", "2014-01-01T00:00:00Z"),
-        ("2014-01-01T00:00:00", "2014-01-01T00:00:00Z"),
-        (parse("2014-01-01"), "2014-01-01T00:00:00Z"),
+        ("2014-01-01", False, "2014-01-01T00:00:00Z"),
+        ("2015-01-01T00:00:00", False, "2015-01-01T00:00:00Z"),
+        (parse("2016-01-01"), False, "2016-01-01T00:00:00Z"),
+        ("2017-01-01", True, "2017-01-01T23:59:59Z"),
+        ("2018-01-01T00:10:00", True, "2018-01-01T00:10:00Z"),
+        (parse("2019-01-01"), True, "2019-01-01T00:00:00Z"),
     ],
 )
-def test_format_time(date, result_time):
-    formatted_time = format_time(
-        date=date,
-    )
+def test_format_time(date, set_end_of_day, result_time):
+    formatted_time = format_time(date=date, set_end_of_day=set_end_of_day)
     assert isinstance(formatted_time, str)
     assert formatted_time == result_time
-
-
-@pytest.mark.parametrize(
-    "start_date,end_date,result_time",
-    [
-        ("2014-01-01", "2016-12-31", "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z"),
-        (
-            "2014-01-01T00:00:00",
-            "2016-12-31T10:11:12",
-            "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
-        ),
-        (
-            "2014-01-01T00:00:00",
-            "2016-12-31",
-            "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
-        ),
-        (
-            parse("2014-01-01"),
-            parse("2016-12-31T10:11:12"),
-            "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
-        ),
-        (
-            parse("2014-01-01"),
-            "2016-12-31",
-            "2014-01-01T00:00:00Z/2016-12-31T23:59:59Z",
-        ),
-        (
-            parse("2014-01-01"),
-            "2016-12-31T10:11:12",
-            "2014-01-01T00:00:00Z/2016-12-31T10:11:12Z",
-        ),
-    ],
-)
-def test_format_time_period(start_date, end_date, result_time):
-    time_period = format_time_period(
-        start_date=start_date,
-        end_date=end_date,
-    )
-    assert isinstance(time_period, str)
-    assert time_period == result_time
-
-
-@pytest.mark.parametrize(
-    "start_date,end_date",
-    [(None, "2014-01-01"), ("2014-01-01", None)],
-)
-def test_format_time_period_raises_with_missing_dates(start_date, end_date):
-    with pytest.raises(ValueError) as e:
-        format_time_period(
-            start_date=start_date,
-            end_date=end_date,
-        )
-        assert (
-            "When using dates, both start_date and end_date need to be provided."
-            in str(e.value)
-        )
-
-
-@pytest.mark.parametrize(
-    "start_date,end_date",
-    [(None, "2016-01-01"), ("2014-01-01", None)],
-)
-def test_format_time_period_raises_with_mixed_up_dates(start_date, end_date):
-    with pytest.raises(ValueError) as e:
-        format_time_period(
-            start_date=start_date,
-            end_date=end_date,
-        )
-        assert "The start_date needs to be earlier than the end_date!" in str(e.value)
 
 
 @pytest.mark.parametrize(

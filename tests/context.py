@@ -10,7 +10,6 @@ from up42.tools import read_vector_file, get_example_aoi
 from up42.viztools import folium_base_map, VizTools
 from up42.utils import (
     format_time,
-    format_time_period,
     any_vector_to_fc,
     fc_to_query_geometry,
     download_from_gcs_unpack,
