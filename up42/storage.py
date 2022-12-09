@@ -93,27 +93,16 @@ class Storage:
                 your own workspace.
             limit: Optional, only return n first assets by sorting criteria and order.
                 Optimal to select if your workspace contains many assets.
-            sortby: The sorting criteria, one of "created", "updated", "workspaceId", "name", "size".
+            sortby: The sorting criteria, one of "created", "updated", "title", "name", "size", "contentType",
+                "collectionName", "producerName", "workspaceId", "accountId", "id"
             descending: The sorting order, True for descending (default), False for ascending.
             return_json: If set to True, returns json object.
 
         Returns:
             Asset objects in the workspace or alternatively json info of the assets.
         """
-        allowed_sorting_criteria = [
-            "created",
-            "updated",
-            "workspaceId",
-            "type",
-            "name",
-            "size",
-        ]
-        if sortby not in allowed_sorting_criteria:
-            raise ValueError(
-                f"sortby parameter must be one of {allowed_sorting_criteria}!"
-            )
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/v2/assets?format=paginated&sort={sort}"
+        url = f"{self.auth._endpoint()}/v2/assets?sort={sort}"
         if created_after is not None:
             url += f"&{created_after}"
         if created_before is not None:
