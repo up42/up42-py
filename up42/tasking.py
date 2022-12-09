@@ -1,7 +1,7 @@
 """
 Tasking functionality
 """
-from typing import Union, Optional
+from typing import Union
 from datetime import datetime
 
 from geopandas import GeoDataFrame
