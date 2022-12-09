@@ -146,7 +146,7 @@ def test_get_assets_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_assets_paginated = (
-        f"{auth_mock._endpoint()}/v2/assets?format=paginated&sort=created,asc&size=50"
+        f"{auth_mock._endpoint()}/v2/assets?sort=created,asc&size=50"
     )
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
