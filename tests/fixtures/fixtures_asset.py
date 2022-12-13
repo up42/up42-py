@@ -13,15 +13,19 @@ from ..context import (
 def asset_mock(auth_mock, requests_mock):
 
     # asset info
-    url_asset_info = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets/{ASSET_ID}"
-    )
+    url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/metadata"
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
 
+    # asset update
+    updated_json_asset = JSON_ASSET.copy()
+    updated_json_asset["title"] = "some_other_title"
+    updated_json_asset["tags"] = ["othertag1", "othertag2"]
+    requests_mock.post(url=url_asset_info, json=updated_json_asset)
+
     # download url
-    requests_mock.get(
-        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets/{ASSET_ID}/downloadUrl",
-        json={"data": {"url": DOWNLOAD_URL}},
+    requests_mock.post(
+        url=f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/download-url",
+        json={"url": DOWNLOAD_URL},
     )
 
     asset = Asset(auth=auth_mock, asset_id=ASSET_ID)

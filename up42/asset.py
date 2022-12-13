@@ -24,7 +24,6 @@ class Asset:
 
     def __init__(self, auth: Auth, asset_id: str, asset_info: Optional[dict] = None):
         self.auth = auth
-        self.workspace_id = auth.workspace_id
         self.asset_id = asset_id
         self.results: Union[List[str], None] = None
         if asset_info is not None:
@@ -33,35 +32,39 @@ class Asset:
             self._info = self.info
 
     def __repr__(self):
-        return (
-            f"Asset(name: {self._info['name']}, asset_id: {self.asset_id}, type: {self._info['type']}, "
-            f"source: {self._info['source']}, createdAt: {self._info['createdAt']}, "
+        representation = (
+            f"Asset(name: {self._info['name']}, asset_id: {self.asset_id}, created: {self._info['created']}, "
             f"size: {self._info['size']})"
         )
+        if "source" in self._info:
+            representation += f", source: {self._info['source']}"
+        if "contentType" in self._info:
+            representation += f", contentType: {self._info['contentType']}"
+        return representation
 
     @property
     def info(self) -> dict:
         """
         Gets and updates the asset metadata information.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets/{self.asset_id}"
+        url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
         response_json = self.auth._request(request_type="GET", url=url)
-        self._info = response_json["data"]
+        self._info = response_json
         return self._info
 
-    @property
-    def source(self) -> dict:
-        """
-        Gets the source of the Asset. One of `TASKING`, `ORDER`, `BLOCK`, `UPLOAD`.
-        """
-        source = self.info["source"]
-        logger.info(f"Asset source is {source}")
-        return source
+    def update_metadata(self, title: str = None, tags: List[str] = None, **kwargs):
+        url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
+        body_update = {"title": title, "tags": tags, **kwargs}
+        response_json = self.auth._request(
+            request_type="POST", url=url, data=body_update
+        )
+        self._info = response_json
+        return self._info
 
     def _get_download_url(self) -> str:
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/assets/{self.asset_id}/downloadUrl"
-        response_json = self.auth._request(request_type="GET", url=url)
-        download_url = response_json["data"]["url"]
+        url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/download-url"
+        response_json = self.auth._request(request_type="POST", url=url)
+        download_url = response_json["url"]
         return download_url
 
     def download(
