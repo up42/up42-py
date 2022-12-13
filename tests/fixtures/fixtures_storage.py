@@ -17,15 +17,11 @@ from ..context import (
 @pytest.fixture()
 def storage_mock(auth_mock, requests_mock):
     # assets
-    url_storage_assets = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets"
-    )
+    url_storage_assets = f"{auth_mock._endpoint()}/v2/assets"
     requests_mock.get(url=url_storage_assets, json=JSON_ASSETS)
 
     # asset info
-    url_asset_info = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/assets/{ASSET_ID}"
-    )
+    url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/metadata"
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
 
     # orders
