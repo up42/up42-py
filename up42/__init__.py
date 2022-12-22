@@ -25,6 +25,8 @@
     ```
 """
 
+from pathlib import Path
+
 from up42.main import *  # defined by __all__
 from up42.initialization import *  # defined by __all__
 from up42.tools import read_vector_file, get_example_aoi
@@ -42,3 +44,8 @@ from up42.storage import Storage
 from up42.order import Order
 from up42.asset import Asset
 from up42.webhooks import Webhook
+
+
+__version__ = (Path(__file__).resolve().parent / "_version.txt").read_text(
+    encoding="utf-8"
+)
