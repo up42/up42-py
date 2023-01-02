@@ -1,6 +1,6 @@
-mkdocs-material==8.5.6
-mkdocstrings==0.18.1
+mkdocs-material==9.0.0
+mkdocstrings==0.19.1
 mkdocs-exclude==1.0.2
-mkdocs-jupyter==0.21.0
-mkdocs-autolinks-plugin==0.5.0
+mkdocs-jupyter==0.22.0
+mkdocs-autolinks-plugin==0.6.0
 mkdocs-macros-plugin==0.7.0
