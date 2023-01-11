@@ -52,7 +52,19 @@ class Asset:
         self._info = response_json
         return self._info
 
-    def update_metadata(self, title: str = None, tags: List[str] = None, **kwargs):
+    def update_metadata(
+        self, title: str = None, tags: List[str] = None, **kwargs
+    ) -> dict:
+        """
+        Update the metadata of the asset.
+
+        Args:
+            title: The title string to be assigned to the asset.
+            tags: A list of tag strings to be assigned to the asset.
+
+        Returns:
+            The updated asset metadata information
+        """
         url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
         body_update = {"title": title, "tags": tags, **kwargs}
         response_json = self.auth._request(
