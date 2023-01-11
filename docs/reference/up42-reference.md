@@ -1,11 +1,5 @@
 # up42
 
-::: up42.__init__
-    rendering:
-        show_root_toc_entry: False
-        show_if_no_docstring: False
-        group_by_category: False
-
 ::: up42.main
     selection:
         members:
@@ -15,7 +9,7 @@
        show_if_no_docstring: False
        group_by_category: False
 
-::: up42.initialization
+::: up42.tools
     rendering:
         show_root_toc_entry: False
         show_if_no_docstring: False
@@ -26,6 +20,13 @@
         filters:
             - "!authenticate"
             - "!^_"
+    rendering:
+        show_root_toc_entry: False
+        show_if_no_docstring: False
+        group_by_category: False
+
+
+::: up42.initialization
     rendering:
         show_root_toc_entry: False
         show_if_no_docstring: False
