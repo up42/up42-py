@@ -76,7 +76,7 @@ def draw_aoi() -> "folium.Map":
     not run in a Jupyter notebook.
 
     Export the drawn aoi via the export button, then read the geometries via
-    read_aoi_file().
+    up42.read_aoi_file().
     """
     m = folium_base_map(layer_control=True)
     DrawFoliumOverride(
