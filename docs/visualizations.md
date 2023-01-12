@@ -29,6 +29,7 @@ Works best in a [Jupyter notebook](https://jupyter.org/)!
     ```python
     up42.draw_aoi()
     ```
+    You can export the drawn aoi as a GeoJSON and e.g. use it via `up42.read_vector_geometry()`
 
 === "Job Results"
     ```python

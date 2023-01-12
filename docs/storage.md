@@ -25,7 +25,7 @@ orders = storage.get_orders(limit=100, sortby="createdAt")
 ```
 
 ```python
-assets = storage.get_assets(limit=100, sortby="size", descending=False)
+assets = storage.get_assets(created_after="2022-01-01", limit=100, sortby="size", descending=False)
 
 print(assets[0].info) # Dictionary with the asset metadata
 ```
@@ -36,6 +36,13 @@ You can download an asset via:
 
 ```python
 assets[0].download()
+```
+
+Or to download multiple assets loop over a list of assets:
+
+```python
+for asset in assets:
+    asset.download()
 ```
 
 ⏭️ Continue with the [Run an analytics workflow](analytics_workflow.md) chapter.
