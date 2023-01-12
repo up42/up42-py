@@ -91,6 +91,7 @@ workflows:
             branches:
               only: master
       - deploy:
+          context: pypi-python-package-publishing
           requires:
             - hold_before_deploy
           filters:
