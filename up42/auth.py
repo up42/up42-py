@@ -298,7 +298,6 @@ class Auth:
 
             # Handle api error messages here before handling it in every single function.
             try:
-                print(f"return text:{response_text.keys()}")
                 if "error" in response_text:
                     if response_text["error"] is not None and response_text["data"] is None:
                         raise ValueError(response_text["error"])
