@@ -278,6 +278,11 @@ class Auth:
             response = retryer_token(
                 self._request_helper, request_type, url, data, querystring
             )
+        except requests.exceptions.HTTPError as errh:
+            err_message = errh.response.json()["error"]
+            logger.error(f"Http Error: {err_message}")
+            raise requests.exceptions.RequestException(err_message) from errh
+
         except requests.exceptions.RequestException as err:  # Base error class
             # Raising the original `err` error would not surface the relevant error message (contained in API response)
             err_message = err.response.json()["error"]
@@ -293,8 +298,10 @@ class Auth:
 
             # Handle api error messages here before handling it in every single function.
             try:
-                if response_text["error"] is not None and response_text["data"] is None:
-                    raise ValueError(response_text["error"])
+                print(f"return text:{response_text.keys()}")
+                if "error" in response_text:
+                    if response_text["error"] is not None and response_text["data"] is None:
+                        raise ValueError(response_text["error"])
                 return response_text
             except (
                 KeyError,
