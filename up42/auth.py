@@ -298,8 +298,11 @@ class Auth:
 
             # Handle api error messages here before handling it in every single function.
             try:
-                if "error" in response_text: # If error was not caught previously
-                    if response_text["error"] is not None and response_text["data"] is None:
+                if "error" in response_text:  # If error was not caught previously
+                    if (
+                        response_text["error"] is not None
+                        and response_text["data"] is None
+                    ):
                         raise ValueError(response_text["error"])
                 return response_text
             except (
