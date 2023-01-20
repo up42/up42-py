@@ -281,9 +281,9 @@ class Auth:
         except requests.exceptions.HTTPError as errh:
             err_response_json = errh.response.json()
             if "error" in err_response_json:
-                err_message = err_response_json["error"]
+                err_message = err_response_json["error"] #For handling api v1
             else:
-                err_message = err_response_json
+                err_message = err_response_json #For handling api v2 error 
             raise requests.exceptions.RequestException(err_message) from errh
 
         except requests.exceptions.RequestException as err:  # Base error class

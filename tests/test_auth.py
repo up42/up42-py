@@ -155,7 +155,7 @@ def test_request_non200_raises_error_apiv2(auth_mock, requests_mock):
     )
     with pytest.raises(requests.exceptions.RequestException) as e:
         auth_mock._request(request_type="GET", url="http://test.com")
-    assert "title" in str(e.value)
+        assert "title" in str(e.value)
 
 
 def test_request_token_still_timed_out_after_retry_raises(auth_mock, requests_mock):
