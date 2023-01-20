@@ -279,12 +279,15 @@ class Auth:
                 self._request_helper, request_type, url, data, querystring
             )
         except requests.exceptions.HTTPError as errh:
-            err_message = errh.response.json()["error"]
-            logger.error(f"Http Error: {err_message}")
+            err_response_json = errh.response.json()
+            if "error" in err_response_json:
+                err_message = err_response_json["error"]
+            else:
+                err_message = err_response_json
             raise requests.exceptions.RequestException(err_message) from errh
 
         except requests.exceptions.RequestException as err:  # Base error class
-            # Raising the original `err` error would not surface the relevant error message (contained in API response)
+        # Raising the original `err` error would not surface the relevant error message (contained in API response)
             err_message = err.response.json()["error"]
             logger.error(f"Error {err_message}")
             raise requests.exceptions.RequestException(err_message) from err
@@ -298,12 +301,8 @@ class Auth:
 
             # Handle api error messages here before handling it in every single function.
             try:
-                if "error" in response_text:  # If error was not caught previously
-                    if (
-                        response_text["error"] is not None
-                        and response_text["data"] is None
-                    ):
-                        raise ValueError(response_text["error"])
+                if response_text["error"] is not None and response_text["data"] is None:
+                    raise ValueError(response_text["error"])
                 return response_text
             except (
                 KeyError,
