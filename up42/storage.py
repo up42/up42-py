@@ -80,7 +80,7 @@ class Storage:
         created_before: Optional[Union[str, datetime]] = None,
         workspace_id: Optional[str] = None,
         limit: Optional[int] = None,
-        sortby: str = "created",
+        sortby: str = "createdAt",
         descending: bool = True,
         return_json: bool = False,
     ) -> Union[List[Asset], dict]:
@@ -96,7 +96,7 @@ class Storage:
                 to limit to your own workspace.
             limit: Optional, only return n first assets by sorting criteria and order.
                 Optimal to select if your workspace contains many assets.
-            sortby: The sorting criteria, one of "created", "updated", "title", "name", "size", "contentType",
+            sortby: The sorting criteria, one of "createdAt", "updatedAt", "title", "name", "size", "contentType",
                 "collectionName", "producerName", "workspaceId", "accountId", "id"
             descending: The sorting order, True for descending (default), False for ascending.
             return_json: If set to True, returns json object.
