@@ -279,22 +279,15 @@ class Auth:
                 self._request_helper, request_type, url, data, querystring
             )
 
-        except requests.exceptions.HTTPError as errh:  # For Http Error
-            # Raising the original `err` error would not surface the relevant error message (contained in API response)
-            err_response_json = errh.response.json()
-            if "error" in err_response_json:
-                err_message = err_response_json["error"]  # For handling api v1
-            else:
-                err_message = err_response_json  # For handling api v2 error
-            logger.error(f"Error {err_message}")
-            raise requests.exceptions.RequestException(err_message) from errh
+        # There are two UP42 API versions:
+        # v1 endpoints give response format {"data": ..., "error": ...}   data e.g. dict or list.  error str or dict or None (if no error).
+        # v1 always gives response, the error is indicated by the error key.
+        # v2 endpoints follows RFC 7807: {"title":..., "status": 404} Optional "detail" and "type" keys.
+        # v2 either gives above positive response, or fails with httperror (then check error.json() for the above fields)
 
         except requests.exceptions.RequestException as err:  # Base error class
-            err_response_json = err.response.json()
-            if "error" in err_response_json:
-                err_message = err_response_json["error"]
-            else:
-                err_message = err_response_json
+            # Raising the original `err` error would not surface the relevant error message (contained in API response)
+            err_message = err.response.json()
             logger.error(f"Error {err_message}")
             raise requests.exceptions.RequestException(err_message) from err
 
