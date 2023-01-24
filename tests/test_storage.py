@@ -161,6 +161,7 @@ def test_get_assets_pagination(auth_mock, requests_mock):
 def test_get_assets_raise_error_live(storage_live):
     """
     Api v2 error format is handled in the auth request method
+    This tests asserts if the api v2 error response is correct.
     """
     assets = storage_live.get_assets(workspace_id="a")
     with pytest.raises(requests.exceptions.RequestException) as e:
