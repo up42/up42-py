@@ -150,7 +150,7 @@ def test_request_non200_raises_error_not_dict(auth_mock, requests_mock):
 def test_request_non200_raises_error_apiv2(auth_mock, requests_mock):
     """
     Errors that are raised in the http response with the api v2 format
-    Live tests are included in the specific tests classes. 
+    Live tests are included in the specific tests classes.
     e.g. test_storage (test_get_assets_raise_error_live)
     """
     requests_mock.get(
@@ -171,7 +171,7 @@ def test_request_200_raises_error_apiv2(auth_mock, requests_mock):
     requests_mock.get(
         url="http://test.com",
         json={
-            "data": None, 
+            "data": None,
             "error": "Some default error not related to Http",
         },
         status_code=200,

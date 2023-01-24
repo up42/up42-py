@@ -157,13 +157,14 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ID
 
+
 @pytest.mark.live
 def test_get_assets_raise_error_live(storage_live):
     """
     Api v2 error format is handled in the auth request method
     This tests asserts if the api v2 error response is correct.
     """
-    assets = storage_live.get_assets(workspace_id="a")
+    storage_live.get_assets(workspace_id="a")
     with pytest.raises(requests.exceptions.RequestException) as e:
         assert "title" in str(e.value)
 
