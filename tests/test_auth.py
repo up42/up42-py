@@ -166,7 +166,7 @@ def test_request_non200_raises_error_apiv2(auth_mock, requests_mock):
 def test_request_200_raises_error_apiv2(auth_mock, requests_mock):
     """
     Errors that are raised in a positive the http response
-    and included in the error key.
+    and included in the error key
     """
     requests_mock.get(
         url="http://test.com",
