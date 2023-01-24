@@ -278,17 +278,23 @@ class Auth:
             response = retryer_token(
                 self._request_helper, request_type, url, data, querystring
             )
-        except requests.exceptions.HTTPError as errh:
+
+        except requests.exceptions.HTTPError as errh:  # For Http Error
+            # Raising the original `err` error would not surface the relevant error message (contained in API response)
             err_response_json = errh.response.json()
             if "error" in err_response_json:
-                err_message = err_response_json["error"] #For handling api v1
+                err_message = err_response_json["error"]  # For handling api v1
             else:
-                err_message = err_response_json #For handling api v2 error 
+                err_message = err_response_json  # For handling api v2 error
+            logger.error(f"Error {err_message}")
             raise requests.exceptions.RequestException(err_message) from errh
 
         except requests.exceptions.RequestException as err:  # Base error class
-        # Raising the original `err` error would not surface the relevant error message (contained in API response)
-            err_message = err.response.json()["error"]
+            err_response_json = err.response.json()
+            if "error" in err_response_json:
+                err_message = err_response_json["error"]
+            else:
+                err_message = err_response_json
             logger.error(f"Error {err_message}")
             raise requests.exceptions.RequestException(err_message) from err
 
