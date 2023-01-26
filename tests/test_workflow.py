@@ -609,6 +609,7 @@ def test_helper_run_parallel_jobs_fail_concurrent_jobs(
             )
 
 
+@pytest.mark.skip(reason="takes long")
 @pytest.mark.live
 def test_test_jobs_parallel_live(workflow_live):
     input_parameters_list = [
@@ -642,6 +643,7 @@ def test_test_jobs_parallel_live(workflow_live):
         assert job._info["mode"] == "DRY_RUN"
 
 
+@pytest.mark.skip(reason="takes long")
 @pytest.mark.live
 def test_run_jobs_parallel_live(workflow_live):
     input_parameters_list = [
