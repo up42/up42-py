@@ -9,7 +9,7 @@ repo_url: https://github.com/up42/up42-py
 edit_uri: ''  #disables edit button
 
 # Copyright
-copyright: UP42 2020
+copyright: UP42 2023
 
 ## Social Media
 extra:
@@ -120,9 +120,10 @@ plugins:
       handlers:
         python:
           rendering:
-            show_root_heading: false
-            show_source: true
-            show_category_heading: true
+            show_root_toc_entry: False
+            show_root_heading: False
+            show_source: True
+            show_category_heading: True
             show_bases: False
           selection:
             filters:

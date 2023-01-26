@@ -97,7 +97,7 @@ def define_env(env):
     env.variables.funcs_up42 = get_methods(up42, exclude_viztools=True)
     env.variables.funcs_project = get_methods(up42.project.Project)
     env.variables.funcs_workflow = get_methods(up42.workflow.Workflow)
-    env.variables.funcs_job = get_methods(up42.job.Job)
+    env.variables.funcs_job = get_methods(up42.job.Job, exclude=["plot_coverage"])
     env.variables.funcs_jobtask = get_methods(
         up42.jobtask.JobTask, exclude=["map_quicklooks", "plot_coverage"]
     )
