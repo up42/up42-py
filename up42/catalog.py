@@ -232,8 +232,8 @@ class Catalog(CatalogBase, VizTools):
                 Also see catalog.get_collections().
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
-            usage_type: Optional. Filter for imagery that can just be purchased & downloaded or also
-                processes. ["DATA"] (can only be download), ["ANALYTICS"] (can be downloaded
+            usage_type: Optional. Filter for imagery that can be purchased & downloaded or also
+                processed. ["DATA"] (can only be downloaded), ["ANALYTICS"] (can be downloaded
                 or used directly with a processing algorithm), ["DATA", "ANALYTICS"]
                 (can be any combination). The filter is inclusive, using ["DATA"] can
                 also result in results with ["DATA", "ANALYTICS"].
