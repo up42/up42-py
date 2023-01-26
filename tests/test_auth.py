@@ -147,6 +147,40 @@ def test_request_non200_raises_error_not_dict(auth_mock, requests_mock):
     assert "Not found!" in str(e.value)
 
 
+def test_request_non200_raises_error_apiv2(auth_mock, requests_mock):
+    """
+    Errors that are raised in the http response with the api v2 format
+    Live tests are included in the specific tests classes.
+    e.g. test_storage (test_get_assets_raise_error_live)
+    """
+    requests_mock.get(
+        url="http://test.com",
+        json={"title": "Bad request", "status": 400},
+        status_code=400,
+    )
+    with pytest.raises(requests.exceptions.RequestException) as e:
+        auth_mock._request(request_type="GET", url="http://test.com")
+        assert "title" in str(e.value)
+
+
+def test_request_200_raises_error_apiv2(auth_mock, requests_mock):
+    """
+    Errors that are raised in a positive the http response
+    and included in the error key
+    """
+    requests_mock.get(
+        url="http://test.com",
+        json={
+            "data": None,
+            "error": "Some default error not related to Http",
+        },
+        status_code=200,
+    )
+    with pytest.raises(ValueError) as e:
+        auth_mock._request(request_type="GET", url="http://test.com")
+        assert "error" in str(e.value)
+
+
 def test_request_token_still_timed_out_after_retry_raises(auth_mock, requests_mock):
     a = requests_mock.get(
         "http://test.com",

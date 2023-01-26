@@ -1,4 +1,5 @@
 import pytest
+import requests
 
 # pylint: disable=unused-import
 from .context import Storage, Asset, Order
@@ -155,6 +156,17 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     assert len(assets) == 74
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ID
+
+
+@pytest.mark.live
+def test_get_assets_raise_error_live(storage_live):
+    """
+    Api v2 error format is handled in the auth request method
+    This tests asserts if the api v2 error response is correct.
+    """
+    storage_live.get_assets(workspace_id="a")
+    with pytest.raises(requests.exceptions.RequestException) as e:
+        assert "title" in str(e.value)
 
 
 def test_get_orders(storage_mock):
