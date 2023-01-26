@@ -8,6 +8,7 @@ from typing import Tuple, List, Union, Optional
 import math
 from pathlib import Path
 import warnings
+from functools import wraps
 
 import numpy as np
 from shapely.geometry import box
@@ -58,6 +59,10 @@ logger = get_logger(__name__)
 
 
 def requires_viz(func):
+    # @wraps line required for mkdocstrings to be able to pick up decorated functions see
+    # https://mkdocstrings.github.io/troubleshooting/#my-wrapped-function-shows-documentationcode-for-its-wrapper-
+    # instead-of-its-own
+    @wraps(func)
     def wrapper_func(*args, **kwargs):
         if not _viz_installed:
             raise ImportError(
@@ -77,6 +82,8 @@ def draw_aoi() -> "folium.Map":
 
     Export the drawn aoi via the export button, then read the geometries via
     up42.read_aoi_file().
+
+    Requires installation of up42-py[viz] extra dependencies.
     """
     m = folium_base_map(layer_control=True)
     DrawFoliumOverride(
@@ -118,6 +125,8 @@ class VizTools:
         # pylint: disable=line-too-long
         """
         Plots image data (quicklooks or results)
+
+        Requires installation of up42-py[viz] extra dependencies.
 
         Args:
             figsize: matplotlib figure size.
@@ -210,6 +219,8 @@ class VizTools:
         Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
         respective object, e.g. job, catalog).
 
+        Requires installation of up42-py[viz] extra dependencies.
+
         Args:
             figsize: matplotlib figure size.
             filepaths: Paths to images to plot. Optional, by default picks up the last
@@ -243,6 +254,7 @@ class VizTools:
     ) -> "folium.Map":
         """
         Displays data.json, and if available, one or multiple results geotiffs.
+
         Args:
             plot_file_format: List of accepted image file formats e.g. [".png"]
             result_df: GeoDataFrame with scene geometries.
@@ -371,6 +383,8 @@ class VizTools:
         """
         Displays data.json, and if available, one or multiple results geotiffs.
 
+        Requires installation of up42-py[viz] extra dependencies.
+
         Args:
             bands: Image bands and order to plot, e.g. [1,2,3]. First band is 1.
             aoi: Optional visualization of aoi boundaries when given GeoDataFrame of aoi.
@@ -435,21 +449,22 @@ class VizTools:
         save_html: Optional[Path] = None,
     ) -> "folium.Map":
         """
-        TODO: Currently only implemented for catalog!
-
         Plots the downloaded quicklooks (filepaths saved to self.quicklooks of the
         respective object, e.g. job, catalog).
 
+        Requires installation of up42-py[viz] extra dependencies.
+
         Args:
-                scenes: GeoDataFrame of scenes, results of catalog.search()
-                aoi: GeoDataFrame of aoi.
-                show_images: Shows images if True (default).
-                show_features: Shows no features if False (default).
-                filepaths: Paths to images to plot. Optional, by default picks up the last
-                        downloaded results.
-                name_column: Name of the feature property that provides the Feature/Layer name.
-                save_html: The path for saving folium map as html file. With default None, no file is saved.
+            scenes: GeoDataFrame of scenes, results of catalog.search()
+            aoi: GeoDataFrame of aoi.
+            show_images: Shows images if True (default).
+            show_features: Shows no features if False (default).
+            filepaths: Paths to images to plot. Optional, by default picks up the last
+                    downloaded results.
+            name_column: Name of the feature property that provides the Feature/Layer name.
+            save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
+        # TODO: Currently only implemented for catalog!
         if filepaths is None:
             if self.quicklooks is None:
                 raise ValueError("You first need to download the quicklooks!")
@@ -477,12 +492,15 @@ class VizTools:
     ) -> None:
         """
         Plots a coverage map of a dataframe with geometries e.g. the results of catalog.search())
+
+        Requires installation of up42-py[viz] extra dependencies.
+
         Args:
-                scenes: GeoDataFrame of scenes, results of catalog.search()
-                aoi: GeoDataFrame of aoi.
-                legend_column: Dataframe column set to legend, default is "sceneId".
-                        Legend entries are sorted and this determines plotting order.
-                figsize: Matplotlib figure size.
+            scenes: GeoDataFrame of scenes, results of catalog.search()
+            aoi: GeoDataFrame of aoi.
+            legend_column: Dataframe column set to legend, default is "sceneId".
+                    Legend entries are sorted and this determines plotting order.
+            figsize: Matplotlib figure size.
         """
         if legend_column not in scenes.columns:
             legend_column = None  # type: ignore
@@ -520,7 +538,9 @@ if _viz_installed:
         width_percent: str = "95%",
         layer_control: bool = False,
     ) -> "folium.Map":
-        """Provides a folium map with basic features and UP42 logo."""
+        """
+        Provides a folium map with basic features and UP42 logo.
+        """
         mapfigure = folium.Figure(width=width_percent)
         m = folium.Map(
             location=[lat, lon], zoom_start=zoom_start, crs="EPSG3857"
