@@ -280,10 +280,12 @@ class Auth:
             )
 
         # There are two UP42 API versions:
-        # v1 endpoints give response format {"data": ..., "error": ...}   data e.g. dict or list.  error str or dict or None (if no error).
+        # v1 endpoints give response format {"data": ..., "error": ...}   data e.g. dict or list.  error str or dict
+        # or None (if no error).
         # v1 always gives response, the error is indicated by the error key.
         # v2 endpoints follows RFC 7807: {"title":..., "status": 404} Optional "detail" and "type" keys.
-        # v2 either gives above positive response, or fails with httperror (then check error.json() for the above fields)
+        # v2 either gives above positive response, or fails with httperror (then check error.json() for the above
+        # fields)
 
         except requests.exceptions.RequestException as err:  # Base error class
             # Raising the original `err` error would not surface the relevant error message (contained in API response)
