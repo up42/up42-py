@@ -30,12 +30,17 @@ You can determine your currently installed version via:
 
 ## Versions
 
+### [0.27.1](https://pypi.org/project/up42-py/) (2023-01-26)
+- Improve error communication of functions using API v2 endpoints.
+- add `up42.__version__` attribute to access the package version with Python.
+- Adapt asset class attributes (`created` to `createdAt`) to UP42 API.
+
 ### [0.27.0](https://pypi.org/project/up42-py/) (2022-12-12)
 - Add `asset.update_metadata()` for adjusting title & tags of an asset.
 - `storage.get_assets()` has new parameters `created_after`, `created_before`, `workspace_id`  to better filter the 
   desired assets. It now queries the assets of all accessible workspaces by default. Also see 
   [docs reference](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.get_assets).
-- Adopt new UP42 API 2.0 endpoints for user storage & assets
+- Adopt new UP42 API 2.0 endpoints for user storage & assets.
 
 ### [0.26.0](https://pypi.org/project/up42-py/) (2022-11-02)
 - Remove Python version upper bound, this will enable immediate but untested installation with any new Python version. 
