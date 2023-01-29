@@ -106,8 +106,7 @@ class Storage:
                 "SPOT 6/7 NY Central Park".
             limit: Optional, only return n first assets (by sorting and order criteria). Optimal to use if your
                 workspace contains many assets.
-            sortby: The sorting criteria, one of "createdAt", "updatedAt", "title", "name", "size", "contentType",
-                "collectionName", "producerName", "workspaceId", "accountId", "id"
+            sortby: The sorting criteria, corresponds to the asset properties, e.g. "created_after".
             descending: The sorting order, True for descending (default), False for ascending.
             return_json: If set to True, returns json dict instead.
 
