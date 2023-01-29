@@ -147,19 +147,20 @@ JSON_WORKFLOW_ESTIMATION = {
 }
 
 JSON_ASSET = {
-    "id": ASSET_ID,
     "accountId": "69353acb-f942-423f-8f32-11d6d67caa77",
-    "workspaceId": WORKSPACE_ID,
-    "size": 256248634,
-    "name": "string",
     "createdAt": "2022-12-07T14:25:34.968Z",
     "updatedAt": "2022-12-07T14:25:34.968Z",
+    "id": ASSET_ID,
+    "name": "string",
+    "size": 256248634,
+    "workspaceId": WORKSPACE_ID,
+    "order": {"id": "string", "status": "string", "hostId": "string"},
+    "source": "ARCHIVE",
+    "productId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "contentType": "string",
     "producerName": "string",
     "collectionName": "string",
-    "productId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "source": "ARCHIVE",
-    "order": {"id": "string", "status": "string", "hostId": "string"},
+    "geospatialMetadataExtraction": "SUCCESSFUL",
     "title": "string",
     "tags": ["string"],
 }
