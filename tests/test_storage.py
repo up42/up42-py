@@ -108,10 +108,6 @@ def test_get_assets(storage_mock):
 
 @pytest.mark.live
 def test_get_assets_live(storage_live):
-    """
-    SDK test account holds too few assets to query multiple pages via pagination,
-    needs to be mocked.
-    """
     assets = storage_live.get_assets()
     assert len(assets) >= 2
     dates = [asset.info["createdAt"] for asset in assets]
@@ -122,6 +118,9 @@ def test_get_assets_live(storage_live):
 
 def test_get_assets_pagination(auth_mock, requests_mock):
     """
+    SDK test account holds too few assets to query multiple pages via pagination,
+    needs to be mocked.
+
     Mock result holds 2 pages, each with 50 results.
     """
     json_assets_paginated = {

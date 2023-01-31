@@ -79,30 +79,39 @@ class Storage:
         created_after: Optional[Union[str, datetime]] = None,
         created_before: Optional[Union[str, datetime]] = None,
         workspace_id: Optional[str] = None,
+        collection_names: List[str] = None,
+        producer_names: List[str] = None,
+        tags: List[str] = None,
+        sources: List[str] = None,
+        search: str = None,
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
         return_json: bool = False,
     ) -> Union[List[Asset], dict]:
         """
-        Gets all assets in all your accessible workspaces as Asset objects or json.
+        Gets all assets in all the accessible workspaces as Asset objects or json.
 
         Args:
-            created_after: Only assets that are created strictly after the provided timestamp, datetime or
-                isoformat string e.g. "2022-01-01",
-            created_before: Only assets that are created strictly before the provided timestamp, datetime or
-                isoformat string e.g. "2022-01-30"
-            workspace_id: Only assets that belong to the provided workspace. You can use `storage.workspace_id` here
+            created_after: Filter for assets created after the datetime or isoformat string e.g. "2022-01-01"
+            created_before: Filter for assets created before the datetime or isoformat string e.g. "2022-01-30"
+            workspace_id: Filter for assets by the workspace ID. You can use `storage.workspace_id` here
                 to limit to your own workspace.
-            limit: Optional, only return n first assets by sorting criteria and order.
-                Optimal to select if your workspace contains many assets.
-            sortby: The sorting criteria, one of "createdAt", "updatedAt", "title", "name", "size", "contentType",
-                "collectionName", "producerName", "workspaceId", "accountId", "id"
+            collection_names: Filter for assets with any of the provided collection names, e.g. ["spot", "phr"].
+            producer_names: Filter for assets with any of the provided producer names, e.g. ["airbus", "21at"].
+            tags: Filter for assets with any of the provided tags, e.g. ["optical", "US"].
+            sources: Filter for assets with any of the provided sources, one or multiple of
+                ["ARCHIVE", "TASKING", "ANALYTICSPLATFORM", "USER"].
+            search: Filter for assets that contain the provided search query in their name, title, or order ID, e.g.
+                "SPOT 6/7 NY Central Park".
+            limit: Optional, only return n first assets (by sorting and order criteria). Optimal to use if your
+                workspace contains many assets.
+            sortby: The sorting criteria, corresponds to the asset properties, e.g. "created_after".
             descending: The sorting order, True for descending (default), False for ascending.
-            return_json: If set to True, returns json object.
+            return_json: If set to True, returns json dict instead.
 
         Returns:
-            Asset objects in the workspace or alternatively json info of the assets.
+            List of asset objects.
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/v2/assets?sort={sort}"
@@ -112,6 +121,16 @@ class Storage:
             url += f"&createdBefore={format_time(created_before)}"
         if workspace_id is not None:
             url += f"&workspaceId={workspace_id}"
+        if collection_names is not None:
+            url += f"&collectionNames={collection_names}"
+        if producer_names is not None:
+            url += f"&producerNames={producer_names}"
+        if tags is not None:
+            url += f"&tags={tags}"
+        if sources is not None:
+            url += f"&sources={sources}"
+        if search is not None:
+            url += f"&search={search}"
 
         assets_json = self._query_paginated(url=url, limit=limit)
         if workspace_id is not None:
