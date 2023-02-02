@@ -53,13 +53,11 @@ You can determine your currently installed version via:
 - Fix: `get_data_products` with `basic=False` now correctly returns only tasking OR catalog products.
 - The up42 object now correctly does not give access to third party imports anymore (restructured init module).
 
-
 ### [0.25.0](https://pypi.org/project/up42-py/) (2022-10-25)
 - Add dedicated tasking class for improved handling of satellite tasking orders. See 
   [new example](https://sdk.up42.com/tasking/) in the documentation.
 - `construct_order_parameters` now also adds the parameters specific to the selected data-product, and suggests 
   possible values based on the data-product schema.
-
 
 ### [0.24.0](https://pypi.org/project/up42-py/) (2022-10-20)
 - Add `catalog.get_data_product_schema()` for details on the order parameters
@@ -84,8 +82,6 @@ You can determine your currently installed version via:
 - New function `catalog.construct_order_parameters`
 - `catalog.construct_search_parameters` replaces `catalog.construct_parameters` which is deprecated and will be 
   removed in v0.25.0
-
-
 
 ### [0.22.2](https://pypi.org/project/up42-py/) (2022-07-21)
 - Fix unpacking of order assets if no output topfolder inherent in archive
@@ -128,7 +124,6 @@ You can determine your currently installed version via:
 - Refactor retry mechanism. Resolves issue of unintended token renewals & further limits 
   retries.
 
-
 ### [0.18.1](https://pypi.org/project/up42-py/) (2021-12-20)
 - Allow installation with Python 3.9
 
@@ -157,7 +152,6 @@ You can determine your currently installed version via:
   guarantee parity with UP42 platform. In the future, the UP42 SDK will only handle 
   single geometries.
 - Uses Oauth for access token handling.
-
 
 ### [0.16.0](https://pypi.org/project/up42-py/) (2021-06-30)
 - Limit memory usage for large file downloads (#237)
@@ -210,7 +204,6 @@ You can determine your currently installed version via:
 - *Split off viztools module from tools module.*
 
 ### [0.12.0](https://pypi.org/project/up42-py/) (2020-10-14)
-
 - Simplify object representation, also simplifies logger messages.
 - Add `.info` property to all objects to get the detailed object information, deprecation process for `.get_info`.
 - Add `.status` property to job, jobtask and jobcollection objects. Deprecation process for `.get_status`.
@@ -222,16 +215,13 @@ You can determine your currently installed version via:
 - Move sdk documentation to custom subdomain "sdk.up42.com".
 - *Simplify mock tests & test fixtures*
 
-
 ### [0.11.0](https://pypi.org/project/up42-py/) (2020-08-13)
 - Fix: Remove buffer 0 for fixing invalid geometry.
 - Add `.map_quicklooks` method for visualising quicklooks interactively.
 - Add an example notebook for mapping quicklooks using `.map_quicklooks` method. 
 
-
 ### [0.10.1](https://pypi.org/project/up42-py/) (2020-08-13)
 - Hotfix: Fixes usage of multiple features as the input geometry. 
-
 
 ### [0.10.0](https://pypi.org/project/up42-py/) (2020-08-07)
 - Add parallel jobs feature. Allows running jobs for multiple geometries, scene_ids or

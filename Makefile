@@ -37,7 +37,7 @@ serve:
 	ln -sfn $(PWD)/CHANGELOG.md docs
 	mkdocs serve
 
-# Publication of mkdocs. Not required, docs build pipeline is automated via github actions.
+# Manual publication of mkdocs. Not required, docs build pipeline is automated via github actions on docs file change.
 gh-pages:
 	ln -sfn $(PWD)/examples docs
 	ln -sfn $(PWD)/CHANGELOG.md docs
