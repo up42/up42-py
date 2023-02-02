@@ -26,7 +26,6 @@ from up42.utils import (
 logger = get_logger(__name__)
 
 
-# pylint: disable=duplicate-code
 class CatalogBase:
     """
     The base for Catalog and Tasking class, shared functionality.
@@ -202,7 +201,6 @@ class Catalog(CatalogBase, VizTools):
         """Deprecated, see construct_search_parameters"""
         return self.construct_search_parameters(**kwargs)
 
-    # pylint: disable=dangerous-default-value
     @staticmethod
     def construct_search_parameters(
         geometry: Union[

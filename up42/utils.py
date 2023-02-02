@@ -27,7 +27,7 @@ def get_logger(
     """
     Use level=logging.CRITICAL to disable temporarily.
     """
-    logger = logging.getLogger(name)  # pylint: disable=redefined-outer-name
+    logger = logging.getLogger(name)
     logger.setLevel(level)
     # create console handler and set level to debug
     ch = logging.StreamHandler()

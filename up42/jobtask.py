@@ -11,7 +11,6 @@ from up42.utils import get_logger, download_from_gcs_unpack
 logger = get_logger(__name__)
 
 
-# pylint: disable=duplicate-code
 class JobTask(VizTools):
     """
     The JobTask class provides access to the result of a specific block in the workflow.
