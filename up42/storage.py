@@ -2,10 +2,14 @@ from typing import List, Union, Optional
 import math
 from datetime import datetime
 
+from geopandas import GeoDataFrame
+from shapely.geometry import Polygon
+from geojson import Feature, FeatureCollection
+
 from up42.auth import Auth
 from up42.order import Order
 from up42.asset import Asset
-from up42.utils import get_logger, format_time
+from up42.utils import get_logger, format_time, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__)
 
@@ -74,10 +78,41 @@ class Storage:
             results_list += response_json["content"]
         return results_list[:limit]
 
+    def _search_stac(
+        self,
+        acquired_before=None,
+        acquired_after=None,
+        geometry=Union[
+            dict,
+            Feature,
+            FeatureCollection,
+            list,
+            GeoDataFrame,
+            Polygon,
+        ],
+        **kwargs,
+    ):
+        stac_search_parameters = {
+            "intersects": geometry,
+            "max_items": 100,
+            "limit": 50,
+            **kwargs,
+        }
+        url = f"{self.auth._endpoint()}/v2/assets/stac/search"
+        # TODO query pagination
+        # TODO why a lot less results vs assets: probably due to no 100% migrated, staging results seem already fine
+        stac_results = self.auth._request(
+            request_type="POST", url=url, data=stac_search_parameters
+        )
+        return stac_results
+
     def get_assets(
         self,
         created_after: Optional[Union[str, datetime]] = None,
         created_before: Optional[Union[str, datetime]] = None,
+        acquired_after: Optional[Union[str, datetime]] = None,
+        acquired_before: Optional[Union[str, datetime]] = None,
+        geometry=None,  # TODO types
         workspace_id: Optional[str] = None,
         collection_names: List[str] = None,
         producer_names: List[str] = None,
@@ -88,6 +123,7 @@ class Storage:
         sortby: str = "createdAt",
         descending: bool = True,
         return_json: bool = False,
+        **kwargs,
     ) -> Union[List[Asset], dict]:
         """
         Gets all assets in all the accessible workspaces as Asset objects or json.
@@ -133,6 +169,27 @@ class Storage:
             url += f"&search={search}"
 
         assets_json = self._query_paginated(url=url, limit=limit)
+
+        # TODO: What about property filters
+        # What about extensions e.g. cloudcover
+        if geometry is not None:
+            aoi_geometry = any_vector_to_fc(vector=geometry)
+            aoi_geometry = fc_to_query_geometry(
+                fc=aoi_geometry, geometry_operation="intersects"
+            )
+            stac_results = self._search_stac(
+                acquired_before, acquired_after, aoi_geometry, **kwargs
+            )
+            stac_assets_ids = [
+                feature["properties"]["up42-system:asset_id"]
+                for feature in stac_results["features"]
+            ]
+            assets_json = [
+                asset_json
+                for asset_json in assets_json
+                if asset_json["id"] in stac_assets_ids
+            ]
+
         if workspace_id is not None:
             logger.info(
                 f"Queried {len(assets_json)} assets for workspace {self.workspace_id}."
