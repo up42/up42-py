@@ -26,7 +26,6 @@ from up42.utils import (
 logger = get_logger(__name__)
 
 
-# pylint: disable=duplicate-code
 class CatalogBase:
     """
     The base for Catalog and Tasking class, shared functionality.
@@ -36,10 +35,10 @@ class CatalogBase:
         self.auth = auth
         self.type: Union[str, None] = None
 
-    def get_data_products(self, basic: bool = True) -> Union[Dict, List]:
+    def get_data_products(self, basic: bool = True) -> Union[dict, List[dict]]:
         """
-        Get the available data products (combination of collection and data configuration, e.g.
-        Pleiades Display product) for catalog or tasking.
+        Get the available data product information for each collection. A data product is the available
+        data configurations for each collection, e.g. Pleiades Display product.
 
         Args:
             basic: A dictionary containing only the collection title, name, host and available
@@ -89,16 +88,17 @@ class CatalogBase:
 
             return collection_overview
 
-    def get_data_product_schema(self, data_product_id: str):
+    def get_data_product_schema(self, data_product_id: str) -> dict:
         """
-        Gets the schema of a data product to help with the construction of the catalog/tasking order parameters.
+        Gets the parameters schema of a data product to help with the construction of the catalog/tasking order
+        parameters.
 
         Args:
             data_product_id: The id of a catalog/tasking data product.
         """
         url = f"{self.auth._endpoint()}/orders/schema/{data_product_id}"
         json_response = self.auth._request("GET", url)
-        return json_response  # Does not contain usual "data" key
+        return json_response  # Does not contain APIv1 "data" key
 
     def get_collections(self) -> Union[Dict, List]:
         """
@@ -115,7 +115,7 @@ class CatalogBase:
         track_status: bool = False,
         report_time: int = 120,
         **kwargs,
-    ) -> "Order":
+    ) -> Order:
         """
         Place an order.
 
@@ -135,7 +135,7 @@ class CatalogBase:
             You can also use `Order.track_status` on the returned object to track the status later.
 
         Returns:
-            Order: The placed order.
+            Order class object of the placed order.
         """
         if "scene" in kwargs or "geometry" in kwargs:
             # Deprecated, to be removed, use order_parameters.
@@ -202,7 +202,6 @@ class Catalog(CatalogBase, VizTools):
         """Deprecated, see construct_search_parameters"""
         return self.construct_search_parameters(**kwargs)
 
-    # pylint: disable=dangerous-default-value
     @staticmethod
     def construct_search_parameters(
         geometry: Union[

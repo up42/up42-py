@@ -21,7 +21,6 @@ from up42.utils import (
 logger = get_logger(__name__)
 
 
-# pylint: disable=duplicate-code
 class Tasking(CatalogBase):
     """
     The Tasking class enables access to the UP42 tasking functionality.
