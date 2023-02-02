@@ -19,7 +19,6 @@ from up42.utils import (
 logger = get_logger(__name__)
 
 
-# pylint: disable=duplicate-code
 class Job(VizTools):
     """
     The Job class is the result of running a workflow. It lets you download, visualize and

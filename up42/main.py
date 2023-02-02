@@ -216,7 +216,6 @@ def get_block_details(block_id: str, as_dataframe: bool = False) -> dict:
 
 @_check_auth
 def get_block_coverage(block_id: str) -> dict:
-    # pylint: disable=unused-argument
     """
     Gets the spatial coverage of a data/processing block as
     url or GeoJson Feature Collection.

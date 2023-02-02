@@ -103,7 +103,6 @@ def draw_aoi() -> "folium.Map":
     return m
 
 
-# pylint: disable=no-member, duplicate-code
 class VizTools:
     def __init__(self):
         """
