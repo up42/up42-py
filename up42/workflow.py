@@ -335,13 +335,13 @@ class Workflow:
     def construct_parameters(
         self,
         geometry: Union[
-            dict,
-            Feature,
             FeatureCollection,
-            geojson_Polygon,
+            Feature,
+            dict,
             list,
             GeoDataFrame,
             Polygon,
+            geojson_Polygon,
         ] = None,
         geometry_operation: Optional[str] = None,
         start_date: Optional[Union[str, datetime]] = None,
@@ -357,8 +357,8 @@ class Workflow:
         via dict.update({key:value}).
 
         Args:
-            geometry: One of Dict, FeatureCollection, Feature, List,
-                GeoDataFrame, shapely.geometry.Polygon. All assume EPSG 4326.
+            geometry: One of FeatureCollection, Feature, dict (geojson geometry), list (bounds coordinates),
+                GeoDataFrame, shapely.Polygon, shapely.Point. All assume EPSG 4326!
             geometry_operation: Desired operation, One of "bbox", "intersects", "contains".
             limit: Maximum number of expected results.
             start_date: Query period starting day as iso-format string or datetime object,

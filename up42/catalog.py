@@ -204,14 +204,7 @@ class Catalog(CatalogBase, VizTools):
 
     @staticmethod
     def construct_search_parameters(
-        geometry: Union[
-            dict,
-            Feature,
-            FeatureCollection,
-            list,
-            GeoDataFrame,
-            Polygon,
-        ],
+        geometry: Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon],
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
@@ -225,8 +218,9 @@ class Catalog(CatalogBase, VizTools):
         Helps constructing the parameters dictionary required for the search.
 
         Args:
-            geometry: The search geometry, one of dict, Feature, FeatureCollection,
-                list, GeoDataFrame, Polygon.
+            geometry: The search geometry, default a Polygon. One of FeatureCollection, Feature,
+                dict (geojson geometry), list (bounds coordinates), GeoDataFrame, shapely.Polygon, shapely.Point.
+                All assume EPSG 4326!
             collections: The satellite sensor collections to search for, e.g. ["phr"] or ["phr", "spot"].
                 Also see catalog.get_collections().
             start_date: Query period starting day, format "2020-01-01".
