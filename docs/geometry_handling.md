@@ -1,7 +1,7 @@
 # Geometry Handling
 
-In the Python SDK, the Polygon geometry required for some UP42 operations like placing an image order, can be 
-provided in multiple formats. It is automatically transformed to the required formatting. 
+The Polygon `geometry` parameter required for some UP42 operations like placing an image order, can be 
+provided in multiple formats in the Python SDK. It is automatically transformed to the required formatting. 
 Also see [AOI guidelines](https://docs.up42.com/help/aoi-guidelines).
 
 You can also use `up42.read_vector_file()` to read local geojson, shapefiles, kml & wkt files.
@@ -115,8 +115,7 @@ You can also use `up42.read_vector_file()` to read local geojson, shapefiles, km
 === "bbox coordinates"
     The `minx, miny, maxx, maxy` bbox outline / bounds coordinates of a geometry.
     ```python
-    aoi =  [13.382853541948975, 52.512321097987126, 13.39586259650261, 52.5185756711692]
-    ]
+    aoi = [13.382853541948975, 52.512321097987126, 13.39586259650261, 52.5185756711692]
     ```
 
 
