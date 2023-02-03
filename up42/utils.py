@@ -200,33 +200,33 @@ def format_time(date: Optional[Union[str, datetime]], set_end_of_day=False):
 
 
 def any_vector_to_fc(
-    vector: Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon, Point],
+    vector: Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point],
     as_dataframe: bool = False,
 ) -> Union[dict, GeoDataFrame]:
     """
     Gets a uniform feature collection dictionary (with fc and f bboxes) from any input vector type.
 
     Args:
-        vector: One of dict, FeatureCollection, Feature, list of bounds coordinates,
+        vector: One of FeatureCollection, Feature, dict (geojson geometry), list (bounds coordinates),
             GeoDataFrame, shapely.Polygon, shapely.Point. All assume EPSG 4326!
         as_dataframe: GeoDataFrame output with as_dataframe=True.
     """
     if not isinstance(
         vector,
         (
-            dict,
             FeatureCollection,
             Feature,
-            geojson_Polygon,
+            dict,
             list,
             GeoDataFrame,
             Polygon,
             Point,
+            geojson_Polygon,
         ),
     ):
         raise ValueError(
-            "The provided geometry muste be a FeatureCollection, Feature, dict, geopandas "
-            "Dataframe, shapely Polygon, Point or a list of 4 bounds coordinates."
+            "The provided geometry must be a FeatureCollection, Feature, dict (geojson geometry), geopandas "
+            "dataframe, shapely Polygon, Point or a list (bounds coordinates)."
         )
 
     vector = copy.deepcopy(vector)  # avoid altering input geometry
