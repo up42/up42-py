@@ -116,6 +116,56 @@ def test_get_assets_live(storage_live):
     assert descending_dates == dates
 
 
+def test_get_assets_with_stac_query():
+    pass
+
+
+@pytest.mark.live
+def test_get_assets_with_stac_query_live(storage_live):
+    filter_geometry = {
+        "coordinates": [
+            [
+                [13.353338545805542, 52.52576354784705],
+                [13.353338545805542, 52.52400476917347],
+                [13.355812219301214, 52.52400476917347],
+                [13.355812219301214, 52.52576354784705],
+                [13.353338545805542, 52.52576354784705],
+            ]
+        ],
+        "type": "Polygon",
+    }
+
+    assets = storage_live.get_assets(geometry=filter_geometry)
+    # TODO
+    assert False
+
+
+def test_get__search_stac():
+    pass
+
+
+@pytest.mark.live
+def test_get__search_stac_live(storage_live):
+    filter_geometry = {
+        "coordinates": [
+            [
+                [13.353338545805542, 52.52576354784705],
+                [13.353338545805542, 52.52400476917347],
+                [13.355812219301214, 52.52400476917347],
+                [13.355812219301214, 52.52576354784705],
+                [13.353338545805542, 52.52576354784705],
+            ]
+        ],
+        "type": "Polygon",
+    }
+
+    assets = storage_live._search_stac(
+        acquired_after="2018-10-10", geometry=filter_geometry
+    )
+    assert False
+    # TODO
+
+
 def test_get_assets_pagination(auth_mock, requests_mock):
     """
     SDK test account holds too few assets to query multiple pages via pagination,
