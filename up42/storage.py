@@ -80,24 +80,60 @@ class Storage:
 
     def _search_stac(
         self,
-        acquired_before=None,
-        acquired_after=None,
-        geometry=Union[
+        acquired_after: Optional[Union[str, datetime]] = None,
+        acquired_before: Optional[Union[str, datetime]] = None,
+        geometry: Union[
             dict,
             Feature,
             FeatureCollection,
             list,
             GeoDataFrame,
             Polygon,
-        ],
-        **kwargs,
-    ):
+        ] = None,
+        custom_filter=None,
+    ) -> list:
+        """
+        Search query for storage STAC collection items.
+
+        Args:
+            acquired_after: Filter for assets with image acquisition after the datetime or isoformat string e.g.
+                "2022-01-01".
+            acquired_before: Filter for assets with image acquisition before the datetime or isoformat string e.g.
+                "2022-01-30".
+            geometry: Filter for assets intersecting the Polygon geometry. One of FeatureCollection, Feature,
+                dict (geojson geometry), list (bounds coordinates), GeoDataFrame, shapely.Polygon, shapely.Point.
+                All assume EPSG 4326!
+            custom_filter: A CQL2 filter expression for filtering based on properties, see
+                https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters
+
+        Returns:
+            List of storage Stac search results
+        """
         stac_search_parameters = {
-            "intersects": geometry,
             "max_items": 100,
-            "limit": 50,
-            **kwargs,
+            "limit": 10000,
         }
+        if geometry is not None:
+            geometry = any_vector_to_fc(vector=geometry)
+            geometry = fc_to_query_geometry(
+                fc=geometry, geometry_operation="intersects"
+            )
+            stac_search_parameters["intersects"] = geometry
+        if custom_filter is not None:
+            # e.g. {"op": "gte","args": [{"property": "eo:cloud_cover"}, 10]}
+            stac_search_parameters["filter"] = custom_filter
+
+        datetime_filter = None
+        if acquired_after is not None:
+            datetime_filter = f"{format_time(acquired_after)}/.."
+        if acquired_before is not None:
+            datetime_filter = f"../{format_time(acquired_before)}"
+        if acquired_after is not None and acquired_before is not None:
+            datetime_filter = (
+                f"{format_time(acquired_after)}/{format_time(acquired_before)}"
+            )
+        stac_search_parameters["datetime"] = datetime_filter
+
         url = f"{self.auth._endpoint()}/v2/assets/stac/search"
         # TODO query pagination
         # TODO why a lot less results vs assets: probably due to no 100% migrated, staging results seem already fine
@@ -112,25 +148,34 @@ class Storage:
         created_before: Optional[Union[str, datetime]] = None,
         acquired_after: Optional[Union[str, datetime]] = None,
         acquired_before: Optional[Union[str, datetime]] = None,
-        geometry=None,  # TODO types
+        geometry: Union[
+            dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon
+        ] = None,
         workspace_id: Optional[str] = None,
         collection_names: List[str] = None,
         producer_names: List[str] = None,
         tags: List[str] = None,
         sources: List[str] = None,
         search: str = None,
+        custom_filter: dict = None,
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
         return_json: bool = False,
-        **kwargs,
     ) -> Union[List[Asset], dict]:
         """
         Gets all assets in all the accessible workspaces as Asset objects or json.
 
         Args:
-            created_after: Filter for assets created after the datetime or isoformat string e.g. "2022-01-01"
-            created_before: Filter for assets created before the datetime or isoformat string e.g. "2022-01-30"
+            created_after: Filter for assets created after the datetime or isoformat string e.g. "2022-01-01".
+            created_before: Filter for assets created before the datetime or isoformat string e.g. "2022-01-30".
+            acquired_after: Filter for assets with image acquisition after the datetime or isoformat string e.g.
+                "2022-01-01".
+            acquired_before: Filter for assets with image acquisition before the datetime or isoformat string e.g.
+                "2022-01-30".
+            geometry: Filter for assets intersecting the Polygon geometry. One of FeatureCollection, Feature,
+                dict (geojson geometry), list (bounds coordinates), GeoDataFrame, shapely.Polygon, shapely.Point.
+                All assume EPSG 4326!
             workspace_id: Filter for assets by the workspace ID. You can use `storage.workspace_id` here
                 to limit to your own workspace.
             collection_names: Filter for assets with any of the provided collection names, e.g. ["spot", "phr"].
@@ -140,6 +185,8 @@ class Storage:
                 ["ARCHIVE", "TASKING", "ANALYTICSPLATFORM", "USER"].
             search: Filter for assets that contain the provided search query in their name, title, or order ID, e.g.
                 "SPOT 6/7 NY Central Park".
+            custom_filter: A CQL2 filter expression for filtering based on properties, see
+                https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters
             limit: Optional, only return n first assets (by sorting and order criteria). Optimal to use if your
                 workspace contains many assets.
             sortby: The sorting criteria, corresponds to the asset properties, e.g. "created_after".
@@ -151,10 +198,10 @@ class Storage:
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/v2/assets?sort={sort}"
-        if created_after is not None:
-            url += f"&createdAfter={format_time(created_after)}"
         if created_before is not None:
             url += f"&createdBefore={format_time(created_before)}"
+        if created_after is not None:
+            url += f"&createdAfter={format_time(created_after)}"
         if workspace_id is not None:
             url += f"&workspaceId={workspace_id}"
         if collection_names is not None:
@@ -170,15 +217,15 @@ class Storage:
 
         assets_json = self._query_paginated(url=url, limit=limit)
 
-        # TODO: What about property filters
-        # What about extensions e.g. cloudcover
-        if geometry is not None:
-            aoi_geometry = any_vector_to_fc(vector=geometry)
-            aoi_geometry = fc_to_query_geometry(
-                fc=aoi_geometry, geometry_operation="intersects"
-            )
+        # TODO: Explanation of initial asset results comparison with stac results
+        if (
+            acquired_before is not None
+            or acquired_after is not None
+            or geometry is not None
+            or custom_filter is not None
+        ):
             stac_results = self._search_stac(
-                acquired_before, acquired_after, aoi_geometry, **kwargs
+                acquired_before, acquired_after, geometry, custom_filter
             )
             stac_assets_ids = [
                 feature["properties"]["up42-system:asset_id"]
