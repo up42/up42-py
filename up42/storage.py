@@ -107,7 +107,7 @@ class Storage:
                 https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters
 
         Returns:
-            List of storage Stac search results
+            List of storage STAC results
         """
         stac_search_parameters = {
             "max_items": 100,
@@ -135,8 +135,7 @@ class Storage:
         stac_search_parameters["datetime"] = datetime_filter
 
         url = f"{self.auth._endpoint()}/v2/assets/stac/search"
-        # TODO query pagination
-        # TODO why a lot less results vs assets: probably due to no 100% migrated, staging results seem already fine
+        # TODO query pagination in separate PR
         stac_results = self.auth._request(
             request_type="POST", url=url, data=stac_search_parameters
         )
@@ -217,7 +216,7 @@ class Storage:
 
         assets_json = self._query_paginated(url=url, limit=limit)
 
-        # TODO: Explanation of initial asset results comparison with stac results
+        # Comparison of asset results with storage stac search results which can be related to the assets via asset-id
         if (
             acquired_before is not None
             or acquired_after is not None
@@ -225,7 +224,10 @@ class Storage:
             or custom_filter is not None
         ):
             stac_results = self._search_stac(
-                acquired_before, acquired_after, geometry, custom_filter
+                acquired_after=acquired_after,
+                acquired_before=acquired_before,
+                geometry=geometry,
+                custom_filter=custom_filter,
             )
             stac_assets_ids = [
                 feature["properties"]["up42-system:asset_id"]
