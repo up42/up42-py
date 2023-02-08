@@ -53,8 +53,8 @@ def test__search_stac(storage_mock):
         geometry=geometry,
         custom_filter={"op": "gte", "args": [{"property": "eo:cloud_cover"}, 10]},
     )
-    assert isinstance(stac_results, dict)
-    assert stac_results["features"][0]["assets"]
+    assert isinstance(stac_results, list)
+    assert stac_results[0]["assets"]
 
 
 @pytest.mark.live

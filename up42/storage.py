@@ -93,7 +93,7 @@ class Storage:
             ]
         ] = None,
         custom_filter=None,
-    ) -> dict:
+    ) -> list:
         """
         Search query for storage STAC collection items.
 
@@ -141,7 +141,20 @@ class Storage:
         stac_results = self.auth._request(
             request_type="POST", url=url, data=stac_search_parameters
         )
-        return stac_results
+
+        features = stac_results["features"]
+
+        link_elements = [link["body"]["token"] for link in stac_results["links"] if
+                         link["rel"] == "next"]
+
+        if len(link_elements) > 0:
+            stac_search_parameters["token"] = link_elements[0]
+            stac_results = self.auth._request(
+                request_type="POST", url=url, data=stac_search_parameters
+            )
+            features.append(stac_results["features"])
+
+        return features
 
     def get_assets(
         self,
@@ -225,7 +238,7 @@ class Storage:
             or geometry is not None
             or custom_filter is not None
         ):
-            stac_results = self._search_stac(
+            stac_features = self._search_stac(
                 acquired_after=acquired_after,
                 acquired_before=acquired_before,
                 geometry=geometry,
@@ -233,7 +246,7 @@ class Storage:
             )
             stac_assets_ids = [
                 feature["properties"]["up42-system:asset_id"]
-                for feature in stac_results["features"]
+                for feature in stac_features
             ]
             assets_json = [
                 asset_json
