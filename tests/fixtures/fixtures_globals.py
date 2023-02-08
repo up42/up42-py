@@ -204,7 +204,8 @@ JSON_STORAGE_STAC = {
             },
             "links": [
                 {
-                    "href": "https://api.up42.dev/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6/items/e986e18a-0392-4b82-93c9-7a0af15846d0",
+                    "href": "https://api.up42.dev/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6/"
+                    "items/e986e18a-0392-4b82-93c9-7a0af15846d0",
                     "rel": "self",
                     "type": "application/geo+json",
                 },

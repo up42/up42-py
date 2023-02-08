@@ -188,7 +188,7 @@ def test_get_assets_with_stac_query_live(storage_live):
         "type": "Polygon",
     }
 
-    assets = storage_live.get_assets(geometry=filter_geometry)
+    storage_live.get_assets(geometry=filter_geometry)
     # TODO assertions
 
 
