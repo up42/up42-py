@@ -82,13 +82,15 @@ class Storage:
         self,
         acquired_after: Optional[Union[str, datetime]] = None,
         acquired_before: Optional[Union[str, datetime]] = None,
-        geometry: Union[
-            dict,
-            Feature,
-            FeatureCollection,
-            list,
-            GeoDataFrame,
-            Polygon,
+        geometry: Optional[
+            Union[
+                dict,
+                Feature,
+                FeatureCollection,
+                list,
+                GeoDataFrame,
+                Polygon,
+            ]
         ] = None,
         custom_filter=None,
     ) -> dict:
@@ -147,8 +149,8 @@ class Storage:
         created_before: Optional[Union[str, datetime]] = None,
         acquired_after: Optional[Union[str, datetime]] = None,
         acquired_before: Optional[Union[str, datetime]] = None,
-        geometry: Union[
-            dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon
+        geometry: Optional[
+            Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]
         ] = None,
         workspace_id: Optional[str] = None,
         collection_names: List[str] = None,
