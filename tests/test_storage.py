@@ -191,6 +191,42 @@ def test_get_assets_with_stac_query_live(storage_live):
     storage_live.get_assets(geometry=filter_geometry)
     # TODO assertions
 
+def test_get_assets_with_stac_query_pagination(auth_mock, requests_mock):
+    """
+
+    """
+    json_assets_paginated = {
+        "content": [JSON_ASSET] * 50,
+        "pageable": {
+            "sort": {"sorted": True, "unsorted": False, "empty": False},
+            "pageNumber": 0,
+            "pageSize": 50,
+            "offset": 0,
+            "paged": True,
+            "unpaged": False,
+        },
+        "totalPages": 2,
+        "totalElements": 100,
+        "last": True,
+        "sort": {"sorted": True, "unsorted": False, "empty": False},
+        "numberOfElements": 100,
+        "first": True,
+        "size": 50,
+        "number": 0,
+        "empty": False,
+    }
+
+    # assets pages
+    url_storage_assets_paginated = (
+        f"{auth_mock._endpoint()}/v2/assets?sort=createdAt,asc&size=50"
+    )
+    requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
+
+    storage = Storage(auth=auth_mock)
+    assets = storage.get_assets(limit=74, sortby="createdAt", descending=False)
+    assert len(assets) == 74
+    assert isinstance(assets[0], Asset)
+    assert assets[0].asset_id == ASSET_ID
 
 def test_get_assets_pagination(auth_mock, requests_mock):
     """

@@ -78,6 +78,26 @@ class Storage:
             results_list += response_json["content"]
         return results_list[:limit]
 
+    def _query_paginated_stac_search(
+        self, 
+        url: str, 
+        stac_search_parameters: dict,
+        token: Optional[str] = None
+        ) -> list:
+
+        response_features = []
+        while True:
+            stac_results = self.auth._request(
+                request_type="POST", url=url, data=stac_search_parameters
+            )
+            response_features.extend(stac_results["features"])
+            link_elements = [link["body"]["token"] for link in stac_results["links"] if link["rel"] == "next"]
+            if (len(link_elements) > 0):
+                stac_search_parameters["token"] = link_elements[0]
+                continue
+            else:
+                return response_features
+
     def _search_stac(
         self,
         acquired_after: Optional[Union[str, datetime]] = None,
@@ -137,23 +157,8 @@ class Storage:
         stac_search_parameters["datetime"] = datetime_filter  # type: ignore
 
         url = f"{self.auth._endpoint()}/v2/assets/stac/search"
-        # TODO query pagination in separate PR
-        stac_results = self.auth._request(
-            request_type="POST", url=url, data=stac_search_parameters
-        )
 
-        features = stac_results["features"]
-
-        link_elements = [link["body"]["token"] for link in stac_results["links"] if
-                         link["rel"] == "next"]
-
-        if len(link_elements) > 0:
-            stac_search_parameters["token"] = link_elements[0]
-            stac_results = self.auth._request(
-                request_type="POST", url=url, data=stac_search_parameters
-            )
-            features.append(stac_results["features"])
-
+        features = self._query_paginated_stac_search(url, stac_search_parameters)
         return features
 
     def get_assets(
