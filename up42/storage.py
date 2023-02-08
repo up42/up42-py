@@ -33,7 +33,7 @@ class Storage:
         env = ", env: dev" if self.auth.env == "dev" else ""
         return f"Storage(workspace_id: {self.workspace_id}{env})"
 
-    def _query_paginated(
+    def _query_paginated_endpoints(
         self, url: str, limit: Optional[int] = None, size: int = 50
     ) -> List[dict]:
         """
@@ -82,9 +82,17 @@ class Storage:
         self, 
         url: str, 
         stac_search_parameters: dict,
-        token: Optional[str] = None
         ) -> list:
+        """
+        Helper to fetch list of items in paginated stac search endpoind, e.g. stac search assets.
 
+        Args:
+            url (str): The base url for paginated endpoint.
+            stac_search_parameters (dict): the parameters required for stac search
+
+        Returns:
+            List of storage STAC results features.
+        """
         response_features = []
         while True:
             stac_results = self.auth._request(
@@ -129,7 +137,7 @@ class Storage:
                 https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters
 
         Returns:
-            Dict of storage STAC results
+            List of storage STAC results features
         """
         stac_search_parameters: Dict[str, Any] = {
             "max_items": 100,
@@ -234,7 +242,7 @@ class Storage:
         if search is not None:
             url += f"&search={search}"
 
-        assets_json = self._query_paginated(url=url, limit=limit)
+        assets_json = self._query_paginated_endpoints(url=url, limit=limit)
 
         # Comparison of asset results with storage stac search results which can be related to the assets via asset-id
         if (
@@ -310,7 +318,7 @@ class Storage:
             )
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}"
-        orders_json = self._query_paginated(url=url, limit=limit)
+        orders_json = self._query_paginated_endpoints(url=url, limit=limit)
         logger.info(f"Got {len(orders_json)} orders for workspace {self.workspace_id}.")
 
         if return_json:
