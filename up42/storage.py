@@ -1,11 +1,15 @@
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Dict, Any
 import math
 from datetime import datetime
+
+from geopandas import GeoDataFrame
+from shapely.geometry import Polygon
+from geojson import Feature, FeatureCollection
 
 from up42.auth import Auth
 from up42.order import Order
 from up42.asset import Asset
-from up42.utils import get_logger, format_time
+from up42.utils import get_logger, format_time, any_vector_to_fc, fc_to_query_geometry
 
 logger = get_logger(__name__)
 
@@ -74,16 +78,87 @@ class Storage:
             results_list += response_json["content"]
         return results_list[:limit]
 
+    def _search_stac(
+        self,
+        acquired_after: Optional[Union[str, datetime]] = None,
+        acquired_before: Optional[Union[str, datetime]] = None,
+        geometry: Optional[
+            Union[
+                dict,
+                Feature,
+                FeatureCollection,
+                list,
+                GeoDataFrame,
+                Polygon,
+            ]
+        ] = None,
+        custom_filter=None,
+    ) -> dict:
+        """
+        Search query for storage STAC collection items.
+
+        Args:
+            acquired_after: Filter for assets with image acquisition after the datetime or isoformat string e.g.
+                "2022-01-01".
+            acquired_before: Filter for assets with image acquisition before the datetime or isoformat string e.g.
+                "2022-01-30".
+            geometry: Filter for assets intersecting the Polygon geometry. One of FeatureCollection, Feature,
+                dict (geojson geometry), list (bounds coordinates), GeoDataFrame, shapely.Polygon, shapely.Point.
+                All assume EPSG 4326!
+            custom_filter: A CQL2 filter expression for filtering based on properties, see
+                https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters
+
+        Returns:
+            Dict of storage STAC results
+        """
+        stac_search_parameters: Dict[str, Any] = {
+            "max_items": 100,
+            "limit": 10000,
+        }
+        if geometry is not None:
+            geometry = any_vector_to_fc(vector=geometry)
+            geometry = fc_to_query_geometry(
+                fc=geometry, geometry_operation="intersects"
+            )
+            stac_search_parameters["intersects"] = geometry
+        if custom_filter is not None:
+            # e.g. {"op": "gte","args": [{"property": "eo:cloud_cover"}, 10]}
+            stac_search_parameters["filter"] = custom_filter
+
+        datetime_filter = None
+        if acquired_after is not None:
+            datetime_filter = f"{format_time(acquired_after)}/.."
+        if acquired_before is not None:
+            datetime_filter = f"../{format_time(acquired_before)}"
+        if acquired_after is not None and acquired_before is not None:
+            datetime_filter = (
+                f"{format_time(acquired_after)}/{format_time(acquired_before)}"
+            )
+        stac_search_parameters["datetime"] = datetime_filter  # type: ignore
+
+        url = f"{self.auth._endpoint()}/v2/assets/stac/search"
+        # TODO query pagination in separate PR
+        stac_results = self.auth._request(
+            request_type="POST", url=url, data=stac_search_parameters
+        )
+        return stac_results
+
     def get_assets(
         self,
         created_after: Optional[Union[str, datetime]] = None,
         created_before: Optional[Union[str, datetime]] = None,
+        acquired_after: Optional[Union[str, datetime]] = None,
+        acquired_before: Optional[Union[str, datetime]] = None,
+        geometry: Optional[
+            Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]
+        ] = None,
         workspace_id: Optional[str] = None,
         collection_names: List[str] = None,
         producer_names: List[str] = None,
         tags: List[str] = None,
         sources: List[str] = None,
         search: str = None,
+        custom_filter: dict = None,
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
@@ -93,8 +168,15 @@ class Storage:
         Gets all assets in all the accessible workspaces as Asset objects or json.
 
         Args:
-            created_after: Filter for assets created after the datetime or isoformat string e.g. "2022-01-01"
-            created_before: Filter for assets created before the datetime or isoformat string e.g. "2022-01-30"
+            created_after: Filter for assets created after the datetime or isoformat string e.g. "2022-01-01".
+            created_before: Filter for assets created before the datetime or isoformat string e.g. "2022-01-30".
+            acquired_after: Filter for assets with image acquisition after the datetime or isoformat string e.g.
+                "2022-01-01".
+            acquired_before: Filter for assets with image acquisition before the datetime or isoformat string e.g.
+                "2022-01-30".
+            geometry: Filter for assets intersecting the Polygon geometry. One of FeatureCollection, Feature,
+                dict (geojson geometry), list (bounds coordinates), GeoDataFrame, shapely.Polygon, shapely.Point.
+                All assume EPSG 4326!
             workspace_id: Filter for assets by the workspace ID. You can use `storage.workspace_id` here
                 to limit to your own workspace.
             collection_names: Filter for assets with any of the provided collection names, e.g. ["spot", "phr"].
@@ -104,6 +186,8 @@ class Storage:
                 ["ARCHIVE", "TASKING", "ANALYTICSPLATFORM", "USER"].
             search: Filter for assets that contain the provided search query in their name, title, or order ID, e.g.
                 "SPOT 6/7 NY Central Park".
+            custom_filter: A CQL2 filter expression for filtering based on properties, see
+                https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters
             limit: Optional, only return n first assets (by sorting and order criteria). Optimal to use if your
                 workspace contains many assets.
             sortby: The sorting criteria, corresponds to the asset properties, e.g. "created_after".
@@ -115,10 +199,10 @@ class Storage:
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/v2/assets?sort={sort}"
-        if created_after is not None:
-            url += f"&createdAfter={format_time(created_after)}"
         if created_before is not None:
             url += f"&createdBefore={format_time(created_before)}"
+        if created_after is not None:
+            url += f"&createdAfter={format_time(created_after)}"
         if workspace_id is not None:
             url += f"&workspaceId={workspace_id}"
         if collection_names is not None:
@@ -133,6 +217,30 @@ class Storage:
             url += f"&search={search}"
 
         assets_json = self._query_paginated(url=url, limit=limit)
+
+        # Comparison of asset results with storage stac search results which can be related to the assets via asset-id
+        if (
+            acquired_before is not None
+            or acquired_after is not None
+            or geometry is not None
+            or custom_filter is not None
+        ):
+            stac_results = self._search_stac(
+                acquired_after=acquired_after,
+                acquired_before=acquired_before,
+                geometry=geometry,
+                custom_filter=custom_filter,
+            )
+            stac_assets_ids = [
+                feature["properties"]["up42-system:asset_id"]
+                for feature in stac_results["features"]
+            ]
+            assets_json = [
+                asset_json
+                for asset_json in assets_json
+                if asset_json["id"] in stac_assets_ids
+            ]
+
         if workspace_id is not None:
             logger.info(
                 f"Queried {len(assets_json)} assets for workspace {self.workspace_id}."

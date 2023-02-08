@@ -3,6 +3,7 @@ import pytest
 from .fixtures_globals import (
     JSON_ASSETS,
     JSON_ASSET,
+    JSON_STORAGE_STAC,
     ASSET_ID,
     JSON_ORDERS,
     JSON_ORDER,
@@ -19,6 +20,10 @@ def storage_mock(auth_mock, requests_mock):
     # assets
     url_storage_assets = f"{auth_mock._endpoint()}/v2/assets"
     requests_mock.get(url=url_storage_assets, json=JSON_ASSETS)
+
+    # storage stac
+    url_storage_stac = f"{auth_mock._endpoint()}/v2/assets/stac/search"
+    requests_mock.post(url=url_storage_stac, json=JSON_STORAGE_STAC)
 
     # asset info
     url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/metadata"

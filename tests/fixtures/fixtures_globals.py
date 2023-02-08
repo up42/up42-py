@@ -186,6 +186,88 @@ JSON_ASSETS = {
     "empty": False,
 }
 
+JSON_STORAGE_STAC = {
+    "links": [
+        {
+            "href": "https://api.up42.dev/v2/assets/stac/",
+            "rel": "root",
+            "type": "application/json",
+        }
+    ],
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "assets": {
+                "data": {
+                    "href": "https://api.up42.dev/v2/assets/01ad657e-12f7-4046-a94c-abc90d86106a"
+                }
+            },
+            "links": [
+                {
+                    "href": "https://api.up42.dev/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6/"
+                    "items/e986e18a-0392-4b82-93c9-7a0af15846d0",
+                    "rel": "self",
+                    "type": "application/geo+json",
+                },
+                {
+                    "href": "https://api.up42.dev/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6",
+                    "rel": "parent",
+                    "type": "application/json",
+                },
+                {
+                    "href": "https://api.up42.dev/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6",
+                    "rel": "collection",
+                    "type": "application/json",
+                },
+                {
+                    "href": "https://api.up42.dev/v2/assets/stac/",
+                    "rel": "root",
+                    "type": "application/json",
+                },
+            ],
+            "stac_extensions": [
+                "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+                "https://api.up42.com/stac-extensions/up42-product/v1.0.0/schema.json",
+            ],
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [52.4941111111112, 13.4025555555556],
+                        [52.4941111111112, 13.4111666666667],
+                        [52.4911111111112, 13.4111666666667],
+                        [52.4911111111112, 13.4025555555556],
+                        [52.4941111111112, 13.4025555555556],
+                        [52.4941111111112, 13.4025555555556],
+                    ]
+                ],
+            },
+            "bbox": [
+                52.4911111111112,
+                13.4025555555556,
+                52.4941111111112,
+                13.4111666666667,
+            ],
+            "properties": {
+                "up42-system:asset_id": ASSET_ID,
+                "gsd": 9.118863577837482,
+                "datetime": "2021-05-31T09:51:52.100000+00:00",
+                "platform": "SPOT-7",
+                "proj:epsg": 4326,
+                "end_datetime": "2021-05-31T09:51:52.100000+00:00",
+                "eo:cloud_cover": 0.0,
+                "start_datetime": "2021-05-31T09:51:52.100000+00:00",
+                "up42-system:workspace_id": "7d1cf222-1fa7-468c-a93a-3e3188875997",
+                "up42-product:collection_name": "Collection No 1",
+            },
+            "type": "Feature",
+            "stac_version": "1.0.0",
+            "id": "e986e18a-0392-4b82-93c9-7a0af15846d0",
+            "collection": "69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6",
+        }
+    ],
+}
+
 JSON_ORDER = {
     "data": {
         "id": ORDER_ID,

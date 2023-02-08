@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 import requests
 
@@ -30,6 +32,54 @@ def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
             "number": page_nr,
         },
     }
+
+
+def test__search_stac(storage_mock):
+    geometry = {
+        "coordinates": [
+            [
+                [13.353338545805542, 52.52576354784705],
+                [13.353338545805542, 52.52400476917347],
+                [13.355812219301214, 52.52400476917347],
+                [13.355812219301214, 52.52576354784705],
+                [13.353338545805542, 52.52576354784705],
+            ]
+        ],
+        "type": "Polygon",
+    }
+    stac_results = storage_mock._search_stac(
+        acquired_after="2021-05-30",
+        acquired_before=datetime.datetime(2023, 5, 17),
+        geometry=geometry,
+        custom_filter={"op": "gte", "args": [{"property": "eo:cloud_cover"}, 10]},
+    )
+    assert isinstance(stac_results, dict)
+    assert stac_results["features"][0]["assets"]
+
+
+@pytest.mark.live
+def test__search_stac_live(storage_live):
+    geometry = {
+        "coordinates": [
+            [
+                [13.353338545805542, 52.52576354784705],
+                [13.353338545805542, 52.52400476917347],
+                [13.355812219301214, 52.52400476917347],
+                [13.355812219301214, 52.52576354784705],
+                [13.353338545805542, 52.52576354784705],
+            ]
+        ],
+        "type": "Polygon",
+    }
+    stac_results = storage_live._search_stac(
+        acquired_after="2021-05-30",
+        acquired_before=datetime.datetime(2023, 5, 17),
+        geometry=geometry,
+        custom_filter={"op": "gte", "args": [{"property": "eo:cloud_cover"}, 10]},
+    )
+    assert isinstance(stac_results, dict)
+    assert stac_results["features"][0]["assets"]
+    # TODO: assertions
 
 
 def test_paginate_one_page(storage_mock, requests_mock):
@@ -114,6 +164,32 @@ def test_get_assets_live(storage_live):
     # default descending, newest to oldest.
     descending_dates = sorted(dates)[::-1]
     assert descending_dates == dates
+
+
+def test_get_assets_with_search_stac(storage_mock):
+    assets = storage_mock.get_assets(acquired_after="2021-05-30")
+    assert len(assets) == 1
+    assert isinstance(assets[0], Asset)
+    assert assets[0].asset_id == ASSET_ID
+
+
+@pytest.mark.live
+def test_get_assets_with_stac_query_live(storage_live):
+    filter_geometry = {
+        "coordinates": [
+            [
+                [13.353338545805542, 52.52576354784705],
+                [13.353338545805542, 52.52400476917347],
+                [13.355812219301214, 52.52400476917347],
+                [13.355812219301214, 52.52576354784705],
+                [13.353338545805542, 52.52576354784705],
+            ]
+        ],
+        "type": "Polygon",
+    }
+
+    storage_live.get_assets(geometry=filter_geometry)
+    # TODO assertions
 
 
 def test_get_assets_pagination(auth_mock, requests_mock):
