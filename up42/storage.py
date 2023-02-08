@@ -1,4 +1,4 @@
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Dict, Any
 import math
 from datetime import datetime
 
@@ -91,7 +91,7 @@ class Storage:
             Polygon,
         ] = None,
         custom_filter=None,
-    ) -> list:
+    ) -> dict:
         """
         Search query for storage STAC collection items.
 
@@ -107,9 +107,9 @@ class Storage:
                 https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters
 
         Returns:
-            List of storage STAC results
+            Dict of storage STAC results
         """
-        stac_search_parameters = {
+        stac_search_parameters: Dict[str, Any] = {
             "max_items": 100,
             "limit": 10000,
         }
@@ -132,7 +132,7 @@ class Storage:
             datetime_filter = (
                 f"{format_time(acquired_after)}/{format_time(acquired_before)}"
             )
-        stac_search_parameters["datetime"] = datetime_filter
+        stac_search_parameters["datetime"] = datetime_filter  # type: ignore
 
         url = f"{self.auth._endpoint()}/v2/assets/stac/search"
         # TODO query pagination in separate PR
