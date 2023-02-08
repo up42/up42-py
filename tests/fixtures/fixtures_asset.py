@@ -11,7 +11,6 @@ from ..context import (
 
 @pytest.fixture()
 def asset_mock(auth_mock, requests_mock):
-
     # asset info
     url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/metadata"
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)

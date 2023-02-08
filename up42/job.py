@@ -39,7 +39,6 @@ class Job(VizTools):
     def __init__(
         self, auth: Auth, project_id: str, job_id: str, job_info: Optional[dict] = None
     ):
-
         self.auth = auth
         self.project_id = project_id
         self.job_id = job_id
