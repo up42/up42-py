@@ -195,7 +195,7 @@ class Auth:
         return headers
 
     # pylint: disable=dangerous-default-value
-    @retry(
+    @retry(  # type: ignore
         retry=retry_if_429_rate_limit(),
         wait=wait_random_exponential(multiplier=0.5, max=180),
         reraise=True,
@@ -217,7 +217,7 @@ class Auth:
         """
         headers = self._generate_headers(self.token)  # type: ignore
         if querystring == {}:
-            response = requests.request(
+            response: requests.Response = requests.request(
                 method=request_type, url=url, data=json.dumps(data), headers=headers
             )
         else:
@@ -275,7 +275,7 @@ class Auth:
         )
 
         try:
-            response = retryer_token(
+            response: requests.Response = retryer_token(
                 self._request_helper, request_type, url, data, querystring
             )
 

@@ -33,7 +33,7 @@ class Asset:
 
     def __repr__(self):
         representation = (
-            f"Asset(name: {self._info['name']}, asset_id: {self.asset_id}, created: {self._info['createdAt']}, "
+            f"Asset(name: {self._info['name']}, asset_id: {self.asset_id}, createdAt: {self._info['createdAt']}, "
             f"size: {self._info['size']})"
         )
         if "source" in self._info:

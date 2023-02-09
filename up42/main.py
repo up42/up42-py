@@ -74,6 +74,7 @@ def _check_auth(func, *args, **kwargs):
     Some functionality of the up42 import object can theoretically be used
     before authentication with UP42, so the auth needs to be checked first.
     """
+
     # pylint: disable=unused-argument
     @wraps(func)  # required for mkdocstrings
     def inner(*args, **kwargs):
