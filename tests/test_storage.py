@@ -1,4 +1,5 @@
 import datetime
+import copy
 
 import pytest
 import requests
@@ -15,6 +16,7 @@ from .fixtures import (
     storage_live,
     JSON_ASSET,
     JSON_ORDER,
+    JSON_STORAGE_STAC,
 )
 
 
@@ -122,7 +124,7 @@ def test_paginate_multiple_pages(storage_mock, requests_mock):
         url + f"&size={size}&page=3",
         json=_mock_one_page_reponse(3, size, total_pages, total_elements),
     )
-    res = storage_mock._query_paginated(url=url, limit=limit, size=size)
+    res = storage_mock._query_paginated_endpoints(url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
@@ -145,7 +147,7 @@ def test_paginate_with_limit_smaller_page_size(storage_mock, requests_mock):
         url + f"&size={limit}&page=1",
         json=_mock_one_page_reponse(0, size, total_pages, total_elements),
     )
-    res = storage_mock._query_paginated(url=url, limit=limit, size=size)
+    res = storage_mock._query_paginated_endpoints(url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
@@ -191,42 +193,31 @@ def test_get_assets_with_stac_query_live(storage_live):
     storage_live.get_assets(geometry=filter_geometry)
     # TODO assertions
 
-def test_get_assets_with_stac_query_pagination(auth_mock, requests_mock):
+def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
     """
 
     """
-    json_assets_paginated = {
-        "content": [JSON_ASSET] * 50,
-        "pageable": {
-            "sort": {"sorted": True, "unsorted": False, "empty": False},
-            "pageNumber": 0,
-            "pageSize": 50,
-            "offset": 0,
-            "paged": True,
-            "unpaged": False,
-        },
-        "totalPages": 2,
-        "totalElements": 100,
-        "last": True,
-        "sort": {"sorted": True, "unsorted": False, "empty": False},
-        "numberOfElements": 100,
-        "first": True,
-        "size": 50,
-        "number": 0,
-        "empty": False,
+    url_storage_stac = f"http://some_url/assets/stac/search"
+    stac_search_parameters = {
+            "max_items": 100,
+            "limit": 10000,
     }
-
-    # assets pages
-    url_storage_assets_paginated = (
-        f"{auth_mock._endpoint()}/v2/assets?sort=createdAt,asc&size=50"
+    
+    requests_mock.post(
+        url_storage_stac,
+        json=JSON_STORAGE_STAC,
     )
-    requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
-    storage = Storage(auth=auth_mock)
-    assets = storage.get_assets(limit=74, sortby="createdAt", descending=False)
-    assert len(assets) == 74
-    assert isinstance(assets[0], Asset)
-    assert assets[0].asset_id == ASSET_ID
+    json_storage_stac = copy.deepcopy(JSON_STORAGE_STAC)
+    json_storage_stac["links"].pop(-1)
+    
+    requests_mock.post(
+        url_storage_stac,
+        json=json_storage_stac, # need to match payload
+    )
+
+    resp = storage_mock._query_paginated_stac_search(url=url_storage_stac, stac_search_parameters=stac_search_parameters)
+    assert len(resp) == 1 # Should be 2
 
 def test_get_assets_pagination(auth_mock, requests_mock):
     """
