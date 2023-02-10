@@ -19,6 +19,8 @@ from .fixtures import (
     JSON_STORAGE_STAC,
 )
 
+def match_request_text(request):
+    return 'token' in request.body
 
 def test_init(storage_mock):
     assert isinstance(storage_mock, Storage)
@@ -193,9 +195,13 @@ def test_get_assets_with_stac_query_live(storage_live):
     storage_live.get_assets(geometry=filter_geometry)
     # TODO assertions
 
+
 def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
     """
-
+    Test the stac query pagination by checking the token element in the payload.
+    if the response has the token element in the body, then the _query_paginated_stac_search 
+    retrieves the next page and append the features in the return list. 
+    Otherwise, return the current list of features. 
     """
     url_storage_stac = f"http://some_url/assets/stac/search"
     stac_search_parameters = {
@@ -210,14 +216,15 @@ def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
 
     json_storage_stac = copy.deepcopy(JSON_STORAGE_STAC)
     json_storage_stac["links"].pop(-1)
-    
+
     requests_mock.post(
         url_storage_stac,
-        json=json_storage_stac, # need to match payload
+        additional_matcher=match_request_text,
+        json=json_storage_stac,
     )
 
     resp = storage_mock._query_paginated_stac_search(url=url_storage_stac, stac_search_parameters=stac_search_parameters)
-    assert len(resp) == 1 # Should be 2
+    assert len(resp) == 2
 
 def test_get_assets_pagination(auth_mock, requests_mock):
     """
