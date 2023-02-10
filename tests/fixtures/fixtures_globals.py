@@ -192,7 +192,23 @@ JSON_STORAGE_STAC = {
             "href": "https://api.up42.dev/v2/assets/stac/",
             "rel": "root",
             "type": "application/json",
-        }
+        },
+        {
+            "href": "https://api.up42.dev/v2/assets/stac/search",
+            "rel": "next",
+            "type": "application/json",
+            "body": {
+                "sortby": [
+                    {
+                        "field": "bbox",
+                        "direction": "desc"
+                    }
+                ],
+                "filter": {},
+                "token": "next:12345"
+            },
+            "method": "POST"
+        },
     ],
     "type": "FeatureCollection",
     "features": [
