@@ -34,6 +34,23 @@ def test_asset_info_live(asset_live):
     assert asset_live.info["name"]
 
 
+def test_asset_stac_info(asset_mock):
+    assert asset_mock.stac_info
+    assert (
+        asset_mock.stac_info["features"][0]["properties"]["up42-system:asset_id"]
+        == ASSET_ID
+    )
+
+
+@pytest.mark.live
+# TODO
+def test_asset_stac_info_live(asset_live):
+    assert asset_live.info
+    assert asset_live.info["features"][0]["properties"][
+        "up42-system:asset_id"
+    ] == os.getenv("TEST_UP42_ASSET_ID")
+
+
 def test_asset_update_metadata(asset_mock):
     updated_info = asset_mock.update_metadata(
         title="some_other_title", tags=["othertag1", "othertag2"]
