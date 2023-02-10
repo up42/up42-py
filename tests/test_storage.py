@@ -19,8 +19,6 @@ from .fixtures import (
     JSON_STORAGE_STAC,
 )
 
-def match_request_text(request):
-    return 'token' in request.body
 
 def test_init(storage_mock):
     assert isinstance(storage_mock, Storage)
@@ -203,6 +201,9 @@ def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
     retrieves the next page and append the features in the return list. 
     Otherwise, return the current list of features. 
     """
+    def match_request_text(request):
+        return 'token' in request.body
+    
     url_storage_stac = f"http://some_url/assets/stac/search"
     stac_search_parameters = {
             "max_items": 100,
