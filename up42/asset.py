@@ -52,6 +52,32 @@ class Asset:
         self._info = response_json
         return self._info
 
+    @property
+    def stac_info(self) -> Union[dict, None]:
+        """
+        Gets the storage STAC information for the asset as a FeatureCollection.
+
+        One asset can contain multiple STAC items (e.g. the pan- and multispectral images).
+        """
+        stac_search_parameters = {
+            "max_items": 50,
+            "limit": 50,
+            "filter": {
+                "op": "=",
+                "args": [{"property": "asset_id"}, self.asset_id],
+            },
+        }
+        url = f"{self.auth._endpoint()}/v2/assets/stac/search"
+        stac_results = self.auth._request(
+            request_type="POST", url=url, data=stac_search_parameters
+        )
+        stac_results.pop("links", None)
+        if not stac_results["features"]:
+            logger.info(
+                "No STAC metadata information available for this asset's items!"
+            )
+        return stac_results
+
     def update_metadata(
         self, title: str = None, tags: List[str] = None, **kwargs
     ) -> dict:
