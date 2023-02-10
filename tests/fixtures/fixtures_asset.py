@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from .fixtures_globals import ASSET_ID, JSON_ASSET, DOWNLOAD_URL
+from .fixtures_globals import ASSET_ID, JSON_ASSET, DOWNLOAD_URL, JSON_STORAGE_STAC
 
 from ..context import (
     Asset,
@@ -14,6 +14,10 @@ def asset_mock(auth_mock, requests_mock):
     # asset info
     url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/metadata"
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
+
+    # asset stac info
+    url_asset_stac_info = f"{auth_mock._endpoint()}/v2/assets/stac/search"
+    requests_mock.post(url=url_asset_stac_info, json=JSON_STORAGE_STAC)
 
     # asset update
     updated_json_asset = JSON_ASSET.copy()
