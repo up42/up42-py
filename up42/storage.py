@@ -33,7 +33,7 @@ class Storage:
         env = ", env: dev" if self.auth.env == "dev" else ""
         return f"Storage(workspace_id: {self.workspace_id}{env})"
 
-    def _query_paginated(
+    def _query_paginated_endpoints(
         self, url: str, limit: Optional[int] = None, size: int = 50
     ) -> List[dict]:
         """
@@ -78,6 +78,35 @@ class Storage:
             results_list += response_json["content"]
         return results_list[:limit]
 
+    def _query_paginated_stac_search(
+        self, 
+        url: str, 
+        stac_search_parameters: dict,
+        ) -> list:
+        """
+        Helper to fetch list of items in paginated stac search endpoind, e.g. stac search assets.
+
+        Args:
+            url (str): The base url for paginated endpoint.
+            stac_search_parameters (dict): the parameters required for stac search
+
+        Returns:
+            List of storage STAC results features.
+        """
+        response_features = []
+        response_features_limit = stac_search_parameters["limit"]
+        while len(response_features) < response_features_limit:
+            stac_results = self.auth._request(
+                request_type="POST", url=url, data=stac_search_parameters
+            )
+            response_features.extend(stac_results["features"])
+            token_list = [link["body"]["token"] for link in stac_results["links"] if link["rel"] == "next"]
+            if not token_list:
+                break
+            else:
+                stac_search_parameters["token"] = token_list[0]
+        return response_features
+
     def _search_stac(
         self,
         acquired_after: Optional[Union[str, datetime]] = None,
@@ -93,7 +122,7 @@ class Storage:
             ]
         ] = None,
         custom_filter=None,
-    ) -> dict:
+    ) -> list:
         """
         Search query for storage STAC collection items.
 
@@ -109,7 +138,7 @@ class Storage:
                 https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters
 
         Returns:
-            Dict of storage STAC results
+            List of storage STAC results features
         """
         stac_search_parameters: Dict[str, Any] = {
             "max_items": 100,
@@ -137,11 +166,9 @@ class Storage:
         stac_search_parameters["datetime"] = datetime_filter  # type: ignore
 
         url = f"{self.auth._endpoint()}/v2/assets/stac/search"
-        # TODO query pagination in separate PR
-        stac_results = self.auth._request(
-            request_type="POST", url=url, data=stac_search_parameters
-        )
-        return stac_results
+
+        features = self._query_paginated_stac_search(url, stac_search_parameters)
+        return features
 
     def get_assets(
         self,
@@ -216,7 +243,7 @@ class Storage:
         if search is not None:
             url += f"&search={search}"
 
-        assets_json = self._query_paginated(url=url, limit=limit)
+        assets_json = self._query_paginated_endpoints(url=url, limit=limit)
 
         # Comparison of asset results with storage stac search results which can be related to the assets via asset-id
         if (
@@ -225,7 +252,7 @@ class Storage:
             or geometry is not None
             or custom_filter is not None
         ):
-            stac_results = self._search_stac(
+            stac_features = self._search_stac(
                 acquired_after=acquired_after,
                 acquired_before=acquired_before,
                 geometry=geometry,
@@ -233,7 +260,7 @@ class Storage:
             )
             stac_assets_ids = [
                 feature["properties"]["up42-system:asset_id"]
-                for feature in stac_results["features"]
+                for feature in stac_features
             ]
             assets_json = [
                 asset_json
@@ -292,7 +319,7 @@ class Storage:
             )
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}"
-        orders_json = self._query_paginated(url=url, limit=limit)
+        orders_json = self._query_paginated_endpoints(url=url, limit=limit)
         logger.info(f"Got {len(orders_json)} orders for workspace {self.workspace_id}.")
 
         if return_json:
