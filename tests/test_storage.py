@@ -96,7 +96,7 @@ def test_paginate_one_page(storage_mock, requests_mock):
         url + f"&size={size}",
         json=_mock_one_page_reponse(0, expected, total_pages, total_elements),
     )
-    res = storage_mock._query_paginated(url=url, limit=limit, size=size)
+    res = storage_mock._query_paginated_endpoints(url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
@@ -197,19 +197,20 @@ def test_get_assets_with_stac_query_live(storage_live):
 def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
     """
     Test the stac query pagination by checking the token element in the payload.
-    if the response has the token element in the body, then the _query_paginated_stac_search 
-    retrieves the next page and append the features in the return list. 
-    Otherwise, return the current list of features. 
+    if the response has the token element in the body, then the _query_paginated_stac_search
+    retrieves the next page and append the features in the return list.
+    Otherwise, return the current list of features.
     """
+
     def match_request_text(request):
-        return 'token' in request.body
-    
-    url_storage_stac = f"http://some_url/assets/stac/search"
+        return "token" in request.body
+
+    url_storage_stac = "http://some_url/assets/stac/search"
     stac_search_parameters = {
-            "max_items": 100,
-            "limit": 10000,
+        "max_items": 100,
+        "limit": 10000,
     }
-    
+
     requests_mock.post(
         url_storage_stac,
         json=JSON_STORAGE_STAC,
@@ -224,8 +225,11 @@ def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
         json=json_storage_stac,
     )
 
-    resp = storage_mock._query_paginated_stac_search(url=url_storage_stac, stac_search_parameters=stac_search_parameters)
+    resp = storage_mock._query_paginated_stac_search(
+        url=url_storage_stac, stac_search_parameters=stac_search_parameters
+    )
     assert len(resp) == 2
+
 
 def test_get_assets_pagination(auth_mock, requests_mock):
     """

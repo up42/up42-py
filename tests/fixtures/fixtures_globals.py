@@ -198,16 +198,11 @@ JSON_STORAGE_STAC = {
             "rel": "next",
             "type": "application/json",
             "body": {
-                "sortby": [
-                    {
-                        "field": "bbox",
-                        "direction": "desc"
-                    }
-                ],
+                "sortby": [{"field": "bbox", "direction": "desc"}],
                 "filter": {},
-                "token": "next:12345"
+                "token": "next:12345",
             },
-            "method": "POST"
+            "method": "POST",
         },
     ],
     "type": "FeatureCollection",
