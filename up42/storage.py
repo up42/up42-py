@@ -38,6 +38,8 @@ class Storage:
     def pystac_client(self):
         """
         Pystac Client authenticated for accessing the UP42 Storage.
+
+        See https://pystac-client.readthedocs.io/
         """
 
         def _authenticate_client():

@@ -1,6 +1,7 @@
 import datetime
 import copy
 
+import pystac_client
 import pytest
 import requests
 
@@ -23,6 +24,22 @@ from .fixtures import (
 def test_init(storage_mock):
     assert isinstance(storage_mock, Storage)
     assert storage_mock.workspace_id == WORKSPACE_ID
+
+
+def test_pystac_client_property(storage_mock):
+    up42_pystac_client = storage_mock.pystac_client
+    isinstance(up42_pystac_client, pystac_client.Client)
+
+
+@pytest.mark.live
+def test_pystac_client_property_live(storage_live):
+    up42_pystac_client = storage_live.pystac_client
+    isinstance(up42_pystac_client, pystac_client.Client)
+
+
+def test_pystac_client_property_invalid_auth_token(storage_mock):
+    pass
+    # TODO
 
 
 def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
