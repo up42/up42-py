@@ -104,10 +104,10 @@ class Storage:
         return results_list[:limit]
 
     def _query_paginated_stac_search(
-        self, 
-        url: str, 
+        self,
+        url: str,
         stac_search_parameters: dict,
-        ) -> list:
+    ) -> list:
         """
         Helper to fetch list of items in paginated stac search endpoind, e.g. stac search assets.
 
@@ -118,18 +118,22 @@ class Storage:
         Returns:
             List of storage STAC results features.
         """
-        response_features = []
+        response_features: list = []
         response_features_limit = stac_search_parameters["limit"]
         while len(response_features) < response_features_limit:
             stac_results = self.auth._request(
                 request_type="POST", url=url, data=stac_search_parameters
             )
             response_features.extend(stac_results["features"])
-            token_list = [link["body"]["token"] for link in stac_results["links"] if link["rel"] == "next"]
-            if not token_list:
-                break
-            else:
+            token_list = [
+                link["body"]["token"]
+                for link in stac_results["links"]
+                if link["rel"] == "next"
+            ]
+            if token_list:
                 stac_search_parameters["token"] = token_list[0]
+            else:
+                break
         return response_features
 
     def _search_stac(
