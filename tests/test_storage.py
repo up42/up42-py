@@ -37,7 +37,7 @@ def test_pystac_client_property_live(storage_live):
     isinstance(up42_pystac_client, pystac_client.Client)
 
 
-def test_pystac_client_property_invalid_auth_token(storage_mock):
+def test_pystac_client_property_invalid_auth_token():
     pass
     # TODO
 
