@@ -20,7 +20,7 @@ from ..context import (
 def storage_mock(auth_mock, requests_mock):
 
     # pystac client authentication
-    url_pystac_client = "https://api.up42.com/v2/assets/stac"
+    url_pystac_client = f"{auth_mock._endpoint()}/v2/assets/stac"
     requests_mock.get(url=url_pystac_client, json=PYSTAC_MOCK_CLIENT)
 
     # assets
