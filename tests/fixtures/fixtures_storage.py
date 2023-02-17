@@ -8,6 +8,7 @@ from .fixtures_globals import (
     JSON_ORDERS,
     JSON_ORDER,
     ORDER_ID,
+    PYSTAC_MOCK_CLIENT,
 )
 
 from ..context import (
@@ -17,6 +18,11 @@ from ..context import (
 
 @pytest.fixture()
 def storage_mock(auth_mock, requests_mock):
+
+    # pystac client authentication
+    url_pystac_client = f"{auth_mock._endpoint()}/v2/assets/stac"
+    requests_mock.get(url=url_pystac_client, json=PYSTAC_MOCK_CLIENT)
+
     # assets
     url_storage_assets = f"{auth_mock._endpoint()}/v2/assets"
     requests_mock.get(url=url_storage_assets, json=JSON_ASSETS)
