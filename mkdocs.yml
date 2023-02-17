@@ -63,10 +63,10 @@ nav:
         - JobCollection: reference/jobcollection-reference.md
         - JobTask: reference/jobtask-reference.md
         - Webhooks: reference/webhooks-reference.md
-    -  Changelog & FAQ:
+    - Changelog & FAQ:
         - Changelog: CHANGELOG.md
         - FAQ & Support: support-faq.md
-        - Privacy Policy: privacy-policy.md
+        - Privacy Policy: 'https://up42.com/legal/privacy'
 
 ## Configuration
 theme:
