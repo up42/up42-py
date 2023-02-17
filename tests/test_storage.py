@@ -1,8 +1,10 @@
 import datetime
 import copy
 
+import pystac_client
 import pytest
 import requests
+import mock
 
 # pylint: disable=unused-import
 from .context import Storage, Asset, Order
@@ -23,6 +25,28 @@ from .fixtures import (
 def test_init(storage_mock):
     assert isinstance(storage_mock, Storage)
     assert storage_mock.workspace_id == WORKSPACE_ID
+
+
+def test_pystac_client_property(storage_mock):
+    up42_pystac_client = storage_mock.pystac_client
+    isinstance(up42_pystac_client, pystac_client.Client)
+
+
+@pytest.mark.live
+def test_pystac_client_property_live(storage_live):
+    up42_pystac_client = storage_live.pystac_client
+    isinstance(up42_pystac_client, pystac_client.Client)
+
+
+@mock.patch("pystac_client.Client.open")
+def test_pystac_client_property_invalid_auth_token(pystac_open_mock, storage_mock):
+    pystac_open_mock.side_effect = pystac_client.exceptions.APIError()
+    with pytest.raises(pystac_client.exceptions.APIError):
+        storage_mock.pystac_client  # pylint: disable=pointless-statement
+
+    pystac_open_mock.side_effect = [pystac_client.exceptions.APIError(), mock.DEFAULT]
+    up42_pystac_client = storage_mock.pystac_client
+    isinstance(up42_pystac_client, pystac_client.Client)
 
 
 def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
