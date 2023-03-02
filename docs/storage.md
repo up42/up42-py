@@ -64,7 +64,7 @@ for asset in assets:
 
 ## **Pystac client**
 
-For the users which are familiar with the pystac-client library, we allow to get an authenticated client for browsing UP42 storage.
+For the users who are familiar with the pystac-client library, the storage class allows to get an authenticated pystac-client for browsing the UP42 storage.
 Using the authenticated pystac_client for the UP42 account will look like:
 
 ```python
