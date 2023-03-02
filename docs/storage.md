@@ -16,7 +16,7 @@ up42.authenticate(
 
 ## **Access Orders**
 
-Get a list of all orders in your user storage. Then access or [download](#download-assets)) the image assets of an 
+Get a list of all orders in your user storage. Then access or [download](#download-assets) the image assets of an 
 order.
 
 ```python
