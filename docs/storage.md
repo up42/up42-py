@@ -16,7 +16,7 @@ up42.authenticate(
 
 ## **Access Orders**
 
-Get a list of all orders in your user storage. Then access or [download](#download-assets)) the image assets of an 
+Get a list of all orders in your user storage. Then access or [download](#download-assets) the image assets of an 
 order.
 
 ```python
@@ -61,5 +61,25 @@ Or to download multiple assets loop over a list of assets:
 for asset in assets:
     asset.download()
 ```
+
+## **Pystac client**
+
+For the users who are familiar with the pystac-client library, the storage class allows to get an authenticated pystac-client for browsing the UP42 storage.
+Using the authenticated pystac_client for the UP42 account will look like:
+
+```python
+up42_pystac_client = storage.pystac_client
+```
+
+With the `up42_pystac_client`, it is possible to run the regular pystac client operations (e.g. to go through the UP42 assets AKA UP42 pystac-collections in your account). 
+
+```python
+up42_stac_collections = up42_pystac_client.get_collections()
+```
+
+Check the documentation for reference about UP42 stac definitions.
+
+
+
 
 ⏭️ Continue with the [Run an analytics workflow](analytics_workflow.md) chapter.
