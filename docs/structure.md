@@ -3,8 +3,8 @@
 ## Structure
 
 - The Python SDK uses multiple classes, representing the **hierarchical structure of UP42**:
-    - **Catalog > Order**
-    - **Tasking > Order**
+    - **Catalog > Order > Asset**
+    - **Tasking > Order > Asset**
     - **Storage > Asset**
     - **Project > Workflow > Job/JobCollection > JobTask**
 
