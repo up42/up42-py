@@ -1,3 +1,11 @@
+"""
+Note: The additional monkeypatching of the auth module in this module's tests is neccessary if running all tests
+in one pytest chain.
+They work without the monkeypatching when run independent of each other. However, when running all together via pytest,
+e.g. `make test`, the auth module fixture is otherwise not properly attached to the class object mocks for each test,
+or would need to be recreated for each test.
+"""
+
 import json
 from pathlib import Path
 
