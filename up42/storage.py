@@ -5,6 +5,7 @@ from datetime import datetime
 from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
 from geojson import Feature, FeatureCollection
+import pystac_client
 
 from up42.auth import Auth
 from up42.order import Order
@@ -32,6 +33,32 @@ class Storage:
     def __repr__(self):
         env = ", env: dev" if self.auth.env == "dev" else ""
         return f"Storage(workspace_id: {self.workspace_id}{env})"
+
+    @property
+    def pystac_client(self):
+        """
+        Pystac Client authenticated for accessing the UP42 Storage.
+
+        See https://pystac-client.readthedocs.io/
+        """
+
+        def _authenticate_client():
+            url = f"{self.auth._endpoint()}/v2/assets/stac"
+            authenticated_client = pystac_client.Client.open(
+                url=url,
+                headers={
+                    "Authorization": f"Bearer {self.auth.token}",
+                },
+            )
+            return authenticated_client
+
+        try:
+            up42_pystac_client = _authenticate_client()
+        except pystac_client.exceptions.APIError:
+            self.auth._get_token()
+            up42_pystac_client = _authenticate_client()
+
+        return up42_pystac_client
 
     def _query_paginated_endpoints(
         self, url: str, limit: Optional[int] = None, size: int = 50
