@@ -217,7 +217,7 @@ class Storage:
     ) -> Union[List[Asset], dict]:
         """
         Gets a list of assets in storage as Asset objects or in JSON format.
-        See (Functionality)[https://sdk.up42.com/structure/] under the asset tab for definition of assets.
+        See [Functionality](https://sdk.up42.com/structure/) under the asset tab for reference about definition of assets.
 
         Args:
             created_after: Search for assets created after the specified timestamp, in `"YYYY-MM-DD"` format.
