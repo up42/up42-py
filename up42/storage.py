@@ -37,7 +37,8 @@ class Storage:
     @property
     def pystac_client(self):
         """
-        PySTAC client, a Python package for working with UP42 STAC API and accessing storage assets. For more information, see [PySTAC Client Documentation](https://pystac-client.readthedocs.io/).
+        PySTAC client, a Python package for working with UP42 STAC API and accessing storage assets.
+        For more information, see [PySTAC Client Documentation](https://pystac-client.readthedocs.io/).
         """
 
         def _authenticate_client():
@@ -156,10 +157,22 @@ class Storage:
         Search query for storage STAC collection items.
 
         Args:
-            acquired_after: Search for assets that contain data acquired after the specified timestamp, in `"YYYY-MM-DD"` format.
-            acquired_before: Search for assets that contain data acquired before the specified timestamp, in `"YYYY-MM-DD"` format.
-            geometry: Search for assets that contain STAC items intersecting the provided geometry, in EPSG:4326 (WGS84) format.<br/>For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
-            custom_filter: CQL2 filters used to search for assets that contain STAC items with specific property values.<br/>For more information on filters, see [PySTAC Client Documentation — CQL2 Filtering](https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters).<br/>For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            acquired_after: Search for assets that contain data acquired after the specified timestamp,
+            in `"YYYY-MM-DD"` format.
+            acquired_before: Search for assets that contain data acquired before the specified timestamp,
+            in `"YYYY-MM-DD"` format.
+            geometry: Search for assets that contain STAC items intersecting the provided geometry,
+            in EPSG:4326 (WGS84) format.
+            <br/>For more information on STAC items,
+            see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            custom_filter: CQL2 filters used to search for assets that contain STAC items with specific property values.
+            <br/>
+            For more information on filters,
+            see [PySTAC Client Documentation — CQL2 Filtering]
+            (https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters).
+            <br/>
+            For more information on STAC items,
+            see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
 
         Returns:
             A list of STAC items.
@@ -217,21 +230,37 @@ class Storage:
     ) -> Union[List[Asset], dict]:
         """
         Gets a list of assets in storage as Asset objects or in JSON format.
-        See [Functionality](https://sdk.up42.com/structure/) under the asset tab for reference about definition of assets.
-
+        See [Functionality](https://sdk.up42.com/structure/)
+        under the asset tab for reference about definition of assets.
         Args:
-            created_after: Search for assets created after the specified timestamp, in `"YYYY-MM-DD"` format.
-            created_before: Search for assets created before the specified timestamp, in `"YYYY-MM-DD"` format.
-            acquired_after: Search for assets that contain data acquired after the specified timestamp, in `"YYYY-MM-DD"` format.
-            acquired_before: Search for assets that contain data acquired before the specified timestamp, in `"YYYY-MM-DD"` format.
-            geometry: Search for assets that contain STAC items intersecting the provided geometry, in EPSG:4326 (WGS84) format.<br/>For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            created_after: Search for assets created after the specified timestamp,
+            in `"YYYY-MM-DD"` format.
+            created_before: Search for assets created before the specified timestamp,
+            in `"YYYY-MM-DD"` format.
+            acquired_after: Search for assets that contain data acquired after the specified timestamp,
+            in `"YYYY-MM-DD"` format.
+            acquired_before: Search for assets that contain data acquired before the specified timestamp,
+            in `"YYYY-MM-DD"` format.
+            geometry: Search for assets that contain STAC items intersecting the provided geometry,
+            in EPSG:4326 (WGS84) format.
+            <br/>
+            For more information on STAC items,
+            see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
             workspace_id: Search by the workspace ID.
             collection_names: Search for assets from any of the provided geospatial collections.
             producer_names: Search for assets from any of the provided producers.
             tags: Search for assets with any of the provided tags.
-            sources: Search for assets from any of the provided sources. The allowed values: `"ARCHIVE"`, `"TASKING"`, `"ANALYTICS"`, `"USER"`.
+            sources: Search for assets from any of the provided sources.
+            The allowed values: `"ARCHIVE"`, `"TASKING"`, `"ANALYTICS"`, `"USER"`.
             search: Search for assets that contain the provided search query in their name, title, or order ID.
-            custom_filter: CQL2 filters used to search for assets that contain STAC items with specific property values.<br/>For more information on filters, see [PySTAC Client Documentation — CQL2 Filtering](https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters).<br/>For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            custom_filter: CQL2 filters used to search for assets that contain STAC items with specific property values.
+            <br/>
+            For more information on filters,
+            see [PySTAC Client Documentation — CQL2 Filtering]
+            (https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters).
+            <br/>
+            For more information on STAC items,
+            see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
             limit: The number of results on a results page.
             sortby: The property to sort by.
             descending: The sorting order: <ul><li>`true` — descending</li><li>`false` — ascending</li></ul>
