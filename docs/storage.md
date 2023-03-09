@@ -14,7 +14,7 @@ up42.authenticate(
 )
 ```
 
-## Get orders
+## See orders
 
 Get a list of all tasking and catalog orders.
 

@@ -229,9 +229,8 @@ class Storage:
         return_json: bool = False,
     ) -> Union[List[Asset], dict]:
         """
-        Gets a list of assets in storage as Asset objects or in JSON format.
-        See [Functionality](https://sdk.up42.com/structure/)
-        under the asset tab for reference about definition of assets.
+        Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#functionality_1)
+        objects or in JSON format.
         Args:
             created_after: Search for assets created after the specified timestamp,
             in `"YYYY-MM-DD"` format.
@@ -264,7 +263,8 @@ class Storage:
             limit: The number of results on a results page.
             sortby: The property to sort by.
             descending: The sorting order: <ul><li>`true` — descending</li><li>`false` — ascending</li></ul>
-            return_json: If `true`, returns a JSON dictionary. Otherwise it returns the list of Asset objects.
+            return_json: If `true`, returns a JSON dictionary. If `false`, returns a list of
+            [Asset](https://sdk.up42.com/structure/#functionality_1) objects.
 
         Returns:
             A list of Asset objects.
