@@ -37,9 +37,8 @@ class Storage:
     @property
     def pystac_client(self):
         """
-        Pystac Client authenticated for accessing the UP42 Storage.
-
-        See https://pystac-client.readthedocs.io/
+        PySTAC client, a Python package for working with UP42 STAC API and accessing storage assets.
+        For more information, see [PySTAC Client Documentation](https://pystac-client.readthedocs.io/).
         """
 
         def _authenticate_client():
@@ -158,18 +157,13 @@ class Storage:
         Search query for storage STAC collection items.
 
         Args:
-            acquired_after: Filter for assets with image acquisition after the datetime or isoformat string e.g.
-                "2022-01-01".
-            acquired_before: Filter for assets with image acquisition before the datetime or isoformat string e.g.
-                "2022-01-30".
-            geometry: Filter for assets intersecting the Polygon geometry. One of FeatureCollection, Feature,
-                dict (geojson geometry), list (bounds coordinates), GeoDataFrame, shapely.Polygon, shapely.Point.
-                All assume EPSG 4326!
-            custom_filter: A CQL2 filter expression for filtering based on properties, see
-                https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters
+            acquired_after: Search for assets that contain data acquired after the specified timestamp, in `"YYYY-MM-DD"` format.
+            acquired_before: Search for assets that contain data acquired before the specified timestamp, in `"YYYY-MM-DD"` format.
+            geometry: Search for assets that contain STAC items intersecting the provided geometry, in EPSG:4326 (WGS84) format. For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            custom_filter: CQL2 filters used to search for assets that contain STAC items with specific property values. For more information on filters, see [PySTAC Client Documentation — CQL2 Filtering](https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters). For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
 
         Returns:
-            List of storage STAC results features
+            A list of STAC items.
         """
         stac_search_parameters: Dict[str, Any] = {
             "max_items": 100,
@@ -223,37 +217,28 @@ class Storage:
         return_json: bool = False,
     ) -> Union[List[Asset], dict]:
         """
-        Gets all assets in all the accessible workspaces as Asset objects or json.
-
+        Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#functionality_1)
+        objects or in JSON format.
         Args:
-            created_after: Filter for assets created after the datetime or isoformat string e.g. "2022-01-01".
-            created_before: Filter for assets created before the datetime or isoformat string e.g. "2022-01-30".
-            acquired_after: Filter for assets with image acquisition after the datetime or isoformat string e.g.
-                "2022-01-01".
-            acquired_before: Filter for assets with image acquisition before the datetime or isoformat string e.g.
-                "2022-01-30".
-            geometry: Filter for assets intersecting the Polygon geometry. One of FeatureCollection, Feature,
-                dict (geojson geometry), list (bounds coordinates), GeoDataFrame, shapely.Polygon, shapely.Point.
-                All assume EPSG 4326!
-            workspace_id: Filter for assets by the workspace ID. You can use `storage.workspace_id` here
-                to limit to your own workspace.
-            collection_names: Filter for assets with any of the provided collection names, e.g. ["spot", "phr"].
-            producer_names: Filter for assets with any of the provided producer names, e.g. ["airbus", "21at"].
-            tags: Filter for assets with any of the provided tags, e.g. ["optical", "US"].
-            sources: Filter for assets with any of the provided sources, one or multiple of
-                ["ARCHIVE", "TASKING", "ANALYTICSPLATFORM", "USER"].
-            search: Filter for assets that contain the provided search query in their name, title, or order ID, e.g.
-                "SPOT 6/7 NY Central Park".
-            custom_filter: A CQL2 filter expression for filtering based on properties, see
-                https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters
-            limit: Optional, only return n first assets (by sorting and order criteria). Optimal to use if your
-                workspace contains many assets.
-            sortby: The sorting criteria, corresponds to the asset properties, e.g. "created_after".
-            descending: The sorting order, True for descending (default), False for ascending.
-            return_json: If set to True, returns json dict instead.
+            created_after: Search for assets created after the specified timestamp, in `"YYYY-MM-DD"` format.
+            created_before: Search for assets created before the specified timestamp, in `"YYYY-MM-DD"` format.
+            acquired_after: Search for assets that contain data acquired after the specified timestamp, in `"YYYY-MM-DD"` format.
+            acquired_before: Search for assets that contain data acquired before the specified timestamp, in `"YYYY-MM-DD"` format.
+            geometry: Search for assets that contain STAC items intersecting the provided geometry, in EPSG:4326 (WGS84) format. For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            workspace_id: Search by the workspace ID.
+            collection_names: Search for assets from any of the provided geospatial collections.
+            producer_names: Search for assets from any of the provided producers.
+            tags: Search for assets with any of the provided tags.
+            sources: Search for assets from any of the provided sources. The allowed values: `"ARCHIVE"`, `"TASKING"`, `"ANALYTICS"`, `"USER"`.
+            search: Search for assets that contain the provided search query in their name, title, or order ID.
+            custom_filter: CQL2 filters used to search for assets that contain STAC items with specific property values. For more information on filters, see [PySTAC Client Documentation — CQL2 Filtering](https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters). For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            limit: The number of results on a results page.
+            sortby: The property to sort by.
+            descending: The sorting order: <ul><li>`true` — descending</li><li>`false` — ascending</li></ul>
+            return_json: If `true`, returns a JSON dictionary. If `false`, returns a list of [Asset](https://sdk.up42.com/structure/#functionality_1) objects.
 
         Returns:
-            List of asset objects.
+            A list of Asset objects.
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/v2/assets?sort={sort}"
@@ -270,7 +255,7 @@ class Storage:
         if tags is not None:
             url += f"&tags={tags}"
         if sources is not None:
-            url += f"&sources={sources}"
+            url += f"&sources={','.join(sources)}"
         if search is not None:
             url += f"&search={search}"
 
