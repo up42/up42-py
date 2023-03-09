@@ -192,6 +192,12 @@ def test_get_assets_live(storage_live):
     assert descending_dates == dates
 
 
+@pytest.mark.live
+def test_get_assets_by_source_live(storage_live):
+    assets = storage_live.get_assets(sources=["ARCHIVE", "ANALYTICS"])
+    assert len(assets) >= 2
+
+
 def test_get_assets_with_search_stac(storage_mock):
     assets = storage_mock.get_assets(acquired_after="2021-05-30")
     assert len(assets) == 1
