@@ -1,4 +1,4 @@
-# :file_cabinet: Storage assets
+# :file_cabinet: Storage Assets
 
 Access all previous orders or assets in your account.
 
