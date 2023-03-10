@@ -159,8 +159,11 @@ class Storage:
         Args:
             acquired_after: Search for assets that contain data acquired after the specified timestamp, in `"YYYY-MM-DD"` format.
             acquired_before: Search for assets that contain data acquired before the specified timestamp, in `"YYYY-MM-DD"` format.
-            geometry: Search for assets that contain STAC items intersecting the provided geometry, in EPSG:4326 (WGS84) format. For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
-            custom_filter: CQL2 filters used to search for assets that contain STAC items with specific property values. For more information on filters, see [PySTAC Client Documentation — CQL2 Filtering](https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters). For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            geometry: Search for assets that contain STAC items intersecting the provided geometry, in EPSG:4326 (WGS84) format.\\
+                For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).\n
+            custom_filter: CQL2 filters used to search for assets that contain STAC items with specific property values. For more information on filters,\\
+                see [PySTAC Client Documentation — CQL2 Filtering](https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters). \\
+                For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
 
         Returns:
             A list of STAC items.
@@ -224,14 +227,17 @@ class Storage:
             created_before: Search for assets created before the specified timestamp, in `"YYYY-MM-DD"` format.
             acquired_after: Search for assets that contain data acquired after the specified timestamp, in `"YYYY-MM-DD"` format.
             acquired_before: Search for assets that contain data acquired before the specified timestamp, in `"YYYY-MM-DD"` format.
-            geometry: Search for assets that contain STAC items intersecting the provided geometry, in EPSG:4326 (WGS84) format. For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            geometry: Search for assets that contain STAC items intersecting the provided geometry, in EPSG:4326 (WGS84) format.\\
+                For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
             workspace_id: Search by the workspace ID.
             collection_names: Search for assets from any of the provided geospatial collections.
             producer_names: Search for assets from any of the provided producers.
             tags: Search for assets with any of the provided tags.
             sources: Search for assets from any of the provided sources. The allowed values: `"ARCHIVE"`, `"TASKING"`, `"ANALYTICS"`, `"USER"`.
             search: Search for assets that contain the provided search query in their name, title, or order ID.
-            custom_filter: CQL2 filters used to search for assets that contain STAC items with specific property values. For more information on filters, see [PySTAC Client Documentation — CQL2 Filtering](https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters). For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            custom_filter: CQL2 filters used to search for assets that contain STAC items with specific property values.\\
+                For more information on filters, see [PySTAC Client Documentation — CQL2 Filtering](https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters).\\
+                    For more information on STAC items, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
             limit: The number of results on a results page.
             sortby: The property to sort by.
             descending: The sorting order: <ul><li>`true` — descending</li><li>`false` — ascending</li></ul>
