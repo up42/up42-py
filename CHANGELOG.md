@@ -30,6 +30,9 @@ You can determine your currently installed version via:
 
 ## Versions
 
+### [0.28.1](https://pypi.org/project/up42-py/) (2023-04-06)
+- Updating test to latest version
+
 ### [0.28.0](https://pypi.org/project/up42-py/) (2023-02-17)
 - Added STAC search functionality to 
   [storage.get_assets](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.get_assets). 
