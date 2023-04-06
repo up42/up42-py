@@ -88,23 +88,37 @@ def test__search_stac_live(storage_live):
     geometry = {
         "coordinates": [
             [
-                [13.353338545805542, 52.52576354784705],
-                [13.353338545805542, 52.52400476917347],
-                [13.355812219301214, 52.52400476917347],
-                [13.355812219301214, 52.52576354784705],
-                [13.353338545805542, 52.52576354784705],
+                [
+                13.290655771836441,
+                52.54215979691358
+                ],
+                [
+                13.290655771836441,
+                52.42035305277207
+                ],
+                [
+                13.582819011302632,
+                52.42035305277207
+                ],
+                [
+                13.582819011302632,
+                52.54215979691358
+                ],
+                [
+                13.290655771836441,
+                52.54215979691358
+                ]
             ]
         ],
         "type": "Polygon",
     }
     stac_results = storage_live._search_stac(
-        acquired_after="2021-05-30",
+        acquired_after=datetime.datetime(2020, 5, 17),
         acquired_before=datetime.datetime(2023, 5, 17),
         geometry=geometry,
-        custom_filter={"op": "gte", "args": [{"property": "eo:cloud_cover"}, 10]},
     )
-    assert isinstance(stac_results, dict)
-    assert stac_results["features"][0]["assets"]
+    assert isinstance(stac_results, list)
+    assert stac_results[0]["assets"]
     # TODO: assertions
 
 
