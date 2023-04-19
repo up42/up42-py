@@ -1,10 +1,10 @@
-# 🔍 Search & Order Data
+# Search and order data
 
 A basic example on how to search & purchase data from the UP42 catalog.
 
 [![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2F1_search_order_data.ipynb)
 
-## **Authenticate**
+## Authenticate
 
 First connect with UP42 as explained in the [authentication chapter](authentication.md).
 
@@ -16,7 +16,7 @@ up42.authenticate(
 )
 ```
 
-## **Decide on dataset**
+## Decide on collection
 
 We look at the available data products and decide to order a *"Pléiades"* satellite image in the 
 *"Display"* configuration (*Pansharpened RGB-NIR bands, 8bit,*
@@ -41,7 +41,7 @@ products = catalog.get_data_products(basic=True)
 }
 ```
 
-## **Search image in the catalog**
+## Search image in the catalog
 
 Before ordering, we want to find a specific image in the *"Pléiades"* collection that fits our requirements. 
 Use [construct search parameters](catalog-reference.md#up42.catalog.Catalog.construct_search_parameters) 
@@ -70,7 +70,7 @@ search_results = catalog.search(search_parameters)
 ![Search results](assets/search_results.png)
 
 
-## **Order the image**
+## Order the image
 
 When you have decided on a specific image, you can purchase it by placing an order
 with the desired `image_id`, `data_product_id`,  and `geometry` parameters. 
@@ -113,7 +113,7 @@ order = catalog.place_order(order_parameters)
 You can check the status of the order via `order.status`. If you want to continuously track the
 order status until it is finished, use `order.track_status()`.
 
-## **Download the image**
+## Download the image
 
 After the order is finished, access the asset created from the order. To access all assets in your user storage see 
 the [Storage](storage.md) chapter.

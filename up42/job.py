@@ -157,7 +157,7 @@ class Job(VizTools):
             as_dataframe: Return type, Default Feature Collection. GeoDataFrame if True.
 
         Returns:
-            The job data.json json.
+            The job data.json.
         """
         url = (
             f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
@@ -293,10 +293,10 @@ class Job(VizTools):
         self, return_json: bool = False
     ) -> Union[List["JobTask"], List[dict]]:
         """
-        Get the individual items of the job as a list of JobTask objects or json.
+        Get the individual items of the job as a list of JobTask objects or JSON.
 
         Args:
-            return_json: If True returns the json information of the job tasks.
+            return_json: If True returns the JSON information of the job tasks.
 
         Returns:
             The job task objects in a list.

@@ -22,10 +22,10 @@ def read_vector_file(
 ) -> Union[dict, GeoDataFrame]:
     """
     Reads vector files (geojson, shapefile, kml, wkt) to a feature collection,
-    for use as the aoi geometry in the workflow input parameters
+    for use as the AOI geometry in the workflow input parameters
     (see get_input_parameters).
 
-    Example aoi fiels are provided, e.g. example/data/aoi_Berlin.geojson
+    Example AOI fields are provided, e.g. example/data/aoi_Berlin.geojson
 
     Args:
         filename: File path of the vector file.
@@ -61,7 +61,7 @@ def get_example_aoi(
     location: str = "Berlin", as_dataframe: bool = False
 ) -> Union[dict, GeoDataFrame]:
     """
-    Gets predefined, small, rectangular example aoi for the selected location.
+    Gets predefined, small, rectangular example AOI for the selected location.
 
     Args:
         location: Location, one of Berlin, Washington.
@@ -69,9 +69,9 @@ def get_example_aoi(
             (default).
 
     Returns:
-        Feature collection json with the selected aoi.
+        Feature collection JSON with the selected AOI.
     """
-    logger.info(f"Getting small example aoi in location '{location}'.")
+    logger.info(f"Getting small example AOI in location '{location}'.")
     if location == "Berlin":
         example_aoi = read_vector_file(
             f"{str(Path(__file__).resolve().parent)}/data/aoi_berlin.geojson"

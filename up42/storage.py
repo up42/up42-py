@@ -337,17 +337,17 @@ class Storage:
         descending: bool = True,
     ) -> Union[List[Order], dict]:
         """
-        Gets all orders in the workspace as Order objects or json.
+        Gets all orders in the workspace as Order objects or JSON.
 
         Args:
-            return_json: If set to True, returns json object.
+            return_json: If set to True, returns JSON object.
             limit: Optional, only return n first assets by sorting criteria and order.
                 Optimal to select if your workspace contains many assets.
             sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "type".
             descending: The sorting order, True for descending (default), False for ascending.
 
         Returns:
-            Order objects in the workspace or alternatively json info of the orders.
+            Order objects in the workspace or alternatively JSON info of the orders.
         """
         allowed_sorting_criteria = [
             "createdAt",

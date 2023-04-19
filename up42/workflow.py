@@ -292,7 +292,7 @@ class Workflow:
         to make it easy to construct the desired parameters.
 
         Returns:
-            Workflow parameters info json.
+            Workflow parameters info JSON.
         """
         workflow_parameters_info = {}
         workflow_tasks = self.get_workflow_tasks()
@@ -352,7 +352,7 @@ class Workflow:
         **kwargs,
     ) -> dict:
         """
-        Constructs workflow input parameters with a specified aoi, the default input parameters, and
+        Constructs workflow input parameters with a specified AOI, the default input parameters, and
         optionally limit and order-ids. Further parameter editing needs to be done manually
         via dict.update({key:value}).
 
@@ -499,7 +499,7 @@ class Workflow:
         Estimation of price and duration of the workflow for the provided input parameters.
 
         Args:
-            input_parameters: Either json string of workflow parameters or filepath to json.
+            input_parameters: Either JSON string of workflow parameters or filepath to JSON.
 
         Returns:
             A dictionary of estimation for each task in the workflow.
@@ -547,7 +547,7 @@ class Workflow:
         Helper function to create and run a new real or test job.
 
         Args:
-            input_parameters: Either json string of workflow parameters or filepath to json.
+            input_parameters: Either JSON string of workflow parameters or filepath to JSON.
             test_job: If set, runs a test query (search for available imagery based on your data parameters).
             track_status: Automatically attaches workflow.track_status which queries
                 the job status every 30 seconds.
@@ -564,7 +564,7 @@ class Workflow:
         if isinstance(input_parameters, (str, Path)):
             with open(input_parameters) as src:
                 input_parameters = json.load(src)
-            logger.info("Loading job parameters from json file.")
+            logger.info("Loading job parameters from JSON file.")
 
         if test_job:
             input_parameters = input_parameters.copy()  # type: ignore
@@ -707,7 +707,7 @@ class Workflow:
         charged with any data or processing credits, but have a preview of the job result.
 
         Args:
-            input_parameters: Either json string of workflow parameters or filepath to json.
+            input_parameters: Either JSON string of workflow parameters or filepath to JSON.
             track_status: Automatically attaches workflow.track_status which queries
                 the job status every 30 seconds.
             name: The job name. Optional, by default the workflow name is assigned.
@@ -764,7 +764,7 @@ class Workflow:
         Creates and runs a new job.
 
         Args:
-            input_parameters: Either json string of workflow parameters or filepath to json.
+            input_parameters: Either JSON string of workflow parameters or filepath to JSON.
             track_status: Automatically attaches workflow.track_status which queries
                 the job status every 30 seconds.
             name: The job name. Optional, by default the workflow name is assigned.
@@ -807,15 +807,15 @@ class Workflow:
         self, return_json: bool = False, test_jobs: bool = True, real_jobs: bool = True
     ) -> Union[JobCollection, List[Dict]]:
         """
-        Get all jobs associated with the workflow as a JobCollection or json.
+        Get all jobs associated with the workflow as a JobCollection or JSON.
 
         Args:
-            return_json: If true, returns the job info jsons instead of a JobCollection.
+            return_json: If true, returns the job info JSONs instead of a JobCollection.
             test_jobs: Return test jobs or test queries.
             real_jobs: Return real jobs.
 
         Returns:
-            A JobCollection, or alternatively the jobs info as json.
+            A JobCollection, or alternatively the jobs info as JSON.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
         response_json = self.auth._request(request_type="GET", url=url)

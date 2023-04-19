@@ -1,4 +1,4 @@
-# :floppy_disk: Installation
+# Installation
 
 **Install via pip or conda** (requires Python version >3.6, Python 3.10 is not yet supported.)
 

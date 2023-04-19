@@ -77,10 +77,10 @@ def requires_viz(func):
 @requires_viz
 def draw_aoi() -> "folium.Map":
     """
-    Displays an interactive map to draw an aoi by hand, returns the folium object if
+    Displays an interactive map to draw an AOI by hand, returns the folium object if
     not run in a Jupyter notebook.
 
-    Export the drawn aoi via the export button, then read the geometries via
+    Export the drawn AOI via the export button, then read the geometries via
     up42.read_aoi_file().
 
     Requires installation of up42-py[viz] extra dependencies.
@@ -252,12 +252,12 @@ class VizTools:
         save_html: Optional[Path] = None,
     ) -> "folium.Map":
         """
-        Displays data.json, and if available, one or multiple results geotiffs.
+        Displays data.json, and if available, one or multiple results GeoTIFFs.
 
         Args:
             plot_file_format: List of accepted image file formats e.g. [".png"]
             result_df: GeoDataFrame with scene geometries.
-            aoi: GeoDataFrame of aoi.
+            aoi: GeoDataFrame of AOI.
             filepaths: Paths to images to plot. Optional, by default picks up the last
                 downloaded results.
             bands: Image bands and order to plot, e.g. [1,2,3]. First band is 1.
@@ -380,13 +380,13 @@ class VizTools:
         save_html: Path = None,
     ) -> "folium.Map":
         """
-        Displays data.json, and if available, one or multiple results geotiffs.
+        Displays data.json, and if available, one or multiple results GeoTIFFs.
 
         Requires installation of up42-py[viz] extra dependencies.
 
         Args:
             bands: Image bands and order to plot, e.g. [1,2,3]. First band is 1.
-            aoi: Optional visualization of aoi boundaries when given GeoDataFrame of aoi.
+            aoi: Optional visualization of AOI boundaries when given GeoDataFrame of AOI.
             show_images: Shows images if True (default).
             show_features: Shows features if True (default).
             name_column: Name of the feature property that provides the Feature/Layer name.
@@ -400,7 +400,7 @@ class VizTools:
         f_paths = []
         if isinstance(self.results, list):
             # Add features to map.
-            # Some blocks store vector results in an additional geojson file.
+            # Some blocks store vector results in an additional GeoJSON file.
             # pylint: disable=not-an-iterable
             json_fp = [fp for fp in self.results if fp.endswith(".geojson")]
             if json_fp:
@@ -455,7 +455,7 @@ class VizTools:
 
         Args:
             scenes: GeoDataFrame of scenes, results of catalog.search()
-            aoi: GeoDataFrame of aoi.
+            aoi: GeoDataFrame of AOI.
             show_images: Shows images if True (default).
             show_features: Shows no features if False (default).
             filepaths: Paths to images to plot. Optional, by default picks up the last
@@ -496,7 +496,7 @@ class VizTools:
 
         Args:
             scenes: GeoDataFrame of scenes, results of catalog.search()
-            aoi: GeoDataFrame of aoi.
+            aoi: GeoDataFrame of AOI.
             legend_column: Dataframe column set to legend, default is "sceneId".
                     Legend entries are sorted and this determines plotting order.
             figsize: Matplotlib figure size.

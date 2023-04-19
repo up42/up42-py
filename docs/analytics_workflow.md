@@ -1,10 +1,10 @@
-# :world_map: Run Analytics Workflow
+# Run analytics workflow
 
 This chapter shows how to create and run workflow with a data source and analytics/processing algorithm.
 
 [![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2F4_analtics_workflow.ipynb)
 
-## **Authenticate**
+## Authenticate
 
 First connect with UP42 as explained in the [authentication chapter](authentication.md).
 
@@ -16,7 +16,7 @@ up42.authenticate(
 )
 ```
 
-## **Create a workflow**
+## Create a workflow
 
 This simple workflow consists of [Sentinel-2 L2A data](https://up42.com/marketplace/blocks/data/aws-s2-l2a)
 and [Sharpening Filter](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e).
@@ -32,7 +32,7 @@ workflow.add_workflow_tasks(["Sentinel-2 L2A Visual (GeoTIFF)",
                              "Sharpening Filter"])
 ```
 
-## **Configure the workflow**
+## Configure the workflow
 
 Provide workflow input parameters to configure the workflow, e.g. the area of interest, time period etc.
 with the help of the [construct_parameters](workflow-reference.md#up42.workflow.Workflow.construct_parameters) function.
@@ -49,7 +49,7 @@ input_parameters = workflow.construct_parameters(geometry=aoi,
                                                  limit=1)
 input_parameters["esa-s2-l2a-gtiff-visual:1"].update({"max_cloud_cover":5})
 ```
-## **Estimate costs & Test**
+## Estimate costs and test
 
 Before running the workflow, estimate the costs. You can also run a free test job to confirm the correct job 
 configuration and data availability.
@@ -62,7 +62,7 @@ workflow.estimate_job(input_parameters)
 workflow.test_job(input_parameters, track_status=True)
 ```
 
-## **Run the workflow**
+## Run the workflow
 
 ```python
 job = workflow.run_job(input_parameters, track_status=True)

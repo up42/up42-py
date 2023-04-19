@@ -44,11 +44,11 @@ def authenticate(
     **kwargs,
 ):
     """
-    Authenticate with UP42, either via project_id & project_api_key, or a config json file containing both.
+    Authenticate with UP42, either via project_id & project_api_key, or a config JSON file containing both.
     Also see the documentation https://sdk.up42.com/authentication/
 
     Args:
-        cfg_file: A json file containing project_id & project_api_key
+        cfg_file: A JSON file containing project_id & project_api_key
         project_id: The UP42 project id.
         project_api_key: The UP42 project api key.
 
@@ -91,7 +91,7 @@ def get_webhooks(return_json: bool = False) -> List[Webhook]:
     Gets all registered webhooks for this workspace.
 
     Args:
-        return_json: If true returns the webhooks information as json instead of webhook class objects.
+        return_json: If true returns the webhooks information as JSON instead of webhook class objects.
     Returns:
         A list of the registered webhooks for this workspace.
     """
@@ -149,7 +149,7 @@ def get_blocks(
     Args:
         block_type: Optionally filters to "data" or "processing" blocks, default None.
         basic: Optionally returns simple version {block_id : block_name}
-        as_dataframe: Returns a dataframe instead of json (default).
+        as_dataframe: Returns a dataframe instead of JSON (default).
 
     Returns:
         A list of the public blocks and their metadata. Optional a simpler version
@@ -200,7 +200,7 @@ def get_block_details(block_id: str, as_dataframe: bool = False) -> dict:
 
     Args:
         block_id: The block id.
-        as_dataframe: Returns a dataframe instead of json (default).
+        as_dataframe: Returns a dataframe instead of JSON (default).
 
     Returns:
         A dict of the block details metadata for the specific block.
@@ -308,7 +308,7 @@ def get_credits_history(
 @_check_auth
 def validate_manifest(path_or_json: Union[str, Path, dict]) -> dict:
     """
-    Validates a block manifest json.
+    Validates a block manifest JSON.
 
     The block manifest is required to build a custom block on UP42 and contains
     the metadata about the block as well as block input and output capabilities.
@@ -316,7 +316,7 @@ def validate_manifest(path_or_json: Union[str, Path, dict]) -> dict:
     [manifest chapter in the UP42 documentation](https://docs.up42.com/reference/block-manifest.html).
 
     Args:
-        path_or_json: The input manifest, either a filepath or json string, see example.
+        path_or_json: The input manifest, either a filepath or JSON string, see example.
 
     Returns:
         A dictionary with the validation results and potential validation errors.

@@ -231,8 +231,8 @@ class Catalog(CatalogBase, VizTools):
                 (can be any combination). The filter is inclusive, using ["DATA"] can
                 also result in results with ["DATA", "ANALYTICS"].
             limit: The maximum number of search results to return (1-max.500).
-            max_cloudcover: Optional. Maximum cloudcover % - e.g. 100 will return all scenes,
-                8.4 will return all scenes with 8.4 or less cloudcover.
+            max_cloudcover: Optional. Maximum cloud coverage percent - e.g. 100 will return all scenes,
+                8.4 will return all scenes with 8.4 or less cloud coverage.
             sortby: The property to sort by, "cloudCoverage", "acquisitionDate",
                 "acquisitionIdentifier", "incidenceAngle", "snowCover".
             ascending: Ascending sort order by default, descending if False.
@@ -286,7 +286,7 @@ class Catalog(CatalogBase, VizTools):
             as_dataframe: return type, GeoDataFrame if True (default), FeatureCollection if False.
 
         Returns:
-            The search results as a GeoDataFrame, optionally as json dict.
+            The search results as a GeoDataFrame, optionally as JSON dict.
 
         Example:
             ```python
@@ -377,7 +377,7 @@ class Catalog(CatalogBase, VizTools):
         ] = None,
     ):
         """
-        Helps constructing the parameters dictionary required for the catalog order. Some datasets have
+        Helps constructing the parameters dictionary required for the catalog order. Some collections have
         additional parameters that are added to the output dictionary with value None. The potential values to
         select from are given in the logs, for more detail on the parameter use `catalog.get_data_product_schema()`.
 
@@ -412,7 +412,7 @@ class Catalog(CatalogBase, VizTools):
         schema = self.get_data_product_schema(data_product_id)
         order_parameters = autocomplete_order_parameters(order_parameters, schema)
 
-        # Some catalog orders, e.g. Capella don't require aoi (full image order)
+        # Some catalog orders, e.g. Capella don't require AOI (full image order)
         # Handled on API level, don't manipulate in SDK, providers might accept geometries in the future.
         if aoi is not None:
             aoi = any_vector_to_fc(vector=aoi)

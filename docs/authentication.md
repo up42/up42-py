@@ -1,4 +1,4 @@
-# :key: Authentication
+# Authentication
 
 To use the UP42 Python SDK, you first need to authenticate with **UP42** via your **project credentials**:
 
@@ -10,9 +10,9 @@ up42.authenticate(
 )
 ```
 
-### Get your Project credentials
+### Get your project credentials
 
-Log in to **[UP42.com](https://console.up42.com)** and select a **Project**.
+Log in to the [console](https://console.up42.com) and select a **Project**.
 In the project's **Developers section** you can find the **Project ID** and **Project API key**.
 
 <figure markdown>
@@ -56,4 +56,4 @@ up42.authenticate(cfg_file="config.json")
 
 <br>
 
-⏭️ Continue with the [Search & Order data chapter](search_order.md).
+⏭️ Continue with [Search and order data](search_order.md).

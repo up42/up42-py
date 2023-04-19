@@ -19,9 +19,9 @@
 </p>
 
 ## Highlights
-- Python package for easy access to **[UP42's](http://www.up42.com)** **geospatial datasets** & **analytics workflows**
+- Python package for easy access to [UP42's](http://www.up42.com) geospatial collections and analytics workflows
 - Use UP42 functionality together with your preferred Python libraries!
-- Interactive maps & **visualizations** of your UP42 assets
+- Interactive maps and visualizations of your UP42 assets
 
 ![](docs/assets/vizualisations.jpg)
 
@@ -31,8 +31,8 @@
 
 ## Installation & Documentation
 
-See the **[documentation](https://sdk.up42.com/)** for **Getting Started** guides, **examples** and the **code 
-reference**. 
+See the [documentation](https://sdk.up42.com/) for getting started guides, examples and the code
+reference. 
 
 Install via pip or conda. The package requires Python > 3.6.
 
@@ -81,4 +81,4 @@ assets[0].download()
 
 ## Support
 
-For any kind of issues or suggestions please see the [**documentation**](https://sdk.up42.com/), open a **[github issue](https://github.com/up42/up42-py/issues)** or contact us via Email **[support@up42.com](mailto:support@up42.com)**
+For any kind of issues or suggestions please see the [documentation](https://sdk.up42.com/), open a [GitHub issue](https://github.com/up42/up42-py/issues) or [contact support](https://up42.com/company/contact-support).
