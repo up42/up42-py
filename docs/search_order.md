@@ -132,4 +132,4 @@ assets[0].download()
 
 <br>
 
-⏭️ Continue with the [Tasking](tasking.md) chapter.
+Continue with [Satellite tasking](tasking.md).

@@ -261,7 +261,7 @@ class Workflow:
 
         !!! Info "Using Custom Blocks"
             To use a custom block in your workspace, you need to provide the custom block
-            id directly in the [full workflow definition](https://docs.up42.com/going-further/api-walkthrough.html#creating-the-the-second-task-processing-block-addition)
+            id directly in the full workflow definition
             (dict of block id, block name and parent block name). See example below.
 
         Examples:

@@ -85,4 +85,4 @@ up42_stac_collections = up42_pystac_client.get_collections()
 
 For more information, see [Storage](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.pystac_client).
 
-⏭️ Continue with the [Run an analytics workflow](analytics_workflow.md) chapter.
+Continue with [Run analytics workflows](analytics_workflow.md).

@@ -41,4 +41,4 @@ import up42
 
 <br>
 
-⏭️ Continue with the [Authentication chapter](authentication.md).
+Continue with [Authentication](authentication.md).

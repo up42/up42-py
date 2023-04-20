@@ -39,7 +39,7 @@ nav:
       - Search and order data: search_order.md
       - Satellite tasking: tasking.md
       - Storage assets: storage.md
-      - Run analytics workflow: analytics_workflow.md
+      - Run analytics workflows: analytics_workflow.md
     - Advanced:
       - Functionality: structure.md
       - Geometry handling: geometry_handling.md

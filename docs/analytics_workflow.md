@@ -1,4 +1,4 @@
-# Run analytics workflow
+# Run analytics workflows
 
 This chapter shows how to create and run workflow with a data source and analytics/processing algorithm.
 
@@ -76,4 +76,4 @@ job.plot_results()
 
 <br>
 
-⏭️ Continue with the [Advanced section](structure.md) or see the examples & code reference.
+Continue with the [Advanced section](structure.md) or see the examples and code reference.

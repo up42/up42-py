@@ -56,4 +56,4 @@ up42.authenticate(cfg_file="config.json")
 
 <br>
 
-⏭️ Continue with [Search and order data](search_order.md).
+Continue with [Search and order data](search_order.md).

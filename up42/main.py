@@ -265,7 +265,6 @@ def get_credits_history(
 
     Returns:
         A dict with the information of the credit consumption records for all the users linked by the account_id.
-        (see https://docs.up42.com/developers/api#operation/getHistory for output description)
     """
     if start_date is None:
         start_date = "2000-01-01"
@@ -310,10 +309,9 @@ def validate_manifest(path_or_json: Union[str, Path, dict]) -> dict:
     """
     Validates a block manifest JSON.
 
-    The block manifest is required to build a custom block on UP42 and contains
+    The [block manifest](https://docs.up42.com/processing-platform/custom-blocks/manifest)
+    is required to build a custom block on UP42 and contains
     the metadata about the block as well as block input and output capabilities.
-    Also see the
-    [manifest chapter in the UP42 documentation](https://docs.up42.com/reference/block-manifest.html).
 
     Args:
         path_or_json: The input manifest, either a filepath or JSON string, see example.
