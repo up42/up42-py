@@ -259,7 +259,7 @@ def any_vector_to_fc(
                 if df.crs.to_string() != "EPSG:4326":
                     df = df.to_crs(epsg=4326)
             except AttributeError as e:
-                raise AttributeError("GeoDataFrame requires a crs.") from e
+                raise AttributeError("GeoDataFrame requires a CRS.") from e
 
     if as_dataframe:
         return df
@@ -288,14 +288,14 @@ def fc_to_query_geometry(
 ) -> Union[List, dict]:
     """
     From a feature collection with a single feature, depending on the geometry_operation,
-    returns the feature as a list of bounds coordinates or a geojson Polygon (as dict).
+    returns the feature as a list of bounds coordinates or a GeoJSON Polygon (as dict).
 
     Args:
         fc: feature collection
         geometry_operation: One of "bbox", "intersects", "contains".
 
     Returns:
-        The feature as a list of bounds coordinates or a geojson Polygon (as dict)
+        The feature as a list of bounds coordinates or a GeoJSON Polygon (as dict)
     """
     validate_fc_up42_requirements(fc)
     feature = fc["features"][0]

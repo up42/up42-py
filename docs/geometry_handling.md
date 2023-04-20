@@ -1,4 +1,4 @@
-# Geometry Handling
+# Geometry handling
 
 The Polygon `geometry` parameter required for some UP42 operations like placing an image order, can be 
 provided in multiple formats in the Python SDK. It is automatically transformed to the required formatting. 

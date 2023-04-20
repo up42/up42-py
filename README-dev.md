@@ -20,7 +20,7 @@ make install[dev]
 
 3. Create a new project on [UP42](https://up42.com).
 
-4. Create a `config.json` file and fill in the [project credentials](https://docs.up42.com/getting-started/first-api-request.html#run-your-first-job-via-the-api).
+4. Create a `config.json` file and fill in the [project credentials](https://docs.up42.com/developers/authentication#step-1-find-project-credentials.
 ```json
 {
   "project_id": "...",

@@ -1,8 +1,8 @@
-# :satellite: **Create a Satellite Tasking Order**
+# Satellite tasking
 
 A basic example on how to create a tasking order on UP42.
 
-## **Authenticate**
+## Authenticate
 
 First connect with UP42 as explained in the [authentication chapter](authentication.md).
 
@@ -14,7 +14,7 @@ up42.authenticate(
 )
 ```
 
-## **Decide on the satellite dataset**
+## Decide on the satellite collection
 
 We look at the available data products and decide to create a tasking order for a TerraSar satellite image (
 [see marketplace](https://up42.com/marketplace/data/tasking/terra-sar-tasking)). The `get_data_products` function 
@@ -43,7 +43,7 @@ print(products)
 terrasar_product_id = "a6f64332-3148-4e05-a475-45a02176f210"
 ```
 
-## **Create the order parameters**
+## Create the order parameters
 
 ```python
 #geometry = up42.read_vector_file("data/aoi_washington.geojson")
@@ -99,7 +99,7 @@ print(order_parameters)
   "processingLevel": "ssc"}}
 ```
 
-## **Place the tasking order**
+## Place the tasking order
 
 After placing the tasking order, UP42 will carry out a feasibility study for the specified requirements and contact you
 with next steps via email.
@@ -116,7 +116,7 @@ tab.
 order.status
 ```
 
-## **Feasibility study**
+## Feasibility study
 
 After the order placed, the UP42 customer support team will reach out to you via email with the results of the
 tasking feasibility study and pricing options.

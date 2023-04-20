@@ -141,7 +141,7 @@ class Webhooks:
         Gets all registered webhooks for this workspace.
 
         Args:
-            return_json: If true returns the webhooks information as json instead of webhook class objects.
+            return_json: If true returns the webhooks information as JSON instead of webhook class objects.
 
         Returns:
             A list of the registered webhooks for this workspace.

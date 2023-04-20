@@ -1,4 +1,4 @@
-# Privacy Policy
+# Privacy policy
 
 *Last amended: September, 14th, 2020*
 

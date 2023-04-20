@@ -1,4 +1,4 @@
-# :card_box: Functionality
+# Functionality
 
 ## Structure
 

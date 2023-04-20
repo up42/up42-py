@@ -53,7 +53,6 @@ class retry_if_429_rate_limit(retry_if_exception):
     """
     Custom tenacity error response that enables separate retry strategy for
     429 HTTPError (too many requests) due to UP42 rate limitation.
-    Also see https://docs.up42.com/developers/api#section/API-Usage-Constraints/Rate-limiting
 
     Adapted from https://github.com/alexwlchan/handling-http-429-with-tenacity
     """

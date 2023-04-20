@@ -1,7 +1,5 @@
 # Visualizations
 
-
-
 The UP42 Python offers plotting and interactive map functionality to visualize the downloaded data and quicklooks.
 The visualization functionality is optional and not installed with the default installation. In order to use them, 
 install the additional library dependencies (also see the [Installation chapter](installation.md)):
@@ -21,7 +19,7 @@ install the additional library dependencies (also see the [Installation chapter]
 
 ![](assets/vizualisations.jpg)
 
-## **Interactive Maps**
+## Interactive maps
 
 Works best in a [Jupyter notebook](https://jupyter.org/)!
 
@@ -29,7 +27,7 @@ Works best in a [Jupyter notebook](https://jupyter.org/)!
     ```python
     up42.draw_aoi()
     ```
-    You can export the drawn aoi as a GeoJSON and e.g. use it via `up42.read_vector_geometry()`
+    You can export the drawn AOI as a GeoJSON and e.g. use it via `up42.read_vector_geometry()`
 
 === "Job Results"
     ```python
@@ -49,8 +47,7 @@ Works best in a [Jupyter notebook](https://jupyter.org/)!
     catalog.map_quicklooks(scenes=search_results, aoi=aoi)
     ```
 
-## **Plots**
-
+## Plots
 
 === "Catalog Quicklooks"
     ```python

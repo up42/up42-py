@@ -33,24 +33,24 @@ extra:
 ## Page tree
 nav:
     - Home: index.md
-    - Getting Started:
+    - Getting started:
       - Installation: installation.md
       - Authentication: authentication.md
-      - Search & Order data: search_order.md
-      - Satellite Tasking: tasking.md
-      - Storage Assets: storage.md
-      - Run Analytics Workflow: analytics_workflow.md
+      - Search and order data: search_order.md
+      - Satellite tasking: tasking.md
+      - Storage assets: storage.md
+      - Run analytics workflows: analytics_workflow.md
     - Advanced:
-        - Functionality: structure.md
-        - Geometry Handling: geometry_handling.md
-        - Visualizations: visualizations.md
-        - Webhooks: webhooks.md
-        - Example Notebooks:
-          - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
-          - NEXTMap One - Elevation Data (Streaming) and Viewshed: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
-          - Open Street Map: examples/data-block-examples/osm-example.ipynb
-          - Ship Identification: examples/advanced/ship-identification.ipynb
-    - Code Reference:
+      - Functionality: structure.md
+      - Geometry handling: geometry_handling.md
+      - Visualizations: visualizations.md
+      - Webhooks: webhooks.md
+      - Example notebooks:
+        - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
+        - NEXTMap One - Elevation Data (Streaming) and Viewshed: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
+        - Open Street Map: examples/data-block-examples/osm-example.ipynb
+        - Ship Identification: examples/advanced/ship-identification.ipynb
+    - Code reference:
         - up42: reference/up42-reference.md
         - Catalog: reference/catalog-reference.md
         - Tasking: reference/tasking-reference.md
@@ -63,10 +63,10 @@ nav:
         - JobCollection: reference/jobcollection-reference.md
         - JobTask: reference/jobtask-reference.md
         - Webhooks: reference/webhooks-reference.md
-    - Changelog & FAQ:
+    - Changelog and FAQ:
         - Changelog: CHANGELOG.md
-        - FAQ & Support: support-faq.md
-        - Privacy Policy: 'https://up42.com/legal/privacy'
+        - FAQ and support: support-faq.md
+        - Privacy policy: 'https://up42.com/legal/privacy'
 
 ## Configuration
 theme:

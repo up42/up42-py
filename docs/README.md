@@ -18,7 +18,7 @@ make serve
 ```
 Access at `http://127.0.0.1:8000/`
 
-## Build site (Not really neccessary due to preview function):
+## Build site (not really necessary due to preview function):
 ```
 mkdocs build
 ```

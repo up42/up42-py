@@ -1,4 +1,4 @@
-# :floppy_disk: Installation
+# Installation
 
 **Install via pip or conda** (requires Python version >3.6, Python 3.10 is not yet supported.)
 
@@ -41,4 +41,4 @@ import up42
 
 <br>
 
-⏭️ Continue with the [Authentication chapter](authentication.md).
+Continue with [Authentication](authentication.md).

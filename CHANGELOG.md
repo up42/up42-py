@@ -1,4 +1,4 @@
-# :calendar: Changelog
+# Changelog
 
 To update your installation to the latest version use:
 
@@ -28,169 +28,244 @@ You can determine your currently installed version via:
     conda search up42-py
     ```
 
-## Versions
+For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-### [0.28.1](https://pypi.org/project/up42-py/) (2023-04-06)
+## 0.28.1
+
+**April 6, 2023**
+
 - Updating test to latest version
 
-### [0.28.0](https://pypi.org/project/up42-py/) (2023-02-17)
-- Added STAC search functionality to 
-  [storage.get_assets](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.get_assets). 
-  Now you can filter assets by new parameters: `geometry`, `acquired_after`, `acquired_before`, 
+## 0.28.0
+
+**February 17, 2023**
+
+- Added STAC search functionality to
+  [storage.get_assets](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.get_assets).
+  Now you can filter assets by new parameters: `geometry`, `acquired_after`, `acquired_before`,
   `collection_names`, `producer_names`, `tags`, `search`, `sources`.
-- Added [storage.pystac_client](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.pystac_client). 
+- Added [storage.pystac_client](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.pystac_client).
   Use it to authenticate PySTAC client to access your UP42 storage assets using its library.
-- Added [asset.stac_info](https://sdk.up42.com/reference/asset-reference/#up42.asset.Asset.stac_info). 
+- Added [asset.stac_info](https://sdk.up42.com/reference/asset-reference/#up42.asset.Asset.stac_info).
   Use it to access STAC metadata, such as acquisition, sensor, and collection information.
 
-### [0.27.1](https://pypi.org/project/up42-py/) (2023-01-26)
+## 0.27.1
+
+**January 26, 2023**
+
 - Improve error communication of functions using API v2 endpoints.
 - add `up42.__version__` attribute to access the package version with Python.
 - Adapt asset class attributes (`created` to `createdAt`) to UP42 API.
 
-### [0.27.0](https://pypi.org/project/up42-py/) (2022-12-12)
+## 0.27.0
+
+**December 12, 2022**
+
 - Add `asset.update_metadata()` for adjusting title & tags of an asset.
-- `storage.get_assets()` has new parameters `created_after`, `created_before`, `workspace_id`  to better filter the 
-  desired assets. It now queries the assets of all accessible workspaces by default. Also see 
+- `storage.get_assets()` has new parameters `created_after`, `created_before`, `workspace_id`  to better filter the
+  desired assets. It now queries the assets of all accessible workspaces by default. Also see
   [docs reference](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.get_assets).
 - Adopt new UP42 API 2.0 endpoints for user storage & assets.
 
-### [0.26.0](https://pypi.org/project/up42-py/) (2022-11-02)
-- Remove Python version upper bound, this will enable immediate but untested installation with any new Python version. 
+## 0.26.0
+
+**November 2, 2022**
+
+- Remove Python version upper bound, this will enable immediate but untested installation with any new Python version.
 - Changes to `workflow.construct_parameters`:
   - Deprecates the `assets` parameter (list of asset objects), instead use `asset_ids` (list of asset_ids).
-  - Removes limitation of using only assets originating from blocks, now also supports assets from catalog & 
+  - Removes limitation of using only assets originating from blocks, now also supports assets from catalog &
     tasking.
   - In addition to required parameters, now adds all optional parameters that have default values.
 - `tasking.construct_order_parameters` now accepts a Point feature (e.g. use with Blacksky).
 - Fix: `get_data_products` with `basic=False` now correctly returns only tasking OR catalog products.
 - The up42 object now correctly does not give access to third party imports anymore (restructured init module).
 
-### [0.25.0](https://pypi.org/project/up42-py/) (2022-10-25)
-- Add dedicated tasking class for improved handling of satellite tasking orders. See 
+## 0.25.0
+
+**October 25, 2022**
+
+- Add dedicated tasking class for improved handling of satellite tasking orders. See
   [new example](https://sdk.up42.com/tasking/) in the documentation.
-- `construct_order_parameters` now also adds the parameters specific to the selected data-product, and suggests 
+- `construct_order_parameters` now also adds the parameters specific to the selected data-product, and suggests
   possible values based on the data-product schema.
 
-### [0.24.0](https://pypi.org/project/up42-py/) (2022-10-20)
+## 0.24.0
+
+**October 20, 2022**
+
 - Add `catalog.get_data_product_schema()` for details on the order parameters
 - Switches parameter `sensor` to `collection` in `catalog.download_quicklooks`.
-- Various small improvements e.g. quicklooks automatic band selection, Reduced use of default parameters in 
+- Various small improvements e.g. quicklooks automatic band selection, Reduced use of default parameters in
   constructor methods, error message display, optimized API call handling for parameter validation etc.
 - Internal: Separation of Catalog and CatalogBase to prepare addition of Tasking class, reorganize test fixtures.
 
-### [0.23.1](https://pypi.org/project/up42-py/) (2022-10-05)
-- Fixes issue with filename of downloaded assets containing two suffix `.` e.g. `./output..zip`. 
+## 0.23.1
+
+**October 5, 2022**
+
+- Fixes issue with filename of downloaded assets containing two suffix `.` e.g. `./output..zip`.
   Resolves [#350](https://github.com/up42/up42-py/issues/350)
 
-### [0.23.0](https://pypi.org/project/up42-py/) (2022-09-20)
-- Integrates the UP42 [data products](https://docs.up42.com/developers/api#tag/data-products), 
-  e.g. the selection "Display" and "Reflectance" configuration in the ordering process. The new ordering process 
-  requires the selection of a specific data product, see the updated 
-  [Search & Order data](https://sdk.up42.com/search_order/) documentation chapter.
+## 0.23.0
+
+**September 20, 2022**
+
+- Integrates the UP42 [data products](https://docs.up42.com/developers/api#tag/data-products),
+  e.g. the selection "Display" and "Reflectance" configuration in the ordering process. The new ordering process
+  requires the selection of a specific data product, see the updated
+  [Search and order data](https://sdk.up42.com/search_order/) documentation chapter.
 - The `order_parameters` argument for `catalog.estimate_order` and `catalog.place_order` now has a
   [different structure](https://sdk.up42.com/reference/catalog-reference/#up42.catalog.Catalog.place_order).
-  **The previous option to just specify the collection name will soon be deactivated in the UP42 API!** 
+  **The previous option to just specify the collection name will soon be deactivated in the UP42 API!**
 - New function `catalog.get_data_products`
 - New function `catalog.construct_order_parameters`
-- `catalog.construct_search_parameters` replaces `catalog.construct_parameters` which is deprecated and will be 
+- `catalog.construct_search_parameters` replaces `catalog.construct_parameters` which is deprecated and will be
   removed in v0.25.0
 
-### [0.22.2](https://pypi.org/project/up42-py/) (2022-07-21)
+## 0.22.2
+
+**July 21, 2022**
+
 - Fix unpacking of order assets if no output topfolder inherent in archive
 
-### [0.22.1](https://pypi.org/project/up42-py/) (2022-07-19)
+## 0.22.1
+
+**July 19, 2022**
+
 - Fix conda release (include requirements-viz file)
 
-### [0.22.0](https://pypi.org/project/up42-py/) (2022-07-05)
+## 0.22.0
+
+**July 5, 2022**
+
 - Adds webhooks functionality to the SDK, see new [webhooks docs chapter](https://sdk.up42.com/webhooks/).
-- Introduces optional installation option for the visualization functionalities. The required dependencies are now 
+- Introduces optional installation option for the visualization functionalities. The required dependencies are now
   not installed by default. See the new [visualization docs chapter] (https://sdk.up42.com/visualizations/).
-- Removes `order.metadata` property, as removed from UP42 API. 
+- Removes `order.metadata` property, as removed from UP42 API.
 - Fix: Using a MultiPolygon geometry in construct_parameters will now correctly raise an error as not accepted.
 - Documentation overhaul & various improvements
 
-### [0.21.0](https://pypi.org/project/up42-py/) (2022-05-12)
+## 0.21.0
+
+**May 12, 2022**
+
 - Adding `up42.get_balance` and `up42.get_credits_history` features for allowing account information retrieval.
-- Adding `up42.get_block_coverage` features for retrieval of the catalog blocks' coverage as geojson.
+- Adding `up42.get_block_coverage` features for retrieval of the catalog blocks' coverage as GeoJSON.
 - `project.get_jobs` now has sorting criteria, sorting order and limit parameters.
 - Catalog search now enables search for Pleiades Neo etc. (uses host specific API endpoints)
 - Fix: `project.get_jobs` now correctly queries the full number of jobs.
 
-### [0.20.2](https://pypi.org/project/up42-py/) (2022-04-10)
+## 0.20.2
+
+**April 10, 2022**
+
 - Update documentation
 - Non functional changes to enable conda release
-- Update requirements and removing overlapping subdependencies 
+- Update requirements and removing overlapping subdependencies
 
-### [0.20.1](https://pypi.org/project/up42-py/) (2022-04-05)
+## 0.20.1
+
+**April 5, 2022**
+
 - Update documentation for latest changes on the user console.
 - Remove outdated examples.
-- Add required files on the dist version for allowing creation of conda meta files. 
+- Add required files on the dist version for allowing creation of conda meta files.
 
-### [0.20.0](https://pypi.org/project/up42-py/) (2022-02-15)
+## 0.20.0
+
+**February 15, 2022**
+
 - Enables getting credits consumed by a job via `job.get_credits`.
-  
-### [0.19.0](https://pypi.org/project/up42-py/) (2022-01-28)
+
+## 0.19.0
+
+**January 28, 2022**
+
 - Add support for UP42 data collections via `catalog.get_collections`.
-- Switch `catalog.construct_parameters` to use `collection` instead of `sensor` for 
-  the dataset selection.
-- Refactor retry mechanism. Resolves issue of unintended token renewals & further limits 
+- Switch `catalog.construct_parameters` to use `collection` instead of `sensor` for
+  the collection selection.
+- Refactor retry mechanism. Resolves issue of unintended token renewals & further limits
   retries.
 
-### [0.18.1](https://pypi.org/project/up42-py/) (2021-12-20)
+## 0.18.1
+
+**December 20, 2021**
+
 - Allow installation with Python 3.9
 
-### [0.18.0](https://pypi.org/project/up42-py/) (2021-11-10)
-- Add sorting criteria, sorting order and results limit parameters to `storage.get_orders` 
-  and `storage.get_assets`. Now also uses results pagination which avoids timeout issues 
+## 0.18.0
+
+**November 10, 2021**
+
+- Add sorting criteria, sorting order and results limit parameters to `storage.get_orders`
+  and `storage.get_assets`. Now also uses results pagination which avoids timeout issues
   when querying large asset/order collections.
 - Significant speed improvement for:
     -`.get_jobs`, `.get_workflows`, `.get_assets`, `.get_orders` calls.
     - `workflow.create_workflow` when used with `existing=True`.
     - Printing objects representations, which now does not trigger additional object info API calls.
 - Removal: Removes deprecated handling of multiple features as input geometry in `.construct_parameters`
-  Instead, using multiple features or a MultiPolygon will now raise an error. 
+  Instead, using multiple features or a MultiPolygon will now raise an error.
   This aligns the Python SDK with the regular UP42 platform behaviour.
 - Removal: Remove the Python SDK Command Line Interface.
 - Fix: JobTask.info and the printout now uses the correct jobtask information.
 
-### [0.17.0](https://pypi.org/project/up42-py/) (2021-09-10)
+## 0.17.0
+
+**September 10, 2021**
+
 - Adds `usage_type` parameter for selection of "DATA" and "ANALYTICS" data in catalog search.
-- Adds automatic handling of catalog search results pagination when requesting more 
+- Adds automatic handling of catalog search results pagination when requesting more
   than 500 results.
-- Adds support for datetime objects and all iso-format compatible time strings to 
+- Adds support for datetime objects and all iso-format compatible time strings to
   `construct_parameters`.
 - Fix: `get_compatible_blocks` with an empty workflow now returns all data blocks.
-- Start deprecation for `handle_multiple_features` parameter in `construct_parameters` to 
-  guarantee parity with UP42 platform. In the future, the UP42 SDK will only handle 
+- Start deprecation for `handle_multiple_features` parameter in `construct_parameters` to
+  guarantee parity with UP42 platform. In the future, the UP42 SDK will only handle
   single geometries.
 - Uses Oauth for access token handling.
 
-### [0.16.0](https://pypi.org/project/up42-py/) (2021-06-30)
+## 0.16.0
+
+**June 30, 2021**
+
 - Limit memory usage for large file downloads (#237)
 - Remove deprecated job.get_status() (Replace by job.status) (#224)
 - Remove deprecated jobcollection.get_job_info() and jobcollection.get_status() (Replaced by jobcollection.info and jobcollection.status)
 - Remove order-id functionality (#228)
 - Limit installation to Python <=3.9.4
-- Internal code improvements (e.g. project settings, retry)  
+- Internal code improvements (e.g. project settings, retry)
 
-### [0.15.2](https://pypi.org/project/up42-py/) (2021-04-07)
+## 0.15.2
+
+**April 7, 2021**
+
 - Enables plotting of jobcollection with `.map_results()`.
 - Fixes `.cancel_job()` functionality.
 
-### [0.15.1](https://pypi.org/project/up42-py/) (2020-03-12)
+## 0.15.1
+
+**March 12, 2021**
+
 - Fixes breaking API change in catalog search.
 - Catalog search result now contains a `sceneId` property instead of `scene_id`.
 
-### [0.15.0](https://pypi.org/project/up42-py/) (2020-01-27)
+## 0.15.0
+
+**January 27, 2021**
+
 - Add `Storage`, `Order` and `Asset` objects.
 - Add possibility to create orders from `Catalog` with `Catalog.place_order`.
 - Add possibility to use assets in job parameters with `Workflow.construct_paramaters`.
 - Update job estimation endpoint.
 - Multiple documentation fixes.
 
-### [0.14.0](https://pypi.org/project/up42-py/) (2020-12-07)
-- Add `workflow.estimate_job()` function for estimation of credit costs & job duration before running a job. 
+## 0.14.0
+
+**December 7, 2020**
+
+- Add `workflow.estimate_job()` function for estimation of credit costs & job duration before running a job.
 - Add `bands=[3,2,1]` parameter in `.plot_results()` and `.map_results()` for band & band order selection.
 - `.plot_results()` now accepts kwargs of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show) and matplotlib.
 - Add `up42.initialize_jobcollection()`
@@ -198,25 +273,34 @@ You can determine your currently installed version via:
 - Add ship-identification example.
 - Overhaul "Getting started" examples.
 
-### [0.13.1](https://pypi.org/project/up42-py/) (2020-11-18)
+## 0.13.1
+
+**November 18, 2020**
+
 - Handle request rate limits via retry mechanism.
 - Limit `map_quicklooks()` to 100 quicklooks.
 - Add aircraft detection example & documentation improvements.
 
-### [0.13.0](https://pypi.org/project/up42-py/) (2020-10-30)
+## 0.13.0
+
+**October 30, 2020**
+
 - New consistent use & documentation of the basic functionality:
-    - All [basic functions](up42-reference.md) (e.g. `up42.get_blocks`) are accessible 
-        from the `up42` import object. Now consistently documented in the `up42` 
+    - All [basic functions](up42-reference.md) (e.g. `up42.get_blocks`) are accessible
+        from the `up42` import object. Now consistently documented in the `up42`
         [object code reference](up42-reference.md).
-    - The option to use this basic functionality from any lower level object will soon be 
+    - The option to use this basic functionality from any lower level object will soon be
         removed (e.g. `project.get_blocks`, `workflow.get_blocks`). Now triggers a deprecation warning.
-- The plotting functionality of each object is now documented directly in that [object's code reference](job-reference.md). 
+- The plotting functionality of each object is now documented directly in that [object's code reference](job-reference.md).
 - Fix: Repair catalog search for sobloo.
 - *Various improvements to docs & code reference.*
 - *Overhaul & simplify test fixtures.*
 - *Split off viztools module from tools module.*
 
-### [0.12.0](https://pypi.org/project/up42-py/) (2020-10-14)
+## 0.12.0
+
+**October 14, 2020**
+
 - Simplify object representation, also simplifies logger messages.
 - Add `.info` property to all objects to get the detailed object information, deprecation process for `.get_info`.
 - Add `.status` property to job, jobtask and jobcollection objects. Deprecation process for `.get_status`.
@@ -228,17 +312,26 @@ You can determine your currently installed version via:
 - Move sdk documentation to custom subdomain "sdk.up42.com".
 - *Simplify mock tests & test fixtures*
 
-### [0.11.0](https://pypi.org/project/up42-py/) (2020-08-13)
+## 0.11.0
+
+**August 13, 2020**
+
 - Fix: Remove buffer 0 for fixing invalid geometry.
 - Add `.map_quicklooks` method for visualising quicklooks interactively.
-- Add an example notebook for mapping quicklooks using `.map_quicklooks` method. 
+- Add an example notebook for mapping quicklooks using `.map_quicklooks` method.
 
-### [0.10.1](https://pypi.org/project/up42-py/) (2020-08-13)
-- Hotfix: Fixes usage of multiple features as the input geometry. 
+## 0.10.1
 
-### [0.10.0](https://pypi.org/project/up42-py/) (2020-08-07)
+**August 13, 2020**
+
+- Hotfix: Fixes usage of multiple features as the input geometry.
+
+## 0.10.0
+
+**August 7, 2020**
+
 - Add parallel jobs feature. Allows running jobs for multiple geometries, scene_ids or
- timeperiods in parallel. Adds `workflow.construct_parameters_parallel`, 
+ timeperiods in parallel. Adds `workflow.construct_parameters_parallel`,
  `workflow.test_job_parallel`, `workflow.run_job_parallel` and the new `JobCollection` object.
 - Adjusts `workflow.get_jobs` and `project.get_jobs` to return JobCollections.
 - Adjusts airports-parallel example notebook to use the parallel jobs feature.
@@ -250,26 +343,44 @@ You can determine your currently installed version via:
 - Now truncates log messages > 2k characters.
 - *Various small improvements & code refactorings.*
 
-### [0.9.3](https://pypi.org/project/up42-py/) (2020-07-15)
-- Add support for secondary geojson file to `job.map_results`
+## 0.9.3
 
-### [0.9.2](https://pypi.org/project/up42-py/) (2020-07-04)
-- Fix inconsistency with `job.map_results` selecting the json instead of the image
+**July 15, 2020**
 
-### [0.9.1](https://pypi.org/project/up42-py/) (2020-06-25)
+- Add support for secondary GeoJSON file to `job.map_results`
+
+## 0.9.2
+
+**July 4, 2020**
+
+- Fix inconsistency with `job.map_results` selecting the JSON instead of the image
+
+## 0.9.1
+
+**June 25, 2020**
+
 - Fixes typo in catalog search parameters
 
-### [0.9.0](https://pypi.org/project/up42-py/) (2020-05-07)
+## 0.9.0
+
+**May 7, 2020**
+
 - Enable block_name and block_display_name for `workflow.add_workflow_tasks`
 - Replace requirement to specify provider by sensor for `catalog.download_quicklooks`
 - Add option to disable logging in `up42.settings`
 - Add `project.get_jobs` and limit `workflow.get_jobs` to jobs in the workflow.
 - Fix download of all output files
 - Job name selectabable in `workflow.test_job` and `workflow.run_job` (with added suffix _py)
-- Fix crs issues in make `job.map_results`, make plotting functionalities more robust
+- Fix CRS issues in make `job.map_results`, make plotting functionalities more robust
 
-### [0.8.3](https://pypi.org/project/up42-py/) (2020-04-30)
-- Pin geopandas to 0.7.0, package requires new crs convention
+## 0.8.3
 
-### [0.8.2](https://pypi.org/project/up42-py/) (2020-04-27)
+**April 30, 2020**
+
+- Pin geopandas to 0.7.0, package requires new CRS convention
+
+## 0.8.2
+
+**April 24, 2020**
+
 - Removed `job.create_and_run_job`, now split into `job.test_job` and `job.run_job`

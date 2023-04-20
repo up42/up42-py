@@ -101,13 +101,13 @@ class Project:
         self, return_json: bool = False
     ) -> Union[List["Workflow"], List[dict]]:
         """
-        Gets all workflows in a project as workflow objects or json.
+        Gets all workflows in a project as workflow objects or JSON.
 
         Args:
-            return_json: True returns infos of workflows as json instead of workflow objects.
+            return_json: True returns infos of workflows as JSON instead of workflow objects.
 
         Returns:
-            List of Workflow objects in the project or alternatively json info of the workflows.
+            List of Workflow objects in the project or alternatively JSON info of the workflows.
         """
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows"
         response_json = self.auth._request(request_type="GET", url=url)
@@ -140,13 +140,13 @@ class Project:
         descending: bool = True,
     ) -> Union[JobCollection, List[dict]]:
         """
-        Get all jobs in the project as a JobCollection or json.
+        Get all jobs in the project as a JobCollection or JSON.
 
         Use Workflow().get_job() to get a JobCollection with jobs associated with a
         specific workflow.
 
         Args:
-            return_json: If true, returns the job info jsons instead of JobCollection.
+            return_json: If true, returns the job info JSONs instead of JobCollection.
             test_jobs: Return test jobs or test queries.
             real_jobs: Return real jobs.
             limit: Only return n first jobs by sorting criteria and order, default 500.
@@ -154,7 +154,7 @@ class Project:
             descending: The sorting order, True for descending (default), False for ascending.
 
         Returns:
-            All job objects in a JobCollection, or alternatively the jobs info as json.
+            All job objects in a JobCollection, or alternatively the jobs info as JSON.
         """
         allowed_sorting_criteria = [
             "createdAt",

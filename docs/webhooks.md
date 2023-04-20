@@ -1,11 +1,11 @@
-# 🪝 Webhooks
+# Webhooks
 
 In this chapter you will learn how to setup webhooks on UP42 via the Python SDK. When a new order or job is finished,
 the webhook sends a signal to a selected HTTPS url which can be used to e.g. trigger additional operations 
 on your end. Also see the [full webhook documentation](https://docs.up42.com/account/webhooks) and accompanying 
 [blogpost](https://up42.com/blog/tech/first-step-into-webhooks-no-code-required).
 
-## **Authenticate**
+## Authenticate
 
 First connect with UP42 as explained in the [authentication chapter](authentication.md).
 
@@ -17,7 +17,7 @@ up42.authenticate(
 )
 ```
 
-## **Manage existing webhooks**
+## Manage existing webhooks
 
 Query existing webhooks in your UP42 workspace to modify, test or delete the resulting webhook object, see the [webhook
 code reference](webhooks-reference.md) for all available functionality.
@@ -27,7 +27,7 @@ webhooks = up42.get_webhooks()
 webhooks[0].trigger_test_event()
 ```
 
-## **Create a new webhook**
+## Create a new webhook
 
 
 ```python
