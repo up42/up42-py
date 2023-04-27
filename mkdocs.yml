@@ -34,12 +34,12 @@ extra:
 nav:
     - Home: index.md
     - Getting started:
-      - Installation: installation.md
-      - Authentication: authentication.md
-      - Search and order data: search_order.md
-      - Satellite tasking: tasking.md
-      - Storage assets: storage.md
-      - Run analytics workflows: analytics_workflow.md
+      - installation.md
+      - authentication.md
+      - tasking.md
+      - search_order.md
+      - storage.md
+      - analytics_workflow.md
     - Advanced:
       - Functionality: structure.md
       - Geometry handling: geometry_handling.md
