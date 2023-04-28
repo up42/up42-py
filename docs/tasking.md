@@ -13,7 +13,7 @@ Request a satellite or an aircraft to capture your designated area with certain 
   An example of one tasking collection in the response:
   ```json
   {
-     "Pléiades Neo Tasking":{
+     "Pléiades Neo Tasking": {
         "collection": "pneo-tasking",
         "host": "oneatlas",
         "data_products": {

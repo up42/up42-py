@@ -1,45 +1,43 @@
-# Search and order data
+# Catalog
 
-A basic example on how to search & purchase data from the UP42 catalog.
+Place orders for archive geospatial data that have been captured in the past.
 
-[![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2F1_search_order_data.ipynb)
+## Step 1. Choose a catalog collection
 
-## Authenticate
+1. Use the `get_data_products` function to choose a [catalog collection](https://docs.up42.com/data/datasets) and get its `data_product_id` for ordering:
+  ```python
+  catalog = up42.initialize_catalog()
+  products = catalog.get_data_products(basic=True)
+  print(products)
+  ```
+  An example of one tasking collection in the response:
+  ```json
+  {
+     "Pléiades Neo": {
+        "collection": "pneo",
+        "host": "oneatlas",
+        "data_products": {
+           "Analytic": "6f722fb5-0323-4c97-9b1e-22870325b8db",
+           "Display": "17745de8-6e7d-4751-99cd-3f8e9e9d290e"
+        }
+     }
+  }
+  ```
 
-First connect with UP42 as explained in the [authentication chapter](authentication.md).
+2. Choose a data product and copy its ID:
+  ```python
+  data_product_id = "6f722fb5-0323-4c97-9b1e-22870325b8db"
+  ```
 
-```python
-import up42
-up42.authenticate(
-    project_id="your-project-ID",
-    project_api_key="your-project-API-key"
-)
-```
+## Step 2. Request catalog access
 
-## Decide on collection
+If you want to order the chosen collection for the first time, you need to request access to it. For more information on access requests, see [Restrictions](https://docs.up42.com/getting-started/restrictions#catalog-collections).
 
-We look at the available data products and decide to order a *"Pléiades"* satellite image in the 
-*"Display"* configuration (*Pansharpened RGB-NIR bands, 8bit,*
-[see marketplace](https://up42.com/marketplace/blocks/data/oneatlas-pleiades-display)).<br>
-The `get_data_products` function gives us the `collection` name (required for search), and the 
-`data_product_id` (required for ordering).
+An email from the Customer Success team usually takes up to 3 days. You can review your access request status on the [Access requests](https://console.up42.com/settings/access) page.
 
-```python
-catalog = up42.initialize_catalog()
-products = catalog.get_data_products(basic=True)
-```
+## Step 3. Accept an EULA
 
-```json
-{
-  "Pléiades": {"collection": "phr",
-    "host": "oneatlas",
-    "data_products": {"Analytic": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
-      "Display": "647780db-5a06-4b61-b525-577a8b68bb54"}},
-  "Pléiades Neo": {"collection": "pneo",
-    "host": "oneatlas",
-    "data_products": {"Display": "17745de8-6e7d-4751-99cd-3f8e9e9d290e"}}
-}
-```
+If you want to order the chosen collection for the first time, you need to accept its EULA. For more information on license agreements, see [Account management](https://docs.up42.com/getting-started/account/management#accept-end-user-license-agreements).
 
 ## Search image in the catalog
 
@@ -130,6 +128,8 @@ Download the asset to your current working directory, or provide the `output_dir
 assets[0].download()
 ```
 
-<br>
+## Notebook
 
-Continue with [Satellite tasking](tasking.md).
+A basic example on how to search & purchase data from the UP42 catalog.
+
+[![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2F1_search_order_data.ipynb)

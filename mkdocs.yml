@@ -37,7 +37,7 @@ nav:
       - installation.md
       - authentication.md
       - tasking.md
-      - search_order.md
+      - catalog.md
       - storage.md
       - analytics_workflow.md
     - Advanced:
