@@ -130,7 +130,7 @@ After selecting an option, you will receive a price quote for your order. To rev
 2. Select your order and click **Price**.
 3. Accept or reject this price. If you accept, the amount will be deducted from your credit balance and tasking operations will start.
 
-## Step 9. Check the order
+## Step 9. Monitor an order
 
 Check the status of your order:
 ```python
