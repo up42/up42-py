@@ -4,7 +4,7 @@ Request a satellite or an aircraft to capture your designated area with certain 
 
 ## Step 1. Choose a tasking collection
 
-1. Use the `get_data_products` function to choose a [tasking collection](https://docs.up42.com/data/datasets) and use its `data_product_id` for ordering:
+1. Use the `get_data_products` function to choose a [tasking collection](https://docs.up42.com/data/datasets) and get its `data_product_id` for ordering:
   ```python
   tasking = up42.initialize_tasking()
   products = tasking.get_data_products(basic=True)
@@ -32,13 +32,13 @@ Request a satellite or an aircraft to capture your designated area with certain 
 
 ## Step 2. Request tasking access
 
-If you want to order the chosen collection for the first time, you need to request access to it. For more information on access requests, see [Restrictions](https://docs.up42.com/getting-started/restrictions#tasking-datasets).
+If you want to order the chosen collection for the first time, you need to request access to it. For more information on access requests, see [Restrictions](https://docs.up42.com/getting-started/restrictions#tasking-collections).
 
 An email from the Customer Success team usually takes up to 3 days. You can review your access request status on the [Access requests](https://console.up42.com/settings/access) page.
 
 ## Step 3. Accept an EULA
 
-If you want to order the chosen collection for the first time, you need to accept its EULA. For more information on EULAs, see [Account management](https://docs.up42.com/getting-started/account/management#accept-end-user-license-agreements).
+If you want to order the chosen collection for the first time, you need to accept its EULA. For more information on license agreements, see [Account management](https://docs.up42.com/getting-started/account/management#accept-end-user-license-agreements).
 
 ## Step 4. Get a JSON schema of an order form
 
@@ -94,10 +94,11 @@ tasking.get_data_product_schema("123eabab-0511-4f36-883a-80928716c3db")
   print(order_parameters)
   ```
 
-## Step 6. Place the order
+## Step 6. Place an order
 
 If multiple people need to be alerted about a future order, create a group email and [add it to the account](https://docs.up42.com/getting-started/account/management#change-your-email) you'll be placing an order with. Otherwise, only one person will receive notifications about it.
 
+Use the `tasking.place_order` function to place your order:
 ```python
 order = tasking.place_order(order_parameters)
 order
@@ -112,13 +113,22 @@ After an order is placed, the Operations team will look at the order feasibility
 - The order is possible with the given parameters.
 - The order requires modifications with suitable options proposed.
 
-<!--Should we suggest console?-->
+You will receive an email notifying you when your order feasibility has been assessed. To proceed, follow these steps:
 
-## Step 8. Activate the order
+1. Open the [console](https://console.up42.com) and go to **Tasking** → **My orders**.
+2. Select your order and click **Feasibility**.
+3. Choose a suitable option. If none of the options are suitable, [contact](https://up42.com/company/contact-ordering) the Operations team.
+4. Click **Confirm** chosen option.
 
-After selecting an option, you will receive a price quote for your order.
+You can't modify your order after accepting an option.
 
-<!--Should we suggest console?-->
+## Step 8. Activate an order
+
+After selecting an option, you will receive a price quote for your order. To review a price quote and activate your order, follow these steps:
+
+1. Open the [console](https://console.up42.com) and go to **Tasking** → **My orders**.
+2. Select your order and click **Price**.
+3. Accept or reject this price. If you accept, the amount will be deducted from your credit balance and tasking operations will start.
 
 ## Step 9. Check the order
 
