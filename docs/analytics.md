@@ -1,10 +1,10 @@
 # Analytics
 
-Apply analytics on geospatial data by using workflows with data and processing blocks.
+Apply analytics on geospatial data by using workflows with [data blocks](https://docs.up42.com/processing-platform/blocks/data) and [processing blocks](https://docs.up42.com/processing-platform/blocks/processing)
 
 ## Step 1. Create and populate a workflow
 
-A workflow is a sequence of [data blocks](https://docs.up42.com/processing-platform/blocks/data) and [processing blocks](https://docs.up42.com/processing-platform/blocks/processing). It defines an order for operations.
+A workflow is a sequence of data blocks and processing blocks. It defines an order for operations.
 
 A workflow starts with a data block and is usually followed by one or more processing blocks.
 

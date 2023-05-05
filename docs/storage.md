@@ -1,8 +1,8 @@
 # Storage assets
 
-## UP42 storage
-
 Retrieve assets from completed tasking and catalog orders.
+
+## UP42 storage
 
 You can search for assets from specific orders or for assets with specific parameters.
 
