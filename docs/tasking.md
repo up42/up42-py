@@ -4,7 +4,7 @@ Request a satellite or an aircraft to capture your designated area with certain 
 
 ## Step 1. Choose a tasking collection
 
-1. Use the `get_data_products` function to choose a [tasking collection](https://docs.up42.com/data/datasets) and get its `data_product_id` for ordering:
+1. Choose a [tasking collection](https://docs.up42.com/data/datasets) and get its `data_product_id` for ordering:
   ```python
   tasking = up42.initialize_tasking()
   products = tasking.get_data_products(basic=True)
@@ -36,7 +36,7 @@ If you want to order the chosen collection for the first time, you need to reque
 
 An email from the Customer Success team usually takes up to 3 days. You can review your access request status on the [Access requests](https://console.up42.com/settings/access) page.
 
-## Step 3. Accept an EULA
+## Step 3. Accept a EULA
 
 If you want to order the chosen collection for the first time, you need to accept its EULA. For more information on license agreements, see [Account management](https://docs.up42.com/getting-started/account/management#accept-end-user-license-agreements).
 
@@ -47,11 +47,12 @@ Get detailed information about the parameters needed to create an order for the 
 tasking.get_data_product_schema("123eabab-0511-4f36-883a-80928716c3db")
 ```
 
-## Step 5. Fill out the order form
+## Step 5. Fill out an order form
 
 1. Specify geometry and use the required request body schema format for the chosen data product, for example:
   ```python
   # geometry = up42.read_vector_file("data/aoi_washington.geojson")
+  # geometry = up42.get_example_aoi()
   geometry = {
       "type": "Polygon",
       "coordinates": (
@@ -98,7 +99,7 @@ tasking.get_data_product_schema("123eabab-0511-4f36-883a-80928716c3db")
 
 If multiple people need to be alerted about a future order, create a group email and [add it to the account](https://docs.up42.com/getting-started/account/management#change-your-email) you'll be placing an order with. Otherwise, only one person will receive notifications about it.
 
-Use the `tasking.place_order` function to place your order:
+Place your order:
 ```python
 order = tasking.place_order(order_parameters)
 order
@@ -136,3 +137,5 @@ Check the status of your order:
 ```python
 order.status
 ```
+
+When the order is completed, [download its assets from storage](storage.md).

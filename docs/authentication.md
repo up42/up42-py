@@ -1,15 +1,22 @@
 # Authentication
 
-## Step 1. Find project credentials
-
 Each API call is made at a [project](https://docs.up42.com/processing-platform/projects) level.
 
-1. Go to [**Projects**](https://console.up42.com/projects) and select an existing project or create a new one.
+## Step 1. Create a project
+
+1. Open the [console](https://console.up42.com) and go to **Projects**.
+2. Click **Start a Project**.
+3. Name the project and give it a description.
+4. Click **Save**.
+
+## Step 2. Find project credentials
+
+1. Open the [console](https://console.up42.com), go to **Projects**, and select a project.
 2. Go to the **Developers** tab in the project and copy the values of **Project API Key** and **Project ID**.
 
 Don't share your credentials with others. They allow anyone to access your project and consume the UP42 credits associated with your account. If your credentials were compromised, [generate a new API key](https://docs.up42.com/processing-platform/projects#generate-a-new-api-key).
 
-## Step 2. Enter the credentials
+## Step 3. Enter the credentials
 
 === "Directly in code"
 

@@ -2,18 +2,6 @@
 
 Access all previous orders or assets in your account.
 
-## Authenticate
-
-First connect with UP42 as explained in the [authentication chapter](authentication.md).
-
-```python
-import up42
-up42.authenticate(
-    project_id="your-project-ID",
-    project_api_key="your-project-API-key"
-)
-```
-
 ## See orders
 
 Get a list of all tasking and catalog orders.
@@ -84,5 +72,3 @@ up42_stac_collections = up42_pystac_client.get_collections()
 ```
 
 For more information, see [Storage](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.pystac_client).
-
-Continue with [Run analytics workflows](analytics_workflow.md).

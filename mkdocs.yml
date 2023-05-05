@@ -39,7 +39,7 @@ nav:
       - tasking.md
       - catalog.md
       - storage.md
-      - analytics_workflow.md
+      - analytics.md
     - Advanced:
       - Functionality: structure.md
       - Geometry handling: geometry_handling.md

@@ -1,35 +1,22 @@
-# Run analytics workflows
+# Analytics
 
-This chapter shows how to create and run workflow with a data source and analytics/processing algorithm.
+## Step 1. Create a workflow
 
-[![Binder](assets/badge_logo.svg)](https://mybinder.org/v2/gh/up42/up42-py/master?filepath=examples%2F4_analtics_workflow.ipynb)
+A workflow is a sequence of [data blocks](https://docs.up42.com/processing-platform/blocks/data) and [processing blocks](https://docs.up42.com/processing-platform/blocks/processing). It defines an order for operations.
 
-## Authenticate
+A workflow starts with a data block and is usually followed by one or more processing blocks.
 
-First connect with UP42 as explained in the [authentication chapter](authentication.md).
+![A workflow graph](images/workflow-graph.png)
 
-```python
-import up42
-up42.authenticate(
-    project_id="your-project-ID",
-    project_api_key="your-project-API-key"
-)
-```
-
-## Create a workflow
-
-This simple workflow consists of [Sentinel-2 L2A data](https://up42.com/marketplace/blocks/data/aws-s2-l2a)
-and [Sharpening Filter](https://marketplace.up42.com/block/e374ea64-dc3b-4500-bb4b-974260fb203e).
-See `up42.get_blocks` or the UP42 marketplace for all other [data](https://up42.com/marketplace/search?
-type=DATA&type=ARCHIVE) and 
-[analytics](https://up42.com/marketplace/search?type=PROCESSING) tasks.
-
-
+Create a workflow and populate it with blocks, for example:
 ```python
 project = up42.initialize_project()
+
 workflow = project.create_workflow(name="Workflow-example")
-workflow.add_workflow_tasks(["Sentinel-2 L2A Visual (GeoTIFF)",
-                             "Sharpening Filter"])
+workflow.add_workflow_tasks([
+    "Sentinel-2 L2A Visual (GeoTIFF)",
+    "Sharpening Filter"
+])
 ```
 
 ## Configure the workflow
