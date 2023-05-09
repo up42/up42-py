@@ -1,59 +1,45 @@
 # Authentication
 
-To use the UP42 Python SDK, you first need to authenticate with **UP42** via your **project credentials**:
+Each API call is made at a [project](https://docs.up42.com/processing-platform/projects) level.
 
-```python
-import up42
-up42.authenticate(
-    project_id="your-project-ID",
-    project_api_key="your-project-API-key"
-)
-```
+## Step 1. Create a project
 
-### Get your project credentials
+1. Open the [console](https://console.up42.com) and go to **Projects**.
+2. Click **Start a Project**.
+3. Name the project and give it a description.
+4. Click **Save**.
 
-Log in to the [console](https://console.up42.com) and select a **Project**.
-In the project's **Developers section** you can find the **Project ID** and **Project API key**.
+## Step 2. Find project credentials
 
-<figure markdown>
-  ![Image title](assets/auth.png){ width="680" }
-</figure>
+1. Open the [console](https://console.up42.com), go to **Projects**, and select a project.
+2. Go to the **Developers** tab in the project and copy the values of **Project API Key** and **Project ID**.
 
-### Authenticate
+Don't share your credentials with others. They allow anyone to access your project and consume the UP42 credits associated with your account. If your credentials were compromised, [generate a new API key](https://docs.up42.com/processing-platform/projects#generate-a-new-api-key).
 
-The most simple way to authenticate is to enter the project credentials directly in
-your code. After successful authentication you will receive a confirmation message.
+## Step 3. Enter the credentials
 
-```python
-import up42
-up42.authenticate(
-    project_id="your-project-ID",
-    project_api_key="your-project-API-key"
-)
-```
+=== "Directly in code"
 
-```
-YYYY-MM-DD HH:MM:SS - Authentication with UP42 successful!
-```
+    ```python
+    import up42
+    up42.authenticate(
+        project_id="your-project-ID",
+        project_api_key="your-project-API-key"
+    )
+    ```
 
-### Optional: Use configuration file
+=== "In a configuration file"
 
-In order to hide your credentials, you can also read your credentials from a configuration JSON file.
-
- 
-```json title="Create a config.json file"
-{
-  "project_id": "your-project-ID",
-  "project_api_key": "your-project-api-key"
-}
-```
-
-```python title="Authentication from config.json file"
-import up42
-up42.authenticate(cfg_file="config.json")
-```
-
-
-<br>
-
-Continue with [Search and order data](search_order.md).
+    1. Create a `config.json` file.
+    2. Paste the following code:
+      ```json
+      {
+        "project_id": "your-project-ID",
+        "project_api_key": "your-project-api-key"
+      }
+      ```
+    3. Authenticate from the created `config.json` file.
+      ```python
+      import up42
+      up42.authenticate(cfg_file="config.json")
+      ```

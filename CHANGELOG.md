@@ -113,8 +113,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 - Integrates the UP42 [data products](https://docs.up42.com/developers/api#tag/data-products),
   e.g. the selection "Display" and "Reflectance" configuration in the ordering process. The new ordering process
-  requires the selection of a specific data product, see the updated
-  [Search and order data](https://sdk.up42.com/search_order/) documentation chapter.
+  requires the selection of a specific data product. For more information, see
+  [Catalog](https://sdk.up42.com/catalog).
 - The `order_parameters` argument for `catalog.estimate_order` and `catalog.place_order` now has a
   [different structure](https://sdk.up42.com/reference/catalog-reference/#up42.catalog.Catalog.place_order).
   **The previous option to just specify the collection name will soon be deactivated in the UP42 API!**
