@@ -71,7 +71,10 @@ search_parameters = catalog.construct_search_parameters(
 search_results = catalog.search(search_parameters)
 ```
 
-The search outputs a dataframe with full scenes that match the specified parameters:
+Output a dataframe with full scenes that match the specified parameters:
+```python
+search_results
+```
 
 ![Search results](images/search-results.png)
 
