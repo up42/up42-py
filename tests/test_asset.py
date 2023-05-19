@@ -45,8 +45,8 @@ def test_asset_stac_info(asset_mock):
 @pytest.mark.live
 # TODO
 def test_asset_stac_info_live(asset_live):
-    assert asset_live.info
-    assert asset_live.info["features"][0]["properties"][
+    assert asset_live.stac_info
+    assert asset_live.stac_info["features"][0]["properties"][
         "up42-system:asset_id"
     ] == os.getenv("TEST_UP42_ASSET_ID")
 
