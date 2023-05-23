@@ -30,7 +30,7 @@ Request a satellite or an aircraft to capture your designated area with certain 
   data_product_id = "123eabab-0511-4f36-883a-80928716c3db"
   ```
 
-## Step 2. Request tasking access
+## Step 2. Request access
 
 If you want to order the chosen collection for the first time, you need to request access to it. For more information on access requests, see [Restrictions](https://docs.up42.com/getting-started/restrictions#tasking-collections).
 
@@ -38,7 +38,7 @@ An email from the Customer Success team usually takes up to 3 days. You can revi
 
 ## Step 3. Accept a EULA
 
-If you want to order the chosen collection for the first time, you need to accept its EULA. For more information on license agreements, see [Account management](https://docs.up42.com/getting-started/account/management#accept-end-user-license-agreements).
+If you want to order the chosen collection for the first time, you need to accept its end-user license agreement (EULA). For more information on license agreements, see [EULAs](https://docs.up42.com/getting-started/account/eulas).
 
 ## Step 4. Get a JSON schema of an order form
 

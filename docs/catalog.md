@@ -29,15 +29,15 @@ Place orders for archive geospatial data that have been captured in the past.
   data_product_id = "4f1b2f62-98df-4c74-81f4-5dce45deee99"
   ```
 
-## Step 2. Request catalog access
+## Step 2. Request access
 
-If you want to order the chosen collection for the first time, you need to request access to it. For more information on access requests, see [Restrictions](https://docs.up42.com/getting-started/restrictions#catalog-collections).
+If you want to order the chosen collection for the first time, and it is restricted, you need to request access to it. For more information on access requests, see [Restrictions](https://docs.up42.com/getting-started/restrictions#catalog-collections).
 
 An email from the Customer Success team usually takes up to 3 days. You can review your access request status on the [Access requests](https://console.up42.com/settings/access) page.
 
 ## Step 3. Accept a EULA
 
-If you want to order the chosen collection for the first time, you need to accept its EULA. For more information on license agreements, see [Account management](https://docs.up42.com/getting-started/account/management#accept-end-user-license-agreements).
+If you want to order the chosen collection for the first time, you need to accept its end-user license agreement (EULA). For more information on license agreements, see [EULAs](https://docs.up42.com/getting-started/account/eulas#accept-end-user-license-agreements).
 
 ## Step 4. Search the catalog
 
