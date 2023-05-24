@@ -1,25 +1,22 @@
-# Functionality
+# Functionality overview
 
 ## Structure
 
-- The Python SDK uses multiple classes, representing the **hierarchical structure of UP42**:
-    - **Catalog > Order > Asset**
-    - **Tasking > Order > Asset**
-    - **Storage > Asset**
-    - **Project > Workflow > Job/JobCollection > JobTask**
+- The Python SDK uses multiple classes, representing the hierarchical structure of UP42:
+    - Catalog → Order → Asset
+    - Tasking → Order → Asset
+    - Storage → Asset
+    - Project → Workflow → Job/JobCollection → JobTask
 
-- Each class object can **spawn elements of one level below**, e.g.
+- Each class object can spawn elements of one level below, for example:
     - `project = up42.initialize_project()`
     - `workflow = project.create_workflow()`
     - `job = workflow.run_job()`
 
 
-## Functionality
+## Classes
 
-A quick overview how the different class objects are **created, used and which functionality** they offer. More detail
-in the [code reference](up42-reference.md).
-
-!!! example "Available Functionality"
+!!! example "Classes"
     === "up42"
 
         {{ docstring_up42 }}

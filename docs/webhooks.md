@@ -1,40 +1,50 @@
 # Webhooks
 
-In this chapter you will learn how to setup webhooks on UP42 via the Python SDK. When a new order or job is finished,
-the webhook sends a signal to a selected HTTPS url which can be used to e.g. trigger additional operations 
-on your end. Also see the [full webhook documentation](https://docs.up42.com/account/webhooks) and accompanying 
-[blogpost](https://up42.com/blog/tech/first-step-into-webhooks-no-code-required).
+A [webhook](https://docs.up42.com/getting-started/webhooks) is a method for sending event notifications from one application to another. When something happens in a source system indicated by an event, the webhook transmits an event notification via HTTPS to a specific URL.
 
-## Authenticate
+## See notification events
 
-First connect with UP42 as explained in the [authentication chapter](authentication.md).
+You can set up webhooks to receive notifications in the following cases:
+
+- **Job status updates.** Every time a job changes its status.
+- **Order status updates.** When a new order has been completed — successfully or not.
 
 ```python
-import up42
-up42.authenticate(
-    project_id="your-project-ID",
-    project_api_key="your-project-API-key"
+events = up42.get_webhook_events()
+print(events)
+```
+
+## Create and test a new webhook
+
+```python
+webhook = up42.create_webhook(
+    name="new-webhook",
+    url="https://receiving-url.com",
+    events=events,
+    active=True
 )
+webhook.trigger_test_event()
 ```
 
 ## Manage existing webhooks
 
-Query existing webhooks in your UP42 workspace to modify, test or delete the resulting webhook object, see the [webhook
-code reference](webhooks-reference.md) for all available functionality.
-
+Modify you webhook:
 ```python
 webhooks = up42.get_webhooks()
-webhooks[0].trigger_test_event()
+webhooks[0].update(
+    name="new-webhook",
+    url="https://receiving-url.com",
+    events=events,
+    active=False
+)
 ```
 
-## Create a new webhook
-
-
+Delete your webhook:
 ```python
-events = up42.get_webhook_events() #[e.g. "job.status", "order.status"]
-webhook = up42.create_webhook(name="new-webhook", 
-                              url="https://receiving-url.com", 
-                              events=events, 
-                              active=True)
-webhook.trigger_test_event()
+webhooks = up42.get_webhooks()
+webhooks[0].delete()
 ```
+
+## Learn more
+
+- [First step into UP42 webhooks: Almost no code required](https://up42.com/blog/first-step-into-webhooks-no-code-required)
