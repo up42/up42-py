@@ -33,24 +33,21 @@ extra:
 ## Page tree
 nav:
     - Home: index.md
-    - Getting started:
+    - Tutorials:
       - installation.md
       - authentication.md
       - tasking.md
       - catalog.md
       - storage.md
-      - analytics.md
-    - Advanced:
-      - Functionality: structure.md
-      - Geometry handling: geometry_handling.md
-      - Visualizations: visualizations.md
-      - Webhooks: webhooks.md
-      - Example notebooks:
-        - Pleiades Reflectance (Download): examples/data-block-examples/pleiades-download-example.ipynb
-        - NEXTMap One - Elevation Data (Streaming) and Viewshed: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
-        - Open Street Map: examples/data-block-examples/osm-example.ipynb
-        - Ship Identification: examples/advanced/ship-identification.ipynb
+      - Analytics:
+        - analytics.md
+        - Example notebooks:
+          - NEXTMap One and Viewshed workflow: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
+          - OpenStreetMap workflow: examples/data-block-examples/osm-example.ipynb
+          - Ship detection and Ship identification workflow: examples/advanced/ship-identification.ipynb
+      - webhooks.md
     - Code reference:
+        - structure.md
         - up42: reference/up42-reference.md
         - Catalog: reference/catalog-reference.md
         - Tasking: reference/tasking-reference.md
@@ -64,8 +61,10 @@ nav:
         - JobTask: reference/jobtask-reference.md
         - Webhooks: reference/webhooks-reference.md
     - Changelog and FAQ:
-        - Changelog: CHANGELOG.md
-        - FAQ and support: support-faq.md
+        - CHANGELOG.md
+        - support-faq.md
+        - visualizations.md
+        - geometry_handling.md
         - Privacy policy: 'https://up42.com/legal/privacy'
 
 ## Configuration

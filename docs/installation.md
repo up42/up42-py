@@ -10,7 +10,7 @@
     ```
 
     ```bash title="Advanced installation with plotting functionalities"
-    pip install "up42-py[viz]"
+    pip install up42-py[viz]
     ```
 
 === "For Windows (conda)"

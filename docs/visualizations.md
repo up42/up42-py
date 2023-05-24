@@ -1,73 +1,70 @@
 # Visualizations
 
-The UP42 Python offers plotting and interactive map functionality to visualize the downloaded data and quicklooks.
-The visualization functionality is optional and not installed with the default installation. In order to use them, 
-install the additional library dependencies (also see the [Installation chapter](installation.md)):
+You can visualize quicklooks and downloaded data.
 
-=== "pip"
+![](assets/vizualisations.jpg)
 
-    ```bash title="Installation with plotting functionality (Optional)"
+## Install with plotting functionalities
+
+The visualization functionality is optional and not installed with the basic installation.
+
+=== "For macOS (pip)"
+
+    ```bash title="Advanced installation with plotting functionalities"
     pip install up42-py[viz]
     ```
 
-=== "conda"
+=== "For Windows (conda)"
 
-    ```bash title="Installation with plotting functionality (Optional)"
+    ```bash title="Advanced installation with plotting functionalities"
     conda install -c conda-forge up42-py
     conda install -c conda-forge rasterio folium branca matplotlib descartes
     ```
 
-![](assets/vizualisations.jpg)
+    If you experience issues with the installation, use the following resources:
 
-## Interactive maps
+    - [Install Python for geospatial applications](https://chrieke.medium.com/howto-install-python-for-geospatial-applications-1dbc82433c05)
+    - [Python for Geospatial work flows: Use anaconda](http://www.acgeospatial.co.uk/python-geospatial-workflows-prt1-anaconda/)
 
-Works best in a [Jupyter notebook](https://jupyter.org/)!
+## Interactive maps and plots
 
-=== "Draw Area of Interest"
-    ```python
-    up42.draw_aoi()
-    ```
-    You can export the drawn AOI as a GeoJSON and e.g. use it via `up42.read_vector_geometry()`
+### Draw an AOI
 
-=== "Job Results"
-    ```python
-    job.download_results()
-    job.map_results()
-    ```
+```python
+up42.draw_aoi()
+```
 
-=== "Job Quicklooks"
-    ```python
-    job.download_quicklooks()
-    job.map_quicklooks()
-    ```
+You can export the drawn AOI as a GeoJSON and use it via the `up42.read_vector_geometry()` method.
 
-=== "Catalog Quicklooks"
-    ```python
-    catalog.download_quicklooks(image_ids=list(search_results.id), collection="phr")
-    catalog.map_quicklooks(scenes=search_results, aoi=aoi)
-    ```
+### Job results
 
-## Plots
+```python
+job.download_results()
 
-=== "Catalog Quicklooks"
-    ```python
-    catalog.download_quicklooks(image_ids=list(search_results.id), collection="phr")
-    catalog.plot_quicklooks()
-    ```
+job.map_results() # Maps
+job.plot_results() # Plots
+```
 
-=== "Catalog scene coverage"
-    ```python
-    catalog.plot_coverage(scenes=search_results, aoi=aoi, legend_column="sceneId")
-    ```
+### Job quicklooks
 
-=== "Job Results"
-    ```python
-    job.download_results()
-    job.plot_results()
-    ```
+```python
+job.download_quicklooks()
 
-=== "Job Quicklooks"
-    ```python
-    job.download_quicklooks()
-    job.plot_quicklooks()
-    ```
+job.map_quicklooks() # Maps
+job.plot_quicklooks() # Plots
+```
+
+### Catalog quicklooks
+
+```python
+catalog.download_quicklooks(image_ids=list(search_results.id), collection="phr")
+
+catalog.map_quicklooks(scenes=search_results, aoi=aoi) # Maps
+catalog.plot_quicklooks() # Plots
+```
+
+### Catalog scene coverage
+
+```python
+catalog.plot_coverage(scenes=search_results, aoi=aoi, legend_column="sceneId") # Plots
+```
