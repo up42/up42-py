@@ -379,7 +379,7 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
     return order_parameters
 
 
-def replace_page_query(url: str, new_page: str) -> str:
+def replace_page_query(url: str, new_page: int) -> str:
     """
     Handle pagination replacement in an encoded url
     Args:
@@ -391,7 +391,7 @@ def replace_page_query(url: str, new_page: str) -> str:
     """
     parsed_url = urlparse(url)
     query_params = parse_qs(parsed_url.query)
-    query_params["page"] = new_page
+    query_params["page"] = str(new_page)  # type: ignore
 
     # Update the query string with the modified parameters
     encoded_query = urlencode(query_params, doseq=True)

@@ -50,7 +50,7 @@ def tasking_mock(auth_mock, requests_mock):
         json_data_get_quotation = json.load(json_file)
         requests_mock.get(url=url_get_quotations_mp3, json=json_data_get_quotation)
 
-    url_get_quotations_workspace_filtered = f"{auth_mock._endpoint()}/v2/tasking/quotation?page=0&sort=createdAt,desc&workspaceId=80357ed6-9fa2-403c-9af0-65e4955d4816"
+    url_get_quotations_workspace_filtered = f"{auth_mock._endpoint()}/v2/tasking/quotation?page=0&sort=createdAt,desc&workspaceId=80357ed6-9fa2-403c-9af0-65e4955d4816"  # pylint: disable=line-too-long
     with open(
         Path(__file__).resolve().parents[1]
         / "mock_data/tasking_data/get_quotations_workspace_id.json"
@@ -60,7 +60,7 @@ def tasking_mock(auth_mock, requests_mock):
             url=url_get_quotations_workspace_filtered, json=json_data_get_quotation
         )
 
-    url_get_quotations_decision_filtered = f"{auth_mock._endpoint()}/v2/tasking/quotation?page=0&sort=createdAt,desc&decision=ACCEPTED"
+    url_get_quotations_decision_filtered = f"{auth_mock._endpoint()}/v2/tasking/quotation?page=0&sort=createdAt,desc&decision=ACCEPTED"  # pylint: disable=line-too-long
     with open(
         Path(__file__).resolve().parents[1]
         / "mock_data/tasking_data/get_quotations_decision_ACCEPTED.json"
