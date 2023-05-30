@@ -378,7 +378,16 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
             logger.info(f"As `{param}` select `{schema['properties'][param]}`")
     return order_parameters
 
-def replace_page_query(url, new_page):
+def replace_page_query(url: str, new_page: int) -> str:
+    """
+    Handle pagination replacement in an encoded url
+    Args:
+        url (str): a url with query parameters including page 
+        new_page (int): the desired page starting at 0 to include in the url 
+
+    Returns:
+        str: the url with the new page parameter. 
+    """
     parsed_url = urlparse(url)
     query_params = parse_qs(parsed_url.query)
     query_params['page'] = new_page

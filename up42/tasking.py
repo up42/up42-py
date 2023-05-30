@@ -126,7 +126,19 @@ class Tasking(CatalogBase):
             decision: Optional[str] = None,
             sortby: str = "createdAt",
             descending: bool = True, 
-        ):
+        ) -> list(dict):
+        """_summary_
+
+        Args:
+            workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search. Defaults to None.
+            order_id (Optional[str], optional): The order id (uuid) to filter the search. Defaults to None.
+            decision (Optional[str], optional): the status of the quotation (NOT_DECIDED, ACCEPTED or REJECTED). Defaults to None.
+            sortby (str, optional): The results sorting method that arranges elements in ascending or descending order based on a chosen field. The format is <field name>,<asc or desc>. . Defaults to "createdAt".
+            descending (bool, optional): _description_. Defaults to True.
+
+        Returns:
+            JSON: The json representation with the quotations resulted from the search.
+        """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/v2/tasking/quotation?page=0?sort={sort}"
         if workspace_id is not None:
