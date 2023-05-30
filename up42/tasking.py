@@ -110,13 +110,13 @@ class Tasking(CatalogBase):
         page = 0
         response = self.auth._request(request_type="GET", url=url)
         json_results = response["content"]
-        not_last_page = not (response["last"])
+        not_last_page = not response["last"]
         while not_last_page:
             page += 1
             url = replace_page_query(url, page)
             response = self.auth._request(request_type="GET", url=url)
             json_results.extend(response["content"])
-            not_last_page = not (response["last"])
+            not_last_page = not response["last"]
         return json_results
 
     def get_quotations(
@@ -127,14 +127,16 @@ class Tasking(CatalogBase):
         sortby: str = "createdAt",
         descending: bool = True,
     ):
-        """_summary_
+        """
+        This function returns the quotations for tasking by filtering and sorting by different parameters.
 
         Args:
-            workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search. Defaults to None.
-            order_id (Optional[str], optional): The order id (uuid) to filter the search. Defaults to None.
-            decision (Optional[str], optional): the status of the quotation (NOT_DECIDED, ACCEPTED or REJECTED). Defaults to None.
-            sortby (str, optional): The results sorting method that arranges elements in ascending or descending order based on a chosen field. The format is <field name>,<asc or desc>. . Defaults to "createdAt".
-            descending (bool, optional): _description_. Defaults to True.
+            workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search.
+            order_id (Optional[str], optional): The order id (uuid) to filter the search.
+            decision (Optional[str], optional): the status of the quotation (NOT_DECIDED, ACCEPTED or REJECTED).
+            sortby (str, optional): Arranges elements in asc or desc order based on a chosen field.
+            The format is <field name>,<asc or desc>.
+            descending (bool, optional): Descending or ascending sort.
 
         Returns:
             JSON: The json representation with the quotations resulted from the search.
@@ -149,7 +151,7 @@ class Tasking(CatalogBase):
             url += f"&decision={decision}"
         elif decision is not None:
             logger.warning(
-                f"Desicion values are NOT_DECIDED, ACCEPTED, REJECTED, otherwise desicion filter values ignored."
+                "Desicion values are NOT_DECIDED, ACCEPTED, REJECTED, otherwise desicion filter values ignored."
             )
         return self._query_paginated_output(url)
 

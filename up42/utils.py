@@ -9,6 +9,7 @@ import warnings
 from datetime import datetime
 from datetime import time as datetime_time
 from functools import wraps
+from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
 
 from geopandas import GeoDataFrame
 import shapely
@@ -17,8 +18,6 @@ from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 import requests
 from tqdm import tqdm
-
-from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
 
 
 def get_logger(
@@ -380,7 +379,7 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
     return order_parameters
 
 
-def replace_page_query(url: str, new_page: int) -> str:
+def replace_page_query(url: str, new_page: str) -> str:
     """
     Handle pagination replacement in an encoded url
     Args:

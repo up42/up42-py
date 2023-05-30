@@ -1,6 +1,6 @@
 from pathlib import Path
-import pytest
 import json
+import pytest
 
 # pylint: disable=unused-import
 from .fixtures import (
@@ -34,14 +34,15 @@ def test_get_quotations(tasking_mock):
     assert len(get_quotations) == 23
     workspace_id_filter = "80357ed6-9fa2-403c-9af0-65e4955d4816"
     get_quotations = tasking_mock.get_quotations(workspace_id=workspace_id_filter)
-    assert all(
-        [
-            quotation["workspaceId"] == workspace_id_filter
-            for quotation in get_quotations
-        ]
+    quotations_accepted = (
+        quotation["workspaceId"] == workspace_id_filter for quotation in get_quotations
     )
+    assert all(quotations_accepted)
     get_quotations = tasking_mock.get_quotations(decision="ACCEPTED")
-    assert all([quotation["decision"] == "ACCEPTED" for quotation in get_quotations])
+    quotations_accepted = (
+        quotation["decision"] == "ACCEPTED" for quotation in get_quotations
+    )
+    assert all(quotations_accepted)
 
 
 @pytest.mark.skip(reason="No live tests in the SDK.")
@@ -51,11 +52,12 @@ def test_get_quotations_live(tasking_live):
     assert len(get_quotations) > 10
     workspace_id_filter = "80357ed6-9fa2-403c-9af0-65e4955d4816"
     get_quotations = tasking_live.get_quotations(workspace_id=workspace_id_filter)
-    assert all(
-        [
-            quotation["workspaceId"] == workspace_id_filter
-            for quotation in get_quotations
-        ]
+    quotations_accepted = (
+        quotation["workspaceId"] == workspace_id_filter for quotation in get_quotations
     )
+    assert all(quotations_accepted)
     get_quotations = tasking_live.get_quotations(decision="ACCEPTED")
-    assert all([quotation["decision"] == "ACCEPTED" for quotation in get_quotations])
+    quotations_accepted = (
+        quotation["decision"] == "ACCEPTED" for quotation in get_quotations
+    )
+    assert all(quotations_accepted)
