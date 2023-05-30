@@ -126,7 +126,7 @@ class Tasking(CatalogBase):
             decision: Optional[str] = None,
             sortby: str = "createdAt",
             descending: bool = True, 
-        ) -> list[dict]:
+        ):
         """_summary_
 
         Args:
