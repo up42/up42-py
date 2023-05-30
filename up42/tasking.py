@@ -1,7 +1,7 @@
 """
 Tasking functionality
 """
-from typing import Union
+from typing import Optional, Union
 from datetime import datetime
 
 from geopandas import GeoDataFrame
@@ -16,6 +16,7 @@ from up42.utils import (
     any_vector_to_fc,
     fc_to_query_geometry,
     autocomplete_order_parameters,
+    replace_page_query,
 )
 
 logger = get_logger(__name__)
@@ -104,6 +105,42 @@ class Tasking(CatalogBase):
             order_parameters["params"]["geometry"] = geometry  # type: ignore
 
         return order_parameters
+
+    def _query_paginated_output(self, url:str):
+        page = 0
+        response = self.auth._request(request_type="GET", url=url)
+        json_results = response["content"]
+        not_last_page = not(response["last"])
+        while not_last_page:
+            page += 1
+            url = replace_page_query(url, page)
+            response = self.auth._request(request_type="GET", url=url)
+            json_results.extend(response["content"])
+            not_last_page = not(response["last"])
+        return json_results
+    
+    def get_quotations(
+            self,
+            workspace_id: Optional[str] = None,
+            order_id: Optional[str] = None,
+            decision: Optional[str] = None,
+            sortby: str = "createdAt",
+            descending: bool = True, 
+        ):
+        sort = f"{sortby},{'desc' if descending else 'asc'}"
+        url = f"{self.auth._endpoint()}/v2/tasking/quotation?page=0?sort={sort}"
+        if workspace_id is not None:
+            url += f"&workspaceId={workspace_id}"
+        if order_id is not None:
+            url += f"&order_id={order_id}"
+        if decision in ["NOT_DECIDED", "ACCEPTED", "REJECTED"]:
+            url += f"&decision={decision}"
+        elif decision is not None: 
+            logger.warning(
+                f"Desicion values are NOT_DECIDED, ACCEPTED, REJECTED, otherwise desicion filter values ignored."
+            )
+        return self._query_paginated_output(url)
+
 
     def __repr__(self):
         return f"Tasking(auth={self.auth})"

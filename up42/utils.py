@@ -18,6 +18,7 @@ from geojson import Polygon as geojson_Polygon
 import requests
 from tqdm import tqdm
 
+from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
 
 def get_logger(
     name: str,
@@ -376,3 +377,23 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
             del schema["properties"][param]["title"]
             logger.info(f"As `{param}` select `{schema['properties'][param]}`")
     return order_parameters
+
+def replace_page_query(url, new_page):
+    parsed_url = urlparse(url)
+    query_params = parse_qs(parsed_url.query)
+    query_params['page'] = new_page
+
+    # Update the query string with the modified parameters
+    encoded_query = urlencode(query_params, doseq=True)
+
+    # Reconstruct the modified URL
+    modified_url = urlunparse((
+        parsed_url.scheme,
+        parsed_url.netloc,
+        parsed_url.path,
+        parsed_url.params,
+        encoded_query,
+        parsed_url.fragment
+    ))
+
+    return modified_url

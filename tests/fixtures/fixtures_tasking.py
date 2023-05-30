@@ -21,3 +21,9 @@ def tasking_mock(auth_mock, requests_mock):
         requests_mock.get(url=url_data_product_schema, json=json_data_product_schema)
 
     return Tasking(auth=auth_mock)
+
+
+@pytest.fixture()
+def tasking_live(auth_live):
+    tasking = Tasking(auth=auth_live)
+    return tasking
