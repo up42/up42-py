@@ -126,7 +126,7 @@ class Tasking(CatalogBase):
             decision: Optional[str] = None,
             sortby: str = "createdAt",
             descending: bool = True, 
-        ) -> list(dict):
+        ) -> list[dict]:
         """_summary_
 
         Args:
@@ -140,7 +140,7 @@ class Tasking(CatalogBase):
             JSON: The json representation with the quotations resulted from the search.
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/v2/tasking/quotation?page=0?sort={sort}"
+        url = f"{self.auth._endpoint()}/v2/tasking/quotation?page=0&sort={sort}"
         if workspace_id is not None:
             url += f"&workspaceId={workspace_id}"
         if order_id is not None:
