@@ -156,6 +156,16 @@ class Tasking(CatalogBase):
         return self._query_paginated_output(url)
 
     def decide_quotation(self, quotation_id: str, desicion: str) -> dict:
+        """Accept or reject a quotation for a tasking order.
+        This operation is only allowed on quotations with the NOT_DECIDED status.
+
+        Args:
+            quotation_id (str): The target quotation ID.
+            desicion (str): The decision made for this quotation.
+
+        Returns:
+            dict: The confirmation to the decided quotation plus metadata.
+        """
         if desicion not in ["ACCEPTED", "REJECTED"]:
             raise ValueError("Possible desicions are only ACCEPTED or REJECTED.")
         
