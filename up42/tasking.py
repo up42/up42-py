@@ -155,5 +155,12 @@ class Tasking(CatalogBase):
             )
         return self._query_paginated_output(url)
 
+    def decide_quotation(self, quotation_id: str, desicion: str) -> dict:
+        if desicion not in ["ACCEPTED", "REJECTED"]:
+            raise ValueError("Possible desicions are only ACCEPTED or REJECTED.")
+        
+        
+        pass
+
     def __repr__(self):
         return f"Tasking(auth={self.auth})"
