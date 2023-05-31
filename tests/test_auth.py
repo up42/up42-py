@@ -88,7 +88,7 @@ def test_get_workspace_live(auth_live):
 
 def test_generate_headers(auth_mock):
     version = (
-        Path(__file__)  # pylint: disable=no-member
+        Path(__file__) # pylint: disable=no-member
         .resolve()
         .parents[1]
         .joinpath("up42/_version.txt")
