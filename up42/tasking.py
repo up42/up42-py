@@ -151,7 +151,7 @@ class Tasking(CatalogBase):
             url += f"&decision={decision}"
         elif decision is not None:
             logger.warning(
-                "Desicion values are NOT_DECIDED, ACCEPTED, REJECTED, otherwise desicion filter values ignored."
+                "decision values are NOT_DECIDED, ACCEPTED, REJECTED, otherwise decision filter values ignored."
             )
         return self._query_paginated_output(url)
 
