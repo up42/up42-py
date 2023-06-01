@@ -86,8 +86,8 @@ def tasking_mock(auth_mock, requests_mock):
     wrong_id_response_json = json.dumps(
         {
             "status": 404,
-            "title": f"Resource (Quotation) not found with Id='{QUOTATION_ID}'.",
-            "detail": None,
+            "title": "Resource does not exist.",
+            "detail": {}
         }
     )
     decide_quotation_endpoint = f"/v2/tasking/quotation/{QUOTATION_ID}-01"
@@ -104,7 +104,7 @@ def tasking_mock(auth_mock, requests_mock):
         {
             "status": 405,
             "title": "Resource (Quotation) is write-protected.",
-            "detail": None,
+            "detail": {},
         }
     )
     requests_mock.patch(
