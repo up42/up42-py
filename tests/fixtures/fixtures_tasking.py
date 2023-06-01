@@ -3,11 +3,13 @@ import json
 
 import pytest
 
-from .fixtures_globals import DATA_PRODUCT_ID
+from .fixtures_globals import DATA_PRODUCT_ID, WORKSPACE_ID
 
 from ..context import (
     Tasking,
 )
+
+ENDPOINT = "/v2/tasking/quotation"
 
 
 @pytest.fixture()
@@ -21,7 +23,7 @@ def tasking_mock(auth_mock, requests_mock):
         requests_mock.get(url=url_data_product_schema, json=json_data_product_schema)
 
     url_get_quotations_mp1 = (
-        f"{auth_mock._endpoint()}/v2/tasking/quotation?page=0&sort=createdAt,desc"
+        f"{auth_mock._endpoint()}{ENDPOINT}?page=0&sort=createdAt,desc"
     )
     with open(
         Path(__file__).resolve().parents[1]
@@ -31,7 +33,7 @@ def tasking_mock(auth_mock, requests_mock):
         requests_mock.get(url=url_get_quotations_mp1, json=json_data_get_quotation)
 
     url_get_quotations_mp2 = (
-        f"{auth_mock._endpoint()}/v2/tasking/quotation?page=1&sort=createdAt,desc"
+        f"{auth_mock._endpoint()}{ENDPOINT}?page=1&sort=createdAt,desc"
     )
     with open(
         Path(__file__).resolve().parents[1]
@@ -41,7 +43,7 @@ def tasking_mock(auth_mock, requests_mock):
         requests_mock.get(url=url_get_quotations_mp2, json=json_data_get_quotation)
 
     url_get_quotations_mp3 = (
-        f"{auth_mock._endpoint()}/v2/tasking/quotation?page=2&sort=createdAt,desc"
+        f"{auth_mock._endpoint()}{ENDPOINT}?page=2&sort=createdAt,desc"
     )
     with open(
         Path(__file__).resolve().parents[1]
@@ -51,12 +53,10 @@ def tasking_mock(auth_mock, requests_mock):
         requests_mock.get(url=url_get_quotations_mp3, json=json_data_get_quotation)
 
     sorting = "page=0&sort=createdAt,desc"
-    workspace = "80357ed6-9fa2-403c-9af0-65e4955d4816"
     decision = "ACCEPTED"
-    endpoint = "/v2/tasking/quotation?"
 
     url_get_quotations_workspace_filtered = (
-        f"{auth_mock._endpoint()}{endpoint}{sorting}&workspaceId={workspace}"
+        f"{auth_mock._endpoint()}{ENDPOINT}?{sorting}&workspaceId={WORKSPACE_ID}"
     )
     with open(
         Path(__file__).resolve().parents[1]
@@ -68,7 +68,7 @@ def tasking_mock(auth_mock, requests_mock):
         )
 
     url_get_quotations_decision_filtered = (
-        f"{auth_mock._endpoint()}{endpoint}{sorting}&decision={decision}"
+        f"{auth_mock._endpoint()}{ENDPOINT}?{sorting}&decision={decision}"
     )
     with open(
         Path(__file__).resolve().parents[1]

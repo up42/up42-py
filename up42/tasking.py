@@ -121,6 +121,7 @@ class Tasking(CatalogBase):
 
     def get_quotations(
         self,
+        quotation_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
         decision: Optional[str] = None,
@@ -131,6 +132,7 @@ class Tasking(CatalogBase):
         This function returns the quotations for tasking by filtering and sorting by different parameters.
 
         Args:
+            quotation_id (Optional[str], optional): The quotation Id for the specific quotation to retrieve.
             workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search.
             order_id (Optional[str], optional): The order id (uuid) to filter the search.
             decision (Optional[str], optional): the status of the quotation (NOT_DECIDED, ACCEPTED or REJECTED).
@@ -143,15 +145,17 @@ class Tasking(CatalogBase):
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/v2/tasking/quotation?page=0&sort={sort}"
+        if quotation_id is not None:
+            url += f"&id={quotation_id}"
         if workspace_id is not None:
             url += f"&workspaceId={workspace_id}"
         if order_id is not None:
-            url += f"&order_id={order_id}"
+            url += f"&orderId={order_id}"
         if decision in ["NOT_DECIDED", "ACCEPTED", "REJECTED"]:
             url += f"&decision={decision}"
         elif decision is not None:
             logger.warning(
-                "Desicion values are NOT_DECIDED, ACCEPTED, REJECTED, otherwise desicion filter values ignored."
+                "decision values are NOT_DECIDED, ACCEPTED, REJECTED, otherwise decision filter values ignored."
             )
         return self._query_paginated_output(url)
 

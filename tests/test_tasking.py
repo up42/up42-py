@@ -9,6 +9,7 @@ from .fixtures import (
     auth_live,
     tasking_mock,
     tasking_live,
+    WORKSPACE_ID,
 )
 
 with open(
@@ -33,10 +34,9 @@ def test_construct_order_parameters(tasking_mock):
 def test_get_quotations(tasking_mock):
     get_quotations = tasking_mock.get_quotations()
     assert len(get_quotations) == 23
-    workspace_id_filter = "80357ed6-9fa2-403c-9af0-65e4955d4816"
-    get_quotations = tasking_mock.get_quotations(workspace_id=workspace_id_filter)
+    get_quotations = tasking_mock.get_quotations(workspace_id=WORKSPACE_ID)
     quotations_accepted = (
-        quotation["workspaceId"] == workspace_id_filter for quotation in get_quotations
+        quotation["workspaceId"] == WORKSPACE_ID for quotation in get_quotations
     )
     assert all(quotations_accepted)
 
