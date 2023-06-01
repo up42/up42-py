@@ -159,23 +159,23 @@ class Tasking(CatalogBase):
             )
         return self._query_paginated_output(url)
 
-    def decide_quotation(self, quotation_id: str, desicion: str) -> dict:
+    def decide_quotation(self, quotation_id: str, decision: str) -> dict:
         """Accept or reject a quotation for a tasking order.
         This operation is only allowed on quotations with the NOT_DECIDED status.
 
         Args:
             quotation_id (str): The target quotation ID.
-            desicion (str): The decision made for this quotation.
+            decision (str): The decision made for this quotation.
 
         Returns:
             dict: The confirmation to the decided quotation plus metadata.
         """
-        if desicion not in ["ACCEPTED", "REJECTED"]:
+        if decision not in ["ACCEPTED", "REJECTED"]:
             raise ValueError("Possible desicions are only ACCEPTED or REJECTED.")
 
         url = f"{self.auth._endpoint()}/v2/tasking/quotation/{quotation_id}"
 
-        decision_payload = {"decision": desicion}
+        decision_payload = {"decision": decision}
 
         response_json = self.auth._request(
             request_type="PATCH", url=url, data=decision_payload

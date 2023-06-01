@@ -3,7 +3,11 @@ import json
 
 import pytest
 
-from .fixtures_globals import DATA_PRODUCT_ID, WORKSPACE_ID
+from .fixtures_globals import (
+    DATA_PRODUCT_ID,
+    WORKSPACE_ID,
+    QUOTATION_ID,
+)
 
 from ..context import (
     Tasking,
@@ -82,21 +86,17 @@ def tasking_mock(auth_mock, requests_mock):
     wrong_id_response_json = json.dumps(
         {
             "status": 404,
-            "title": "Resource (Quotation) not found with Id='296ef1b0-d890-430d-8d14-e9b579ab08ba'.",
+            "title": f"Resource (Quotation) not found with Id='{QUOTATION_ID}'.",
             "detail": None,
         }
     )
-    decide_quotation_endpoint = (
-        "/v2/tasking/quotation/296ef1b0-d890-430d-8d14-e9b579ab08ba"
-    )
+    decide_quotation_endpoint = f"/v2/tasking/quotation/{QUOTATION_ID}-01"
     url_decide_quotation_fail = f"{auth_mock._endpoint()}{decide_quotation_endpoint}"
     requests_mock.patch(
         url=url_decide_quotation_fail, status_code=404, json=wrong_id_response_json
     )
 
-    decide_quotation_endpoint = (
-        "/v2/tasking/quotation/296ef1b0-d890-430d-8d14-e9b579ab08bd"
-    )
+    decide_quotation_endpoint = f"/v2/tasking/quotation/{QUOTATION_ID}-02"
     url_decide_quotation_accepted = (
         f"{auth_mock._endpoint()}{decide_quotation_endpoint}"
     )
