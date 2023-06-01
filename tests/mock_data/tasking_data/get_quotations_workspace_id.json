@@ -1,11 +1,11 @@
 {
     "content": [
       {
-        "id": "81295047-ceb8-4638-8f5c-b88e2aa74952",
+        "id": "81295047-ceb8-4638-8f5c",
         "createdAt": "2023-05-08T07:17:37.622127Z",
         "updatedAt": "2023-05-08T07:17:37.622127Z",
-        "accountId": "3c86279b-610a-4dba-ad12-abe3bdc51428",
-        "workspaceId": "80357ed6-9fa2-403c-9af0-65e4955d4816",
+        "accountId": "3c86279b-610a-4dba-ad12",
+        "workspaceId": "workspace_id_123",
         "orderId": "7c37af83-e33f-43fa-bb2d-7dbb3e8c4b7c",
         "creditsPrice": 0,
         "decision": "NOT_DECIDED",
