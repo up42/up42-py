@@ -78,36 +78,39 @@ def tasking_mock(auth_mock, requests_mock):
         requests_mock.get(
             url=url_get_quotations_decision_filtered, json=json_data_get_quotation
         )
-    
-    
-    wrong_id_response_json = json.dumps({
-        'status': 404, 
-        'title': "Resource (Quotation) not found with Id='296ef1b0-d890-430d-8d14-e9b579ab08ba'.", 
-        'detail': None
-    })
-    decide_quotation_endpoint = "/v2/tasking/quotation/296ef1b0-d890-430d-8d14-e9b579ab08ba"
-    url_decide_quotation_fail = (
-        f"{auth_mock._endpoint()}{decide_quotation_endpoint}"
+
+    wrong_id_response_json = json.dumps(
+        {
+            "status": 404,
+            "title": "Resource (Quotation) not found with Id='296ef1b0-d890-430d-8d14-e9b579ab08ba'.",
+            "detail": None,
+        }
     )
+    decide_quotation_endpoint = (
+        "/v2/tasking/quotation/296ef1b0-d890-430d-8d14-e9b579ab08ba"
+    )
+    url_decide_quotation_fail = f"{auth_mock._endpoint()}{decide_quotation_endpoint}"
     requests_mock.patch(
-            url=url_decide_quotation_fail, 
-            status_code = 404,
-            json=wrong_id_response_json
+        url=url_decide_quotation_fail, status_code=404, json=wrong_id_response_json
     )
-    
-    decide_quotation_endpoint = "/v2/tasking/quotation/296ef1b0-d890-430d-8d14-e9b579ab08bd"
+
+    decide_quotation_endpoint = (
+        "/v2/tasking/quotation/296ef1b0-d890-430d-8d14-e9b579ab08bd"
+    )
     url_decide_quotation_accepted = (
         f"{auth_mock._endpoint()}{decide_quotation_endpoint}"
     )
-    accepted_id_response_json = json.dumps({
-        'status': 405, 
-        'title': 'Resource (Quotation) is write-protected.', 
-        'detail': None
-    })
+    accepted_id_response_json = json.dumps(
+        {
+            "status": 405,
+            "title": "Resource (Quotation) is write-protected.",
+            "detail": None,
+        }
+    )
     requests_mock.patch(
-            url=url_decide_quotation_accepted, 
-            status_code = 405,
-            json=accepted_id_response_json
+        url=url_decide_quotation_accepted,
+        status_code=405,
+        json=accepted_id_response_json,
     )
 
     return Tasking(auth=auth_mock)

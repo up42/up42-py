@@ -39,22 +39,22 @@ def test_get_quotations(tasking_mock):
         quotation["workspaceId"] == workspace_id_filter for quotation in get_quotations
     )
     assert all(quotations_accepted)
-    
+
     get_quotations = tasking_mock.get_quotations(decision="ACCEPTED")
     quotations_accepted = (
         quotation["decision"] == "ACCEPTED" for quotation in get_quotations
     )
     assert all(quotations_accepted)
-    
+
     accepted_quotation_id = "296ef1b0-d890-430d-8d14-e9b579ab08ba"
     with pytest.raises(requests.exceptions.RequestException) as e:
-        decide_quotation = tasking_mock.decide_quotation(accepted_quotation_id, 'ACCEPTED')
+        tasking_mock.decide_quotation(accepted_quotation_id, "ACCEPTED")
     assert isinstance(e.value, requests.exceptions.RequestException)
-    assert "404" in str(e.value) 
-    
+    assert "404" in str(e.value)
+
     accepted_quotation_id = "296ef1b0-d890-430d-8d14-e9b579ab08bd"
     with pytest.raises(requests.exceptions.RequestException) as e:
-        decide_quotation_response = tasking_mock.decide_quotation(accepted_quotation_id, "ACCEPTED")
+        tasking_mock.decide_quotation(accepted_quotation_id, "ACCEPTED")
     assert isinstance(e.value, requests.exceptions.RequestException)
     assert "405" in str(e.value)
 
@@ -80,15 +80,14 @@ def test_get_quotations_live(tasking_live):
 @pytest.mark.skip(reason="No live tests in the SDK.")
 @pytest.mark.live
 def test_decide_quotations_live(tasking_live):
-    wrong_quotation_id = "296ef1b0-d890-430d-8d14-e9b579ab08ba"  
+    wrong_quotation_id = "296ef1b0-d890-430d-8d14-e9b579ab08ba"
     with pytest.raises(requests.exceptions.RequestException) as e:
-        decide_quotation_response = tasking_live.decide_quotation(wrong_quotation_id, "ACCEPTED")
+        tasking_live.decide_quotation(wrong_quotation_id, "ACCEPTED")
     assert isinstance(e.value, requests.exceptions.RequestException)
     assert "404" in str(e.value)
-    
+
     accepted_quotation_id = "296ef1b0-d890-430d-8d14-e9b579ab08bd"
     with pytest.raises(requests.exceptions.RequestException) as e:
-        decide_quotation_response = tasking_live.decide_quotation(accepted_quotation_id, "ACCEPTED")
+        tasking_live.decide_quotation(accepted_quotation_id, "ACCEPTED")
     assert isinstance(e.value, requests.exceptions.RequestException)
     assert "405" in str(e.value)
-    

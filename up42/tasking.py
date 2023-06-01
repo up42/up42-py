@@ -168,17 +168,15 @@ class Tasking(CatalogBase):
         """
         if desicion not in ["ACCEPTED", "REJECTED"]:
             raise ValueError("Possible desicions are only ACCEPTED or REJECTED.")
-        
+
         url = f"{self.auth._endpoint()}/v2/tasking/quotation/{quotation_id}"
-        
-        decision_payload = {
-            "decision": desicion
-        }
-        
+
+        decision_payload = {"decision": desicion}
+
         response_json = self.auth._request(
             request_type="PATCH", url=url, data=decision_payload
         )
-        
+
         return response_json
 
     def __repr__(self):
