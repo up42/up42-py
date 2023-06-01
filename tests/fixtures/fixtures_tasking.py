@@ -84,11 +84,7 @@ def tasking_mock(auth_mock, requests_mock):
         )
 
     wrong_id_response_json = json.dumps(
-        {
-            "status": 404,
-            "title": "Resource does not exist.",
-            "detail": {}
-        }
+        {"status": 404, "title": "Resource does not exist.", "detail": {}}
     )
     decide_quotation_endpoint = f"/v2/tasking/quotation/{QUOTATION_ID}-01"
     url_decide_quotation_fail = f"{auth_mock._endpoint()}{decide_quotation_endpoint}"
