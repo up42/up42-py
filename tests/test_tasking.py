@@ -38,9 +38,15 @@ def test_get_quotations(tasking_mock):
         quotation["workspaceId"] == WORKSPACE_ID for quotation in get_quotations
     )
     assert all(quotations_accepted)
-    get_quotations = tasking_mock.get_quotations(decision="ACCEPTED")
+    get_quotations = tasking_mock.get_quotations(decision=["ACCEPTED"])
     quotations_accepted = (
         quotation["decision"] == "ACCEPTED" for quotation in get_quotations
+    )
+    assert all(quotations_accepted)
+    get_quotations = tasking_mock.get_quotations(decision=["ACCEPTED", "REJECTED"])
+    quotations_accepted = (
+        quotation["decision"] in ["ACCEPTED", "REJECTED"]
+        for quotation in get_quotations
     )
     assert all(quotations_accepted)
 
@@ -51,13 +57,22 @@ def test_get_quotations_live(tasking_live):
     get_quotations = tasking_live.get_quotations()
     assert len(get_quotations) > 10
     workspace_id_filter = "80357ed6-9fa2-403c-9af0-65e4955d4816"
+
     get_quotations = tasking_live.get_quotations(workspace_id=workspace_id_filter)
     quotations_accepted = (
         quotation["workspaceId"] == workspace_id_filter for quotation in get_quotations
     )
     assert all(quotations_accepted)
-    get_quotations = tasking_live.get_quotations(decision="ACCEPTED")
+
+    get_quotations = tasking_live.get_quotations(decision=["ACCEPTED"])
     quotations_accepted = (
         quotation["decision"] == "ACCEPTED" for quotation in get_quotations
+    )
+    assert all(quotations_accepted)
+
+    get_quotations = tasking_live.get_quotations(decision=["ACCEPTED", "REJECTED"])
+    quotations_accepted = (
+        quotation["decision"] in ["ACCEPTED", "REJECTED"]
+        for quotation in get_quotations
     )
     assert all(quotations_accepted)
