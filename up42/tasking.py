@@ -1,7 +1,7 @@
 """
 Tasking functionality
 """
-from typing import Optional, Union
+from typing import Optional, Union, List
 from datetime import datetime
 
 from geopandas import GeoDataFrame
@@ -124,7 +124,7 @@ class Tasking(CatalogBase):
         quotation_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
-        decision: Optional[list[str]] = None,
+        decision: Optional[List[str]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
     ):
