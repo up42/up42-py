@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import requests
 import pytest
 
 # pylint: disable=unused-import
@@ -9,6 +10,7 @@ from .fixtures import (
     tasking_mock,
     tasking_live,
     WORKSPACE_ID,
+    QUOTATION_ID,
 )
 
 with open(
@@ -51,6 +53,20 @@ def test_get_quotations(tasking_mock):
     assert all(quotations_accepted)
 
 
+def test_decide_quotation(tasking_mock):
+    with pytest.raises(requests.exceptions.RequestException) as e:
+        tasking_mock.decide_quotation(QUOTATION_ID + "-01", "ACCEPTED")
+    response = json.loads(str(e.value))
+    assert isinstance(e.value, requests.exceptions.RequestException)
+    assert response["status"] == 404
+
+    with pytest.raises(requests.exceptions.RequestException) as e:
+        tasking_mock.decide_quotation(QUOTATION_ID + "-02", "ACCEPTED")
+    response = json.loads(str(e.value))
+    assert isinstance(e.value, requests.exceptions.RequestException)
+    assert response["status"] == 405
+
+
 @pytest.mark.skip(reason="No live tests in the SDK.")
 @pytest.mark.live
 def test_get_quotations_live(tasking_live):
@@ -76,3 +92,19 @@ def test_get_quotations_live(tasking_live):
         for quotation in get_quotations
     )
     assert all(quotations_accepted)
+
+
+@pytest.mark.skip(reason="No live tests in the SDK.")
+@pytest.mark.live
+def test_decide_quotations_live(tasking_live):
+    wrong_quotation_id = "296ef1b0-d890-430d-8d14-e9b579ab08ba"
+    with pytest.raises(requests.exceptions.RequestException) as e:
+        tasking_live.decide_quotation(wrong_quotation_id, "ACCEPTED")
+    assert isinstance(e.value, requests.exceptions.RequestException)
+    assert "404" in str(e.value)
+
+    accepted_quotation_id = "296ef1b0-d890-430d-8d14-e9b579ab08bd"
+    with pytest.raises(requests.exceptions.RequestException) as e:
+        tasking_live.decide_quotation(accepted_quotation_id, "ACCEPTED")
+    assert isinstance(e.value, requests.exceptions.RequestException)
+    assert "405" in str(e.value)

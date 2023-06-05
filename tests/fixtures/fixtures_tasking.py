@@ -3,7 +3,11 @@ import json
 
 import pytest
 
-from .fixtures_globals import DATA_PRODUCT_ID, WORKSPACE_ID
+from .fixtures_globals import (
+    DATA_PRODUCT_ID,
+    WORKSPACE_ID,
+    QUOTATION_ID,
+)
 
 from ..context import (
     Tasking,
@@ -93,6 +97,32 @@ def tasking_mock(auth_mock, requests_mock):
         requests_mock.get(
             url=url_get_quotations_decision_filtered, json=json_data_get_quotation
         )
+
+    wrong_id_response_json = json.dumps(
+        {"status": 404, "title": "Resource does not exist.", "detail": {}}
+    )
+    decide_quotation_endpoint = f"/v2/tasking/quotation/{QUOTATION_ID}-01"
+    url_decide_quotation_fail = f"{auth_mock._endpoint()}{decide_quotation_endpoint}"
+    requests_mock.patch(
+        url=url_decide_quotation_fail, status_code=404, json=wrong_id_response_json
+    )
+
+    decide_quotation_endpoint = f"/v2/tasking/quotation/{QUOTATION_ID}-02"
+    url_decide_quotation_accepted = (
+        f"{auth_mock._endpoint()}{decide_quotation_endpoint}"
+    )
+    accepted_id_response_json = json.dumps(
+        {
+            "status": 405,
+            "title": "Resource (Quotation) is write-protected.",
+            "detail": {},
+        }
+    )
+    requests_mock.patch(
+        url=url_decide_quotation_accepted,
+        status_code=405,
+        json=accepted_id_response_json,
+    )
 
     return Tasking(auth=auth_mock)
 
