@@ -1,7 +1,7 @@
 """
 Tasking functionality
 """
-from typing import Union
+from typing import Optional, Union, List
 from datetime import datetime
 
 from geopandas import GeoDataFrame
@@ -16,6 +16,7 @@ from up42.utils import (
     any_vector_to_fc,
     fc_to_query_geometry,
     autocomplete_order_parameters,
+    replace_page_query,
 )
 
 logger = get_logger(__name__)
@@ -104,6 +105,90 @@ class Tasking(CatalogBase):
             order_parameters["params"]["geometry"] = geometry  # type: ignore
 
         return order_parameters
+
+    def _query_paginated_output(self, url: str):
+        page = 0
+        response = self.auth._request(request_type="GET", url=url)
+        json_results = response["content"]
+        not_last_page = not response["last"]
+        while not_last_page:
+            page += 1
+            url = replace_page_query(url, page)
+            response = self.auth._request(request_type="GET", url=url)
+            json_results.extend(response["content"])
+            not_last_page = not response["last"]
+        return json_results
+
+    def get_quotations(
+        self,
+        quotation_id: Optional[str] = None,
+        workspace_id: Optional[str] = None,
+        order_id: Optional[str] = None,
+        decision: Optional[List[str]] = None,
+        sortby: str = "createdAt",
+        descending: bool = True,
+    ):
+        """
+        This function returns the quotations for tasking by filtering and sorting by different parameters.
+
+        Args:
+            quotation_id (Optional[str], optional): The quotation Id for the specific quotation to retrieve.
+            workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search.
+            order_id (Optional[str], optional): The order id (uuid) to filter the search.
+            decision (Optional[list[str]], optional): The status of the quotation
+            (NOT_DECIDED, ACCEPTED or REJECTED).
+            sortby (str, optional): Arranges elements in asc or desc order based on a chosen field.
+            The format is <field name>,<asc or desc>.
+            descending (bool, optional): Descending or ascending sort.
+
+        Returns:
+            JSON: The json representation with the quotations resulted from the search.
+        """
+        sort = f"{sortby},{'desc' if descending else 'asc'}"
+        url = f"{self.auth._endpoint()}/v2/tasking/quotation?page=0&sort={sort}"
+        if quotation_id is not None:
+            url += f"&id={quotation_id}"
+        if workspace_id is not None:
+            url += f"&workspaceId={workspace_id}"
+        if order_id is not None:
+            url += f"&orderId={order_id}"
+        if decision is not None:
+            decisions_validation = (
+                single_decision in ["NOT_DECIDED", "ACCEPTED", "REJECTED"]
+                for single_decision in decision
+            )
+            if all(decisions_validation):
+                for single_decision in decision:
+                    url += f"&decision={single_decision}"
+            else:
+                logger.warning(
+                    "decision values are NOT_DECIDED, ACCEPTED, REJECTED, otherwise decision filter values ignored."
+                )
+        return self._query_paginated_output(url)
+
+    def decide_quotation(self, quotation_id: str, decision: str) -> dict:
+        """Accept or reject a quotation for a tasking order.
+        This operation is only allowed on quotations with the NOT_DECIDED status.
+
+        Args:
+            quotation_id (str): The target quotation ID.
+            decision (str): The decision made for this quotation.
+
+        Returns:
+            dict: The confirmation to the decided quotation plus metadata.
+        """
+        if decision not in ["ACCEPTED", "REJECTED"]:
+            raise ValueError("Possible desicions are only ACCEPTED or REJECTED.")
+
+        url = f"{self.auth._endpoint()}/v2/tasking/quotation/{quotation_id}"
+
+        decision_payload = {"decision": decision}
+
+        response_json = self.auth._request(
+            request_type="PATCH", url=url, data=decision_payload
+        )
+
+        return response_json
 
     def __repr__(self):
         return f"Tasking(auth={self.auth})"

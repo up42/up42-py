@@ -9,6 +9,7 @@ import warnings
 from datetime import datetime
 from datetime import time as datetime_time
 from functools import wraps
+from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
 
 from geopandas import GeoDataFrame
 import shapely
@@ -376,3 +377,35 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
             del schema["properties"][param]["title"]
             logger.info(f"As `{param}` select `{schema['properties'][param]}`")
     return order_parameters
+
+
+def replace_page_query(url: str, new_page: int) -> str:
+    """
+    Handle pagination replacement in an encoded url
+    Args:
+        url (str): a url with query parameters including page
+        new_page (int): the desired page starting at 0 to include in the url
+
+    Returns:
+        str: the url with the new page parameter.
+    """
+    parsed_url = urlparse(url)
+    query_params = parse_qs(parsed_url.query)
+    query_params["page"] = str(new_page)  # type: ignore
+
+    # Update the query string with the modified parameters
+    encoded_query = urlencode(query_params, doseq=True)
+
+    # Reconstruct the modified URL
+    modified_url = urlunparse(
+        (
+            parsed_url.scheme,
+            parsed_url.netloc,
+            parsed_url.path,
+            parsed_url.params,
+            encoded_query,
+            parsed_url.fragment,
+        )
+    )
+
+    return modified_url
