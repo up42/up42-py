@@ -56,13 +56,15 @@ def test_get_quotations(tasking_mock):
 def test_decide_quotation(tasking_mock):
     with pytest.raises(requests.exceptions.RequestException) as e:
         tasking_mock.decide_quotation(QUOTATION_ID + "-01", "ACCEPTED")
+    response = json.loads(str(e.value))
     assert isinstance(e.value, requests.exceptions.RequestException)
-    assert "404" in str(e.value)
+    assert response["status"] == 404
 
     with pytest.raises(requests.exceptions.RequestException) as e:
         tasking_mock.decide_quotation(QUOTATION_ID + "-02", "ACCEPTED")
+    response = json.loads(str(e.value))
     assert isinstance(e.value, requests.exceptions.RequestException)
-    assert "405" in str(e.value)
+    assert response["status"] == 405
 
 
 @pytest.mark.skip(reason="No live tests in the SDK.")
