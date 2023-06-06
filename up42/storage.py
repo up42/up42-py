@@ -335,6 +335,8 @@ class Storage:
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
+        type: Optional[str] = None,
+        tags: Optional[List[str]] = None,
     ) -> Union[List[Order], dict]:
         """
         Gets all orders in the workspace as Order objects or JSON.
@@ -362,6 +364,11 @@ class Storage:
             )
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}"
+        if type is not None and type in ["TASKING", "ARCHIVE"]:
+            url += f"&type={type}"
+        if tags is not None:
+            for tag in tags:
+                url += f"&tags={tag}"
         orders_json = self._query_paginated_endpoints(url=url, limit=limit)
         logger.info(f"Got {len(orders_json)} orders for workspace {self.workspace_id}.")
 
