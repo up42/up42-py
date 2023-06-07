@@ -2,7 +2,7 @@
 name = "up42-py"
 version = "0.28.1"
 description = "Python SDK for UP42, the geospatial marketplace and developer platform."
-authors = ["Your Name <you@example.com>"]
+authors = ["UP42 GmbH"]
 license = "https://github.com/up42/up42-py/blob/master/LICENSE"
 readme = "README.md"
 
@@ -35,6 +35,15 @@ pytest-cov = "^4.1.0"
 pytest-mypy = "^0.10.3"
 mock = "^5.0.2"
 twine = "^4.0.2"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs-material = "^9.1.15"
+mkdocstrings = "^0.22.0"
+mkdocstrings-python = "^1.1.2"
+mkdocs-exclude = "^1.0.2"
+mkdocs-jupyter = "^0.24.0"
+mkdocs-autolinks-plugin = "^0.7.0"
+mkdocs-macros-plugin = "^1.0.1"
 
 [build-system]
 requires = ["poetry-core"]
