@@ -19,7 +19,7 @@ jobs:
           name: Install requirements
           command: |
             curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.4.1 python3 -
-            poetry install --no-ansi
+            poetry install --no-ansi --with dev,docs,viz
       - run:
           name: Runnning tests
           command: make test
