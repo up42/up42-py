@@ -118,3 +118,13 @@ def test_get_feasibility(tasking_mock):
 @pytest.mark.live
 def test_get_feasibility_live(tasking_live):
     pass
+
+
+def test_choose_feasibility(tasking_mock):
+    pass
+
+
+@pytest.mark.skip(reason="No live tests in the SDK.")
+@pytest.mark.live
+def test_choose_feasibility_live(tasking_live):
+    pass

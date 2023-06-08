@@ -237,6 +237,26 @@ class Tasking(CatalogBase):
                 )
         return self._query_paginated_output(url)
 
+    def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
+        """Accept one of the proposed feasibility study options..
+        This operation is only allowed on feasibility studies with the NOT_DECIDED status.
+
+        Args:
+            feasibility_id (str): The target feasibility study ID.
+            accepted_option_id (str): The ID of the feasibility option to accept.
+
+        Returns:
+            dict: The confirmation to the decided quotation plus metadata.
+        """
+        url = f"{self.auth._endpoint()}/v2/tasking/feasibility/{feasibility_id}"
+
+        accepted_option_payload = {"acceptedOptionId": accepted_option_id}
+
+        response_json = self.auth._request(
+            request_type="PATCH", url=url, data=accepted_option_payload
+        )
+
+        return response_json
 
     def __repr__(self):
         return f"Tasking(auth={self.auth})"
