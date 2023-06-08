@@ -4,23 +4,29 @@
 
 The development installation is necessary if you want to contribute to up42-py, e.g. to fix a bug.
 
-1. *Optional (but highly recommended)*: Create a new virtual environment e.g. using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/):
-```bash
-mkvirtualenv --python=$(which python3.7) up42-py
-```
 
-2. Clone the repository and install locally with SystemLink (code changes are reflected).  
-This will install all the neccessary dependencies for up42-py, running the tests and editing the docs.
+1. Clone the repository and install locally.  
+This will create a virtual environment and install all the neccessary dependencies for up42-py.
 
 ```bash
 git clone git@github.com:up42/up42-py.git
 cd up42-py
-make install[dev]
+poetry install
 ```
 
-3. Create a new project on [UP42](https://up42.com).
+To activate the virtual environment, run:
+```bash
+poetry shell
+```
 
-4. Create a `config.json` file and fill in the [project credentials](https://docs.up42.com/developers/authentication#step-1-find-project-credentials.
+To run the tests, run:
+```bash
+pytest
+```
+
+2. Create a new project on [UP42](https://up42.com).
+
+3. Create a `config.json` file and fill in the [project credentials](https://docs.up42.com/developers/authentication#step-1-find-project-credentials.
 ```json
 {
   "project_id": "...",
