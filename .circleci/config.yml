@@ -10,7 +10,7 @@ jobs:
   test:
     working_directory: *workspace-dir
     docker:
-      - image: cimg/python:3.8
+      - image: circleci/python:3.8
     steps:
       - attach_workspace:
           at: *workspace-dir
@@ -18,7 +18,8 @@ jobs:
       - run:
           name: Install requirements
           command: |
-            poetry install
+            curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.4.1 python3 -
+            poetry install --no-ansi
       - run:
           name: Runnning tests
           command: make test
@@ -44,12 +45,13 @@ jobs:
           sonar_token_variable_name: SONAR_TOKEN
   test_live:
     docker:
-      - image: cimg/python:3.8
+      - image: circleci/python:3.8
     steps:
       - checkout
       - run:
           name: Install requirements
           command: |
+            curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.4.1 python3 -
             poetry install
       - run:
           name: Runnning tests
