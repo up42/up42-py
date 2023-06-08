@@ -19,7 +19,9 @@ jobs:
           name: Install requirements
           command: |
             curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.4.1 python3 -
+            poetry config virtualenvs.create false
             poetry install --no-ansi --with dev,docs,viz
+            pip freeze
       - run:
           name: Runnning tests
           command: make test
@@ -52,7 +54,7 @@ jobs:
           name: Install requirements
           command: |
             curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.4.1 python3 -
-            poetry install
+            poetry install --no-ansi --with dev,docs,viz
       - run:
           name: Runnning tests
           command: python -m pytest --runlive --durations=5
