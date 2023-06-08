@@ -19,7 +19,7 @@ jobs:
           name: Install requirements
           command: |
             pip install poetry==1.3.2
-            poetry install
+            poetry install --no-ansi
       - run:
           name: Runnning tests
           command: make test
