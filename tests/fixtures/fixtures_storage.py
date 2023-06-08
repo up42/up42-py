@@ -18,7 +18,6 @@ from ..context import (
 
 @pytest.fixture()
 def storage_mock(auth_mock, requests_mock):
-
     # pystac client authentication
     url_pystac_client = f"{auth_mock._endpoint()}/v2/assets/stac"
     requests_mock.get(url=url_pystac_client, json=PYSTAC_MOCK_CLIENT)

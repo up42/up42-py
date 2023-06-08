@@ -108,3 +108,13 @@ def test_decide_quotations_live(tasking_live):
         tasking_live.decide_quotation(accepted_quotation_id, "ACCEPTED")
     assert isinstance(e.value, requests.exceptions.RequestException)
     assert "405" in str(e.value)
+
+
+def test_get_feasibility(tasking_mock):
+    pass
+
+
+@pytest.mark.skip(reason="No live tests in the SDK.")
+@pytest.mark.live
+def test_get_feasibility_live(tasking_live):
+    pass

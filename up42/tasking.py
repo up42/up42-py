@@ -190,5 +190,53 @@ class Tasking(CatalogBase):
 
         return response_json
 
+    def get_feasibility(
+        self,
+        quotation_id: Optional[str] = None,
+        workspace_id: Optional[str] = None,
+        order_id: Optional[str] = None,
+        decision: Optional[List[str]] = None,
+        sortby: str = "createdAt",
+        descending: bool = True,
+    ):
+        """
+        This function returns the list of feasibility studies for tasking orders.
+
+        Args:
+            quotation_id (Optional[str], optional): The quotation Id for the specific quotation to retrieve.
+            workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search.
+            order_id (Optional[str], optional): The order id (uuid) to filter the search.
+            decision (Optional[list[str]], optional): The status of the quotation
+            (NOT_DECIDED, ACCEPTED or REJECTED).
+            sortby (str, optional): Arranges elements in asc or desc order based on a chosen field.
+            The format is <field name>,<asc or desc>.
+            descending (bool, optional): Descending or ascending sort.
+
+        Returns:
+            JSON: The json representation with the feasibility resulted from the search.
+        """
+        sort = f"{sortby},{'desc' if descending else 'asc'}"
+        url = f"{self.auth._endpoint()}/v2/tasking/feasibility?page=0&sort={sort}"
+        if quotation_id is not None:
+            url += f"&id={quotation_id}"
+        if workspace_id is not None:
+            url += f"&workspaceId={workspace_id}"
+        if order_id is not None:
+            url += f"&orderId={order_id}"
+        if decision is not None:
+            decisions_validation = (
+                single_decision in ["NOT_DECIDED", "ACCEPTED"]
+                for single_decision in decision
+            )
+            if all(decisions_validation):
+                for single_decision in decision:
+                    url += f"&decision={single_decision}"
+            else:
+                logger.warning(
+                    "decision values are NOT_DECIDED or ACCEPTED, otherwise decision filter values will be ignored."
+                )
+        return self._query_paginated_output(url)
+
+
     def __repr__(self):
         return f"Tasking(auth={self.auth})"
