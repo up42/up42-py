@@ -192,7 +192,7 @@ class Tasking(CatalogBase):
 
     def get_feasibility(
         self,
-        quotation_id: Optional[str] = None,
+        feasibility_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
         decision: Optional[List[str]] = None,
@@ -203,13 +203,13 @@ class Tasking(CatalogBase):
         This function returns the list of feasibility studies for tasking orders.
 
         Args:
-            quotation_id (Optional[str], optional): The quotation Id for the specific quotation to retrieve.
+            feasibility_id (Optional[str], optional): The feasibility Id for the specific feasibility study to retrieve.
             workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search.
             order_id (Optional[str], optional): The order id (uuid) to filter the search.
             decision (Optional[list[str]], optional): The status of the quotation
-            (NOT_DECIDED, ACCEPTED or REJECTED).
+            (NOT_DECIDED or ACCEPTED).
             sortby (str, optional): Arranges elements in asc or desc order based on a chosen field.
-            The format is <field name>,<asc or desc>.
+            The format is <field name>,<asc or desc>. Eg: "id,asc"
             descending (bool, optional): Descending or ascending sort.
 
         Returns:
@@ -217,8 +217,8 @@ class Tasking(CatalogBase):
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/v2/tasking/feasibility?page=0&sort={sort}"
-        if quotation_id is not None:
-            url += f"&id={quotation_id}"
+        if feasibility_id is not None:
+            url += f"&id={feasibility_id}"
         if workspace_id is not None:
             url += f"&workspaceId={workspace_id}"
         if order_id is not None:

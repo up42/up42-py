@@ -13,6 +13,8 @@ from .fixtures import (
     QUOTATION_ID,
 )
 
+LIVE_TEST_WORKSPACE_ID = "80357ed6-9fa2-403c-9af0-65e4955d4816"
+
 with open(
     Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
 ) as json_file:
@@ -111,20 +113,52 @@ def test_decide_quotations_live(tasking_live):
 
 
 def test_get_feasibility(tasking_mock):
+    # TODO: add assertions for 200 and 401
     pass
 
 
 @pytest.mark.skip(reason="No live tests in the SDK.")
 @pytest.mark.live
 def test_get_feasibility_live(tasking_live):
-    pass
+    feasibility_studies = tasking_live.get_feasibility()
+    assert len(feasibility_studies) > 10
+    feasibility_studies = tasking_live.get_feasibility(workspace_id=LIVE_TEST_WORKSPACE_ID)
+    accepted_studies = (
+        feasibility["workspaceId"] == LIVE_TEST_WORKSPACE_ID for feasibility in feasibility_studies
+    )
+    assert all(accepted_studies)
+
+    feasibility_studies = tasking_live.get_feasibility(decision=["ACCEPTED"])
+    accepted_studies = (
+        feasibility["decision"] == "ACCEPTED" for feasibility in feasibility_studies
+    )
+    #TODO: add assertions on length, etc.
+    assert all(accepted_studies)
+
+    feasibility_studies = tasking_live.get_feasibility(decision=["ACCEPTED", "NOT_DECIDED"])
+    accepted_studies = (
+        feasibility["decision"] in ["ACCEPTED", "NOT_DECIDED"] for feasibility in feasibility_studies
+    )
+    assert all(accepted_studies)
 
 
 def test_choose_feasibility(tasking_mock):
+    #TODO: add assertions for 200, 404, 405
     pass
 
 
 @pytest.mark.skip(reason="No live tests in the SDK.")
 @pytest.mark.live
 def test_choose_feasibility_live(tasking_live):
-    pass
+    wrong_feasibility_id = "296ef160-d890-430d-8d14-e9b579ab08ba"
+    option_id = "something"
+    with pytest.raises(requests.exceptions.RequestException) as e:
+        tasking_live.choose_feasibility(wrong_feasibility_id, wrong_feasibility_id)
+    assert isinstance(e.value, requests.exceptions.RequestException)
+    assert "404" in str(e.value)
+
+    accepted_quotation_id = "296ef1b0-d890-430d-8d14-e9b579ab08bd"
+    with pytest.raises(requests.exceptions.RequestException) as e:
+        tasking_live.decide_quotation(accepted_quotation_id, "ACCEPTED")
+    assert isinstance(e.value, requests.exceptions.RequestException)
+    assert "405" in str(e.value)
