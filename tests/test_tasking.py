@@ -14,6 +14,10 @@ from .fixtures import (
 )
 
 LIVE_TEST_WORKSPACE_ID = "80357ed6-9fa2-403c-9af0-65e4955d4816"
+WRONG_FEASIBILITY_ID = "296ef160-d890-430d-8d14-e9b579ab08ba"
+WRONG_OPTION_ID = "296ef160-7890-430d-8d14-e9b579ab08ba"
+LIVE_FEASIBILITY_ID = "e6285c5b-0b1f-4e87-be4b-782705f5ae2d"
+LIVE_OPTION_ID = "ed3628eb-a324-4470-b802-ee9625c34b3d"
 
 with open(
     Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
@@ -132,14 +136,17 @@ def test_get_feasibility_live(tasking_live):
     accepted_studies = (
         feasibility["decision"] == "ACCEPTED" for feasibility in feasibility_studies
     )
-    #TODO: add assertions on length, etc.
+    assert len(list(accepted_studies)) > 10
     assert all(accepted_studies)
 
     feasibility_studies = tasking_live.get_feasibility(decision=["ACCEPTED", "NOT_DECIDED"])
     accepted_studies = (
         feasibility["decision"] in ["ACCEPTED", "NOT_DECIDED"] for feasibility in feasibility_studies
     )
+    assert len(list(accepted_studies)) > 10
     assert all(accepted_studies)
+    feasibility_studies = tasking_live.get_feasibility(feasibility_id=WRONG_FEASIBILITY_ID)
+    assert len(feasibility_studies) == 0
 
 
 def test_choose_feasibility(tasking_mock):
@@ -150,15 +157,12 @@ def test_choose_feasibility(tasking_mock):
 @pytest.mark.skip(reason="No live tests in the SDK.")
 @pytest.mark.live
 def test_choose_feasibility_live(tasking_live):
-    wrong_feasibility_id = "296ef160-d890-430d-8d14-e9b579ab08ba"
-    option_id = "something"
     with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_live.choose_feasibility(wrong_feasibility_id, wrong_feasibility_id)
-    assert isinstance(e.value, requests.exceptions.RequestException)
-    assert "404" in str(e.value)
+        tasking_live.choose_feasibility(WRONG_FEASIBILITY_ID, WRONG_OPTION_ID)
+        assert isinstance(e.value, requests.exceptions.RequestException)
+        assert "404" in str(e.value)
 
-    accepted_quotation_id = "296ef1b0-d890-430d-8d14-e9b579ab08bd"
     with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_live.decide_quotation(accepted_quotation_id, "ACCEPTED")
-    assert isinstance(e.value, requests.exceptions.RequestException)
-    assert "405" in str(e.value)
+        tasking_live.choose_feasibility(LIVE_FEASIBILITY_ID, LIVE_OPTION_ID)
+        assert isinstance(e.value, requests.exceptions.RequestException)
+        assert str(e.value) == "{'status': 405, 'title': 'Resource (FeasibilityStudy) is write-protected.', 'detail': None}"
