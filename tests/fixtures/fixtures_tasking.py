@@ -7,6 +7,8 @@ from .fixtures_globals import (
     DATA_PRODUCT_ID,
     WORKSPACE_ID,
     QUOTATION_ID,
+    WRONG_FEASIBILITY_ID,
+    LIVE_FEASIBILITY_ID,
 )
 
 from ..context import (
@@ -58,9 +60,7 @@ def tasking_mock(auth_mock, requests_mock):
 
     sorting = "page=0&sort=createdAt,desc"
 
-    url_get_quotations_workspace_filtered = (
-        f"{auth_mock._endpoint()}{QUOTATION_ENDPOINT}?{sorting}&workspaceId={WORKSPACE_ID}"
-    )
+    url_get_quotations_workspace_filtered = f"{auth_mock._endpoint()}{QUOTATION_ENDPOINT}?{sorting}&workspaceId={WORKSPACE_ID}"
     with open(
         Path(__file__).resolve().parents[1]
         / "mock_data/tasking_data/get_quotations_workspace_id.json"
@@ -85,9 +85,9 @@ def tasking_mock(auth_mock, requests_mock):
             f"{auth_mock._endpoint()}{QUOTATION_ENDPOINT}?{sorting}&decision=ACCEPTED"
         )
 
-    desicion_filter = "&decision=ACCEPTED&decision=REJECTED"
+    decision_filter = "&decision=ACCEPTED&decision=REJECTED"
     url_get_quotations_decision_filtered = (
-        f"{auth_mock._endpoint()}{QUOTATION_ENDPOINT}?{sorting}{desicion_filter}"
+        f"{auth_mock._endpoint()}{QUOTATION_ENDPOINT}?{sorting}{decision_filter}"
     )
     with open(
         Path(__file__).resolve().parents[1]
@@ -124,6 +124,69 @@ def tasking_mock(auth_mock, requests_mock):
         json=accepted_id_response_json,
     )
 
+    return Tasking(auth=auth_mock)
+
+
+@pytest.fixture()
+def tasking_get_feasibility_mock(auth_mock, requests_mock):
+    get_feasibility_page0_url = (
+        f"{auth_mock._endpoint()}/v2/tasking/feasibility?page=0&sort=createdAt,desc"
+    )
+    with open(
+        Path(__file__).resolve().parents[1]
+        / "mock_data/tasking_data/get_feasibility_multi_page_01.json"
+    ) as json_file:
+        json_data_get_quotation = json.load(json_file)
+        requests_mock.get(url=get_feasibility_page0_url, json=json_data_get_quotation)
+
+    get_feasibility_page1_url = (
+        f"{auth_mock._endpoint()}/v2/tasking/feasibility?page=1&sort=createdAt,desc"
+    )
+    with open(
+        Path(__file__).resolve().parents[1]
+        / "mock_data/tasking_data/get_feasibility_multi_page_02.json"
+    ) as json_file:
+        json_data_get_quotation = json.load(json_file)
+        requests_mock.get(url=get_feasibility_page1_url, json=json_data_get_quotation)
+
+    get_feasibility_page2_url = (
+        f"{auth_mock._endpoint()}/v2/tasking/feasibility?page=2&sort=createdAt,desc"
+    )
+    with open(
+        Path(__file__).resolve().parents[1]
+        / "mock_data/tasking_data/get_feasibility_multi_page_03.json"
+    ) as json_file:
+        json_data_get_quotation = json.load(json_file)
+        requests_mock.get(url=get_feasibility_page2_url, json=json_data_get_quotation)
+
+    return Tasking(auth=auth_mock)
+
+
+@pytest.fixture()
+def tasking_choose_feasibility_mock(auth_mock, requests_mock):
+    wrong_feasibility_url = (
+        f"{auth_mock._endpoint()}/v2/tasking/feasibility/{WRONG_FEASIBILITY_ID}"
+    )
+    response = json.dumps(
+        {
+            "status": 404,
+            "title": "Resource (FeasibilityStudy) not found with Id='296ef160-7890-430d-8d14-e9b579ab08ba'.",
+            "detail": {},
+        }
+    )
+    requests_mock.patch(url=wrong_feasibility_url, status_code=404, json=response)
+
+    choose_feasibility_url = (
+        f"{auth_mock._endpoint()}/v2/tasking/feasibility/{LIVE_FEASIBILITY_ID}"
+    )
+    response = json.dumps(
+        {
+            "status": 405,
+            "title": "Resource (FeasibilityStudy) is write-protected.",
+            "detail": {},
+        }
+    )
+    requests_mock.patch(url=choose_feasibility_url, status_code=405, json=response)
     return Tasking(auth=auth_mock)
 
 

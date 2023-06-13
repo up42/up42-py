@@ -249,13 +249,10 @@ class Tasking(CatalogBase):
             dict: The confirmation to the decided quotation plus metadata.
         """
         url = f"{self.auth._endpoint()}/v2/tasking/feasibility/{feasibility_id}"
-
         accepted_option_payload = {"acceptedOptionId": accepted_option_id}
-
         response_json = self.auth._request(
             request_type="PATCH", url=url, data=accepted_option_payload
         )
-
         return response_json
 
     def __repr__(self):

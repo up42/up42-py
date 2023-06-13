@@ -6,7 +6,13 @@ PROJECT_APIKEY = "project_apikey_123"
 PROJECT_NAME = "project_name_123"
 PROJECT_DESCRIPTION = "project_description_123"
 
+# tasking constants
 QUOTATION_ID = "some_quotation_id"
+LIVE_TEST_WORKSPACE_ID = "80357ed6-9fa2-403c-9af0-65e4955d4816"
+WRONG_FEASIBILITY_ID = "296ef160-d890-430d-8d14-e9b579ab08ba"
+WRONG_OPTION_ID = "296ef160-7890-430d-8d14-e9b579ab08ba"
+LIVE_FEASIBILITY_ID = "e6285c5b-0b1f-4e87-be4b-782705f5ae2d"
+LIVE_OPTION_ID = "ed3628eb-a324-4470-b802-ee9625c34b3d"
 
 WORKFLOW_ID = "workflow_id_123"
 WORKFLOW_NAME = "workflow_name_123"
