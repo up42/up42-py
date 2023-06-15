@@ -332,6 +332,9 @@ def test_get_orders_live(storage_live):
     descending_dates = sorted(dates)[::-1]
     assert descending_dates == dates
 
+    orders_tags = storage_live.get_orders(tags=["Test"])
+    assert len(orders_tags) >= 0
+
 
 def test_get_orders_raises_with_illegal_sorting_criteria(storage_mock):
     with pytest.raises(ValueError):

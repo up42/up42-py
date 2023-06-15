@@ -375,6 +375,7 @@ class Catalog(CatalogBase, VizTools):
             GeoDataFrame,
             Polygon,
         ] = None,
+        tags: Optional[str] = None
     ):
         """
         Helps constructing the parameters dictionary required for the catalog order. Some collections have
@@ -406,6 +407,8 @@ class Catalog(CatalogBase, VizTools):
             "dataProduct": data_product_id,
             "params": {"id": image_id},
         }
+        if tags is not None:
+            order_parameters["tags"] = tags
         logger.info(
             "See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options."
         )
