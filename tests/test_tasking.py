@@ -141,6 +141,10 @@ def test_get_feasibility(tasking_get_feasibility_mock):
         decision=["NOT_DECIDED"]
     )
     assert len(feasibility_studies) == 1
+    feasibility_studies = tasking_get_feasibility_mock.get_feasibility(
+        decision=["some_wrong_string"]
+    )
+    assert len(feasibility_studies) == 26
 
 
 @pytest.mark.skip(reason="No live tests in the SDK.")
