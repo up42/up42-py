@@ -1,6 +1,6 @@
 from pathlib import Path
 import json
-
+import os
 import pytest
 
 from .fixtures_globals import (
@@ -8,8 +8,8 @@ from .fixtures_globals import (
     WORKSPACE_ID,
     QUOTATION_ID,
     WRONG_FEASIBILITY_ID,
-    LIVE_FEASIBILITY_ID,
 )
+LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
 
 from ..context import (
     Tasking,
@@ -59,8 +59,12 @@ def tasking_mock(auth_mock, requests_mock):
         requests_mock.get(url=url_get_quotations_mp3, json=json_data_get_quotation)
 
     sorting = "page=0&sort=createdAt,desc"
-    # pylint: disable=line-too-long
-    url_get_quotations_workspace_filtered = f"{auth_mock._endpoint()}{QUOTATION_ENDPOINT}?{sorting}&workspaceId={WORKSPACE_ID}"
+    url_get_quotations_workspace_filtered = (
+    f"{auth_mock._endpoint()}"
+    f"{QUOTATION_ENDPOINT}?"
+    f"{sorting}&"
+    f"workspaceId={WORKSPACE_ID}"
+)
     with open(
         Path(__file__).resolve().parents[1]
         / "mock_data/tasking_data/get_quotations_workspace_id.json"

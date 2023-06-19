@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import json
 import requests
@@ -13,13 +14,12 @@ from .fixtures import (
     tasking_choose_feasibility_mock,
     WORKSPACE_ID,
     QUOTATION_ID,
-    LIVE_TEST_WORKSPACE_ID,
     WRONG_FEASIBILITY_ID,
     WRONG_OPTION_ID,
-    LIVE_FEASIBILITY_ID,
-    LIVE_OPTION_ID,
 )
-
+LIVE_TEST_WORKSPACE_ID = os.getenv("LIVE_TEST_WORKSPACE_ID")
+LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
+LIVE_OPTION_ID = os.getenv("LIVE_OPTION_ID")
 
 with open(
     Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
