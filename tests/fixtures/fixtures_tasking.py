@@ -2,6 +2,9 @@ from pathlib import Path
 import json
 import os
 import pytest
+from ..context import (
+    Tasking,
+)
 
 from .fixtures_globals import (
     DATA_PRODUCT_ID,
@@ -9,11 +12,9 @@ from .fixtures_globals import (
     QUOTATION_ID,
     WRONG_FEASIBILITY_ID,
 )
+
 LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
 
-from ..context import (
-    Tasking,
-)
 
 QUOTATION_ENDPOINT = "/v2/tasking/quotation"
 
@@ -60,11 +61,11 @@ def tasking_mock(auth_mock, requests_mock):
 
     sorting = "page=0&sort=createdAt,desc"
     url_get_quotations_workspace_filtered = (
-    f"{auth_mock._endpoint()}"
-    f"{QUOTATION_ENDPOINT}?"
-    f"{sorting}&"
-    f"workspaceId={WORKSPACE_ID}"
-)
+        f"{auth_mock._endpoint()}"
+        f"{QUOTATION_ENDPOINT}?"
+        f"{sorting}&"
+        f"workspaceId={WORKSPACE_ID}"
+    )
     with open(
         Path(__file__).resolve().parents[1]
         / "mock_data/tasking_data/get_quotations_workspace_id.json"
@@ -140,8 +141,8 @@ def tasking_get_feasibility_mock(auth_mock, requests_mock):
         Path(__file__).resolve().parents[1]
         / "mock_data/tasking_data/get_feasibility_multi_page_01.json"
     ) as json_file:
-        json_data_get_quotation = json.load(json_file)
-        requests_mock.get(url=get_feasibility_page0_url, json=json_data_get_quotation)
+        json_data = json.load(json_file)
+        requests_mock.get(url=get_feasibility_page0_url, json=json_data)
 
     get_feasibility_page1_url = (
         f"{auth_mock._endpoint()}/v2/tasking/feasibility?page=1&sort=createdAt,desc"
@@ -150,8 +151,8 @@ def tasking_get_feasibility_mock(auth_mock, requests_mock):
         Path(__file__).resolve().parents[1]
         / "mock_data/tasking_data/get_feasibility_multi_page_02.json"
     ) as json_file:
-        json_data_get_quotation = json.load(json_file)
-        requests_mock.get(url=get_feasibility_page1_url, json=json_data_get_quotation)
+        json_data = json.load(json_file)
+        requests_mock.get(url=get_feasibility_page1_url, json=json_data)
 
     get_feasibility_page2_url = (
         f"{auth_mock._endpoint()}/v2/tasking/feasibility?page=2&sort=createdAt,desc"
@@ -160,8 +161,16 @@ def tasking_get_feasibility_mock(auth_mock, requests_mock):
         Path(__file__).resolve().parents[1]
         / "mock_data/tasking_data/get_feasibility_multi_page_03.json"
     ) as json_file:
-        json_data_get_quotation = json.load(json_file)
-        requests_mock.get(url=get_feasibility_page2_url, json=json_data_get_quotation)
+        json_data = json.load(json_file)
+        requests_mock.get(url=get_feasibility_page2_url, json=json_data)
+
+    get_feasibility_decision_param = f"{auth_mock._endpoint()}/v2/tasking/feasibility?page=0&sort=createdAt,desc&decision=NOT_DECIDED"
+    with open(
+        Path(__file__).resolve().parents[1]
+        / "mock_data/tasking_data/get_feasibility_NOT_DECIDED.json"
+    ) as json_file:
+        json_data = json.load(json_file)
+        requests_mock.get(url=get_feasibility_decision_param, json=json_data)
 
     return Tasking(auth=auth_mock)
 
@@ -198,3 +207,6 @@ def tasking_choose_feasibility_mock(auth_mock, requests_mock):
 def tasking_live(auth_live):
     tasking = Tasking(auth=auth_live)
     return tasking
+
+
+# {{backend_url}}/v2/tasking/feasibility?page=0&sort=createdAt,desc&decision=NOT_DECIDED&&workspaceId=eb1626d2-8015-43e9-acab-fbfaee89466c&orderId=1f82558b-a235-47f8-9965-9128f4bd0156

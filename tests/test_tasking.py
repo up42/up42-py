@@ -17,6 +17,7 @@ from .fixtures import (
     WRONG_FEASIBILITY_ID,
     WRONG_OPTION_ID,
 )
+
 LIVE_TEST_WORKSPACE_ID = os.getenv("LIVE_TEST_WORKSPACE_ID")
 LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
 LIVE_OPTION_ID = os.getenv("LIVE_OPTION_ID")
@@ -136,6 +137,10 @@ def test_get_feasibility(tasking_get_feasibility_mock):
         "decisionAt",
         "decisionOption",
     ]
+    feasibility_studies = tasking_get_feasibility_mock.get_feasibility(
+        decision=["NOT_DECIDED"]
+    )
+    assert len(feasibility_studies) == 1
 
 
 @pytest.mark.skip(reason="No live tests in the SDK.")
