@@ -6,7 +6,10 @@ PROJECT_APIKEY = "project_apikey_123"
 PROJECT_NAME = "project_name_123"
 PROJECT_DESCRIPTION = "project_description_123"
 
+# tasking constants
 QUOTATION_ID = "some_quotation_id"
+WRONG_FEASIBILITY_ID = "296ef160-d890-430d-8d14-e9b579ab08ba"
+WRONG_OPTION_ID = "296ef160-7890-430d-8d14-e9b579ab08ba"
 
 WORKFLOW_ID = "workflow_id_123"
 WORKFLOW_NAME = "workflow_name_123"
