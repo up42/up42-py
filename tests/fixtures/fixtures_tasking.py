@@ -164,7 +164,10 @@ def tasking_get_feasibility_mock(auth_mock, requests_mock):
         json_data = json.load(json_file)
         requests_mock.get(url=get_feasibility_page2_url, json=json_data)
 
-    get_feasibility_decision_param = f"{auth_mock._endpoint()}/v2/tasking/feasibility?page=0&sort=createdAt,desc&decision=NOT_DECIDED"
+    get_feasibility_decision_param = (
+    f"{auth_mock._endpoint()}/v2/tasking/feasibility?"
+    "page=0&sort=createdAt,desc&decision=NOT_DECIDED"
+)
     with open(
         Path(__file__).resolve().parents[1]
         / "mock_data/tasking_data/get_feasibility_NOT_DECIDED.json"
@@ -207,6 +210,3 @@ def tasking_choose_feasibility_mock(auth_mock, requests_mock):
 def tasking_live(auth_live):
     tasking = Tasking(auth=auth_live)
     return tasking
-
-
-# {{backend_url}}/v2/tasking/feasibility?page=0&sort=createdAt,desc&decision=NOT_DECIDED&&workspaceId=eb1626d2-8015-43e9-acab-fbfaee89466c&orderId=1f82558b-a235-47f8-9965-9128f4bd0156
