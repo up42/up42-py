@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **June 20, 2023**
 
-- Integrating tasking endpoints to the SDK [API endpoints](https://docs.up42.com/developers/api#tag/tasking): 
+- Tasking endpoints integrated to the SDK [API endpoints](https://docs.up42.com/developers/api#tag/tasking): 
 - Added get_quotations to the tasking class.
 - Added decide on a quotation to the tasking class.
 - Added get feasibility studies to the tasking class.
