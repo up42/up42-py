@@ -30,6 +30,16 @@ You can determine your currently installed version via:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.29.0
+
+**June 20, 2023**
+
+- Tasking endpoints integrated to the SDK [API endpoints](https://docs.up42.com/developers/api#tag/tasking): 
+- Added get_quotations to the tasking class.
+- Added decide on a quotation to the tasking class.
+- Added get feasibility studies to the tasking class.
+- Added decide feasibility study to the tasking class.
+
 ## 0.28.1
 
 **April 6, 2023**
