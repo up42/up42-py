@@ -107,29 +107,44 @@ order
 
 If you've defined an AOI with multiple geometries, each geometry will create a separate order. Order names will be suffixed with incrementing numbers: `Order 1`, `Order 2`, etc.
 
-## Step 7. Review feasibility
+## Step 7. Review and accept feasibility
 
 After an order is placed, the Operations team will look at the order feasibility. They will evaluate the tasking parameters with the provider, and then will present the following assessments:
 
 - The order is possible with the given parameters.
 - The order requires modifications with suitable options proposed.
 
-You will receive an email notifying you when your order feasibility has been assessed. To proceed, follow these steps:
+You will receive an email notifying you when your order feasibility has been assessed. Using your order ID, review the proposed feasibility options as follows:
+```python
+tasking.get_feasibility(order_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
+```
 
-1. Open the [console](https://console.up42.com) and go to **Tasking** → **My orders**.
-2. Select your order and click **Feasibility**.
-3. Choose a suitable option. If none of the options are suitable, [contact](https://up42.com/company/contact-ordering) the Operations team.
-4. Click **Confirm** chosen option.
+Accept one of the options as follows:
+```python
+tasking.choose_feasibility(
+    feasibility_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
+    accepted_option_id="a0d443a2-41e8-4995-8b54-a5cc4c448227"
+)
+```
+
+If none of the options are suitable, [contact](https://up42.com/company/contact-ordering) the Operations team.
 
 You can't modify your order after accepting an option.
 
 ## Step 8. Activate an order
 
-After selecting an option, you will receive a price quote for your order. To review a price quote and activate your order, follow these steps:
+After selecting a feasibility option, you will receive a price quote for your order. Using your order ID, review the received quotation as follows:
+```python
+tasking.get_quotations(order_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
+```
 
-1. Open the [console](https://console.up42.com) and go to **Tasking** → **My orders**.
-2. Select your order and click **Price**.
-3. Accept or reject this price. If you accept, the amount will be deducted from your credit balance and tasking operations will start.
+To activate your order, accept the quotation as follows:
+```python
+tasking.choose_feasibility(
+    quotation_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
+    decision="ACCEPTED"
+)
+```
 
 ## Step 9. Monitor an order
 
