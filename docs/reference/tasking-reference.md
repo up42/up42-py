@@ -6,54 +6,6 @@ The Tasking class enables access to the UP42 [tasking functionality](../tasking.
 tasking = up42.initialize_tasking()
 ```
 
-## Data products
-
-### get_data_products
-
-The `get_data_products` function allows you to see all tasking collections and their data products available for ordering.
-
-```python
-get_data_products(basic)
-```
-
-<h3> Arguments </h3>
-
-| Name    | Type   | Description                       |
-| ------- | ------ | --------------------------------- |
-| `basic` | `bool` | Whether to simplify the response. |
-
-<h3> Returns </h3>
-
-Use `print` to return a list of collections and their data products.
-
-<h3> Example </h3>
-
-```python
-print(tasking.get_data_products(basic=True))
-```
-
-### get_data_product_schema
-
-The `get_data_product_schema` function allows you to get detailed information about the parameters needed to create an order for a specific data product.
-
-```python
-get_data_product_schema(data_product_id)
-```
-
-<h3> Arguments </h3>
-
-| Name              | Type  | Description          |
-| ----------------- | ----- | -------------------- |
-| `data_product_id` | `str` | The data product ID. |
-
-<h3> Returns </h3>
-
-<h3> Example </h3>
-
-```python
-tasking.get_data_product_schema("123eabab-0511-4f36-883a-80928716c3db")
-```
-
 ## Order
 
 ### construct_order_parameters
@@ -109,42 +61,6 @@ tasking.construct_order_parameters(
 )
 ```
 
-### place_order
-
-The `place_order` function allows you to create a new tasking order.
-
-```python
-tasking.place_order(
-    tasking.construct_order_parameters(
-        data_product_id,
-        name,
-        acquisition_start,
-        acquisition_end,
-        geometry
-    )
-)
-```
-
-<h3> Returns </h3>
-
-| Type   | Description             |
-| ------ | ----------------------- |
-| `dict` | The created order data. |
-
-<h3> Example </h3>
-
-```python
-order_parameters = tasking.construct_order_parameters(
-    data_product_id="123eabab-0511-4f36-883a-80928716c3db",
-    name="PNeo tasking order",
-    acquisition_start="2023-11-01",
-    acquisition_end="2023-12-20",
-    geometry=geometry,
-)
-
-tasking.place_order(order_parameters)
-```
-
 ## Feasibility study
 
 ### get_feasibility
@@ -158,7 +74,8 @@ get_feasibility(
     order_id=None,
     decision=None,
     sortby="createdAt",
-    descending=True)
+    descending=True
+)
 ```
 
 <h3> Arguments </h3>
@@ -281,7 +198,7 @@ The `decide_quotation` function allows you to accept or reject a quotation for a
 You can only perform actions with feasibility studies with the `NOT_DECIDED` status.
 
 ```python
-choose_feasibility(
+decide_quotation(
     quotation_id,
     decision
 )
@@ -303,7 +220,7 @@ choose_feasibility(
 <h3> Example </h3>
 
 ```python
-tasking.choose_feasibility(
+tasking.decide_quotation(
     quotation_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
     decision="ACCEPTED"
 )

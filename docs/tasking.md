@@ -140,7 +140,7 @@ tasking.get_quotations(order_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 
 To activate your order, accept the quotation as follows:
 ```python
-tasking.choose_feasibility(
+tasking.decide_quotation(
     quotation_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
     decision="ACCEPTED"
 )

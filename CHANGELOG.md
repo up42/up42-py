@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **June 20, 2023**
 
-Integrated new functions to the [Tasking class](/up42-py/reference/tasking-reference):
+Integrated new functions into the [Tasking class](/up42-py/reference/tasking-reference):
 
 - `get_feasibility` — Returns a list of feasibility studies for tasking orders.
 - `choose_feasibility` — Allows accepting one of the proposed feasibility study options.
