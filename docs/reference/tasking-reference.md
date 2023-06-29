@@ -28,8 +28,8 @@ construct_order_parameters(
 | ------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `data_product_id`   | `str`                                                                         | The data product ID.                                                                                                                          |
 | `name`              | `str`                                                                         | The tasking order name.                                                                                                                       |
-| `acquisition_start` | `Union[str, datetime]`                                                        | The start date of the acquisition period in the `YYYY_MM_DD` format.                                                                          |
-| `acquisition_end`   | `Union[str, datetime]`                                                        | The end date of the acquisition period in the `YYYY_MM_DD` format.                                                                            |
+| `acquisition_start` | `Union[str, datetime]`                                                        | The start date of the acquisition period in the `YYYY-MM-DD` format.                                                                          |
+| `acquisition_end`   | `Union[str, datetime]`                                                        | The end date of the acquisition period in the `YYYY-MM-DD` format.                                                                            |
 | `geometry`          | `Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point]` | Geometry of the area to be captured. It can be a POI or an AOI depending on the [collection](https://docs.up42.com/data/tasking/limitations). |
 
 <h3> Returns </h3>
