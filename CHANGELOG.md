@@ -1,6 +1,6 @@
 # Changelog
 
-To update your installation to the latest version use:
+Update your installation to the latest version with the following command:
 
 === "pip"
 
@@ -14,7 +14,7 @@ To update your installation to the latest version use:
     conda update -c conda-forge up42-py
     ```
 
-You can determine your currently installed version via:
+You can check your current version with the following command:
 
 === "pip"
 
@@ -34,11 +34,12 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **June 20, 2023**
 
-- Tasking endpoints integrated to the SDK [API endpoints](https://docs.up42.com/developers/api#tag/tasking): 
-- Added get_quotations to the tasking class.
-- Added decide on a quotation to the tasking class.
-- Added get feasibility studies to the tasking class.
-- Added decide feasibility study to the tasking class.
+Integrated new functions into the [Tasking class](/up42-py/reference/tasking-reference):
+
+- `get_feasibility` — Returns a list of feasibility studies for tasking orders.
+- `choose_feasibility` — Allows accepting one of the proposed feasibility study options.
+- `get_quotations` — Returns a list of all quotations for tasking orders.
+- `decide_quotation` — Allows accepting or rejecting a quotation for a tasking order.
 
 ## 0.28.1
 
