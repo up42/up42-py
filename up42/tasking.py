@@ -127,7 +127,7 @@ class Tasking(CatalogBase):
         decision: Optional[List[str]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
-    ):
+    ) -> list:
         """
         This function returns the quotations for tasking by filtering and sorting by different parameters.
 
@@ -186,6 +186,72 @@ class Tasking(CatalogBase):
             request_type="PATCH", url=url, data=decision_payload
         )
 
+        return response_json
+
+    def get_feasibility(
+        self,
+        feasibility_id: Optional[str] = None,
+        workspace_id: Optional[str] = None,
+        order_id: Optional[str] = None,
+        decision: Optional[List[str]] = None,
+        sortby: str = "createdAt",
+        descending: bool = True,
+    ) -> list:
+        """
+        This function returns the list of feasibility studies for tasking orders.
+
+        Args:
+            feasibility_id (Optional[str], optional): The feasibility Id for the specific feasibility study to retrieve.
+            workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search.
+            order_id (Optional[str], optional): The order id (uuid) to filter the search.
+            decision (Optional[list[str]], optional): The status of the quotation
+            (NOT_DECIDED or ACCEPTED).
+            sortby (str, optional): Arranges elements in asc or desc order based on a chosen field.
+            The format is <field name>,<asc or desc>. Eg: "id,asc"
+            descending (bool, optional): Descending or ascending sort.
+
+        Returns:
+            JSON: The json representation with the feasibility resulted from the search.
+        """
+        sort = f"{sortby},{'desc' if descending else 'asc'}"
+        url = f"{self.auth._endpoint()}/v2/tasking/feasibility?page=0&sort={sort}"
+        if feasibility_id is not None:
+            url += f"&id={feasibility_id}"
+        if workspace_id is not None:
+            url += f"&workspaceId={workspace_id}"
+        if order_id is not None:
+            url += f"&orderId={order_id}"
+        if decision is not None:
+            decisions_validation = (
+                single_decision in ["NOT_DECIDED", "ACCEPTED"]
+                for single_decision in decision
+            )
+            if all(decisions_validation):
+                for single_decision in decision:
+                    url += f"&decision={single_decision}"
+            else:
+                logger.warning(
+                    "decision values should be in NOT_DECIDED or ACCEPTED, "
+                    "otherwise decision filter values will be ignored."
+                )
+        return self._query_paginated_output(url)
+
+    def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
+        """Accept one of the proposed feasibility study options..
+        This operation is only allowed on feasibility studies with the NOT_DECIDED status.
+
+        Args:
+            feasibility_id (str): The target feasibility study ID.
+            accepted_option_id (str): The ID of the feasibility option to accept.
+
+        Returns:
+            dict: The confirmation to the decided quotation plus metadata.
+        """
+        url = f"{self.auth._endpoint()}/v2/tasking/feasibility/{feasibility_id}"
+        accepted_option_payload = {"acceptedOptionId": accepted_option_id}
+        response_json = self.auth._request(
+            request_type="PATCH", url=url, data=accepted_option_payload
+        )
         return response_json
 
     def __repr__(self):
