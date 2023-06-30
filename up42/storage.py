@@ -336,7 +336,7 @@ class Storage:
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
-        type: Optional[str] = None,  # type: ignore
+        order_type: Optional[str] = None,
         tags: Optional[List[str]] = None,
     ) -> Union[List[Order], dict]:
         """
@@ -348,7 +348,7 @@ class Storage:
                 Optimal to select if your workspace contains many assets.
             sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "type".
             descending: The sorting order, True for descending (default), False for ascending.
-            type: Optional Enum: "TASKING" "ARCHIVE". Search for orders with any of the provided tags
+            order_type: Optional Enum: "TASKING" "ARCHIVE". Search for orders with any of the provided tags
             tags: Optional List[str] Search for orders with any of the provided tags.
 
         Returns:
@@ -367,8 +367,8 @@ class Storage:
             )
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}"
-        if type is not None and type in ["TASKING", "ARCHIVE"]:
-            url += f"&type={type}"
+        if order_type is not None and order_type in ["TASKING", "ARCHIVE"]:
+            url += f"&type={order_type}"
         if tags is not None:
             for tag in tags:
                 url += f"&tags={tag}"
