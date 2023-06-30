@@ -94,7 +94,7 @@ get_feasibility(
 
 | Type   | Description                    |
 | ------ | ------------------------------ |
-| `JSON` | A list of feasibility studies. |
+| `list` | A list of feasibility studies. |
 
 <h3> Example </h3>
 
@@ -176,7 +176,7 @@ get_quotations(
 
 | Type   | Description           |
 | ------ | --------------------- |
-| `JSON` | A list of quotations. |
+| `list` | A list of quotations. |
 
 <h3> Example </h3>
 

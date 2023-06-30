@@ -127,7 +127,7 @@ class Tasking(CatalogBase):
         decision: Optional[List[str]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
-    ):
+    ) -> list:
         """
         This function returns the quotations for tasking by filtering and sorting by different parameters.
 
@@ -198,7 +198,7 @@ class Tasking(CatalogBase):
         decision: Optional[List[str]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
-    ):
+    ) -> list:
         """
         This function returns the list of feasibility studies for tasking orders.
 
