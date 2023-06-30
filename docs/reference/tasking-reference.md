@@ -18,7 +18,8 @@ construct_order_parameters(
     name,
     acquisition_start,
     acquisition_end,
-    geometry
+    geometry,
+    tags
 )
 ```
 
@@ -31,6 +32,7 @@ construct_order_parameters(
 | `acquisition_start` | `Union[str, datetime]`                                                        | The start date of the acquisition period in the `YYYY-MM-DD` format.                                                                          |
 | `acquisition_end`   | `Union[str, datetime]`                                                        | The end date of the acquisition period in the `YYYY-MM-DD` format.                                                                            |
 | `geometry`          | `Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point]` | Geometry of the area to be captured. It can be a POI or an AOI depending on the [collection](https://docs.up42.com/data/tasking/limitations). |
+| `tags`              | `Optional[List[str]` | Add tags to order with the provided tags. |
 
 <h3> Returns </h3>
 
