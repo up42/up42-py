@@ -139,8 +139,8 @@ class Tasking(CatalogBase):
             quotation_id (Optional[str], optional): The quotation Id for the specific quotation to retrieve.
             workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search.
             order_id (Optional[str], optional): The order id (uuid) to filter the search.
-            decision (Optional[list[str]], optional): The status of the quotation (NOT_DECIDED, ACCEPTED or REJECTED).
-            sortby (str, optional): Arranges elements in asc or desc order based on a chosen field. The format is <field name>,<asc or desc>.
+            decision (Optional[list[str]], optional): quotation status (NOT_DECIDED, ACCEPTED or REJECTED).
+            sortby (str, optional): Arranges elements in asc or desc order.
             descending (bool, optional): Descending or ascending sort.
 
         Returns:

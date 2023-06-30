@@ -336,7 +336,7 @@ class Storage:
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
-        type: Optional[str] = None,
+        type: Optional[str] = None,  # type: ignore
         tags: Optional[List[str]] = None,
     ) -> Union[List[Order], dict]:
         """
