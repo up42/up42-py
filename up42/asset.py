@@ -1,12 +1,8 @@
 from pathlib import Path
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
 from up42.auth import Auth
-from up42.utils import (
-    get_logger,
-    download_from_gcs_unpack,
-    download_gcs_not_unpack,
-)
+from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_logger
 
 logger = get_logger(__name__)
 

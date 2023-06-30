@@ -1,16 +1,16 @@
-from typing import List, Union, Optional, Dict, Any
 import math
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Union
 
+import pystac_client
+from geojson import Feature, FeatureCollection
 from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
-from geojson import Feature, FeatureCollection
-import pystac_client
 
+from up42.asset import Asset
 from up42.auth import Auth
 from up42.order import Order
-from up42.asset import Asset
-from up42.utils import get_logger, format_time, any_vector_to_fc, fc_to_query_geometry
+from up42.utils import any_vector_to_fc, fc_to_query_geometry, format_time, get_logger
 
 logger = get_logger(__name__)
 
@@ -280,7 +280,8 @@ class Storage:
         if producer_names is not None:
             url += f"&producerNames={producer_names}"
         if tags is not None:
-            url += f"&tags={tags}"
+            for tag in tags:
+                url += f"&tags={tags}"
         if sources is not None:
             url += f"&sources={','.join(sources)}"
         if search is not None:

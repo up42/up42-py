@@ -45,6 +45,7 @@ class Tasking(CatalogBase):
         geometry: Union[
             FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point
         ],
+        tags: Optional[List[str]] = None,
     ):
         """
         Helps constructing the parameters dictionary required for the tasking order. Each sensor has additional
@@ -87,6 +88,8 @@ class Tasking(CatalogBase):
                 "acquisitionEnd": format_time(acquisition_end, set_end_of_day=True),
             },
         }
+        if tags is not None:
+            order_parameters["tags"] = tags
 
         schema = self.get_data_product_schema(data_product_id)
         logger.info(
