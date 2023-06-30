@@ -1,21 +1,21 @@
 """
 Tasking functionality
 """
-from typing import Optional, Union, List
 from datetime import datetime
+from typing import List, Optional, Union
 
-from geopandas import GeoDataFrame
-from shapely.geometry import Polygon, Point
 from geojson import Feature, FeatureCollection
+from geopandas import GeoDataFrame
+from shapely.geometry import Point, Polygon
 
 from up42.auth import Auth
 from up42.catalog import CatalogBase
 from up42.utils import (
-    get_logger,
-    format_time,
     any_vector_to_fc,
-    fc_to_query_geometry,
     autocomplete_order_parameters,
+    fc_to_query_geometry,
+    format_time,
+    get_logger,
     replace_page_query,
 )
 
@@ -135,10 +135,8 @@ class Tasking(CatalogBase):
             quotation_id (Optional[str], optional): The quotation Id for the specific quotation to retrieve.
             workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search.
             order_id (Optional[str], optional): The order id (uuid) to filter the search.
-            decision (Optional[list[str]], optional): The status of the quotation
-            (NOT_DECIDED, ACCEPTED or REJECTED).
-            sortby (str, optional): Arranges elements in asc or desc order based on a chosen field.
-            The format is <field name>,<asc or desc>.
+            decision (Optional[list[str]], optional): The status of the quotation (NOT_DECIDED, ACCEPTED or REJECTED).
+            sortby (str, optional): Arranges elements in asc or desc order based on a chosen field. The format is <field name>,<asc or desc>.
             descending (bool, optional): Descending or ascending sort.
 
         Returns:
