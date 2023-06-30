@@ -246,7 +246,7 @@ class Storage:
             workspace_id: Search by the workspace ID.
             collection_names: Search for assets from any of the provided geospatial collections.
             producer_names: Search for assets from any of the provided producers.
-            tags: Search for assets with any of the provided tags.
+            tags: Optional List[str]. Search for assets with any of the provided tags.
             sources: Search for assets from any of the provided sources.\
                 The allowed values: `"ARCHIVE"`, `"TASKING"`, `"ANALYTICS"`, `"USER"`.
             search: Search for assets that contain the provided search query in their name,\
@@ -281,7 +281,7 @@ class Storage:
             url += f"&producerNames={producer_names}"
         if tags is not None:
             for tag in tags:
-                url += f"&tags={tags}"
+                url += f"&tags={tag}"
         if sources is not None:
             url += f"&sources={','.join(sources)}"
         if search is not None:
@@ -348,6 +348,8 @@ class Storage:
                 Optimal to select if your workspace contains many assets.
             sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "type".
             descending: The sorting order, True for descending (default), False for ascending.
+            type: Optional Enum: "TASKING" "ARCHIVE". Search for orders with any of the provided tags
+            tags: Optional List[str] Search for orders with any of the provided tags.
 
         Returns:
             Order objects in the workspace or alternatively JSON info of the orders.

@@ -2,26 +2,26 @@
 Catalog search functionality
 """
 
-from pathlib import Path
-from typing import Union, List, Dict, Any, Optional
 import warnings
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
+from geojson import Feature, FeatureCollection
 from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
-from geojson import Feature, FeatureCollection
 from tqdm import tqdm
 
 from up42.auth import Auth
-from up42.viztools import VizTools
 from up42.order import Order
 from up42.utils import (
-    get_logger,
     any_vector_to_fc,
-    fc_to_query_geometry,
-    deprecation,
     autocomplete_order_parameters,
+    deprecation,
+    fc_to_query_geometry,
     format_time,
+    get_logger,
 )
+from up42.viztools import VizTools
 
 logger = get_logger(__name__)
 
@@ -375,7 +375,7 @@ class Catalog(CatalogBase, VizTools):
             GeoDataFrame,
             Polygon,
         ] = None,
-        tags: Optional[str] = None
+        tags: Optional[List[str]] = None,
     ):
         """
         Helps constructing the parameters dictionary required for the catalog order. Some collections have
@@ -387,6 +387,7 @@ class Catalog(CatalogBase, VizTools):
             image_id: The id of the desired image (from search results)
             aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
                 list, GeoDataFrame, Polygon. Optional for "full-image products".
+            tags: Optional [List[srt]] Add tags to order with the provided tags.
         Returns:
             The order parameters dictionary.
 

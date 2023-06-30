@@ -60,6 +60,7 @@ class Tasking(CatalogBase):
             geometry: Geometry of the area to be captured, default a Polygon. Allows Point feature for specific
                 data products. One of FeatureCollection, Feature, dict (geojson geometry), list (bounds coordinates),
                 GeoDataFrame, shapely.Polygon, shapely.Point. All assume EPSG 4326!
+            tags: Optional [List[srt]] Add tags to order with the provided tags.
 
         Returns:
             The constructed order parameters dictionary.
