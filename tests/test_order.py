@@ -105,7 +105,7 @@ def order_parameters():
                 ],
             },
         },
-        "tags" : ["Test", "SDK"],
+        "tags": ["Test", "SDK"],
     }
 
 
@@ -135,14 +135,12 @@ def test_place_order_no_id(order_parameters, auth_mock, order_mock, requests_moc
         Order.place(auth_mock, order_parameters)
 
 
-#@pytest.mark.skip(reason="Placing orders costs credits.")
+# @pytest.mark.skip(reason="Placing orders costs credits.")
 @pytest.mark.live
 def test_place_order_live(auth_live, order_parameters):
     order = Order.place(auth_live, order_parameters)
     assert order.status == "PLACED"
     assert order.order_parameters == order_parameters
-        
-    
 
 
 def test_track_status_running(order_mock, requests_mock):
