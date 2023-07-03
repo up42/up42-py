@@ -1,24 +1,24 @@
-import datetime
 import copy
+import datetime
 
+import mock
 import pystac_client
 import pytest
 import requests
-import mock
 
 # pylint: disable=unused-import
-from .context import Storage, Asset, Order
+from .context import Asset, Order, Storage
 from .fixtures import (
     ASSET_ID,
-    ORDER_ID,
-    WORKSPACE_ID,
-    auth_mock,
-    auth_live,
-    storage_mock,
-    storage_live,
     JSON_ASSET,
     JSON_ORDER,
     JSON_STORAGE_STAC,
+    ORDER_ID,
+    WORKSPACE_ID,
+    auth_live,
+    auth_mock,
+    storage_live,
+    storage_mock,
 )
 
 
@@ -189,6 +189,13 @@ def test_get_assets_live(storage_live):
     # default descending, newest to oldest.
     descending_dates = sorted(dates)[::-1]
     assert descending_dates == dates
+    assets = storage_live.get_assets(
+        created_after="2020-01-01",
+        created_before="2023-01-01",
+        acquired_after="2020-01-01",
+        acquired_before="2023-01-01",
+    )
+    assert len(assets) >= 2
 
 
 @pytest.mark.live
@@ -202,6 +209,15 @@ def test_get_assets_with_search_stac(storage_mock):
     assert len(assets) == 1
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ID
+    assets = storage_mock.get_assets(
+        created_after="2020-01-01",
+        created_before="2023-01-01",
+        acquired_after="2020-01-01",
+        acquired_before="2023-01-01",
+        tags=["project-7", "optical"],
+    )
+    assert len(assets) == 1
+    assert isinstance(assets[0], Asset)
 
 
 @pytest.mark.live
@@ -313,7 +329,9 @@ def test_get_assets_raise_error_live(storage_live):
 
 
 def test_get_orders(storage_mock):
-    orders = storage_mock.get_orders()
+    orders = storage_mock.get_orders(
+        order_type="ARCHIVE", tags=["project-7", "optical"]
+    )
     assert len(orders) == 1
     assert isinstance(orders[0], Order)
     assert orders[0].order_id == ORDER_ID
@@ -331,6 +349,9 @@ def test_get_orders_live(storage_live):
     # default descending, newest to oldest.
     descending_dates = sorted(dates)[::-1]
     assert descending_dates == dates
+
+    orders_tags = storage_live.get_orders(tags=["Test"])
+    assert len(orders_tags) >= 0
 
 
 def test_get_orders_raises_with_illegal_sorting_criteria(storage_mock):

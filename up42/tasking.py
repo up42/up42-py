@@ -1,21 +1,21 @@
 """
 Tasking functionality
 """
-from typing import Optional, Union, List
 from datetime import datetime
+from typing import List, Optional, Union
 
-from geopandas import GeoDataFrame
-from shapely.geometry import Polygon, Point
 from geojson import Feature, FeatureCollection
+from geopandas import GeoDataFrame
+from shapely.geometry import Point, Polygon
 
 from up42.auth import Auth
 from up42.catalog import CatalogBase
 from up42.utils import (
-    get_logger,
-    format_time,
     any_vector_to_fc,
-    fc_to_query_geometry,
     autocomplete_order_parameters,
+    fc_to_query_geometry,
+    format_time,
+    get_logger,
     replace_page_query,
 )
 
@@ -45,6 +45,7 @@ class Tasking(CatalogBase):
         geometry: Union[
             FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point
         ],
+        tags: Optional[List[str]] = None,
     ):
         """
         Helps constructing the parameters dictionary required for the tasking order. Each sensor has additional
@@ -59,6 +60,7 @@ class Tasking(CatalogBase):
             geometry: Geometry of the area to be captured, default a Polygon. Allows Point feature for specific
                 data products. One of FeatureCollection, Feature, dict (geojson geometry), list (bounds coordinates),
                 GeoDataFrame, shapely.Polygon, shapely.Point. All assume EPSG 4326!
+            tags: List of tags to be added to the order.
 
         Returns:
             The constructed order parameters dictionary.
@@ -87,6 +89,8 @@ class Tasking(CatalogBase):
                 "acquisitionEnd": format_time(acquisition_end, set_end_of_day=True),
             },
         }
+        if tags is not None:
+            order_parameters["tags"] = tags
 
         schema = self.get_data_product_schema(data_product_id)
         logger.info(
@@ -135,10 +139,8 @@ class Tasking(CatalogBase):
             quotation_id (Optional[str], optional): The quotation Id for the specific quotation to retrieve.
             workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search.
             order_id (Optional[str], optional): The order id (uuid) to filter the search.
-            decision (Optional[list[str]], optional): The status of the quotation
-            (NOT_DECIDED, ACCEPTED or REJECTED).
-            sortby (str, optional): Arranges elements in asc or desc order based on a chosen field.
-            The format is <field name>,<asc or desc>.
+            decision (Optional[list[str]], optional): quotation status (NOT_DECIDED, ACCEPTED or REJECTED).
+            sortby: Param to sort the results. Default value set to createdAt
             descending (bool, optional): Descending or ascending sort.
 
         Returns:
