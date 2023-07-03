@@ -329,7 +329,9 @@ def test_get_assets_raise_error_live(storage_live):
 
 
 def test_get_orders(storage_mock):
-    orders = storage_mock.get_orders()
+    orders = storage_mock.get_orders(
+        order_type="ARCHIVE", tags=["project-7", "optical"]
+    )
     assert len(orders) == 1
     assert isinstance(orders[0], Order)
     assert orders[0].order_id == ORDER_ID
