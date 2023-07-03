@@ -140,7 +140,7 @@ class Tasking(CatalogBase):
             workspace_id (Optional[str], optional): The workspace id (uuid) to filter the search.
             order_id (Optional[str], optional): The order id (uuid) to filter the search.
             decision (Optional[list[str]], optional): quotation status (NOT_DECIDED, ACCEPTED or REJECTED).
-            sortby (str, optional): Arranges elements in asc or desc order.
+            sortby: Param to sort the results. Default value set to createdAt
             descending (bool, optional): Descending or ascending sort.
 
         Returns:
