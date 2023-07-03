@@ -32,6 +32,16 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 0.29.0
 
+**July 3, 2023**
+
+Adding tag parameter to the endpoints that include tags:
+
+- `get_assets` — Filter your assets by tags.
+- `get_orders` — Filter your orders by tags.
+- `place_order` — Tasking and archive are allowed to place orders and set tags.
+
+## 0.29.0
+
 **June 20, 2023**
 
 Integrated new functions into the [Tasking class](/up42-py/reference/tasking-reference):
