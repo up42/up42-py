@@ -349,7 +349,7 @@ class Storage:
             sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "type".
             descending: The sorting order, True for descending (default), False for ascending.
             order_type: Can be either "TASKING" or "ARCHIVE". Pass this param to filter orders based on order_type.
-            tags: Optional List[str] Search for orders with any of the provided tags.
+            tags: Search for orders with any of the provided tags.
 
         Returns:
             Order objects in the workspace or alternatively JSON info of the orders.
