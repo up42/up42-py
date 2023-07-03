@@ -209,6 +209,14 @@ def test_get_assets_with_search_stac(storage_mock):
     assert len(assets) == 1
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ID
+    assets = storage_mock.get_assets(
+        created_after="2020-01-01",
+        created_before="2023-01-01",
+        acquired_after="2020-01-01",
+        acquired_before="2023-01-01",
+    )
+    assert len(assets) == 1
+    assert isinstance(assets[0], Asset)
 
 
 @pytest.mark.live
