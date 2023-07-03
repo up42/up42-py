@@ -348,7 +348,7 @@ class Storage:
                 Optimal to select if your workspace contains many assets.
             sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "type".
             descending: The sorting order, True for descending (default), False for ascending.
-            order_type: Optional Enum: "TASKING" "ARCHIVE". Search for orders with any of the provided tags
+            order_type: Can be either "TASKING" or "ARCHIVE". Pass this param to filter orders based on order_type.
             tags: Optional List[str] Search for orders with any of the provided tags.
 
         Returns:
