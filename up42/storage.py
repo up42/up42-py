@@ -246,7 +246,7 @@ class Storage:
             workspace_id: Search by the workspace ID.
             collection_names: Search for assets from any of the provided geospatial collections.
             producer_names: Search for assets from any of the provided producers.
-            tags: Optional List[str]. Search for assets with any of the provided tags.
+            tags: Search for assets with any of the provided tags.
             sources: Search for assets from any of the provided sources.\
                 The allowed values: `"ARCHIVE"`, `"TASKING"`, `"ANALYTICS"`, `"USER"`.
             search: Search for assets that contain the provided search query in their name,\
@@ -367,8 +367,13 @@ class Storage:
             )
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}"
-        if order_type is not None and order_type in ["TASKING", "ARCHIVE"]:
-            url += f"&type={order_type}"
+        if order_type is not None:
+            if order_type in ["TASKING", "ARCHIVE"]:
+                url += f"&type={order_type}"
+            else:
+                logger.warning(
+                    "decision values are TASKING, ARCHIVE, otherwise decision filter values ignored."
+                )
         if tags is not None:
             for tag in tags:
                 url += f"&tags={tag}"

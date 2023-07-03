@@ -1,20 +1,21 @@
 import os
+
 import pytest
 
 # pylint: disable=unused-import
-from .context import Order, Asset
+from .context import Asset, Order
 from .fixtures import (
     ASSET_ID,
     JSON_ORDER,
     ORDER_ID,
     WORKSPACE_ID,
-    auth_mock,
-    auth_live,
-    order_mock,
-    order_live,
-    asset_mock,
     asset_live,
+    asset_mock,
+    auth_live,
+    auth_mock,
     catalog_mock,
+    order_live,
+    order_mock,
 )
 
 
@@ -135,7 +136,7 @@ def test_place_order_no_id(order_parameters, auth_mock, order_mock, requests_moc
         Order.place(auth_mock, order_parameters)
 
 
-# @pytest.mark.skip(reason="Placing orders costs credits.")
+@pytest.mark.skip(reason="Placing orders costs credits.")
 @pytest.mark.live
 def test_place_order_live(auth_live, order_parameters):
     order = Order.place(auth_live, order_parameters)
