@@ -372,7 +372,7 @@ class Storage:
                 url += f"&type={order_type}"
             else:
                 logger.warning(
-                    "decision values are TASKING, ARCHIVE, otherwise decision filter values ignored."
+                    "order_type should be TASKING or ARCHIVE. Ignoring this filter."
                 )
         if tags is not None:
             for tag in tags:
