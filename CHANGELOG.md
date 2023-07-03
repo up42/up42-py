@@ -30,7 +30,7 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-## 0.29.0
+## 0.30.0
 
 **July 3, 2023**
 
