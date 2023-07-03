@@ -214,6 +214,7 @@ def test_get_assets_with_search_stac(storage_mock):
         created_before="2023-01-01",
         acquired_after="2020-01-01",
         acquired_before="2023-01-01",
+        tags=["project-7", "optical"],
     )
     assert len(assets) == 1
     assert isinstance(assets[0], Asset)
