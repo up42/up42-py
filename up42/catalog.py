@@ -387,7 +387,7 @@ class Catalog(CatalogBase, VizTools):
             image_id: The id of the desired image (from search results)
             aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
                 list, GeoDataFrame, Polygon. Optional for "full-image products".
-            tags: List of tags to be added to the order.
+            tags: A list of tags that categorize the order.
         Returns:
             The order parameters dictionary.
 

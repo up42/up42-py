@@ -30,11 +30,23 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.30.0
+
+**July 3, 2023**
+
+Added a new `tags` argument to the following functions:
+
+- `construct_order_parameters`, to assign tags to new [tasking](https://sdk.up42.com/reference/tasking-reference/#construct_order_parameters) and [catalog](https://sdk.up42.com/reference/catalog-reference/) orders.
+- `get_order`, to filter [orders](https://sdk.up42.com/reference/storage-reference/) by tags.
+- `get_assets`, to filter [assets](https://sdk.up42.com/reference/storage-reference/) by tags.
+
+
+
 ## 0.29.0
 
 **June 20, 2023**
 
-Integrated new functions into the [Tasking class](/up42-py/reference/tasking-reference):
+Integrated new functions into the [Tasking class](https://sdk.up42.com/reference/tasking-reference):
 
 - `get_feasibility` — Returns a list of feasibility studies for tasking orders.
 - `choose_feasibility` — Allows accepting one of the proposed feasibility study options.
