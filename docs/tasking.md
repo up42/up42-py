@@ -72,6 +72,7 @@ tasking.get_data_product_schema("123eabab-0511-4f36-883a-80928716c3db")
       acquisition_start="2023-11-01",
       acquisition_end="2023-12-20",
       geometry=geometry,
+      tags=["project-7", "optical"]
   )
   ```
   The returned log will contain the required parameters you'll need to specify:
