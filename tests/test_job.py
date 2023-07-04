@@ -194,20 +194,23 @@ def test_job_download_gcs_no_unpacking(job_mock, requests_mock):
         assert len(out_files) == 1
 
 
+# This test tests existance of netCDF files for the given job id
+# unfortunately, the given job no longer exists.
+# commeting this test for the time being.
 # @pytest.mark.live
-def test_job_download_result_no_tiff_live(auth_live):
-    with tempfile.TemporaryDirectory() as tempdir:
-        job = Job(
-            auth=auth_live,
-            project_id=auth_live.project_id,
-            job_id=os.getenv("TEST_UP42_JOB_ID_NC_FILE"),
-        )
-        out_files = job.download_results(Path(tempdir))
-        assert Path(out_files[0]).exists()
-        assert Path(out_files[1]).exists()
-        assert any(".nc" in s for s in out_files)
-        assert any("data.json" in s for s in out_files)
-        assert len(out_files) == 2
+# def test_job_download_result_no_tiff_live(auth_live):
+#     with tempfile.TemporaryDirectory() as tempdir:
+#         job = Job(
+#             auth=auth_live,
+#             project_id=auth_live.project_id,
+#             job_id=os.getenv("TEST_UP42_JOB_ID_NC_FILE"),
+#         )
+#         out_files = job.download_results(Path(tempdir))
+#         assert Path(out_files[0]).exists()
+#         assert Path(out_files[1]).exists()
+#         assert any(".nc" in s for s in out_files)
+#         assert any("data.json" in s for s in out_files)
+#         assert len(out_files) == 2
 
 
 @pytest.mark.live
