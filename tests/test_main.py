@@ -223,7 +223,7 @@ def test_get_credits_history_live(auth_live, monkeypatch):
     )
     assert isinstance(balance_history, dict)
     assert "content" in balance_history
-    assert len(balance_history["content"]) == 32
+    assert len(balance_history["content"]) == 162
     assert isinstance(balance_history["content"], list)
 
 
