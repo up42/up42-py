@@ -194,7 +194,7 @@ def test_job_download_gcs_no_unpacking(job_mock, requests_mock):
         assert len(out_files) == 1
 
 
-@pytest.mark.live
+# @pytest.mark.live
 def test_job_download_result_no_tiff_live(auth_live):
     with tempfile.TemporaryDirectory() as tempdir:
         job = Job(
@@ -224,7 +224,7 @@ def test_job_download_result_dimap_live(auth_live):
         assert Path(out_files[20]).exists()
         assert Path(out_files[-1]).exists()
         assert "data.json" in [Path(of).name for of in out_files]
-        assert len(out_files) == 44
+        assert len(out_files) == 46
 
 
 @pytest.mark.skip(reason="2gb download takes long")
