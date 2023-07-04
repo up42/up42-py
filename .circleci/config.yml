@@ -10,7 +10,7 @@ jobs:
   test:
     working_directory: *workspace-dir
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:<< parameters.python-version >>
     steps:
       - attach_workspace:
           at: *workspace-dir
@@ -78,7 +78,10 @@ workflows:
   version: 2
   test_and_deploy:
     jobs:
-      - test
+      - test:
+          matrix:
+            parameters:
+              python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
       - sonar:
           context: sonarcloud
           requires:
