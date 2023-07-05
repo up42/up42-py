@@ -9,6 +9,10 @@ workspace: &workspace-dir /tmp/workspace
 jobs:
   test:
     working_directory: *workspace-dir
+    parameters:
+      python-version:
+        description: Python version to run tests on
+        type: string
     docker:
       - image: circleci/python:<< parameters.python-version >>
     steps:
