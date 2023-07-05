@@ -113,3 +113,8 @@ You can download and visualize the results:
 job.download_results()
 job.plot_results()
 ```
+
+## Troubleshooting
+
+#### Where can I find the default parameters for a block?
+There are multiple ways to handle the block parameters. After creating a workflow, the most convenient way is to use `workflow.construct_parameters()` to [create the parameters](#step-4-adjust-json-parameters). Here, parameters that are not specifically set will be added as the default block parameter values. Additionally, you can use `up42.get_block_details()` with the block's id to get the parameters of a specific block.

@@ -122,3 +122,8 @@ order.track_status()
 ```
 
 When the order is completed, [download its assets from storage](storage.md).
+
+## Troubleshooting
+
+#### I want the catalog search results as JSON instead of a dataframe
+Due to the amount of scenes and metadata, the default output of `catalog.search()` is a GeoPandas Dataframe, providing all its convenient methods for sorting, filtering and geometry operations. If you prefer the output as a regular json, you can use `catalog.search(as_dataframe=False)`.
