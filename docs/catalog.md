@@ -5,29 +5,33 @@ Place orders for archive geospatial data that have been captured in the past.
 ## Step 1. Choose a catalog collection
 
 1. Choose a [catalog collection](https://docs.up42.com/data/datasets) and get its `data_product_id` for ordering:
-  ```python
-  catalog = up42.initialize_catalog()
-  products = catalog.get_data_products(basic=True)
-  print(products)
-  ```
-  An example of one catalog collection in the response:
-  ```json
-  {
-     "Pléiades": {
-        "collection": "phr",
-        "host": "oneatlas",
-        "data_products": {
-          "Analytic":"4f1b2f62-98df-4c74-81f4-5dce45deee99",
-          "Display":"647780db-5a06-4b61-b525-577a8b68bb54"
-        }
-     }
+
+```python
+catalog = up42.initialize_catalog()
+products = catalog.get_data_products(basic=True)
+print(products)
+```
+
+An example of one catalog collection in the response:
+
+```json
+{
+  "Pléiades": {
+    "collection": "phr",
+    "host": "oneatlas",
+    "data_products": {
+      "Analytic": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
+      "Display": "647780db-5a06-4b61-b525-577a8b68bb54"
+    }
   }
-  ```
+}
+```
 
 2. Choose a data product and copy its ID:
-  ```python
-  data_product_id = "4f1b2f62-98df-4c74-81f4-5dce45deee99"
-  ```
+
+```python
+data_product_id = "4f1b2f62-98df-4c74-81f4-5dce45deee99"
+```
 
 ## Step 2. Request access
 
@@ -42,6 +46,7 @@ If you want to order the chosen collection for the first time, you need to accep
 ## Step 4. Search the catalog
 
 Specify search parameters to find a full scene that fits your requirements, for example:
+
 ```python
 # geometry = up42.read_vector_file("data/aoi_washington.geojson")
 # geometry = up42.get_example_aoi()
@@ -72,15 +77,19 @@ search_results = catalog.search(search_parameters)
 ```
 
 Output a dataframe with full scenes that match the specified parameters:
+
 ```python
 search_results
 ```
 
 ![Search results](images/search-results.png)
 
+To output a JSON instead, you can use `catalog.search(as_dataframe=False)`.
+
 ## Step 5. Fill out an order form
 
 Fill out the order form for catalog collections, for example:
+
 ```python
 order_parameters = catalog.construct_order_parameters(
     data_product_id=data_product_id,
@@ -92,11 +101,13 @@ order_parameters = catalog.construct_order_parameters(
 ## Step 6. Get a cost estimate
 
 Get a cost estimation before placing a catalog order:
+
 ```python
 catalog.estimate_order(order_parameters)
 ```
 
 You will receive an overview of the overall credit amount that will be deducted from your credit balance if you decide to proceed with the ordering:
+
 ```text
 log: Order is estimated to cost 150 UP42 credits.
 150
@@ -112,18 +123,15 @@ order
 ## Step 8. Monitor an order
 
 Check the status of your order:
+
 ```python
 order.status
 ```
 
 You can also track the order status until the order is completed:
+
 ```python
 order.track_status()
 ```
 
 When the order is completed, [download its assets from storage](storage.md).
-
-## Troubleshooting
-
-#### I want the catalog search results as JSON instead of a dataframe
-Due to the amount of scenes and metadata, the default output of `catalog.search()` is a GeoPandas Dataframe, providing all its convenient methods for sorting, filtering and geometry operations. If you prefer the output as a regular json, you can use `catalog.search(as_dataframe=False)`.

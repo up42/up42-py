@@ -11,32 +11,40 @@ A workflow starts with a data block and is usually followed by one or more proce
 ![A workflow graph](images/workflow-graph.png)
 
 1. Create a workflow and populate it with blocks, for example:
-  ```python
-  project = up42.initialize_project()
 
-  workflow = project.create_workflow(name="My workflow with Processing from Storage")
-  workflow.add_workflow_tasks([
-    "Processing from Storage"
-  ])
-  ```
+```python
+project = up42.initialize_project()
+
+workflow = project.create_workflow(name="My workflow with Processing from Storage")
+workflow.add_workflow_tasks([
+  "Processing from Storage"
+])
+```
+
 1. If needed, search for compatible blocks:
-  ```python
-  workflow.get_compatible_blocks()
-  ```
-  The search outputs a dataframe with blocks that can be added to your workflow, for example:
-  ```python
-  workflow.add_workflow_tasks([
-    "Sharpening Filter"
-  ])
-  ```
+
+```python
+workflow.get_compatible_blocks()
+```
+
+The search outputs a dataframe with blocks that can be added to your workflow, for example:
+
+```python
+workflow.add_workflow_tasks([
+  "Sharpening Filter"
+])
+```
 
 ## Step 2. Retrieve an input schema
 
 Retrieve input parameters of the first block in a workflow:
+
 ```python
 workflow.get_parameters_info()
 ```
+
 For example, Processing from Storage requires `asset_ids` as input parameters:
+
 ```json
 {
   "up42-processing-from-storage:1": {
@@ -73,6 +81,7 @@ geometry = {
 ## Step 4. Adjust JSON parameters
 
 Define how data retrieval and analysis will be performed during a job run, for example:
+
 ```python
 input_parameters = workflow.construct_parameters(
     geometry=geometry,
@@ -83,6 +92,8 @@ input_parameters = workflow.construct_parameters(
 )
 input_parameters["esa-s2-l2a-gtiff-visual:1"].update({"max_cloud_cover": 5})
 ```
+
+If parameters are not adjusted with `workflow.construct_parameters()`, they will be added as the default block parameter values. To see the default parameters of a specific block, you can use `up42.get_block_details()` with the block's id.
 
 ## Step 5. Make a test query
 
@@ -95,6 +106,7 @@ workflow.test_job(input_parameters, track_status=True)
 ## Step 6. Get a cost estimate
 
 Get a cost estimation before running a live job:
+
 ```python
 workflow.estimate_job(input_parameters)
 ```
@@ -113,8 +125,3 @@ You can download and visualize the results:
 job.download_results()
 job.plot_results()
 ```
-
-## Troubleshooting
-
-#### Where can I find the default parameters for a block?
-There are multiple ways to handle the block parameters. After creating a workflow, the most convenient way is to use `workflow.construct_parameters()` to [create the parameters](#step-4-adjust-json-parameters). Here, parameters that are not specifically set will be added as the default block parameter values. Additionally, you can use `up42.get_block_details()` with the block's id to get the parameters of a specific block.
