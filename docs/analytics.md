@@ -83,7 +83,6 @@ input_parameters = workflow.construct_parameters(
 )
 input_parameters["esa-s2-l2a-gtiff-visual:1"].update({"max_cloud_cover": 5})
 ```
-If parameters are not adjusted with `workflow.construct_parameters()`, they will be added as the default block parameter values.
 
 ## Step 5. Make a test query
 
