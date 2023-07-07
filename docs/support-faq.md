@@ -1,17 +1,8 @@
 # Support
 
-## Contact
-
 If you have any questions, [contact support](https://up42.com/company/contact-support).
 
-## Related links
-
-[UP42 website](https://up42.com)  
-[UP42 Python SDK repository](https://github.com/up42/up42-py)  
-[UP42 GitHub repositories](https://github.com/up42)  
-[UP42 documentation](https://docs.up42.com)
-
-### Jupyter notebooks
+## Jupyter notebooks
 
 To explore UP42:
 

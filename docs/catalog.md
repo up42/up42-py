@@ -78,7 +78,7 @@ search_results
 
 ![Search results](images/search-results.png)
 
-To output a JSON instead, you can use `catalog.search(as_dataframe=False)`.
+To output a JSON instead, use `catalog.search(as_dataframe=False)`.
 
 ## Step 5. Fill out an order form
 
