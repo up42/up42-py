@@ -377,8 +377,8 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
                 # Full information for simple parameters
                 del schema["properties"][param]["title"]
                 logger.info(f"As `{param}` select `{schema['properties'][param]}`")
-    except KeyError:
-        raise KeyError("Please reach out to UP42 Support (support@up42.com)")
+    except KeyError as exc:
+        raise KeyError("Please reach out to UP42 Support (support@up42.com)") from exc
     return order_parameters
 
 
