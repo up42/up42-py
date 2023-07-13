@@ -290,7 +290,7 @@ def test_filter_jobs_on_mode():
 
 def test_autocomplete_order_parameters():
     with open(
-        Path(__file__).resolve().parent / "mock_data/data_product_schema.json"
+        Path(__file__).resolve().parent / "mock_data/data_product_spot_schema.json"
     ) as json_file:
         json_data_product_schema = json.load(json_file)
     order_parameters = {
@@ -303,6 +303,5 @@ def test_autocomplete_order_parameters():
 
     assert "dataProduct" in order_parameters
     assert order_parameters["params"]["existing_param1"] is not None
-    assert order_parameters["params"]["aoi"] is None
+    assert order_parameters["params"]["geometry"] is None
     assert order_parameters["params"]["acquisitionMode"] is None
-    assert order_parameters["params"]["id"] is None
