@@ -41,8 +41,8 @@ def test_construct_order_parameters(tasking_mock):
     assert order_parameters["params"]["acquisitionMode"] is None
 
 
-# @pytest.mark.skip(reason="No live tests in the SDK.")
-# @pytest.mark.live
+@pytest.mark.skip(reason="No live tests in the SDK.")
+@pytest.mark.live
 @pytest.mark.parametrize(
     "product_id",
     [
@@ -63,8 +63,6 @@ def test_construct_order_parameters(tasking_mock):
     ],
 )
 def test_construct_order_parameters_live(tasking_live, product_id):
-    # TODO: update mock
-    #TODO: if only one sub param can be selected, just make it default?
     order_parameters = tasking_live.construct_order_parameters(
         data_product_id=product_id,
         name="test_construct_order_params",
