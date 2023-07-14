@@ -41,6 +41,40 @@ def test_construct_order_parameters(tasking_mock):
     assert order_parameters["params"]["acquisitionMode"] is None
 
 
+@pytest.mark.skip(reason="No live tests in the SDK.")
+@pytest.mark.live
+@pytest.mark.parametrize(
+    "product_id",
+    [
+        ("613ad1f5-4148-4460-a316-1a97e46058f9"),
+        ("83e21b35-e431-43a0-a1c4-22a6ad313911"),
+        ("205fd9e1-4b00-4f0a-aabd-01e2f3f4dfba"),
+        ("123eabab-0511-4f36-883a-80928716c3db"),
+        ("07c33a51-94b9-4509-84df-e9c13ea92b84"),
+        ("469f9b2f-1631-4c09-b66d-575abd41dc8f"),
+        ("bd102407-1814-4f92-8b5a-7697b7a73f5a"),
+        ("4f866cd3-d816-4c98-ace3-e6105623cf13"),
+        ("28d4a077-6620-4ab5-9a03-c96bf622457e"),
+        ("9d16c506-a6c0-4cf2-a020-8ecaf10b4160"),
+        ("3a89d24e-515a-460f-a494-96be55da10a9"),
+        ("47a693ba-4f8b-414d-8d5b-697373df4765"),
+        ("9f790255-e8dc-4954-b5f9-3e7bea37cc69"),
+        ("a6f64332-3148-4e05-a475-45a02176f210"),
+    ],
+)
+def test_construct_order_parameters_live(tasking_live, product_id):
+    order_parameters = tasking_live.construct_order_parameters(
+        data_product_id=product_id,
+        name="test_construct_order_params",
+        acquisition_start="2022-11-01",
+        acquisition_end="2022-11-10",
+        geometry=mock_search_parameters["intersects"],
+    )
+    assert isinstance(order_parameters, dict)
+    assert list(order_parameters.keys()) == ["dataProduct", "params"]
+    assert order_parameters["params"]["acquisitionMode"] is None
+
+
 def test_get_quotations(tasking_mock):
     get_quotations = tasking_mock.get_quotations()
     assert len(get_quotations) == 23

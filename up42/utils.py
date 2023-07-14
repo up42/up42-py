@@ -366,16 +366,19 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
     order_parameters["params"] = dict(order_parameters["params"], **additional_params)
 
     # Log message help for parameter selection
-    for param in additional_params.keys():
-        if param in ["aoi", "geometry"]:
-            continue
-        elif "allOf" in schema["properties"][param]:  # has further definitions key
-            potential_values = [x["id"] for x in schema["definitions"][param]["enum"]]
-            logger.info(f"As `{param}` select one of {potential_values}")
-        else:
-            # Full information for simple parameters
-            del schema["properties"][param]["title"]
-            logger.info(f"As `{param}` select `{schema['properties'][param]}`")
+    try:
+        for param in additional_params.keys():
+            if param in ["aoi", "geometry"]:
+                continue
+            elif "allOf" in schema["properties"][param]:  # has further definitions key
+                potential_values = [x["const"] for x in schema["definitions"][param]["anyOf"]]
+                logger.info(f"As `{param}` select one of {potential_values}")
+            else:
+                # Full information for simple parameters
+                del schema["properties"][param]["title"]
+                logger.info(f"As `{param}` select `{schema['properties'][param]}`")
+    except KeyError as exc:
+        raise KeyError("Please reach out to UP42 Support (support@up42.com)") from exc
     return order_parameters
 
 
