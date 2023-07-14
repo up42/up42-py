@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **July 14, 2023**
 
-Fixed failing [construct_order_parameters](https://sdk.up42.com/reference/tasking-reference/#construct_order_parameters) function and updated tests.
+Fixed the failing [construct_order_parameters](https://sdk.up42.com/reference/tasking-reference/#construct_order_parameters) function and updated tests.
 
 ## 0.30.0
 
