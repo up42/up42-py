@@ -8,24 +8,11 @@ import pandas as pd
 import pytest
 
 from .context import Order
-from .fixtures import (
-    DATA_PRODUCT_ID,
-    ORDER_ID,
-    auth_live,
-    auth_mock,
-    catalog_live,
-    catalog_mock,
-    catalog_pagination_mock,
-    catalog_usagetype_mock,
-    order_mock,
-)
-
-# pylint: disable=unused-import
-from .test_order import order_parameters
+from .fixtures import DATA_PRODUCT_ID, ORDER_ID
 
 with open(
     Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
-) as json_file:
+) as json_file:  # pylint: disable=unspecified-encoding
     mock_search_parameters = json.load(json_file)
 
 
@@ -113,7 +100,7 @@ def test_construct_search_parameters(catalog_mock):
 def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
     with open(
         Path(__file__).resolve().parent / "mock_data/search_footprints.geojson"
-    ) as json_file:
+    ) as json_file:  # pylint: disable=unspecified-encoding
         fc = json.load(json_file)
 
     with pytest.raises(ValueError) as e:
