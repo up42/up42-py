@@ -211,6 +211,8 @@ class Catalog(CatalogBase, VizTools):
         usage_type: List[str] = None,
         limit: int = 10,
         max_cloudcover: Optional[int] = None,
+        sortby: str = None,
+        ascending: bool = None,
     ) -> dict:
         """
         Helps constructing the parameters dictionary required for the search.
@@ -231,10 +233,17 @@ class Catalog(CatalogBase, VizTools):
             limit: The maximum number of search results to return (1-max.500).
             max_cloudcover: Optional. Maximum cloud coverage percent - e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloud coverage.
-
+            sortby: (deprecated)
+            ascending: (deprecated)
         Returns:
             The constructed parameters dictionary.
         """
+
+        if sortby is not None or ascending is not None:
+            logger.info(
+                "sortby is deprecated, currently only sorting output by creation date."
+            )
+
         time_period = (
             f"{format_time(start_date)}/{format_time(end_date, set_end_of_day=True)}"
         )
