@@ -211,8 +211,8 @@ class Catalog(CatalogBase, VizTools):
         usage_type: List[str] = None,
         limit: int = 10,
         max_cloudcover: Optional[int] = None,
-        sortby: str = "acquisitionDate",
-        ascending: bool = True,
+        sortby: str = None,
+        ascending: bool = None,
     ) -> dict:
         """
         Helps constructing the parameters dictionary required for the search.
@@ -233,13 +233,17 @@ class Catalog(CatalogBase, VizTools):
             limit: The maximum number of search results to return (1-max.500).
             max_cloudcover: Optional. Maximum cloud coverage percent - e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloud coverage.
-            sortby: The property to sort by, "cloudCoverage", "acquisitionDate",
-                "acquisitionIdentifier", "incidenceAngle", "snowCover".
-            ascending: Ascending sort order by default, descending if False.
-
+            sortby: (deprecated)
+            ascending: (deprecated)
         Returns:
             The constructed parameters dictionary.
         """
+
+        if sortby is not None or ascending is not None:
+            logger.info(
+                "sortby is deprecated, currently only sorting output by creation date."
+            )
+
         time_period = (
             f"{format_time(start_date)}/{format_time(end_date, set_end_of_day=True)}"
         )
@@ -247,7 +251,6 @@ class Catalog(CatalogBase, VizTools):
             vector=geometry,
         )
         aoi_geometry = fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
-        sort_order = "asc" if ascending else "desc"
 
         query_filters: Dict[Any, Any] = {}
         if max_cloudcover is not None:
@@ -269,7 +272,6 @@ class Catalog(CatalogBase, VizTools):
             "limit": limit,
             "collections": collections,
             "query": query_filters,
-            "sortby": [{"field": f"properties.{sortby}", "direction": sort_order}],
         }
 
         return search_parameters

@@ -1,31 +1,33 @@
-from pathlib import Path
 import json
-import tempfile
 import os
+import tempfile
+from pathlib import Path
 
-import pytest
 import geopandas as gpd
 import pandas as pd
+import pytest
 
 from .context import Order
 
 # pylint: disable=unused-import
-from .test_order import order_parameters
 from .fixtures import (
-    auth_mock,
+    DATA_PRODUCT_ID,
+    ORDER_ID,
     auth_live,
-    catalog_mock,
+    auth_mock,
     catalog_live,
+    catalog_mock,
     catalog_pagination_mock,
     catalog_usagetype_mock,
     order_mock,
-    ORDER_ID,
-    DATA_PRODUCT_ID,
 )
 
+# pylint: disable=unused-import
+from .test_order import order_parameters
 
 with open(
-    Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
+    Path(__file__).resolve().parent / "mock_data/search_params_simple.json",
+    encoding="utf-8",
 ) as json_file:
     mock_search_parameters = json.load(json_file)
 
@@ -101,8 +103,6 @@ def test_construct_search_parameters(catalog_mock):
         usage_type=["DATA", "ANALYTICS"],
         limit=4,
         max_cloudcover=20,
-        sortby="cloudCoverage",
-        ascending=False,
     )
     assert isinstance(search_parameters, dict)
     assert search_parameters["datetime"] == mock_search_parameters["datetime"]
@@ -111,12 +111,12 @@ def test_construct_search_parameters(catalog_mock):
     )
     assert search_parameters["limit"] == mock_search_parameters["limit"]
     assert search_parameters["query"] == mock_search_parameters["query"]
-    assert search_parameters["sortby"] == mock_search_parameters["sortby"]
 
 
 def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
     with open(
-        Path(__file__).resolve().parent / "mock_data/search_footprints.geojson"
+        Path(__file__).resolve().parent / "mock_data/search_footprints.geojson",
+        encoding="utf-8",
     ) as json_file:
         fc = json.load(json_file)
 
@@ -128,8 +128,6 @@ def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
             collections=["phr"],
             limit=10,
             max_cloudcover=15,
-            sortby="acquisitionDate",
-            ascending=True,
         )
     assert (
         str(e.value)
@@ -451,6 +449,7 @@ def test_construct_order_parameters(catalog_mock):
     assert isinstance(order_parameters, dict)
     assert list(order_parameters.keys()) == ["dataProduct", "params"]
     assert order_parameters["params"]["acquisitionMode"] is None
+
 
 @pytest.mark.skip(reason="No live tests in the SDK.")
 @pytest.mark.live

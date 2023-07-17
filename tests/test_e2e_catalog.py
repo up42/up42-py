@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 import up42
@@ -21,7 +22,6 @@ def test_e2e_catalog():
         end_date="2022-12-31",
         collections=["phr"],
         max_cloudcover=20,
-        sortby="cloudCoverage",
         limit=10,
     )
     search_results = catalog.search(search_parameters=search_parameters)

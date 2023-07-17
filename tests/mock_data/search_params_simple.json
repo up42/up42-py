@@ -32,6 +32,5 @@
     "query": {
         "cloudCoverage": {"lte": 20},
         "up42:usageType":  {"in": ["DATA", "ANALYTICS"]}
-    },
-    "sortby": [{"field": "properties.cloudCoverage", "direction": "desc"}]
+    }
 }
