@@ -8,6 +8,8 @@ import pandas as pd
 import pytest
 
 from .context import Order
+
+# pylint: disable=unused-import
 from .fixtures import (
     DATA_PRODUCT_ID,
     ORDER_ID,
@@ -19,6 +21,8 @@ from .fixtures import (
     catalog_usagetype_mock,
     order_mock,
 )
+
+# pylint: disable=unused-import
 from .test_order import order_parameters
 
 with open(
