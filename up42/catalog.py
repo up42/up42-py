@@ -231,9 +231,6 @@ class Catalog(CatalogBase, VizTools):
             limit: The maximum number of search results to return (1-max.500).
             max_cloudcover: Optional. Maximum cloud coverage percent - e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloud coverage.
-            sortby: The property to sort by, "cloudCoverage", "acquisitionDate",
-                "acquisitionIdentifier", "incidenceAngle", "snowCover".
-            ascending: Ascending sort order by default, descending if False.
 
         Returns:
             The constructed parameters dictionary.
