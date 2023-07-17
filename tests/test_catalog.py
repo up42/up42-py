@@ -11,8 +11,9 @@ from .context import Order
 from .fixtures import DATA_PRODUCT_ID, ORDER_ID
 
 with open(
-    Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
-) as json_file:  # pylint: disable=unspecified-encoding
+    Path(__file__).resolve().parent / "mock_data/search_params_simple.json",
+    encoding="utf-8",
+) as json_file:
     mock_search_parameters = json.load(json_file)
 
 
@@ -99,8 +100,9 @@ def test_construct_search_parameters(catalog_mock):
 
 def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
     with open(
-        Path(__file__).resolve().parent / "mock_data/search_footprints.geojson"
-    ) as json_file:  # pylint: disable=unspecified-encoding
+        Path(__file__).resolve().parent / "mock_data/search_footprints.geojson",
+        encoding="utf-8",
+    ) as json_file:
         fc = json.load(json_file)
 
     with pytest.raises(ValueError) as e:
