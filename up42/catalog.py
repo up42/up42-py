@@ -211,7 +211,6 @@ class Catalog(CatalogBase, VizTools):
         usage_type: List[str] = None,
         limit: int = 10,
         max_cloudcover: Optional[int] = None,
-        ascending: bool = True,
     ) -> dict:
         """
         Helps constructing the parameters dictionary required for the search.
@@ -246,7 +245,6 @@ class Catalog(CatalogBase, VizTools):
             vector=geometry,
         )
         aoi_geometry = fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
-        sort_order = "asc" if ascending else "desc"
 
         query_filters: Dict[Any, Any] = {}
         if max_cloudcover is not None:

@@ -100,7 +100,6 @@ def test_construct_search_parameters(catalog_mock):
         usage_type=["DATA", "ANALYTICS"],
         limit=4,
         max_cloudcover=20,
-        ascending=False,
     )
     assert isinstance(search_parameters, dict)
     assert search_parameters["datetime"] == mock_search_parameters["datetime"]
@@ -125,7 +124,6 @@ def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
             collections=["phr"],
             limit=10,
             max_cloudcover=15,
-            ascending=True,
         )
     assert (
         str(e.value)
