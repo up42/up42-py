@@ -211,7 +211,6 @@ class Catalog(CatalogBase, VizTools):
         usage_type: List[str] = None,
         limit: int = 10,
         max_cloudcover: Optional[int] = None,
-        sortby: str = "acquisitionDate",
         ascending: bool = True,
     ) -> dict:
         """
@@ -269,7 +268,6 @@ class Catalog(CatalogBase, VizTools):
             "limit": limit,
             "collections": collections,
             "query": query_filters,
-            "sortby": [{"field": f"properties.{sortby}", "direction": sort_order}],
         }
 
         return search_parameters
