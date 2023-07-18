@@ -1,4 +1,4 @@
-# Workflows and jobs
+# Analytics
 
 Apply analytics on geospatial data by using workflows with [data blocks](https://docs.up42.com/processing-platform/blocks/data) and [processing blocks](https://docs.up42.com/processing-platform/blocks/processing).
 
