@@ -37,6 +37,8 @@ nav:
       - installation.md
       - authentication.md
       - tasking.md
+        - Example notebooks:
+          - Create a tasking order: examples/tasking/tasking-example.ipynb
       - catalog.md
       - storage.md
       - Analytics:
