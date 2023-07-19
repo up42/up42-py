@@ -155,6 +155,19 @@ class Order:
         Returns:
             str: The final order status.
         """
+
+        def substatus_messages(substatus: str) -> str:
+            substatus_user_messages = {
+                "FEASIBILITY_WAITING_UPLOAD": "feasibility study in progress, wait for updates.",
+                "FEASIBILITY_WAITING_RESPONSE": "choose a feasibility option",
+                "QUOTATION_WAITING_UPLOAD": "quotation being prepared, wait for updates.",
+                "QUOTATION_WAITING_RESPONSE": "review to accept or reject price",
+                "QUOTATION_ACCEPTED": "wait for files to be delivered.",
+            }
+            if substatus in substatus_user_messages:
+                return f"{substatus}, {substatus_user_messages[substatus]}"
+            return f"{substatus}"
+
         logger.info(
             f"Tracking order status, reporting every {report_time} seconds...",
         )
@@ -168,7 +181,7 @@ class Order:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info(f"Order is {status}! - {self.order_id}")
                 if self.info["type"] == "TASKING":
-                    logger.info(f'Tasking order is: {self.order_details["subStatus"]}')
+                    logger.info(substatus_messages(self.order_details["subStatus"]))
 
             elif status in ["FAILED", "FAILED_PERMANENTLY"]:
                 logger.info(f"Order is {status}! - {self.order_id}")
