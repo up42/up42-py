@@ -61,7 +61,7 @@ class Order:
         return status
 
     @property
-    def order_details(self) -> str:
+    def order_details(self) -> dict:
         """
         Gets the Order Details.
         """
@@ -69,7 +69,7 @@ class Order:
             order_details = self.info["orderDetails"]
             return order_details
         logger.info("Order is not TASKING type. Order details are not provided.")
-        return ""
+        return {}
 
     @property
     def is_fulfilled(self) -> bool:
@@ -170,7 +170,7 @@ class Order:
             return f"{substatus}"
 
         logger.info(
-            f"Tracking order status, reporting every {report_time} seconds...",
+            f"Tracking order status, reporting every {str(report_time)} seconds...",
         )
         time_asleep = 0
 
