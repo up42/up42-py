@@ -154,9 +154,36 @@ def test_track_status_running(order_mock, requests_mock):
     requests_mock.get(
         url_job_info,
         [
-            {"json": {"data": {"status": "PLACED"}, "error": {}}},
-            {"json": {"data": {"status": "BEING_FULFILLED"}, "error": {}}},
-            {"json": {"data": {"status": "FULFILLED"}, "error": {}}},
+            {
+                "json": {
+                    "data": {
+                        "status": "PLACED",
+                        "type": "TASKING",
+                        "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                    },
+                    "error": {},
+                }
+            },
+            {
+                "json": {
+                    "data": {
+                        "status": "BEING_FULFILLED",
+                        "type": "TASKING",
+                        "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                    },
+                    "error": {},
+                }
+            },
+            {
+                "json": {
+                    "data": {
+                        "status": "FULFILLED",
+                        "type": "TASKING",
+                        "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                    },
+                    "error": {},
+                }
+            },
         ],
     )
 

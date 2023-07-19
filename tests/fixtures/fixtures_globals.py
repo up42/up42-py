@@ -350,6 +350,8 @@ JSON_ORDER = {
     "error": None,
 }
 
+JSON_ORDER_UPDATED = {}
+
 JSON_ORDERS = {
     "data": {
         "content": [JSON_ORDER["data"]],

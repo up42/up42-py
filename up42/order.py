@@ -1,11 +1,9 @@
 from time import sleep
 from typing import List, Optional
 
-from up42.auth import Auth
 from up42.asset import Asset
-from up42.utils import (
-    get_logger,
-)
+from up42.auth import Auth
+from up42.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -61,6 +59,17 @@ class Order:
         status = self.info["status"]
         logger.info(f"Order is {status}")
         return status
+
+    @property
+    def order_details(self) -> str:
+        """
+        Gets the Order Details.
+        """
+        if self.info["type"] == "TASKING":
+            order_details = self.info["orderDetails"]
+            return order_details
+        logger.info("Order is not TASKING type. Order details are not provided.")
+        return None
 
     @property
     def is_fulfilled(self) -> bool:
@@ -151,13 +160,19 @@ class Order:
         )
         time_asleep = 0
 
+        # check order details and react for tasking orders.
+
         while not self.is_fulfilled:
             status = self.status
             if status in ["PLACED", "BEING_FULFILLED"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info(f"Order is {status}! - {self.order_id}")
+                if self.info["type"] == "TASKING":
+                    logger.info(f'Tasking order is: {self.order_details["subStatus"]}')
+
             elif status in ["FAILED", "FAILED_PERMANENTLY"]:
                 logger.info(f"Order is {status}! - {self.order_id}")
+
                 raise ValueError("Order has failed!")
 
             sleep(report_time)
