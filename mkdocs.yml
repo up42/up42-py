@@ -39,13 +39,15 @@ nav:
       - tasking.md
       - catalog.md
       - storage.md
-      - Analytics:
-        - analytics.md
-        - Example notebooks:
+      - analytics.md
+      - webhooks.md
+      - Example notebooks:
+        - Tasking:
+          - Create a tasking order: examples/tasking/tasking-example.ipynb
+        - Analytics:
           - NEXTMap One and Viewshed workflow: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
           - OpenStreetMap workflow: examples/data-block-examples/osm-example.ipynb
           - Ship detection and Ship identification workflow: examples/advanced/ship-identification.ipynb
-      - webhooks.md
     - Code reference:
         - structure.md
         - up42: reference/up42-reference.md
@@ -83,7 +85,6 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.indexes
-    - navigation.expand
   palette:
     primary: indigo
     accent: purple
@@ -104,7 +105,8 @@ plugins:
       include: ["examples/data-block-examples/pleiades-download-example.ipynb",
                 "examples/data-block-examples/nextmapone-viewshed-data-example.ipynb",
                 "examples/data-block-examples/osm-example.ipynb",
-                "examples/advanced/ship-identification.ipynb"]
+                "examples/advanced/ship-identification.ipynb",
+                "examples/tasking/tasking-example.ipynb"]
   - macros:
       module_name: docs/macros
   - exclude:
