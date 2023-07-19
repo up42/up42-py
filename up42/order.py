@@ -69,7 +69,7 @@ class Order:
             order_details = self.info["orderDetails"]
             return order_details
         logger.info("Order is not TASKING type. Order details are not provided.")
-        return None
+        return ""
 
     @property
     def is_fulfilled(self) -> bool:
@@ -165,7 +165,8 @@ class Order:
                 "QUOTATION_ACCEPTED": "wait for files to be delivered.",
             }
             if substatus in substatus_user_messages:
-                return f"{substatus}, {substatus_user_messages[substatus]}"
+                message = substatus_user_messages[substatus]
+                return f"{substatus}, {message}"
             return f"{substatus}"
 
         logger.info(

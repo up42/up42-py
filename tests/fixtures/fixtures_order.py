@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from ..context import Order
-from .fixtures_globals import JSON_ORDER, ORDER_ID
+from .fixtures_globals import ORDER_ID
 
 
 @pytest.fixture()
