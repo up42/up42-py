@@ -179,7 +179,7 @@ def test_track_status_running(order_mock, requests_mock):
                     "data": {
                         "status": "FULFILLED",
                         "type": "TASKING",
-                        "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                        "orderDetails": {"subStatus": ""},
                     },
                     "error": {},
                 }
