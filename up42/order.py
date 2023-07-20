@@ -182,7 +182,7 @@ class Order:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info(f"Order is {status}! - {self.order_id}")
                 if self.info["type"] == "TASKING":
-                    logger.info(substatus_messages(self.order_details["subStatus"]))
+                    logger.info(substatus_messages(self.order_details.get("subStatus")))
 
             elif status in ["FAILED", "FAILED_PERMANENTLY"]:
                 logger.info(f"Order is {status}! - {self.order_id}")
