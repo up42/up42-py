@@ -158,12 +158,13 @@ class Order:
 
         def substatus_messages(substatus: str) -> str:
             substatus_user_messages = {
-                "FEASIBILITY_WAITING_UPLOAD": "feasibility study in progress, wait for updates.",
-                "FEASIBILITY_WAITING_RESPONSE": "choose a feasibility option",
-                "QUOTATION_WAITING_UPLOAD": "quotation being prepared, wait for updates.",
-                "QUOTATION_WAITING_RESPONSE": "review to accept or reject price",
-                "QUOTATION_ACCEPTED": "wait for files to be delivered.",
+                "FEASIBILITY_WAITING_UPLOAD": "Wait for feasibility.",
+                "FEASIBILITY_WAITING_RESPONSE": "Feasibility is ready.",
+                "QUOTATION_WAITING_UPLOAD": "Wait for quotation.",
+                "QUOTATION_WAITING_RESPONSE": "Quotation is ready",
+                "QUOTATION_ACCEPTED": "In progress.",
             }
+
             if substatus in substatus_user_messages:
                 message = substatus_user_messages[substatus]
                 return f"{substatus}, {message}"
