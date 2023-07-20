@@ -184,7 +184,7 @@ class Order:
                     logger.info(f"Order is {status}! - {self.order_id}")
                     if self.info["type"] == "TASKING":
                         logger.info(
-                            substatus_messages(self.order_details.get("subStatus"))
+                            substatus_messages(self.order_details.get("subStatus", ""))
                         )
 
             elif status in ["FAILED", "FAILED_PERMANENTLY"]:
