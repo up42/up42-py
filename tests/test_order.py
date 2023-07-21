@@ -50,7 +50,7 @@ def test_order_status(order_mock, status, monkeypatch):
     "status, order_type, order_details",
     [
         ("PLACED", "TASKING", {"subStatus": "FEASIBILITY_WAITING_UPLOAD"}),
-        ("FULFILLED", "TASKING", {"subStatus": ""}),
+        ("FULFILLED", "ARCHIVE", {}),
     ],
 )
 def test_order_details(order_mock, status, order_type, order_details, monkeypatch):
