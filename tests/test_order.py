@@ -227,7 +227,10 @@ def test_track_status_fail(order_mock, status, requests_mock):
         f"{order_mock.auth._endpoint()}/workspaces/"
         f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
     )
-    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+    requests_mock.get(
+        url=url_job_info,
+        json={"data": {"status": status, "type": "ARCHIVE"}, "error": {}},
+    )
 
     with pytest.raises(ValueError):
         order_mock.track_status()
