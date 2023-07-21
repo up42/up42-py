@@ -1,11 +1,9 @@
 from time import sleep
 from typing import List, Optional
 
-from up42.auth import Auth
 from up42.asset import Asset
-from up42.utils import (
-    get_logger,
-)
+from up42.auth import Auth
+from up42.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -61,6 +59,17 @@ class Order:
         status = self.info["status"]
         logger.info(f"Order is {status}")
         return status
+
+    @property
+    def order_details(self) -> dict:
+        """
+        Gets the Order Details.
+        """
+        if self.info["type"] == "TASKING":
+            order_details = self.info["orderDetails"]
+            return order_details
+        logger.info("Order is not TASKING type. Order details are not provided.")
+        return {}
 
     @property
     def is_fulfilled(self) -> bool:
@@ -146,16 +155,40 @@ class Order:
         Returns:
             str: The final order status.
         """
+
+        def substatus_messages(substatus: str) -> str:
+            substatus_user_messages = {
+                "FEASIBILITY_WAITING_UPLOAD": "Wait for feasibility.",
+                "FEASIBILITY_WAITING_RESPONSE": "Feasibility is ready.",
+                "QUOTATION_WAITING_UPLOAD": "Wait for quotation.",
+                "QUOTATION_WAITING_RESPONSE": "Quotation is ready",
+                "QUOTATION_ACCEPTED": "In progress.",
+            }
+
+            if substatus in substatus_user_messages:
+                message = substatus_user_messages[substatus]
+                return f"{substatus}, {message}"
+            return f"{substatus}"
+
         logger.info(
-            f"Tracking order status, reporting every {report_time} seconds...",
+            f"Tracking order status, reporting every {str(report_time)} seconds...",
         )
         time_asleep = 0
 
+        # check order details and react for tasking orders.
+
         while not self.is_fulfilled:
             status = self.status
+            substatus_message = (
+                substatus_messages(self.order_details.get("subStatus", ""))
+                if self.info["type"] == "TASKING"
+                else ""
+            )
             if status in ["PLACED", "BEING_FULFILLED"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info(f"Order is {status}! - {self.order_id}")
+                    logger.info(substatus_message)
+
             elif status in ["FAILED", "FAILED_PERMANENTLY"]:
                 logger.info(f"Order is {status}! - {self.order_id}")
                 raise ValueError("Order has failed!")

@@ -46,6 +46,22 @@ def test_order_status(order_mock, status, monkeypatch):
     assert order_mock.status == status
 
 
+@pytest.mark.parametrize(
+    "status, order_type, order_details",
+    [
+        ("PLACED", "TASKING", {"subStatus": "FEASIBILITY_WAITING_UPLOAD"}),
+        ("FULFILLED", "ARCHIVE", {}),
+    ],
+)
+def test_order_details(order_mock, status, order_type, order_details, monkeypatch):
+    monkeypatch.setattr(
+        Order,
+        "info",
+        {"status": status, "type": order_type, "orderDetails": order_details},
+    )
+    assert order_mock.order_details == order_details
+
+
 # pylint: disable=unused-argument
 @pytest.mark.parametrize(
     "status,expected",
@@ -151,15 +167,40 @@ def test_track_status_running(order_mock, requests_mock):
         f"{order_mock.auth._endpoint()}/workspaces/"
         f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
     )
-    requests_mock.get(
-        url_job_info,
-        [
-            {"json": {"data": {"status": "PLACED"}, "error": {}}},
-            {"json": {"data": {"status": "BEING_FULFILLED"}, "error": {}}},
-            {"json": {"data": {"status": "FULFILLED"}, "error": {}}},
-        ],
-    )
 
+    status_responses = [
+        {
+            "json": {
+                "data": {
+                    "status": "PLACED",
+                    "type": "TASKING",
+                    "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                },
+                "error": {},
+            }
+        },
+        {
+            "json": {
+                "data": {
+                    "status": "BEING_FULFILLED",
+                    "type": "TASKING",
+                    "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                },
+                "error": {},
+            }
+        },
+        {
+            "json": {
+                "data": {
+                    "status": "FULFILLED",
+                    "type": "TASKING",
+                    "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                },
+                "error": {},
+            }
+        },
+    ]
+    requests_mock.get(url_job_info, status_responses)
     order_status = order_mock.track_status(report_time=0.1)
     assert order_status == "FULFILLED"
 
@@ -186,7 +227,10 @@ def test_track_status_fail(order_mock, status, requests_mock):
         f"{order_mock.auth._endpoint()}/workspaces/"
         f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
     )
-    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+    requests_mock.get(
+        url=url_job_info,
+        json={"data": {"status": status, "type": "ARCHIVE"}, "error": {}},
+    )
 
     with pytest.raises(ValueError):
         order_mock.track_status()
