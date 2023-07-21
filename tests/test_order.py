@@ -151,42 +151,40 @@ def test_track_status_running(order_mock, requests_mock):
         f"{order_mock.auth._endpoint()}/workspaces/"
         f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
     )
-    requests_mock.get(
-        url_job_info,
-        [
-            {
-                "json": {
-                    "data": {
-                        "status": "PLACED",
-                        "type": "TASKING",
-                        "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
-                    },
-                    "error": {},
-                }
-            },
-            {
-                "json": {
-                    "data": {
-                        "status": "BEING_FULFILLED",
-                        "type": "TASKING",
-                        "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
-                    },
-                    "error": {},
-                }
-            },
-            {
-                "json": {
-                    "data": {
-                        "status": "FULFILLED",
-                        "type": "TASKING",
-                        "orderDetails": {"subStatus": ""},
-                    },
-                    "error": {},
-                }
-            },
-        ],
-    )
 
+    status_responses = [
+        {
+            "json": {
+                "data": {
+                    "status": "PLACED",
+                    "type": "TASKING",
+                    "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                },
+                "error": {},
+            }
+        },
+        {
+            "json": {
+                "data": {
+                    "status": "BEING_FULFILLED",
+                    "type": "TASKING",
+                    "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                },
+                "error": {},
+            }
+        },
+        {
+            "json": {
+                "data": {
+                    "status": "FULFILLED",
+                    "type": "TASKING",
+                    "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                },
+                "error": {},
+            }
+        },
+    ]
+    requests_mock.get(url_job_info, status_responses)
     order_status = order_mock.track_status(report_time=0.1)
     assert order_status == "FULFILLED"
 
