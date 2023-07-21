@@ -46,6 +46,22 @@ def test_order_status(order_mock, status, monkeypatch):
     assert order_mock.status == status
 
 
+@pytest.mark.parametrize(
+    "status, order_type, order_details",
+    [
+        ("PLACED", "TASKING", {"subStatus": "FEASIBILITY_WAITING_UPLOAD"}),
+        ("FULFILLED", "TASKING", {"subStatus": ""}),
+    ],
+)
+def test_order_details(order_mock, status, order_type, order_details, monkeypatch):
+    monkeypatch.setattr(
+        Order,
+        "info",
+        {"status": status, "type": order_type, "orderDetails": order_details},
+    )
+    assert order_mock.order_details == order_details
+
+
 # pylint: disable=unused-argument
 @pytest.mark.parametrize(
     "status,expected",

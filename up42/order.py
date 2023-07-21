@@ -179,17 +179,18 @@ class Order:
 
         while not self.is_fulfilled:
             status = self.status
+            substatus_message = (
+                substatus_messages(self.order_details.get("subStatus", ""))
+                if self.info["type"] == "TASKING"
+                else ""
+            )
             if status in ["PLACED", "BEING_FULFILLED"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info(f"Order is {status}! - {self.order_id}")
-                    if self.info["type"] == "TASKING":
-                        logger.info(
-                            substatus_messages(self.order_details.get("subStatus", ""))
-                        )
+                    logger.info(substatus_message)
 
             elif status in ["FAILED", "FAILED_PERMANENTLY"]:
                 logger.info(f"Order is {status}! - {self.order_id}")
-
                 raise ValueError("Order has failed!")
 
             sleep(report_time)
