@@ -13,7 +13,6 @@ __all__ = [
 import json
 import logging
 import warnings
-from datetime import date, datetime, timedelta
 from functools import wraps
 from pathlib import Path
 from typing import Dict, List, Optional, Union
@@ -23,7 +22,7 @@ import requests.exceptions
 
 # pylint: disable=wrong-import-position
 from up42.auth import Auth
-from up42.utils import format_time, get_logger
+from up42.utils import get_logger
 from up42.webhooks import Webhook, Webhooks
 
 logger = get_logger(__name__, level=logging.INFO)
