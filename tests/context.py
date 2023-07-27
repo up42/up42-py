@@ -1,8 +1,6 @@
+# pylint: skip-file
 import os
 import sys
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../up42")))
 
 from up42 import main
 from up42.asset import Asset
@@ -55,3 +53,6 @@ from up42.utils import (
 from up42.viztools import VizTools, folium_base_map
 from up42.webhooks import Webhook, Webhooks
 from up42.workflow import Workflow
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../up42")))
