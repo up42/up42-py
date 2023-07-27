@@ -7,26 +7,24 @@ __all__ = [
     "get_block_details",
     "get_block_coverage",
     "get_credits_balance",
-    "get_credits_history",
     "validate_manifest",
 ]
 
-import warnings
-from pathlib import Path
-from typing import Union, List, Optional, Dict
-import logging
-from datetime import datetime, date, timedelta
 import json
+import logging
+import warnings
+from datetime import date, datetime, timedelta
 from functools import wraps
+from pathlib import Path
+from typing import Dict, List, Optional, Union
 
-import requests.exceptions
 import pandas as pd
-
+import requests.exceptions
 
 # pylint: disable=wrong-import-position
 from up42.auth import Auth
-from up42.webhooks import Webhooks, Webhook
-from up42.utils import get_logger, format_time
+from up42.utils import format_time, get_logger
+from up42.webhooks import Webhook, Webhooks
 
 logger = get_logger(__name__, level=logging.INFO)
 
@@ -246,62 +244,6 @@ def get_credits_balance() -> dict:
     response_json = _auth._request(request_type="GET", url=endpoint_url)
     details_json = response_json["data"]
     return details_json
-
-
-@_check_auth
-def get_credits_history(
-    start_date: Optional[Union[str, datetime]] = None,
-    end_date: Optional[Union[str, datetime]] = None,
-) -> Dict[str, Union[str, int, Dict]]:
-    """
-    Display the overall credits history consumed in your account.
-    The consumption history will be returned for all workspace_ids on your account.
-
-    Args:
-        start_date: The start date for the credit consumption search, datetime or isoformat string e.g.
-            2021-12-01. Default start_date None uses 2000-01-01.
-        end_date: The end date for the credit consumption search, datetime or isoformat string e.g.
-            2021-12-31. Default end_date None uses current date.
-
-    Returns:
-        A dict with the information of the credit consumption records for all the users linked by the account_id.
-    """
-    if start_date is None:
-        start_date = "2000-01-01"
-    if end_date is None:
-        tomorrow_date = date.today() + timedelta(days=1)
-        tomorrow_datetime = datetime(
-            year=tomorrow_date.year,
-            month=tomorrow_date.month,
-            day=tomorrow_date.day,
-        )
-        end_date = tomorrow_datetime.strftime("%Y-%m-%d")
-
-    search_parameters = dict(
-        {
-            "from": format_time(start_date),
-            "to": format_time(end_date, set_end_of_day=True),
-            "size": 2000,  # 2000 is the maximum page size for this call
-            "page": 0,
-        }
-    )
-    endpoint_url = f"{_auth._endpoint()}/accounts/me/credits/history"
-    response_json: dict = _auth._request(
-        request_type="GET", url=endpoint_url, querystring=search_parameters
-    )
-    isLastPage = response_json["data"]["last"]
-    credit_history = response_json["data"]["content"].copy()
-    result = dict(response_json["data"])
-    del result["content"]
-    while not isLastPage:
-        search_parameters["page"] += 1
-        response_json = _auth._request(
-            request_type="GET", url=endpoint_url, querystring=search_parameters
-        )
-        isLastPage = response_json["data"]["last"]
-        credit_history.extend(response_json["data"]["content"].copy())
-    result["content"] = credit_history
-    return result
 
 
 @_check_auth
