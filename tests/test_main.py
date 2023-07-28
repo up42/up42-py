@@ -9,26 +9,21 @@ or would need to be recreated for each test.
 import json
 from pathlib import Path
 
-import pytest
 import pandas as pd
+import pytest
 import requests
 
-# pylint: disable=unused-import
-from .fixtures import (
-    auth_mock,
-    auth_live,
-    credits_history_mock,
-    credits_history_pagination_mock,
-)
 from .context import (
-    main,
-    get_blocks,
-    get_block_details,
     get_block_coverage,
+    get_block_details,
+    get_blocks,
     get_credits_balance,
-    get_credits_history,
+    main,
     validate_manifest,
 )
+
+# pylint: disable=unused-import
+from .fixtures import auth_live, auth_mock
 
 
 def test_get_blocks(auth_mock, requests_mock, monkeypatch):
@@ -177,54 +172,6 @@ def test_get_credits_balance_live(auth_live, monkeypatch):
     balance = get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
-
-
-def test_get_credits_history(credits_history_mock, monkeypatch):
-    monkeypatch.setattr(main, "_auth", credits_history_mock)
-    credits_history = get_credits_history()
-    assert isinstance(credits_history, dict)
-    assert "content" in credits_history
-    assert isinstance(credits_history["content"], list)
-    assert len(credits_history["content"]) == 10
-
-
-def test_get_credits_history_pagination(credits_history_pagination_mock, monkeypatch):
-    monkeypatch.setattr(main, "_auth", credits_history_pagination_mock)
-    credits_history = get_credits_history()
-    assert isinstance(credits_history, dict)
-    assert "content" in credits_history
-    assert isinstance(credits_history["content"], list)
-    assert len(credits_history["content"]) == 2500
-
-
-@pytest.mark.parametrize(
-    "start_date,end_date",
-    [(None, "2014-01-01"), ("2014-01-01", None)],
-)
-def test_get_credits_history_no_bounds(
-    credits_history_mock, start_date, end_date, monkeypatch
-):
-    monkeypatch.setattr(main, "_auth", credits_history_mock)
-    balance_history_no_enddate = get_credits_history(start_date=start_date)
-    assert isinstance(balance_history_no_enddate, dict)
-    assert "content" in balance_history_no_enddate
-    assert isinstance(balance_history_no_enddate["content"], list)
-    balance_history_no_startdate = get_credits_history(end_date=end_date)
-    assert isinstance(balance_history_no_startdate, dict)
-    assert "content" in balance_history_no_startdate
-    assert isinstance(balance_history_no_startdate["content"], list)
-
-
-@pytest.mark.live
-def test_get_credits_history_live(auth_live, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_live)
-    balance_history = get_credits_history(
-        start_date="2022-03-01", end_date="2022-03-02"
-    )
-    assert isinstance(balance_history, dict)
-    assert "content" in balance_history
-    assert len(balance_history["content"]) == 162
-    assert isinstance(balance_history["content"], list)
 
 
 def test_validate_manifest(auth_mock, requests_mock, monkeypatch):
