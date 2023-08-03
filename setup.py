@@ -1,5 +1,6 @@
 from pathlib import Path
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 parent_dir = Path(__file__).resolve().parent
 
@@ -34,5 +35,5 @@ setup(
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.8",
 )
