@@ -42,6 +42,8 @@ def test_asset_stac_info(asset_mock):
         asset_mock.stac_info["features"][0]["properties"]["up42-system:asset_id"]
         == ASSET_ID
     )
+    pystac_items = asset_mock.stac_items
+    assert isinstance(pystac_items, pystac.ItemCollection)
 
 
 @pytest.mark.live
