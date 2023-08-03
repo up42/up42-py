@@ -39,6 +39,7 @@ def asset_mock(auth_mock, requests_mock):
 
     # asset stac item
     url_asset_stac = f"{auth_mock._endpoint()}/v2/assets/stac"
+
     catalog = {
         "type": "Catalog",
         "id": "up42-storage",
@@ -47,7 +48,7 @@ def asset_mock(auth_mock, requests_mock):
         "links": [
             {
                 "rel": "root",
-                "href": "https://api.up42.com/v2/assets/stac/",
+                "href": "https://api.up42.com/v2/assets/stac",
                 "type": "application/json",
                 "title": "UP42 Storage",
             },
@@ -64,7 +65,7 @@ def asset_mock(auth_mock, requests_mock):
             },
             {
                 "rel": "self",
-                "href": "https://api.up42.com/v2/assets/stac/",
+                "href": "https://api.up42.com/v2/assets/stac",
                 "type": "application/json",
             },
         ],
