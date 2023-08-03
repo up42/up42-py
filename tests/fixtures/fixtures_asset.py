@@ -38,7 +38,7 @@ def asset_mock(auth_mock, requests_mock):
     )
 
     # asset stac item
-    url_asset_stac_info = f"{auth_mock._endpoint()}/v2/assets/stac"
+    url_asset_stac = f"{auth_mock._endpoint()}/v2/assets/stac"
     catalog = {
         "type": "Catalog",
         "id": "up42-storage",
@@ -88,7 +88,7 @@ def asset_mock(auth_mock, requests_mock):
         ],
         "title": "UP42 Storage",
     }
-    requests_mock.get(url=url_asset_stac_info, json=catalog)
+    requests_mock.get(url=url_asset_stac, json=catalog)
 
     # asset update
     updated_json_asset = JSON_ASSET.copy()
