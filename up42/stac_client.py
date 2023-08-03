@@ -2,6 +2,8 @@ from pystac_client import Client
 
 from up42.auth import Auth
 
+# pylint: skip-file
+
 
 class pystac_auth_client(Client):
     def __init__(
