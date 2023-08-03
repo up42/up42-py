@@ -39,7 +39,7 @@ def test_pystac_client_property_live(storage_live):
     isinstance(up42_pystac_client, pystac_client.Client)
     time.sleep(1)
     stac_collections = up42_pystac_client.get_collections()
-    assert isinstance(stac_collections, pystac.Collection)
+    assert isinstance(stac_collections.__next__(), pystac.Collection)
 
 
 def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
