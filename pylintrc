@@ -22,7 +22,8 @@ disable=
     duplicate-code,
     logging-fstring-interpolation,
     logging-format-interpolation,
-    too-many-lines
+    too-many-lines,
+    unexpected-keyword-arg
     
 [FORMAT]
 max-line-length=120
