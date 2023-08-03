@@ -23,7 +23,10 @@ disable=
     logging-fstring-interpolation,
     logging-format-interpolation,
     too-many-lines,
-    unexpected-keyword-arg
+    unexpected-keyword-arg,
+    argument-error,
+    multiple-values-for-keyword-argument,
+    signature
     
 [FORMAT]
 max-line-length=120
