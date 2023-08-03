@@ -13,6 +13,7 @@ disable=
     super-init-not-called,
     inconsistent-return-statements,
     too-many-arguments,
+    too-many-ancestors,
     too-many-locals,
     protected-access,
     no-else-continue,
@@ -22,11 +23,7 @@ disable=
     duplicate-code,
     logging-fstring-interpolation,
     logging-format-interpolation,
-    too-many-lines,
-    unexpected-keyword-arg,
-    argument-error,
-    multiple-values-for-keyword-argument,
-    signature
+    too-many-lines
     
 [FORMAT]
 max-line-length=120

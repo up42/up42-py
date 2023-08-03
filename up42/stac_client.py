@@ -14,7 +14,7 @@ class pystac_auth_client(Client):
         self.auth._get_token()
         request.headers["Authorization"] = f"Bearer {self.auth.token}"
 
-    def open(self, *args, **kwargs) -> Client:  # type: ignore
+    def open(self, *args, **kwargs) -> Client:  # type: ignore # pylint: disable=arguments-differ
         return super().open(  # type: ignore
             request_modifier=self._auth_modifier,
             *args,
