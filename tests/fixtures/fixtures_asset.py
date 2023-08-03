@@ -1,5 +1,4 @@
 import datetime
-import logging
 import os
 
 import pytest
@@ -40,7 +39,6 @@ def asset_mock(auth_mock, requests_mock):
 
     # asset stac item
     url_asset_stac = f"{auth_mock._endpoint()}/v2/assets/stac"
-    logging.info(f"url {url_asset_stac}")
     catalog = {
         "type": "Catalog",
         "id": "up42-storage",
