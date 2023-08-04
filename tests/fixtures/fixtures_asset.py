@@ -1,12 +1,11 @@
+import datetime
 import os
 
 import pytest
+from pystac import Item, ItemCollection
 
-from .fixtures_globals import ASSET_ID, JSON_ASSET, DOWNLOAD_URL, JSON_STORAGE_STAC
-
-from ..context import (
-    Asset,
-)
+from ..context import Asset
+from .fixtures_globals import ASSET_ID, DOWNLOAD_URL, JSON_ASSET, JSON_STORAGE_STAC
 
 
 @pytest.fixture()
@@ -15,9 +14,82 @@ def asset_mock(auth_mock, requests_mock):
     url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/metadata"
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
 
-    # asset stac info
+    mock_item_collection = ItemCollection(
+        items=[
+            Item(
+                id="test",
+                geometry=None,
+                properties={},
+                bbox=None,
+                datetime=datetime.datetime.now(),
+            )
+        ]
+    )
+
     url_asset_stac_info = f"{auth_mock._endpoint()}/v2/assets/stac/search"
-    requests_mock.post(url=url_asset_stac_info, json=JSON_STORAGE_STAC)
+
+    requests_mock.post(
+        url_asset_stac_info,
+        [
+            {"json": JSON_STORAGE_STAC},
+            {"json": JSON_STORAGE_STAC},
+            {"json": mock_item_collection.to_dict()},
+        ],
+    )
+
+    # asset stac item
+    url_asset_stac = f"{auth_mock._endpoint()}/v2/assets/stac"
+
+    catalog = {
+        "type": "Catalog",
+        "id": "up42-storage",
+        "stac_version": "1.0.0",
+        "description": "UP42 Storage STAC API",
+        "links": [
+            {
+                "rel": "root",
+                "href": "https://api.up42.com/v2/assets/stac",
+                "type": "application/json",
+                "title": "UP42 Storage",
+            },
+            {
+                "rel": "data",
+                "href": "https://api.up42.com/v2/assets/stac/collections",
+                "type": "application/json",
+            },
+            {
+                "rel": "search",
+                "href": "https://api.up42.com/v2/assets/stac/search",
+                "type": "application/json",
+                "method": "POST",
+            },
+            {
+                "rel": "self",
+                "href": "https://api.up42.com/v2/assets/stac",
+                "type": "application/json",
+            },
+        ],
+        "stac_extensions": [],
+        "conformsTo": [
+            "https://api.stacspec.org/v1.0.0-rc.1/collections",
+            "https://api.stacspec.org/v1.0.0-rc.1/core",
+            "http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/features-filter",
+            "http://www.opengis.net/spec/ogcapi-features-4/1.0/conf/simpletx",
+            "https://api.stacspec.org/v1.0.0-rc.1/item-search#filter",
+            "http://www.opengis.net/spec/cql2/1.0/conf/cql2-text",
+            "https://api.stacspec.org/v1.0.0-rc.1/item-search",
+            "https://api.stacspec.org/v1.0.0-rc.1/ogcapi-features/extensions/transaction",
+            "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core",
+            "http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/filter",
+            "http://www.opengis.net/spec/cql2/1.0/conf/basic-cql2",
+            "https://api.stacspec.org/v1.0.0-rc.1/ogcapi-features",
+            "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson",
+            "https://api.stacspec.org/v1.0.0-rc.1/item-search#sort",
+            "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30",
+        ],
+        "title": "UP42 Storage",
+    }
+    requests_mock.get(url=url_asset_stac, json=catalog)
 
     # asset update
     updated_json_asset = JSON_ASSET.copy()

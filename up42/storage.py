@@ -2,7 +2,6 @@ import math
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
-import pystac_client
 from geojson import Feature, FeatureCollection
 from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
@@ -10,6 +9,7 @@ from shapely.geometry import Polygon
 from up42.asset import Asset
 from up42.auth import Auth
 from up42.order import Order
+from up42.stac_client import pystac_auth_client
 from up42.utils import any_vector_to_fc, fc_to_query_geometry, format_time, get_logger
 
 logger = get_logger(__name__)
@@ -36,28 +36,9 @@ class Storage:
 
     @property
     def pystac_client(self):
-        """
-        PySTAC client, a Python package for working with UP42 STAC API and accessing storage assets.
-        For more information, see [PySTAC Client Documentation](https://pystac-client.readthedocs.io/).
-        """
-
-        def _authenticate_client():
-            url = f"{self.auth._endpoint()}/v2/assets/stac"
-            authenticated_client = pystac_client.Client.open(
-                url=url,
-                headers={
-                    "Authorization": f"Bearer {self.auth.token}",
-                },
-            )
-            return authenticated_client
-
-        try:
-            up42_pystac_client = _authenticate_client()
-        except pystac_client.exceptions.APIError:
-            self.auth._get_token()
-            up42_pystac_client = _authenticate_client()
-
-        return up42_pystac_client
+        url = f"{self.auth._endpoint()}/v2/assets/stac"
+        pystac_client_auth = pystac_auth_client(auth=self.auth).open(url=url)
+        return pystac_client_auth
 
     def _query_paginated_endpoints(
         self, url: str, limit: Optional[int] = None, size: int = 50

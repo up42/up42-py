@@ -194,12 +194,12 @@ JSON_ASSETS = {
 JSON_STORAGE_STAC = {
     "links": [
         {
-            "href": "https://api.up42.dev/v2/assets/stac/",
+            "href": "https://api.up42.com/v2/assets/stac/",
             "rel": "root",
             "type": "application/json",
         },
         {
-            "href": "https://api.up42.dev/v2/assets/stac/search",
+            "href": "https://api.up42.com/v2/assets/stac/search",
             "rel": "next",
             "type": "application/json",
             "body": {
@@ -215,28 +215,28 @@ JSON_STORAGE_STAC = {
         {
             "assets": {
                 "data": {
-                    "href": "https://api.up42.dev/v2/assets/01ad657e-12f7-4046-a94c-abc90d86106a"
+                    "href": "https://api.up42.com/v2/assets/01ad657e-12f7-4046-a94c-abc90d86106a"
                 }
             },
             "links": [
                 {
-                    "href": "https://api.up42.dev/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6/"
+                    "href": "https://api.up42.com/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6/"
                     "items/e986e18a-0392-4b82-93c9-7a0af15846d0",
                     "rel": "self",
                     "type": "application/geo+json",
                 },
                 {
-                    "href": "https://api.up42.dev/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6",
+                    "href": "https://api.up42.com/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6",
                     "rel": "parent",
                     "type": "application/json",
                 },
                 {
-                    "href": "https://api.up42.dev/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6",
+                    "href": "https://api.up42.com/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6",
                     "rel": "collection",
                     "type": "application/json",
                 },
                 {
-                    "href": "https://api.up42.dev/v2/assets/stac/",
+                    "href": "https://api.up42.com/v2/assets/stac/",
                     "rel": "root",
                     "type": "application/json",
                 },

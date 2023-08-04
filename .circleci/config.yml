@@ -10,7 +10,7 @@ jobs:
   test:
     working_directory: *workspace-dir
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.8
     steps:
       - attach_workspace:
           at: *workspace-dir
@@ -60,7 +60,7 @@ jobs:
           command: python -m pytest --runlive --durations=5
   deploy:
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.8
     steps:
       - checkout
       - run:

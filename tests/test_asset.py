@@ -1,6 +1,8 @@
 import os
-from pathlib import Path
 import tempfile
+from pathlib import Path
+
+import pystac
 import pytest
 
 # pylint: disable=unused-import
@@ -9,10 +11,10 @@ from .fixtures import (
     ASSET_ID,
     DOWNLOAD_URL,
     JSON_ASSET,
-    auth_mock,
-    auth_live,
-    asset_mock,
     asset_live,
+    asset_mock,
+    auth_live,
+    auth_mock,
 )
 
 
@@ -40,6 +42,8 @@ def test_asset_stac_info(asset_mock):
         asset_mock.stac_info["features"][0]["properties"]["up42-system:asset_id"]
         == ASSET_ID
     )
+    pystac_items = asset_mock.stac_items
+    assert isinstance(pystac_items, pystac.ItemCollection)
 
 
 @pytest.mark.live
@@ -49,6 +53,8 @@ def test_asset_stac_info_live(asset_live):
     assert asset_live.stac_info["features"][0]["properties"][
         "up42-system:asset_id"
     ] == os.getenv("TEST_UP42_ASSET_ID")
+    pystac_items = asset_live.stac_items
+    assert isinstance(pystac_items, pystac.ItemCollection)
 
 
 def test_asset_update_metadata(asset_mock):
