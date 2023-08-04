@@ -9,6 +9,9 @@ from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_lo
 
 logger = get_logger(__name__)
 
+MAX_ITEM = 50
+LIMIT = 50
+
 
 class Asset:
     """
@@ -59,8 +62,8 @@ class Asset:
         One asset can contain multiple STAC items (e.g. the pan- and multispectral images).
         """
         stac_search_parameters = {
-            "max_items": 50,
-            "limit": 50,
+            "max_items": MAX_ITEM,
+            "limit": LIMIT,
             "filter": {
                 "op": "=",
                 "args": [{"property": "asset_id"}, self.asset_id],
@@ -82,8 +85,8 @@ class Asset:
         url = f"{self.auth._endpoint()}/v2/assets/stac"
         pystac_client_aux = pystac_auth_client(auth=self.auth).open(url=url)
         stac_search_parameters = {
-            "max_items": 50,
-            "limit": 50,
+            "max_items": MAX_ITEM,
+            "limit": LIMIT,
             "filter": {
                 "op": "=",
                 "args": [

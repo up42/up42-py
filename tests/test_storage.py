@@ -1,6 +1,5 @@
 import copy
 import datetime
-import time
 
 import pystac
 import pystac_client
@@ -37,7 +36,6 @@ def test_pystac_client_property(storage_mock):
 def test_pystac_client_property_live(storage_live):
     up42_pystac_client = storage_live.pystac_client
     isinstance(up42_pystac_client, pystac_client.Client)
-    time.sleep(1)
     stac_collections = up42_pystac_client.get_collections()
     assert isinstance(stac_collections.__next__(), pystac.Collection)
 

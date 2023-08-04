@@ -5,7 +5,12 @@ from up42.auth import Auth
 
 class pystac_auth_client(Client):
     def __init__(
-        self, *args, id="id", description="description", auth: Auth = None, **kwargs
+        self,
+        *args,
+        id="id",
+        description="description",
+        auth: Auth = None,
+        **kwargs,
     ):  # pylint: disable=redefined-builtin
         super().__init__(id=id, description=description, *args, **kwargs)  # type: ignore
         self.auth = auth
