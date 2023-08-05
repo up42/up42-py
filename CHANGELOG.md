@@ -30,6 +30,22 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.31.0
+
+**August 10, 2023**
+
+### Added
+- `Asset.stac_items` - access pystac.ItemCollection objects linked to an specific asset.
+- `Order.track_status` - Adding substatus for Tasking orders.
+
+### Fixed
+- `catalog.search(sort_by)` - Catalog results are now only sorted by `acquisition_date`.
+
+# Removed
+- `get_credits_history` - Not available anymore in the main class.
+- Python 3.7 support no longer available.
+
+
 ## 0.30.1
 
 **July 14, 2023**

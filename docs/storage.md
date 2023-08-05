@@ -80,7 +80,22 @@ PySTAC is a library for working with [STAC](https://stacspec.org/).
   up42_pystac_client = storage.pystac_client
   ```
 
-1. Run regular PySTAC client operations using `up42_pystac_client`:
+2. Run regular PySTAC client operations using `up42_pystac_client`:
   ```python
   up42_stac_collections = up42_pystac_client.get_collections()
   ```
+
+To access STAC items and info from a given asset.
+The resulting items object is a `pystac.ItemCollection` where you can access with the pystac class methods.
+
+```python
+    assets = storage.get_assets(
+        workspace_id="your-workspace-id"
+    )
+    # select one asset
+    asset = assets[0]
+
+    # access the STAC items
+    items = asset.stac_items # items is a pystac.ItemCollection
+
+``` 
