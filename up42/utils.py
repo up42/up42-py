@@ -371,7 +371,9 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
             if param in ["aoi", "geometry"]:
                 continue
             elif "allOf" in schema["properties"][param]:  # has further definitions key
-                potential_values = [x["const"] for x in schema["definitions"][param]["anyOf"]]
+                potential_values = [
+                    x["const"] for x in schema["definitions"][param]["anyOf"]
+                ]
                 logger.info(f"As `{param}` select one of {potential_values}")
             else:
                 # Full information for simple parameters

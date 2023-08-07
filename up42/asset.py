@@ -1,10 +1,16 @@
 from pathlib import Path
 from typing import List, Optional, Union
 
+import pystac
+
 from up42.auth import Auth
+from up42.stac_client import pystac_auth_client
 from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_logger
 
 logger = get_logger(__name__)
+
+MAX_ITEM = 50
+LIMIT = 50
 
 
 class Asset:
@@ -56,8 +62,8 @@ class Asset:
         One asset can contain multiple STAC items (e.g. the pan- and multispectral images).
         """
         stac_search_parameters = {
-            "max_items": 50,
-            "limit": 50,
+            "max_items": MAX_ITEM,
+            "limit": LIMIT,
             "filter": {
                 "op": "=",
                 "args": [{"property": "asset_id"}, self.asset_id],
@@ -73,6 +79,25 @@ class Asset:
                 "No STAC metadata information available for this asset's items!"
             )
         return stac_results
+
+    @property
+    def stac_items(self) -> Optional[pystac.ItemCollection]:
+        url = f"{self.auth._endpoint()}/v2/assets/stac"
+        pystac_client_aux = pystac_auth_client(auth=self.auth).open(url=url)
+        stac_search_parameters = {
+            "max_items": MAX_ITEM,
+            "limit": LIMIT,
+            "filter": {
+                "op": "=",
+                "args": [
+                    {"property": "asset_id"},
+                    self.asset_id,
+                ],
+            },
+        }
+        pystac_search = pystac_client_aux.search(filter=stac_search_parameters)
+        resulting_item = pystac_search.get_all_items()
+        return resulting_item
 
     def update_metadata(
         self, title: str = None, tags: List[str] = None, **kwargs

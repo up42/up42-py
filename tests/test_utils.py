@@ -1,23 +1,22 @@
 import json
-from pathlib import Path
 import tempfile
-from dateutil.parser import parse
+from pathlib import Path
 
 import geopandas as gpd
-from geopandas import GeoDataFrame
 import pandas as pd
 import pytest
-from shapely.geometry import Polygon, LinearRing
+from dateutil.parser import parse
+from geopandas import GeoDataFrame
+from shapely.geometry import LinearRing, Polygon
 
 from .context import (
-    format_time,
     any_vector_to_fc,
-    fc_to_query_geometry,
-    download_from_gcs_unpack,
-    filter_jobs_on_mode,
     autocomplete_order_parameters,
+    download_from_gcs_unpack,
+    fc_to_query_geometry,
+    filter_jobs_on_mode,
+    format_time,
 )
-
 
 POLY = Polygon([(0, 0), (1, 1), (1, 0)])
 
