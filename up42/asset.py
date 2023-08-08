@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import pystac
 from pystac_client import Client, ItemSearch
@@ -56,7 +56,7 @@ class Asset:
         return self._info
 
     @property
-    def _stac_search(self) -> tuple[Client, ItemSearch]:
+    def _stac_search(self) -> Tuple[Client, ItemSearch]:
         url = f"{self.auth._endpoint()}/v2/assets/stac"
         pystac_client_aux = pystac_auth_client(auth=self.auth).open(url=url)
         stac_search_parameters = {
