@@ -4,6 +4,8 @@ from up42.auth import Auth
 
 
 class pystac_auth_client(Client):
+    """Pystac Client authenticated to access stac catalog."""
+
     def __init__(
         self,
         *args,
@@ -16,6 +18,7 @@ class pystac_auth_client(Client):
         self.auth = auth
 
     def _auth_modifier(self, request):
+        """Callable for the pystac client request_modifier to authenticate catalog calls."""
         self.auth._get_token()
         request.headers["Authorization"] = f"Bearer {self.auth.token}"
 

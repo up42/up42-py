@@ -81,7 +81,12 @@ class Asset:
         return stac_results
 
     @property
-    def stac_items(self) -> Optional[pystac.ItemCollection]:
+    def stac_items(self) -> pystac.ItemCollection:
+        """Return the STAC Items link to the asset
+
+        Returns:
+            pystac.ItemCollection: List of the STAC items linked to the asset.
+        """
         url = f"{self.auth._endpoint()}/v2/assets/stac"
         pystac_client_aux = pystac_auth_client(auth=self.auth).open(url=url)
         stac_search_parameters = {
