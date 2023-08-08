@@ -27,6 +27,7 @@ DATA_PRODUCT_ID = "data_product_id_123"
 
 ORDER_ID = "order_id_123"
 ASSET_ID = "asset_id_123"
+STAC_COLLECTION_ID = "collection_id_123"
 
 WEBHOOK_ID = "123"
 
@@ -279,7 +280,7 @@ JSON_STORAGE_STAC = {
             "type": "Feature",
             "stac_version": "1.0.0",
             "id": "e986e18a-0392-4b82-93c9-7a0af15846d0",
-            "collection": "69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6",
+            "collection": STAC_COLLECTION_ID,
         }
     ],
 }
