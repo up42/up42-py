@@ -55,7 +55,7 @@ class Asset:
         return self._info
 
     @property
-    def _stac_search(self) -> Union[dict, None]:
+    def _stac_search(self) -> dict:
         url = f"{self.auth._endpoint()}/v2/assets/stac"
         pystac_client_aux = pystac_auth_client(auth=self.auth).open(url=url)
         stac_search_parameters = {
@@ -73,7 +73,7 @@ class Asset:
         return (pystac_client_aux, pystac_asset_search)
 
     @property
-    def stac_info(self) -> Optional[pystac.Collection]:
+    def stac_info(self) -> pystac.Collection:
         """
         Gets the storage STAC information for the asset as a FeatureCollection.
         One asset can contain multiple STAC items (e.g. the pan- and multispectral images).
@@ -83,22 +83,25 @@ class Asset:
             pystac_asset_search.get_item_collections(), None
         )  # up42:asset_id unique, we expect only one results
         if resulting_item is None:
-            logger.info(
-                "No STAC metadata information available for this asset's items!"
+            raise ValueError(
+                f"No STAC metadata information available for this asset {self.asset_id}"
             )
-        else:
-            collection_id = resulting_item[0].collection_id
-            return pystac_client_aux.get_collection(collection_id)
-        return None
+        collection_id = resulting_item[0].collection_id
+        return pystac_client_aux.get_collection(collection_id)
 
     @property
-    def stac_items(self) -> Optional[pystac.ItemCollection]:
+    def stac_items(self) -> pystac.ItemCollection:
         """ "
         returns the stac items from an UP42 asset STAC representation.
         """
-        _, pystac_asset_search = self._stac_search
-        resulting_item = pystac_asset_search.get_all_items()
-        return resulting_item
+        try:
+            _, pystac_asset_search = self._stac_search
+            resulting_item = pystac_asset_search.get_all_items()
+            return resulting_item
+        except Exception as exc:
+            raise ValueError(
+                f"No STAC metadata information available for this asset {self.asset_id}"
+            ) from exc
 
     def update_metadata(
         self, title: str = None, tags: List[str] = None, **kwargs
