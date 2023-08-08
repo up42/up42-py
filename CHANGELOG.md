@@ -34,17 +34,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **August 10, 2023**
 
-### Added
-- `Asset.stac_items` - access pystac.ItemCollection objects linked to an specific asset.
-- `Order.track_status` - Adding substatus for Tasking orders.
-
-### Fixed
-- `catalog.search(sort_by)` - Catalog results are now only sorted by `acquisition_date`.
-
-# Removed
-- `get_credits_history` - Not available anymore in the main class.
-- Python 3.7 support no longer available.
-
+- Supported STAC assets in `asset.stac_items`.
+- Added substatuses to `order.track_status`.
+- Limited `catalog.search(sort_by)` to `acquisition_date` only.
+- Removed `get_credits_history` from the main class.
+- Python 3.7 is no longer supported.
 
 ## 0.30.1
 
@@ -61,8 +55,6 @@ Added a new `tags` argument to the following functions:
 - `construct_order_parameters`, to assign tags to new [tasking](https://sdk.up42.com/reference/tasking-reference/#construct_order_parameters) and [catalog](https://sdk.up42.com/reference/catalog-reference/) orders.
 - `get_order`, to filter [orders](https://sdk.up42.com/reference/storage-reference/) by tags.
 - `get_assets`, to filter [assets](https://sdk.up42.com/reference/storage-reference/) by tags.
-
-
 
 ## 0.29.0
 
