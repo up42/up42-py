@@ -46,7 +46,6 @@ nav:
           - Create a tasking order: examples/tasking/tasking-example.ipynb
         - Analytics:
           - NEXTMap One and Viewshed workflow: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
-          - OpenStreetMap workflow: examples/data-block-examples/osm-example.ipynb
           - Ship detection and Ship identification workflow: examples/advanced/ship-identification.ipynb
     - Code reference:
         - structure.md
