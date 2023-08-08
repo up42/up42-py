@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 import pystac
-from pystac_client import Client
+from pystac_client import Client, ItemSearch
 
 from up42.auth import Auth
 from up42.stac_client import pystac_auth_client
@@ -56,7 +56,7 @@ class Asset:
         return self._info
 
     @property
-    def _stac_search(self) -> tuple(Client, dict):
+    def _stac_search(self) -> tuple[Client, ItemSearch]:
         url = f"{self.auth._endpoint()}/v2/assets/stac"
         pystac_client_aux = pystac_auth_client(auth=self.auth).open(url=url)
         stac_search_parameters = {
@@ -74,7 +74,7 @@ class Asset:
         return (pystac_client_aux, pystac_asset_search)
 
     @property
-    def stac_info(self) -> pystac.Collection:
+    def stac_info(self) -> Optional[pystac.Collection]:
         """
         Gets the storage STAC information for the asset as a FeatureCollection.
         One asset can contain multiple STAC items (e.g. the pan- and multispectral images).
