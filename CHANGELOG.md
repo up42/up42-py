@@ -30,6 +30,16 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.31.0
+
+**August 10, 2023**
+
+- Supported STAC assets in `asset.stac_items`.
+- Added substatuses to `order.track_status`.
+- Limited `catalog.search(sort_by)` to `acquisition_date` only.
+- Removed `get_credits_history` from the main class.
+- Python 3.7 is no longer supported.
+
 ## 0.30.1
 
 **July 14, 2023**
@@ -45,8 +55,6 @@ Added a new `tags` argument to the following functions:
 - `construct_order_parameters`, to assign tags to new [tasking](https://sdk.up42.com/reference/tasking-reference/#construct_order_parameters) and [catalog](https://sdk.up42.com/reference/catalog-reference/) orders.
 - `get_order`, to filter [orders](https://sdk.up42.com/reference/storage-reference/) by tags.
 - `get_assets`, to filter [assets](https://sdk.up42.com/reference/storage-reference/) by tags.
-
-
 
 ## 0.29.0
 

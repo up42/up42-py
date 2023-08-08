@@ -1,12 +1,10 @@
-# Storage assets
+# Storage
 
 Retrieve assets from completed tasking and catalog orders.
 
-## UP42 storage
-
 You can search for assets from specific orders or for assets with specific parameters.
 
-### Search for assets from orders
+## Search for assets from orders
 
 Get a list of all tasking and catalog orders:
 ```python
@@ -29,7 +27,7 @@ up42.initialize_order(
 )
 ```
 
-### Search for specific assets
+## Search for specific assets
 
 You can search by different properties — for example, tags, geometry, geospatial collections.
 
@@ -55,7 +53,7 @@ up42.initialize_asset(
 )
 ```
 
-### Download assets
+## Download assets
 
 The default download path for an asset is your current working directory. You can also provide a custom [output directory](http://127.0.0.1:8000/up42-py/reference/asset-reference/#up42.asset.Asset-functions).
 
@@ -70,10 +68,40 @@ for asset in assets:
     asset.download()
 ```
 
+## Access STAC objects
+
+- **STAC collection**
+
+    An UP42 asset you received in storage as a result of a completed tasking or catalog order. It groups related items and aggregates their summary metadata. A STAC collection contains STAC items.
+
+- **STAC item**
+
+    An individual scene in a STAC collection that has a unique spatiotemporal extent. Different spatiotemporal extents produce different STAC items.
+
+- **STAC asset**
+
+    A geospatial feature of a STAC item, its quicklook, or metadata file. For example, multispectral and panchromatic products of an image acquired by an optical sensor are different STAC assets.
+
+For more information, see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+
+Get STAC items from an UP42 asset by using your workspace ID:
+
+```python
+storage = up42.initialize_storage()
+
+assets = storage.get_assets(workspace_id="your-workspace-id")
+item_list = assets[0].stac_items
+```
+
+Get STAC assets from an UP42 asset:
+```python
+for key, asset in assets[0].stac_items[0].get_assets().items():
+    print(f"{key}: {asset.href}")
+```
+
 ## PySTAC
 
-PySTAC is a library for working with [STAC](https://stacspec.org/).
-
+[PySTAC](https://pystac.readthedocs.io/en/stable/) is a library for working with STAC. You can use it as an alternative method of accessing STAC objects inside UP42 assets.
 
 1. Authenticate `pystac-client` to browse in UP42 storage as follows:
   ```python
