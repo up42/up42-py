@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 import pystac
+from pystac_client import Client
 
 from up42.auth import Auth
 from up42.stac_client import pystac_auth_client
@@ -55,7 +56,7 @@ class Asset:
         return self._info
 
     @property
-    def _stac_search(self) -> dict:
+    def _stac_search(self) -> tuple(Client, dict):
         url = f"{self.auth._endpoint()}/v2/assets/stac"
         pystac_client_aux = pystac_auth_client(auth=self.auth).open(url=url)
         stac_search_parameters = {
