@@ -32,13 +32,13 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 0.31.0
 
-**August 10, 2023**
+**August 9, 2023**
 
 - Supported STAC assets in `asset.stac_items`.
 - Added substatuses to `order.track_status`.
 - Limited `catalog.search(sort_by)` to `acquisition_date` only.
 - Removed `get_credits_history` from the main class.
-- `asset.stac_info` returns now `pystac.Collection` object.
+- `asset.stac_info` now returns the `pystac.Collection` object.
 - Python 3.7 is no longer supported.
 
 ## 0.30.1
