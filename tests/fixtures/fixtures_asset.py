@@ -3,9 +3,17 @@ import os
 
 import pytest
 from pystac import Item, ItemCollection
+from pystac.collection import Extent, SpatialExtent, TemporalExtent
+from pystac_client import CollectionClient
 
 from ..context import Asset
-from .fixtures_globals import ASSET_ID, DOWNLOAD_URL, JSON_ASSET, JSON_STORAGE_STAC
+from .fixtures_globals import (
+    ASSET_ID,
+    DOWNLOAD_URL,
+    JSON_ASSET,
+    JSON_STORAGE_STAC,
+    STAC_COLLECTION_ID,
+)
 
 
 @pytest.fixture()
@@ -101,6 +109,34 @@ def asset_mock(auth_mock, requests_mock):
     requests_mock.post(
         url=f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/download-url",
         json={"url": DOWNLOAD_URL},
+    )
+
+    # stac_info url
+    mock_client = CollectionClient(
+        id="up42-storage",
+        description="UP42 Storage STAC API",
+        extra_fields={"up42-system:asset_id": ASSET_ID},
+        extent=Extent(
+            spatial=SpatialExtent(
+                bboxes=[
+                    [
+                        13.3783333333333,
+                        52.4976111111112,
+                        13.3844444444445,
+                        52.5017222222223,
+                    ]
+                ]
+            ),
+            temporal=TemporalExtent(
+                intervals=[
+                    [datetime.datetime(2021, 5, 31), datetime.datetime(2021, 5, 31)]
+                ]
+            ),
+        ),
+    )
+    requests_mock.get(
+        url=f"{auth_mock._endpoint()}/v2/assets/stac/collections/{STAC_COLLECTION_ID}",
+        json=mock_client.to_dict(),
     )
 
     asset = Asset(auth=auth_mock, asset_id=ASSET_ID)

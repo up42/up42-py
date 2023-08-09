@@ -1,7 +1,8 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import pystac
+from pystac_client import Client, ItemSearch
 
 from up42.auth import Auth
 from up42.stac_client import pystac_auth_client
@@ -55,38 +56,7 @@ class Asset:
         return self._info
 
     @property
-    def stac_info(self) -> Union[dict, None]:
-        """
-        Gets the storage STAC information for the asset as a FeatureCollection.
-
-        One asset can contain multiple STAC items (e.g. the pan- and multispectral images).
-        """
-        stac_search_parameters = {
-            "max_items": MAX_ITEM,
-            "limit": LIMIT,
-            "filter": {
-                "op": "=",
-                "args": [{"property": "asset_id"}, self.asset_id],
-            },
-        }
-        url = f"{self.auth._endpoint()}/v2/assets/stac/search"
-        stac_results = self.auth._request(
-            request_type="POST", url=url, data=stac_search_parameters
-        )
-        stac_results.pop("links", None)
-        if not stac_results["features"]:
-            logger.info(
-                "No STAC metadata information available for this asset's items!"
-            )
-        return stac_results
-
-    @property
-    def stac_items(self) -> pystac.ItemCollection:
-        """Return the STAC Items link to the asset
-
-        Returns:
-            pystac.ItemCollection: List of the STAC items linked to the asset.
-        """
+    def _stac_search(self) -> Tuple[Client, ItemSearch]:
         url = f"{self.auth._endpoint()}/v2/assets/stac"
         pystac_client_aux = pystac_auth_client(auth=self.auth).open(url=url)
         stac_search_parameters = {
@@ -100,9 +70,37 @@ class Asset:
                 ],
             },
         }
-        pystac_search = pystac_client_aux.search(filter=stac_search_parameters)
-        resulting_item = pystac_search.get_all_items()
-        return resulting_item
+        pystac_asset_search = pystac_client_aux.search(filter=stac_search_parameters)
+        return (pystac_client_aux, pystac_asset_search)
+
+    @property
+    def stac_info(self) -> Optional[pystac.Collection]:
+        """
+        Gets the storage STAC information for the asset as a FeatureCollection.
+        One asset can contain multiple STAC items (e.g. the PAN and multispectral images).
+        """
+        pystac_client_aux, pystac_asset_search = self._stac_search
+        resulting_item = pystac_asset_search.item_collection()
+        if resulting_item is None:
+            raise ValueError(
+                f"No STAC metadata information available for this asset {self.asset_id}"
+            )
+        collection_id = resulting_item[0].collection_id
+        return pystac_client_aux.get_collection(collection_id)
+
+    @property
+    def stac_items(self) -> pystac.ItemCollection:
+        """ "
+        returns the stac items from an UP42 asset STAC representation.
+        """
+        try:
+            _, pystac_asset_search = self._stac_search
+            resulting_items = pystac_asset_search.item_collection()
+            return resulting_items
+        except Exception as exc:
+            raise ValueError(
+                f"No STAC metadata information available for this asset {self.asset_id}"
+            ) from exc
 
     def update_metadata(
         self, title: str = None, tags: List[str] = None, **kwargs
