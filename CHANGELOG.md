@@ -38,6 +38,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Added substatuses to `order.track_status`.
 - Limited `catalog.search(sort_by)` to `acquisition_date` only.
 - Removed `get_credits_history` from the main class.
+- `asset.stac_info` returns now `pystac.Collection` object.
 - Python 3.7 is no longer supported.
 
 ## 0.30.1

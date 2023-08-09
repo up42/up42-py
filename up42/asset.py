@@ -90,9 +90,7 @@ class Asset:
 
     @property
     def stac_items(self) -> pystac.ItemCollection:
-        """ "
-        returns the stac items from an UP42 asset STAC representation.
-        """
+        """Returns the stac items from an UP42 asset STAC representation."""
         try:
             _, pystac_asset_search = self._stac_search
             resulting_items = pystac_asset_search.item_collection()
