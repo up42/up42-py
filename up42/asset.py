@@ -80,9 +80,7 @@ class Asset:
         One asset can contain multiple STAC items (e.g. the PAN and multispectral images).
         """
         pystac_client_aux, pystac_asset_search = self._stac_search
-        resulting_item = next(
-            pystac_asset_search.get_item_collections(), None
-        )  # up42:asset_id unique, we expect only one results
+        resulting_item = pystac_asset_search.item_collection()
         if resulting_item is None:
             raise ValueError(
                 f"No STAC metadata information available for this asset {self.asset_id}"
@@ -97,8 +95,8 @@ class Asset:
         """
         try:
             _, pystac_asset_search = self._stac_search
-            resulting_items = pystac_asset_search.get_all_items()
-            return resulting_item
+            resulting_items = pystac_asset_search.item_collection()
+            return resulting_items
         except Exception as exc:
             raise ValueError(
                 f"No STAC metadata information available for this asset {self.asset_id}"

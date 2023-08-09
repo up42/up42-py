@@ -37,10 +37,9 @@ def test_asset_info_live(asset_live):
 
 
 def test_asset_stac_info(asset_mock):
-    assert asset_mock.stac_info
-    assert asset_mock.stac_info.extra_fields["up42-system:asset_id"] == os.getenv(
-        "TEST_UP42_ASSET_ID"
-    )
+    results_stac_asset = asset_mock.stac_info
+    assert results_stac_asset
+    assert results_stac_asset.extra_fields["up42-system:asset_id"] == ASSET_ID
     pystac_items = asset_mock.stac_items
     assert isinstance(pystac_items, pystac.ItemCollection)
 

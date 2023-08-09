@@ -115,7 +115,7 @@ def asset_mock(auth_mock, requests_mock):
     mock_client = CollectionClient(
         id="up42-storage",
         description="UP42 Storage STAC API",
-        extra_fields={"up42-system:asset_id": os.getenv("TEST_UP42_ASSET_ID")},
+        extra_fields={"up42-system:asset_id": ASSET_ID},
         extent=Extent(
             spatial=SpatialExtent(
                 bboxes=[
