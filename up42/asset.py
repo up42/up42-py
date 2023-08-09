@@ -97,7 +97,7 @@ class Asset:
         """
         try:
             _, pystac_asset_search = self._stac_search
-            resulting_item = pystac_asset_search.get_all_items()
+            resulting_items = pystac_asset_search.get_all_items()
             return resulting_item
         except Exception as exc:
             raise ValueError(
