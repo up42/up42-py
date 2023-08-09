@@ -77,7 +77,7 @@ class Asset:
     def stac_info(self) -> Optional[pystac.Collection]:
         """
         Gets the storage STAC information for the asset as a FeatureCollection.
-        One asset can contain multiple STAC items (e.g. the pan- and multispectral images).
+        One asset can contain multiple STAC items (e.g. the PAN and multispectral images).
         """
         pystac_client_aux, pystac_asset_search = self._stac_search
         resulting_item = next(
