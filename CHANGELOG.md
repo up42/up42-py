@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 0.31.0
 
-**August 10, 2023**
+**August 9, 2023**
 
 - Supported STAC assets in `asset.stac_items`.
 - Added substatuses to `order.track_status`.
