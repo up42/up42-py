@@ -1,5 +1,5 @@
-rasterio
-folium
-branca
-matplotlib
-descartes
+rasterio==1.3.8
+folium==0.14.0
+branca==0.6.0
+matplotlib==3.7.2
+descartes==1.1.0
