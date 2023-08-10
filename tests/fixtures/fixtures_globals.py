@@ -13,34 +13,34 @@ DOWNLOAD_URL2 = (
     "cjvDcUPTeIYjHYjBMV0yBOO0FHnzZLRFtpmoXQ5LjIuDb8NYiPcf044XiLIWIdrDhPliMAWZr"
     "whx5CG98M2Y4buui4C24JD6Q%3D%3D"
 )
-PROJECT_ID = "project_id_123"
+PROJECT_ID = "f19e833d-e698-4d9e-a037-2e6dbd8791ef"
 PROJECT_APIKEY = "project_apikey_123"
 PROJECT_NAME = "project_name_123"
 PROJECT_DESCRIPTION = "project_description_123"
 
 # tasking constants
-QUOTATION_ID = "some_quotation_id"
+QUOTATION_ID = "805b1f27-1025-43d2-90d0-0bd3416238fb"
 WRONG_FEASIBILITY_ID = "296ef160-d890-430d-8d14-e9b579ab08ba"
 WRONG_OPTION_ID = "296ef160-7890-430d-8d14-e9b579ab08ba"
 
-WORKFLOW_ID = "workflow_id_123"
+WORKFLOW_ID = "c74d73c0-6929-4549-a5c9-5a3f517f6d63"
 WORKFLOW_NAME = "workflow_name_123"
 WORKFLOW_DESCRIPTION = "workflow_description_123"
 WORKSPACE_ID = "workspace_id_123"
 
-JOB_ID = "job_id_123"
-JOB_ID_2 = "jobid_456"
+JOB_ID = "13ba070a-55b7-4b3f-95f1-7b11ac8f1175"
+JOB_ID_2 = "ce6286e2-aebb-49ce-8a09-272d6466f3c5"
 JOB_NAME = "job_name_123"
 
-JOBTASK_ID = "jobtask_id_123"
+JOBTASK_ID = "a16615e2-6944-4143-879e-416f2fe52de8"
 JOBTASK_NAME = "jobtask_name_123"
 
-DATA_PRODUCT_ID = "data_product_id_123"
+DATA_PRODUCT_ID = "47dadb27-9532-4552-93a5-48f70a83eaef"
 
-ORDER_ID = "order_id_123"
-ASSET_ID = "asset_id_123"
+ORDER_ID = "ddb207c0-3b7f-4186-bc0b-c033f0d2f32b"
+ASSET_ID = "363f89c1-3586-4b14-9a49-03a890c3b593"
 ASSET_ID2 = "88ddc9d8-f179-4821-acef-e7b2abddecr0"
-STAC_COLLECTION_ID = "collection_id_123"
+STAC_COLLECTION_ID = "e459db4c-3b9d-4aa1-8931-5df2517b49ba"
 
 WEBHOOK_ID = "123"
 
