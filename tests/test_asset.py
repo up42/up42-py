@@ -10,9 +10,11 @@ from .context import Asset
 from .fixtures import (
     ASSET_ID,
     DOWNLOAD_URL,
+    DOWNLOAD_URL2,
     JSON_ASSET,
     asset_live,
     asset_mock,
+    asset_mock2,
     auth_live,
     auth_mock,
 )
@@ -62,9 +64,17 @@ def test_asset_update_metadata(asset_mock):
     assert updated_info["tags"] == ["othertag1", "othertag2"]
 
 
-def test_asset_get_download_url(asset_mock):
-    url = asset_mock._get_download_url()
-    assert url == DOWNLOAD_URL
+@pytest.mark.parametrize(
+    "asset_fixture, download_url",
+    [
+        ("asset_mock", DOWNLOAD_URL),
+        ("asset_mock2", DOWNLOAD_URL2),
+    ],
+)
+def test_asset_get_download_url(asset_fixture, download_url, request):
+    asset_fixture = request.getfixturevalue(asset_fixture)
+    url = asset_fixture._get_download_url()
+    assert url == download_url
 
 
 @pytest.mark.live
@@ -127,19 +137,33 @@ def test_asset_download_live_2(asset_live):
         assert len(out_files) == 42
 
 
-def test_asset_download_no_unpacking(asset_mock, requests_mock):
+@pytest.mark.parametrize(
+    "asset_fixture, download_url, out_file_name",
+    [
+        ("asset_mock", DOWNLOAD_URL, "output.tgz"),
+        (
+            "asset_mock2",
+            DOWNLOAD_URL2,
+            "DS_SPOT6_202206240959075_FR1_FR1_SV1_SV1_E013N52_01709.tgz",
+        ),
+    ],
+)
+def test_asset_download_no_unpacking(
+    asset_fixture, download_url, out_file_name, requests_mock, request
+):
+    asset_fixture = request.getfixturevalue(asset_fixture)
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as src_tgz:
         out_tgz_file = src_tgz.read()
     requests_mock.get(
-        url=DOWNLOAD_URL,
+        url=download_url,
         content=out_tgz_file,
         headers={"x-goog-stored-content-length": "163"},
     )
 
     with tempfile.TemporaryDirectory() as tempdir:
-        out_files = asset_mock.download(tempdir, unpacking=False)
+        out_files = asset_fixture.download(tempdir, unpacking=False)
         for file in out_files:
             assert Path(file).exists()
-            assert Path(file).name == "output.tgz"
+            assert Path(file).name == out_file_name
         assert len(out_files) == 1
