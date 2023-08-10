@@ -148,13 +148,13 @@ def download_gcs_not_unpack(
         output_directory: The file output directory, defaults to the current working
             directory.
     """
-    if ".tgz" in download_url:
-        file_ending = "tgz"
-    elif ".zip" in download_url:
-        file_ending = "zip"
-    else:
-        ValueError("To be downloaded file is not a TGZ/TAR or ZIP archive.")
-    out_fp = Path().joinpath(output_directory, f"output.{file_ending}")
+    parsed_url = urlparse(download_url)
+    extension = Path(parsed_url.path).suffix
+    try:
+        file_name = parse_qs(parsed_url.query)['response-content-disposition'][0].split('filename=')[1]
+        out_fp = Path().joinpath(output_directory, f"{file_name}{extension}")
+    except IndexError:
+        out_fp = Path().joinpath(output_directory, f"output{extension}")
 
     # Download
     with open(out_fp, "wb") as dst:
