@@ -1,7 +1,18 @@
 TOKEN = "token_123"
 DOWNLOAD_URL = "http://up42.api.com/abcdef.tgz"
-DOWNLOAD_URL2 = "https://storage.googleapis.com/user-storage-interstellar-prod/workspace/a917e589-1187-402f-8bf8-38937d6fe713/block-output/78ddc9d8-f179-4821-acef-e7b2abddece0/data.tgz?response-content-disposition=attachment%3B%20filename%3DDS_SPOT6_202206240959075_FR1_FR1_SV1_SV1_E013N52_01709&GoogleAccessId=asset-service@interstellar-prod-env.iam.gserviceaccount.com&Expires=1691664318&Signature=py7zPKQdqE%2FnVNOVz1eNkc4dRC465zAnRPcX2UOeKsYSJeEkkkBCnCqFyhG07qXlMd7xi5Rz7KCe3ZZUgFNmLjkoCEV6CEhX4zafLR2219MteRM8EURVxYvL8MAbcxjqscKcjm10CGXnOb1e4C4Ap7NW9lqUPp6WS%2BJjNe5mYyZuvxsD2vPiVpoYsuuqFIr5Dp2JQsOriuV4xdwRx6EiGkjo2VkadH%2BfEr3o2wjDstvxCmtV6BE8WcjvDcUPTeIYjHYjBMV0yBOO0FHnzZLRFtpmoXQ5LjIuDb8NYiPcf044XiLIWIdrDhPliMAWZrwhx5CG98M2Y4buui4C24JD6Q%3D%3D"
-
+DOWNLOAD_URL2 = (
+    "https://storage.googleapis.com/user-storage-interstellar-prod/workspace/"
+    "a917e589-1187-402f-8bf8-38937d6fe713/block-output/"
+    "78ddc9d8-f179-4821-acef-e7b2abddece0/data.tgz?"
+    "response-content-disposition=attachment%3B%20filename%3DDS_SPOT6_202206240959075_"
+    "FR1_FR1_SV1_SV1_E013N52_01709&GoogleAccessId=asset-service@interstellar-prod-env."
+    "iam.gserviceaccount.com&Expires=1691664318&Signature=py7zPKQdqE%2FnVNOVz1eNkc4dR"
+    "C465zAnRPcX2UOeKsYSJeEkkkBCnCqFyhG07qXlMd7xi5Rz7KCe3ZZUgFNmLjkoCEV6CEhX4zaf"
+    "LR2219MteRM8EURVxYvL8MAbcxjqscKcjm10CGXnOb1e4C4Ap7NW9lqUPp6WS%2BJjNe5mYyZuv"
+    "xsD2vPiVpoYsuuqFIr5Dp2JQsOriuV4xdwRx6EiGkjo2VkadH%2BfEr3o2wjDstvxCmtV6BE8W"
+    "cjvDcUPTeIYjHYjBMV0yBOO0FHnzZLRFtpmoXQ5LjIuDb8NYiPcf044XiLIWIdrDhPliMAWZr"
+    "whx5CG98M2Y4buui4C24JD6Q%3D%3D"
+)
 PROJECT_ID = "project_id_123"
 PROJECT_APIKEY = "project_apikey_123"
 PROJECT_NAME = "project_name_123"
