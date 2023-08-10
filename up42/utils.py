@@ -153,7 +153,7 @@ def download_gcs_not_unpack(
     try:
         file_name = parse_qs(parsed_url.query)['response-content-disposition'][0].split('filename=')[1]
         out_fp = Path().joinpath(output_directory, f"{file_name}{extension}")
-    except IndexError:
+    except (IndexError, KeyError):
         out_fp = Path().joinpath(output_directory, f"output{extension}")
 
     # Download
