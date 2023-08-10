@@ -57,7 +57,7 @@ def test_job_iterator(
 
     res = jobcollection_multiple_mock.apply(worker, add=5, only_succeeded=True)
     assert len(res) == 1
-    assert res["jobid_456"] == 5
+    assert res[JOB_ID_2] == 5
 
     with pytest.raises(ValueError) as e:
         jobcollection_empty_mock.apply(worker, add=5, only_succeeded=True)

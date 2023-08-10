@@ -1,22 +1,22 @@
 import copy
 import logging
-from typing import List, Union, Optional
-from pathlib import Path
-import tempfile
 import tarfile
-import zipfile
+import tempfile
 import warnings
+import zipfile
 from datetime import datetime
 from datetime import time as datetime_time
 from functools import wraps
-from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
+from pathlib import Path
+from typing import List, Optional, Union
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-from geopandas import GeoDataFrame
+import requests
 import shapely
-from shapely.geometry import Polygon, Point
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
-import requests
+from geopandas import GeoDataFrame
+from shapely.geometry import Point, Polygon
 from tqdm import tqdm
 
 
@@ -148,13 +148,15 @@ def download_gcs_not_unpack(
         output_directory: The file output directory, defaults to the current working
             directory.
     """
-    if ".tgz" in download_url:
-        file_ending = "tgz"
-    elif ".zip" in download_url:
-        file_ending = "zip"
-    else:
-        ValueError("To be downloaded file is not a TGZ/TAR or ZIP archive.")
-    out_fp = Path().joinpath(output_directory, f"output.{file_ending}")
+    parsed_url = urlparse(download_url)
+    extension = Path(parsed_url.path).suffix
+    try:
+        file_name = parse_qs(parsed_url.query)["response-content-disposition"][0].split(
+            "filename="
+        )[1]
+        out_fp = Path().joinpath(output_directory, f"{file_name}{extension}")
+    except (IndexError, KeyError):
+        out_fp = Path().joinpath(output_directory, f"output{extension}")
 
     # Download
     with open(out_fp, "wb") as dst:

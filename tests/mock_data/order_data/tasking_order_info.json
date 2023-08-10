@@ -1,6 +1,6 @@
 {
     "data": {
-        "id": "order_id_123",
+        "id": "ddb207c0-3b7f-4186-bc0b-c033f0d2f32b",
         "userId": null,
         "workspaceId": "workspace_id_123",
         "accountId": "ACCOUNTID",
@@ -19,7 +19,7 @@
             "type": "INTERNAL"
         },
         "assets": [
-            "asset_id_123",
+            "363f89c1-3586-4b14-9a49-03a890c3b593",
             "f898881f-3841-4473-b19c-be5483142036",
             "54d748e0-ebba-4ac0-9e8d-672ea8e89ef4",
             "edd4d820-ea91-4855-a2e8-1723195b767c",

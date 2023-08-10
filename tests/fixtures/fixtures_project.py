@@ -9,6 +9,7 @@ from .fixtures_globals import (
     WORKFLOW_NAME,
     WORKFLOW_DESCRIPTION,
     JOB_ID,
+    PROJECT_ID,
 )
 
 from ..context import (
@@ -137,7 +138,7 @@ def project_mock(auth_mock, requests_mock):
 
     # project settings update
     url_projects_settings_update = (
-        f"{project.auth._endpoint()}/projects/project_id_123/settings"
+        f"{project.auth._endpoint()}/projects/{PROJECT_ID}/settings"
     )
     json_desired_project_settings = {
         "data": [

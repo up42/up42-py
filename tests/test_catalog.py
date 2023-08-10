@@ -442,7 +442,7 @@ def test_download_quicklook_live(catalog_live):
 
 def test_construct_order_parameters(catalog_mock):
     order_parameters = catalog_mock.construct_order_parameters(
-        data_product_id="data_product_id_123",
+        data_product_id=DATA_PRODUCT_ID,
         image_id="123",
         aoi=mock_search_parameters["intersects"],
     )

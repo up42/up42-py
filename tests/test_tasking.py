@@ -16,6 +16,7 @@ from .fixtures import (
     QUOTATION_ID,
     WRONG_FEASIBILITY_ID,
     WRONG_OPTION_ID,
+    DATA_PRODUCT_ID,
 )
 
 LIVE_TEST_WORKSPACE_ID = os.getenv("LIVE_TEST_WORKSPACE_ID")
@@ -30,7 +31,7 @@ with open(
 
 def test_construct_order_parameters(tasking_mock):
     order_parameters = tasking_mock.construct_order_parameters(
-        data_product_id="data_product_id_123",
+        data_product_id=DATA_PRODUCT_ID,
         name="my_tasking_order",
         acquisition_start="2022-11-01",
         acquisition_end="2022-11-10",

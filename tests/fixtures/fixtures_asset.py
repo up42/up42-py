@@ -9,7 +9,9 @@ from pystac_client import CollectionClient
 from ..context import Asset
 from .fixtures_globals import (
     ASSET_ID,
+    ASSET_ID2,
     DOWNLOAD_URL,
+    DOWNLOAD_URL2,
     JSON_ASSET,
     JSON_STORAGE_STAC,
     STAC_COLLECTION_ID,
@@ -141,6 +143,17 @@ def asset_mock(auth_mock, requests_mock):
 
     asset = Asset(auth=auth_mock, asset_id=ASSET_ID)
 
+    return asset
+
+@pytest.fixture()
+def asset_mock2(auth_mock, requests_mock):
+    url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID2}/metadata"
+    requests_mock.get(url=url_asset_info, json=JSON_ASSET)
+    requests_mock.post(
+        url=f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID2}/download-url",
+        json={"url": DOWNLOAD_URL2},
+    )
+    asset = Asset(auth=auth_mock, asset_id=ASSET_ID2)
     return asset
 
 
