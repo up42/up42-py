@@ -46,7 +46,7 @@ jobs:
           sonar_token_variable_name: SONAR_TOKEN
   test_live:
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.8
     steps:
       - checkout
       - run:
