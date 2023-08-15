@@ -113,3 +113,9 @@ You can download and visualize the results:
 job.download_results()
 job.plot_results()
 ```
+
+## Troubleshooting
+
+### How many blocks can I add to a workflow?
+
+You can add one data block and up to five processing blocks to a workflow.
