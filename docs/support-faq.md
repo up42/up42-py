@@ -7,11 +7,6 @@ If you have any questions, [contact support](https://up42.com/company/contact-su
 To explore UP42:
 
 - [Data recipes](https://github.com/up42/data-recipes)
-- [Training materials](https://github.com/up42/training-materials)
-
-To create mosaics using Pléiades and SPOT imagery:
-
-- [UP42 mosaicking](https://github.com/up42/mosaicking)
 
 ## Troubleshooting
 

@@ -6,7 +6,7 @@ Apply analytics on geospatial data by using workflows with [data blocks](https:/
 
 A workflow is a sequence of data blocks and processing blocks. It defines an order for operations.
 
-A workflow starts with a data block and is usually followed by one or more processing blocks.
+A workflow starts with a data block, which may be followed by processing blocks. You can add one data block and up to five processing blocks to a workflow.
 
 ![A workflow graph](images/workflow-graph.png)
 
@@ -113,3 +113,9 @@ You can download and visualize the results:
 job.download_results()
 job.plot_results()
 ```
+
+## Troubleshooting
+
+### How many blocks can I add to a workflow?
+
+You can add one data block and up to five processing blocks to a workflow.
