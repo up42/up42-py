@@ -153,5 +153,7 @@ Check the status of your order:
 ```python
 order.status
 ```
+The following statuses mean you can [download assets from storage](storage.md):
 
-When the order is completed, [download its assets from storage](storage.md).
+- `BEING_FULFILLED`: some order assets are delivered
+- `FULFILLED`: all order assets are delivered
