@@ -206,15 +206,16 @@ def test_jobcollection_iterator(jobcollection_multiple_mock):
         assert isinstance(job, Job)
 
 
-@pytest.mark.live
-def test_jobcollection_download_results_live(jobcollection_live):
-    with tempfile.TemporaryDirectory() as tmpdir:
-        out_files_dict = jobcollection_live.download_results(Path(tmpdir), merge=False)
-        jobid_1, jobid_2 = jobcollection_live.jobs_id
-        for _, value in out_files_dict.items():
-            for p in value:
-                assert Path(p).exists()
-        assert jobid_1 in out_files_dict
-        assert jobid_2 in out_files_dict
-        assert len(out_files_dict[jobid_1]) == 2
-        assert len(out_files_dict[jobid_2]) == 2
+# #NOTE: this job does not exist anymore
+# # @pytest.mark.live
+# def test_jobcollection_download_results_live(jobcollection_live):
+#     with tempfile.TemporaryDirectory() as tmpdir:
+#         out_files_dict = jobcollection_live.download_results(Path(tmpdir), merge=False)
+#         jobid_1, jobid_2 = jobcollection_live.jobs_id
+#         for _, value in out_files_dict.items():
+#             for p in value:
+#                 assert Path(p).exists()
+#         assert jobid_1 in out_files_dict
+#         assert jobid_2 in out_files_dict
+#         assert len(out_files_dict[jobid_1]) == 2
+#         assert len(out_files_dict[jobid_2]) == 2
