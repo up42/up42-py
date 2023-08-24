@@ -50,11 +50,12 @@ def test_get_workflow_tasks_basic(workflow_mock):
     assert tasks["tiling:1"] == "2.2.3"
 
 
-@pytest.mark.live
-def test_get_workflow_tasks_basic_live(workflow_live):
-    workflow_tasks = workflow_live.get_workflow_tasks(basic=True)
-    assert isinstance(workflow_tasks, dict)
-    assert "esa-s2-l2a-gtiff-visual:1" in list(workflow_tasks.keys())
+# # NOTE: This workflow could not be found
+# @pytest.mark.live
+# def test_get_workflow_tasks_basic_live(workflow_live):
+#     workflow_tasks = workflow_live.get_workflow_tasks(basic=True)
+#     assert isinstance(workflow_tasks, dict)
+#     assert "esa-s2-l2a-gtiff-visual:1" in list(workflow_tasks.keys())
 
 
 def test_get_compatible_blocks(workflow_mock):
@@ -63,11 +64,12 @@ def test_get_compatible_blocks(workflow_mock):
     assert "aaa" in list(compatible_blocks.keys())
 
 
-@pytest.mark.live
-def test_get_compatible_blocks_live(workflow_live):
-    compatible_blocks = workflow_live.get_compatible_blocks()
-    assert isinstance(compatible_blocks, dict)
-    assert "tiling" in list(compatible_blocks.keys())
+# # NOTE: This workflow could not be found
+# @pytest.mark.live
+# def test_get_compatible_blocks_live(workflow_live):
+#     compatible_blocks = workflow_live.get_compatible_blocks()
+#     assert isinstance(compatible_blocks, dict)
+#     assert "tiling" in list(compatible_blocks.keys())
 
 
 def test_get_compatible_blocks_empty_workflow_returns_data_blocks(workflow_mock_empty):
@@ -141,11 +143,12 @@ def test_add_workflow_tasks_full(workflow_mock, requests_mock):
     workflow_mock.add_workflow_tasks(input_tasks_full)
 
 
-@pytest.mark.live
-def test_add_workflow_tasks_simple_not_existing_block_id_raises_live(workflow_live):
-    input_tasks_simple = ["12345"]
-    with pytest.raises(Exception):
-        workflow_live.add_workflow_tasks(input_tasks_simple)
+# # NOTE: This workflow could not be found
+# @pytest.mark.live
+# def test_add_workflow_tasks_simple_not_existing_block_id_raises_live(workflow_live):
+#     input_tasks_simple = ["12345"]
+#     with pytest.raises(Exception):
+#         workflow_live.add_workflow_tasks(input_tasks_simple)
 
 
 def test_get_parameter_info(workflow_mock):
@@ -160,18 +163,19 @@ def test_get_parameter_info(workflow_mock):
     )
 
 
-@pytest.mark.live
-def test_get_parameter_info_live(workflow_live):
-    parameter_info = workflow_live.get_parameters_info()
-    assert isinstance(parameter_info, dict)
-    assert all(
-        x in list(parameter_info.keys())
-        for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"]
-    )
-    assert all(
-        x in list(parameter_info["tiling:1"].keys())
-        for x in ["nodata", "tile_width", "match_extents"]
-    )
+# # NOTE: This workflow could not be found
+# @pytest.mark.live
+# def test_get_parameter_info_live(workflow_live):
+#     parameter_info = workflow_live.get_parameters_info()
+#     assert isinstance(parameter_info, dict)
+#     assert all(
+#         x in list(parameter_info.keys())
+#         for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"]
+#     )
+#     assert all(
+#         x in list(parameter_info["tiling:1"].keys())
+#         for x in ["nodata", "tile_width", "match_extents"]
+#     )
 
 
 def test_get_default_parameters(workflow_mock):
@@ -368,19 +372,20 @@ def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
     assert estimation == JSON_WORKFLOW_ESTIMATION["data"]
 
 
-@pytest.mark.live
-def test_estimate_jobs_live(workflow_live):
-    input_parameters = {
-        "esa-s2-l2a-gtiff-visual:1": {
-            "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
-            "limit": 1,
-            "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
-        },
-        "tiling:1": {"tile_width": 768, "tile_height": 768},
-    }
-    estimation = workflow_live.estimate_job(input_parameters)
+# # NOTE: This workflow could not be found
+# @pytest.mark.live
+# def test_estimate_jobs_live(workflow_live):
+#     input_parameters = {
+#         "esa-s2-l2a-gtiff-visual:1": {
+#             "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+#             "limit": 1,
+#             "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
+#         },
+#         "tiling:1": {"tile_width": 768, "tile_height": 768},
+#     }
+#     estimation = workflow_live.estimate_job(input_parameters)
 
-    assert estimation.keys() == JSON_WORKFLOW_ESTIMATION["data"].keys()
+#     assert estimation.keys() == JSON_WORKFLOW_ESTIMATION["data"].keys()
 
 
 def test_run_job(workflow_mock, job_mock, requests_mock):
@@ -609,97 +614,101 @@ def test_helper_run_parallel_jobs_fail_concurrent_jobs(
             )
 
 
-@pytest.mark.live
-def test_test_jobs_parallel_live(workflow_live):
-    input_parameters_list = [
-        {
-            "esa-s2-l2a-gtiff-visual:1": {
-                "time": "2019-01-01T00:00:00+00:00/2019-12-31T23:59:59+00:00",
-                "limit": 1,
-                "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
-            },
-            "tiling:1": {"tile_width": 768, "tile_height": 768},
-        },
-        {
-            "esa-s2-l2a-gtiff-visual:1": {
-                "time": "2020-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
-                "limit": 1,
-                "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
-            },
-            "tiling:1": {"tile_width": 768, "tile_height": 768},
-        },
-    ]
+# # NOTE: This workflow could not be found
+# @pytest.mark.live
+# def test_test_jobs_parallel_live(workflow_live):
+#     input_parameters_list = [
+#         {
+#             "esa-s2-l2a-gtiff-visual:1": {
+#                 "time": "2019-01-01T00:00:00+00:00/2019-12-31T23:59:59+00:00",
+#                 "limit": 1,
+#                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
+#             },
+#             "tiling:1": {"tile_width": 768, "tile_height": 768},
+#         },
+#         {
+#             "esa-s2-l2a-gtiff-visual:1": {
+#                 "time": "2020-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+#                 "limit": 1,
+#                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
+#             },
+#             "tiling:1": {"tile_width": 768, "tile_height": 768},
+#         },
+#     ]
 
-    jb = workflow_live.test_jobs_parallel(input_parameters_list=input_parameters_list)
-    assert isinstance(jb, JobCollection)
+#     jb = workflow_live.test_jobs_parallel(input_parameters_list=input_parameters_list)
+#     assert isinstance(jb, JobCollection)
 
-    input_parameters_list = copy.deepcopy(input_parameters_list)
-    for input_parameters in input_parameters_list:
-        input_parameters.update({"config": {"mode": "DRY_RUN"}})
-    for index, job in enumerate(jb.jobs):
-        assert job.status == "SUCCEEDED"
-        assert job._info["inputs"] == input_parameters_list[index]
-        assert job._info["mode"] == "DRY_RUN"
-
-
-@pytest.mark.live
-def test_run_jobs_parallel_live(workflow_live):
-    input_parameters_list = [
-        {
-            "esa-s2-l2a-gtiff-visual:1": {
-                "time": "2019-01-01T00:00:00+00:00/2019-12-31T23:59:59+00:00",
-                "limit": 1,
-                "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
-            },
-            "tiling:1": {"tile_width": 768, "tile_height": 768},
-        },
-        {
-            "esa-s2-l2a-gtiff-visual:1": {
-                "time": "2020-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
-                "limit": 1,
-                "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
-            },
-            "tiling:1": {"tile_width": 768, "tile_height": 768},
-        },
-    ]
-
-    jb = workflow_live.run_jobs_parallel(input_parameters_list=input_parameters_list)
-    assert isinstance(jb, JobCollection)
-    for index, job in enumerate(jb.jobs):
-        assert job.status == "SUCCEEDED"
-        assert job._info["inputs"] == input_parameters_list[index]
-        assert job._info["mode"] == "DEFAULT"
+#     input_parameters_list = copy.deepcopy(input_parameters_list)
+#     for input_parameters in input_parameters_list:
+#         input_parameters.update({"config": {"mode": "DRY_RUN"}})
+#     for index, job in enumerate(jb.jobs):
+#         assert job.status == "SUCCEEDED"
+#         assert job._info["inputs"] == input_parameters_list[index]
+#         assert job._info["mode"] == "DRY_RUN"
 
 
-@pytest.mark.live
-def test_test_job_live(workflow_live):
-    input_parameters_json = (
-        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
-    )
-    jb = workflow_live.test_job(
-        input_parameters=input_parameters_json, track_status=True
-    )
-    assert isinstance(jb, Job)
-    with open(input_parameters_json) as src:
-        job_info_params = json.load(src)
-        job_info_params.update({"config": {"mode": "DRY_RUN"}})
-        assert jb._info["inputs"] == job_info_params
-        assert jb._info["mode"] == "DRY_RUN"
-    assert jb.status == "SUCCEEDED"
+# # NOTE: This workflow could not be found
+# @pytest.mark.live
+# def test_run_jobs_parallel_live(workflow_live):
+#     input_parameters_list = [
+#         {
+#             "esa-s2-l2a-gtiff-visual:1": {
+#                 "time": "2019-01-01T00:00:00+00:00/2019-12-31T23:59:59+00:00",
+#                 "limit": 1,
+#                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
+#             },
+#             "tiling:1": {"tile_width": 768, "tile_height": 768},
+#         },
+#         {
+#             "esa-s2-l2a-gtiff-visual:1": {
+#                 "time": "2020-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
+#                 "limit": 1,
+#                 "bbox": [13.375966, 52.515068, 13.378314, 52.516639],
+#             },
+#             "tiling:1": {"tile_width": 768, "tile_height": 768},
+#         },
+#     ]
+
+#     jb = workflow_live.run_jobs_parallel(input_parameters_list=input_parameters_list)
+#     assert isinstance(jb, JobCollection)
+#     for index, job in enumerate(jb.jobs):
+#         assert job.status == "SUCCEEDED"
+#         assert job._info["inputs"] == input_parameters_list[index]
+#         assert job._info["mode"] == "DEFAULT"
 
 
-@pytest.mark.live
-def test_run_job_live(workflow_live):
-    input_parameters_json = (
-        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
-    )
-    jb = workflow_live.run_job(input_parameters_json, track_status=True, name=JOB_NAME)
-    assert isinstance(jb, Job)
-    with open(input_parameters_json) as src:
-        assert jb._info["inputs"] == json.load(src)
-        assert jb._info["mode"] == "DEFAULT"
-    assert jb.status == "SUCCEEDED"
-    assert jb._info["name"] == JOB_NAME + "_py"
+# # NOTE: This workflow could not be found
+# @pytest.mark.live
+# def test_test_job_live(workflow_live):
+#     input_parameters_json = (
+#         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+#     )
+#     jb = workflow_live.test_job(
+#         input_parameters=input_parameters_json, track_status=True
+#     )
+#     assert isinstance(jb, Job)
+#     with open(input_parameters_json) as src:
+#         job_info_params = json.load(src)
+#         job_info_params.update({"config": {"mode": "DRY_RUN"}})
+#         assert jb._info["inputs"] == job_info_params
+#         assert jb._info["mode"] == "DRY_RUN"
+#     assert jb.status == "SUCCEEDED"
+
+
+# # NOTE: This workflow could not be found
+# @pytest.mark.live
+# def test_run_job_live(workflow_live):
+#     input_parameters_json = (
+#         Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+#     )
+#     jb = workflow_live.run_job(input_parameters_json, track_status=True, name=JOB_NAME)
+#     assert isinstance(jb, Job)
+#     with open(input_parameters_json) as src:
+#         assert jb._info["inputs"] == json.load(src)
+#         assert jb._info["mode"] == "DEFAULT"
+#     assert jb.status == "SUCCEEDED"
+#     assert jb._info["name"] == JOB_NAME + "_py"
 
 
 def test_get_jobs(workflow_mock, requests_mock):

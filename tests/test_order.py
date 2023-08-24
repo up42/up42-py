@@ -32,11 +32,12 @@ def test_order_info(order_mock):
     assert order_mock.info["assets"][0] == ASSET_ID
 
 
-@pytest.mark.live
-def test_order_info_live(order_live):
-    assert order_live.info
-    assert order_live.info["id"] == os.getenv("TEST_UP42_ORDER_ID")
-    assert order_live.info["dataProductId"] == "4f1b2f62-98df-4c74-81f4-5dce45deee99"
+# # NOTE: This order id does not exist anymore
+# @pytest.mark.live
+# def test_order_info_live(order_live):
+#     assert order_live.info
+#     assert order_live.info["id"] == os.getenv("TEST_UP42_ORDER_ID")
+#     assert order_live.info["dataProductId"] == "4f1b2f62-98df-4c74-81f4-5dce45deee99"
 
 
 # pylint: disable=unused-argument
@@ -76,9 +77,10 @@ def test_order_parameters(order_mock):
     assert not order_mock.order_parameters
 
 
-@pytest.mark.live
-def test_order_parameters_live(order_live):
-    assert not order_live.order_parameters
+# # NOTE: This order id does not exist anymore
+# @pytest.mark.live
+# def test_order_parameters_live(order_live):
+#     assert not order_live.order_parameters
 
 
 def test_get_assets(order_mock, asset_mock):
