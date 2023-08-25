@@ -168,16 +168,6 @@ def test_job_download_result(job_mock, requests_mock):
         assert out_paths[1].parent.is_dir()
 
 
-# # NOTE: This job doesn't exist anymore; is it even possible to remove/delete jobs
-# # @pytest.mark.live
-# def test_job_download_result_live(job_live):
-#     with tempfile.TemporaryDirectory() as tempdir:
-#         out_files = job_live.download_results(Path(tempdir))
-#         for file in out_files:
-#             assert Path(file).exists()
-#         assert len(out_files) == 2
-
-
 def test_job_download_gcs_no_unpacking(job_mock, requests_mock):
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as src_tgz:
@@ -251,14 +241,6 @@ def test_job_get_credits(job_mock):
 
     assert isinstance(out_files, dict)
     assert out_files == {"creditsUsed": 100}
-
-
-# # NOTE: This job doesn't exist anymore
-# @pytest.mark.live
-# def test_job_get_credits_live(job_live):
-#     out_files = job_live.get_credits()
-#     assert isinstance(out_files, dict)
-#     assert out_files == {"creditsUsed": 5}
 
 
 @pytest.mark.skip(reason="Sometimes takes quite long to cancel the job on the server.")
