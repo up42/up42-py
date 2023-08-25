@@ -3,7 +3,7 @@ import os
 import pytest
 
 # pylint: disable=unused-import
-from .context import Webhooks, Webhook
+from .context import Webhook
 from .fixtures import (
     WEBHOOK_ID,
     WORKSPACE_ID,
@@ -27,41 +27,16 @@ def test_webhook_info(webhook_mock):
     assert webhook_mock._info["id"] == WEBHOOK_ID
 
 
-@pytest.mark.live
-#TODO: failing
-def test_webhook_info_live(webhook_live):
-    assert webhook_live.info
-    assert webhook_live._info["id"] == os.getenv("TEST_UP42_WEBHOOK_ID")
-
-
 def test_webhook_trigger_test_event(webhook_mock):
     test_event_info = webhook_mock.trigger_test_events()
     assert isinstance(test_event_info, dict)
     assert test_event_info["testsRun"] >= 1
 
 
-# # NOTE: this webhook id does not exist anymore
-# @pytest.mark.live
-# def test_webhook_trigger_test_event_live(webhook_live):
-#     test_event_info = webhook_live.trigger_test_events()
-#     assert isinstance(test_event_info, dict)
-#     assert test_event_info["testsRun"] >= 1
-
-
 def test_webhook_update(webhook_mock):
     updated_webhook = webhook_mock.update(name="test_info_webhook")
     assert isinstance(updated_webhook, Webhook)
     assert updated_webhook._info["name"] == "test_info_webhook"
-
-
-# # NOTE: this webhook id does not exist anymore
-# @pytest.mark.live
-# def test_webhook_update_live(webhook_live):
-#     updated_webhook = webhook_live.update(
-#         name="test_info_webhook"
-#     )  # "Updates" to the old name for consistency.
-#     assert isinstance(updated_webhook, Webhook)
-#     assert updated_webhook._info["name"] == "test_info_webhook"
 
 
 def test_webhook_delete(webhook_mock):
