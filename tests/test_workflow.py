@@ -1,6 +1,4 @@
 from pathlib import Path
-import json
-import copy
 
 import pytest
 from shapely.geometry import box
@@ -13,7 +11,6 @@ from .fixtures import (
     auth_live,
     workflow_mock_empty,
     workflow_mock,
-    workflow_live,
     job_mock,
     jobcollection_single_mock,
     jobtask_mock,

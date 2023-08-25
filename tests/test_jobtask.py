@@ -2,11 +2,10 @@ from pathlib import Path
 import tempfile
 import shutil
 
-import pytest
 
 # pylint: disable=unused-import
 from .context import JobTask
-from .fixtures import auth_mock, auth_live, jobtask_mock, jobtask_live
+from .fixtures import auth_mock, auth_live, jobtask_mock
 from .fixtures import DOWNLOAD_URL
 
 
