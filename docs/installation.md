@@ -3,7 +3,7 @@
 !!! Warning "Python version"
     The package requires Python ≥ 3.8
 
-=== "For macOS (pip)"
+=== "For macOS and Ubuntu (pip)"
 
     ```bash title="Basic installation"
     pip install up42-py
