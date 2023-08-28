@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 # pylint: disable=unused-import
