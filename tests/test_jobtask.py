@@ -2,11 +2,10 @@ from pathlib import Path
 import tempfile
 import shutil
 
-import pytest
 
 # pylint: disable=unused-import
 from .context import JobTask
-from .fixtures import auth_mock, auth_live, jobtask_mock, jobtask_live
+from .fixtures import auth_mock, auth_live, jobtask_mock
 from .fixtures import DOWNLOAD_URL
 
 
@@ -20,13 +19,6 @@ def test_get_results_json(jobtask_mock):
         "type": "FeatureCollection",
         "features": [],
     }
-
-
-@pytest.mark.live
-def test_get_result_json_live(jobtask_live):
-    result_json = jobtask_live.get_results_json()
-    assert result_json["type"] == "FeatureCollection"
-    assert len(result_json["features"][0]["bbox"]) == 4
 
 
 def test_jobtask_download_result(jobtask_mock, requests_mock):
@@ -63,17 +55,6 @@ def test_jobtask_download_result(jobtask_mock, requests_mock):
     shutil.rmtree(default_outdir)
 
 
-@pytest.mark.live
-def test_jobtask_download_result_live(jobtask_live):
-    with tempfile.TemporaryDirectory() as tempdir:
-        out_files = jobtask_live.download_results(output_directory=tempdir)
-        for file in out_files:
-            assert Path(file).exists()
-        assert len(out_files) == 2
-        assert ".tif" in [Path(of).suffix for of in out_files]
-        assert "data.json" in [Path(of).name for of in out_files]
-
-
 def test_download_quicklook(jobtask_mock, requests_mock):
     url_download_quicklooks = (
         f"{jobtask_mock.auth._endpoint()}/projects/{jobtask_mock.project_id}/"
@@ -90,12 +71,3 @@ def test_download_quicklook(jobtask_mock, requests_mock):
         assert len(quick) == 1
         assert Path(quick[0]).exists()
         assert Path(quick[0]).suffix == ".png"
-
-
-@pytest.mark.live
-def test_download_quicklook_live(jobtask_live):
-    with tempfile.TemporaryDirectory() as tempdir:
-        out_files = jobtask_live.download_quicklooks(output_directory=tempdir)
-        assert len(out_files) == 1
-        assert Path(out_files[0]).exists()
-        assert Path(out_files[0]).suffix == ".png"

@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 # pylint: disable=unused-import
@@ -14,7 +12,6 @@ from .fixtures import (
     auth_live,
     auth_mock,
     catalog_mock,
-    order_live,
     order_mock,
 )
 
@@ -30,13 +27,6 @@ def test_order_info(order_mock):
     assert order_mock.info["id"] == ORDER_ID
     assert order_mock.info["dataProvider"] == JSON_ORDER["data"]["dataProvider"]
     assert order_mock.info["assets"][0] == ASSET_ID
-
-
-@pytest.mark.live
-def test_order_info_live(order_live):
-    assert order_live.info
-    assert order_live.info["id"] == os.getenv("TEST_UP42_ORDER_ID")
-    assert order_live.info["dataProductId"] == "4f1b2f62-98df-4c74-81f4-5dce45deee99"
 
 
 # pylint: disable=unused-argument
@@ -74,11 +64,6 @@ def test_is_fulfilled(order_mock, status, expected, monkeypatch):
 
 def test_order_parameters(order_mock):
     assert not order_mock.order_parameters
-
-
-@pytest.mark.live
-def test_order_parameters_live(order_live):
-    assert not order_live.order_parameters
 
 
 def test_get_assets(order_mock, asset_mock):
