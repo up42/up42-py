@@ -5,7 +5,7 @@ import pystac
 from pystac_client import Client, ItemSearch
 
 from up42.auth import Auth
-from up42.stac_client import pystac_auth_client
+from up42.stac_client import PySTACAuthClient
 from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_logger
 
 logger = get_logger(__name__)
@@ -58,7 +58,7 @@ class Asset:
     @property
     def _stac_search(self) -> Tuple[Client, ItemSearch]:
         url = f"{self.auth._endpoint()}/v2/assets/stac"
-        pystac_client_aux = pystac_auth_client(auth=self.auth).open(url=url)
+        pystac_client_aux = PySTACAuthClient(auth=self.auth).open(url=url)
         stac_search_parameters = {
             "max_items": MAX_ITEM,
             "limit": LIMIT,

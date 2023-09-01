@@ -9,7 +9,7 @@ from shapely.geometry import Polygon
 from up42.asset import Asset
 from up42.auth import Auth
 from up42.order import Order
-from up42.stac_client import pystac_auth_client
+from up42.stac_client import PySTACAuthClient
 from up42.utils import any_vector_to_fc, fc_to_query_geometry, format_time, get_logger
 
 logger = get_logger(__name__)
@@ -37,7 +37,7 @@ class Storage:
     @property
     def pystac_client(self):
         url = f"{self.auth._endpoint()}/v2/assets/stac"
-        pystac_client_auth = pystac_auth_client(auth=self.auth).open(url=url)
+        pystac_client_auth = PySTACAuthClient(auth=self.auth).open(url=url)
         return pystac_client_auth
 
     def _query_paginated_endpoints(
