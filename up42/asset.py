@@ -1,3 +1,5 @@
+import requests
+from tqdm import tqdm
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
@@ -166,3 +168,40 @@ class Asset:
 
         self.results = out_filepaths
         return out_filepaths
+
+    def download_stac_asset(
+        self, stac_asset: pystac.Asset, output_directory: Union[str, Path, None] = None, unpacking: bool = True
+    ) -> Path:
+        """
+        """
+        logger.info(f"Downloading STAC asset {stac_asset.title}")
+
+        #TODO: make sure spaces in title work
+        if output_directory is None:
+            output_directory = (
+                Path.cwd() / f"project_{self.auth.project_id}/asset_{self.asset_id}/{stac_asset.title}"
+            )
+        else:
+            output_directory = Path(output_directory)
+        output_directory.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Download directory: {str(output_directory)}")
+        out_file_path = output_directory / "test.tif"
+        # Download
+        # TODO: add unint test
+        # TODO: make sure filename is different
+        with open(out_file_path, "wb") as dst:
+            try:
+                up42_signed_token = self.auth.get_auth_token()
+                headers= {'Authorization': f"Bearer {up42_signed_token}", }
+                r = requests.get(stac_asset.href, headers=headers, stream=True)
+                r.raise_for_status()
+                for chunk in tqdm(r.iter_content(chunk_size=1024)):
+                    if chunk:  # filter out keep-alive new chunks
+                        dst.write(chunk)
+            except requests.exceptions.HTTPError as err:
+                logger.debug(f"Connection error, please try again! {err}")
+                raise requests.exceptions.HTTPError(
+                    f"Connection error, please try again! {err}"
+            )
+        return out_file_path
+

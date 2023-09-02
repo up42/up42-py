@@ -2,6 +2,7 @@
 UP42 authentication mechanism and base requests functionality
 """
 import json
+import base64
 from pathlib import Path
 from typing import Dict, Optional, Union
 
@@ -152,6 +153,24 @@ class Auth:
     def _endpoint(self) -> str:
         """Gets the endpoint."""
         return f"https://api.up42.{self.env}"
+
+    def get_auth_token(self):
+        #TODO: rename
+        # TODO: compare with _get_token method
+        #TODO: add test
+        """Authentication based on UP42 Project ID and Key"""
+        project_api_key = f"{self.project_id}:{self.project_api_key}"
+        b64_val = base64.b64encode(project_api_key.encode()).decode()
+        AUTH_URL = self._endpoint() + "/oauth/token"
+        req_headers = {
+            "Authorization": f"Basic {b64_val}",
+            "Content-Type":"application/x-www-form-urlencoded",
+        }
+        req_body = {
+            "grant_type":"client_credentials"
+        }
+        response = requests.post(AUTH_URL, data=req_body, headers=req_headers)
+        return response.json()['data']['accessToken']
 
     def _get_token(self):
         """Project specific authentication via project id and project api key."""
