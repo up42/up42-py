@@ -158,7 +158,8 @@ class Auth:
         #TODO: rename
         # TODO: compare with _get_token method
         #TODO: add test
-        """Authentication based on UP42 Project ID and Key"""
+        """
+        """
         project_api_key = f"{self.project_id}:{self.project_api_key}"
         b64_val = base64.b64encode(project_api_key.encode()).decode()
         AUTH_URL = self._endpoint() + "/oauth/token"

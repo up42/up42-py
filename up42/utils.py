@@ -20,6 +20,22 @@ from shapely.geometry import Point, Polygon
 from tqdm import tqdm
 
 
+
+def get_filename(signed_url: str, default_filename: str) -> str:
+    """
+    Returns the filename from the signed URL
+    """
+    parsed_url = urlparse(signed_url)
+    extension = Path(parsed_url.path).suffix
+    try:
+        file_name = parse_qs(parsed_url.query)["response-content-disposition"][0].split(
+            "filename="
+        )[1]
+    except (IndexError, KeyError):
+        file_name = f"{default_filename}{extension}"
+        warnings.warn(f"Unable to extract filename from URL. Using default filename: {file_name}", UserWarning)
+    return file_name
+
 def get_logger(
     name: str,
     level=logging.INFO,
@@ -148,16 +164,9 @@ def download_gcs_not_unpack(
         output_directory: The file output directory, defaults to the current working
             directory.
     """
-    parsed_url = urlparse(download_url)
-    extension = Path(parsed_url.path).suffix
-    try:
-        file_name = parse_qs(parsed_url.query)["response-content-disposition"][0].split(
-            "filename="
-        )[1]
-        out_fp = Path().joinpath(output_directory, f"{file_name}{extension}")
-    except (IndexError, KeyError):
-        out_fp = Path().joinpath(output_directory, f"output{extension}")
-
+    #TODO: replace
+    file_name = get_filename(download_url, default_filename="output")
+    out_fp = Path().joinpath(output_directory, file_name)
     # Download
     with open(out_fp, "wb") as dst:
         try:
