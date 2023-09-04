@@ -204,7 +204,8 @@ class Asset:
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info(f"Download directory: {str(output_directory)}")
         try:
-            up42_signed_token = self.auth._get_auth_token()
+            self.auth._get_token()
+            up42_signed_token = self.auth.token
             headers = {
                 "Authorization": f"Bearer {up42_signed_token}",
             }

@@ -154,36 +154,6 @@ class Auth:
         """Gets the endpoint."""
         return f"https://api.up42.{self.env}"
 
-    def _get_auth_token(self):
-        """
-        Obtains an authentication token using the client credentials grant type.
-
-        This method sends an HTTP request to the authentication server using the
-        project ID and project API key to obtain an access token for authentication.
-        The access token is used for making authenticated requests to the API.
-
-        Returns:
-            str: The obtained authentication token.
-        """
-        try:
-            project_api_key = f"{self.project_id}:{self.project_api_key}"
-            b64_val = base64.b64encode(project_api_key.encode()).decode()
-            AUTH_URL = self._endpoint() + "/oauth/token"
-            req_headers = {
-                "Authorization": f"Basic {b64_val}",
-                "Content-Type":"application/x-www-form-urlencoded",
-            }
-            req_body = {
-                "grant_type":"client_credentials"
-            }
-            response = requests.post(AUTH_URL, data=req_body, headers=req_headers)
-        except MissingTokenError as err:
-            raise ValueError(
-                "Authentication was not successful, check the provided project credentials."
-            ) from err
-
-        return response.json()['data']['accessToken']
-
     def _get_token(self):
         """Project specific authentication via project id and project api key."""
         try:
