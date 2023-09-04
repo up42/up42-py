@@ -194,7 +194,6 @@ class Asset:
 
         """
         logger.info(f"Downloading STAC asset {stac_asset.title}")
-        # TODO: make sure each stac asset has title
         if output_directory is None:
             output_directory = (
                 Path.cwd()

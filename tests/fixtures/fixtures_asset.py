@@ -1,6 +1,5 @@
 import datetime
 import os
-from pathlib import Path
 import pytest
 from pystac import Item, ItemCollection
 from pystac.collection import Extent, SpatialExtent, TemporalExtent
@@ -12,7 +11,6 @@ from .fixtures_globals import (
     ASSET_ID2,
     DOWNLOAD_URL,
     DOWNLOAD_URL2,
-    STAC_ASSET_DOWNLOAD_URL,
     JSON_ASSET,
     JSON_STORAGE_STAC,
     STAC_COLLECTION_ID,
@@ -157,7 +155,7 @@ def asset_mock2(auth_mock, requests_mock):
     )
     asset = Asset(auth=auth_mock, asset_id=ASSET_ID2)
     return asset
-    
+
 
 @pytest.fixture()
 def asset_live(auth_live):
