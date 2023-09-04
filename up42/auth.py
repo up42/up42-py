@@ -2,7 +2,6 @@
 UP42 authentication mechanism and base requests functionality
 """
 import json
-import base64
 from pathlib import Path
 from typing import Dict, Optional, Union
 
