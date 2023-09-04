@@ -157,19 +157,7 @@ def asset_mock2(auth_mock, requests_mock):
     )
     asset = Asset(auth=auth_mock, asset_id=ASSET_ID2)
     return asset
-
-
-@pytest.fixture()
-def stac_asset_mock(requests_mock):
-    requests_mock.get(
-        url=STAC_ASSET_DOWNLOAD_URL,
-    )
-    out_file_path = (
-        Path(__file__).resolve().parents[1] / "mock_data/multipolygon.geojson"
-    )
-    with open(out_file_path, "rb") as src_file:
-        return src_file.read()
-
+    
 
 @pytest.fixture()
 def asset_live(auth_live):

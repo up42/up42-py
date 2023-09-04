@@ -17,7 +17,6 @@ from .fixtures import (
     asset_mock2,
     auth_live,
     auth_mock,
-    stac_asset_mock,
 )
 
 
@@ -122,7 +121,7 @@ def test_asset_download_no_unpacking(
         assert len(out_files) == 1
 
 
-def test_download_stac_asset(stac_asset_mock, requests_mock):
+def test_download_stac_asset(asset_mock2, requests_mock):
     out_file_path = Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
     with open(out_file_path, "rb") as src_file:
         out_file = src_file.read()
@@ -133,4 +132,9 @@ def test_download_stac_asset(stac_asset_mock, requests_mock):
             "Authorization": "Bearer some_token_value",
         },
     )
-    assert isinstance(stac_asset_mock, bytes)
+    with tempfile.TemporaryDirectory() as tempdir:
+        out_path = asset_mock2.download_stac_asset(
+            pystac.Asset(href=STAC_ASSET_DOWNLOAD_URL, roles=["data"]), tempdir
+        )
+        assert out_path.exists()
+        assert out_path.name == "stac_asset"
