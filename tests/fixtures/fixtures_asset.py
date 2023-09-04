@@ -1,8 +1,7 @@
 import datetime
 import os
-
-import pytest
 from pathlib import Path
+import pytest
 from pystac import Item, ItemCollection
 from pystac.collection import Extent, SpatialExtent, TemporalExtent
 from pystac_client import CollectionClient

@@ -165,7 +165,6 @@ def download_gcs_not_unpack(
         output_directory: The file output directory, defaults to the current working
             directory.
     """
-    #TODO: replace
     file_name = get_filename(download_url, default_filename="output")
     out_fp = Path().joinpath(output_directory, file_name)
     # Download
