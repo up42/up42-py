@@ -2,6 +2,7 @@ import datetime
 import os
 
 import pytest
+from pathlib import Path
 from pystac import Item, ItemCollection
 from pystac.collection import Extent, SpatialExtent, TemporalExtent
 from pystac_client import CollectionClient
@@ -12,6 +13,7 @@ from .fixtures_globals import (
     ASSET_ID2,
     DOWNLOAD_URL,
     DOWNLOAD_URL2,
+    STAC_ASSET_DOWNLOAD_URL,
     JSON_ASSET,
     JSON_STORAGE_STAC,
     STAC_COLLECTION_ID,
@@ -145,6 +147,7 @@ def asset_mock(auth_mock, requests_mock):
 
     return asset
 
+
 @pytest.fixture()
 def asset_mock2(auth_mock, requests_mock):
     url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID2}/metadata"
@@ -155,6 +158,18 @@ def asset_mock2(auth_mock, requests_mock):
     )
     asset = Asset(auth=auth_mock, asset_id=ASSET_ID2)
     return asset
+
+
+@pytest.fixture()
+def stac_asset_mock(requests_mock):
+    requests_mock.get(
+        url=STAC_ASSET_DOWNLOAD_URL,
+    )
+    out_file_path = (
+        Path(__file__).resolve().parents[1] / "mock_data/multipolygon.geojson"
+    )
+    with open(out_file_path, "rb") as src_file:
+        return src_file.read()
 
 
 @pytest.fixture()

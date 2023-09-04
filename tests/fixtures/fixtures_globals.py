@@ -13,6 +13,7 @@ DOWNLOAD_URL2 = (
     "cjvDcUPTeIYjHYjBMV0yBOO0FHnzZLRFtpmoXQ5LjIuDb8NYiPcf044XiLIWIdrDhPliMAWZr"
     "whx5CG98M2Y4buui4C24JD6Q%3D%3D"
 )
+STAC_ASSET_DOWNLOAD_URL = "https://api.up42.com/v2/assets/v3b3e203-346d-4f67-b79b-895c36983fb8"
 PROJECT_ID = "f19e833d-e698-4d9e-a037-2e6dbd8791ef"
 PROJECT_APIKEY = "project_apikey_123"
 PROJECT_NAME = "project_name_123"

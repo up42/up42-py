@@ -1,19 +1,25 @@
-import requests
-from tqdm import tqdm
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
 import pystac
+import requests
 from pystac_client import Client, ItemSearch
+from tqdm import tqdm
 
 from up42.auth import Auth
 from up42.stac_client import PySTACAuthClient
-from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_logger, get_filename
+from up42.utils import (
+    download_from_gcs_unpack,
+    download_gcs_not_unpack,
+    get_filename,
+    get_logger,
+)
 
 logger = get_logger(__name__)
 
 MAX_ITEM = 50
 LIMIT = 50
+
 
 class Asset:
     """
@@ -188,18 +194,21 @@ class Asset:
 
         """
         logger.info(f"Downloading STAC asset {stac_asset.title}")
-        #TODO: make sure each stac asset has title
+        # TODO: make sure each stac asset has title
         if output_directory is None:
             output_directory = (
-                Path.cwd() / f"project_{self.auth.project_id}/asset_{self.asset_id}/{stac_asset.title}"
+                Path.cwd()
+                / f"project_{self.auth.project_id}/asset_{self.asset_id}/{stac_asset.title}"
             )
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info(f"Download directory: {str(output_directory)}")
         try:
-            up42_signed_token = self.auth.get_auth_token()
-            headers= {'Authorization': f"Bearer {up42_signed_token}", }
+            up42_signed_token = self.auth._get_auth_token()
+            headers = {
+                "Authorization": f"Bearer {up42_signed_token}",
+            }
             response = requests.get(stac_asset.href, headers=headers, stream=True)
             response.raise_for_status()
             file_name = get_filename(response.url, default_filename="stac_asset")
@@ -218,4 +227,3 @@ class Asset:
             logger.error(error_message)
             raise
         return out_file_path
-
