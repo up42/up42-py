@@ -380,8 +380,8 @@ def test_get_orders_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_orders_paginated = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/"
-        f"orders?format=paginated&sort=createdAt,asc&size=50"
+        f"{auth_mock._endpoint()}/v2/"
+        f"orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)
 

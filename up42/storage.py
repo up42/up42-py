@@ -313,28 +313,46 @@ class Storage:
 
     def get_orders(
         self,
+        workspace_orders: bool = True,
         return_json: bool = False,
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
         order_type: Optional[str] = None,
+        status: Optional[List[str]] = None,
+        name: Optional[str] = None,
         tags: Optional[List[str]] = None,
     ) -> Union[List[Order], dict]:
         """
-        Gets all orders in the workspace as Order objects or JSON.
+        Gets all orders in the account/workspace as Order objects or JSON.
 
         Args:
+            workspace_orders: If set to True, only returns workspace orders. Otherwise, returns all account orders.
             return_json: If set to True, returns JSON object.
             limit: Optional, only return n first assets by sorting criteria and order.
                 Optimal to select if your workspace contains many assets.
             sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "type".
             descending: The sorting order, True for descending (default), False for ascending.
             order_type: Can be either "TASKING" or "ARCHIVE". Pass this param to filter orders based on order_type.
+            status: Search for orders with any of the status provided.
             tags: Search for orders with any of the provided tags.
 
         Returns:
             Order objects in the workspace or alternatively JSON info of the orders.
         """
+        allowed_status = [
+            "CREATED",
+            "BEING_PLACED",
+            "PLACED",
+            "PLACEMENT_FAILED",
+            "DELIVERY_INITIALIZATION_FAILED",
+            "BEING_FULFILLED",
+            "DOWNLOAD_FAILED",
+            "DOWNLOADED",
+            "FULFILLED",
+            "FAILED_PERMANENTLY",
+        ]
+
         allowed_sorting_criteria = [
             "createdAt",
             "updatedAt",
@@ -347,7 +365,22 @@ class Storage:
                 f"sortby parameter must be one of {allowed_sorting_criteria}!"
             )
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}"
+        url = f"{self.auth._endpoint()}/v2/orders?sort={sort}"
+        if workspace_orders:
+            url += f"&workspaceId={self.workspace_id}"
+        if name is not None:
+            url += f"&displayName={name}"
+        if status is not None:
+            for order_status in status:
+                if order_status not in allowed_status:
+                    raise ValueError(
+                        f"status parameters must be one of {allowed_status}!"
+                    )
+                for order_status in allowed_status:
+                    url += f"&status={order_status}"
+
+            if order_type in ["TASKING", "ARCHIVE"]:
+                url += f"&type={order_type}"
         if order_type is not None:
             if order_type in ["TASKING", "ARCHIVE"]:
                 url += f"&type={order_type}"

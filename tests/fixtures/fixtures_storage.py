@@ -1,18 +1,15 @@
 import pytest
 
+from ..context import Storage
 from .fixtures_globals import (
-    JSON_ASSETS,
-    JSON_ASSET,
-    JSON_STORAGE_STAC,
     ASSET_ID,
-    JSON_ORDERS,
+    JSON_ASSET,
+    JSON_ASSETS,
     JSON_ORDER,
+    JSON_ORDERS,
+    JSON_STORAGE_STAC,
     ORDER_ID,
     PYSTAC_MOCK_CLIENT,
-)
-
-from ..context import (
-    Storage,
 )
 
 
@@ -36,7 +33,8 @@ def storage_mock(auth_mock, requests_mock):
 
     # orders
     url_storage_assets = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders"
+        f"{auth_mock._endpoint()}/v2/orders?sort=createdAt,desc&workspaceId={auth_mock.workspace_id}"
+        "&type=ARCHIVE&tags=project-7&tags=optical&size=50"
     )
     requests_mock.get(url=url_storage_assets, json=JSON_ORDERS)
 
