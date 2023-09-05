@@ -3,7 +3,7 @@ from pystac_client import Client
 from up42.auth import Auth
 
 
-class pystac_auth_client(Client):
+class PySTACAuthClient(Client):
     """Pystac Client authenticated to access stac catalog."""
 
     def __init__(

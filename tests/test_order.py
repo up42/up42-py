@@ -14,7 +14,6 @@ from .fixtures import (
     auth_live,
     auth_mock,
     catalog_mock,
-    order_live,
     order_mock,
     order_mock_v2,
 )
@@ -26,9 +25,11 @@ def test_init(order_mock_v2):
     assert order_mock_v2.workspace_id == WORKSPACE_ID
 
 
-def test_order_info(order_mock_v2):
-    assert order_mock_v2.info
-    assert order_mock_v2.info["id"] == ORDER_ID
+def test_order_info(order_mock):
+    assert order_mock.info
+    assert order_mock.info["id"] == ORDER_ID
+    assert order_mock.info["dataProvider"] == JSON_ORDER["data"]["dataProvider"]
+    assert order_mock.info["assets"][0] == ASSET_ID
 
 
 @pytest.mark.live
