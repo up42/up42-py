@@ -46,9 +46,9 @@ class Order:
         """
         Gets and updates the order information.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders/{self.order_id}"
+        url = f"{self.auth._endpoint()}/v2/orders/{self.order_id}"
         response_json = self.auth._request(request_type="GET", url=url)
-        self._info = response_json["data"]
+        self._info = response_json
         return self._info
 
     @property
@@ -78,17 +78,6 @@ class Order:
         Also see [status attribute](order-reference.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
-
-    def get_assets(self) -> List[Asset]:
-        """
-        Gets the Order assets or results.
-        """
-        if self.is_fulfilled:
-            assets: List[str] = self.info["assets"]
-            return [Asset(self.auth, asset_id=asset) for asset in assets]
-        raise ValueError(
-            f"Order {self.order_id} is not FULFILLED! Status is {self.status}"
-        )
 
     @classmethod
     def place(cls, auth: Auth, order_parameters: dict) -> "Order":

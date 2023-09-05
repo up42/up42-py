@@ -1,27 +1,26 @@
 {
-    "data": {
-        "id": "ddb207c0-3b7f-4186-bc0b-c033f0d2f32b",
-        "userId": null,
-        "workspaceId": "workspace_id_123",
-        "accountId": "ACCOUNTID",
-        "dataProvider": "OneAtlas",
-        "type": "ARCHIVE",
-        "status": "FULFILLED",
-        "dataProductId": "acc3f9a4-b622-49c1-b1e1-c762aa3e7e13",
-        "createdAt": "2023-03-17T08:53:18.272834Z",
-        "updatedAt": "2023-03-17T09:42:31.213565Z",
-        "createdBy": {
-            "id": "e49786fb-dfb8-4cd7-8a40",
-            "type": "API_KEY"
-        },
-        "updatedBy": {
-            "id": "system",
-            "type": "INTERNAL"
-        },
-        "assets": [
-            "363f89c1-3586-4b14-9a49-03a890c3b593"
-        ],
-        "tags": []
+    "displayName": "Pléiades Neo over North America",
+    "orderDetails": {
+        "acquisitionStart": "2019-08-24T14:15:22Z",
+        "acquisitionEnd": "2019-08-24T14:15:22Z",
+        "geometry": {},
+        "extraDescription": "string",
+        "subStatus": "FEASIBILITY_WAITING_UPLOAD"
     },
-    "error": null
+    "id": "ddb207c0-3b7f-4186-bc0b-c033f0d2f32b",
+    "workspaceId": "workspace_id_123",
+    "accountId": "ACCOUNTID",
+    "type": "TASKING",
+    "dataProductId": "acc3f9a4-b622-49c1-b1e1-c762aa3e7e13",
+    "createdAt": "2023-03-17T08:53:18.272834Z",
+    "updatedAt": "2023-03-17T09:42:31.213565Z",
+    "createdBy": {
+        "id": "e49786fb-dfb8-4cd7-8a40",
+        "type": "API_KEY"
+    },
+    "updatedBy": {
+        "id": "system",
+        "type": "INTERNAL"
+    },
+    "tags": []
 }

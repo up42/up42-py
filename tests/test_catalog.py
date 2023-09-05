@@ -20,6 +20,7 @@ from .fixtures import (
     catalog_pagination_mock,
     catalog_usagetype_mock,
     order_mock,
+    order_mock_v2,
 )
 
 # pylint: disable=unused-import
@@ -485,7 +486,7 @@ def test_construct_order_parameters_live(catalog_live, product_id):
 
 # pylint: disable=unused-argument
 def test_estimate_order_from_catalog(
-    order_parameters, order_mock, catalog_mock, requests_mock
+    order_parameters, order_mock_v2, catalog_mock, requests_mock
 ):
     url_order_estimation = (
         f"{catalog_mock.auth._endpoint()}/workspaces/"
@@ -511,7 +512,7 @@ def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests
 
 
 def test_order_from_catalog_track_status(
-    order_parameters, order_mock, catalog_mock, requests_mock
+    order_parameters, order_mock_v2, catalog_mock, requests_mock
 ):
     requests_mock.post(
         url=f"{catalog_mock.auth._endpoint()}/workspaces/{catalog_mock.auth.workspace_id}/orders",
