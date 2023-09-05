@@ -1,6 +1,5 @@
 import datetime
 import os
-
 import pytest
 from pystac import Item, ItemCollection
 from pystac.collection import Extent, SpatialExtent, TemporalExtent
@@ -144,6 +143,7 @@ def asset_mock(auth_mock, requests_mock):
     asset = Asset(auth=auth_mock, asset_id=ASSET_ID)
 
     return asset
+
 
 @pytest.fixture()
 def asset_mock2(auth_mock, requests_mock):

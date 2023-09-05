@@ -1,1 +1,4 @@
 * @up42/data-science
+/examples/ @up42/documentation
+/docs/ @up42/documentation
+*.md @up42/documentation
