@@ -10,6 +10,7 @@
     "id": "ddb207c0-3b7f-4186-bc0b-c033f0d2f32b",
     "workspaceId": "workspace_id_123",
     "accountId": "ACCOUNTID",
+    "status": "PLACED",
     "type": "TASKING",
     "dataProductId": "acc3f9a4-b622-49c1-b1e1-c762aa3e7e13",
     "createdAt": "2023-03-17T08:53:18.272834Z",
