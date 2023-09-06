@@ -36,17 +36,15 @@ nav:
     - Tutorials:
       - installation.md
       - authentication.md
-      - tasking.md
+      - Tasking: examples/tasking/tasking-example.ipynb
       - catalog.md
       - storage.md
+      - Assets: examples/asset/asset-example.ipynb
       - analytics.md
       - webhooks.md
       - Example notebooks:
-        - Tasking:
-          - Create a tasking order: examples/tasking/tasking-example.ipynb
-        - Analytics:
-          - NEXTMap One and Viewshed workflow: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
-          - Ship detection and Ship identification workflow: examples/advanced/ship-identification.ipynb
+        - NEXTMap One and Viewshed workflow: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
+        - Ship detection and Ship identification workflow: examples/advanced/ship-identification.ipynb
     - Code reference:
         - structure.md
         - up42: reference/up42-reference.md
@@ -75,7 +73,7 @@ theme:
   # 404 page
   static_templates:
     - 404.html
-  # Don't include MkDocs' JavaScript 
+  # Don't include MkDocs' JavaScript
   include_search_page: false
   search_index_only: true
   # Default values, taken from mkdocs_theme.yml
@@ -105,7 +103,8 @@ plugins:
                 "examples/data-block-examples/nextmapone-viewshed-data-example.ipynb",
                 "examples/data-block-examples/osm-example.ipynb",
                 "examples/advanced/ship-identification.ipynb",
-                "examples/tasking/tasking-example.ipynb"]
+                "examples/tasking/tasking-example.ipynb",
+                "examples/asset/asset-example.ipynb"]
   - macros:
       module_name: docs/macros
   - exclude:
