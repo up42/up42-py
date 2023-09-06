@@ -1,16 +1,16 @@
 # Tasking
 
-The Tasking class enables access to the UP42 [tasking functionality](../tasking.md).
+The Tasking class enables access to the UP42 [tasking functionality](../../examples/tasking/tasking-example/).
 
 ```python
 tasking = up42.initialize_tasking()
 ```
 
-## Order
+## Orders
 
-### construct_order_parameters
+### construct_order_parameters()
 
-The `construct_order_parameters` function allows you to fill out an order form for a new tasking order.
+The `construct_order_parameters()` function allows you to fill out an order form for a new tasking order.
 
 ```python
 construct_order_parameters(
@@ -23,7 +23,7 @@ construct_order_parameters(
 )
 ```
 
-<h3> Arguments </h3>
+<h5> Arguments </h5>
 
 | Name                | Type                                                                          | Description                                                                                                                                   |
 | ------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -32,15 +32,15 @@ construct_order_parameters(
 | `acquisition_start` | `Union[str, datetime]`                                                        | The start date of the acquisition period in the `YYYY-MM-DD` format.                                                                          |
 | `acquisition_end`   | `Union[str, datetime]`                                                        | The end date of the acquisition period in the `YYYY-MM-DD` format.                                                                            |
 | `geometry`          | `Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point]` | Geometry of the area to be captured. It can be a POI or an AOI depending on the [collection](https://docs.up42.com/data/tasking/limitations). |
-| `tags`              | `Optional[List[str]`                                                          | A list of tags that categorize the order.                                                                                                     |
+| `tags`              | `Optional[List[str]]`                                                         | A list of tags that categorize the order.                                                                                                     |
 
-<h3> Returns </h3>
+<h5> Returns </h5>
 
 | Type   | Description       |
 | ------ | ----------------- |
 | `dict` | Order parameters. |
 
-<h3> Example </h3>
+<h5> Example </h5>
 
 ```python
 tasking.construct_order_parameters(
@@ -64,11 +64,11 @@ tasking.construct_order_parameters(
 )
 ```
 
-## Feasibility study
+## Feasibility studies
 
-### get_feasibility
+### get_feasibility()
 
-The `get_feasibility` function returns a list of feasibility studies for tasking orders.
+The `get_feasibility()` function returns a list of feasibility studies for tasking orders.
 
 ```python
 get_feasibility(
@@ -81,7 +81,7 @@ get_feasibility(
 )
 ```
 
-<h3> Arguments </h3>
+<h5> Arguments </h5>
 
 | Name             | Type                  | Description                                                                                                                           |
 | ---------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -90,16 +90,16 @@ get_feasibility(
 | `order_id`       | `Optional[str]`       | The order ID.                                                                                                                         |
 | `decision`       | `Optional[list[str]]` | The status of feasibility studies. The allowed values:<ul><li>`NOT_DECIDED`</li><li>`ACCEPTED`</li></ul>                              |
 | `sortby`         | `str`                 | Arrange elements in the order specified in `descending` based on a chosen field.                                                      |
-| `descending`     | `bool`                | Arrange elements in ascending or descending order based on the field specified in `sortby`.                                           |
+| `descending`     | `bool`                | Whether to arrange elements in ascending or descending order based on the field specified in `sortby`.                                |
 
 
-<h3> Returns </h3>
+<h5> Returns </h5>
 
 | Type   | Description                    |
 | ------ | ------------------------------ |
 | `list` | A list of feasibility studies. |
 
-<h3> Example </h3>
+<h5> Example </h5>
 
 ```python
 tasking.get_feasibility(
@@ -112,9 +112,9 @@ tasking.get_feasibility(
 )
 ```
 
-### choose_feasibility
+### choose_feasibility()
 
-The `choose_feasibility` function allows you to accept one of the proposed feasibility study options.
+The `choose_feasibility()` function allows you to accept one of the proposed feasibility study options.
 
 You can only perform actions with feasibility studies with the `NOT_DECIDED` status.
 
@@ -125,20 +125,20 @@ choose_feasibility(
 )
 ```
 
-<h3> Arguments </h3>
+<h5> Arguments </h5>
 
 | Name                 | Type  | Description                                 |
 | -------------------- | ----- | ------------------------------------------- |
 | `feasibility_id`     | `str` | The feasibility study ID.                   |
 | `accepted_option_id` | `str` | The ID of the feasibility option to accept. |
 
-<h3> Returns </h3>
+<h5> Returns </h5>
 
 | Type   | Description                                   |
 | ------ | --------------------------------------------- |
 | `dict` | Feasibility option confirmation and metadata. |
 
-<h3> Example </h3>
+<h5> Example </h5>
 
 ```python
 tasking.choose_feasibility(
@@ -147,11 +147,11 @@ tasking.choose_feasibility(
 )
 ```
 
-## Quotation
+## Quotations
 
-### get_quotations
+### get_quotations()
 
-The `get_quotations` function returns a list of all quotations for tasking orders.
+The `get_quotations()` function returns a list of all quotations for tasking orders.
 
 ```python
 get_quotations(
@@ -164,7 +164,7 @@ get_quotations(
 )
 ```
 
-<h3> Arguments </h3>
+<h5> Arguments </h5>
 
 | Name           | Type                  | Description                                                                                                                           |
 | -------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -173,15 +173,15 @@ get_quotations(
 | `order_id`     | `Optional[str]`       | The order ID.                                                                                                                         |
 | `decision`     | `Optional[list[str]]` | The status of quotations. The allowed values:<ul><li>`NOT_DECIDED`</li><li>`ACCEPTED`</li><li>`REJECTED`</li></ul>                    |
 | `sortby`       | `str`                 | Arrange elements in the order specified in `descending` based on a chosen field.                                                      |
-| `descending`   | `bool`                | Arrange elements in ascending or descending order based on the field specified in `sortby`.                                           |
+| `descending`   | `bool`                | Whether to arrange elements in ascending or descending order based on the field specified in `sortby`.                                |
 
-<h3> Returns </h3>
+<h5> Returns </h5>
 
 | Type   | Description           |
 | ------ | --------------------- |
 | `list` | A list of quotations. |
 
-<h3> Example </h3>
+<h5> Example </h5>
 
 ```python
 tasking.get_quotations(
@@ -194,9 +194,9 @@ tasking.get_quotations(
 )
 ```
 
-### decide_quotation
+### decide_quotation()
 
-The `decide_quotation` function allows you to accept or reject a quotation for a tasking order.
+The `decide_quotation()` function allows you to accept or reject a quotation for a tasking order.
 
 You can only perform actions with feasibility studies with the `NOT_DECIDED` status.
 
@@ -207,20 +207,20 @@ decide_quotation(
 )
 ```
 
-<h3> Arguments </h3>
+<h5> Arguments </h5>
 
 | Name           | Type  | Description                                                                                              |
 | -------------- | ----- | -------------------------------------------------------------------------------------------------------- |
 | `quotation_id` | `str` | The quotation ID.                                                                                        |
 | `decision`     | `str` | The decision made for this quotation. The allowed values:<ul><li>`ACCEPTED`</li><li>`REJECTED`</li></ul> |
 
-<h3> Returns </h3>
+<h5> Returns </h5>
 
 | Type   | Description                                   |
 | ------ | --------------------------------------------- |
 | `dict` | Quotation decision confirmation and metadata. |
 
-<h3> Example </h3>
+<h5> Example </h5>
 
 ```python
 tasking.decide_quotation(
