@@ -31,6 +31,14 @@
         Available functions, see also [**Catalog reference**](catalog-reference.md):
         {{ format_funcs(funcs_catalog) }}
 
+    === "CatalogBase"
+
+        {{ docstring_catalogbase }}
+        <br>
+        Available functions, see also [**CatalogBase reference**](catalogbase-reference.md):
+        {{ format_funcs(funcs_tasking) }}
+
+
     === "Tasking"
 
         {{ docstring_tasking }}
