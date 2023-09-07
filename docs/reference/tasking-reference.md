@@ -2,6 +2,8 @@
 
 The Tasking class enables access to the UP42 [tasking functionality](../../examples/tasking/tasking-example/).
 
+The class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
+
 ```python
 tasking = up42.initialize_tasking()
 ```

@@ -33,10 +33,15 @@
 
     === "CatalogBase"
 
-        {{ docstring_catalogbase }}
-        <br>
+        The CatalogBase class is used for UP42 catalog and tasking functionality.
+        <br><br>
         Available functions, see also [**CatalogBase reference**](catalogbase-reference.md):
-        {{ format_funcs(funcs_tasking) }}
+        <ul>
+            <li>`.get_data_products()`</li>
+            <li>`.get_data_products_schema()`</li>
+            <li>`.get_collections()`</li>
+            <li>`.place_orders()`</li>
+        </ul>
 
 
     === "Tasking"
