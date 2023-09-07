@@ -2,11 +2,18 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
 import pystac
+import requests
 from pystac_client import Client, ItemSearch
+from tqdm import tqdm
 
 from up42.auth import Auth
-from up42.stac_client import pystac_auth_client
-from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_logger
+from up42.stac_client import PySTACAuthClient
+from up42.utils import (
+    download_from_gcs_unpack,
+    download_gcs_not_unpack,
+    get_filename,
+    get_logger,
+)
 
 logger = get_logger(__name__)
 
@@ -58,7 +65,7 @@ class Asset:
     @property
     def _stac_search(self) -> Tuple[Client, ItemSearch]:
         url = f"{self.auth._endpoint()}/v2/assets/stac"
-        pystac_client_aux = pystac_auth_client(auth=self.auth).open(url=url)
+        pystac_client_aux = PySTACAuthClient(auth=self.auth).open(url=url)
         stac_search_parameters = {
             "max_items": MAX_ITEM,
             "limit": LIMIT,
@@ -166,3 +173,57 @@ class Asset:
 
         self.results = out_filepaths
         return out_filepaths
+
+    def download_stac_asset(
+        self, stac_asset: pystac.Asset, output_directory: Union[str, Path, None] = None
+    ) -> Path:
+        """
+        Downloads a STAC asset to a specified output directory.
+
+        Args:
+            self (object): The instance of the class calling this method.
+            stac_asset (pystac.Asset): The STAC asset to be downloaded.
+            output_directory (Union[str, Path, None], optional): The directory where the asset
+                will be downloaded. If not provided, a default directory structure will be used.
+
+        Returns:
+            Path: The path to the downloaded asset file.
+
+        Raises:
+            requests.exceptions.HTTPError: If there is an HTTP error during the download.
+
+        """
+        logger.info(f"Downloading STAC asset {stac_asset.title}")
+        if output_directory is None:
+            output_directory = (
+                Path.cwd()
+                / f"project_{self.auth.project_id}/asset_{self.asset_id}/{stac_asset.title}"
+            )
+        else:
+            output_directory = Path(output_directory)
+        output_directory.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Download directory: {str(output_directory)}")
+        try:
+            self.auth._get_token()
+            up42_signed_token = self.auth.token
+            headers = {
+                "Authorization": f"Bearer {up42_signed_token}",
+            }
+            response = requests.get(stac_asset.href, headers=headers, stream=True)
+            response.raise_for_status()
+            file_name = get_filename(response.url, default_filename="stac_asset")
+            out_file_path = output_directory / file_name
+            with open(out_file_path, "wb") as dst:
+                for chunk in tqdm(response.iter_content(chunk_size=1024)):
+                    if chunk:  # filter out keep-alive new chunks
+                        dst.write(chunk)
+        except requests.exceptions.HTTPError as err:
+            error_message = f"Error during STAC asset download: {err}"
+            logger.error(error_message)
+            raise requests.exceptions.HTTPError(error_message)
+        except Exception as e:
+            # Catch and log other exceptions, but still raise them
+            error_message = f"An unexpected error occurred: {e}"
+            logger.error(error_message)
+            raise
+        return out_file_path

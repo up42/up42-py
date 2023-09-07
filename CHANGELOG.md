@@ -30,6 +30,14 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.32.0
+
+**September 7, 2023**
+
+A new function added to the [Asset class](https://sdk.up42.com/reference/asset-reference):
+
+- `download_stac_asset` allows you to download STAC assets from storage.
+
 ## 0.31.0
 
 **August 9, 2023**
@@ -123,8 +131,7 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 
 **October 25, 2022**
 
-- Add dedicated tasking class for improved handling of satellite tasking orders. See
-  [new example](https://sdk.up42.com/tasking/) in the documentation.
+- Add dedicated tasking class for improved handling of satellite tasking orders.
 - `construct_order_parameters` now also adds the parameters specific to the selected data-product, and suggests
   possible values based on the data-product schema.
 

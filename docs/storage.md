@@ -55,7 +55,7 @@ up42.initialize_asset(
 
 ## Download assets
 
-The default download path for an asset is your current working directory. You can also provide a custom [output directory](http://127.0.0.1:8000/up42-py/reference/asset-reference/#up42.asset.Asset-functions).
+The default download path for an asset is your current working directory. You can also provide a custom output directory.
 
 Download a single asset as follows:
 ```python

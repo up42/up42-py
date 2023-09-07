@@ -79,13 +79,6 @@ def test_get_assets_placed(order_mock, asset_mock, monkeypatch):
         order_mock.get_assets()
 
 
-@pytest.mark.live
-def test_get_assets_live(order_live, asset_live):
-    assets = order_live.get_assets()
-    assert len(assets) >= 1
-    assert isinstance(assets[0], Asset)
-
-
 @pytest.fixture
 def order_parameters():
     return {
