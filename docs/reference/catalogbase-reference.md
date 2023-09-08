@@ -44,9 +44,9 @@ get_data_products(
 
 <h5> Returns </h5>
 
-| Type                      | Description                                    |
-| ------------------------- | ---------------------------------------------- |
-| `Union[dict, List[dict]]` | A dictionary containing collection information |
+| Type                      | Description                                     |
+| ------------------------- | ----------------------------------------------- |
+| `Union[dict, List[dict]]` | A dictionary containing collection information. |
 
 <h5> Example </h5>
 
@@ -106,7 +106,7 @@ place_orders(
 
 | Name               | Type                | Description                                                                            |
 | ------------------ | ------------------- | -------------------------------------------------------------------------------------- |
-| `order_parameters` | `Union[dict, None]` | A dictionary containing the catalog or tasking order parameters                        |
+| `order_parameters` | `Union[dict, None]` | A dictionary containing the catalog or tasking order parameters.                       |
 | `track_status`     | `bool`              | Whether to return the Order only once the order status changes to FULFILLED or FAILED. |
 | `report_time`      | `int`               | The interval (in seconds) to query the order status if `track_status` is True.         |
 
