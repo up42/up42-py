@@ -33,14 +33,14 @@
 
     === "CatalogBase"
 
-        The CatalogBase class is used for UP42 catalog and tasking functionality.
+        The CatalogBase class is used in [Catalog](catalog-reference.md) and [Tasking](tasking-reference.md) classes.
         <br><br>
         Available functions, see also [**CatalogBase reference**](catalogbase-reference.md):
         <ul>
-            <li>`.get_data_products()`</li>
-            <li>`.get_data_products_schema()`</li>
             <li>`.get_collections()`</li>
-            <li>`.place_orders()`</li>
+            <li>`.get_data_product_schema()`</li>
+            <li>`.get_data_products()`</li>
+            <li>`.place_order()`</li>
         </ul>
 
 
