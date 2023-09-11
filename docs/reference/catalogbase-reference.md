@@ -66,7 +66,7 @@ get_data_product_schema(
 
 ```python
 tasking.get_data_product_schema(
-    data_product_id="647780db-5a06-4b61-b525-577a8b68bb54"
+    data_product_id="123eabab-0511-4f36-883a-80928716c3db"
 )
 ```
 
