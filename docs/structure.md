@@ -33,7 +33,7 @@
 
     === "CatalogBase"
 
-        The CatalogBase class is used in [Catalog](catalog-reference.md) and [Tasking](tasking-reference.md) classes.
+        The CatalogBase class is inherited by the [Tasking](tasking-reference.md) and [Catalog](catalog-reference.md) classes.
         <br><br>
         Available functions, see also [**CatalogBase reference**](catalogbase-reference.md):
         <ul>
