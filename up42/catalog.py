@@ -155,7 +155,7 @@ class CatalogBase:
 
 class Catalog(CatalogBase, VizTools):
     """
-    The Catalog class enables access to the UP42 [catalog functionality](../../examples/catalog) (data archive search & ordering).
+    The Catalog class enables access to the UP42 [catalog functionality](../../catalog) (data archive search & ordering).
 
     This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
 
