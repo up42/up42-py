@@ -24,7 +24,9 @@ logger = get_logger(__name__)
 
 class Tasking(CatalogBase):
     """
-    The Tasking class enables access to the UP42 tasking functionality.
+    The Tasking class enables access to the UP42 [tasking functionality](../../examples/tasking/tasking-example).
+
+    This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
 
     Use tasking:
     ```python
