@@ -157,12 +157,12 @@ class Catalog(CatalogBase, VizTools):
     """
     The Catalog class enables access to the UP42 catalog functionality (data archive search & ordering).
 
-    This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
-
     Use catalog:
     ```python
     catalog = up42.initialize_catalog()
     ```
+
+    This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
     """
 
     def __init__(self, auth: Auth):
