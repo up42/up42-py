@@ -49,8 +49,8 @@ nav:
         - structure.md
         - up42: reference/up42-reference.md
         - Catalog: reference/catalog-reference.md
-        - CatalogBase: reference/catalogbase-reference.md
         - Tasking: reference/tasking-reference.md
+        - CatalogBase: reference/catalogbase-reference.md
         - Storage: reference/storage-reference.md
         - Order: reference/order-reference.md
         - Asset: reference/asset-reference.md
