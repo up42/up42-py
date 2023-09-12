@@ -30,6 +30,8 @@
         <br>
         Available functions, see also [**Catalog reference**](catalog-reference.md):
         {{ format_funcs(funcs_catalog) }}
+        <br>
+        This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
 
     === "Tasking"
 
@@ -37,6 +39,8 @@
         <br>
         Available functions, see also [**Tasking reference**](tasking-reference.md):
         {{ format_funcs(funcs_tasking) }}
+        <br>
+        This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
 
     === "CatalogBase"
 

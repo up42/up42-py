@@ -2,16 +2,11 @@
 
 The CatalogBase class is inherited by the [Tasking](tasking-reference.md) and [Catalog](catalog-reference.md) classes.
 
-To use these functions, first initialize the Tasking or Catalog class as follows.
-
-<h6>Tasking</h6>
+To use these functions, first initialize the Tasking or Catalog class as follows:
 
 ```python
 tasking = up42.initialize_tasking()
-```
-<h6>Catalog</h6>
 
-```python
 catalog = up42.initialize_catalog()
 ```
 
@@ -33,14 +28,9 @@ get_collections()
 
 <h5> Example </h5>
 
-<h6>Tasking</h6>
-
 ```python
 tasking.get_collections()
-```
-<h6>Catalog</h6>
 
-```python
 catalog.get_collections()
 ```
 
@@ -60,7 +50,7 @@ get_data_products(
 
 | Name    | Type   | Description                                                                                                                                                                                                                                |
 | ------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `basic` | `bool` | Determines how to return the list of data products:<ul><li>`True`: returns the collection titles, collection names, host names, product configuration titles, and data product IDs. </li><li>`False`: returns the full response.</li></ul> |
+| `basic` | `bool` | Determines how to return a list of data products:<ul><li>`True`: returns only collection titles, collection names, host names, product configuration titles, and data product IDs.</li><li>`False`: returns the full response.</li></ul> |
 
 <h5> Returns </h5>
 
@@ -70,19 +60,13 @@ get_data_products(
 
 <h5> Example </h5>
 
-<h6>Tasking</h6>
-
 ```python
 tasking.get_data_products(
-    basic=True
+    basic=False
 )
-```
 
-<h6>Catalog</h6>
-
-```python
 catalog.get_data_products(
-    basic=True
+    basic=False
 )
 ```
 
@@ -110,16 +94,11 @@ get_data_product_schema(
 
 <h5> Example </h5>
 
-<h6>Tasking</h6>
-
 ```python
 tasking.get_data_product_schema(
     data_product_id="123eabab-0511-4f36-883a-80928716c3db"
 )
-```
-<h6>Catalog</h6>
 
-```python
 catalog.get_data_product_schema(
     data_product_id="647780db-5a06-4b61-b525-577a8b68bb54"
 )
@@ -144,8 +123,8 @@ place_order(
 | Name               | Type                | Description                                                                                                                                                                                |
 | ------------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `order_parameters` | `Union[dict, None]` | Parameters with which to place an order.                                                                                                                                                   |
-| `track_status`     | `bool`              | Determines when to return order data:<ul><li>`True`: return order data when the order status changes to `FULFILLED` or `FAILED`.</li><li>`False`: return order data immediately.</li></ul> |
-| `report_time`      | `int`               | Use if `track_status=True`.<br/><br/>The time interval for querying if the order status has changed to `FULFILLED` or `FAILED`, in seconds.                                                |
+| `track_status`     | `bool`              | Determines when to return order data:<ul><li>`True`: return order data only when the order status changes to `FULFILLED` or `FAILED`.</li><li>`False`: return order data immediately.</li></ul> |
+| `report_time`      | `int`               | Use if `track_status=True`.<br/><br/>The time interval for querying whether the order status has changed to `FULFILLED` or `FAILED`, in seconds.                                                |
 
 <h5> Returns </h5>
 
@@ -155,9 +134,9 @@ place_order(
 
 <h5> Example </h5>
 
-<h6>Tasking</h6>
-
 ```python
+# Specify order geometry
+
 geometry = {
     "type": "Polygon",
     "coordinates": (
@@ -171,49 +150,34 @@ geometry = {
     ),
 }
 
-new_order_parameters = tasking.construct_order_parameters(
+# Place a tasking order
+
+tasking_order_parameters = tasking.construct_order_parameters(
     data_product_id="123eabab-0511-4f36-883a-80928716c3db",
     name="PNeo tasking order",
     acquisition_start="2023-11-01",
     acquisition_end="2023-12-20",
     geometry=geometry,
-    tags=["project-7", "optical"]
+    tags=["project-7", "optical"],
 )
 
-place_order(
-    order_parameters=new_order_parameters,
+tasking.place_order(
+    order_parameters=tasking_order_parameters,
     track_status=True,
-    report_time=120,
+    report_time=150,
 )
-```
 
-<h6>Catalog</h6>
+# Place a catalog order
 
-To place a catalog order, first use `catalog.search()` and select a scene.
-
-```python
-geometry = {
-    "type": "Polygon",
-    "coordinates": (
-        (
-            (13.375966, 52.515068),
-            (13.375966, 52.516639),
-            (13.378314, 52.516639),
-            (13.378314, 52.515068),
-            (13.375966, 52.515068),
-        ),
-    ),
-}
-
-new_order_parameters = catalog.construct_order_parameters(
+catalog_order_parameters = catalog.construct_order_parameters(
     data_product_id="4f1b2f62-98df-4c74-81f4-5dce45deee99",
-    image_id=search_results.iloc[0]["id"],
+    image_id=search_results.iloc[0]["id"], # To place a catalog order, first use catalog.search() and select a scene
     aoi=geometry,
 )
 
-place_order(
-    order_parameters=new_order_parameters,
+catalog.place_order(
+    order_parameters=catalog_order_parameters,
     track_status=True,
-    report_time=120,
+    report_time=150,
 )
 ```
