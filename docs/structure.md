@@ -30,6 +30,8 @@
         <br>
         Available functions, see also [**Catalog reference**](catalog-reference.md):
         {{ format_funcs(funcs_catalog) }}
+        <br>
+        This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
 
     === "Tasking"
 
@@ -37,6 +39,20 @@
         <br>
         Available functions, see also [**Tasking reference**](tasking-reference.md):
         {{ format_funcs(funcs_tasking) }}
+        <br>
+        This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
+
+    === "CatalogBase"
+
+        The CatalogBase class is inherited by the [Tasking](tasking-reference.md) and [Catalog](catalog-reference.md) classes.
+        <br><br>
+        Available functions, see also [**CatalogBase reference**](catalogbase-reference.md):
+        <ul>
+            <li>`.get_collections()`</li>
+            <li>`.get_data_product_schema()`</li>
+            <li>`.get_data_products()`</li>
+            <li>`.place_order()`</li>
+        </ul>
 
     === "Storage"
 

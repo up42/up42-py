@@ -161,6 +161,8 @@ class Catalog(CatalogBase, VizTools):
     ```python
     catalog = up42.initialize_catalog()
     ```
+
+    This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
     """
 
     def __init__(self, auth: Auth):

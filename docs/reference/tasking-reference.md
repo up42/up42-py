@@ -6,6 +6,8 @@ The Tasking class enables access to the UP42 [tasking functionality](../../examp
 tasking = up42.initialize_tasking()
 ```
 
+This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
+
 ## Orders
 
 ### construct_order_parameters()
