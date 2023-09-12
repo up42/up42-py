@@ -26,8 +26,6 @@ class Tasking(CatalogBase):
     """
     The Tasking class enables access to the UP42 tasking functionality.
 
-    This class also inherits functions from the CatalogBase class.
-
     Use tasking:
     ```python
     tasking = up42.initialize_tasking()
