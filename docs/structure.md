@@ -24,21 +24,21 @@
         Available functions, see also [**up42 reference**](up42-reference.md):
         {{ format_funcs(funcs_up42) }}
 
-    === "Catalog"
-
-        {{ docstring_catalog }}
-        <br>
-        Available functions, see also [**Catalog reference**](catalog-reference.md):
-        {{ format_funcs(funcs_catalog) }}
-        <br>
-        This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
-
     === "Tasking"
 
         {{ docstring_tasking }}
         <br>
         Available functions, see also [**Tasking reference**](tasking-reference.md):
         {{ format_funcs(funcs_tasking) }}
+        <br>
+        This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
+
+    === "Catalog"
+
+        {{ docstring_catalog }}
+        <br>
+        Available functions, see also [**Catalog reference**](catalog-reference.md):
+        {{ format_funcs(funcs_catalog) }}
         <br>
         This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
 
@@ -54,25 +54,26 @@
             <li>`.place_order()`</li>
         </ul>
 
-    === "Storage"
-
-        {{ docstring_storage }}
-        <br>
-        Available functions, see also [**Storage reference**](storage-reference.md):
-        {{ format_funcs(funcs_storage) }}
-    
     === "Order"
 
         {{ docstring_order }}
         <br>
         Available functions, see also [**Order reference**](order-reference.md):
         {{ format_funcs(funcs_order) }}
-    
+
+
+    === "Storage"
+
+        {{ docstring_storage }}
+        <br>
+        Available functions, see also [**Storage reference**](storage-reference.md):
+        {{ format_funcs(funcs_storage) }}
+
     === "Asset"
 
         {{ docstring_asset }}
         <br>
-        Available functions, see also [**Asset reference**](asset-reference.md): 
+        Available functions, see also [**Asset reference**](asset-reference.md):
         {{ format_funcs(funcs_asset) }}
 
     === "Project"
@@ -81,28 +82,28 @@
         <br>
         Available functions, see also [**Project reference**](project-reference.md):
         {{ format_funcs(funcs_project) }}
-    
+
     === "Workflow"
 
         {{ docstring_workflow }}
         <br>
         Available functions, see also [**Workflow reference**](workflow-reference.md):
         {{ format_funcs(funcs_workflow) }}
-        
+
     === "Job"
 
         {{ docstring_job }}
         <br>
         Available functions, see also [**Job reference**](job-reference.md):
         {{ format_funcs(funcs_job) }}
-        
+
     === "JobTask"
 
         {{ docstring_jobtask }}
         <br>
         Available functions, see also [**JobTask reference**](jobtask-reference.md):
         {{ format_funcs(funcs_jobtask) }}
-        
+
     === "JobCollection"
 
         {{ docstring_jobcollection }}
@@ -114,5 +115,5 @@
 
         {{ docstring_webhooks }}
         <br>
-        Available functions, see also [**Webhooks reference**](webhooks-reference.md): 
+        Available functions, see also [**Webhooks reference**](webhooks-reference.md):
         {{ format_funcs(funcs_webhook) }}

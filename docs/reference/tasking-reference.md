@@ -16,12 +16,12 @@ The `construct_order_parameters()` function allows you to fill out an order form
 
 ```python
 construct_order_parameters(
-    data_product_id,
-    name,
-    acquisition_start,
-    acquisition_end,
-    geometry,
-    tags
+    data_product_id=None,
+    name=None,
+    acquisition_start=None,
+    acquisition_end=None,
+    geometry=None,
+    tags=None,
 )
 ```
 
@@ -105,12 +105,10 @@ get_feasibility(
 
 ```python
 tasking.get_feasibility(
-    feasibility_id=None,
     workspace_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
-    order_id=None,
     decision="NOT_DECIDED",
-    sortby="createdAt",
-    descending=False
+    sortby="updatedAt",
+    descending=False,
 )
 ```
 
@@ -122,8 +120,8 @@ You can only perform actions with feasibility studies with the `NOT_DECIDED` sta
 
 ```python
 choose_feasibility(
-    feasibility_id,
-    accepted_option_id
+    feasibility_id=None,
+    accepted_option_id=None,
 )
 ```
 
@@ -187,11 +185,9 @@ get_quotations(
 
 ```python
 tasking.get_quotations(
-    quotation_id=None,
     workspace_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
-    order_id=None,
     decision="NOT_DECIDED",
-    sortby="createdAt",
+    sortby="updatedAt",
     descending=False
 )
 ```
@@ -204,8 +200,8 @@ You can only perform actions with feasibility studies with the `NOT_DECIDED` sta
 
 ```python
 decide_quotation(
-    quotation_id,
-    decision
+    quotation_id=None,
+    decision=None,
 )
 ```
 
@@ -227,6 +223,6 @@ decide_quotation(
 ```python
 tasking.decide_quotation(
     quotation_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
-    decision="ACCEPTED"
+    decision="ACCEPTED",
 )
 ```

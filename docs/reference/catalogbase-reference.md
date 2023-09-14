@@ -41,9 +41,7 @@ catalog.get_collections()
 The `get_data_products()` function returns a list of data products.
 
 ```python
-get_data_products(
-    basic=True
-)
+get_data_products(basic=True)
 ```
 
 <h5> Arguments </h5>
@@ -61,13 +59,9 @@ get_data_products(
 <h5> Example </h5>
 
 ```python
-tasking.get_data_products(
-    basic=False
-)
+tasking.get_data_products(basic=False)
 
-catalog.get_data_products(
-    basic=False
-)
+catalog.get_data_products(basic=False)
 ```
 
 ### get_data_product_schema()
@@ -75,9 +69,7 @@ catalog.get_data_products(
 The `get_data_product_schema()` function returns the parameters needed to place an order for a specific data product.
 
 ```python
-get_data_product_schema(
-    data_product_id
-)
+get_data_product_schema(data_product_id=None)
 ```
 
 <h5> Arguments </h5>
@@ -95,13 +87,9 @@ get_data_product_schema(
 <h5> Example </h5>
 
 ```python
-tasking.get_data_product_schema(
-    data_product_id="123eabab-0511-4f36-883a-80928716c3db"
-)
+tasking.get_data_product_schema(data_product_id="123eabab-0511-4f36-883a-80928716c3db")
 
-catalog.get_data_product_schema(
-    data_product_id="647780db-5a06-4b61-b525-577a8b68bb54"
-)
+catalog.get_data_product_schema(data_product_id="647780db-5a06-4b61-b525-577a8b68bb54")
 ```
 
 ## Orders
@@ -112,7 +100,7 @@ The `place_order()` function allows you to place a catalog or tasking order.
 
 ```python
 place_order(
-    order_parameters,
+    order_parameters=None,
     track_status=False,
     report_time=120,
 )
