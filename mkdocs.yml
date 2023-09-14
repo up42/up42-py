@@ -34,6 +34,7 @@ extra:
 nav:
     - Home: index.md
     - Tutorials:
+      - quickstart.md
       - installation.md
       - authentication.md
       - Tasking: examples/tasking/tasking-example.ipynb
