@@ -59,11 +59,156 @@ tools.settings(log=True)
 up42.tools.settings(log=True)
 ```
 
+## Credits
+
+### get_credits_balance()
+
+The `get_credits_balance()` function returns your account balance.
+
+```python
+get_credits_balance()
+```
+
+<h5> Returns </h5>
+˝
+| Type   | Description                       |
+| ------ | --------------------------------- |
+| `dict` | Your account balance, in credits. |
+
+<h5> Example </h5>
+
+```python
+up42.get_credits_balance()
+```
+
+## Blocks
+
+### get_block_coverage()
+
+The `get_block_coverage()` function returns the spatial coverage of the block.
+
+```python
+get_block_coverage(block_id=None)
+```
+
+<h5> Arguments </h5>
+
+| Name       | Type  | Description   |
+| ---------- | ----- | ------------- |
+| `block_id` | `str` | The block ID. |
+
+<h5> Returns </h5>
+
+| Type   | Description       |
+| ------ | ----------------- |
+| `dict` | Spatial coverage. |
+
+<h5> Example </h5>
+
+```python
+up42.get_block_coverage(block_id="045019bb-06fc-4fa1-b703-318725b4d8af")
+```
+
+### get_block_details()
+
+The `get_block_details()` function returns information about a specific block.
+
+```python
+get_block_details(
+    block_id=None,
+    as_dataframe=False,
+)
+```
+
+<h5> Arguments </h5>
+
+| Name           | Type   | Description                                                                                                        |
+| -------------- | ------ | ------------------------------------------------------------------------------------------------------------------ |
+| `block_id`     | `str`  | The block ID.                                                                                                      |
+| `as_dataframe` | `bool` | Determines how to return the information:<ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul> |
+
+<h5> Returns </h5>
+
+| Type   | Description     |
+| ------ | --------------- |
+| `dict` | Block metadata. |
+
+<h5> Example </h5>
+
+```python
+up42.get_block_details(
+    block_id="045019bb-06fc-4fa1-b703-318725b4d8af",
+    as_dataframe=True,
+)
+```
+
+### get_blocks()
+
+The `get_blocks()` function returns a list of all blocks on the marketplace.
+
+```python
+get_blocks(
+    block_type=None,
+    basic=True,
+    as_dataframe=False,
+)
+```
+
+<h5> Arguments </h5>
+
+| Name           | Type            | Description                                                                                                                                           |
+| -------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `block_type`   | `Optional[str]` | Filters blocks:<ul><li>`data`: return data blocks.</li><li>`processing`: return processing blocks.</li></ul>                                          |
+| `basic`        | `bool`          | Determines how to return a list of blocks:<ul><li>`True`: return only block names and block IDs.</li><li>`False`: return the full response.</li></ul> |
+| `as_dataframe` | `bool`          | Determines how to return the information:<ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul>                                    |
+
+<h5> Returns </h5>
+
+| Type                      | Description     |
+| ------------------------- | --------------- |
+| `Union[List[Dict], dict]` | Block metadata. |
+
+<h5> Example </h5>
+
+```python
+up42.get_blocks(
+    block_type="data",
+    basic=True,
+    as_dataframe=True,
+)
+```
+
+### validate_manifest()
+
+The `validate_manifest()` function allows you to validate the [manifest of your custom block](https://docs.up42.com/processing-platform/custom-blocks/manifest).
+
+```python
+validate_manifest(path_or_json=None)
+```
+
+<h5> Arguments </h5>
+
+| Name           | Type                     | Description                                    |
+| -------------- | ------------------------ | ---------------------------------------------- |
+| `path_or_json` | `Union[str, Path, dict]` | The file path to the manifest to be validated. |
+
+<h5> Returns </h5>
+
+| Type   | Description         |
+| ------ | ------------------- |
+| `dict` | Validation results. |
+
+<h5> Example </h5>
+
+```python
+validate_manifest(path_or_json="/Users/max.mustermann/Desktop/UP42Manifest.json")
+```
+
 ## Geometries
 
 ### get_example_aoi()
 
-The `get_example_aoi()` function allows you to… / returns.
+The `get_example_aoi()` function returns an example AOI.
 
 ```python
 get_example_aoi(
@@ -74,16 +219,16 @@ get_example_aoi(
 
 <h5> Arguments </h5>
 
-| Name           | Type   | Description                                                                                                                               |
-| -------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `location`     | `str`  | A defined location. The allowed values:<ul><li>`Berlin`</li><li>`Washington`</li></ul>                                                    |
-| `as_dataframe` | `bool` | Determines how to return the geometry:<ul><li>`True`: return a GeoDataFrame.</li><li>`False`: return a FeatureCollection object.</li></ul> |
+| Name           | Type   | Description                                                                                                        |
+| -------------- | ------ | ------------------------------------------------------------------------------------------------------------------ |
+| `location`     | `str`  | A defined location. The allowed values:<ul><li>`Berlin`</li><li>`Washington`</li></ul>                             |
+| `as_dataframe` | `bool` | Determines how to return the information:<ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul> |
 
 <h5> Returns </h5>
 
-| Type                        | Description                |
-| --------------------------- | -------------------------- |
-| `Union[dict, GeoDataFrame]` | A FeatureCollection object. |
+| Type                        | Description     |
+| --------------------------- | --------------- |
+| `Union[dict, GeoDataFrame]` | The chosen AOI. |
 
 <h5> Example </h5>
 
@@ -107,16 +252,16 @@ read_vector_file(
 
 <h5> Arguments </h5>
 
-| Name           | Type   | Description                                                                                                                               |
-| -------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `filename`     | `str`  | The file path to the vector file containing the geometry.                                                                                 |
-| `as_dataframe` | `bool` | Determines how to return the geometry:<ul><li>`True`: return a GeoDataFrame.</li><li>`False`: return a FeatureCollection object.</li></ul> |
+| Name           | Type   | Description                                                                                                        |
+| -------------- | ------ | ------------------------------------------------------------------------------------------------------------------ |
+| `filename`     | `str`  | The file path to the vector file containing the geometry.                                                          |
+| `as_dataframe` | `bool` | Determines how to return the information:<ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul> |
 
 <h5> Returns </h5>
 
-| Type                        | Description                |
-| --------------------------- | -------------------------- |
-| `Union[dict, GeoDataFrame]` | A FeatureCollection object. |
+| Type                        | Description            |
+| --------------------------- | ---------------------- |
+| `Union[dict, GeoDataFrame]` | The uploaded geometry. |
 
 <h5> Example </h5>
 
@@ -129,55 +274,64 @@ up42.read_vector_file(
 
 ### draw_aoi()
 
-The `draw_aoi()` function allows you to… / returns.
+The `draw_aoi()` function allows you to draw an AOI on an interactive map. To be able to use the function, [install plotting functionalities](installation.md) first.
 
 ```python
+draw_aoi()
 ```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
 
 <h5> Example </h5>
 
 ```python
+up42.draw_aoi()
 ```
 
-### folium_base_map()
+## Visualization
 
-The `folium_base_map()` function allows you to… / returns.
+### viztools.folium_base_map()
+
+The `viztools.folium_base_map()` function returns a Folium map with the UP42 logo. Use it to [visualize your assets](visualizations.md).
 
 ```python
+viztools.folium_base_map(
+    lat=52.49190032214706,
+    lon=13.39117252959244,
+    zoom_start=14,
+    width_percent="95%",
+    layer_control=False,
+)
 ```
 
 <h5> Arguments </h5>
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
+| Name            | Type    | Description                                                                                                                                   |
+| --------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lat`           | `float` | The latitude.                                                                                                                                 |
+| `lon`           | `float` | The longitude.                                                                                                                                |
+| `zoom_start`    | `int`   | The value of initial zooming in on the coordinates.                                                                                           |
+| `width_percent` | `str`   | The map width in percentage.                                                                                                                  |
+| `layer_control` | `bool`  | Determines how to return the map:<ul><li>`True`: return a basic map.</li><li>`False`: return a map with visualized geospatial data.</li></ul> |
+
 
 <h5> Returns </h5>
 
-| Type | Description |
-| ---- | ----------- |
-|      |             |
+| Type         | Description |
+| ------------ | ----------- |
+| `folium.Map` | A map.      |
 
 <h5> Example </h5>
 
 ```python
+up42.viztools.folium_base_map(
+    lat=48.8584,
+    lon=2.2945,
+    zoom_start=40,
+    width_percent="100%",
+    layer_control=False,
+)
 ```
 
-## Credits
-
-### get_credits_balance()
+### map_quicklooks()
 
 The `` function allows you to… / returns.
 
@@ -201,9 +355,7 @@ The `` function allows you to… / returns.
 ```python
 ```
 
-## Blocks
-
-### get_block_coverage()
+### map_results()
 
 The `` function allows you to… / returns.
 
@@ -227,7 +379,7 @@ The `` function allows you to… / returns.
 ```python
 ```
 
-### get_block_details()
+### plot_coverage()
 
 The `` function allows you to… / returns.
 
@@ -251,7 +403,7 @@ The `` function allows you to… / returns.
 ```python
 ```
 
-### get_blocks()
+### plot_quicklooks()
 
 The `` function allows you to… / returns.
 
@@ -275,7 +427,7 @@ The `` function allows you to… / returns.
 ```python
 ```
 
-### validate_manifest()
+### plot_results()
 
 The `` function allows you to… / returns.
 
