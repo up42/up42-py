@@ -46,9 +46,9 @@ get_data_products(basic=True)
 
 <h5> Arguments </h5>
 
-| Name    | Type   | Description                                                                                                                                                                                                                                |
-| ------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `basic` | `bool` | Determines how to return a list of data products:<ul><li>`True`: returns only collection titles, collection names, host names, product configuration titles, and data product IDs.</li><li>`False`: returns the full response.</li></ul> |
+| Name    | Type   | Description                                                                                                                                                                                                                            |
+| ------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `basic` | `bool` | Determines how to return a list of data products:<ul><li>`True`: return only collection titles, collection names, host names, product configuration titles, and data product IDs.</li><li>`False`: return the full response.</li></ul> |
 
 <h5> Returns </h5>
 
@@ -108,9 +108,9 @@ place_order(
 
 <h5> Arguments </h5>
 
-| Name               | Type                | Description                                                                                                                                                                                |
-| ------------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `order_parameters` | `Union[dict, None]` | Parameters with which to place an order.                                                                                                                                                   |
+| Name               | Type                | Description                                                                                                                                                                                     |
+| ------------------ | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `order_parameters` | `Union[dict, None]` | Parameters with which to place an order.                                                                                                                                                        |
 | `track_status`     | `bool`              | Determines when to return order data:<ul><li>`True`: return order data only when the order status changes to `FULFILLED` or `FAILED`.</li><li>`False`: return order data immediately.</li></ul> |
 | `report_time`      | `int`               | Use if `track_status=True`.<br/><br/>The time interval for querying whether the order status has changed to `FULFILLED` or `FAILED`, in seconds.                                                |
 
