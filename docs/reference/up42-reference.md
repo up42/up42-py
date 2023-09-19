@@ -8,19 +8,19 @@ The `authenticate()` function allows you to access UP42 SDK requests. For more i
 
 ```python
 authenticate(
-    cfg_file=None,
-    project_id=None,
-    project_api_key=None,
+    cfg_file,
+    project_id,
+    project_api_key,
 )
 ```
 
 <h5> Arguments </h5>
 
-| Name              | Type               | Description                                                               |
-| ----------------- | ------------------ | ------------------------------------------------------------------------- |
-| `cfg_file`        | `Union[str, Path]` | The file path to the JSON file containing the project ID and the API key. |
-| `project_id`      | `Optional[str]`    | The project ID.                                                           |
-| `project_api_key` | `Optional[str]`    | The project API key.                                                      |
+| Argument          | Overview                                                                                           |
+| ----------------- | -------------------------------------------------------------------------------------------------- |
+| `cfg_file`        | **Union[str, Path]**<br/>The file path to the JSON file containing the project ID and the API key. |
+| `project_id`      | **str**<br/>The project ID.                                                                        |
+| `project_api_key` | **str**<br/>The project API key.                                                                   |
 
 <h5> Example </h5>
 
@@ -44,14 +44,14 @@ up42.authenticate(cfg_file="config.json")
 The `tools.settings()` function allows you to enable logging.
 
 ```python
-tools.settings(log=True)
+tools.settings(log)
 ```
 
 <h5> Arguments </h5>
 
-| Name  | Type   | Description                |
-| ----- | ------ | -------------------------- |
-| `log` | `bool` | Whether to enable logging. |
+| Argument | Overview                                                                                                                                              |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `log`    | **bool**<br/>Determines logging enabling:<br/><ul><li>`True`: enable logging.</li><li>`False`: disable logging.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
 
@@ -63,17 +63,13 @@ up42.tools.settings(log=True)
 
 ### get_credits_balance()
 
-The `get_credits_balance()` function returns your account balance.
+The `get_credits_balance()` function returns your account balance, in credits.
 
 ```python
 get_credits_balance()
 ```
 
-<h5> Returns </h5>
-˝
-| Type   | Description                       |
-| ------ | --------------------------------- |
-| `dict` | Your account balance, in credits. |
+The returned format is `dict`.
 
 <h5> Example </h5>
 
@@ -88,25 +84,21 @@ up42.get_credits_balance()
 The `get_block_coverage()` function returns the spatial coverage of the block.
 
 ```python
-get_block_coverage(block_id=None)
+get_block_coverage(block_id)
 ```
+
+The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Name       | Type  | Description   |
-| ---------- | ----- | ------------- |
-| `block_id` | `str` | The block ID. |
-
-<h5> Returns </h5>
-
-| Type   | Description       |
-| ------ | ----------------- |
-| `dict` | Spatial coverage. |
+| Argument   | Overview                             |
+| ---------- | ------------------------------------ |
+| `block_id` | **str / required**<br/>The block ID. |
 
 <h5> Example </h5>
 
 ```python
-up42.get_block_coverage(block_id="045019bb-06fc-4fa1-b703-318725b4d8af")
+up42.get_block_coverage(block_id="f73c60f6-3f3c-4120-96cf-62b8d3019346")
 ```
 
 ### get_block_details()
@@ -115,23 +107,19 @@ The `get_block_details()` function returns information about a specific block.
 
 ```python
 get_block_details(
-    block_id=None,
-    as_dataframe=False,
+    block_id,
+    as_dataframe,
 )
 ```
 
+The returned format is `dict`.
+
 <h5> Arguments </h5>
 
-| Name           | Type   | Description                                                                                                        |
-| -------------- | ------ | ------------------------------------------------------------------------------------------------------------------ |
-| `block_id`     | `str`  | The block ID.                                                                                                      |
-| `as_dataframe` | `bool` | Determines how to return the information:<ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul> |
-
-<h5> Returns </h5>
-
-| Type   | Description     |
-| ------ | --------------- |
-| `dict` | Block metadata. |
+| Argument       | Overview                                                                                                                                                          |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `block_id`     | **str / required**<br/>The block ID.                                                                                                                              |
+| `as_dataframe` | **bool**<br/>Determines how to return the information:<br/><ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul>The default value is `False`. |
 
 <h5> Example </h5>
 
@@ -148,25 +136,21 @@ The `get_blocks()` function returns a list of all blocks on the marketplace.
 
 ```python
 get_blocks(
-    block_type=None,
-    basic=True,
-    as_dataframe=False,
+    block_type,
+    basic,
+    as_dataframe,
 )
 ```
 
+The returned format is `Union[List[Dict], dict]`.
+
 <h5> Arguments </h5>
 
-| Name           | Type            | Description                                                                                                                                           |
-| -------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `block_type`   | `Optional[str]` | Filters blocks:<ul><li>`data`: return data blocks.</li><li>`processing`: return processing blocks.</li></ul>                                          |
-| `basic`        | `bool`          | Determines how to return a list of blocks:<ul><li>`True`: return only block names and block IDs.</li><li>`False`: return the full response.</li></ul> |
-| `as_dataframe` | `bool`          | Determines how to return the information:<ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul>                                    |
-
-<h5> Returns </h5>
-
-| Type                      | Description     |
-| ------------------------- | --------------- |
-| `Union[List[Dict], dict]` | Block metadata. |
+| Argument       | Overview                                                                                                                                                                                            |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `block_type`   | **str**<br/>Filters blocks:<br/><ul><li>`data`: return data blocks.</li><li>`processing`: return processing blocks.</li></ul>                                                                       |
+| `basic`        | **bool**<br/>Determines how to return a list of blocks:<br/><ul><li>`True`: return only block names and block IDs.</li><li>`False`: return the full response.</li></ul>The default value is `True`. |
+| `as_dataframe` | **bool**<br/>Determines how to return the information:<br/><ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul>The default value is `False`.                                   |
 
 <h5> Example </h5>
 
@@ -183,20 +167,16 @@ up42.get_blocks(
 The `validate_manifest()` function allows you to validate the [manifest of your custom block](https://docs.up42.com/processing-platform/custom-blocks/manifest).
 
 ```python
-validate_manifest(path_or_json=None)
+validate_manifest(path_or_json)
 ```
+
+The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Name           | Type                     | Description                                    |
-| -------------- | ------------------------ | ---------------------------------------------- |
-| `path_or_json` | `Union[str, Path, dict]` | The file path to the manifest to be validated. |
-
-<h5> Returns </h5>
-
-| Type   | Description         |
-| ------ | ------------------- |
-| `dict` | Validation results. |
+| Argument       | Overview                                                                                 |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| `path_or_json` | **Union[str, Path, dict] / required**<br/>The file path to the manifest to be validated. |
 
 <h5> Example </h5>
 
@@ -212,23 +192,19 @@ The `get_example_aoi()` function returns an example AOI.
 
 ```python
 get_example_aoi(
-    location="Berlin",
-    as_dataframe=False,
+    location,
+    as_dataframe,
 )
 ```
 
+The returned format is `Union[dict, GeoDataFrame]`.
+
 <h5> Arguments </h5>
 
-| Name           | Type   | Description                                                                                                        |
-| -------------- | ------ | ------------------------------------------------------------------------------------------------------------------ |
-| `location`     | `str`  | A defined location. The allowed values:<ul><li>`Berlin`</li><li>`Washington`</li></ul>                             |
-| `as_dataframe` | `bool` | Determines how to return the information:<ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul> |
-
-<h5> Returns </h5>
-
-| Type                        | Description     |
-| --------------------------- | --------------- |
-| `Union[dict, GeoDataFrame]` | The chosen AOI. |
+| Argument       | Overview                                                                                                                                                          |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `location`     | **str**<br/>A defined location. The allowed values:<br/><ul><li>`Berlin`</li><li>`Washington`</li></ul>The default value is `Berlin`.                             |
+| `as_dataframe` | **bool**<br/>Determines how to return the information:<br/><ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul>The default value is `False`. |
 
 <h5> Example </h5>
 
@@ -245,23 +221,19 @@ The `read_vector_file()` function allows you to upload your geometry from a vect
 
 ```python
 read_vector_file(
-    filename="aoi.geojson",
-    as_dataframe=False,
+    filename,
+    as_dataframe,
 )
 ```
 
+The returned format is `Union[dict, GeoDataFrame]`.
+
 <h5> Arguments </h5>
 
-| Name           | Type   | Description                                                                                                        |
-| -------------- | ------ | ------------------------------------------------------------------------------------------------------------------ |
-| `filename`     | `str`  | The file path to the vector file containing the geometry.                                                          |
-| `as_dataframe` | `bool` | Determines how to return the information:<ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul> |
-
-<h5> Returns </h5>
-
-| Type                        | Description            |
-| --------------------------- | ---------------------- |
-| `Union[dict, GeoDataFrame]` | The uploaded geometry. |
+| Argument       | Overview                                                                                                                                                          |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `filename`     | **str**<br/>The file path to the vector file containing the geometry. The default value is `aoi.geojson`.                                                         |
+| `as_dataframe` | **bool**<br/>Determines how to return the information:<br/><ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul>The default value is `False`. |
 
 <h5> Example </h5>
 
@@ -280,6 +252,8 @@ The `draw_aoi()` function allows you to draw an AOI on an interactive map. To be
 draw_aoi()
 ```
 
+The returned format is `folium.Map`.
+
 <h5> Example </h5>
 
 ```python
@@ -294,30 +268,25 @@ The `viztools.folium_base_map()` function returns a Folium map with the UP42 log
 
 ```python
 viztools.folium_base_map(
-    lat=52.49190032214706,
-    lon=13.39117252959244,
-    zoom_start=14,
-    width_percent="95%",
-    layer_control=False,
+    lat,
+    lon,
+    zoom_start,
+    width_percent,
+    layer_control,
 )
 ```
 
+The returned format is `folium.Map`.
+
 <h5> Arguments </h5>
 
-| Name            | Type    | Description                                                                                                                                   |
-| --------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `lat`           | `float` | The latitude.                                                                                                                                 |
-| `lon`           | `float` | The longitude.                                                                                                                                |
-| `zoom_start`    | `int`   | The value of initial zooming in on the coordinates.                                                                                           |
-| `width_percent` | `str`   | The map width in percentage.                                                                                                                  |
-| `layer_control` | `bool`  | Determines how to return the map:<ul><li>`True`: return a basic map.</li><li>`False`: return a map with visualized geospatial data.</li></ul> |
-
-
-<h5> Returns </h5>
-
-| Type         | Description |
-| ------------ | ----------- |
-| `folium.Map` | A map.      |
+| Argument        | Overview                                                                                                                                                                                     |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lat`           | **float**<br/>The latitude. The default value is `52.49190032214706`.                                                                                                                        |
+| `lon`           | **float**<br/>The longitude. The default value is `13.39117252959244`.                                                                                                                       |
+| `zoom_start`    | **int**<br/>The value of initial zooming in on the coordinates. The default value is `14`.                                                                                                   |
+| `width_percent` | **str**<br/>The map width in percentage. The default value is `95%`.                                                                                                                         |
+| `layer_control` | **bool**<br/>Determines how to return the map:<br/><ul><li>`True`: return a basic map.</li><li>`False`: return a map with visualized geospatial data.</li></ul>The default value is `False`. |
 
 <h5> Example </h5>
 
@@ -329,390 +298,4 @@ up42.viztools.folium_base_map(
     width_percent="100%",
     layer_control=False,
 )
-```
-
-### map_quicklooks()
-
-The `` function allows you to… / returns.
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### map_results()
-
-The `` function allows you to… / returns.
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### plot_coverage()
-
-The `` function allows you to… / returns.
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### plot_quicklooks()
-
-The `` function allows you to… / returns.
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### plot_results()
-
-The `` function allows you to… / returns.
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-## Initialization
-
-### initialize_tasking()
-
-The `initialize_tasking()` function allows you to access the [Tasking class](tasking-reference.md).
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### initialize_catalog()
-
-The `initialize_catalog()` function allows you to access the [Catalog class](catalog-reference.md).
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### initialize_order()
-
-The `initialize_order()` function allows you to access the [Order class](order-reference.md).
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### initialize_storage()
-
-The `initialize_storage()` function allows you to access the [Storage class](storage-reference.md).
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### initialize_asset()
-
-The `initialize_asset()` function allows you to access the [Asset class](asset-reference.md).
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### initialize_project()
-
-The `initialize_project()` function allows you to access the [Project class](project-reference.md).
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### initialize_workflow()
-
-The `initialize_workflow()` function allows you to access the [Workflow class](workflow-reference.md).
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### initialize_job()
-
-The `initialize_job()` function allows you to access the [Job class](job-reference.md).
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### initialize_jobcollection()
-
-The `initialize_jobcollection()` function allows you to access the [JobCollection class](jobcollection-reference.md).
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### initialize_jobtask()
-
-The `initialize_jobtask()` function allows you to access the [JobTask class](jobtask-reference.md).
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
-```
-
-### initialize_webhook()
-
-The `initialize_webhook()` function allows you to access the [Webhooks class](webhooks-reference.md).
-
-```python
-```
-
-<h5> Arguments </h5>
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-|      |      |             |
-
-<h5> Returns </h5>
-
-| Type | Description |
-| ---- | ----------- |
-|      |             |
-
-<h5> Example </h5>
-
-```python
 ```

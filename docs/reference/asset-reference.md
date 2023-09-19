@@ -37,29 +37,25 @@ The `update_metadata()` function allows you to change the title and tags of an U
 ```python
 update_metadata(
     title,
-    tags
+    tags,
 )
 ```
 
+The returned format is `dict`.
+
 <h5> Arguments </h5>
 
-| Name    | Type        | Description                                       |
-| ------- | ----------- | ------------------------------------------------- |
-| `title` | `str`       | An editable asset title.                          |
-| `tags`  | `List[str]` | An editable list of tags to categorize the asset. |
-
-<h5> Returns </h5>
-
-| Type   | Description     |
-| ------ | --------------- |
-| `dict` | Asset metadata. |
+| Argument | Overview                                                            |
+| -------- | ------------------------------------------------------------------- |
+| `title`  | **str**<br/>An editable asset title.                                |
+| `tags`   | **List[str]**<br/>An editable list of tags to categorize the asset. |
 
 <h5> Example </h5>
 
 ```python
 asset.update_metadata(
     title="Sentinel-2 over Western Europe",
-    tags=["optical", "WEU"]
+    tags=["optical", "WEU"],
 )
 ```
 
@@ -70,28 +66,25 @@ The `download()` function allows you to download UP42 assets from storage.
 ```python
 download(
     output_directory,
-    unpacking
+    unpacking,
 )
 ```
+
+The returned format is `List[str]`.
+
 <h5> Arguments </h5>
 
-| Name               | Type                     | Description                         |
-| ------------------ | ------------------------ | ----------------------------------- |
-| `output_directory` | `Union[str, Path, None]` | The file output directory.          |
-| `unpacking`        | `bool`                   | Whether to unpack the archive file. |
-
-<h5> Returns </h5>
-
-| Type        | Description                                       |
-| ----------- | ------------------------------------------------- |
-| `List[str]` | A list of paths where the files were uploaded to. |
+| Argument           | Overview                                                                                                                                                                                       |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `output_directory` | **Union[str, Path, None]**<br/>The file output directory. The default value is the current directory.                                                                                          |
+| `unpacking`        | **bool / required**<br/>Determines how to download the asset:<br/><ul><li>`True`: download and unpack the file.</li><li>`False`: just download the file.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
 
 ```python
 asset.download(
     output_directory="/Users/max.mustermann/Desktop/",
-    unpacking=True
+    unpacking=False,
 )
 ```
 
@@ -124,27 +117,24 @@ The `download_stac_asset()` function allows you to download STAC assets from sto
 ```python
 download_stac_asset(
     stac_asset,
-    unpacking
+    output_directory,
 )
 ```
+
+The returned format is `Path`.
+
 <h5> Arguments </h5>
 
-| Name               | Type                     | Description                |
-| ------------------ | ------------------------ | -------------------------- |
-| `stac_asset`       | `pystac.Asset`           | The STAC asset name.       |
-| `output_directory` | `Union[str, Path, None]` | The file output directory. |
-
-<h5> Returns </h5>
-
-| Type   | Description                               |
-| ------ | ----------------------------------------- |
-| `Path` | The path where the file were uploaded to. |
+| Argument           | Description                                                                                           |
+| ------------------ | ----------------------------------------------------------------------------------------------------- |
+| `stac_asset`       | **pystac.Asset / required**<br/>The STAC asset name.                                                  |
+| `output_directory` | **Union[str, Path, None]**<br/>The file output directory. The default value is the current directory. |
 
 <h5> Example </h5>
 
 ```python
 asset.download_stac_asset(
     stac_asset="b12.tiff",
-    output_directory="/Users/max.mustermann/Desktop/"
+    output_directory="/Users/max.mustermann/Desktop/",
 )
 ```

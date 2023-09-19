@@ -20,11 +20,7 @@ The `get_collections()` function returns a list of geospatial collections.
 get_collections()
 ```
 
-<h5> Returns </h5>
-
-| Type                | Description                       |
-| ------------------- | --------------------------------- |
-| `Union[Dict, List]` | A list of geospatial collections. |
+The returned format is `Union[Dict, List]`.
 
 <h5> Example </h5>
 
@@ -41,20 +37,16 @@ catalog.get_collections()
 The `get_data_products()` function returns a list of data products.
 
 ```python
-get_data_products(basic=True)
+get_data_products(basic)
 ```
+
+The returned format is `Union[dict, List[dict]]`.
 
 <h5> Arguments </h5>
 
-| Name    | Type   | Description                                                                                                                                                                                                                            |
-| ------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `basic` | `bool` | Determines how to return a list of data products:<ul><li>`True`: return only collection titles, collection names, host names, product configuration titles, and data product IDs.</li><li>`False`: return the full response.</li></ul> |
-
-<h5> Returns </h5>
-
-| Type                      | Description              |
-| ------------------------- | ------------------------ |
-| `Union[dict, List[dict]]` | A list of data products. |
+| Argument | Overview                                                                                                                                                                                                                                                                              |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `basic`  | **bool**<br/>Determines how to return a list of data products:</br/><ul><li>`True`: return only collection titles, collection names, host names, product configuration titles, and data product IDs.</li><li>`False`: return the full response.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
 
@@ -69,20 +61,16 @@ catalog.get_data_products(basic=False)
 The `get_data_product_schema()` function returns the parameters needed to place an order for a specific data product.
 
 ```python
-get_data_product_schema(data_product_id=None)
+get_data_product_schema(data_product_id)
 ```
+
+The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Name              | Type  | Description          |
-| ----------------- | ----- | -------------------- |
-| `data_product_id` | `str` | The data product ID. |
-
-<h5> Returns </h5>
-
-| Type   | Description              |
-| ------ | ------------------------ |
-| `dict` | Data product parameters. |
+| Argument          | Overview                                    |
+| ----------------- | ------------------------------------------- |
+| `data_product_id` | **str / required**<br/>The data product ID. |
 
 <h5> Example </h5>
 
@@ -100,25 +88,21 @@ The `place_order()` function allows you to place a catalog or tasking order.
 
 ```python
 place_order(
-    order_parameters=None,
-    track_status=False,
-    report_time=120,
+    order_parameters,
+    track_status,
+    report_time,
 )
 ```
 
+The returned format is `Order`.
+
 <h5> Arguments </h5>
 
-| Name               | Type                | Description                                                                                                                                                                                     |
-| ------------------ | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `order_parameters` | `Union[dict, None]` | Parameters with which to place an order.                                                                                                                                                        |
-| `track_status`     | `bool`              | Determines when to return order data:<ul><li>`True`: return order data only when the order status changes to `FULFILLED` or `FAILED`.</li><li>`False`: return order data immediately.</li></ul> |
-| `report_time`      | `int`               | Use if `track_status=True`.<br/><br/>The time interval for querying whether the order status has changed to `FULFILLED` or `FAILED`, in seconds.                                                |
-
-<h5> Returns </h5>
-
-| Type    | Description |
-| ------- | ----------- |
-| `Order` | Order data. |
+| Argument           | Overview                                                                                                                                                                                                                                      |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `order_parameters` | **Union[dict, None]**<br/>Parameters with which to place an order.                                                                                                                                                                            |
+| `track_status`     | **bool**<br/>Determines when to return order data:</p><ul><li>`True`: return order data only when the order status changes to `FULFILLED` or `FAILED`.</li><li>`False`: return order data immediately.</li></ul>The default value is `False`. |
+| `report_time`      | **int**<br/>Use if `track_status=True`.<br/><br/>The time interval for querying whether the order status has changed to `FULFILLED` or `FAILED`, in seconds. The default value is `120`.                                                      |
 
 <h5> Example </h5>
 
