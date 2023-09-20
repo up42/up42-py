@@ -48,11 +48,11 @@ nav:
     - Code reference:
         - structure.md
         - up42: reference/up42-reference.md
-        - Catalog: reference/catalog-reference.md
         - Tasking: reference/tasking-reference.md
+        - Catalog: reference/catalog-reference.md
         - CatalogBase: reference/catalogbase-reference.md
-        - Storage: reference/storage-reference.md
         - Order: reference/order-reference.md
+        - Storage: reference/storage-reference.md
         - Asset: reference/asset-reference.md
         - Project: reference/project-reference.md
         - Workflow: reference/workflow-reference.md
