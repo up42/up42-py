@@ -112,7 +112,7 @@ asset.stac_items
 
 ### download_stac_asset()
 
-The `download_stac_asset()` function allows you to download a STAC asset from storage and returns the path to the downloaded file.
+The `download_stac_asset()` function allows you to download a STAC asset from storage and returns the path to the downloaded file. A new directory for the file will be created.
 
 ```python
 download_stac_asset(
