@@ -61,7 +61,7 @@ asset.update_metadata(
 
 ### download()
 
-The `download()` function allows you to download UP42 assets from storage.
+The `download()` function allows you to download UP42 assets from storage and returns a list of download paths.
 
 ```python
 download(
@@ -74,10 +74,10 @@ The returned format is `List[str]`.
 
 <h5> Arguments </h5>
 
-| Argument           | Overview                                                                                                                                                                                       |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `output_directory` | **Union[str, Path, None]**<br/>The file output directory. The default value is the current directory.                                                                                          |
-| `unpacking`        | **bool / required**<br/>Determines how to download the asset:<br/><ul><li>`True`: download and unpack the file.</li><li>`False`: just download the file.</li></ul>The default value is `True`. |
+| Argument           | Overview                                                                                                                                                                                             |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `output_directory` | **Union[str, Path, None]**<br/>The file output directory. The default value is the current directory.                                                                                                |
+| `unpacking`        | **bool / required**<br/>Determines how to download the asset:<br/><ul><li>`True`: download and unpack the file.</li><li>`False`: download the compressed file.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
 
@@ -112,7 +112,7 @@ asset.stac_items
 
 ### download_stac_asset()
 
-The `download_stac_asset()` function allows you to download STAC assets from storage.
+The `download_stac_asset()` function allows you to download a STAC asset from storage and returns the path to the downloaded file.
 
 ```python
 download_stac_asset(
@@ -121,7 +121,7 @@ download_stac_asset(
 )
 ```
 
-The returned format is `Path`.
+The returned format is `pathlib.Path`.
 
 <h5> Arguments </h5>
 
