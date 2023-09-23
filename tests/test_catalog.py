@@ -306,7 +306,7 @@ def test_search_catalog_pagination_live(catalog_live):
     assert search_results.shape == (720, 15)
     assert search_results.collection.nunique() == 2
     assert all(search_results.collection.isin(["phr", "spot"]))
-    period_column = pd.to_datetime(search_results.acquisitionDate)
+    period_column = pd.to_datetime(search_results.acquisitionDate, format="mixed")
     assert all(
         (period_column > pd.to_datetime("2018-01-01T00:00:00Z"))
         & (period_column <= pd.to_datetime("2019-12-31T23:59:59Z"))
