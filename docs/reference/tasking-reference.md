@@ -21,26 +21,22 @@ construct_order_parameters(
     acquisition_start,
     acquisition_end,
     geometry,
-    tags
+    tags,
 )
 ```
 
+The returned format is `dict`.
+
 <h5> Arguments </h5>
 
-| Name                | Type                                                                          | Description                                                                                                                                   |
-| ------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `data_product_id`   | `str`                                                                         | The data product ID.                                                                                                                          |
-| `name`              | `str`                                                                         | The tasking order name.                                                                                                                       |
-| `acquisition_start` | `Union[str, datetime]`                                                        | The start date of the acquisition period in the `YYYY-MM-DD` format.                                                                          |
-| `acquisition_end`   | `Union[str, datetime]`                                                        | The end date of the acquisition period in the `YYYY-MM-DD` format.                                                                            |
-| `geometry`          | `Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point]` | Geometry of the area to be captured. It can be a POI or an AOI depending on the [collection](https://docs.up42.com/data/tasking/limitations). |
-| `tags`              | `Optional[List[str]]`                                                         | A list of tags that categorize the order.                                                                                                     |
-
-<h5> Returns </h5>
-
-| Type   | Description       |
-| ------ | ----------------- |
-| `dict` | Order parameters. |
+| Argument            | Overview                                                                                                                                                                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `data_product_id`   | **str / required**<br/>The data product ID.                                                                                                                                                                                                      |
+| `name`              | **str / required**<br/>The tasking order name.                                                                                                                                                                                                   |
+| `acquisition_start` | **Union[str, datetime] / required**<br/>The start date of the acquisition period in the `YYYY-MM-DD` format.                                                                                                                                     |
+| `acquisition_end`   | **Union[str, datetime] / required**<br/>The end date of the acquisition period in the `YYYY-MM-DD` format.                                                                                                                                       |
+| `geometry`          | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point] / required**<br/>The geometry of the area to be captured. It can be a POI or an AOI depending on the [collection](https://docs.up42.com/data/tasking/limitations). |
+| `tags`              | **List[str]**<br/>A list of tags that categorize the order.                                                                                                                                                                                      |
 
 <h5> Example </h5>
 
@@ -62,7 +58,7 @@ tasking.construct_order_parameters(
             ),
         ),
     },
-    tags=["project-7", "optical"]
+    tags=["project-7", "optical"],
 )
 ```
 
@@ -74,43 +70,36 @@ The `get_feasibility()` function returns a list of feasibility studies for taski
 
 ```python
 get_feasibility(
-    feasibility_id=None,
-    workspace_id=None,
-    order_id=None,
-    decision=None,
-    sortby="createdAt",
-    descending=True
+    feasibility_id,
+    workspace_id,
+    order_id,
+    decision,
+    sortby,
+    descending,
 )
 ```
 
+The returned format is `list`.
+
 <h5> Arguments </h5>
 
-| Name             | Type                  | Description                                                                                                                           |
-| ---------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `feasibility_id` | `Optional[str]`       | The feasibility study ID.                                                                                                             |
-| `workspace_id`   | `Optional[str]`       | The workspace ID.<br/><br/>Use to get objects from a specific workspace. Otherwise, objects from the entire account will be returned. |
-| `order_id`       | `Optional[str]`       | The order ID.                                                                                                                         |
-| `decision`       | `Optional[list[str]]` | The status of feasibility studies. The allowed values:<ul><li>`NOT_DECIDED`</li><li>`ACCEPTED`</li></ul>                              |
-| `sortby`         | `str`                 | Arrange elements in the order specified in `descending` based on a chosen field.                                                      |
-| `descending`     | `bool`                | Whether to arrange elements in ascending or descending order based on the field specified in `sortby`.                                |
-
-
-<h5> Returns </h5>
-
-| Type   | Description                    |
-| ------ | ------------------------------ |
-| `list` | A list of feasibility studies. |
+| Argument         | Overview                                                                                                                                                                                                                                                                                     |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `feasibility_id` | **str**<br/>The feasibility study ID.                                                                                                                                                                                                                                                        |
+| `workspace_id`   | **str**<br/>The workspace ID. Use to get objects from a specific workspace. Otherwise, objects from the entire account will be returned.                                                                                                                                                     |
+| `order_id`       | **str**<br/>The order ID.                                                                                                                                                                                                                                                                    |
+| `decision`       | **List[str]**<br/>The status of feasibility studies. The allowed values:<br/><ul><li>`NOT_DECIDED`</li><li>`ACCEPTED`</li></ul>                                                                                                                                                              |
+| `sortby`         | **str**<br/>Arrange elements in the order specified in `descending` based on a chosen field. The default value is `createdAt`.                                                                                                                                                               |
+| `descending`     | **bool**<br/>Determines the arrangement of elements:<br/><ul><li>`True`: arrange elements in descending order based on the field specified in `sortby`.</li><li>`False`: arrange elements in ascending order based on the field specified in `sortby`.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
 
 ```python
 tasking.get_feasibility(
-    feasibility_id=None,
     workspace_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
-    order_id=None,
     decision="NOT_DECIDED",
-    sortby="createdAt",
-    descending=False
+    sortby="updatedAt",
+    descending=False,
 )
 ```
 
@@ -123,29 +112,25 @@ You can only perform actions with feasibility studies with the `NOT_DECIDED` sta
 ```python
 choose_feasibility(
     feasibility_id,
-    accepted_option_id
+    accepted_option_id,
 )
 ```
 
+The returned format is `dict`.
+
 <h5> Arguments </h5>
 
-| Name                 | Type  | Description                                 |
-| -------------------- | ----- | ------------------------------------------- |
-| `feasibility_id`     | `str` | The feasibility study ID.                   |
-| `accepted_option_id` | `str` | The ID of the feasibility option to accept. |
-
-<h5> Returns </h5>
-
-| Type   | Description                                   |
-| ------ | --------------------------------------------- |
-| `dict` | Feasibility option confirmation and metadata. |
+| Argument             | Overview                                                           |
+| -------------------- | ------------------------------------------------------------------ |
+| `feasibility_id`     | **str / required**<br/>The feasibility study ID.                   |
+| `accepted_option_id` | **str / required**<br/>The ID of the feasibility option to accept. |
 
 <h5> Example </h5>
 
 ```python
 tasking.choose_feasibility(
     feasibility_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
-    accepted_option_id="a0d443a2-41e8-4995-8b54-a5cc4c448227"
+    accepted_option_id="a0d443a2-41e8-4995-8b54-a5cc4c448227",
 )
 ```
 
@@ -157,42 +142,36 @@ The `get_quotations()` function returns a list of all quotations for tasking ord
 
 ```python
 get_quotations(
-    quotation_id=None,
-    workspace_id=None,
-    order_id=None,
-    decision=None,
-    sortby="createdAt",
-    descending=True
+    quotation_id,
+    workspace_id,
+    order_id,
+    decision,
+    sortby,
+    descending,
 )
 ```
 
+The returned format is `list`.
+
 <h5> Arguments </h5>
 
-| Name           | Type                  | Description                                                                                                                           |
-| -------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `quotation_id` | `Optional[str]`       | The quotation ID.                                                                                                                     |
-| `workspace_id` | `Optional[str]`       | The workspace ID.<br/><br/>Use to get objects from a specific workspace. Otherwise, objects from the entire account will be returned. |
-| `order_id`     | `Optional[str]`       | The order ID.                                                                                                                         |
-| `decision`     | `Optional[list[str]]` | The status of quotations. The allowed values:<ul><li>`NOT_DECIDED`</li><li>`ACCEPTED`</li><li>`REJECTED`</li></ul>                    |
-| `sortby`       | `str`                 | Arrange elements in the order specified in `descending` based on a chosen field.                                                      |
-| `descending`   | `bool`                | Whether to arrange elements in ascending or descending order based on the field specified in `sortby`.                                |
-
-<h5> Returns </h5>
-
-| Type   | Description           |
-| ------ | --------------------- |
-| `list` | A list of quotations. |
+| Argument       | Overview                                                                                                                                                                                                                                                                                     |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `quotation_id` | **str**<br/>The quotation ID.                                                                                                                                                                                                                                                                |
+| `workspace_id` | **str**<br/>The workspace ID. Use to get objects from a specific workspace. Otherwise, objects from the entire account will be returned.                                                                                                                                                     |
+| `order_id`     | **str**<br/>The order ID.                                                                                                                                                                                                                                                                    |
+| `decision`     | **List[str]**<br/>The status of quotations. The allowed values:<br/><ul><li>`NOT_DECIDED`</li><li>`ACCEPTED`</li><li>`REJECTED`</li></ul>                                                                                                                                                    |
+| `sortby`       | **str**<br/>Arrange elements in the order specified in `descending` based on a chosen field. The default value is `createdAt`.                                                                                                                                                               |
+| `descending`   | **bool**<br/>Determines the arrangement of elements:<br/><ul><li>`True`: arrange elements in descending order based on the field specified in `sortby`.</li><li>`False`: arrange elements in ascending order based on the field specified in `sortby`.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
 
 ```python
 tasking.get_quotations(
-    quotation_id=None,
     workspace_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
-    order_id=None,
     decision="NOT_DECIDED",
-    sortby="createdAt",
-    descending=False
+    sortby="updatedAt",
+    descending=False,
 )
 ```
 
@@ -205,28 +184,24 @@ You can only perform actions with feasibility studies with the `NOT_DECIDED` sta
 ```python
 decide_quotation(
     quotation_id,
-    decision
+    decision,
 )
 ```
 
+The returned format is `dict`.
+
 <h5> Arguments </h5>
 
-| Name           | Type  | Description                                                                                              |
-| -------------- | ----- | -------------------------------------------------------------------------------------------------------- |
-| `quotation_id` | `str` | The quotation ID.                                                                                        |
-| `decision`     | `str` | The decision made for this quotation. The allowed values:<ul><li>`ACCEPTED`</li><li>`REJECTED`</li></ul> |
-
-<h5> Returns </h5>
-
-| Type   | Description                                   |
-| ------ | --------------------------------------------- |
-| `dict` | Quotation decision confirmation and metadata. |
+| Argument       | Description                                                                                                                     |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `quotation_id` | **str / required**<br/>The quotation ID.                                                                                        |
+| `decision`     | **str / required**<br/>The decision made for this quotation. The allowed values:<ul><li>`ACCEPTED`</li><li>`REJECTED`</li></ul> |
 
 <h5> Example </h5>
 
 ```python
 tasking.decide_quotation(
     quotation_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
-    decision="ACCEPTED"
+    decision="ACCEPTED",
 )
 ```
