@@ -108,7 +108,7 @@ asset.stac_info
 
 The `stac_items` attribute returns STAC items from a specific UP42 asset.
 
-The returned format is `pystac.Collection`.
+The returned format is `pystac.ItemCollection`.
 
 <h5> Example </h5>
 
