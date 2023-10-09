@@ -24,6 +24,8 @@ Types of assets:
 
 The `info` attribute returns metadata of a specific UP42 asset.
 
+The returned format is `dict`.
+
 <h5> Example </h5>
 
 ```python
@@ -94,6 +96,8 @@ asset.download(
 
 The `stac_info` attribute returns the STAC collection associated with a specific UP42 asset.
 
+The returned format is `pystac.Collection`.
+
 <h5> Example </h5>
 
 ```python
@@ -103,6 +107,8 @@ asset.stac_info
 ### stac_items
 
 The `stac_items` attribute returns STAC items from a specific UP42 asset.
+
+The returned format is `pystac.ItemCollection`.
 
 <h5> Example </h5>
 
