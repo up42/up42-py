@@ -49,7 +49,7 @@ project.get_project_settings()
 
 ### update_project_settings()
 
-The `function_name()` function allows you to update threshold limits applied to the project. Threshold limits are maximum values that prevent jobs from consuming too many credits unintentionally.
+The `update_project_settings()` function allows you to update threshold limits applied to the project. Threshold limits are maximum values that prevent jobs from consuming too many credits unintentionally.
 
 ```python
 update_project_settings(
@@ -83,7 +83,7 @@ project.update_project_settings(
 
 ### get_workflows()
 
-The `function_name()` function returns a list of workflows.
+The `get_workflows()` function returns a list of workflows.
 
 ```python
 get_workflows(return_json)
