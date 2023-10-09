@@ -152,7 +152,7 @@ get_jobs(
 )
 ```
 
-The returned format is `Union[JobCollection, List[dict]]`.
+The returned format is `Union[JobCollection, list[dict]]`.
 
 <h5> Arguments </h5>
 
