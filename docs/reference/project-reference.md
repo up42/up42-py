@@ -39,7 +39,7 @@ The `get_project_settings()` function returns threshold limits applied to the pr
 ```python
 get_project_settings()
 ```
-The returned format is `List[Dict[str, str]]`.
+The returned format is `list[dict[str, str]]`.
 
 <h5> Example </h5>
 
