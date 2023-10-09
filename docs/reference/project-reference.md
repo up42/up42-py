@@ -89,7 +89,7 @@ The `get_workflows()` function returns a list of workflows.
 get_workflows(return_json)
 ```
 
-The returned format is `Union[List[Workflow], List[dict]]`.
+The returned format is `Union[list[Workflow], list[dict]]`.
 
 <h5> Arguments </h5>
 
