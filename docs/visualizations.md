@@ -45,15 +45,6 @@ job.map_results() # Maps
 job.plot_results() # Plots
 ```
 
-### Job quicklooks
-
-```python
-job.download_quicklooks()
-
-job.map_quicklooks() # Maps
-job.plot_quicklooks() # Plots
-```
-
 ### Catalog quicklooks
 
 ```python
