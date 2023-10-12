@@ -24,7 +24,7 @@ jobs:
             poetry install --no-ansi
       - run:
           name: Runnning tests
-          command: make test
+          command: poetry run make test
       - store_artifacts:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
@@ -59,7 +59,7 @@ jobs:
             poetry install --no-ansi
       - run:
           name: Runnning tests
-          command: python -m pytest --runlive --durations=5
+          command: poetry run python -m pytest --runlive --durations=5
   deploy:
     docker:
       - image: circleci/python:3.8
