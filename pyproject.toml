@@ -4,7 +4,6 @@ version = "0.32.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-packages = [{include = "up42_py"}]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
