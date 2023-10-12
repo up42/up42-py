@@ -17,12 +17,10 @@ install[dev]:
 
 test:
 	-rm -r .pytest_cache
-	black .
 	python -m pytest --pylint --pylint-rcfile=../../pylintrc --mypy --mypy-ignore-missing-imports --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
 
 test[live]:
 	-rm -r .pytest_cache
-	black .
 	python -m pytest --pylint --pylint-rcfile=../../pylintrc --mypy --mypy-ignore-missing-imports --cov=up42/ --runlive --durations=5
 
 e2e:
