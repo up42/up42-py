@@ -19,6 +19,7 @@ jobs:
           name: Install requirements
           command: |
             pip install --upgrade poetry
+            pip install --upgrade cleo
             poetry lock
             poetry install --no-ansi
       - run:
@@ -53,6 +54,7 @@ jobs:
           name: Install requirements
           command: |
             pip install --upgrade poetry
+            pip install --upgrade cleo
             poetry lock
             poetry install --no-ansi
       - run:
