@@ -5,16 +5,6 @@ from shapely.geometry import box
 
 # pylint: disable=unused-import,wrong-import-order
 from .context import Job, JobCollection, Workflow
-from .fixtures import asset_mock  # noqa
-from .fixtures import auth_live  # noqa
-from .fixtures import auth_mock  # noqa
-from .fixtures import job_mock  # noqa
-from .fixtures import jobcollection_single_mock  # noqa
-from .fixtures import jobtask_mock  # noqa
-from .fixtures import project_mock  # noqa
-from .fixtures import project_mock_max_concurrent_jobs  # noqa
-from .fixtures import workflow_mock  # noqa
-from .fixtures import workflow_mock_empty  # noqa
 from .fixtures import (
     ASSET_ID,
     JOB_ID,
@@ -22,6 +12,16 @@ from .fixtures import (
     JOBTASK_ID,
     JSON_WORKFLOW_ESTIMATION,
     JSON_WORKFLOW_TASKS,
+    asset_mock,
+    auth_live,
+    auth_mock,
+    job_mock,
+    jobcollection_single_mock,
+    jobtask_mock,
+    project_mock,
+    project_mock_max_concurrent_jobs,
+    workflow_mock,
+    workflow_mock_empty,
 )
 
 
@@ -88,13 +88,17 @@ def test_construct_full_workflow_tasks_dict_unknown_block_raises(workflow_mock):
     ],
 )
 def test_construct_full_workflow_tasks_dict(workflow_mock, input_tasks):
-    full_workflow_tasks_dict = workflow_mock._construct_full_workflow_tasks_dict(input_tasks=input_tasks)
+    full_workflow_tasks_dict = workflow_mock._construct_full_workflow_tasks_dict(
+        input_tasks=input_tasks
+    )
     assert isinstance(full_workflow_tasks_dict, list)
     assert full_workflow_tasks_dict[0]["name"] == "esa-s2-l2a-gtiff-visual:1"
     assert full_workflow_tasks_dict[0]["parentName"] is None
     assert full_workflow_tasks_dict[1]["name"] == "tiling:1"
     assert full_workflow_tasks_dict[1]["parentName"] == "esa-s2-l2a-gtiff-visual:1"
-    assert full_workflow_tasks_dict[1]["blockId"] == "4ed70368-d4e1-4462-bef6-14e768049471"
+    assert (
+        full_workflow_tasks_dict[1]["blockId"] == "4ed70368-d4e1-4462-bef6-14e768049471"
+    )
 
 
 def test_add_workflow_tasks_full(workflow_mock, requests_mock):
@@ -122,15 +126,23 @@ def test_add_workflow_tasks_full(workflow_mock, requests_mock):
 def test_get_parameter_info(workflow_mock):
     parameter_info = workflow_mock.get_parameters_info()
     assert isinstance(parameter_info, dict)
-    assert all(x in list(parameter_info.keys()) for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"])
-    assert all(x in list(parameter_info["tiling:1"].keys()) for x in ["nodata", "tile_width"])
+    assert all(
+        x in list(parameter_info.keys())
+        for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"]
+    )
+    assert all(
+        x in list(parameter_info["tiling:1"].keys()) for x in ["nodata", "tile_width"]
+    )
 
 
 def test_get_default_parameters(workflow_mock):
     default_parameters = workflow_mock._get_default_parameters()
 
     assert isinstance(default_parameters, dict)
-    assert all(x in list(default_parameters.keys()) for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"])
+    assert all(
+        x in list(default_parameters.keys())
+        for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"]
+    )
     assert default_parameters["tiling:1"] == {
         "nodata": None,
         "tile_width": 768,
@@ -201,7 +213,9 @@ def test_construct_parameter_assets(workflow_mock, asset_mock):
     parameters = workflow_mock.construct_parameters(asset_ids=[ASSET_ID, ASSET_ID])
     assert isinstance(parameters, dict)
     assert parameters == {
-        "esa-s2-l2a-gtiff-visual:1": {"asset_ids": [asset_mock.asset_id, asset_mock.asset_id]},
+        "esa-s2-l2a-gtiff-visual:1": {
+            "asset_ids": [asset_mock.asset_id, asset_mock.asset_id]
+        },
         "tiling:1": {
             "nodata": None,
             "tile_width": 768,
@@ -277,7 +291,9 @@ def test_construct_parameters_parallel_multiple_intervals(workflow_mock):
 
 
 def test_construct_parameters_parallel_scene_ids(workflow_mock):
-    parameters_list = workflow_mock.construct_parameters_parallel(scene_ids=["S2abc", "S2123"])
+    parameters_list = workflow_mock.construct_parameters_parallel(
+        scene_ids=["S2abc", "S2123"]
+    )
     assert len(parameters_list) == 2
     assert parameters_list[0] == {
         "esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "bbox": None, "limit": 1},
@@ -303,7 +319,9 @@ def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
         f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
         f"{workflow_mock.workflow_id}/tasks"
     )
-    url_workflow_estimation = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/estimate/job"
+    url_workflow_estimation = (
+        f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/estimate/job"
+    )
     requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
     requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
 
@@ -313,16 +331,23 @@ def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
 
 def test_run_job(workflow_mock, job_mock, requests_mock):
     # job info
-    url_job_info = f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/" f"jobs/{job_mock.job_id}"
+    url_job_info = (
+        f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/"
+        f"jobs/{job_mock.job_id}"
+    )
     requests_mock.get(url=url_job_info, json={"data": {}})
 
-    input_parameters_json = Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    input_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    )
     job = workflow_mock.run_job(input_parameters_json, name=JOB_NAME)
     assert isinstance(job, Job)
     assert job.job_id == job_mock.job_id
 
 
-def test_helper_run_parallel_jobs_dry_run(workflow_mock, project_mock_max_concurrent_jobs):
+def test_helper_run_parallel_jobs_dry_run(
+    workflow_mock, project_mock_max_concurrent_jobs
+):
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
@@ -344,18 +369,23 @@ def test_helper_run_parallel_jobs_dry_run(workflow_mock, project_mock_max_concur
             print(url_job)
             m.post(url=url_job, json={"data": {"id": job_name}})
             m.get(
-                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/" f"jobs/{job_name}",
+                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"jobs/{job_name}",
                 json=example_response,
             )
 
-        jb = workflow_mock._helper_run_parallel_jobs(input_parameters_list, max_concurrent_jobs=2, test_job=True)
+        jb = workflow_mock._helper_run_parallel_jobs(
+            input_parameters_list, max_concurrent_jobs=2, test_job=True
+        )
     assert isinstance(jb, JobCollection)
     assert len(jb.jobs) == 2
     for job in jb.jobs:
         assert job._info["mode"] == "DRY_RUN"
 
 
-def test_helper_run_parallel_jobs_all_fails(workflow_mock, jobtask_mock, project_mock_max_concurrent_jobs):
+def test_helper_run_parallel_jobs_all_fails(
+    workflow_mock, jobtask_mock, project_mock_max_concurrent_jobs
+):
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
@@ -375,11 +405,13 @@ def test_helper_run_parallel_jobs_all_fails(workflow_mock, jobtask_mock, project
             )
             m.post(url=job_url, json={"data": {"id": job_name}})
             m.get(
-                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/" f"jobs/{job_name}",
+                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"jobs/{job_name}",
                 json=response_failed,
             )
             url_job_tasks = (
-                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/{job_name}" f"/tasks/"
+                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/{job_name}"
+                f"/tasks/"
             )
             m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
             url_log = (
@@ -388,7 +420,9 @@ def test_helper_run_parallel_jobs_all_fails(workflow_mock, jobtask_mock, project
             )
             m.get(url_log, json="")
 
-        jb = workflow_mock._helper_run_parallel_jobs(input_parameters_list, max_concurrent_jobs=2, test_job=True)
+        jb = workflow_mock._helper_run_parallel_jobs(
+            input_parameters_list, max_concurrent_jobs=2, test_job=True
+        )
         assert isinstance(jb, JobCollection)
         assert len(jb.jobs) == 2
         assert jb.status == {
@@ -397,7 +431,9 @@ def test_helper_run_parallel_jobs_all_fails(workflow_mock, jobtask_mock, project
         }
 
 
-def test_helper_run_parallel_jobs_one_fails(workflow_mock, project_mock_max_concurrent_jobs):
+def test_helper_run_parallel_jobs_one_fails(
+    workflow_mock, project_mock_max_concurrent_jobs
+):
     input_parameters_list = [
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2def"], "limit": 1}},
@@ -423,11 +459,13 @@ def test_helper_run_parallel_jobs_one_fails(workflow_mock, project_mock_max_conc
             )
             m.post(url=job_url, json={"data": {"id": job_name}})
             m.get(
-                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/" f"jobs/{job_name}",
+                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"jobs/{job_name}",
                 json=responses[i],
             )
             url_job_tasks = (
-                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/{job_name}" f"/tasks/"
+                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/{job_name}"
+                f"/tasks/"
             )
             m.get(url=url_job_tasks, json={"data": [{"id": JOBTASK_ID}]})
             url_log = (
@@ -436,7 +474,9 @@ def test_helper_run_parallel_jobs_one_fails(workflow_mock, project_mock_max_conc
             )
             m.get(url_log, json="")
 
-        jb = workflow_mock._helper_run_parallel_jobs(input_parameters_list, max_concurrent_jobs=2, test_job=True)
+        jb = workflow_mock._helper_run_parallel_jobs(
+            input_parameters_list, max_concurrent_jobs=2, test_job=True
+        )
         assert isinstance(jb, JobCollection)
         assert len(jb.jobs) == 2
         assert jb.status == {
@@ -446,7 +486,9 @@ def test_helper_run_parallel_jobs_one_fails(workflow_mock, project_mock_max_conc
 
 
 @pytest.mark.skip(reason="Takes 100sec")
-def test_helper_run_parallel_jobs_default(workflow_mock, project_mock_max_concurrent_jobs):
+def test_helper_run_parallel_jobs_default(
+    workflow_mock, project_mock_max_concurrent_jobs
+):
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
@@ -466,18 +508,23 @@ def test_helper_run_parallel_jobs_default(workflow_mock, project_mock_max_concur
             )
             m.post(url=job_url, json={"data": {"id": job_name}})
             m.get(
-                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/" f"jobs/{job_name}",
+                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"jobs/{job_name}",
                 json=example_response,
             )
 
-        jb = workflow_mock._helper_run_parallel_jobs(input_parameters_list, max_concurrent_jobs=10)
+        jb = workflow_mock._helper_run_parallel_jobs(
+            input_parameters_list, max_concurrent_jobs=10
+        )
     assert isinstance(jb, JobCollection)
     assert len(jb.jobs) == 20
     for job in jb.jobs:
         assert job._info["mode"] == "DEFAULT"
 
 
-def test_helper_run_parallel_jobs_fail_concurrent_jobs(workflow_mock, project_mock_max_concurrent_jobs):
+def test_helper_run_parallel_jobs_fail_concurrent_jobs(
+    workflow_mock, project_mock_max_concurrent_jobs
+):
     # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
@@ -497,16 +544,22 @@ def test_helper_run_parallel_jobs_fail_concurrent_jobs(workflow_mock, project_mo
             )
             m.post(url=job_url, json={"data": {"id": job_name}})
             m.get(
-                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/" f"jobs/{job_name}",
+                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"jobs/{job_name}",
                 json=example_response,
             )
 
         with pytest.raises(ValueError):
-            workflow_mock._helper_run_parallel_jobs(input_parameters_list, max_concurrent_jobs=10)
+            workflow_mock._helper_run_parallel_jobs(
+                input_parameters_list, max_concurrent_jobs=10
+            )
 
 
 def test_get_jobs(workflow_mock, requests_mock):
-    url_job_info = f"{workflow_mock.auth._endpoint()}/projects/" f"{workflow_mock.project_id}/jobs/{JOB_ID}"
+    url_job_info = (
+        f"{workflow_mock.auth._endpoint()}/projects/"
+        f"{workflow_mock.project_id}/jobs/{JOB_ID}"
+    )
     requests_mock.get(
         url=url_job_info,
         json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
@@ -516,16 +569,22 @@ def test_get_jobs(workflow_mock, requests_mock):
     assert isinstance(jobcollection, JobCollection)
     assert isinstance(jobcollection.jobs[0], Job)
     assert jobcollection.jobs[0].job_id == JOB_ID
-    assert len(jobcollection.jobs) == 1  # Filters out the job that is not associated with the workflow object
+    assert (
+        len(jobcollection.jobs) == 1
+    )  # Filters out the job that is not associated with the workflow object
 
 
-@pytest.mark.skip(reason="too many jobs in test project, triggers too many job info requests.")
+@pytest.mark.skip(
+    reason="too many jobs in test project, triggers too many job info requests."
+)
 @pytest.mark.live
 def test_get_jobs_live(workflow_live):
     jobcollection = workflow_live.get_jobs()
     assert isinstance(jobcollection, list)
     assert isinstance(jobcollection.jobs[0], Job)
-    assert all(j._info["workflowId"] == workflow_live.workflow_id for j in jobcollection.jobs)
+    assert all(
+        j._info["workflowId"] == workflow_live.workflow_id for j in jobcollection.jobs
+    )
 
 
 def test_update_name(workflow_mock, requests_mock):
