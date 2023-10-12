@@ -18,8 +18,7 @@ jobs:
       - run:
           name: Install requirements
           command: |
-            poetry shell
-            poetry install
+            poetry install --no-ansi
       - run:
           name: Runnning tests
           command: make test
@@ -51,8 +50,7 @@ jobs:
       - run:
           name: Install requirements
           command: |
-            poetry shell
-            poetry install
+            poetry install --no-ansi
       - run:
           name: Runnning tests
           command: python -m pytest --runlive --durations=5
