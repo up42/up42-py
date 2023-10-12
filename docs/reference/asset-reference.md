@@ -50,7 +50,7 @@ The returned format is `dict`.
 | Argument | Overview                                                            |
 | -------- | ------------------------------------------------------------------- |
 | `title`  | **str**<br/>An editable asset title.                                |
-| `tags`   | **List[str]**<br/>An editable list of tags to categorize the asset. |
+| `tags`   | **list[str]**<br/>An editable list of tags to categorize the asset. |
 
 <h5> Example </h5>
 
