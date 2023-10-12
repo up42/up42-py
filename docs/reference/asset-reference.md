@@ -78,7 +78,7 @@ The returned format is `list[str]`.
 
 | Argument           | Overview                                                                                                                                                                                             |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `output_directory` | **union[str, path, none]**<br/>The file output directory. The default value is the current directory.                                                                                                |
+| `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory.                                                                                                |
 | `unpacking`        | **bool**<br/>Determines how to download the asset:<br/><ul><li>`True`: download and unpack the file.</li><li>`False`: download the compressed file.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
@@ -134,7 +134,7 @@ The returned format is `pathlib.Path`.
 | Argument           | Description                                                                                           |
 | ------------------ | ----------------------------------------------------------------------------------------------------- |
 | `stac_asset`       | **pystac.Asset / required**<br/>The STAC asset name.                                                  |
-| `output_directory` | **union[str, path, none]**<br/>The file output directory. The default value is the current directory. |
+| `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory. |
 
 <h5> Example </h5>
 

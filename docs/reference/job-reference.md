@@ -110,7 +110,7 @@ The returned format is `list[str]`.
 
 | Argument           | Overview                                                                                              |
 | ------------------ | ----------------------------------------------------------------------------------------------------- |
-| `output_directory` | **union[str, path, none]**<br/>The file output directory. The default value is the current directory. |
+| `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory. |
 
 <h5> Example </h5>
 
@@ -126,7 +126,7 @@ The `get_results_json()` function returns job results.
 get_results_json(as_dataframe)
 ```
 
-The returned format is `union[dict, GeoDataFrame]`.
+The returned format is `Union[dict, GeoDataFrame]`.
 
 <h5> Arguments </h5>
 
@@ -157,7 +157,7 @@ The returned format is `list[str]`.
 
 | Argument           | Overview                                                                                                                                                                                        |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `output_directory` | **union[str, path, none]**<br/>The file output directory. The default value is the current directory.                                                                                           |
+| `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory.                                                                                           |
 | `unpacking`        | **bool**<br/>Determines how to download the job results:<br/><ul><li>`True`: download and unpack the file.</li><li>`False`: download the compressed file.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
@@ -231,7 +231,7 @@ The `get_jobtasks()` function returns a list of job tasks.
 get_jobtasks(return_json)
 ```
 
-The returned format is `union[list[JobTask], list[dict]]`.
+The returned format is `Union[list[JobTask], list[dict]]`.
 
 <h5> Arguments </h5>
 
@@ -357,7 +357,7 @@ The returned format is `type`.
 | `figsize`          | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(14, 8)`. |
 | `bands`            | **list[int]**<br/>A list of image bands to plot and their order.                                                                            |
 | `titles`           | **list[str]**<br/>Titles for the subplots.                                                                                                  |
-| `filpaths`         | **union[list[union[str, path]], dict, none]**<br/>The file path. By default, the downloaded results will be used.                           |
+| `filpaths`         | **Union[list[Union[str, Path]], dict, none]**<br/>The file path. By default, the downloaded results will be used.                           |
 | `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                   |
 | `kwargs`           | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
 
