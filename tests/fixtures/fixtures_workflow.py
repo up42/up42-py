@@ -2,17 +2,14 @@ import os
 
 import pytest
 
+from ..context import Workflow
 from .fixtures_globals import (
+    JOB_ID,
+    JOB_NAME,
+    JSON_WORKFLOW_TASKS,
     PROJECT_DESCRIPTION,
     WORKFLOW_ID,
     WORKFLOW_NAME,
-    JOB_ID,
-    JSON_WORKFLOW_TASKS,
-    JOB_NAME,
-)
-
-from ..context import (
-    Workflow,
 )
 
 
@@ -23,11 +20,7 @@ def workflow_mock_empty(auth_mock, requests_mock):
     without tasks (blocks). For the fully mocked workflow see workflow_mock fixture.
     """
     # info
-    url_workflow_info = (
-        f"{auth_mock._endpoint()}/projects/"
-        f"{auth_mock.project_id}/workflows/"
-        f"{WORKFLOW_ID}"
-    )
+    url_workflow_info = f"{auth_mock._endpoint()}/projects/" f"{auth_mock.project_id}/workflows/" f"{WORKFLOW_ID}"
     json_workflow_info = {
         "data": {
             "name": WORKFLOW_NAME,
@@ -52,8 +45,7 @@ def workflow_mock_empty(auth_mock, requests_mock):
         "data": [],
     }
     url_workflow_tasks = (
-        f"{workflow.auth._endpoint()}/projects/{workflow.auth.project_id}/workflows/"
-        f"{workflow.workflow_id}/tasks"
+        f"{workflow.auth._endpoint()}/projects/{workflow.auth.project_id}/workflows/" f"{workflow.workflow_id}/tasks"
     )
     requests_mock.get(url=url_workflow_tasks, json=json_empty_workflow_tasks)
 
@@ -63,11 +55,7 @@ def workflow_mock_empty(auth_mock, requests_mock):
 @pytest.fixture()
 def workflow_mock(auth_mock, requests_mock):
     # info
-    url_workflow_info = (
-        f"{auth_mock._endpoint()}/projects/"
-        f"{auth_mock.project_id}/workflows/"
-        f"{WORKFLOW_ID}"
-    )
+    url_workflow_info = f"{auth_mock._endpoint()}/projects/" f"{auth_mock.project_id}/workflows/" f"{WORKFLOW_ID}"
     json_workflow_info = {
         "data": {
             "name": WORKFLOW_NAME,
@@ -88,8 +76,7 @@ def workflow_mock(auth_mock, requests_mock):
 
     # get_workflow_tasks
     url_workflow_tasks = (
-        f"{workflow.auth._endpoint()}/projects/{workflow.auth.project_id}/workflows/"
-        f"{workflow.workflow_id}/tasks"
+        f"{workflow.auth._endpoint()}/projects/{workflow.auth.project_id}/workflows/" f"{workflow.workflow_id}/tasks"
     )
     requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
 

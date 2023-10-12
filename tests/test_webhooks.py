@@ -5,12 +5,12 @@ from .context import Webhook
 from .fixtures import (
     WEBHOOK_ID,
     WORKSPACE_ID,
-    webhook_mock,
-    webhooks_mock,
-    webhook_live,
-    webhooks_live,
-    auth_mock,
     auth_live,
+    auth_mock,
+    webhook_live,
+    webhook_mock,
+    webhooks_live,
+    webhooks_mock,
 )
 
 

@@ -8,12 +8,12 @@ from .context import Auth
 
 # pylint: disable=unused-import
 from .fixtures import (
-    auth_mock,
-    auth_live,
-    TOKEN,
-    PROJECT_ID,
     PROJECT_APIKEY,
+    PROJECT_ID,
+    TOKEN,
     WORKSPACE_ID,
+    auth_live,
+    auth_mock,
 )
 
 
@@ -59,15 +59,13 @@ def test_get_token(auth_mock):
     auth_mock._get_token()
     assert auth_mock.token == TOKEN
 
+
 @pytest.mark.live
 def test_get_token_raises_wrong_credentials_live(auth_live):
     auth_live.project_id = "123"
     with pytest.raises(ValueError) as e:
         auth_live._get_token()
-    assert (
-        "Authentication was not successful, check the provided project credentials."
-        in str(e.value)
-    )
+    assert "Authentication was not successful, check the provided project credentials." in str(e.value)
 
 
 @pytest.mark.live
@@ -93,9 +91,7 @@ def test_generate_headers(auth_mock):
         .joinpath("up42/_version.txt")
         .read_text(encoding="utf-8")
     )
-    assert (
-        isinstance(version, str) and "\n" not in version
-    ), "check integrity of your version file"
+    assert isinstance(version, str) and "\n" not in version, "check integrity of your version file"
     expected_headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer token_1011",
@@ -108,9 +104,7 @@ def test_generate_headers(auth_mock):
 def test_request_helper(auth_mock, requests_mock):
     requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
 
-    response = auth_mock._request_helper(
-        request_type="GET", url="http://test.com", data={}, querystring={}
-    )
+    response = auth_mock._request_helper(request_type="GET", url="http://test.com", data={}, querystring={})
     response_json = json.loads(response.text)
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 

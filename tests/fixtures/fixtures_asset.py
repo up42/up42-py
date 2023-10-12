@@ -1,5 +1,6 @@
 import datetime
 import os
+
 import pytest
 from pystac import Item, ItemCollection
 from pystac.collection import Extent, SpatialExtent, TemporalExtent
@@ -128,11 +129,7 @@ def asset_mock(auth_mock, requests_mock):
                     ]
                 ]
             ),
-            temporal=TemporalExtent(
-                intervals=[
-                    [datetime.datetime(2021, 5, 31), datetime.datetime(2021, 5, 31)]
-                ]
-            ),
+            temporal=TemporalExtent(intervals=[[datetime.datetime(2021, 5, 31), datetime.datetime(2021, 5, 31)]]),
         ),
     )
     requests_mock.get(
