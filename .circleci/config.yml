@@ -45,14 +45,12 @@ jobs:
           sonar_token_variable_name: SONAR_TOKEN
   test_live:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
     steps:
       - checkout
       - run:
           name: Install requirements
           command: |
-            rm `which poetry`
-            curl -sSL https://install.python-poetry.org | python -
             poetry lock
             poetry install --no-ansi
       - run:
