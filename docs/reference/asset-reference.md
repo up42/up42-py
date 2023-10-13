@@ -76,9 +76,9 @@ The returned format is `list[str]`.
 
 <h5> Arguments </h5>
 
-| Argument           | Overview                                                                                                                                                                                             |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory.                                                                                                |
+| Argument           | Overview                                                                                                                                                                                  |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory.                                                                                     |
 | `unpacking`        | **bool**<br/>Determines how to download the asset:<br/><ul><li>`True`: download and unpack the file.</li><li>`False`: download the compressed file.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
@@ -133,14 +133,14 @@ The returned format is `pathlib.Path`.
 
 | Argument           | Description                                                                                           |
 | ------------------ | ----------------------------------------------------------------------------------------------------- |
-| `stac_asset`       | **pystac.Asset / required**<br/>The STAC asset name.                                                  |
+| `stac_asset`       | **pystac.Asset / required**<br/>The STAC asset to be downloaded.                                      |
 | `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory. |
 
 <h5> Example </h5>
 
 ```python
 asset.download_stac_asset(
-    stac_asset="b12.tiff",
+    stac_asset=asset.stac_items.items[0].assets.get("b01.tiff"),
     output_directory="/Users/max.mustermann/Desktop/",
 )
 ```
