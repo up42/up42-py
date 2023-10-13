@@ -1,23 +1,17 @@
 import datetime
 import os
-import pytest
 from pathlib import Path
+
+import pytest
 from pystac import Item, ItemCollection
 from pystac.collection import Extent, SpatialExtent, TemporalExtent
 from pystac_client import CollectionClient
 
 from ..context import Asset
-from .fixtures_globals import (
-    ASSET_ID,
-    ASSET_ID2,
-    STAC_ASSET_ID,
-    STAC_ASSET_URL,
-    DOWNLOAD_URL,
-    DOWNLOAD_URL2,
-    JSON_ASSET,
-    JSON_STORAGE_STAC,
-    STAC_COLLECTION_ID,
-)
+from .fixtures_globals import (ASSET_ID, ASSET_ID2, DOWNLOAD_URL,
+                               DOWNLOAD_URL2, JSON_ASSET, JSON_STORAGE_STAC,
+                               STAC_ASSET_ID, STAC_ASSET_URL,
+                               STAC_COLLECTION_ID)
 
 
 @pytest.fixture()
