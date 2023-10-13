@@ -128,11 +128,27 @@ class Asset:
         self._info = response_json
         return self._info
 
-    def _get_download_url(self) -> str:
-        url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/download-url"
-        response_json = self.auth._request(request_type="POST", url=url)
+    def _get_download_url(self, stac_asset_id: Optional[str] = None, request_type:str = "POST") -> str:
+        if stac_asset_id is None:
+            url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/download-url"
+        else:
+            url = f"{self.auth._endpoint()}/v2/assets/{stac_asset_id}/download-url"
+        response_json = self.auth._request(request_type=request_type, url=url)
         download_url = response_json["url"]
         return download_url
+
+    def get_stac_asset_url(self, stac_asset: pystac.Asset):
+        """
+        Returns the signed URL for the STAC Asset.
+        Args:
+            stac_asset: pystac Asset object.
+
+        Returns:
+            Signed URL for the STAC Asset.
+        """
+        stac_asset_id = stac_asset.href.split("/")[-1]
+        # so we can utilize all functionalities of Auth class
+        return self._get_download_url(stac_asset_id=stac_asset_id)
 
     def download(
         self, output_directory: Union[str, Path, None] = None, unpacking: bool = True
@@ -203,27 +219,8 @@ class Asset:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info(f"Download directory: {str(output_directory)}")
-        try:
-            self.auth._get_token()
-            up42_signed_token = self.auth.token
-            headers = {
-                "Authorization": f"Bearer {up42_signed_token}",
-            }
-            response = requests.get(stac_asset.href, headers=headers, stream=True)
-            response.raise_for_status()
-            file_name = get_filename(response.url, default_filename="stac_asset")
-            out_file_path = output_directory / file_name
-            with open(out_file_path, "wb") as dst:
-                for chunk in tqdm(response.iter_content(chunk_size=1024)):
-                    if chunk:  # filter out keep-alive new chunks
-                        dst.write(chunk)
-        except requests.exceptions.HTTPError as err:
-            error_message = f"Error during STAC asset download: {err}"
-            logger.error(error_message)
-            raise requests.exceptions.HTTPError(error_message)
-        except Exception as e:
-            # Catch and log other exceptions, but still raise them
-            error_message = f"An unexpected error occurred: {e}"
-            logger.error(error_message)
-            raise
+        download_url = self.get_stac_asset_url(stac_asset=stac_asset)
+        file_name = get_filename(download_url, default_filename="stac_asset")
+        out_file_path = output_directory / file_name
+        download_gcs_not_unpack(download_url, output_directory)
         return out_file_path

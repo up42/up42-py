@@ -138,3 +138,7 @@ def test_download_stac_asset(asset_mock2, requests_mock):
         )
         assert out_path.exists()
         assert out_path.name == "stac_asset"
+
+def test_get_stac_asset_url(asset_mock2, requests_mock):
+    # TODO: populate
+    pass

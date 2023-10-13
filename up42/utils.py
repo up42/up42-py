@@ -182,8 +182,7 @@ def download_gcs_not_unpack(
             )
 
     logger.info(
-        f"Download successful of original archive file to output_directory"
-        f" '{output_directory}': {out_fp.name}. To automatically unpack the archive use `unpacking=True`"
+        f"Successfully downloaded the file at {out_fp}"
     )
     out_filepaths = [str(out_fp)]
     return out_filepaths
