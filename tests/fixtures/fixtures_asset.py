@@ -1,6 +1,7 @@
 import datetime
 import os
 import pytest
+from pathlib import Path
 from pystac import Item, ItemCollection
 from pystac.collection import Extent, SpatialExtent, TemporalExtent
 from pystac_client import CollectionClient
@@ -9,6 +10,8 @@ from ..context import Asset
 from .fixtures_globals import (
     ASSET_ID,
     ASSET_ID2,
+    STAC_ASSET_ID,
+    STAC_ASSET_URL,
     DOWNLOAD_URL,
     DOWNLOAD_URL2,
     JSON_ASSET,
@@ -152,6 +155,18 @@ def asset_mock2(auth_mock, requests_mock):
     requests_mock.post(
         url=f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID2}/download-url",
         json={"url": DOWNLOAD_URL2},
+    )
+    requests_mock.post(
+        url=f"{auth_mock._endpoint()}/v2/assets/{STAC_ASSET_ID}/download-url",
+        json={"url": STAC_ASSET_URL},
+    )
+    mock_file = Path(__file__).resolve().parents[1] / "mock_data/aoi_berlin.geojson"
+    with open(mock_file, "rb") as src_file:
+        out_file = src_file.read()
+
+    requests_mock.get(
+        url=STAC_ASSET_URL,
+        content=out_file,
     )
     asset = Asset(auth=auth_mock, asset_id=ASSET_ID2)
     return asset

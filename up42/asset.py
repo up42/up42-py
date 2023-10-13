@@ -2,9 +2,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
 import pystac
-import requests
 from pystac_client import Client, ItemSearch
-from tqdm import tqdm
 
 from up42.auth import Auth
 from up42.stac_client import PySTACAuthClient
