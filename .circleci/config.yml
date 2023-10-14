@@ -10,7 +10,7 @@ jobs:
   test:
     working_directory: *workspace-dir
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
     steps:
       - attach_workspace:
           at: *workspace-dir
@@ -18,12 +18,11 @@ jobs:
       - run:
           name: Install requirements
           command: |
-            pip install -r requirements.txt
-            pip install -r requirements-viz.txt
-            pip install -r requirements-dev.txt
+            poetry lock
+            poetry install --no-ansi
       - run:
           name: Runnning tests
-          command: make test
+          command: poetry run make test
       - store_artifacts:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
@@ -46,18 +45,17 @@ jobs:
           sonar_token_variable_name: SONAR_TOKEN
   test_live:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
     steps:
       - checkout
       - run:
           name: Install requirements
           command: |
-            pip install -r requirements.txt
-            pip install -r requirements-viz.txt
-            pip install -r requirements-dev.txt
+            poetry lock
+            poetry install --no-ansi
       - run:
           name: Runnning tests
-          command: python -m pytest --runlive --durations=5
+          command: poetry run python -m pytest --runlive --durations=5
   deploy:
     docker:
       - image: circleci/python:3.8

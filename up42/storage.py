@@ -40,9 +40,7 @@ class Storage:
         pystac_client_auth = PySTACAuthClient(auth=self.auth).open(url=url)
         return pystac_client_auth
 
-    def _query_paginated_endpoints(
-        self, url: str, limit: Optional[int] = None, size: int = 50
-    ) -> List[dict]:
+    def _query_paginated_endpoints(self, url: str, limit: Optional[int] = None, size: int = 50) -> List[dict]:
         """
         Helper to fetch list of items in paginated endpoint, e.g. assets, orders.
 
@@ -58,9 +56,7 @@ class Storage:
         url = url + f"&size={size}"
 
         first_page_response = self.auth._request(request_type="GET", url=url)
-        if (
-            "data" in first_page_response
-        ):  # UP42 API v2 convention without data key, but still in e.g. get order
+        if "data" in first_page_response:  # UP42 API v2 convention without data key, but still in e.g. get order
             # endpoint
             first_page_response = first_page_response["data"]
         num_pages = first_page_response["totalPages"]
@@ -77,9 +73,7 @@ class Storage:
             num_pages_to_query = math.ceil(min(limit, num_elements) / size)
 
         for page in range(1, num_pages_to_query):
-            response_json = self.auth._request(
-                request_type="GET", url=url + f"&page={page}"
-            )
+            response_json = self.auth._request(request_type="GET", url=url + f"&page={page}")
             if "data" in response_json:
                 response_json = response_json["data"]
             results_list += response_json["content"]
@@ -103,15 +97,9 @@ class Storage:
         response_features: list = []
         response_features_limit = stac_search_parameters["limit"]
         while len(response_features) < response_features_limit:
-            stac_results = self.auth._request(
-                request_type="POST", url=url, data=stac_search_parameters
-            )
+            stac_results = self.auth._request(request_type="POST", url=url, data=stac_search_parameters)
             response_features.extend(stac_results["features"])
-            token_list = [
-                link["body"]["token"]
-                for link in stac_results["links"]
-                if link["rel"] == "next"
-            ]
+            token_list = [link["body"]["token"] for link in stac_results["links"] if link["rel"] == "next"]
             if token_list:
                 stac_search_parameters["token"] = token_list[0]
             else:
@@ -163,9 +151,7 @@ class Storage:
         }
         if geometry is not None:
             geometry = any_vector_to_fc(vector=geometry)
-            geometry = fc_to_query_geometry(
-                fc=geometry, geometry_operation="intersects"
-            )
+            geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
             stac_search_parameters["intersects"] = geometry
         if custom_filter is not None:
             # e.g. {"op": "gte","args": [{"property": "eo:cloud_cover"}, 10]}
@@ -177,9 +163,7 @@ class Storage:
         if acquired_before is not None:
             datetime_filter = f"../{format_time(acquired_before)}"
         if acquired_after is not None and acquired_before is not None:
-            datetime_filter = (
-                f"{format_time(acquired_after)}/{format_time(acquired_before)}"
-            )
+            datetime_filter = f"{format_time(acquired_after)}/{format_time(acquired_before)}"
         stac_search_parameters["datetime"] = datetime_filter  # type: ignore
 
         url = f"{self.auth._endpoint()}/v2/assets/stac/search"
@@ -193,9 +177,7 @@ class Storage:
         created_before: Optional[Union[str, datetime]] = None,
         acquired_after: Optional[Union[str, datetime]] = None,
         acquired_before: Optional[Union[str, datetime]] = None,
-        geometry: Optional[
-            Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]
-        ] = None,
+        geometry: Optional[Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]] = None,
         workspace_id: Optional[str] = None,
         collection_names: List[str] = None,
         producer_names: List[str] = None,
@@ -283,32 +265,18 @@ class Storage:
                 geometry=geometry,
                 custom_filter=custom_filter,
             )
-            stac_assets_ids = [
-                feature["properties"]["up42-system:asset_id"]
-                for feature in stac_features
-            ]
-            assets_json = [
-                asset_json
-                for asset_json in assets_json
-                if asset_json["id"] in stac_assets_ids
-            ]
+            stac_assets_ids = [feature["properties"]["up42-system:asset_id"] for feature in stac_features]
+            assets_json = [asset_json for asset_json in assets_json if asset_json["id"] in stac_assets_ids]
 
         if workspace_id is not None:
-            logger.info(
-                f"Queried {len(assets_json)} assets for workspace {self.workspace_id}."
-            )
+            logger.info(f"Queried {len(assets_json)} assets for workspace {self.workspace_id}.")
         else:
-            logger.info(
-                f"Queried {len(assets_json)} assets from all workspaces in account."
-            )
+            logger.info(f"Queried {len(assets_json)} assets from all workspaces in account.")
 
         if return_json:
             return assets_json  # type: ignore
         else:
-            assets = [
-                Asset(self.auth, asset_id=asset_json["id"], asset_info=asset_json)
-                for asset_json in assets_json
-            ]
+            assets = [Asset(self.auth, asset_id=asset_json["id"], asset_info=asset_json) for asset_json in assets_json]
             return assets
 
     def get_orders(
@@ -343,18 +311,14 @@ class Storage:
             "dataProvider",
         ]
         if sortby not in allowed_sorting_criteria:
-            raise ValueError(
-                f"sortby parameter must be one of {allowed_sorting_criteria}!"
-            )
+            raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}"
         if order_type is not None:
             if order_type in ["TASKING", "ARCHIVE"]:
                 url += f"&type={order_type}"
             else:
-                logger.warning(
-                    "order_type should be TASKING or ARCHIVE. Ignoring this filter."
-                )
+                logger.warning("order_type should be TASKING or ARCHIVE. Ignoring this filter.")
         if tags is not None:
             for tag in tags:
                 url += f"&tags={tag}"
@@ -364,8 +328,5 @@ class Storage:
         if return_json:
             return orders_json  # type: ignore
         else:
-            orders = [
-                Order(self.auth, order_id=order_json["id"], order_info=order_json)
-                for order_json in orders_json
-            ]
+            orders = [Order(self.auth, order_id=order_json["id"], order_info=order_json) for order_json in orders_json]
             return orders

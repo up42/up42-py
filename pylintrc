@@ -24,7 +24,7 @@ disable=
     logging-fstring-interpolation,
     logging-format-interpolation,
     too-many-lines
-    
+
 [FORMAT]
 max-line-length=120
 single-line-if-stmt=yes

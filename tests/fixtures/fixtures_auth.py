@@ -2,15 +2,15 @@ import os
 
 import pytest
 
-from .fixtures_globals import (
-    TOKEN,
-    PROJECT_ID,
-    WORKSPACE_ID,
-    PROJECT_APIKEY,
-    JSON_BLOCKS,
-    JSON_BALANCE,
-)
 from ..context import Auth, main
+from .fixtures_globals import (
+    JSON_BALANCE,
+    JSON_BLOCKS,
+    PROJECT_APIKEY,
+    PROJECT_ID,
+    TOKEN,
+    WORKSPACE_ID,
+)
 
 
 @pytest.fixture()
@@ -30,9 +30,7 @@ def auth_mock(requests_mock):
         url=url_get_workspace,
         json=json_get_workspace,
     )
-    auth = Auth(
-        project_id=PROJECT_ID, project_api_key=PROJECT_APIKEY, authenticate=True
-    )
+    auth = Auth(project_id=PROJECT_ID, project_api_key=PROJECT_APIKEY, authenticate=True)
 
     # get_blocks
     url_get_blocks = f"{auth._endpoint()}/blocks"

@@ -1,30 +1,29 @@
+import copy
 import json
 import logging
-import copy
 from collections import Counter
-from pathlib import Path
-from typing import Dict, List, Union, Tuple, Optional
 from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Union
 
-from geopandas import GeoDataFrame
-from shapely.geometry import Polygon
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
+from geopandas import GeoDataFrame
+from shapely.geometry import Polygon
 from tqdm import tqdm
 
+import up42.main as main
 from up42.auth import Auth
-from up42.job import Job
 from up42.estimation import Estimation
+from up42.job import Job
 from up42.jobcollection import JobCollection
-
 from up42.utils import (
-    get_logger,
     any_vector_to_fc,
     fc_to_query_geometry,
     filter_jobs_on_mode,
     format_time,
+    get_logger,
 )
-import up42.main as main
 
 logger = get_logger(__name__)
 
@@ -72,10 +71,7 @@ class Workflow:
         """
         Gets and updates the workflow metadata information.
         """
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
-            f"{self.workflow_id}"
-        )
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}"
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
@@ -114,9 +110,7 @@ class Workflow:
         )
         response_json = self.auth._request(request_type="GET", url=url)
         compatible_blocks = response_json["data"]["blocks"]
-        compatible_blocks = {
-            block["name"]: block["blockId"] for block in compatible_blocks
-        }
+        compatible_blocks = {block["name"]: block["blockId"] for block in compatible_blocks}
         return compatible_blocks
 
     def get_workflow_tasks(self, basic: bool = False) -> Union[List, dict]:
@@ -129,10 +123,7 @@ class Workflow:
         Returns:
             The workflow task info.
         """
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
-            f"{self.workflow_id}/tasks"
-        )
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks"
 
         response_json = self.auth._request(request_type="GET", url=url)
         tasks = response_json["data"]
@@ -144,9 +135,7 @@ class Workflow:
             return tasks
 
     @staticmethod
-    def _construct_full_workflow_tasks_dict(
-        input_tasks: Union[List[str], List[dict]]
-    ) -> List[dict]:
+    def _construct_full_workflow_tasks_dict(input_tasks: Union[List[str], List[dict]]) -> List[dict]:
         """
         Constructs the full workflow task definition from a simplified version.
         Accepts blocks ids, block names, block display names & combinations of them.
@@ -194,10 +183,7 @@ class Workflow:
             elif task in list(blocks_displaynames_id.keys()):
                 input_tasks_ids.append(blocks_displaynames_id[task])
             else:
-                raise ValueError(
-                    f"The specified input task {task} does not match any "
-                    f"available block."
-                )
+                raise ValueError(f"The specified input task {task} does not match any " f"available block.")
 
         # Add first task, the data block.
         data_task = {
@@ -279,10 +265,7 @@ class Workflow:
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
 
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
-            f"{self.workflow_id}/tasks/"
-        )
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks/"
         self.auth._request(request_type="POST", url=url, data=input_tasks)
         logger.info(f"Added tasks to workflow: {input_tasks}")
 
@@ -321,10 +304,7 @@ class Workflow:
             for param_name, param_values in task_parameters.items():
                 if "default" in param_values:
                     default_task_parameters[param_name] = param_values["default"]
-                if (
-                    "required" in param_values
-                    and param_name not in default_task_parameters
-                ):
+                if "required" in param_values and param_name not in default_task_parameters:
                     # required without default key, add as placeholder
                     if param_values["required"]:
                         default_task_parameters[param_name] = None
@@ -372,9 +352,7 @@ class Workflow:
         Returns:
             Dictionary of constructed input parameters.
         """
-        logger.info(
-            "See `workflow.get_workflow_tasks() for more detail on the parameters options."
-        )
+        logger.info("See `workflow.get_workflow_tasks() for more detail on the parameters options.")
 
         input_parameters = self._get_default_parameters()
         try:
@@ -402,9 +380,7 @@ class Workflow:
                 input_parameters[data_block_name].pop("time")
             elif start_date is not None or end_date is not None:
                 if start_date is None or end_date is None:
-                    raise ValueError(
-                        "If using dates both `start_date` and `end_date` need to be provided!"
-                    )
+                    raise ValueError("If using dates both `start_date` and `end_date` need to be provided!")
                 time_period = f"{format_time(start_date)}/{format_time(end_date, set_end_of_day=True)}"
                 input_parameters[data_block_name]["time"] = time_period
 
@@ -487,10 +463,7 @@ class Workflow:
                     )
                 )
         else:
-            raise ValueError(
-                "Please provides geometries and scene_ids, geometries"
-                "and time_interval or scene_ids."
-            )
+            raise ValueError("Please provides geometries and scene_ids, geometries" "and time_interval or scene_ids.")
 
         return result_params
 
@@ -505,9 +478,7 @@ class Workflow:
             A dictionary of estimation for each task in the workflow.
         """
         if input_parameters is None:
-            raise ValueError(
-                "Select the job_parameters, use workflow.construct_parameters()!"
-            )
+            raise ValueError("Select the job_parameters, use workflow.construct_parameters()!")
 
         workflow_tasks = self.workflow_tasks
         block_names = [task_name.split(":")[0] for task_name in workflow_tasks.keys()]
@@ -515,9 +486,7 @@ class Workflow:
         for task in input_tasks:
             task["blockVersionTag"] = workflow_tasks[task["name"]]
 
-        estimation = Estimation(
-            auth=self.auth, input_parameters=input_parameters, input_tasks=input_tasks
-        ).estimate()
+        estimation = Estimation(auth=self.auth, input_parameters=input_parameters, input_tasks=input_tasks).estimate()
 
         min_credits, max_credits, min_duration, max_duration = [], [], [], []
         for e in estimation.values():
@@ -557,9 +526,7 @@ class Workflow:
             The spawned real or test job object.
         """
         if input_parameters is None:
-            raise ValueError(
-                "Select the job_parameters, use workflow.construct_parameters()!"
-            )
+            raise ValueError("Select the job_parameters, use workflow.construct_parameters()!")
 
         if isinstance(input_parameters, (str, Path)):
             with open(input_parameters) as src:
@@ -578,13 +545,8 @@ class Workflow:
         if name is None:
             name = self._info["name"]
         name = f"{name}_py"  # Temporary recognition of python API usage.
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/"
-            f"workflows/{self.workflow_id}/jobs?name={name}"
-        )
-        response_json = self.auth._request(
-            request_type="POST", url=url, data=input_parameters  # type: ignore
-        )
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/" f"workflows/{self.workflow_id}/jobs?name={name}"
+        response_json = self.auth._request(request_type="POST", url=url, data=input_parameters)  # type: ignore
         job_json = response_json["data"]
         logger.info(f"Created and running new job: {job_json['id']}.")
         job = Job(
@@ -649,7 +611,7 @@ class Workflow:
 
         # Run all jobs in parallel batches of the max_concurrent_jobs (max. 10.)
         batches = [
-            input_parameters_list[pos : pos + max_concurrent_jobs]
+            input_parameters_list[pos : pos + max_concurrent_jobs]  # noqa E203
             for pos in range(0, len(input_parameters_list), max_concurrent_jobs)
         ]
         for batch in batches:
@@ -658,17 +620,13 @@ class Workflow:
             for params in batch:
                 logger.info(f"Selected input_parameters: {params}.")
 
-                job_name = (
-                    f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
-                )
+                job_name = f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
 
                 url = (
                     f"{self.auth._endpoint()}/projects/{self.project_id}/"
                     f"workflows/{self.workflow_id}/jobs?name={job_name}"
                 )
-                response_json = self.auth._request(
-                    request_type="POST", url=url, data=params
-                )
+                response_json = self.auth._request(request_type="POST", url=url, data=params)
                 job_json = response_json["data"]
                 logger.info(f"Created and running new job: {job_json['id']}")
                 job = Job(
@@ -690,9 +648,7 @@ class Workflow:
                         raise
             jobs_list.extend(batch_jobs)
 
-        job_collection = JobCollection(
-            self.auth, project_id=self.project_id, jobs=jobs_list
-        )
+        job_collection = JobCollection(self.auth, project_id=self.project_id, jobs=jobs_list)
         return job_collection
 
     def test_job(
@@ -772,9 +728,7 @@ class Workflow:
         Returns:
             The spawned job object.
         """
-        return self._helper_run_job(
-            input_parameters=input_parameters, track_status=track_status, name=name
-        )
+        return self._helper_run_job(input_parameters=input_parameters, track_status=track_status, name=name)
 
     def run_jobs_parallel(
         self,
@@ -821,29 +775,19 @@ class Workflow:
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
 
-        jobs_workflow_json = [
-            j for j in jobs_json if j["workflowId"] == self.workflow_id
-        ]
+        jobs_workflow_json = [j for j in jobs_json if j["workflowId"] == self.workflow_id]
 
         logger.info(
-            f"Got {len(jobs_workflow_json)} jobs for workflow "
-            f"{self.workflow_id} in project {self.project_id}."
+            f"Got {len(jobs_workflow_json)} jobs for workflow " f"{self.workflow_id} in project {self.project_id}."
         )
         if return_json:
             return jobs_workflow_json
         else:
-            jobs = [
-                Job(self.auth, job_id=job["id"], project_id=self.project_id)
-                for job in tqdm(jobs_workflow_json)
-            ]
-            jobcollection = JobCollection(
-                auth=self.auth, project_id=self.project_id, jobs=jobs
-            )
+            jobs = [Job(self.auth, job_id=job["id"], project_id=self.project_id) for job in tqdm(jobs_workflow_json)]
+            jobcollection = JobCollection(auth=self.auth, project_id=self.project_id, jobs=jobs)
             return jobcollection
 
-    def update_name(
-        self, name: Optional[str] = None, description: Optional[str] = None
-    ) -> None:
+    def update_name(self, name: Optional[str] = None, description: Optional[str] = None) -> None:
         """
         Updates the workflow name and description.
 
@@ -852,10 +796,7 @@ class Workflow:
             description: New description of the workflow.
         """
         properties_to_update = {"name": name, "description": description}
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
-            f"{self.workflow_id}"
-        )
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}"
         self.auth._request(request_type="PUT", url=url, data=properties_to_update)
         # TODO: Renew info
         logger.info(f"Updated workflow name: {properties_to_update}")
@@ -864,10 +805,7 @@ class Workflow:
         """
         Deletes the workflow and sets the Python object to None.
         """
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
-            f"{self.workflow_id}"
-        )
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}"
         self.auth._request(request_type="DELETE", url=url, return_text=False)
         logger.info(f"Successfully deleted workflow: {self.workflow_id}")
         del self

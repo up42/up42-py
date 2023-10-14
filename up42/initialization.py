@@ -16,20 +16,19 @@ import logging
 from typing import List
 
 from up42 import main
-from up42.main import _check_auth
-from up42.utils import get_logger
-from up42.project import Project
-from up42.workflow import Workflow
-from up42.job import Job
-from up42.jobtask import JobTask
-from up42.jobcollection import JobCollection
-from up42.catalog import Catalog
-from up42.tasking import Tasking
-from up42.storage import Storage
-from up42.order import Order
 from up42.asset import Asset
+from up42.catalog import Catalog
+from up42.job import Job
+from up42.jobcollection import JobCollection
+from up42.jobtask import JobTask
+from up42.main import _check_auth
+from up42.order import Order
+from up42.project import Project
+from up42.storage import Storage
+from up42.tasking import Tasking
+from up42.utils import get_logger
 from up42.webhooks import Webhook
-
+from up42.workflow import Workflow
 
 logger = get_logger(__name__, level=logging.INFO)
 
@@ -67,9 +66,7 @@ def initialize_workflow(workflow_id: str) -> "Workflow":
     Args:
         workflow_id: The UP42 workflow_id
     """
-    workflow = Workflow(
-        auth=main._auth, workflow_id=workflow_id, project_id=str(main._auth.project_id)
-    )
+    workflow = Workflow(auth=main._auth, workflow_id=workflow_id, project_id=str(main._auth.project_id))
     logger.info(f"Initialized {workflow}")
     return workflow
 
@@ -111,13 +108,8 @@ def initialize_jobcollection(job_ids: List[str]) -> "JobCollection":
     Args:
         job_ids: List of UP42 job_ids
     """
-    jobs = [
-        Job(auth=main._auth, job_id=job_id, project_id=str(main._auth.project_id))
-        for job_id in job_ids
-    ]
-    jobcollection = JobCollection(
-        auth=main._auth, project_id=str(main._auth.project_id), jobs=jobs
-    )
+    jobs = [Job(auth=main._auth, job_id=job_id, project_id=str(main._auth.project_id)) for job_id in job_ids]
+    jobcollection = JobCollection(auth=main._auth, project_id=str(main._auth.project_id), jobs=jobs)
     logger.info(f"Initialized {jobcollection}")
     return jobcollection
 

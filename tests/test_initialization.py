@@ -1,38 +1,38 @@
 import pytest
 
+# pylint: disable=wrong-import-order
+import up42
+
 # pylint: disable=unused-import
 from .context import (
-    Project,
-    Catalog,
-    Workflow,
-    Job,
-    JobTask,
-    JobCollection,
-    Storage,
-    Order,
     Asset,
+    Catalog,
+    Job,
+    JobCollection,
+    JobTask,
+    Order,
+    Project,
+    Storage,
+    Workflow,
 )
 from .fixtures import (
-    PROJECT_ID,
-    PROJECT_APIKEY,
-    WORKFLOW_ID,
+    ASSET_ID,
     JOB_ID,
     JOBTASK_ID,
     ORDER_ID,
-    ASSET_ID,
-    auth_mock,
-    project_mock,
-    workflow_mock,
-    job_mock,
-    jobtask_mock,
-    jobcollection_single_mock,
-    storage_mock,
-    order_mock,
+    PROJECT_APIKEY,
+    PROJECT_ID,
+    WORKFLOW_ID,
     asset_mock,
+    auth_mock,
+    job_mock,
+    jobcollection_single_mock,
+    jobtask_mock,
+    order_mock,
+    project_mock,
+    storage_mock,
+    workflow_mock,
 )
-
-# pylint: disable=wrong-import-order
-import up42
 
 
 def test_initialize_object_without_auth_raises():

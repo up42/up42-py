@@ -242,13 +242,9 @@ class Catalog(CatalogBase, VizTools):
         """
 
         if sortby is not None or ascending is not None:
-            logger.info(
-                "sortby is deprecated, currently only sorting output by creation date."
-            )
+            logger.info("sortby is deprecated, currently only sorting output by creation date.")
 
-        time_period = (
-            f"{format_time(start_date)}/{format_time(end_date, set_end_of_day=True)}"
-        )
+        time_period = f"{format_time(start_date)}/{format_time(end_date, set_end_of_day=True)}"
         aoi_fc = any_vector_to_fc(
             vector=geometry,
         )
@@ -278,9 +274,7 @@ class Catalog(CatalogBase, VizTools):
 
         return search_parameters
 
-    def search(
-        self, search_parameters: dict, as_dataframe: bool = True
-    ) -> Union[GeoDataFrame, dict]:
+    def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[GeoDataFrame, dict]:
         """
         Searches the catalog for the the search parameters and returns the metadata of
         the matching scenes.
@@ -357,9 +351,7 @@ class Catalog(CatalogBase, VizTools):
         if not features:
             df = GeoDataFrame(columns=["geometry"], geometry="geometry")
         else:
-            df = GeoDataFrame.from_features(
-                FeatureCollection(features=features), crs="EPSG:4326"
-            )
+            df = GeoDataFrame.from_features(FeatureCollection(features=features), crs="EPSG:4326")
 
         logger.info(f"{df.shape[0]} results returned.")
         if as_dataframe:
@@ -414,9 +406,7 @@ class Catalog(CatalogBase, VizTools):
         }
         if tags is not None:
             order_parameters["tags"] = tags
-        logger.info(
-            "See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options."
-        )
+        logger.info("See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options.")
         schema = self.get_data_product_schema(data_product_id)
         order_parameters = autocomplete_order_parameters(order_parameters, schema)
 
@@ -451,15 +441,9 @@ class Catalog(CatalogBase, VizTools):
         """
         if self.data_products is None:
             self.data_products = self.get_data_products(basic=True)  # type: ignore
-        host = [
-            v["host"]
-            for v in self.data_products.values()  # type: ignore
-            if v["collection"] == collection
-        ]
+        host = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
         if not host:
-            raise ValueError(
-                f"Selected collections {collection} is not valid. See catalog.get_collections."
-            )
+            raise ValueError(f"Selected collections {collection} is not valid. See catalog.get_collections.")
         host = host[0]
         logger.info(f"Downloading quicklooks from provider {host}.")
 
@@ -476,21 +460,15 @@ class Catalog(CatalogBase, VizTools):
         out_paths: List[str] = []
         for image_id in tqdm(image_ids):
             try:
-                url = (
-                    f"{self.auth._endpoint()}/catalog/{host}/image/{image_id}/quicklook"
-                )
-                response = self.auth._request(
-                    request_type="GET", url=url, return_text=False
-                )
+                url = f"{self.auth._endpoint()}/catalog/{host}/image/{image_id}/quicklook"
+                response = self.auth._request(request_type="GET", url=url, return_text=False)
                 out_path = output_directory / f"quicklook_{image_id}.jpg"
                 out_paths.append(str(out_path))
                 with open(out_path, "wb") as dst:
                     for chunk in response:
                         dst.write(chunk)
             except ValueError:
-                logger.warning(
-                    f"Image with id {image_id} does not have quicklook available. Skipping ..."
-                )
+                logger.warning(f"Image with id {image_id} does not have quicklook available. Skipping ...")
 
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths

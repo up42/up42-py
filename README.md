@@ -32,7 +32,7 @@
 ## Installation & Documentation
 
 See the [documentation](https://sdk.up42.com/) for getting started guides, examples and the code
-reference. 
+reference.
 
 Install via pip or conda. The package requires Python > 3.6.
 

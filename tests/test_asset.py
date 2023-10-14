@@ -40,9 +40,7 @@ def test_asset_stac_info(asset_mock):
 
 
 def test_asset_update_metadata(asset_mock):
-    updated_info = asset_mock.update_metadata(
-        title="some_other_title", tags=["othertag1", "othertag2"]
-    )
+    updated_info = asset_mock.update_metadata(title="some_other_title", tags=["othertag1", "othertag2"])
     assert updated_info["title"] == "some_other_title"
     assert updated_info["tags"] == ["othertag1", "othertag2"]
 
@@ -100,9 +98,7 @@ def test_asset_download(asset_mock, requests_mock):
         ),
     ],
 )
-def test_asset_download_no_unpacking(
-    asset_fixture, download_url, out_file_name, requests_mock, request
-):
+def test_asset_download_no_unpacking(asset_fixture, download_url, out_file_name, requests_mock, request):
     asset_fixture = request.getfixturevalue(asset_fixture)
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as src_tgz:
@@ -133,8 +129,6 @@ def test_download_stac_asset(asset_mock2, requests_mock):
         },
     )
     with tempfile.TemporaryDirectory() as tempdir:
-        out_path = asset_mock2.download_stac_asset(
-            pystac.Asset(href=STAC_ASSET_DOWNLOAD_URL, roles=["data"]), tempdir
-        )
+        out_path = asset_mock2.download_stac_asset(pystac.Asset(href=STAC_ASSET_DOWNLOAD_URL, roles=["data"]), tempdir)
         assert out_path.exists()
         assert out_path.name == "stac_asset"

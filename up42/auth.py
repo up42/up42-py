@@ -7,17 +7,17 @@ from typing import Dict, Optional, Union
 
 import requests
 import requests.exceptions
+from oauthlib.oauth2 import BackendApplicationClient, MissingTokenError
 from requests.auth import HTTPBasicAuth
 from requests_oauthlib import OAuth2Session
-from oauthlib.oauth2 import BackendApplicationClient, MissingTokenError
 from tenacity import (
     Retrying,
-    wait_fixed,
-    wait_random_exponential,
-    stop_after_attempt,
+    retry,
     retry_if_exception,
     retry_if_exception_type,
-    retry,
+    stop_after_attempt,
+    wait_fixed,
+    wait_random_exponential,
 )
 
 from up42.utils import get_logger
@@ -59,10 +59,7 @@ class retry_if_429_rate_limit(retry_if_exception):
 
     def __init__(self):
         def is_http_429_error(exception):
-            return (
-                isinstance(exception, requests.exceptions.HTTPError)
-                and exception.response.status_code == 429
-            )
+            return isinstance(exception, requests.exceptions.HTTPError) and exception.response.status_code == 429
 
         super().__init__(predicate=is_http_429_error)
 
@@ -120,9 +117,7 @@ class Auth:
         """
         if self.project_id is None or self.project_api_key is None:
             if self.cfg_file is None:
-                raise ValueError(
-                    "Provide project_id and project_api_key via arguments or config file!"
-                )
+                raise ValueError("Provide project_id and project_api_key via arguments or config file!")
 
             # Source credentials from config file.
             try:
@@ -133,20 +128,15 @@ class Auth:
                         self.project_api_key = config["project_api_key"]
                     except KeyError as e:
                         raise ValueError(
-                            "Provided config file does not contain project_id and "
-                            "project_api_key!"
+                            "Provided config file does not contain project_id and " "project_api_key!"
                         ) from e
                 logger.info("Got credentials from config file.")
             except FileNotFoundError as e:
                 raise ValueError("Selected config file does not exist!") from e
 
-        elif all(
-            v is not None
-            for v in [self.cfg_file, self.project_id, self.project_api_key]
-        ):
+        elif all(v is not None for v in [self.cfg_file, self.project_id, self.project_api_key]):
             logger.info(
-                "Credentials are provided via arguments and config file, "
-                "now using the argument credentials."
+                "Credentials are provided via arguments and config file, " "now using the argument credentials."
             )
 
     def _endpoint(self) -> str:
@@ -156,18 +146,12 @@ class Auth:
     def _get_token(self):
         """Project specific authentication via project id and project api key."""
         try:
-            client = BackendApplicationClient(
-                client_id=self.project_id, client_secret=self.project_api_key
-            )
+            client = BackendApplicationClient(client_id=self.project_id, client_secret=self.project_api_key)
             auth = HTTPBasicAuth(self.project_id, self.project_api_key)
             get_token_session = OAuth2Session(client=client)
-            token_response = get_token_session.fetch_token(
-                token_url=self._endpoint() + "/oauth/token", auth=auth
-            )
+            token_response = get_token_session.fetch_token(token_url=self._endpoint() + "/oauth/token", auth=auth)
         except MissingTokenError as err:
-            raise ValueError(
-                "Authentication was not successful, check the provided project credentials."
-            ) from err
+            raise ValueError("Authentication was not successful, check the provided project credentials.") from err
 
         self.token = token_response["data"]["accessToken"]
 
@@ -179,12 +163,7 @@ class Auth:
 
     @staticmethod
     def _generate_headers(token: str) -> Dict[str, str]:
-        version = (
-            Path(__file__)
-            .resolve()
-            .parent.joinpath("_version.txt")
-            .read_text(encoding="utf-8")
-        )
+        version = Path(__file__).resolve().parent.joinpath("_version.txt").read_text(encoding="utf-8")
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
@@ -264,19 +243,14 @@ class Auth:
         retryer_token = Retrying(
             stop=stop_after_attempt(2),  # Original attempt + one retry
             wait=wait_fixed(0.5),
-            retry=(
-                retry_if_401_invalid_token()
-                | retry_if_exception_type(requests.exceptions.ConnectionError)
-            ),
+            retry=(retry_if_401_invalid_token() | retry_if_exception_type(requests.exceptions.ConnectionError)),
             after=lambda retry_state: self._get_token(),  # type:ignore
             reraise=True,
             # after final failed attempt, raises last attempt's exception instead of RetryError.
         )
 
         try:
-            response: requests.Response = retryer_token(
-                self._request_helper, request_type, url, data, querystring
-            )
+            response: requests.Response = retryer_token(self._request_helper, request_type, url, data, querystring)
 
         # There are two UP42 API versions:
         # v1 endpoints give response format {"data": ..., "error": ...}   data e.g. dict or list.  error str or dict

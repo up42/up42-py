@@ -42,9 +42,7 @@ class Tasking(CatalogBase):
         name: str,
         acquisition_start: Union[str, datetime],
         acquisition_end: Union[str, datetime],
-        geometry: Union[
-            FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point
-        ],
+        geometry: Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point],
         tags: Optional[List[str]] = None,
     ):
         """
@@ -93,9 +91,7 @@ class Tasking(CatalogBase):
             order_parameters["tags"] = tags
 
         schema = self.get_data_product_schema(data_product_id)
-        logger.info(
-            "See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options."
-        )
+        logger.info("See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options.")
         order_parameters = autocomplete_order_parameters(order_parameters, schema)
 
         geometry = any_vector_to_fc(vector=geometry)
@@ -103,9 +99,7 @@ class Tasking(CatalogBase):
             # Tasking (e.g. Blacksky) can require Point geometry.
             order_parameters["params"]["geometry"] = geometry["features"][0]["geometry"]  # type: ignore
         else:
-            geometry = fc_to_query_geometry(
-                fc=geometry, geometry_operation="intersects"
-            )
+            geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
             order_parameters["params"]["geometry"] = geometry  # type: ignore
 
         return order_parameters
@@ -156,8 +150,7 @@ class Tasking(CatalogBase):
             url += f"&orderId={order_id}"
         if decision is not None:
             decisions_validation = (
-                single_decision in ["NOT_DECIDED", "ACCEPTED", "REJECTED"]
-                for single_decision in decision
+                single_decision in ["NOT_DECIDED", "ACCEPTED", "REJECTED"] for single_decision in decision
             )
             if all(decisions_validation):
                 for single_decision in decision:
@@ -186,9 +179,7 @@ class Tasking(CatalogBase):
 
         decision_payload = {"decision": decision}
 
-        response_json = self.auth._request(
-            request_type="PATCH", url=url, data=decision_payload
-        )
+        response_json = self.auth._request(request_type="PATCH", url=url, data=decision_payload)
 
         return response_json
 
@@ -226,10 +217,7 @@ class Tasking(CatalogBase):
         if order_id is not None:
             url += f"&orderId={order_id}"
         if decision is not None:
-            decisions_validation = (
-                single_decision in ["NOT_DECIDED", "ACCEPTED"]
-                for single_decision in decision
-            )
+            decisions_validation = (single_decision in ["NOT_DECIDED", "ACCEPTED"] for single_decision in decision)
             if all(decisions_validation):
                 for single_decision in decision:
                     url += f"&decision={single_decision}"
@@ -253,9 +241,7 @@ class Tasking(CatalogBase):
         """
         url = f"{self.auth._endpoint()}/v2/tasking/feasibility/{feasibility_id}"
         accepted_option_payload = {"acceptedOptionId": accepted_option_id}
-        response_json = self.auth._request(
-            request_type="PATCH", url=url, data=accepted_option_payload
-        )
+        response_json = self.auth._request(request_type="PATCH", url=url, data=accepted_option_payload)
         return response_json
 
     def __repr__(self):
