@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 0.33.0
 
-**October 16, 2023**
+**October XX, 2023**
 
 A new function added to the [Asset class](https://sdk.up42.com/reference/asset-reference):
 
