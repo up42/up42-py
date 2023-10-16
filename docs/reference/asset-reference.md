@@ -10,7 +10,7 @@ Types of assets:
 
 - **UP42 assets**
 
-  The original delivery you received in storage as a result of a completed tasking or catalog order.
+    The original delivery you received in storage as a result of a completed tasking or catalog order.
 
 - **STAC assets**
 
