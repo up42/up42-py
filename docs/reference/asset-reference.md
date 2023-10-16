@@ -144,3 +144,28 @@ asset.download_stac_asset(
     output_directory="/Users/max.mustermann/Desktop/",
 )
 ```
+
+### get_stac_asset_url()
+
+The `get_stac_asset_url()` function returns a pre-signed download URL for a STAC asset.
+The generated URL can be used for up to 30 seconds to download the asset without authentication.
+
+```python
+get_stac_asset_url(stac_asset)
+```
+
+The returned format is `str`.
+
+<h5> Arguments </h5>
+
+| Argument     | Description                                                      |
+| ------------ | ---------------------------------------------------------------- |
+| `stac_asset` | **pystac.Asset / required**<br/>The STAC asset to be downloaded. |
+
+<h5> Example </h5>
+
+```python
+asset.get_stac_asset_url(
+    stac_asset=asset.stac_items.items[0].assets.get("b01.tiff"),
+    )
+```
