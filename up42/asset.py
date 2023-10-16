@@ -137,12 +137,12 @@ class Asset:
 
     def get_stac_asset_url(self, stac_asset: pystac.Asset):
         """
-        Returns the signed URL for the STAC Asset.
+        Returns the pre-signed URL for the STAC Asset.
         Args:
             stac_asset: pystac Asset object.
 
         Returns:
-            Signed URL for the STAC Asset.
+            Pre-signed URL for the STAC Asset.
         """
         stac_asset_id = stac_asset.href.split("/")[-1]
         # so we can utilize all functionalities of Auth class
