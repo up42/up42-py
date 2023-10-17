@@ -167,5 +167,5 @@ The returned format is `str`.
 ```python
 asset.get_stac_asset_url(
     stac_asset=asset.stac_items.items[0].assets.get("b01.tiff"),
-    )
+)
 ```
