@@ -87,9 +87,7 @@ class Asset:
         pystac_client_aux, pystac_asset_search = self._stac_search
         resulting_item = pystac_asset_search.item_collection()
         if resulting_item is None:
-            raise ValueError(
-                f"No STAC metadata information available for this asset {self.asset_id}"
-            )
+            raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}")
         collection_id = resulting_item[0].collection_id
         return pystac_client_aux.get_collection(collection_id)
 
@@ -101,13 +99,9 @@ class Asset:
             resulting_items = pystac_asset_search.item_collection()
             return resulting_items
         except Exception as exc:
-            raise ValueError(
-                f"No STAC metadata information available for this asset {self.asset_id}"
-            ) from exc
+            raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}") from exc
 
-    def update_metadata(
-        self, title: str = None, tags: List[str] = None, **kwargs
-    ) -> dict:
+    def update_metadata(self, title: str = None, tags: List[str] = None, **kwargs) -> dict:
         """
         Update the metadata of the asset.
 
@@ -120,13 +114,11 @@ class Asset:
         """
         url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
         body_update = {"title": title, "tags": tags, **kwargs}
-        response_json = self.auth._request(
-            request_type="POST", url=url, data=body_update
-        )
+        response_json = self.auth._request(request_type="POST", url=url, data=body_update)
         self._info = response_json
         return self._info
 
-    def _get_download_url(self, stac_asset_id: Optional[str] = None, request_type:str = "POST") -> str:
+    def _get_download_url(self, stac_asset_id: Optional[str] = None, request_type: str = "POST") -> str:
         if stac_asset_id is None:
             url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/download-url"
         else:
@@ -148,9 +140,7 @@ class Asset:
         # so we can utilize all functionalities of Auth class
         return self._get_download_url(stac_asset_id=stac_asset_id)
 
-    def download(
-        self, output_directory: Union[str, Path, None] = None, unpacking: bool = True
-    ) -> List[str]:
+    def download(self, output_directory: Union[str, Path, None] = None, unpacking: bool = True) -> List[str]:
         """
         Downloads the asset. Unpacking the downloaded file will happen as default.
 
@@ -165,9 +155,7 @@ class Asset:
         logger.info(f"Downloading asset {self.asset_id}")
 
         if output_directory is None:
-            output_directory = (
-                Path.cwd() / f"project_{self.auth.project_id}/asset_{self.asset_id}"
-            )
+            output_directory = Path.cwd() / f"project_{self.auth.project_id}/asset_{self.asset_id}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
@@ -188,9 +176,7 @@ class Asset:
         self.results = out_filepaths
         return out_filepaths
 
-    def download_stac_asset(
-        self, stac_asset: pystac.Asset, output_directory: Union[str, Path, None] = None
-    ) -> Path:
+    def download_stac_asset(self, stac_asset: pystac.Asset, output_directory: Union[str, Path, None] = None) -> Path:
         """
         Downloads a STAC asset to a specified output directory.
 
@@ -209,10 +195,7 @@ class Asset:
         """
         logger.info(f"Downloading STAC asset {stac_asset.title}")
         if output_directory is None:
-            output_directory = (
-                Path.cwd()
-                / f"project_{self.auth.project_id}/asset_{self.asset_id}/{stac_asset.title}"
-            )
+            output_directory = Path.cwd() / f"project_{self.auth.project_id}/asset_{self.asset_id}/{stac_asset.title}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)

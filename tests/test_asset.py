@@ -134,6 +134,9 @@ def test_download_stac_asset(asset_mock2, requests_mock):
     )
     with tempfile.TemporaryDirectory() as tempdir:
         out_path = asset_mock2.download_stac_asset(
+            pystac.Asset(href=STAC_ASSET_DOWNLOAD_URL, roles=["data"]), tempdir
+        )
+        out_path = asset_mock2.download_stac_asset(
             pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]), tempdir
         )
         assert out_path.exists()

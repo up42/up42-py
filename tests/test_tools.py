@@ -1,9 +1,9 @@
 from pathlib import Path
 
-import pytest
 import geopandas as gpd
+import pytest
 
-from .context import read_vector_file, get_example_aoi
+from .context import get_example_aoi, read_vector_file
 
 
 @pytest.mark.parametrize("vector_format", ["geojson", "kml", "wkt"])

@@ -3,23 +3,21 @@ SDK conveniance functionality that is made available on the up42 import object (
 related to API calls.
 """
 
+import logging
 from pathlib import Path
 from typing import Union
-import logging
 
 import geopandas as gpd
-from geopandas import GeoDataFrame
 import pandas as pd
 import shapely
+from geopandas import GeoDataFrame
 
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
 
 
-def read_vector_file(
-    filename: str = "aoi.geojson", as_dataframe: bool = False
-) -> Union[dict, GeoDataFrame]:
+def read_vector_file(filename: str = "aoi.geojson", as_dataframe: bool = False) -> Union[dict, GeoDataFrame]:
     """
     Reads vector files (geojson, shapefile, kml, wkt) to a feature collection,
     for use as the AOI geometry in the workflow input parameters
@@ -57,9 +55,7 @@ def read_vector_file(
         return df.__geo_interface__
 
 
-def get_example_aoi(
-    location: str = "Berlin", as_dataframe: bool = False
-) -> Union[dict, GeoDataFrame]:
+def get_example_aoi(location: str = "Berlin", as_dataframe: bool = False) -> Union[dict, GeoDataFrame]:
     """
     Gets predefined, small, rectangular example AOI for the selected location.
 
@@ -73,17 +69,11 @@ def get_example_aoi(
     """
     logger.info(f"Getting small example AOI in location '{location}'.")
     if location == "Berlin":
-        example_aoi = read_vector_file(
-            f"{str(Path(__file__).resolve().parent)}/data/aoi_berlin.geojson"
-        )
+        example_aoi = read_vector_file(f"{str(Path(__file__).resolve().parent)}/data/aoi_berlin.geojson")
     elif location == "Washington":
-        example_aoi = read_vector_file(
-            f"{str(Path(__file__).resolve().parent)}/data/aoi_washington.geojson"
-        )
+        example_aoi = read_vector_file(f"{str(Path(__file__).resolve().parent)}/data/aoi_washington.geojson")
     else:
-        raise ValueError(
-            "Please select one of 'Berlin' or 'Washington' as the location!"
-        )
+        raise ValueError("Please select one of 'Berlin' or 'Washington' as the location!")
 
     if as_dataframe:
         df = GeoDataFrame.from_features(example_aoi, crs=4326)
@@ -99,9 +89,7 @@ def settings(log: bool = True) -> None:
         log: Activates/deactivates logging, default True is activated logging.
     """
     if log:
-        logger.info(
-            "Logging enabled (default) - use up42.settings(log=False) to disable."
-        )
+        logger.info("Logging enabled (default) - use up42.settings(log=False) to disable.")
     else:
         logger.info("Logging disabled - use up42.settings(log=True) to reactivate.")
 

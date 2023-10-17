@@ -24,7 +24,7 @@ mkdocs build
 ```
 
 ## Update Python API reference preview via mkdocstrings
-Reinstall Python package via 
+Reinstall Python package via
 ```
 pip install -e .
 ```
