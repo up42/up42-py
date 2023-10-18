@@ -30,6 +30,14 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.33.0
+
+**October XX, 2023**
+
+A new function added to the [Asset class](https://sdk.up42.com/reference/asset-reference):
+
+- `get_stac_asset_url` generates a pre-signed URL that allows you to download a STAC asset from storage without authentication.
+
 ## 0.32.0
 
 **September 7, 2023**
