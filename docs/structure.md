@@ -73,8 +73,16 @@
 
         {{ docstring_asset }}
         <br>
-        Available functions, see also [**Asset reference**](asset-reference.md):
-        {{ format_funcs(funcs_asset) }}
+        Available attributes and functions, see also [**Asset reference**](asset-reference.md):
+        <ul>
+            <li>`.info`</li>
+            <li>`.update_metadata()`</li>
+            <li>`.download()`</li>
+            <li>`.stac_info`</li>
+            <li>`.stac_items`</li>
+            <li>`.download_stac_asset()`</li>
+            <li>`.get_stac_asset_url()`</li>
+        </ul>
 
     === "Project"
 
