@@ -87,7 +87,7 @@ The returned format is `Union[GeoDataFrame, dict]`.
 
 ```python
 catalog.search(
-    search_parameters=search_parameters,  # Use catalog.construct_search_parameters() to construct your search parameters
+    search_parameters=search_parameters,  # Use catalog.construct_search_parameters() to get search_parameters
     as_dataframe=False,
 )
 ```
@@ -118,18 +118,9 @@ The returned format is `list[str]`.
 <h5> Example </h5>
 
 ```python
-# Search for catalog imagery
-
-search_results = catalog.search(
-    search_parameters=search_parameters,  # Use catalog.construct_search_parameters() to construct your search parameters
-    as_dataframe=False,
-)
-
-# Download quicklooks
-
 catalog.download_quicklooks(
-    image_ids=list(search_results.id),
-    collection="phr",  # Use catalog.get_collections() to select a collection
+    image_ids=list(search_results.id),  # Use catalog.search() to get search_results
+    collection="phr",  # Use catalog.get_collections() to select a collection name
     output_directory="/Users/max.mustermann/Desktop/",
 )
 ```
@@ -201,14 +192,14 @@ The returned format is `int`.
 <h5> Example </h5>
 
 ```python
-catalog.estimate_order(order_parameters) # Use catalog.construct_order_parameters() to construct your order parameters
+catalog.estimate_order(order_parameters) # Use catalog.construct_order_parameters() to get order_parameters
 ```
 
 ## Visualization
 
 ### plot_coverage()
 
-The `plot_coverage()` function allows you to visualize coverage map of a GeoDataFrame.
+The `plot_coverage()` function allows you to visualize the coverage of your search results.
 Use together with [`search()`](#search).
 
 ```python
@@ -224,16 +215,20 @@ plot_coverage(
 
 | Argument        | Overview                                                                                                                                     |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scenes`        | **GeoDataFrame / required**<br/>The catalog search results to be plotted.                                                                    |
-| `aoi`           | **GeoDataFrame**<br/>The AOI to be plotted on the map.                                                                                       |
-| `legend_column` | **str**<br/>Arrange legend entries in ascending order based on a chosen column name of `scenes`. The default value is `sceneID`.             |
+| `scenes`        | **GeoDataFrame / required**<br/>The catalog search results to be visualized.                                                                 |
+| `aoi`           | **GeoDataFrame**<br/>The AOI to be visualized.                                                                                               |
+| `legend_column` | **str**<br/>The column name of `scenes` to arrange legend entries by ascending order. The default value is `sceneID`.                        |
 | `figsize`       | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(12, 16)`. |
 
 <h5> Example </h5>
 
+```bash title="Advanced installation with plotting functionalities"
+pip install up42-py[viz]
+```
+
 ```python
 catalog.plot_coverage(
-    scenes=search_results,  # Use catalog.search() to get your search results
+    scenes=search_results,  # Use catalog.search() to get search_results
     aoi="/Users/max.mustermann/Desktop/aoi.geojson",
     legend_column="cloudCoverage",
     figsize=(14, 18),
@@ -245,7 +240,81 @@ catalog.plot_coverage(
 The `map_quicklooks()` function allows you to visualize downloaded quicklooks on a Folium map.
 Use together with [`download_quicklooks()`](#download_quicklooks).
 
+```python
+map_quicklooks(
+    scenes,
+    aoi,
+    show_images,
+    show_features,
+    filepaths,
+    name_column,
+    save_html,
+)
+```
+
+The returned format is `folium.Map`.
+
+<h5> Arguments </h5>
+
+| Argument        | Overview                                                                                                                                                                                                 |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scenes`        | **GeoDataFrame / required**<br/>The catalog search results to be visualized.                                                                                                                             |
+| `aoi`           | **GeoDataFrame**<br/>The AOI to be visualized.                                                                                                                                                           |
+| `show_images`   | **bool**<br/>Determines whether to visualize images:<ul><li>`True`: show the images on the map.</li><li>`False`: don't show the images on the map.</li></ul> The default value is `True`.                |
+| `show_features` | **bool**<br/>Determines whether to visualize the geometry:<br/><ul><li>`True`: show the geometry on the map.</li><li>`False`: don't show the geometry on the map.</li></ul>The default value is `False`. |
+| `filepaths`     | **list[path]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                                                                                                              |
+| `name_column`   | **str**<br/>The column name of `scenes` that provides the feature name. The default value is `id`.                                                                                                       |
+| `save_html`     | **path**<br/>Use to specify a path to save the map as an HTML file.                                                                                                                                      |
+
+<h5> Example </h5>
+
+```bash title="Advanced installation with plotting functionalities"
+pip install up42-py[viz]
+```
+
+```python
+catalog.map_quicklooks(
+    scenes=search_results,  # Use catalog.search() to get search_results
+    aoi="/Users/max.mustermann/Desktop/aoi.geojson",
+    show_images=True,
+    show_features=True,
+    filepaths=catalog.quicklooks,  # Use catalog.download_quicklooks to get catalog.quicklooks
+    name_column="cloudCoverage",
+    save_html="/Users/max.mustermann/Desktop/",
+)
+```
+
 ### plot_quicklooks()
 
-The `plot_quicklooks()` function allows you to visualize downloaded quicklooks. Use together with [`download_quicklooks()`](#download_quicklooks).
+The `plot_quicklooks()` function allows you to visualize downloaded quicklooks.
+Use together with [`download_quicklooks()`](#download_quicklooks).
 
+```python
+plot_quicklooks(
+    figsize,
+    filepaths,
+    titles
+)
+```
+
+<h5> Arguments </h5>
+
+| Argument    | Overview                                                                                                                                   |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `figsize`   | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(8, 8)`. |
+| `filepaths` | **list[path], dict, none]**<br/>The file paths. By default, the last downloaded results will be used.                                      |
+| `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                             |
+
+<h5> Example </h5>
+
+```bash title="Advanced installation with plotting functionalities"
+pip install up42-py[viz]
+```
+
+```python
+catalog.plot_quicklooks(
+    figsize=(10, 10),
+    filepaths=catalog.quicklooks,  # Use catalog.download_quicklooks to get catalog.quicklooks
+    titles=[str(x) for x in range(len(catalog.quicklooks))],
+)
+```
