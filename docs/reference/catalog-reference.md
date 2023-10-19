@@ -30,15 +30,15 @@ The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Argument         | Overview                                                                                                                                                                                                                                             |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `geometry`       | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point] / required**<br/>The geometry of the area to be searched for. It can be a POI or an AOI depending on the [collection](https://docs.up42.com/data/tasking/limitations). |
-| `collections`    | **list[str] / required**<br/>The geospatial collections to search for.                                                                                                                                                                               |
-| `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format.                                                                                                                                                                          |
-| `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format.                                                                                                                                                                            |
-| `usage_type`     | **list[str]**<br/>The usage type. The allowed values:<br/><ul><li>`DATA`</li><li>`ANALYTICS`</li></ul>                                                                                                                                               |
-| `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.                                                                                                                                              |
-| `max_cloudcover` | **int**<br/>The maximum cloud coverage percentage of the search results.                                                                                                                                                                             |
+| Argument         | Overview                                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `geometry`       | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon] / required**<br/>The AOI to be searched for. |
+| `collections`    | **List[str] / required**<br/>The geospatial collections to search for.                                              |
+| `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format.                                         |
+| `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format.                                           |
+| `usage_type`     | **List[str]**<br/>The usage type. The allowed values:<br/><ul><li>`DATA`</li><li>`ANALYTICS`</li></ul>              |
+| `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.             |
+| `max_cloudcover` | **int**<br/>The maximum cloud coverage percentage of the search results.                                            |
 
 <h5> Example </h5>
 
@@ -85,10 +85,10 @@ The returned format is `Union[GeoDataFrame, dict]`.
 
 <h5> Arguments </h5>
 
-| Argument            | Overview                                                                                                                                                                        |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `search_parameters` | **dict / required**<br/>The [catalog search parameters].(#construct-search-parameters).                                                                                         |
-| `as_dataframe`      | **bool**<br/>Determines how to return search results:</br/><ul><li>`True`: return DataFrame.</li><li>`False`: return a FeatureCollection.</li></ul>The default value is `True`. |
+| Argument            | Overview                                                                                                                                                            |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `search_parameters` | **dict / required**<br/>The [catalog search parameters].(#construct-search-parameters).                                                                             |
+| `as_dataframe`      | **bool**<br/>Determines how to return search results:</br/><ul><li>`True`: return GeoDataFrame.</li><li>`False`: return JSON.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
 
@@ -111,7 +111,7 @@ geometry = {
 # Construct search parameters
 
 search_parameters = catalog.construct_search_parameters(
-    collections=["phr"],
+    collections=["phr"], # Use catalog.get_collections() to select collections
     geometry=geometry,
     start_date="2022-06-01",
     end_date="2022-12-31",
@@ -146,7 +146,7 @@ The returned format is `list[str]`.
 
 | Argument           | Overview                                                                                              |
 | ------------------ | ----------------------------------------------------------------------------------------------------- |
-| `image_ids`        | **list[str] / required**<br/>The image IDs.                                                           |
+| `image_ids`        | **List[str] / required**<br/>The full scene IDs.                                                      |
 | `collection`       | **str / required**<br/>The geospatial collection name.                                                |
 | `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory. |
 
@@ -164,7 +164,7 @@ search_results = catalog.search(
 
 catalog.download_quicklooks(
     image_ids=list(search_results.id),
-    collection="phr",
+    collection="phr", # Use catalog.get_collections() to select a collection
     output_directory="/Users/max.mustermann/Desktop/",
 )
 ```
@@ -173,35 +173,53 @@ catalog.download_quicklooks(
 
 ### construct_order_parameters()
 
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
+The `construct_order_parameters()` function allows you to fill out an order form for catalog imagery.
 
 ```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
+construct_order_parameters(
+    data_product_id,
+    image_id,
+    aoi,
+    tags,
 )
 ```
 
-The returned format is `type`.
+The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
+| Argument          | Overview                                                                                            |
+| ----------------- | --------------------------------------------------------------------------------------------------- |
+| `data_product_id` | **str / required**<br/>The data product ID.                                                         |
+| `image_id`        | **str / required**<br/>The full scene ID.                                                           |
+| `aoi`             | **Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]**<br/>The AOI to be ordered. |
+| `tags`            | **List[str]**<br/>A list of tags that categorize the order.                                         |
 
 <h5> Example </h5>
 
 ```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
+# Specify order geometry
+
+geometry = {
+    "type": "Polygon",
+    "coordinates": (
+        (
+            (13.375966, 52.515068),
+            (13.375966, 52.516639),
+            (13.378314, 52.516639),
+            (13.378314, 52.515068),
+            (13.375966, 52.515068),
+        ),
+    ),
+}
+
+# Construct order parameters
+
+catalog.construct_order_parameters(
+    data_product_id="647780db-5a06-4b61-b525-577a8b68bb54",  # Use catalog.get_data_products(basic=False) to select a data product ID
+    image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",  # Use catalog.search() to select a full scene ID
+    aoi=geometry,
+    tags=["project-7", "optical"],
 )
 ```
 
