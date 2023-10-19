@@ -41,11 +41,12 @@
         <ul>
             <li>`.construct_search_parameters()`</li>
             <li>`.search()`</li>
-            <li>`.plot_coverage()`</li>
             <li>`.download_quicklooks()`</li>
+            <li>`.construct_order_parameters()`</li>
+            <li>`.estimate_order()`</li>
+            <li>`.plot_coverage()`</li>
             <li>`.map_quicklooks()`</li>
             <li>`.plot_quicklooks()`</li>
-            <li>`.estimate_order()`</li>
         </ul>
         <br>
         This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
