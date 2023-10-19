@@ -1,5 +1,7 @@
 # up42
 
+The up42 class is the base library module imported to Python. It provides the elementary functionality that is not bound to a specific class of the UP42 structure.
+
 ## Authentication
 
 ### authenticate()
