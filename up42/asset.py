@@ -34,31 +34,32 @@ class Asset:
         self.auth = auth
         self.asset_id = asset_id
         self.results: Union[List[str], None] = None
-        if asset_info is not None:
-            self._info = asset_info
-        else:
-            self._info = self.info
+        self.info = asset_info
 
     def __repr__(self):
         representation = (
-            f"Asset(name: {self._info['name']}, asset_id: {self.asset_id}, createdAt: {self._info['createdAt']}, "
-            f"size: {self._info['size']})"
+            f"name: {self.info['name']}, asset_id: {self.asset_id}, createdAt: {self.info['createdAt']}, "
+            f"size: {self.info['size']}"
         )
-        if "source" in self._info:
-            representation += f", source: {self._info['source']}"
-        if "contentType" in self._info:
-            representation += f", contentType: {self._info['contentType']}"
+        if "source" in self.info:
+            representation += f", source: {self.info['source']}"
+        if "contentType" in self.info:
+            representation += f", contentType: {self.info['contentType']}"
+        representation = f"Asset({representation})"
         return representation
 
     @property
     def info(self) -> dict:
-        """
-        Gets and updates the asset metadata information.
-        """
-        url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
-        response_json = self.auth._request(request_type="GET", url=url)
-        self._info = response_json
         return self._info
+
+    @info.setter
+    def info(self, value: dict):
+        if value is not None:
+            self._info = value
+        else:
+            url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
+            response_json = self.auth._request(request_type="GET", url=url)
+            self._info = response_json
 
     @property
     def _stac_search(self) -> Tuple[Client, ItemSearch]:
@@ -115,8 +116,8 @@ class Asset:
         url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
         body_update = {"title": title, "tags": tags, **kwargs}
         response_json = self.auth._request(request_type="POST", url=url, data=body_update)
-        self._info = response_json
-        return self._info
+        self.info = response_json
+        return self.info
 
     def _get_download_url(self, stac_asset_id: Optional[str] = None, request_type: str = "POST") -> str:
         if stac_asset_id is None:

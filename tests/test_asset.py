@@ -138,3 +138,48 @@ def test_download_stac_asset(asset_mock2, requests_mock):
         )
         assert out_path.exists()
         assert out_path.name == "bsg-104-20230522-044750-90756881_ortho.tiff"
+
+
+def test_asset_repr_without_optional_fields(asset_mock):
+    asset_mock._info = {
+        "name": "Test Asset",
+        "createdAt": "2023-10-19T12:00:00Z",
+        "size": 1024,
+    }
+    representation = repr(asset_mock)
+    ASSET_ID = "363f89c1-3586-4b14-9a49-03a890c3b593"
+    expected_representation = f"Asset(name: Test Asset, asset_id: {ASSET_ID}, createdAt: 2023-10-19T12:00:00Z, size: 1024)"
+    assert representation == expected_representation
+
+
+def test_asset_repr_with_optional_fields(asset_mock):
+    ASSET_ID = "363f89c1-3586-4b14-9a49-03a890c3b593"
+    asset_mock._info = {
+        "name": "Test Asset",
+        "createdAt": "2023-10-19T12:00:00Z",
+        "size": 1024,
+        "source": "Some Source",
+        "contentType": "image/jpeg",
+    }
+    representation = repr(asset_mock)
+    expected_representation = (
+        f"Asset(name: Test Asset, asset_id: {ASSET_ID}, createdAt: 2023-10-19T12:00:00Z, "
+        "size: 1024, source: Some Source, contentType: image/jpeg)"
+    )
+    assert representation == expected_representation
+
+
+def test_asset_repr_without_source_field(asset_mock):
+    ASSET_ID = "363f89c1-3586-4b14-9a49-03a890c3b593"
+    asset_mock._info = {
+        "name": "Test Asset",
+        "createdAt": "2023-10-19T12:00:00Z",
+        "size": 1024,
+        "contentType": "image/jpeg",
+    }
+    representation = repr(asset_mock)
+    expected_representation = (
+        f"Asset(name: Test Asset, asset_id: {ASSET_ID}, createdAt: 2023-10-19T12:00:00Z, "
+        "size: 1024, contentType: image/jpeg)"
+    )
+    assert representation == expected_representation
