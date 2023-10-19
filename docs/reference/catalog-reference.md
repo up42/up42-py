@@ -8,6 +8,12 @@ catalog = up42.initialize_catalog()
 
 This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
 
+To use the [visualization](#visualization) functionalities, first install the advanced up42-py[viz] package.
+
+```bash
+!pip install up42-py[viz]
+```
+
 ## Searches
 
 ### construct_search_parameters()
@@ -33,7 +39,7 @@ The returned format is `dict`.
 | Argument         | Overview                                                                                                            |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `geometry`       | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon] / required**<br/>The AOI to be searched for. |
-| `collections`    | **List[str] / required**<br/>The geospatial collections to search for.                                              |
+| `collections`    | **list[str] / required**<br/>The geospatial collections to search for.                                              |
 | `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format.                                         |
 | `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format.                                           |
 | `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.             |
@@ -111,7 +117,7 @@ The returned format is `list[str]`.
 
 | Argument           | Overview                                                                                              |
 | ------------------ | ----------------------------------------------------------------------------------------------------- |
-| `image_ids`        | **List[str] / required**<br/>The full scene IDs.                                                      |
+| `image_ids`        | **list[str] / required**<br/>The full scene IDs.                                                      |
 | `collection`       | **str / required**<br/>The geospatial collection name.                                                |
 | `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory. |
 
@@ -149,26 +155,15 @@ The returned format is `dict`.
 | `data_product_id` | **str / required**<br/>The data product ID.                                                         |
 | `image_id`        | **str / required**<br/>The full scene ID.                                                           |
 | `aoi`             | **Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]**<br/>The AOI to be ordered. |
-| `tags`            | **List[str]**<br/>A list of tags that categorize the order.                                         |
+| `tags`            | **list[str]**<br/>A list of tags that categorize the order.                                         |
 
 <h5> Example </h5>
 
 ```python
 catalog.construct_order_parameters(
-    data_product_id="647780db-5a06-4b61-b525-577a8b68bb54",  # Use catalog.get_data_products(basic=False) to select a data product ID
+    data_product_id="647780db-5a06-4b61-b525-577a8b68bb54",  # Use catalog.get_data_products() to select a data product ID
     image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",  # Use catalog.search() to select a full scene ID
-    aoi={
-        "type": "Polygon",
-        "coordinates": (
-            (
-                (13.375966, 52.515068),
-                (13.375966, 52.516639),
-                (13.378314, 52.516639),
-                (13.378314, 52.515068),
-                (13.375966, 52.515068),
-            ),
-        ),
-    },
+    aoi="/Users/max.mustermann/Desktop/aoi.geojson",
     tags=["project-7", "optical"],
 )
 ```
@@ -222,10 +217,6 @@ plot_coverage(
 
 <h5> Example </h5>
 
-```bash title="Advanced installation with plotting functionalities"
-pip install up42-py[viz]
-```
-
 ```python
 catalog.plot_coverage(
     scenes=search_results,  # Use catalog.search() to get search_results
@@ -262,15 +253,11 @@ The returned format is `folium.Map`.
 | `aoi`           | **GeoDataFrame**<br/>The AOI to be visualized.                                                                                                                                                           |
 | `show_images`   | **bool**<br/>Determines whether to visualize images:<ul><li>`True`: show the images on the map.</li><li>`False`: don't show the images on the map.</li></ul> The default value is `True`.                |
 | `show_features` | **bool**<br/>Determines whether to visualize the geometry:<br/><ul><li>`True`: show the geometry on the map.</li><li>`False`: don't show the geometry on the map.</li></ul>The default value is `False`. |
-| `filepaths`     | **list[path]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                                                                                                              |
+| `filepaths`     | **List[Union[str, Path]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                                                                                                   |
 | `name_column`   | **str**<br/>The column name of `scenes` that provides the feature name. The default value is `id`.                                                                                                       |
 | `save_html`     | **path**<br/>Use to specify a path to save the map as an HTML file.                                                                                                                                      |
 
 <h5> Example </h5>
-
-```bash title="Advanced installation with plotting functionalities"
-pip install up42-py[viz]
-```
 
 ```python
 catalog.map_quicklooks(
@@ -302,14 +289,10 @@ plot_quicklooks(
 | Argument    | Overview                                                                                                                                   |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | `figsize`   | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(8, 8)`. |
-| `filepaths` | **list[path], dict, none]**<br/>The file paths. By default, the last downloaded results will be used.                                      |
+| `filepaths` | **Union[List[Union[str, Path]], dict, None]**<br/>The file paths. By default, the last downloaded results will be used.                    |
 | `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                             |
 
 <h5> Example </h5>
-
-```bash title="Advanced installation with plotting functionalities"
-pip install up42-py[viz]
-```
 
 ```python
 catalog.plot_quicklooks(
