@@ -43,24 +43,13 @@ The returned format is `dict`.
 | `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format.                                         |
 | `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format.                                           |
 | `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.             |
-| `max_cloudcover` | **int**<br/>The maximum cloud coverage percentage of the search results.                                            |
+| `max_cloudcover` | **int**<br/>The maximum cloud coverage in percentage of the search results.                                         |
 
 <h5> Example </h5>
 
 ```python
 catalog.construct_search_parameters(
-    geometry={
-        "type": "Polygon",
-        "coordinates": (
-            (
-                (13.375966, 52.515068),
-                (13.375966, 52.516639),
-                (13.378314, 52.516639),
-                (13.378314, 52.515068),
-                (13.375966, 52.515068),
-            ),
-        ),
-    },
+    geometry="/Users/max.mustermann/Desktop/aoi.geojson",
     collections=["phr"],
     start_date="2022-06-01",
     end_date="2022-12-31",
@@ -117,7 +106,7 @@ The returned format is `list[str]`.
 
 | Argument           | Overview                                                                                              |
 | ------------------ | ----------------------------------------------------------------------------------------------------- |
-| `image_ids`        | **list[str] / required**<br/>The full scene IDs.                                                      |
+| `image_ids`        | **list[str] / required**<br/>The scene IDs.                                                           |
 | `collection`       | **str / required**<br/>The geospatial collection name.                                                |
 | `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory. |
 
@@ -126,7 +115,7 @@ The returned format is `list[str]`.
 ```python
 catalog.download_quicklooks(
     image_ids=list(search_results.id),  # Use catalog.search() to get search_results
-    collection="phr",  # Use catalog.get_collections() to select a collection name
+    collection="phr",  # Use catalog.get_collections() to select a collection
     output_directory="/Users/max.mustermann/Desktop/",
 )
 ```
@@ -153,7 +142,7 @@ The returned format is `dict`.
 | Argument          | Overview                                                                                            |
 | ----------------- | --------------------------------------------------------------------------------------------------- |
 | `data_product_id` | **str / required**<br/>The data product ID.                                                         |
-| `image_id`        | **str / required**<br/>The full scene ID.                                                           |
+| `image_id`        | **str / required**<br/>The scene ID.                                                                |
 | `aoi`             | **Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]**<br/>The AOI to be ordered. |
 | `tags`            | **list[str]**<br/>A list of tags that categorize the order.                                         |
 
@@ -161,8 +150,8 @@ The returned format is `dict`.
 
 ```python
 catalog.construct_order_parameters(
-    data_product_id="647780db-5a06-4b61-b525-577a8b68bb54",  # Use catalog.get_data_products() to select a data product ID
-    image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",  # Use catalog.search() to select a full scene ID
+    data_product_id="647780db-5a06-4b61-b525-577a8b68bb54",  # Use catalog.get_data_products() to select a data product
+    image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",  # Use catalog.search() to select a scene
     aoi="/Users/max.mustermann/Desktop/aoi.geojson",
     tags=["project-7", "optical"],
 )
@@ -208,12 +197,12 @@ plot_coverage(
 
 <h5> Arguments </h5>
 
-| Argument        | Overview                                                                                                                                     |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scenes`        | **GeoDataFrame / required**<br/>The catalog search results to be visualized.                                                                 |
-| `aoi`           | **GeoDataFrame**<br/>The AOI to be visualized.                                                                                               |
-| `legend_column` | **str**<br/>The column name of `scenes` to arrange legend entries by ascending order. The default value is `sceneID`.                        |
-| `figsize`       | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(12, 16)`. |
+| Argument        | Overview                                                                                                                                               |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `scenes`        | **GeoDataFrame / required**<br/>The catalog search results to be visualized.                                                                           |
+| `aoi`           | **GeoDataFrame**<br/>The AOI to be visualized.                                                                                                         |
+| `legend_column` | **str**<br/>The column name of `scenes` to arrange legend entries by ascending order. The default value is `sceneID`.                                  |
+| `figsize`       | **tuple[int, int]**<br/>The size of the visualization in inches. The first number is length, the second one is width. The default value is `(12, 16)`. |
 
 <h5> Example </h5>
 
@@ -286,11 +275,11 @@ plot_quicklooks(
 
 <h5> Arguments </h5>
 
-| Argument    | Overview                                                                                                                                   |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `figsize`   | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(8, 8)`. |
-| `filepaths` | **Union[List[Union[str, Path]], dict, None]**<br/>The file paths. By default, the last downloaded results will be used.                    |
-| `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                             |
+| Argument    | Overview                                                                                                                                             |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `figsize`   | **tuple[int, int]**<br/>The size of the visualization in inches. The first number is length, the second one is width. The default value is `(8, 8)`. |
+| `filepaths` | **Union[List[Union[str, Path]], dict, None]**<br/>The file paths. By default, the last downloaded results will be used.                              |
+| `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                                       |
 
 <h5> Example </h5>
 
