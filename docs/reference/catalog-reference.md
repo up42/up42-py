@@ -30,15 +30,15 @@ The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Argument         | Overview |
-| ---------------- | -------- |
-| `geometry`          | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point] / required**<br/>The geometry of the area to be searched for. It can be a POI or an AOI depending on the [collection](https://docs.up42.com/data/tasking/limitations). |
-| `collections`    |   **list[str] / required**<br/>The [geospatial collections](/reference/catalogbase-reference/#collections) to search for.       |
-| `start_date`     |    **str**<br/>The start date of the search period in the `YYYY-MM-DD` format.      |
-| `end_date`       |    **str**<br/>The end date of the search period in the `YYYY-MM-DD` format.      |
-| `usage_type`     |     **List[str]**<br/>The usage type. The allowed values:<br/><ul><li>`DATA`</li><li>`ANALYTICS`</li></ul>   |
-| `limit`          |     **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.       |
-| `max_cloudcover` |    **int**<br/>The maximum cloud coverage percentage of the search results.     |
+| Argument         | Overview                                                                                                                                                                                                                                             |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `geometry`       | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point] / required**<br/>The geometry of the area to be searched for. It can be a POI or an AOI depending on the [collection](https://docs.up42.com/data/tasking/limitations). |
+| `collections`    | **list[str] / required**<br/>The geospatial collections to search for.                                                                                                                                                                               |
+| `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format.                                                                                                                                                                          |
+| `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format.                                                                                                                                                                            |
+| `usage_type`     | **List[str]**<br/>The usage type. The allowed values:<br/><ul><li>`DATA`</li><li>`ANALYTICS`</li></ul>                                                                                                                                               |
+| `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.                                                                                                                                              |
+| `max_cloudcover` | **int**<br/>The maximum cloud coverage percentage of the search results.                                                                                                                                                                             |
 
 <h5> Example </h5>
 
@@ -72,177 +72,62 @@ catalog.construct_search_parameters(
 
 ### search()
 
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
+The `search()` function returns catalog search results.
 
 ```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
+search(
+    search_parameters,
+    as_dataframe,
 )
 ```
 
-The returned format is `type`.
+The returned format is `Union[GeoDataFrame, dict]`.
 
 <h5> Arguments </h5>
 
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
+| Argument            | Overview                                                                                                                                                                           |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `search_parameters` | **dict / required**<br/>The [catalog search parameters].(#construct-search-parameters).                                                                                            |
+| `as_dataframe`      | **bool**<br/>Determines how to return search results:</br/><ul><li>`True`: return DataFrame.</li><li>`False`: return a FeatureCollection.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
 
 ```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
+# Specify search geometry
+
+geometry = {
+    "type": "Polygon",
+    "coordinates": (
+        (
+            (13.375966, 52.515068),
+            (13.375966, 52.516639),
+            (13.378314, 52.516639),
+            (13.378314, 52.515068),
+            (13.375966, 52.515068),
+        ),
+    ),
+}
+
+# Construct search parameters
+
+search_parameters = catalog.construct_search_parameters(
+    collections=["phr"],
+    geometry=geometry,
+    start_date="2022-06-01",
+    end_date="2022-12-31",
+    max_cloudcover=20,
 )
-```
 
-## Coverages
+# Place search request
 
-### plot_coverage()
-
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
-
-```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
+catalog.search(
+    search_parameters,
+    as_dataframe=False,
 )
+
 ```
-
-The returned format is `type`.
-
-<h5> Arguments </h5>
-
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
-
-<h5> Example </h5>
-
-```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
-)
-```
-
-## Quicklooks
 
 ### download_quicklooks()
-
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
-
-```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
-)
-```
-
-The returned format is `type`.
-
-<h5> Arguments </h5>
-
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
-
-<h5> Example </h5>
-
-```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
-)
-```
-
-### map_quicklooks()
-
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
-
-```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
-)
-```
-
-The returned format is `type`.
-
-<h5> Arguments </h5>
-
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
-
-<h5> Example </h5>
-
-```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
-)
-```
-
-### plot_quicklooks()
-
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
-
-```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
-)
-```
-
-The returned format is `type`.
-
-<h5> Arguments </h5>
-
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
-
-<h5> Example </h5>
-
-```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
-)
-```
 
 ## Orders
 
@@ -313,3 +198,11 @@ class.function_name(
     argument3=False, # Note the comma at the end of the last argument
 )
 ```
+
+## Visualization
+
+### plot_coverage()
+
+### map_quicklooks()
+
+### plot_quicklooks()
