@@ -36,38 +36,31 @@ The returned format is `dict`.
 | `collections`    | **List[str] / required**<br/>The geospatial collections to search for.                                              |
 | `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format.                                         |
 | `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format.                                           |
-| `usage_type`     | **List[str]**<br/>The usage type. The allowed values:<br/><ul><li>`DATA`</li><li>`ANALYTICS`</li></ul>              |
 | `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.             |
 | `max_cloudcover` | **int**<br/>The maximum cloud coverage percentage of the search results.                                            |
 
 <h5> Example </h5>
 
 ```python
-# Specify search geometry
-
-geometry = {
-    "type": "Polygon",
-    "coordinates": (
-        (
-            (13.375966, 52.515068),
-            (13.375966, 52.516639),
-            (13.378314, 52.516639),
-            (13.378314, 52.515068),
-            (13.375966, 52.515068),
-        ),
-    ),
-}
-
-# Construct search parameters
-
 catalog.construct_search_parameters(
+    geometry={
+        "type": "Polygon",
+        "coordinates": (
+            (
+                (13.375966, 52.515068),
+                (13.375966, 52.516639),
+                (13.378314, 52.516639),
+                (13.378314, 52.515068),
+                (13.375966, 52.515068),
+            ),
+        ),
+    },
     collections=["phr"],
-    geometry=geometry,
     start_date="2022-06-01",
     end_date="2022-12-31",
-    max_cloudcover=20,
+    limit=20,
+    max_cloudcover=25,
 )
-
 ```
 
 ### search()
@@ -93,38 +86,10 @@ The returned format is `Union[GeoDataFrame, dict]`.
 <h5> Example </h5>
 
 ```python
-# Specify search geometry
-
-geometry = {
-    "type": "Polygon",
-    "coordinates": (
-        (
-            (13.375966, 52.515068),
-            (13.375966, 52.516639),
-            (13.378314, 52.516639),
-            (13.378314, 52.515068),
-            (13.375966, 52.515068),
-        ),
-    ),
-}
-
-# Construct search parameters
-
-search_parameters = catalog.construct_search_parameters(
-    collections=["phr"], # Use catalog.get_collections() to select collections
-    geometry=geometry,
-    start_date="2022-06-01",
-    end_date="2022-12-31",
-    max_cloudcover=20,
-)
-
-# Search for catalog images
-
 catalog.search(
-    search_parameters,
+    search_parameters=search_parameters,  # Use catalog.construct_search_parameters() to construct your search parameters
     as_dataframe=False,
 )
-
 ```
 
 ### download_quicklooks()
@@ -153,10 +118,10 @@ The returned format is `list[str]`.
 <h5> Example </h5>
 
 ```python
-# Search for catalog images
+# Search for catalog imagery
 
 search_results = catalog.search(
-    search_parameters,
+    search_parameters=search_parameters,  # Use catalog.construct_search_parameters() to construct your search parameters
     as_dataframe=False,
 )
 
@@ -164,7 +129,7 @@ search_results = catalog.search(
 
 catalog.download_quicklooks(
     image_ids=list(search_results.id),
-    collection="phr", # Use catalog.get_collections() to select a collection
+    collection="phr",  # Use catalog.get_collections() to select a collection
     output_directory="/Users/max.mustermann/Desktop/",
 )
 ```
@@ -198,75 +163,89 @@ The returned format is `dict`.
 <h5> Example </h5>
 
 ```python
-# Specify order geometry
-
-geometry = {
-    "type": "Polygon",
-    "coordinates": (
-        (
-            (13.375966, 52.515068),
-            (13.375966, 52.516639),
-            (13.378314, 52.516639),
-            (13.378314, 52.515068),
-            (13.375966, 52.515068),
-        ),
-    ),
-}
-
-# Construct order parameters
-
 catalog.construct_order_parameters(
     data_product_id="647780db-5a06-4b61-b525-577a8b68bb54",  # Use catalog.get_data_products(basic=False) to select a data product ID
     image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",  # Use catalog.search() to select a full scene ID
-    aoi=geometry,
+    aoi={
+        "type": "Polygon",
+        "coordinates": (
+            (
+                (13.375966, 52.515068),
+                (13.375966, 52.516639),
+                (13.378314, 52.516639),
+                (13.378314, 52.515068),
+                (13.375966, 52.515068),
+            ),
+        ),
+    },
     tags=["project-7", "optical"],
 )
 ```
 
 ### estimate_order()
 
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
+The `estimate_order()` function returns a cost estimation for a catalog order.
 
 ```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
-)
+estimate_order(order_parameters)
 ```
 
-The returned format is `type`.
+The returned format is `int`.
 
 <h5> Arguments </h5>
 
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
+| Argument           | Overview                                                                      |
+| ------------------ | ----------------------------------------------------------------------------- |
+| `order_parameters` | **Union[dict, None] / required**<br/>Parameters with which to place an order. |
 
 <h5> Example </h5>
 
 ```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
-)
+catalog.estimate_order(order_parameters) # Use catalog.construct_order_parameters() to construct your order parameters
 ```
 
 ## Visualization
 
 ### plot_coverage()
 
-The `plot_coverage()` function allows you to visualize coverage map of a DataFrame. Use together with [`search()`](#download_quicklooks).
+The `plot_coverage()` function allows you to visualize coverage map of a GeoDataFrame.
+Use together with [`search()`](#search).
+
+```python
+plot_coverage(
+    scenes,
+    aoi,
+    legend_column,
+    figsize,
+)
+```
+
+<h5> Arguments </h5>
+
+| Argument        | Overview                                                                                                                                     |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scenes`        | **GeoDataFrame / required**<br/>The catalog search results to be plotted.                                                                    |
+| `aoi`           | **GeoDataFrame**<br/>The AOI to be plotted on the map.                                                                                       |
+| `legend_column` | **str**<br/>Arrange legend entries in ascending order based on a chosen column name of `scenes`. The default value is `sceneID`.             |
+| `figsize`       | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(12, 16)`. |
+
+<h5> Example </h5>
+
+```python
+catalog.plot_coverage(
+    scenes=search_results,  # Use catalog.search() to get your search results
+    aoi="/Users/max.mustermann/Desktop/aoi.geojson",
+    legend_column="cloudCoverage",
+    figsize=(14, 18),
+)
+```
 
 ### map_quicklooks()
 
-The `map_quicklooks()` function allows you to visualize downloaded quicklooks on a Folium map. Use together with [`download_quicklooks()`](#download_quicklooks).
+The `map_quicklooks()` function allows you to visualize downloaded quicklooks on a Folium map.
+Use together with [`download_quicklooks()`](#download_quicklooks).
 
 ### plot_quicklooks()
 
 The `plot_quicklooks()` function allows you to visualize downloaded quicklooks. Use together with [`download_quicklooks()`](#download_quicklooks).
+
