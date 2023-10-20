@@ -1,18 +1,13 @@
 SRC := .
 
 env:
-	mkvirtualenv --python=$(which python3.8) up42-py
-	workon up42-py
+	poetry shell
 
 install:
 	pip install up42-py
 
 install[dev]:
-	pip install -r $(SRC)/requirements.txt
-	pip install -e .
-	pip install -r $(SRC)/requirements-dev.txt
-	pip install -r $(SRC)/requirements-viz.txt
-	pip install -r $(SRC)/requirements-docs.txt
+	poetry install --no-ansi
 	unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
 
 test:

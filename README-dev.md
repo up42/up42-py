@@ -4,12 +4,7 @@
 
 The development installation is necessary if you want to contribute to up42-py, e.g. to fix a bug.
 
-1. *Optional (but highly recommended)*: Create a new virtual environment e.g. using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/):
-```bash
-mkvirtualenv --python=$(which python3.7) up42-py
-```
-
-2. Clone the repository and install locally with SystemLink (code changes are reflected).
+1. Clone the repository and install locally with SystemLink (code changes are reflected).
 This will install all the neccessary dependencies for up42-py, running the tests and editing the docs.
 
 ```bash
@@ -18,9 +13,9 @@ cd up42-py
 make install[dev]
 ```
 
-3. Create a new project on [UP42](https://up42.com).
+2. Create a new project on [UP42](https://up42.com).
 
-4. Create a `config.json` file and fill in the [project credentials](https://docs.up42.com/developers/authentication#step-1-find-project-credentials).
+3. Create a `config.json` file and fill in the [project credentials](https://docs.up42.com/developers/authentication#step-1-find-project-credentials).
 ```json
 {
   "project_id": "...",
