@@ -25,6 +25,22 @@ def test_init(asset_mock):
     assert asset_mock.asset_id == ASSET_ID
 
 
+def test_init_asset_failure(auth_mock):
+    with pytest.raises(ValueError) as e:
+        failed_asset = Asset(
+            auth_mock, asset_id="some_asset_id", asset_info={"id": "some_asset_id"}
+        )
+    assert "cannot be provided simultaneously." in str(e.value)
+
+    with pytest.raises(ValueError) as e:
+        failed_asset = Asset(auth_mock)
+    assert "Either asset_id or asset_info should be provided" in str(e.value)
+
+
+def test_asset_id(asset_mock):
+    assert asset_mock.asset_id == ASSET_ID
+
+
 def test_asset_info(asset_mock):
     assert asset_mock.info
     assert asset_mock.info["id"] == ASSET_ID
