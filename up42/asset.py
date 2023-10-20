@@ -19,8 +19,6 @@ MAX_ITEM = 50
 LIMIT = 50
 
 
-
-
 class Asset:
     """
     The Asset class enables access to the UP42 assets in the storage. Assets are results
@@ -32,14 +30,20 @@ class Asset:
     ```
     """
 
-    # don't need to provide asset_id and asset_info at the same time
-    def __init__(self, auth: Auth, asset_id: str, asset_info: Optional[dict] = None):
+    def __init__(
+        self,
+        auth: Auth,
+        asset_id: Optional[str] = None,
+        asset_info: Optional[dict] = None,
+    ):
+        if asset_id and asset_info:
+            raise ValueError("Asset id and asset info should not be provided at the same time.")
         self.auth = auth
-        self.info = asset_info or self._get_info(asset_id) # do we need eager loading? Can we go lazy?
+        self.info = asset_info or self._get_info(asset_id)
         self.results: Union[List[str], None] = None
 
     def __repr__(self):
-        return f"Asset({self.info.__repr__()})"
+        return f"{self.info.__repr__()}"
 
     def _get_info(self, asset_id: str):
         url = f"{self.auth._endpoint()}/v2/assets/{asset_id}/metadata"
