@@ -1,5 +1,8 @@
 version: 2.1
 
+venv-cache: &venv-cache venv-{{ checksum "poetry.lock" }}
+pre-commit-cache: &pre-commit-cache pre-commit-{{ checksum ".pre-commit-config.yaml" }}
+
 orbs:
   sonarcloud: sonarsource/sonarcloud@1.0.3
 
@@ -15,6 +18,27 @@ jobs:
       - attach_workspace:
           at: *workspace-dir
       - checkout
+      - restore_cache:
+          name: Restoring poetry cache
+          keys:
+            - *venv-cache
+      - save_cache:
+          name: Saving poetry cache
+          key: *venv-cache
+          paths:
+            - .venv
+      - restore_cache:
+          name: Restoring pre-commit cache
+          keys:
+            - *pre-commit-cache
+      - run:
+          name: Running pre-commit
+          command: poetry run pre-commit run --all
+      - save_cache:
+          name: Saving pre-commit cache
+          key: *pre-commit-cache
+          paths:
+            - ~/.cache/pre-commit
       - run:
           name: Install requirements
           command: |
@@ -43,7 +67,8 @@ jobs:
           at: *workspace-dir
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
-  test_live:
+
+  test_live_sonar:
     docker:
       - image: cimg/python:3.8
     steps:
@@ -71,9 +96,7 @@ jobs:
           name: Upload to PyPi
           command: make upload
 
-
 workflows:
-  version: 2
   test_and_deploy:
     jobs:
       - test
@@ -104,5 +127,5 @@ workflows:
               only:
                 - master
     jobs:
-      - test_live:
+      - test_live_sonar:
           context: up42-py-live-testing
