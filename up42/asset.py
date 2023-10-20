@@ -19,6 +19,8 @@ MAX_ITEM = 50
 LIMIT = 50
 
 
+
+
 class Asset:
     """
     The Asset class enables access to the UP42 assets in the storage. Assets are results
@@ -30,36 +32,22 @@ class Asset:
     ```
     """
 
+    # don't need to provide asset_id and asset_info at the same time
     def __init__(self, auth: Auth, asset_id: str, asset_info: Optional[dict] = None):
         self.auth = auth
-        self.asset_id = asset_id
+        self.info = asset_info or self._get_info(asset_id) # do we need eager loading? Can we go lazy?
         self.results: Union[List[str], None] = None
-        self.info = asset_info
 
     def __repr__(self):
-        representation = (
-            f"name: {self.info['name']}, asset_id: {self.asset_id}, createdAt: {self.info['createdAt']}, "
-            f"size: {self.info['size']}"
-        )
-        if "source" in self.info:
-            representation += f", source: {self.info['source']}"
-        if "contentType" in self.info:
-            representation += f", contentType: {self.info['contentType']}"
-        representation = f"Asset({representation})"
-        return representation
+        return f"Asset({self.info.__repr__()})"
+
+    def _get_info(self, asset_id: str):
+        url = f"{self.auth._endpoint()}/v2/assets/{asset_id}/metadata"
+        return self.auth._request(request_type="GET", url=url)
 
     @property
-    def info(self) -> dict:
-        return self._info
-
-    @info.setter
-    def info(self, value: dict):
-        if value is not None:
-            self._info = value
-        else:
-            url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
-            response_json = self.auth._request(request_type="GET", url=url)
-            self._info = response_json
+    def asset_id(self) -> dict:
+        return self.info["id"]
 
     @property
     def _stac_search(self) -> Tuple[Client, ItemSearch]:
@@ -125,8 +113,7 @@ class Asset:
         else:
             url = f"{self.auth._endpoint()}/v2/assets/{stac_asset_id}/download-url"
         response_json = self.auth._request(request_type=request_type, url=url)
-        download_url = response_json["url"]
-        return download_url
+        return response_json["url"]
 
     def get_stac_asset_url(self, stac_asset: pystac.Asset):
         """
