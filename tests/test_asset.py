@@ -137,7 +137,7 @@ def test_asset_download_no_unpacking(
         assert len(out_files) == 1
 
 
-def test_download_stac_asset(asset_mock2, requests_mock):
+def test_download_stac_asset(asset_mock_2, requests_mock):
     out_file_path = Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
     with open(out_file_path, "rb") as src_file:
         out_file = src_file.read()
