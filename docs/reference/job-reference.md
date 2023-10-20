@@ -8,6 +8,12 @@ A job is an instance of a workflow. It delivers geospatial outputs defined by jo
 job = up42.initialize_job(job_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 ```
 
+To use the [visualization](#visualization) functionalities, first install the advanced up42-py[viz] package.
+
+```bash
+!pip install up42-py[viz]
+```
+
 ## Jobs
 
 ### info
