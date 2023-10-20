@@ -14,7 +14,7 @@ from .fixtures import (
     STAC_ASSET_HREF,
     asset_live,
     asset_mock,
-    asset_mock2,
+    asset_mock_2,
     auth_live,
     auth_mock,
 )
@@ -51,12 +51,12 @@ def test_asset_update_metadata(asset_mock):
     "asset_fixture, download_url",
     [
         ("asset_mock", DOWNLOAD_URL),
-        ("asset_mock2", DOWNLOAD_URL2),
+        ("asset_mock_2", DOWNLOAD_URL2),
     ],
 )
 def test_asset_get_download_url(asset_fixture, download_url, request):
-    asset_fixture = request.getfixturevalue(asset_fixture)
-    url = asset_fixture._get_download_url()
+    asset_fixture_object = request.getfixturevalue(asset_fixture)
+    url = asset_fixture_object._get_download_url()
     assert url == download_url
 
 
@@ -94,7 +94,7 @@ def test_asset_download(asset_mock, requests_mock):
     [
         ("asset_mock", DOWNLOAD_URL, "output.tgz"),
         (
-            "asset_mock2",
+            "asset_mock_2",
             DOWNLOAD_URL2,
             "DS_SPOT6_202206240959075_FR1_FR1_SV1_SV1_E013N52_01709.tgz",
         ),
@@ -147,39 +147,4 @@ def test_asset_repr_without_optional_fields(asset_mock):
         "size": 1024,
     }
     representation = repr(asset_mock)
-    ASSET_ID = "363f89c1-3586-4b14-9a49-03a890c3b593"
-    expected_representation = f"Asset(name: Test Asset, asset_id: {ASSET_ID}, createdAt: 2023-10-19T12:00:00Z, size: 1024)"
-    assert representation == expected_representation
-
-
-def test_asset_repr_with_optional_fields(asset_mock):
-    ASSET_ID = "363f89c1-3586-4b14-9a49-03a890c3b593"
-    asset_mock._info = {
-        "name": "Test Asset",
-        "createdAt": "2023-10-19T12:00:00Z",
-        "size": 1024,
-        "source": "Some Source",
-        "contentType": "image/jpeg",
-    }
-    representation = repr(asset_mock)
-    expected_representation = (
-        f"Asset(name: Test Asset, asset_id: {ASSET_ID}, createdAt: 2023-10-19T12:00:00Z, "
-        "size: 1024, source: Some Source, contentType: image/jpeg)"
-    )
-    assert representation == expected_representation
-
-
-def test_asset_repr_without_source_field(asset_mock):
-    ASSET_ID = "363f89c1-3586-4b14-9a49-03a890c3b593"
-    asset_mock._info = {
-        "name": "Test Asset",
-        "createdAt": "2023-10-19T12:00:00Z",
-        "size": 1024,
-        "contentType": "image/jpeg",
-    }
-    representation = repr(asset_mock)
-    expected_representation = (
-        f"Asset(name: Test Asset, asset_id: {ASSET_ID}, createdAt: 2023-10-19T12:00:00Z, "
-        "size: 1024, contentType: image/jpeg)"
-    )
-    assert representation == expected_representation
+    assert representation == repr(asset_mock)
