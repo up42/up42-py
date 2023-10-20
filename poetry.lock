@@ -225,7 +225,7 @@ pycparser = "*"
 name = "cfgv"
 version = "3.4.0"
 description = "Validate configuration and produce human readable error messages."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.8"
 files = [
@@ -645,7 +645,7 @@ graph = ["objgraph (>=1.7.2)"]
 name = "distlib"
 version = "0.3.7"
 description = "Distribution utilities"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 files = [
@@ -711,7 +711,7 @@ devel = ["colorama", "json-spec", "jsonschema", "pylint", "pytest", "pytest-benc
 name = "filelock"
 version = "3.12.4"
 description = "A platform independent file lock."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.8"
 files = [
@@ -912,14 +912,14 @@ dev = ["flake8", "markdown", "twine", "wheel"]
 
 [[package]]
 name = "griffe"
-version = "0.36.5"
+version = "0.36.7"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 category = "dev"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "griffe-0.36.5-py3-none-any.whl", hash = "sha256:62af1ca94a5ac73259278b7692d300bf1c6bd8f9beeabaeaa229009bb82d09c6"},
-    {file = "griffe-0.36.5.tar.gz", hash = "sha256:b8a672c54b99e958b985b3cfbf1de09e25d686dd8a667aa5ec2d0b1601a542fc"},
+    {file = "griffe-0.36.7-py3-none-any.whl", hash = "sha256:7a09f8e9b97c7ebe227f6529a298bf7e0e742a9837ee261cc8260d50b4aa039f"},
+    {file = "griffe-0.36.7.tar.gz", hash = "sha256:a6fe60b16720ca0cf63c9e667a4c05eea40dfe4abcf114741885f945b74c7071"},
 ]
 
 [package.dependencies]
@@ -929,7 +929,7 @@ colorama = ">=0.4"
 name = "identify"
 version = "2.5.30"
 description = "File identification library for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.8"
 files = [
@@ -1879,14 +1879,14 @@ requests = ">=2.26"
 
 [[package]]
 name = "mkdocs-material-extensions"
-version = "1.2"
+version = "1.3"
 description = "Extension pack for Python Markdown and MkDocs Material."
 category = "dev"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "mkdocs_material_extensions-1.2-py3-none-any.whl", hash = "sha256:c767bd6d6305f6420a50f0b541b0c9966d52068839af97029be14443849fb8a1"},
-    {file = "mkdocs_material_extensions-1.2.tar.gz", hash = "sha256:27e2d1ed2d031426a6e10d5ea06989d67e90bb02acd588bc5673106b5ee5eedf"},
+    {file = "mkdocs_material_extensions-1.3-py3-none-any.whl", hash = "sha256:0297cc48ba68a9fdd1ef3780a3b41b534b0d0df1d1181a44676fda5f464eeadc"},
+    {file = "mkdocs_material_extensions-1.3.tar.gz", hash = "sha256:f0446091503acb110a7cab9349cbc90eeac51b58d1caa92a704a81ca1e24ddbd"},
 ]
 
 [[package]]
@@ -2127,7 +2127,7 @@ files = [
 name = "nodeenv"
 version = "1.8.0"
 description = "Node.js virtual environment builder"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*"
 files = [
@@ -2396,7 +2396,7 @@ files = [
 name = "platformdirs"
 version = "3.11.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -2428,7 +2428,7 @@ testing = ["pytest", "pytest-benchmark"]
 name = "pre-commit"
 version = "3.5.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.8"
 files = [
@@ -2502,14 +2502,14 @@ testutils = ["gitpython (>3)"]
 
 [[package]]
 name = "pymdown-extensions"
-version = "10.3"
+version = "10.3.1"
 description = "Extension pack for Python Markdown."
 category = "dev"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pymdown_extensions-10.3-py3-none-any.whl", hash = "sha256:77a82c621c58a83efc49a389159181d570e370fff9f810d3a4766a75fc678b66"},
-    {file = "pymdown_extensions-10.3.tar.gz", hash = "sha256:94a0d8a03246712b64698af223848fd80aaf1ae4c4be29c8c61939b0467b5722"},
+    {file = "pymdown_extensions-10.3.1-py3-none-any.whl", hash = "sha256:8cba67beb2a1318cdaf742d09dff7c0fc4cafcc290147ade0f8fb7b71522711a"},
+    {file = "pymdown_extensions-10.3.1.tar.gz", hash = "sha256:f6c79941498a458852853872e379e7bab63888361ba20992fc8b4f8a9b61735e"},
 ]
 
 [package.dependencies]
@@ -2800,7 +2800,7 @@ files = [
 name = "pyyaml"
 version = "6.0.1"
 description = "YAML parser and emitter for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 files = [
@@ -2979,33 +2979,33 @@ cffi = {version = "*", markers = "implementation_name == \"pypy\""}
 
 [[package]]
 name = "rasterio"
-version = "1.3.8.post2"
+version = "1.3.9"
 description = "Fast and direct raster I/O for use with Numpy and SciPy"
 category = "dev"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "rasterio-1.3.8.post2-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:1096533c5e499848bc7c43b2a3a0b9ed490483d8ee1dde8c83a73b8822ef0340"},
-    {file = "rasterio-1.3.8.post2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:d8b3e7ac283ea7f15e3299b2094cda1782641d9002fb18412d3a1ef69142991b"},
-    {file = "rasterio-1.3.8.post2-cp310-cp310-manylinux2014_x86_64.whl", hash = "sha256:464c979fe0f06e961a6616830c9644a823ac29df2bf51cf6ba2166693ae38ab9"},
-    {file = "rasterio-1.3.8.post2-cp310-cp310-win_amd64.whl", hash = "sha256:3d5952a1f2c9434d3a56192619abc1366139d45b3a5a9979422164be959ece17"},
-    {file = "rasterio-1.3.8.post2-cp311-cp311-macosx_10_15_x86_64.whl", hash = "sha256:7878d1bd99a739c8cacaf74f058e683b44f835bb713c9845c79dd89349dbfbd5"},
-    {file = "rasterio-1.3.8.post2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:284dec60e09f94d354baccd1d06673319aba66c163ec65e254017a061801d59f"},
-    {file = "rasterio-1.3.8.post2-cp311-cp311-manylinux2014_x86_64.whl", hash = "sha256:4e44db462398b06fd72ca74d44576353735787ed58ba8caa59455fb0b3344416"},
-    {file = "rasterio-1.3.8.post2-cp311-cp311-win_amd64.whl", hash = "sha256:8dfe6803836858a66d7e6706df069d898ddccbb7af1b5e6d09415f058d56e2ed"},
-    {file = "rasterio-1.3.8.post2-cp312-cp312-macosx_10_15_x86_64.whl", hash = "sha256:6ee1a4b02b394644a73ea99acccd3e1f469fb3aebd06d1212c84f35f79099d9a"},
-    {file = "rasterio-1.3.8.post2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:4490a447a70a73bce087a8926151214f2d6a3c7514e72ac1122c538b8e48bba6"},
-    {file = "rasterio-1.3.8.post2-cp312-cp312-manylinux2014_x86_64.whl", hash = "sha256:ea84cbb032508c0da1107ab8019a40cc4ab41e270ecc20abe76c31323459a9b4"},
-    {file = "rasterio-1.3.8.post2-cp312-cp312-win_amd64.whl", hash = "sha256:2c1ec31a91633e16582a1d7ba6b721d00375eb8d8e6238c06f07d41de2aba986"},
-    {file = "rasterio-1.3.8.post2-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:89b472e3daff3603921a5c393fa5de6c420c03a4ad9bb04272e8dea3ecfbd411"},
-    {file = "rasterio-1.3.8.post2-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:e3fac314844d209ef3dc11a8fd6b731c317e205a79c4e60646e9e9cf192e25e2"},
-    {file = "rasterio-1.3.8.post2-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:af39c73a84fc62e3b0721a4dd788412e0801034c3707bc2ebcf612745b4eef71"},
-    {file = "rasterio-1.3.8.post2-cp38-cp38-win_amd64.whl", hash = "sha256:e040bb4346875d75f19a3899dbadc722b855faa93356e99d7bec435900cf6289"},
-    {file = "rasterio-1.3.8.post2-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:fcabadab6b1f9f8bf5a0fdb3dd234c282147c65e70804d25672118ea24318fd6"},
-    {file = "rasterio-1.3.8.post2-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:0a210d107ab73b81c6cbcdf41ae5bf8e0bcad53259c055bdcf79234ea2727720"},
-    {file = "rasterio-1.3.8.post2-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:b86df67561d9b3533fae5ab3b64ead5db516ea5020041711c47f98e36a89f22d"},
-    {file = "rasterio-1.3.8.post2-cp39-cp39-win_amd64.whl", hash = "sha256:595d9938414b71e8d87a8103aeeda19662d39e8b5a5eb12336a38b7be292114d"},
-    {file = "rasterio-1.3.8.post2.tar.gz", hash = "sha256:e45c6c46f07902cb87f25ed2f394ce0fddf19ff2396c8071f8afd22263c54258"},
+    {file = "rasterio-1.3.9-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:04247da9f4002587ac2bec967c3a72f63fc0e6654101c06850bae3d8131b700d"},
+    {file = "rasterio-1.3.9-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:c9edce37b70f4cd4be5d3f5d314877e3130aeebb612120405cd28f83fe200865"},
+    {file = "rasterio-1.3.9-cp310-cp310-manylinux2014_x86_64.whl", hash = "sha256:fd6a850a37840ba590ddcf7ff90ba007b1e231b04434d8b4ac5ce0f746ada91a"},
+    {file = "rasterio-1.3.9-cp310-cp310-win_amd64.whl", hash = "sha256:0c83156a44f8fda11876ff9f2ff1b602d7e7434447f7d621353f2929cefb1bf1"},
+    {file = "rasterio-1.3.9-cp311-cp311-macosx_10_15_x86_64.whl", hash = "sha256:0172dbd80bd9adc105ec2c9bd207dbd5519ea06b438a4d965c6290ae8ed6ff9f"},
+    {file = "rasterio-1.3.9-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:0ea5b42597d85868ee88c750cc33f2ae729e1b5e3fe28f99071f39e1417bf1c0"},
+    {file = "rasterio-1.3.9-cp311-cp311-manylinux2014_x86_64.whl", hash = "sha256:be9b343bd08245df22115775dc9513c912afb4134d832662fa165d70cb805c34"},
+    {file = "rasterio-1.3.9-cp311-cp311-win_amd64.whl", hash = "sha256:06d53e2e0885f039f960beb7c861400b92ea3e0e5abc2c67483fb56b1e5cbc13"},
+    {file = "rasterio-1.3.9-cp312-cp312-macosx_10_15_x86_64.whl", hash = "sha256:a34bb9eef67b7896e2dfb39e10ba6372f9894226fb790bd7a46f5748f205b7d8"},
+    {file = "rasterio-1.3.9-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:67b144b9678f9ad4cf5f2c3f455cbc6a7166c0523179249cee8f2e2c57d76c5b"},
+    {file = "rasterio-1.3.9-cp312-cp312-manylinux2014_x86_64.whl", hash = "sha256:99b72fccb702a921f43e56a4507b4cafe2a9196b478b993b98e82ec6851916d7"},
+    {file = "rasterio-1.3.9-cp312-cp312-win_amd64.whl", hash = "sha256:6777fad3c31eb3e5da0ccaa28a032ad07c20d003bcd14f8bc13e16ca2f62348c"},
+    {file = "rasterio-1.3.9-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:55bb1a2701dd67c1952b261a2ffbabd947a435d4457f13c25092a32ab7a4b36e"},
+    {file = "rasterio-1.3.9-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:726d8e8884359c34f672312171310052d5483af550ef00fb4f2562cc022a6f5a"},
+    {file = "rasterio-1.3.9-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:f65879415df188fdc9388ccf2ee01e0659abae370d12518a17b60151e7d04efe"},
+    {file = "rasterio-1.3.9-cp38-cp38-win_amd64.whl", hash = "sha256:89771b70ee722c4cc808e2a6139b367bef1a736ecd497b311b3515d78a5d16bc"},
+    {file = "rasterio-1.3.9-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:14df8413c030b04e54d478d6ecec4e5958b46585c3cb970bf0dc19b4831146c8"},
+    {file = "rasterio-1.3.9-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:911e54e0bb97c456a045f6d8e24b00aeb055a235d2aa7c2c1f9128f4c6c7a52d"},
+    {file = "rasterio-1.3.9-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:01e428ee5ba8444f5cb4fff56225acb1ab9bc8b77209b6e4198e04565d8a8509"},
+    {file = "rasterio-1.3.9-cp39-cp39-win_amd64.whl", hash = "sha256:26d9aea05b035927647bb32cc04fad0a68346a2f5186224dc1c2555c33515183"},
+    {file = "rasterio-1.3.9.tar.gz", hash = "sha256:fc6d0d290492fa1a5068711cfebb21cc936968891b7ed9da0690c8a7388885c5"},
 ]
 
 [package.dependencies]
@@ -3644,14 +3644,14 @@ files = [
 
 [[package]]
 name = "types-requests"
-version = "2.31.0.9"
+version = "2.31.0.10"
 description = "Typing stubs for requests"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "types-requests-2.31.0.9.tar.gz", hash = "sha256:3bb11188795cc3aa39f9635032044ee771009370fb31c3a06ae952b267b6fcd7"},
-    {file = "types_requests-2.31.0.9-py3-none-any.whl", hash = "sha256:140e323da742a0cd0ff0a5a83669da9ffcebfaeb855d367186b2ec3985ba2742"},
+    {file = "types-requests-2.31.0.10.tar.gz", hash = "sha256:dc5852a76f1eaf60eafa81a2e50aefa3d1f015c34cf0cba130930866b1b22a92"},
+    {file = "types_requests-2.31.0.10-py3-none-any.whl", hash = "sha256:b32b9a86beffa876c0c3ac99a4cd3b8b51e973fb8e3bd4e0a6bb32c7efad80fc"},
 ]
 
 [package.dependencies]
@@ -3703,7 +3703,7 @@ zstd = ["zstandard (>=0.18.0)"]
 name = "virtualenv"
 version = "20.24.5"
 description = "Virtual Python Environment builder"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -3876,4 +3876,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "30a993e1fe7d6d87da75f2b6f9155c66f6343c3758c37656f044b8c31cfba783"
+content-hash = "6a2c160ed13b808f74de6c541f221f58274bc50c4f14b151c12ae7c3b49bf822"
