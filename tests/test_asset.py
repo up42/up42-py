@@ -156,11 +156,6 @@ def test_download_stac_asset(asset_mock2, requests_mock):
         assert out_path.name == "bsg-104-20230522-044750-90756881_ortho.tiff"
 
 
-def test_asset_repr_without_optional_fields(asset_mock):
-    asset_mock._info = {
-        "name": "Test Asset",
-        "createdAt": "2023-10-19T12:00:00Z",
-        "size": 1024,
-    }
+def test_asset_repr(asset_mock):
     representation = repr(asset_mock)
-    assert representation == repr(asset_mock)
+    assert representation == repr(asset_mock.info)
