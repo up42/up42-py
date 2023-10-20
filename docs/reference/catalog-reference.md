@@ -18,7 +18,7 @@ To use the [visualization](#visualization) functionalities, first install the ad
 
 ### construct_search_parameters()
 
-The `construct_search_parameters()` function allows you to fill out search parameters when searching for catalog data.
+The `construct_search_parameters()` function allows you to fill out search parameters when searching for catalog imagery.
 
 ```python
 construct_search_parameters(
@@ -75,7 +75,7 @@ The returned format is `Union[GeoDataFrame, dict]`.
 
 | Argument            | Overview                                                                                                                                                            |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `search_parameters` | **dict / required**<br/>The [catalog search parameters].(#construct-search-parameters).                                                                             |
+| `search_parameters` | **dict / required**<br/>The [catalog search parameters](#construct-search-parameters).                                                                              |
 | `as_dataframe`      | **bool**<br/>Determines how to return search results:</br/><ul><li>`True`: return GeoDataFrame.</li><li>`False`: return JSON.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
@@ -159,7 +159,7 @@ catalog.construct_order_parameters(
 
 ### estimate_order()
 
-The `estimate_order()` function returns a cost estimation for a catalog order.
+The `estimate_order()` function returns the cost estimate for a catalog order.
 
 ```python
 estimate_order(order_parameters)
@@ -171,7 +171,7 @@ The returned format is `int`.
 
 | Argument           | Overview                                                                      |
 | ------------------ | ----------------------------------------------------------------------------- |
-| `order_parameters` | **Union[dict, None] / required**<br/>Parameters with which to place an order. |
+| `order_parameters` | **Union[dict, none] / required**<br/>Parameters with which to place an order. |
 
 <h5> Example </h5>
 
@@ -199,7 +199,7 @@ plot_coverage(
 
 | Argument        | Overview                                                                                                                                               |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `scenes`        | **GeoDataFrame / required**<br/>The catalog search results to be visualized.                                                                           |
+| `scenes`        | **GeoDataFrame / required**<br/>The search results to be visualized.                                                                                   |
 | `aoi`           | **GeoDataFrame**<br/>The AOI to be visualized.                                                                                                         |
 | `legend_column` | **str**<br/>The column name of `scenes` to arrange legend entries by ascending order. The default value is `sceneID`.                                  |
 | `figsize`       | **tuple[int, int]**<br/>The size of the visualization in inches. The first number is length, the second one is width. The default value is `(12, 16)`. |
@@ -238,13 +238,13 @@ The returned format is `folium.Map`.
 
 | Argument        | Overview                                                                                                                                                                                                 |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scenes`        | **GeoDataFrame / required**<br/>The catalog search results to be visualized.                                                                                                                             |
+| `scenes`        | **GeoDataFrame / required**<br/>The search results to be visualized.                                                                                                                                     |
 | `aoi`           | **GeoDataFrame**<br/>The AOI to be visualized.                                                                                                                                                           |
 | `show_images`   | **bool**<br/>Determines whether to visualize images:<ul><li>`True`: show the images on the map.</li><li>`False`: don't show the images on the map.</li></ul> The default value is `True`.                |
 | `show_features` | **bool**<br/>Determines whether to visualize the geometry:<br/><ul><li>`True`: show the geometry on the map.</li><li>`False`: don't show the geometry on the map.</li></ul>The default value is `False`. |
-| `filepaths`     | **List[Union[str, Path]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                                                                                                   |
+| `filepaths`     | **list[Union[str, Path]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                                                                                                   |
 | `name_column`   | **str**<br/>The column name of `scenes` that provides the feature name. The default value is `id`.                                                                                                       |
-| `save_html`     | **path**<br/>Use to specify a path to save the map as an HTML file.                                                                                                                                      |
+| `save_html`     | **Path**<br/>Use to specify a path to save the map as an HTML file.                                                                                                                                      |
 
 <h5> Example </h5>
 
@@ -278,7 +278,7 @@ plot_quicklooks(
 | Argument    | Overview                                                                                                                                             |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `figsize`   | **tuple[int, int]**<br/>The size of the visualization in inches. The first number is length, the second one is width. The default value is `(8, 8)`. |
-| `filepaths` | **Union[List[Union[str, Path]], dict, None]**<br/>The file paths. By default, the last downloaded results will be used.                              |
+| `filepaths` | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths. By default, the last downloaded results will be used.                              |
 | `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                                       |
 
 <h5> Example </h5>
