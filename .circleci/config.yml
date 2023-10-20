@@ -27,6 +27,11 @@ jobs:
           key: *venv-cache
           paths:
             - .venv
+      - run:
+          name: Install requirements
+          command: |
+            poetry lock
+            poetry install --no-interaction --no-ansi
       - restore_cache:
           name: Restoring pre-commit cache
           keys:
@@ -39,11 +44,6 @@ jobs:
           key: *pre-commit-cache
           paths:
             - ~/.cache/pre-commit
-      - run:
-          name: Install requirements
-          command: |
-            poetry lock
-            poetry install --no-ansi
       - run:
           name: Runnning tests
           command: poetry run make test
