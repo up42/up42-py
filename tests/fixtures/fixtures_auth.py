@@ -3,14 +3,7 @@ import os
 import pytest
 
 from ..context import Auth, main
-from .fixtures_globals import (
-    JSON_BALANCE,
-    JSON_BLOCKS,
-    PROJECT_APIKEY,
-    PROJECT_ID,
-    TOKEN,
-    WORKSPACE_ID,
-)
+from .fixtures_globals import JSON_BALANCE, JSON_BLOCKS, PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID
 
 
 @pytest.fixture()

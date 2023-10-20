@@ -3,14 +3,7 @@ import os
 import pytest
 
 from ..context import Workflow
-from .fixtures_globals import (
-    JOB_ID,
-    JOB_NAME,
-    JSON_WORKFLOW_TASKS,
-    PROJECT_DESCRIPTION,
-    WORKFLOW_ID,
-    WORKFLOW_NAME,
-)
+from .fixtures_globals import JOB_ID, JOB_NAME, JSON_WORKFLOW_TASKS, PROJECT_DESCRIPTION, WORKFLOW_ID, WORKFLOW_NAME
 
 
 @pytest.fixture()

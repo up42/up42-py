@@ -7,14 +7,7 @@ import requests
 from .context import Auth
 
 # pylint: disable=unused-import
-from .fixtures import (
-    PROJECT_APIKEY,
-    PROJECT_ID,
-    TOKEN,
-    WORKSPACE_ID,
-    auth_live,
-    auth_mock,
-)
+from .fixtures import PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID, auth_live, auth_mock
 
 
 def test_auth_kwargs():
