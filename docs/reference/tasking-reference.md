@@ -36,7 +36,7 @@ The returned format is `dict`.
 | `acquisition_start` | **Union[str, datetime] / required**<br/>The start date of the acquisition period in the `YYYY-MM-DD` format.                                                                                                                                     |
 | `acquisition_end`   | **Union[str, datetime] / required**<br/>The end date of the acquisition period in the `YYYY-MM-DD` format.                                                                                                                                       |
 | `geometry`          | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point] / required**<br/>The geometry of the area to be captured. It can be a POI or an AOI depending on the [collection](https://docs.up42.com/data/tasking/limitations). |
-| `tags`              | **List[str]**<br/>A list of tags that categorize the order.                                                                                                                                                                                      |
+| `tags`              | **list[str]**<br/>A list of tags that categorize the order.                                                                                                                                                                                      |
 
 <h5> Example </h5>
 
