@@ -36,8 +36,10 @@ class Asset:
         asset_id: Optional[str] = None,
         asset_info: Optional[dict] = None,
     ):
-        if asset_id and asset_info:
-            raise ValueError("Asset id and asset info should not be provided at the same time.")
+        if asset_id is not None and asset_info is not None:
+            raise ValueError("asset_id and asset_info cannot be provided simultaneously.")
+        if asset_id is None and asset_info is None:
+            raise ValueError("Either asset_id or asset_info should be provided in the constructor.")
         self.auth = auth
         self.info = asset_info or self._get_info(asset_id)
         self.results: Union[List[str], None] = None
