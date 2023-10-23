@@ -4,25 +4,24 @@ import pytest
 from shapely.geometry import box
 
 # pylint: disable=unused-import,wrong-import-order
-from .context import Workflow, Job, JobCollection
-
+from .context import Job, JobCollection, Workflow
 from .fixtures import (
-    auth_mock,
+    ASSET_ID,
+    JOB_ID,
+    JOB_NAME,
+    JOBTASK_ID,
+    JSON_WORKFLOW_ESTIMATION,
+    JSON_WORKFLOW_TASKS,
+    asset_mock,
     auth_live,
-    workflow_mock_empty,
-    workflow_mock,
+    auth_mock,
     job_mock,
     jobcollection_single_mock,
     jobtask_mock,
     project_mock,
     project_mock_max_concurrent_jobs,
-    asset_mock,
-    ASSET_ID,
-    JOB_ID,
-    JOB_NAME,
-    JOBTASK_ID,
-    JSON_WORKFLOW_TASKS,
-    JSON_WORKFLOW_ESTIMATION,
+    workflow_mock,
+    workflow_mock_empty,
 )
 
 

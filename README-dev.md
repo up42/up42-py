@@ -9,7 +9,7 @@ The development installation is necessary if you want to contribute to up42-py, 
 mkvirtualenv --python=$(which python3.7) up42-py
 ```
 
-2. Clone the repository and install locally with SystemLink (code changes are reflected).  
+2. Clone the repository and install locally with SystemLink (code changes are reflected).
 This will install all the neccessary dependencies for up42-py, running the tests and editing the docs.
 
 ```bash
@@ -40,7 +40,7 @@ print(project)
 
 ## Edit the docs
 
-The up42-py documentation is based on markdown and build with [MkDocs](https://www.mkdocs.org) 
+The up42-py documentation is based on markdown and build with [MkDocs](https://www.mkdocs.org)
 & [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/).
 
 In order to live-preview your changes for easier editing, run the MkDocs preview in the main folder:

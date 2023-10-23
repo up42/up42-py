@@ -116,9 +116,7 @@ def create_webhook(
     Returns:
         A dict with details of the registered webhook.
     """
-    webhook = Webhooks(auth=_auth).create_webhook(
-        name=name, url=url, events=events, active=active, secret=secret
-    )
+    webhook = Webhooks(auth=_auth).create_webhook(name=name, url=url, events=events, active=active, secret=secret)
     return webhook
 
 
@@ -165,16 +163,12 @@ def get_blocks(
         blocks_json = [block for block in public_blocks_json if block["type"] == "DATA"]
     elif block_type == "processing":
         logger.info("Getting only processing blocks.")
-        blocks_json = [
-            block for block in public_blocks_json if block["type"] == "PROCESSING"
-        ]
+        blocks_json = [block for block in public_blocks_json if block["type"] == "PROCESSING"]
     else:
         blocks_json = public_blocks_json
 
     if basic:
-        logger.info(
-            "Getting blocks name and id, use basic=False for all block details."
-        )
+        logger.info("Getting blocks name and id, use basic=False for all block details.")
         blocks_basic = {block["name"]: block["id"] for block in blocks_json}
         if as_dataframe:
             return pd.DataFrame.from_dict(blocks_basic, orient="index")

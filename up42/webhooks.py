@@ -84,9 +84,7 @@ class Webhook:
             "active": active if active is not None else self._info["active"],
         }
         url_put = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
-        response_json = self.auth._request(
-            request_type="PUT", url=url_put, data=input_parameters
-        )
+        response_json = self.auth._request(request_type="PUT", url=url_put, data=input_parameters)
         self._info = response_json["data"]
         logger.info(f"Updated webhook {self}")
         return self
@@ -153,9 +151,7 @@ class Webhooks:
         if return_json:
             return response_json["data"]
         webhooks = [
-            Webhook(
-                auth=self.auth, webhook_id=webhook_info["id"], webhook_info=webhook_info
-            )
+            Webhook(auth=self.auth, webhook_id=webhook_info["id"], webhook_info=webhook_info)
             for webhook_info in response_json["data"]
         ]
         return webhooks
@@ -189,9 +185,7 @@ class Webhooks:
             "active": active,
         }
         url_post = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks"
-        response_json = self.auth._request(
-            request_type="POST", url=url_post, data=input_parameters
-        )
+        response_json = self.auth._request(request_type="POST", url=url_post, data=input_parameters)
         webhook = Webhook(
             auth=self.auth,
             webhook_id=response_json["data"]["id"],

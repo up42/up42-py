@@ -1,7 +1,7 @@
 # Geometry handling
 
-The Polygon `geometry` parameter required for some UP42 operations like placing an image order, can be 
-provided in multiple formats in the Python SDK. It is automatically transformed to the required formatting. 
+The Polygon `geometry` parameter required for some UP42 operations like placing an image order, can be
+provided in multiple formats in the Python SDK. It is automatically transformed to the required formatting.
 Also see [AOI guidelines](https://docs.up42.com/help/aoi-guidelines).
 
 You can also use `up42.read_vector_file()` to read local geojson, shapefiles, kml & wkt files.
@@ -121,7 +121,7 @@ You can also use `up42.read_vector_file()` to read local geojson, shapefiles, km
 
 === "GeoDataFrame"
     See the geopandas [documentation](https://geopandas.org/en/stable/index.html).
-    
+
     The geopandas dataframe can only have a single row, and requires a Polygon geometry.
     ```python
     aoi = geopandas.read_file("aoi.geojson")
@@ -132,4 +132,3 @@ You can also use `up42.read_vector_file()` to read local geojson, shapefiles, km
     ```python
     aoi = Polygon([(0, 0, 0), (0, 0, 1), (1, 1, 1)])
     ```
-

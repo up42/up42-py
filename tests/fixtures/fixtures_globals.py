@@ -13,7 +13,20 @@ DOWNLOAD_URL2 = (
     "cjvDcUPTeIYjHYjBMV0yBOO0FHnzZLRFtpmoXQ5LjIuDb8NYiPcf044XiLIWIdrDhPliMAWZr"
     "whx5CG98M2Y4buui4C24JD6Q%3D%3D"
 )
-STAC_ASSET_DOWNLOAD_URL = "https://api.up42.com/v2/assets/v3b3e203-346d-4f67-b79b-895c36983fb8"
+STAC_ASSET_URL = (
+    "https://storage.googleapis.com/user-storage-interstellar-staging/assets/"
+    "3f581f3d-534a-4e1f-869d-901a7f2bff55?response-content-disposition="
+    "attachment%3B%20filename%3Dbsg-104-20230522-044750-90756881_ortho.tiff"
+    "&GoogleAccessId=asset-service@interstellar-staging-env.iam.gserviceaccount.com"
+    "&Expires=1697201515&Signature=CJl3qL9xits6XXoRv7e%2FaROMar8rlu%2BXdbIlao2UjrMwS"
+    "CosttAhIBXM93%2BX48FxOrSDsBZblSGvTAhKWkuahhOOr25DeSBnSolHMjeaWQG65L6v6TGZglxI"
+    "hP%2BgMhIJ%2Feg34HLaTrqlf1L1TEvTYklwpFoYdDYQCOh8O6UaE0ChEy5GoKHeOYPbjpFMYTeg"
+    "%2FKaVTaa3HKpH90irZHA8HPeShk%2Bk8M3tks7bRIbG56gdyl3cwWPLgq8%2FPENb4GTKxLIkn1y"
+    "vW%2FWw%2B2%2FWIzq9IFsx3AEPe%2F2ZeaU180lZDgEyBmsSdrCMQYA1J9IKAD0rIjYrg%2Bo90"
+    "MsgdNhs3HuTDA%3D%3D"
+)
+STAC_ASSET_HREF = "https://api.up42.com/v2/assets/v3b3e203-346d-4f67-b79b-895c36983fb8"
+STAC_ASSET_ID = "v3b3e203-346d-4f67-b79b-895c36983fb8"
 PROJECT_ID = "f19e833d-e698-4d9e-a037-2e6dbd8791ef"
 PROJECT_APIKEY = "project_apikey_123"
 PROJECT_NAME = "project_name_123"
@@ -228,11 +241,7 @@ JSON_STORAGE_STAC = {
     "type": "FeatureCollection",
     "features": [
         {
-            "assets": {
-                "data": {
-                    "href": "https://api.up42.com/v2/assets/01ad657e-12f7-4046-a94c-abc90d86106a"
-                }
-            },
+            "assets": {"data": {"href": "https://api.up42.com/v2/assets/01ad657e-12f7-4046-a94c-abc90d86106a"}},
             "links": [
                 {
                     "href": "https://api.up42.com/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6/"

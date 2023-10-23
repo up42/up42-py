@@ -2,12 +2,8 @@ import os
 
 import pytest
 
-from .fixtures_globals import WEBHOOK_ID, JSON_WEBHOOK
-
-from ..context import (
-    Webhook,
-    Webhooks,
-)
+from ..context import Webhook, Webhooks
+from .fixtures_globals import JSON_WEBHOOK, WEBHOOK_ID
 
 
 @pytest.fixture()
@@ -51,9 +47,7 @@ def webhooks_mock(auth_mock, requests_mock):
     requests_mock.get(url=url_events, json=events_json)
 
     # get webhooks
-    url_webhooks = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks"
-    )
+    url_webhooks = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks"
     webhooks_json = {
         "data": [
             {
@@ -82,9 +76,7 @@ def webhooks_mock(auth_mock, requests_mock):
     requests_mock.get(url=url_webhooks, json=webhooks_json)
 
     # create webhook
-    url_create_webhook = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks"
-    )
+    url_create_webhook = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/webhooks"
     requests_mock.post(url=url_create_webhook, json=JSON_WEBHOOK)
 
     return Webhooks(auth=auth_mock)

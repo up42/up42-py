@@ -20,7 +20,6 @@ from shapely.geometry import Point, Polygon
 from tqdm import tqdm
 
 
-
 def get_filename(signed_url: str, default_filename: str) -> str:
     """
     Returns the filename from the signed URL
@@ -28,14 +27,12 @@ def get_filename(signed_url: str, default_filename: str) -> str:
     parsed_url = urlparse(signed_url)
     extension = Path(parsed_url.path).suffix
     try:
-        file_name = parse_qs(parsed_url.query)["response-content-disposition"][0].split(
-            "filename="
-        )[1]
+        file_name = parse_qs(parsed_url.query)["response-content-disposition"][0].split("filename=")[1]
         return f"{file_name}{extension}"
     except (IndexError, KeyError):
         warnings.warn(f"Unable to extract filename from URL. Using default filename: {default_filename}", UserWarning)
         return f"{default_filename}{extension}"
- 
+
 
 def get_logger(
     name: str,
@@ -153,9 +150,7 @@ def download_from_gcs_unpack(
     return out_filepaths  # type: ignore
 
 
-def download_gcs_not_unpack(
-    download_url: str, output_directory: Union[str, Path]
-) -> List[str]:
+def download_gcs_not_unpack(download_url: str, output_directory: Union[str, Path]) -> List[str]:
     """
     General download function for assets, job and jobtasks from cloud storage
     provider.
@@ -177,14 +172,9 @@ def download_gcs_not_unpack(
                     dst.write(chunk)
         except requests.exceptions.HTTPError as err:
             logger.debug(f"Connection error, please try again! {err}")
-            raise requests.exceptions.HTTPError(
-                f"Connection error, please try again! {err}"
-            )
+            raise requests.exceptions.HTTPError(f"Connection error, please try again! {err}")
 
-    logger.info(
-        f"Download successful of original archive file to output_directory"
-        f" '{output_directory}': {out_fp.name}. To automatically unpack the archive use `unpacking=True`"
-    )
+    logger.info(f"Successfully downloaded the file at {out_fp}")
     out_filepaths = [str(out_fp)]
     return out_filepaths
 
@@ -249,13 +239,9 @@ def any_vector_to_fc(
             elif vector["type"] == "Feature":
                 df = GeoDataFrame.from_features(FeatureCollection([vector]), crs=4326)
             else:  # Only geometry dict of Feature
-                df = GeoDataFrame.from_features(
-                    FeatureCollection([Feature(geometry=vector)]), crs=4326
-                )
+                df = GeoDataFrame.from_features(FeatureCollection([Feature(geometry=vector)]), crs=4326)
         except KeyError as e:
-            raise ValueError(
-                "Provided geometry dictionary has to include a FeatureCollection or Feature."
-            ) from e
+            raise ValueError("Provided geometry dictionary has to include a FeatureCollection or Feature.") from e
     else:
         if isinstance(vector, list):
             if len(vector) == 4:
@@ -295,9 +281,7 @@ def validate_fc_up42_requirements(fc: Union[dict, FeatureCollection]):
         raise ValueError(geometry_error.format(f"is a {fc_type}"))
 
 
-def fc_to_query_geometry(
-    fc: Union[dict, FeatureCollection], geometry_operation: str
-) -> Union[List, dict]:
+def fc_to_query_geometry(fc: Union[dict, FeatureCollection], geometry_operation: str) -> Union[List, dict]:
     """
     From a feature collection with a single feature, depending on the geometry_operation,
     returns the feature as a list of bounds coordinates or a GeoJSON Polygon (as dict).
@@ -327,9 +311,7 @@ def fc_to_query_geometry(
     return query_geometry
 
 
-def filter_jobs_on_mode(
-    jobs_json: List[dict], test_jobs: bool = True, real_jobs: bool = True
-) -> List[dict]:
+def filter_jobs_on_mode(jobs_json: List[dict], test_jobs: bool = True, real_jobs: bool = True) -> List[dict]:
     """
     Filter jobs according to selected mode.
 
@@ -369,11 +351,7 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
     Returns:
         The order parameters with complete params
     """
-    additional_params = {
-        param: None
-        for param in schema["required"]
-        if param not in order_parameters["params"]
-    }
+    additional_params = {param: None for param in schema["required"] if param not in order_parameters["params"]}
     order_parameters["params"] = dict(order_parameters["params"], **additional_params)
 
     # Log message help for parameter selection
@@ -382,9 +360,7 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
             if param in ["aoi", "geometry"]:
                 continue
             elif "allOf" in schema["properties"][param]:  # has further definitions key
-                potential_values = [
-                    x["const"] for x in schema["definitions"][param]["anyOf"]
-                ]
+                potential_values = [x["const"] for x in schema["definitions"][param]["anyOf"]]
                 logger.info(f"As `{param}` select one of {potential_values}")
             else:
                 # Full information for simple parameters

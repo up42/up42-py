@@ -1,8 +1,7 @@
-from typing import Union, List
 from pathlib import Path
+from typing import List, Union
 
 from up42.auth import Auth
-
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
@@ -46,7 +45,5 @@ class Estimation:
             "inputs": self.input_parameters,
         }
 
-        response_json = self.auth._request(
-            request_type="POST", url=url, data=self.payload
-        )
+        response_json = self.auth._request(request_type="POST", url=url, data=self.payload)
         return response_json["data"]

@@ -170,26 +170,17 @@ def test_fc_to_query_geometry_single_bbox():
 
 
 def test_fc_to_query_geometry_multiple_raises():
-    fp = (
-        Path(__file__).resolve().parent
-        / "mock_data/search_results_limited_columns.geojson"
-    )
+    fp = Path(__file__).resolve().parent / "mock_data/search_results_limited_columns.geojson"
     with open(fp) as json_file:
         fc = json.load(json_file)
 
     with pytest.raises(ValueError) as e:
         fc_to_query_geometry(fc=fc, geometry_operation="intersects")
-    assert (
-        str(e.value)
-        == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
-    )
+    assert str(e.value) == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
 
     with pytest.raises(ValueError) as e:
         fc_to_query_geometry(fc=fc, geometry_operation="bbox")
-    assert (
-        str(e.value)
-        == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
-    )
+    assert str(e.value) == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
 
 
 def test_fc_to_query_geometry_multipolygon_raises():
@@ -199,10 +190,7 @@ def test_fc_to_query_geometry_multipolygon_raises():
 
     with pytest.raises(ValueError) as e:
         fc_to_query_geometry(fc=fc, geometry_operation="intersects")
-    assert (
-        str(e.value)
-        == "UP42 only accepts single geometries, the provided geometry is a MultiPolygon."
-    )
+    assert str(e.value) == "UP42 only accepts single geometries, the provided geometry is a MultiPolygon."
 
 
 def test_download_gcs_unpack_tgz(requests_mock):
@@ -288,17 +276,13 @@ def test_filter_jobs_on_mode():
 
 
 def test_autocomplete_order_parameters():
-    with open(
-        Path(__file__).resolve().parent / "mock_data/data_product_spot_schema.json"
-    ) as json_file:
+    with open(Path(__file__).resolve().parent / "mock_data/data_product_spot_schema.json") as json_file:
         json_data_product_schema = json.load(json_file)
     order_parameters = {
         "dataProduct": "123",
         "params": {"existing_param1": "abc"},
     }
-    order_parameters = autocomplete_order_parameters(
-        order_parameters=order_parameters, schema=json_data_product_schema
-    )
+    order_parameters = autocomplete_order_parameters(order_parameters=order_parameters, schema=json_data_product_schema)
 
     assert "dataProduct" in order_parameters
     assert order_parameters["params"]["existing_param1"] is not None

@@ -11,7 +11,7 @@ from .fixtures import (
     DOWNLOAD_URL,
     DOWNLOAD_URL2,
     JSON_ASSET,
-    STAC_ASSET_DOWNLOAD_URL,
+    STAC_ASSET_HREF,
     asset_live,
     asset_mock,
     asset_mock2,
@@ -126,7 +126,7 @@ def test_download_stac_asset(asset_mock2, requests_mock):
     with open(out_file_path, "rb") as src_file:
         out_file = src_file.read()
     requests_mock.get(
-        url=STAC_ASSET_DOWNLOAD_URL,
+        url=STAC_ASSET_HREF,
         content=out_file,
         headers={
             "Authorization": "Bearer some_token_value",
@@ -134,7 +134,7 @@ def test_download_stac_asset(asset_mock2, requests_mock):
     )
     with tempfile.TemporaryDirectory() as tempdir:
         out_path = asset_mock2.download_stac_asset(
-            pystac.Asset(href=STAC_ASSET_DOWNLOAD_URL, roles=["data"]), tempdir
+            pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]), tempdir
         )
         assert out_path.exists()
-        assert out_path.name == "stac_asset"
+        assert out_path.name == "bsg-104-20230522-044750-90756881_ortho.tiff"

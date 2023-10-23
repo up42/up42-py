@@ -19,19 +19,41 @@
 !!! example "Classes"
     === "up42"
 
-        {{ docstring_up42 }}
-        <br>
-        Available functions, see also [**up42 reference**](up42-reference.md):
-        {{ format_funcs(funcs_up42) }}
+        The up42 class is the base library module imported to Python. It provides the elementary functionality that is not bound to a specific class of the UP42 structure.
+
+        See available attributes and functions on the [up42](up42-reference.md) reference page:
+        <ul>
+            <li>`authenticate()`</li>
+            <li>`tools.settings()`</li>
+            <li>`get_credits_balance()`</li>
+            <li>`get_block_coverage()`</li>
+            <li>`get_block_details()`</li>
+            <li>`get_blocks()`</li>
+            <li>`validate_manifest()`</li>
+            <li>`get_example_aoi()`</li>
+            <li>`read_vector_file()`</li>
+            <li>`raw_aoi()`</li>
+            <li>`viztools.folium_base_map()`</li>
+        </ul>
 
     === "Tasking"
 
-        {{ docstring_tasking }}
-        <br>
-        Available functions, see also [**Tasking reference**](tasking-reference.md):
-        {{ format_funcs(funcs_tasking) }}
-        <br>
+        The Tasking class enables access to the UP42 [tasking functionality](../examples/tasking/tasking-example).
+
+        ```python
+        tasking = up42.initialize_tasking()
+        ```
+
         This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
+
+        See available attributes and functions on the [Tasking](tasking-reference.md) reference page:
+        <ul>
+            <li>`construct_order_parameters()`</li>
+            <li>`get_feasibility()`</li>
+            <li>`choose_feasibility()`</li>
+            <li>`get_quotations()`</li>
+            <li>`decide_quotation()`</li>
+        </ul>
 
     === "Catalog"
 
@@ -45,22 +67,39 @@
     === "CatalogBase"
 
         The CatalogBase class is inherited by the [Tasking](tasking-reference.md) and [Catalog](catalog-reference.md) classes.
-        <br><br>
-        Available functions, see also [**CatalogBase reference**](catalogbase-reference.md):
+
+        To use these functions, first initialize the Tasking or Catalog class as follows:
+        ```python
+        tasking = up42.initialize_tasking()
+
+        catalog = up42.initialize_catalog()
+        ```
+
+        See available attributes and functions on the [CatalogBase](catalogbase-reference.md) reference page:
         <ul>
-            <li>`.get_collections()`</li>
-            <li>`.get_data_product_schema()`</li>
-            <li>`.get_data_products()`</li>
-            <li>`.place_order()`</li>
+            <li>`get_collections()`</li>
+            <li>`get_data_products()`</li>
+            <li>`get_data_product_schema()`</li>
+            <li>`place_order()`</li>
         </ul>
 
     === "Order"
 
-        {{ docstring_order }}
-        <br>
-        Available functions, see also [**Order reference**](order-reference.md):
-        {{ format_funcs(funcs_order) }}
+        The Order class enables access to [catalog](../catalog) and [tasking](../examples/tasking/tasking-example) orders tracking.
 
+        ```python
+        order = up42.initialize_order(order_id="ea36dee9-fed6-457e-8400-2c20ebd30f44")
+        ```
+
+        See available attributes and functions on the [Order](order-reference.md) reference page:
+        <ul>
+            <li>`info`</li>
+            <li>`order_details`</li>
+            <li>`status`</li>
+            <li>`is_fulfilled`</li>
+            <li>`track_status()`</li>
+            <li>`get_assets()`</li>
+        </ul>
 
     === "Storage"
 
@@ -71,17 +110,41 @@
 
     === "Asset"
 
-        {{ docstring_asset }}
-        <br>
-        Available functions, see also [**Asset reference**](asset-reference.md):
-        {{ format_funcs(funcs_asset) }}
+        The Asset class enables access to [assets in storage](../examples/asset/asset-example).
+
+        ```python
+        asset = up42.initialize_asset(asset_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
+        ```
+
+        See available attributes and functions on the [Asset](asset-reference.md) reference page:
+        <ul>
+            <li>`info`</li>
+            <li>`update_metadata()`</li>
+            <li>`download()`</li>
+            <li>`stac_info`</li>
+            <li>`stac_items`</li>
+            <li>`download_stac_asset()`</li>
+            <li>`get_stac_asset_url()`</li>
+        </ul>
 
     === "Project"
 
-        {{ docstring_project }}
-        <br>
-        Available functions, see also [**Project reference**](project-reference.md):
-        {{ format_funcs(funcs_project) }}
+        The Project class enables access to the UP42 [analytics functionality](analytics.md). A project stores workflows and their corresponding job runs.
+
+        ```python
+        project = up42.initialize_project()
+        ```
+
+        See available attributes and functions on the [Project](project-reference.md) reference page:
+        <ul>
+            <li>`info`</li>
+            <li>`max_concurrent_jobs`</li>
+            <li>`get_project_settings()`</li>
+            <li>`update_project_settings()`</li>
+            <li>`get_workflows()`</li>
+            <li>`create_workflow()`</li>
+            <li>`get_jobs()`</li>
+        </ul>
 
     === "Workflow"
 
@@ -92,17 +155,32 @@
 
     === "Job"
 
-        {{ docstring_job }}
-        <br>
-        Available functions, see also [**Job reference**](job-reference.md):
-        {{ format_funcs(funcs_job) }}
+        The Job class enables access to the UP42 [analytics functionality](analytics.md).
 
-    === "JobTask"
+        A job is an instance of a workflow. It delivers geospatial outputs defined by job parameters.
 
-        {{ docstring_jobtask }}
-        <br>
-        Available functions, see also [**JobTask reference**](jobtask-reference.md):
-        {{ format_funcs(funcs_jobtask) }}
+        ```python
+        job = up42.initialize_job(job_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
+        ```
+
+        See available attributes and functions on the [Job](job-reference.md) reference page:
+        <ul>
+            <li>`info`</li>
+            <li>`status`</li>
+            <li>`is_succeeded`</li>
+            <li>`track_status()`</li>
+            <li>`get_credits()`</li>
+            <li>`download_quicklooks()`</li>
+            <li>`get_results_json()`</li>
+            <li>`download_results()`</li>
+            <li>`upload_results_to_bucket()`</li>
+            <li>`cancel_job()`</li>
+            <li>`get_jobtasks()`</li>
+            <li>`get_logs()`</li>
+            <li>`get_jobtasks_results_json()`</li>
+            <li>`map_results()`</li>
+            <li>`plot_results()`</li>
+        </ul>
 
     === "JobCollection"
 
@@ -111,7 +189,14 @@
         Available functions, see also [**JobCollection reference**](jobcollection-reference.md):
         {{ format_funcs(funcs_jobcollection) }}
 
-    === "Webhook"
+    === "JobTask"
+
+        {{ docstring_jobtask }}
+        <br>
+        Available functions, see also [**JobTask reference**](jobtask-reference.md):
+        {{ format_funcs(funcs_jobtask) }}
+
+    === "Webhooks"
 
         {{ docstring_webhooks }}
         <br>

@@ -2,12 +2,7 @@ import pytest
 
 # pylint: disable=unused-import,wrong-import-order
 from .context import Estimation
-from .fixtures import (
-    auth_mock,
-    auth_live,
-    estimation_mock,
-    JSON_WORKFLOW_ESTIMATION,
-)
+from .fixtures import JSON_WORKFLOW_ESTIMATION, auth_live, auth_mock, estimation_mock
 
 
 def test_estimate_price(requests_mock, auth_mock, estimation_mock):
@@ -26,9 +21,7 @@ def test_estimate_price(requests_mock, auth_mock, estimation_mock):
         },
     ]
 
-    url_workflow_estimation = (
-        f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/estimate/job"
-    )
+    url_workflow_estimation = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/estimate/job"
     requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
     _ = estimation_mock.estimate()
     assert list(estimation_mock.payload.keys()) == ["tasks", "inputs"]

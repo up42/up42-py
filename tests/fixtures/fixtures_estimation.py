@@ -1,8 +1,6 @@
 import pytest
 
-from ..context import (
-    Estimation,
-)
+from ..context import Estimation
 
 
 @pytest.fixture()
