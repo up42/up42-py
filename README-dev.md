@@ -15,13 +15,7 @@ make install[dev]
 
 2. Create a new project on [UP42](https://up42.com).
 
-3. Create a `config.json` file and fill in the [project credentials](https://docs.up42.com/developers/authentication#step-1-find-project-credentials).
-```json
-{
-  "project_id": "...",
-  "project_api_key": "..."
-}
-```
+3. Create a `config.json` file and configure according to the [authentication guidelines](https://sdk.up42.com/authentication/)
 
 4. Test it in Python! This will authenticate with the UP42 Server and get the project information.
 ```python
