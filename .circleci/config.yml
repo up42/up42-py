@@ -22,16 +22,16 @@ jobs:
           name: Restoring poetry cache
           keys:
             - *venv-cache
-      - save_cache:
-          name: Saving poetry cache
-          key: *venv-cache
-          paths:
-            - .venv
       - run:
           name: Install requirements
           command: |
             poetry lock
             poetry install --no-interaction --no-ansi
+      - save_cache:
+          name: Saving poetry cache
+          key: *venv-cache
+          paths:
+            - .venv
       - restore_cache:
           name: Restoring pre-commit cache
           keys:
@@ -68,7 +68,7 @@ jobs:
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
 
-  test_live_sonar:
+  test_live:
     docker:
       - image: cimg/python:3.8
     steps:
@@ -127,5 +127,5 @@ workflows:
               only:
                 - master
     jobs:
-      - test_live_sonar:
+      - test_live:
           context: up42-py-live-testing
