@@ -1,6 +1,6 @@
 # JobTask
 
-The JobTask class enables access to the results of a specific job task in a job. Job tasks are unique configurations of workflow tasks in a job.
+The JobTask class enables access to [results of a specific job task](../../analytics/). Job tasks are unique configurations of workflow tasks in a job.
 
 ```python
 jobtask = up42.initialize_jobtask(
@@ -9,17 +9,11 @@ jobtask = up42.initialize_jobtask(
 )
 ```
 
-To use the [visualization](#visualization) functionalities, first install the advanced up42-py[viz] package.
-
-```bash
-!pip install up42-py[viz]
-```
-
-## Results
+## Job tasks
 
 ### info
 
-The `info` attribute returns metadata to a specific job task's results.
+The `info` attribute returns metadata to a specific job task.
 
 The returned format is `dict`.
 
@@ -29,40 +23,12 @@ The returned format is `dict`.
 jobtask.info
 ```
 
-### get_results_json()
-
-The `get_results_json()` function allows you to get the `data.json` from a specific job task's results and returns the information as either a JSON or GeoDataFrame.
-
-```python
-get_results_json(
-    as_dataframe,
-)
-```
-
-The returned format is `Union[dict, GeoDataFrame]`.
-
-<h5> Arguments </h5>
-
-| Argument       | Overview                                                                                                                                                                                         |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `as_dataframe` | **bool**<br/>Determines how `data.json` is returned:<br/><ul><li>`True`: return as a GeoDataFrame.</li><li>`False`: return as a JSON `FeatureCollection`.</li></ul>The default value is `False`. |
-
-<h5> Example </h5>
-
-```python
-jobtask.get_results_json(
-    as_dataframe=True,
-)
-```
-
 ### download_quicklooks()
 
-The `download_quicklooks()` function allows you to download low-resolution previews of a specific job task's results. Not all job task's results have quicklooks available.
+The `download_quicklooks()` function allows you to download low-resolution preview images. Not all job tasks have quicklooks available.
 
 ```python
-download_quicklooks(
-    output_directory,
-)
+download_quicklooks(output_directory)
 ```
 
 The returned format is `list[str]`. If an empty list `[]` is returned, no quicklooks are available.
@@ -76,9 +42,29 @@ The returned format is `list[str]`. If an empty list `[]` is returned, no quickl
 <h5> Example </h5>
 
 ```python
-jobtask.download_quicklooks(
-    output_directory="/Users/max.mustermann/Desktop/",
-)
+jobtask.download_quicklooks(output_directory="/Users/max.mustermann/Desktop/")
+```
+
+### get_results_json()
+
+The `get_results_json()` function allows you to get the `data.json` from a specific job task.
+
+```python
+get_results_json(as_dataframe)
+```
+
+The returned format is `Union[dict, GeoDataFrame]`.
+
+<h5> Arguments </h5>
+
+| Argument       | Overview                                                                                                                                                        |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `as_dataframe` | **bool**<br/>Determines how `data.json` is returned:<br/><ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul>The default value is `False`. |
+
+<h5> Example </h5>
+
+```python
+jobtask.get_results_json(as_dataframe=True)
 ```
 
 ### download_results()
@@ -86,9 +72,7 @@ jobtask.download_quicklooks(
 The `download_results()` function allows you to download a specific job task's results and returns a list of download paths.
 
 ```python
-download_results(
-    output_directory,
-)
+download_results(output_directory)
 ```
 
 The returned format is `list[str]`.
@@ -102,12 +86,16 @@ The returned format is `list[str]`.
 <h5> Example </h5>
 
 ```python
-jobtask.download_results(
-    output_directory="/Users/max.mustermann/Desktop/",
-)
+jobtask.download_results(output_directory="/Users/max.mustermann/Desktop/")
 ```
 
-## Visualizations
+## Visualization
+
+To use the visualization functions, [install](../../installation/) the SDK's advanced installation with plotting functionalities.
+
+### plot_quicklooks()
+
+The `plot_quicklooks()` function allows you to visualize downloaded quicklooks. Use together with [`download_quicklooks()`](#download_quicklooks).
 
 ### map_results()
 
@@ -128,14 +116,14 @@ The returned format is `folium.Map`.
 
 <h5> Arguments </h5>
 
-| Argument        | Overview                                                                                                                                                                                                                          |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bands`         | **list[int]**<br/>A list of image bands to show on the map and their order.                                                                                                                                                       |
-| `aoi`           | **GeoDataFrame**<br/>An additional geometry to visualize on the map.                                                                                                                                                              |
-| `show_images`   | **bool**<br/>Determines whether to visualize the job task's results:<ul><li>`True`: show the job task's results on the map.</li><li>`False`: don't show the job task's results on the map.</li></ul> The default value is `True`. |
-| `show_features` | **bool**<br/>Determines whether to visualize the geometry of the job task's results:<br/><ul><li>`True`: show the geometry on the map.</li><li>`False`: don't show the geometry on the map.</li></ul>The default value is `True`. |
-| `name_column`   | **str**<br/>The name of the feature property that provides the feature name. The default value is `uid`.                                                                                                                          |
-| `save_html`     | **path**<br/>Use to specify a path to save the map as an HTML file.                                                                                                                                                               |
+| Argument        | Overview                                                                                                                                                                                                                                            |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bands`         | **list[int]**<br/>A list of image bands to show on the map and their order.                                                                                                                                                                         |
+| `aoi`           | **GeoDataFrame**<br/>An additional geometry to visualize on the map.                                                                                                                                                                                |
+| `show_images`   | **bool**<br/>Determines whether to visualize the job task results:<ul><li>`True`: show the job task results on the map.</li><li>`False`: don't show the job task results on the map.</li></ul> The default value is `True`.                   |
+| `show_features` | **bool**<br/>Determines whether to visualize the geometry of the job task results:<br/><ul><li>`True`: show the job task geometry on the map.</li><li>`False`: don't show the job task geometry on the map.</li></ul>The default value is `True`. |
+| `name_column`   | **str**<br/>The name of the feature property that provides the feature name. The default value is `uid`.                                                                                                                                            |
+| `save_html`     | **path**<br/>Use to specify a path to save the map as an HTML file.                                                                                                                                                                                 |
 
 <h5> Example </h5>
 
@@ -150,39 +138,9 @@ jobtask.map_results(
 )
 ```
 
-### plot_quicklooks()
-
-The `plot_quicklooks()` function allows you to visualize downloaded quicklooks. Use together with [`download_quicklooks()`](#download_quicklooks).
-
-```python
-plot_quicklooks(
-    figsize,
-    filepaths,
-    titles,
-)
-```
-
-<h5> Arguments </h5>
-
-| Argument    | Overview                                                                                                                                             |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `figsize`   | **tuple[int, int]**<br/>The size of the visualization in inches. The first number is length, the second one is width. The default value is `(8, 8)`. |
-| `filepaths` | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths. By default, the last downloaded results will be used.                              |
-| `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                                       |
-
-<h5> Example </h5>
-
-```python
-jobtask.plot_quicklooks(
-    figsize=(10, 10),
-    filepaths=jobtask.quicklooks,  # Use jobtask.download_quicklooks to get jobtask.quicklooks
-    titles=[str(x) for x in range(len(jobtask.quicklooks))],
-)
-```
-
 ### plot_results()
 
-The `plot_results()` function allows you to visualize TIFF files from the downloaded job task's results. Use together with [`download_results()`](#download_results).
+The `plot_results()` function allows you to visualize downloaded job task's results. Use together with [`download_results()`](#download_results).
 
 ```python
 plot_results(
@@ -204,8 +162,8 @@ The returned format is `type`.
 | `figsize`          | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(14, 8)`. |
 | `bands`            | **list[int]**<br/>A list of image bands to plot and their order.                                                                            |
 | `titles`           | **list[str]**<br/>Titles for the subplots.                                                                                                  |
-| `filepaths`        | **Union[list[Union[str, Path]], dict, none]**<br/>The file path. By default, the downloaded job task's results will be used.                |
-| `plot_file_format` | **list[str]**<br/>The returned plot file format. The default value is `[".tif"]`.                                                           |
+| `filepaths`        | **Union[list[Union[str, Path]], dict, none]**<br/>The file path. By default, the downloaded results will be used.                           |
+| `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                   |
 | `kwargs`           | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
 
 <h5> Example </h5>

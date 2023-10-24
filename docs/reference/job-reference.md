@@ -221,7 +221,7 @@ job.cancel_job()
 
 ## Job tasks
 
-Job tasks are unique configurations of workflow tasks in a job.
+Job tasks are unique configurations of workflow tasks in a job. You can access a specific job task's results with the [JobTask](../../reference/jobtask-reference) class.
 
 ### get_jobtasks()
 
