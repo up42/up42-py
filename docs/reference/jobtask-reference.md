@@ -1,6 +1,6 @@
 # JobTask
 
-The JobTask class enables access to [results of a specific job task](../../analytics/). Job tasks are unique configurations of workflow tasks in a job.
+The JobTask class enables access to [results of a specific job task](analytics.md). Job tasks are unique configurations of workflow tasks in a job.
 
 ```python
 jobtask = up42.initialize_jobtask(
@@ -91,7 +91,7 @@ jobtask.download_results(output_directory="/Users/max.mustermann/Desktop/")
 
 ## Visualization
 
-To use the visualization functions, [install](../../installation/) the SDK's advanced installation with plotting functionalities.
+To use the visualization functions, [install](installation.md) the SDK's advanced installation with plotting functionalities.
 
 ### plot_quicklooks()
 
