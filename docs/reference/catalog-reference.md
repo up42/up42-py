@@ -189,7 +189,7 @@ To use the visualization functionalities, [install](../../installation/) the adv
 
 ### plot_coverage()
 
-The `plot_coverage()` function allows you to visualize the coverage of your search results.
+The `plot_coverage()` function allows you to visualize the coverage of scenes returned in search results.
 Use together with [`search()`](#search).
 
 ```python
@@ -205,16 +205,29 @@ plot_coverage(
 
 | Argument        | Overview                                                                                                                                               |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `scenes`        | **GeoDataFrame / required**<br/>The search results to be visualized.                                                                                   |
-| `aoi`           | **GeoDataFrame**<br/>The AOI to be visualized.                                                                                                         |
-| `legend_column` | **str**<br/>The column name of `scenes` to arrange legend entries by ascending order. The default value is `sceneID`.                                  |
+| `scenes`        | **GeoDataFrame / required**<br/>The scenes returned in search results.                                                                                 |
+| `aoi`           | **GeoDataFrame**<br/>The order AOI.                                                                                                         |
+| `legend_column` | **str**<br/>The column name of `scenes` to arrange legend entries by ascending order. The default value is `sceneId`.                                  |
 | `figsize`       | **tuple[int, int]**<br/>The size of the visualization in inches. The first number is length, the second one is width. The default value is `(12, 16)`. |
 
 <h5> Example </h5>
 
 ```python
+# Construct search parameters
+
+search_parameters = catalog.construct_search_parameters(
+    geometry="/Users/max.mustermann/Desktop/aoi.geojson",
+    collections=["phr"],
+    start_date="2022-06-01",
+    end_date="2022-12-31",
+    limit=5,
+    max_cloudcover=25,
+)
+
+# Search and plot scene coverage
+
 catalog.plot_coverage(
-    scenes=search_results,  # Use catalog.search() to get search_results
+    scenes=catalog.search(search_parameters),
     aoi="/Users/max.mustermann/Desktop/aoi.geojson",
     legend_column="cloudCoverage",
     figsize=(14, 18),
