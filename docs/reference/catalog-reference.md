@@ -30,14 +30,14 @@ The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Argument         | Overview                                                                                                                         |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `geometry`       | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon] / required**<br/>The geometry of the area to be captured. |
-| `collections`    | **list[str] / required**<br/>The geospatial collection names.                                                                    |
-| `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format. The default value is `2020-01-01`.                   |
-| `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format. The default value is `2020-01-30`.                     |
-| `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.                          |
-| `max_cloudcover` | **int**<br/>The maximum cloud coverage, in percentage.                                                                           |
+| Argument         | Overview                                                                                                       |
+| ---------------- | -------------------------------------------------------------------------------------------------------------- |
+| `geometry`       | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon] / required**<br/>The geometry.          |
+| `collections`    | **list[str] / required**<br/>The geospatial collection names.                                                  |
+| `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format. The default value is `2020-01-01`. |
+| `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format. The default value is `2020-01-30`.   |
+| `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.        |
+| `max_cloudcover` | **int**<br/>The maximum cloud coverage, in percentage.                                                         |
 
 <h5> Example </h5>
 
@@ -75,9 +75,17 @@ The returned format is `Union[GeoDataFrame, dict]`.
 <h5> Example </h5>
 
 ```python
+# Construct search parameters
+
+search_parameters = catalog.construct_search_parameters(
+    geometry="/Users/max.mustermann/Desktop/aoi.geojson",
+    collections=["phr"],
+)
+
+# Conduct search
+
 catalog.search(
-    search_parameters=search_parameters,  # Use catalog.construct_search_parameters() to get search_parameters
-    as_dataframe=False,
+    search_parameters=search_parameters,
 )
 ```
 
@@ -170,17 +178,13 @@ The returned format is `int`.
 <h5> Example </h5>
 
 ```python
-# Create order parameters
-
-order_parameters = catalog.construct_order_parameters(
-    data_product_id="4f1b2f62-98df-4c74-81f4-5dce45deee99",
-    image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",
-    aoi="/Users/max.mustermann/Desktop/aoi.geojson",
+catalog.estimate_order(
+    order_parameters=catalog.construct_order_parameters(
+        data_product_id="4f1b2f62-98df-4c74-81f4-5dce45deee99",
+        image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",
+        aoi="/Users/max.mustermann/Desktop/aoi.geojson",
+    )
 )
-
-# Estimate order cost
-
-catalog.estimate_order(order_parameters)
 ```
 
 ## Visualization
@@ -258,10 +262,10 @@ The returned format is `folium.Map`.
 | Argument        | Overview                                                                                                                                                                                                 |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `scenes`        | **GeoDataFrame / required**<br/>The scenes returned in search results.                                                                                                                                   |
-| `aoi`           | **GeoDataFrame**<br/>The order AOI.                                                                                                                                                           |
-| `show_images`   | **bool**<br/>Determines whether to visualize quicklooks:<ul><li>`True`: show the quicklooks on the map.</li><li>`False`: don't show the quicklook on the map.</li></ul> The default value is `True`.                |
+| `aoi`           | **GeoDataFrame**<br/>The order AOI.                                                                                                                                                                      |
+| `show_images`   | **bool**<br/>Determines whether to visualize quicklooks:<ul><li>`True`: show the quicklooks on the map.</li><li>`False`: don't show the quicklook on the map.</li></ul> The default value is `True`.     |
 | `show_features` | **bool**<br/>Determines whether to visualize the geometry:<br/><ul><li>`True`: show the geometry on the map.</li><li>`False`: don't show the geometry on the map.</li></ul>The default value is `False`. |
-| `filepaths`     | **list[Union[str, Path]]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                                                                                                   |
+| `filepaths`     | **list[Union[str, Path]]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                                                                                                  |
 | `name_column`   | **str**<br/>The column name of `scenes` that provides the feature name. The default value is `id`.                                                                                                       |
 | `save_html`     | **Path**<br/>Use to specify a path to save the map as an HTML file.                                                                                                                                      |
 
@@ -274,7 +278,7 @@ scenes = catalog.search(
     search_parameters=catalog.construct_search_parameters(
         geometry="/Users/max.mustermann/Desktop/aoi.geojson",
         collections=["phr"],
-        limit=1,
+        limit=2,
     )
 )
 
@@ -294,7 +298,8 @@ catalog.map_quicklooks(
     show_images=True,
     show_features=True,
     filepaths=[
-        "/Users/max.mustermann/Desktop/quicklook_d0a7e38a-0087-48c9-b3f7-8b422388e101.jpg"
+        "/Users/max.mustermann/Desktop/quicklook_d0a7e38a-0087-48c9-b3f7-8b422388e101.jpg",
+        "/Users/max.mustermann/Desktop/quicklook_b7f2c82f-641d-4119-baff-7001a5ceb4f6.jpg",
     ],
     name_column="cloudCoverage",
     save_html="/Users/max.mustermann/Desktop/",
@@ -319,15 +324,38 @@ plot_quicklooks(
 | Argument    | Overview                                                                                                                                             |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `figsize`   | **tuple[int, int]**<br/>The size of the visualization in inches. The first number is length, the second one is width. The default value is `(8, 8)`. |
-| `filepaths` | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths. By default, the last downloaded results will be used.                              |
+| `filepaths` | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths.The file paths. By default, the last downloaded quicklooks will be used.            |
 | `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                                       |
 
 <h5> Example </h5>
 
 ```python
+# Conduct search
+
+scenes = catalog.search(
+    search_parameters=catalog.construct_search_parameters(
+        geometry="/Users/max.mustermann/Desktop/aoi.geojson",
+        collections=["phr"],
+        limit=2,
+    )
+)
+
+# Download quicklooks
+
+catalog.download_quicklooks(
+    image_ids=list(scenes.id),
+    collection="phr",
+    output_directory="/Users/max.mustermann/Desktop/",
+)
+
+# Map quicklooks
+
 catalog.plot_quicklooks(
     figsize=(10, 10),
-    filepaths=catalog.quicklooks,  # Use catalog.download_quicklooks to get catalog.quicklooks
-    titles=[str(x) for x in range(len(catalog.quicklooks))],
+    filepaths=[
+        "/Users/max.mustermann/Desktop/quicklook_d0a7e38a-0087-48c9-b3f7-8b422388e101.jpg",
+        "/Users/max.mustermann/Desktop/quicklook_b7f2c82f-641d-4119-baff-7001a5ceb4f6.jpg",
+    ],
+    titles=["Scene 1", "Scene 2"],
 )
 ```
