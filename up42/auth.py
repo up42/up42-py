@@ -2,6 +2,7 @@
 UP42 authentication mechanism and base requests functionality
 """
 import json
+from enum import Enum
 from pathlib import Path
 from typing import Dict, Optional, Union
 
@@ -23,6 +24,11 @@ from tenacity import (
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
+
+
+class AuthType(Enum):
+    PROJECT = "project-based"
+    ACCOUNT = "account-based"
 
 
 class retry_if_401_invalid_token(retry_if_exception):
