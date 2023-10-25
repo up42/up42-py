@@ -118,7 +118,7 @@ catalog.download_quicklooks(
 
 ### construct_order_parameters()
 
-The `construct_order_parameters()` function allows you to fill out an order form for catalog imagery.
+The `construct_order_parameters()` function allows you to fill out an order form for a new catalog order.
 
 ```python
 construct_order_parameters(
@@ -133,19 +133,19 @@ The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Argument          | Overview                                                                                            |
-| ----------------- | --------------------------------------------------------------------------------------------------- |
-| `data_product_id` | **str / required**<br/>The data product ID.                                                         |
-| `image_id`        | **str / required**<br/>The scene ID.                                                                |
-| `aoi`             | **Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]**<br/>The AOI to be ordered. |
-| `tags`            | **list[str]**<br/>A list of tags that categorize the order.                                         |
+| Argument          | Overview                                                                                    |
+| ----------------- | ------------------------------------------------------------------------------------------- |
+| `data_product_id` | **str / required**<br/>The data product ID.                                                 |
+| `image_id`        | **str / required**<br/>The scene ID.                                                        |
+| `aoi`             | **Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]**<br/>The order AOI. |
+| `tags`            | **list[str]**<br/>A list of tags that categorize the order.                                 |
 
 <h5> Example </h5>
 
 ```python
 catalog.construct_order_parameters(
-    data_product_id="647780db-5a06-4b61-b525-577a8b68bb54",  # Use catalog.get_data_products() to select a data product
-    image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",  # Use catalog.search() to select a scene
+    data_product_id="647780db-5a06-4b61-b525-577a8b68bb54",
+    image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",
     aoi="/Users/max.mustermann/Desktop/aoi.geojson",
     tags=["project-7", "optical"],
 )
