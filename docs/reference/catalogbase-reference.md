@@ -143,7 +143,7 @@ tasking.place_order(
 
 catalog_order_parameters = catalog.construct_order_parameters(
     data_product_id="4f1b2f62-98df-4c74-81f4-5dce45deee99",
-    image_id=search_results.iloc[0]["id"], # To place a catalog order, first use catalog.search() and select a scene
+    image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",
     aoi=geometry,
 )
 
