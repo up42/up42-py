@@ -23,7 +23,16 @@ def auth_mock(requests_mock):
         url=url_get_workspace,
         json=json_get_workspace,
     )
-    auth = Auth(project_id=PROJECT_ID, project_api_key=PROJECT_APIKEY, authenticate=True)
+
+    url_get_workspace_v2 = f"https://api.up42.com/users/me"
+    json_get_workspace_v2 = {"data": {"id": WORKSPACE_ID}}
+    requests_mock.get(
+        url=url_get_workspace_v2,
+        json=json_get_workspace_v2,
+    )
+    auth = Auth(
+        project_id=PROJECT_ID, project_api_key=PROJECT_APIKEY, authenticate=True
+    )
 
     # get_blocks
     url_get_blocks = f"{auth._endpoint()}/blocks"
