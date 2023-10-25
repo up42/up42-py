@@ -5,7 +5,7 @@ The JobTask class enables access to [results of a specific job task](analytics.m
 ```python
 jobtask = up42.initialize_jobtask(
     jobtask_id="3f772637-09aa-4164-bded-692fcd746d20",
-    job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021"
+    job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021",
 )
 ```
 
@@ -13,7 +13,7 @@ jobtask = up42.initialize_jobtask(
 
 ### info
 
-The `info` attribute returns metadata to a specific job task.
+The `info` attribute returns metadata of a specific job task.
 
 The returned format is `dict`.
 
@@ -25,7 +25,7 @@ jobtask.info
 
 ### download_quicklooks()
 
-The `download_quicklooks()` function allows you to download low-resolution preview images. Not all job tasks have quicklooks available.
+The `download_quicklooks()` function allows you to download low-resolution preview images. Not all job tasks have quicklooks.
 
 ```python
 download_quicklooks(output_directory)

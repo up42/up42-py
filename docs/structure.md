@@ -191,14 +191,14 @@
 
     === "JobTask"
 
-        The JobTask class enables access to [results of a specific job task](../../analytics/).
+        The JobTask class enables access to [results of a specific job task](analytics.md).
 
         Job tasks are unique configurations of workflow tasks in a job.
 
         ```python
         jobtask = up42.initialize_jobtask(
             jobtask_id="3f772637-09aa-4164-bded-692fcd746d20",
-            job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021"
+            job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021",
         )
         ```
 
@@ -208,8 +208,8 @@
             <li>`download_quicklooks()`</li>
             <li>`get_results_json()`</li>
             <li>`download_results()`</li>
+            <li>`plot_quicklooks()`</li>
             <li>`map_results()`</li>
-            <li>`quicklooks()`</li>
             <li>`plot_results()`</li>
         </ul>
 
