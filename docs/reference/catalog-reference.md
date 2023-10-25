@@ -8,12 +8,6 @@ catalog = up42.initialize_catalog()
 
 This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
 
-To use the [visualization](#visualization) functionalities, first install the advanced up42-py[viz] package.
-
-```bash
-!pip install up42-py[viz]
-```
-
 ## Searches
 
 ### construct_search_parameters()
@@ -180,6 +174,8 @@ catalog.estimate_order(order_parameters) # Use catalog.construct_order_parameter
 ```
 
 ## Visualization
+
+To use the visualization functionalities, [install](../../installation/) the advanced up42-py package.
 
 ### plot_coverage()
 
