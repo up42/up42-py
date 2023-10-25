@@ -239,7 +239,7 @@ catalog.plot_coverage(
 ### map_quicklooks()
 
 The `map_quicklooks()` function allows you to visualize downloaded quicklooks on a Folium map.
-Use together with [`download_quicklooks()`](#download_quicklooks).
+Use together with [`search()`](#search) and [`download_quicklooks()`](#download_quicklooks).
 
 ```python
 map_quicklooks(
@@ -307,7 +307,7 @@ catalog.map_quicklooks(
 ### plot_quicklooks()
 
 The `plot_quicklooks()` function allows you to visualize downloaded quicklooks.
-Use together with [`download_quicklooks()`](#download_quicklooks).
+Use together with [`search()`](#search) and [`download_quicklooks()`](#download_quicklooks).
 
 ```python
 plot_quicklooks(
