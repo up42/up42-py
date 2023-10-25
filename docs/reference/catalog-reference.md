@@ -54,7 +54,7 @@ catalog.construct_search_parameters(
 
 ### search()
 
-The `search()` function returns the metadata of catalog imagery matching the search parameters.
+The `search()` function returns the scenes matching the search parameters.
 
 ```python
 search(
@@ -69,7 +69,7 @@ The returned format is `Union[GeoDataFrame, dict]`.
 
 | Argument            | Overview                                                                                                                                                            |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `search_parameters` | **dict / required**<br/>The [catalog search parameters](#construct-search-parameters).                                                                              |
+| `search_parameters` | **dict / required**<br/>The catalog search parameters.                                                                                                              |
 | `as_dataframe`      | **bool**<br/>Determines how to return search results:</br/><ul><li>`True`: return GeoDataFrame.</li><li>`False`: return JSON.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
