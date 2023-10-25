@@ -57,9 +57,15 @@
 
     === "Catalog"
 
-        {{ docstring_catalog }}
-        <br>
-        Available functions, see also [**Catalog reference**](catalog-reference.md):
+        The Catalog class enables access to the UP42 [catalog functionality](../catalog/).
+
+        ```python
+        catalog = up42.initialize_catalog()
+        ```
+
+        This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
+
+        See available attributes and functions on the [Catalog](catalog-reference.md) reference page:
         <ul>
             <li>`construct_search_parameters()`</li>
             <li>`search()`</li>
