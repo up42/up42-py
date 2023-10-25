@@ -29,14 +29,14 @@ The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Argument            | Overview                                                                                                                                                                                                                                         |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `data_product_id`   | **str / required**<br/>The data product ID.                                                                                                                                                                                                      |
-| `name`              | **str / required**<br/>The tasking order name.                                                                                                                                                                                                   |
-| `acquisition_start` | **Union[str, datetime] / required**<br/>The start date of the acquisition period in the `YYYY-MM-DD` format.                                                                                                                                     |
-| `acquisition_end`   | **Union[str, datetime] / required**<br/>The end date of the acquisition period in the `YYYY-MM-DD` format.                                                                                                                                       |
-| `geometry`          | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point] / required**<br/>The geometry of the area to be captured. It can be a POI or an AOI depending on the [collection](https://docs.up42.com/data/tasking/limitations). |
-| `tags`              | **list[str]**<br/>A list of tags that categorize the order.                                                                                                                                                                                      |
+| Argument            | Overview                                                                                                                                                                                                                          |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `data_product_id`   | **str / required**<br/>The data product ID.                                                                                                                                                                                       |
+| `name`              | **str / required**<br/>The tasking order name.                                                                                                                                                                                    |
+| `acquisition_start` | **Union[str, datetime] / required**<br/>The start date of the acquisition period in the `YYYY-MM-DD` format.                                                                                                                      |
+| `acquisition_end`   | **Union[str, datetime] / required**<br/>The end date of the acquisition period in the `YYYY-MM-DD` format.                                                                                                                        |
+| `geometry`          | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point] / required**<br/>The geometry of interest. It can be a POI or an AOI depending on the [collection](https://docs.up42.com/data/tasking/limitations). |
+| `tags`              | **list[str]**<br/>A list of tags that categorize the order.                                                                                                                                                                       |
 
 <h5> Example </h5>
 

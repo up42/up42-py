@@ -30,14 +30,14 @@ The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Argument         | Overview                                                                                                       |
-| ---------------- | -------------------------------------------------------------------------------------------------------------- |
-| `geometry`       | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon] / required**<br/>The geometry.          |
-| `collections`    | **list[str] / required**<br/>The geospatial collection names.                                                  |
-| `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format. The default value is `2020-01-01`. |
-| `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format. The default value is `2020-01-30`.   |
-| `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.        |
-| `max_cloudcover` | **int**<br/>The maximum cloud coverage, in percentage.                                                         |
+| Argument         | Overview                                                                                                          |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `geometry`       | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon] / required**<br/>The geometry of interest. |
+| `collections`    | **list[str] / required**<br/>The geospatial collection names.                                                     |
+| `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format. The default value is `2020-01-01`.    |
+| `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format. The default value is `2020-01-30`.      |
+| `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.           |
+| `max_cloudcover` | **int**<br/>The maximum cloud coverage, in percentage.                                                            |
 
 <h5> Example </h5>
 
@@ -75,17 +75,15 @@ The returned format is `Union[GeoDataFrame, dict]`.
 <h5> Example </h5>
 
 ```python
-# Construct search parameters
-
-search_parameters = catalog.construct_search_parameters(
-    geometry="/Users/max.mustermann/Desktop/aoi.geojson",
-    collections=["phr"],
-)
-
-# Conduct search
-
 catalog.search(
-    search_parameters=search_parameters,
+    search_parameters=catalog.construct_search_parameters(
+        geometry="/Users/max.mustermann/Desktop/aoi.geojson",
+        collections=["phr"],
+        start_date="2022-06-01",
+        end_date="2022-12-31",
+        limit=20,
+        max_cloudcover=25,
+    ),
 )
 ```
 
@@ -193,7 +191,7 @@ To use the visualization functionalities, [install](../../installation/) the adv
 
 ### plot_coverage()
 
-The `plot_coverage()` function allows you to visualize the coverage of scenes returned in search results.
+The `plot_coverage()` function allows you to visualize the coverage of scenes matching the search parameters.
 Use together with [`search()`](#search).
 
 ```python
@@ -209,7 +207,7 @@ plot_coverage(
 
 | Argument        | Overview                                                                                                                                               |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `scenes`        | **GeoDataFrame / required**<br/>The scenes returned in search results.                                                                                 |
+| `scenes`        | **GeoDataFrame / required**<br/>The scenes matching the search parameters.                                                                             |
 | `aoi`           | **GeoDataFrame**<br/>The order AOI.                                                                                                                    |
 | `legend_column` | **str**<br/>The column name of `scenes` to arrange legend entries by ascending order. The default value is `sceneId`.                                  |
 | `figsize`       | **tuple[int, int]**<br/>The size of the visualization in inches. The first number is length, the second one is width. The default value is `(12, 16)`. |
@@ -261,7 +259,7 @@ The returned format is `folium.Map`.
 
 | Argument        | Overview                                                                                                                                                                                                 |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scenes`        | **GeoDataFrame / required**<br/>The scenes returned in search results.                                                                                                                                   |
+| `scenes`        | **GeoDataFrame / required**<br/>The scenes matching the search parameters.                                                                                                                               |
 | `aoi`           | **GeoDataFrame**<br/>The order AOI.                                                                                                                                                                      |
 | `show_images`   | **bool**<br/>Determines whether to visualize quicklooks:<ul><li>`True`: show the quicklooks on the map.</li><li>`False`: don't show the quicklook on the map.</li></ul> The default value is `True`.     |
 | `show_features` | **bool**<br/>Determines whether to visualize the geometry:<br/><ul><li>`True`: show the geometry on the map.</li><li>`False`: don't show the geometry on the map.</li></ul>The default value is `False`. |
