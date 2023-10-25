@@ -83,8 +83,8 @@ catalog.search(
 
 ### download_quicklooks()
 
-The `download_quicklooks()` function allows you to download low-resolution previews of search results.
-Visualize quicklooks with [`map_quicklooks`](#map_quicklooks) or [`plot_quicklooks`](#plot_quicklooks).
+The `download_quicklooks()` function allows you to download low-resolution previews of scenes returned in search results.
+Visualize quicklooks with [`map_quicklooks()`](#map_quicklooks) or [`plot_quicklooks()`](#plot_quicklooks).
 
 ```python
 download_quicklooks(
@@ -108,8 +108,8 @@ The returned format is `list[str]`.
 
 ```python
 catalog.download_quicklooks(
-    image_ids=list(search_results.id),  # Use catalog.search() to get search_results
-    collection="phr",  # Use catalog.get_collections() to select a collection
+    image_ids=["a4c9e729-1b62-43be-82e4-4e02c31963dd"],
+    collection="phr",
     output_directory="/Users/max.mustermann/Desktop/",
 )
 ```
