@@ -8,16 +8,7 @@ import pytest
 
 # pylint: disable=unused-import
 from .context import Job, JobTask
-from .fixtures import (
-    DOWNLOAD_URL,
-    JOBTASK_ID,
-    auth_live,
-    auth_mock,
-    job_live,
-    job_mock,
-    jobtask_mock,
-    workflow_live,
-)
+from .fixtures import DOWNLOAD_URL, JOBTASK_ID, auth_live, auth_mock, job_live, job_mock, jobtask_mock, workflow_live
 
 
 def test_job_info(job_mock):

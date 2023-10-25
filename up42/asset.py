@@ -6,12 +6,7 @@ from pystac_client import Client, ItemSearch
 
 from up42.auth import Auth
 from up42.stac_client import PySTACAuthClient
-from up42.utils import (
-    download_from_gcs_unpack,
-    download_gcs_not_unpack,
-    get_filename,
-    get_logger,
-)
+from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_filename, get_logger
 
 logger = get_logger(__name__)
 
@@ -140,7 +135,11 @@ class Asset:
         # so we can utilize all functionalities of Auth class
         return self._get_download_url(stac_asset_id=stac_asset_id)
 
-    def download(self, output_directory: Union[str, Path, None] = None, unpacking: bool = True) -> List[str]:
+    def download(
+        self,
+        output_directory: Union[str, Path, None] = None,
+        unpacking: bool = True,
+    ) -> List[str]:
         """
         Downloads the asset. Unpacking the downloaded file will happen as default.
 
@@ -176,7 +175,11 @@ class Asset:
         self.results = out_filepaths
         return out_filepaths
 
-    def download_stac_asset(self, stac_asset: pystac.Asset, output_directory: Union[str, Path, None] = None) -> Path:
+    def download_stac_asset(
+        self,
+        stac_asset: pystac.Asset,
+        output_directory: Union[str, Path, None] = None,
+    ) -> Path:
         """
         Downloads a STAC asset to a specified output directory.
 
