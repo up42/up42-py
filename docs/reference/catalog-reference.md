@@ -30,14 +30,14 @@ The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Argument         | Overview                                                                                                            |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `geometry`       | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon] / required**<br/>The AOI to be searched for. |
-| `collections`    | **list[str] / required**<br/>The geospatial collections to search for.                                              |
-| `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format.                                         |
-| `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format.                                           |
-| `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.             |
-| `max_cloudcover` | **int**<br/>The maximum cloud coverage in percentage of the search results.                                         |
+| Argument         | Overview                                                                                                                         |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `geometry`       | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon] / required**<br/>The geometry of the area to be captured. |
+| `collections`    | **list[str] / required**<br/>The geospatial collection names.                                                                    |
+| `start_date`     | **str**<br/>The start date of the search period in the `YYYY-MM-DD` format. The default value is `2020-01-01`.                   |
+| `end_date`       | **str**<br/>The end date of the search period in the `YYYY-MM-DD` format. The default value is `2020-01-30`.                     |
+| `limit`          | **int**<br/>The number of search results to show. Use a value from 1 to 500. The default value is `10`.                          |
+| `max_cloudcover` | **int**<br/>The maximum cloud coverage, in percentage.                                                                           |
 
 <h5> Example </h5>
 
