@@ -206,7 +206,7 @@ plot_coverage(
 | Argument        | Overview                                                                                                                                               |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `scenes`        | **GeoDataFrame / required**<br/>The scenes returned in search results.                                                                                 |
-| `aoi`           | **GeoDataFrame**<br/>The order AOI.                                                                                                         |
+| `aoi`           | **GeoDataFrame**<br/>The order AOI.                                                                                                                    |
 | `legend_column` | **str**<br/>The column name of `scenes` to arrange legend entries by ascending order. The default value is `sceneId`.                                  |
 | `figsize`       | **tuple[int, int]**<br/>The size of the visualization in inches. The first number is length, the second one is width. The default value is `(12, 16)`. |
 
@@ -257,23 +257,45 @@ The returned format is `folium.Map`.
 
 | Argument        | Overview                                                                                                                                                                                                 |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scenes`        | **GeoDataFrame / required**<br/>The search results to be visualized.                                                                                                                                     |
-| `aoi`           | **GeoDataFrame**<br/>The AOI to be visualized.                                                                                                                                                           |
-| `show_images`   | **bool**<br/>Determines whether to visualize images:<ul><li>`True`: show the images on the map.</li><li>`False`: don't show the images on the map.</li></ul> The default value is `True`.                |
+| `scenes`        | **GeoDataFrame / required**<br/>The scenes returned in search results.                                                                                                                                   |
+| `aoi`           | **GeoDataFrame**<br/>The order AOI.                                                                                                                                                           |
+| `show_images`   | **bool**<br/>Determines whether to visualize quicklooks:<ul><li>`True`: show the quicklooks on the map.</li><li>`False`: don't show the quicklook on the map.</li></ul> The default value is `True`.                |
 | `show_features` | **bool**<br/>Determines whether to visualize the geometry:<br/><ul><li>`True`: show the geometry on the map.</li><li>`False`: don't show the geometry on the map.</li></ul>The default value is `False`. |
-| `filepaths`     | **list[Union[str, Path]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                                                                                                   |
+| `filepaths`     | **list[Union[str, Path]]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                                                                                                   |
 | `name_column`   | **str**<br/>The column name of `scenes` that provides the feature name. The default value is `id`.                                                                                                       |
 | `save_html`     | **Path**<br/>Use to specify a path to save the map as an HTML file.                                                                                                                                      |
 
 <h5> Example </h5>
 
 ```python
+# Conduct search
+
+scenes = catalog.search(
+    search_parameters=catalog.construct_search_parameters(
+        geometry="/Users/max.mustermann/Desktop/aoi.geojson",
+        collections=["phr"],
+        limit=1,
+    )
+)
+
+# Download quicklooks
+
+catalog.download_quicklooks(
+    image_ids=list(scenes.id),
+    collection="phr",
+    output_directory="/Users/max.mustermann/Desktop/",
+)
+
+# Map quicklooks
+
 catalog.map_quicklooks(
-    scenes=search_results,  # Use catalog.search() to get search_results
+    scenes=scenes,
     aoi="/Users/max.mustermann/Desktop/aoi.geojson",
     show_images=True,
     show_features=True,
-    filepaths=catalog.quicklooks,  # Use catalog.download_quicklooks to get catalog.quicklooks
+    filepaths=[
+        "/Users/max.mustermann/Desktop/quicklook_d0a7e38a-0087-48c9-b3f7-8b422388e101.jpg"
+    ],
     name_column="cloudCoverage",
     save_html="/Users/max.mustermann/Desktop/",
 )
