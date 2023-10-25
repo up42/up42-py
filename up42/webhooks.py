@@ -151,7 +151,11 @@ class Webhooks:
         if return_json:
             return response_json["data"]
         webhooks = [
-            Webhook(auth=self.auth, webhook_id=webhook_info["id"], webhook_info=webhook_info)
+            Webhook(
+                auth=self.auth,
+                webhook_id=webhook_info["id"],
+                webhook_info=webhook_info,
+            )
             for webhook_info in response_json["data"]
         ]
         return webhooks
