@@ -156,16 +156,6 @@ catalog.construct_order_parameters(
 The `estimate_order()` function returns the cost estimate for a catalog order.
 
 ```python
-# Construct order parameters
-
-order_parameters = catalog.construct_order_parameters(
-    data_product_id="4f1b2f62-98df-4c74-81f4-5dce45deee99",
-    image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd"
-    aoi="/Users/max.mustermann/Desktop/aoi.geojson",
-)
-
-# Estimate order cost
-
 estimate_order(order_parameters)
 ```
 
@@ -180,7 +170,17 @@ The returned format is `int`.
 <h5> Example </h5>
 
 ```python
-catalog.estimate_order(order_parameters) # Use catalog.construct_order_parameters() to get order_parameters
+# Create order parameters
+
+order_parameters = catalog.construct_order_parameters(
+    data_product_id="4f1b2f62-98df-4c74-81f4-5dce45deee99",
+    image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",
+    aoi="/Users/max.mustermann/Desktop/aoi.geojson",
+)
+
+# Estimate order cost
+
+catalog.estimate_order(order_parameters)
 ```
 
 ## Visualization
