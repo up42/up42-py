@@ -3,15 +3,7 @@ import os
 import pytest
 
 from ..context import Job
-from .fixtures_globals import (
-    DOWNLOAD_URL,
-    JOB_ID,
-    JOB_ID_2,
-    JOB_NAME,
-    JOBTASK_ID,
-    MOCK_CREDITS,
-    WORKFLOW_NAME,
-)
+from .fixtures_globals import DOWNLOAD_URL, JOB_ID, JOB_ID_2, JOB_NAME, JOBTASK_ID, MOCK_CREDITS, WORKFLOW_NAME
 
 
 @pytest.fixture()

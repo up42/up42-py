@@ -179,7 +179,11 @@ class Auth:
         reraise=True,
     )
     def _request_helper(
-        self, request_type: str, url: str, data: dict = {}, querystring: dict = {}
+        self,
+        request_type: str,
+        url: str,
+        data: dict = {},
+        querystring: dict = {},
     ) -> requests.Response:
         """
         Helper function for the request, running the actual request with the correct headers.
@@ -196,7 +200,10 @@ class Auth:
         headers = self._generate_headers(self.token)  # type: ignore
         if querystring == {}:
             response: requests.Response = requests.request(
-                method=request_type, url=url, data=json.dumps(data), headers=headers
+                method=request_type,
+                url=url,
+                data=json.dumps(data),
+                headers=headers,
             )
         else:
             response = requests.request(

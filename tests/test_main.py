@@ -13,14 +13,7 @@ import pandas as pd
 import pytest
 import requests
 
-from .context import (
-    get_block_coverage,
-    get_block_details,
-    get_blocks,
-    get_credits_balance,
-    main,
-    validate_manifest,
-)
+from .context import get_block_coverage, get_block_details, get_blocks, get_credits_balance, main, validate_manifest
 
 # pylint: disable=unused-import
 from .fixtures import auth_live, auth_mock
