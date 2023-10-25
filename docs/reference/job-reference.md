@@ -357,7 +357,7 @@ plot_results(
 | `figsize`          | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(14, 8)`. |
 | `bands`            | **list[int]**<br/>A list of image bands to plot and their order.                                                                            |
 | `titles`           | **list[str]**<br/>Titles for the subplots.                                                                                                  |
-| `filepaths`        | **Union[list[Union[str, Path]], dict, none]**<br/>The file path. By default, the last downloaded results will be used.                      |
+| `filepaths`        | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths. By default, the last downloaded results will be used.                      |
 | `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                   |
 | `kwargs`           | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
 
