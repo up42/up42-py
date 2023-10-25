@@ -32,7 +32,13 @@ class Job(VizTools):
     ```
     """
 
-    def __init__(self, auth: Auth, project_id: str, job_id: str, job_info: Optional[dict] = None):
+    def __init__(
+        self,
+        auth: Auth,
+        project_id: str,
+        job_id: str,
+        job_info: Optional[dict] = None,
+    ):
         self.auth = auth
         self.project_id = project_id
         self.job_id = job_id
@@ -168,7 +174,11 @@ class Job(VizTools):
         download_url = response_json["data"]["url"]
         return download_url
 
-    def download_results(self, output_directory: Union[str, Path, None] = None, unpacking: bool = True) -> List[str]:
+    def download_results(
+        self,
+        output_directory: Union[str, Path, None] = None,
+        unpacking: bool = True,
+    ) -> List[str]:
         """
         Downloads the job results. Unpacking the final file will happen as default.
 

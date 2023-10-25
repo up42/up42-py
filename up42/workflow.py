@@ -17,13 +17,7 @@ from up42.auth import Auth
 from up42.estimation import Estimation
 from up42.job import Job
 from up42.jobcollection import JobCollection
-from up42.utils import (
-    any_vector_to_fc,
-    fc_to_query_geometry,
-    filter_jobs_on_mode,
-    format_time,
-    get_logger,
-)
+from up42.utils import any_vector_to_fc, fc_to_query_geometry, filter_jobs_on_mode, format_time, get_logger
 
 logger = get_logger(__name__)
 
@@ -486,7 +480,11 @@ class Workflow:
         for task in input_tasks:
             task["blockVersionTag"] = workflow_tasks[task["name"]]
 
-        estimation = Estimation(auth=self.auth, input_parameters=input_parameters, input_tasks=input_tasks).estimate()
+        estimation = Estimation(
+            auth=self.auth,
+            input_parameters=input_parameters,
+            input_tasks=input_tasks,
+        ).estimate()
 
         min_credits, max_credits, min_duration, max_duration = [], [], [], []
         for e in estimation.values():
@@ -728,7 +726,11 @@ class Workflow:
         Returns:
             The spawned job object.
         """
-        return self._helper_run_job(input_parameters=input_parameters, track_status=track_status, name=name)
+        return self._helper_run_job(
+            input_parameters=input_parameters,
+            track_status=track_status,
+            name=name,
+        )
 
     def run_jobs_parallel(
         self,
@@ -758,7 +760,10 @@ class Workflow:
         return jobcollection
 
     def get_jobs(
-        self, return_json: bool = False, test_jobs: bool = True, real_jobs: bool = True
+        self,
+        return_json: bool = False,
+        test_jobs: bool = True,
+        real_jobs: bool = True,
     ) -> Union[JobCollection, List[Dict]]:
         """
         Get all jobs associated with the workflow as a JobCollection or JSON.

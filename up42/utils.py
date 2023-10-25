@@ -30,7 +30,10 @@ def get_filename(signed_url: str, default_filename: str) -> str:
         file_name = parse_qs(parsed_url.query)["response-content-disposition"][0].split("filename=")[1]
         return f"{file_name}{extension}"
     except (IndexError, KeyError):
-        warnings.warn(f"Unable to extract filename from URL. Using default filename: {default_filename}", UserWarning)
+        warnings.warn(
+            f"Unable to extract filename from URL. Using default filename: {default_filename}",
+            UserWarning,
+        )
         return f"{default_filename}{extension}"
 
 

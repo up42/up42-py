@@ -42,7 +42,15 @@ class Tasking(CatalogBase):
         name: str,
         acquisition_start: Union[str, datetime],
         acquisition_end: Union[str, datetime],
-        geometry: Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point],
+        geometry: Union[
+            FeatureCollection,
+            Feature,
+            dict,
+            list,
+            GeoDataFrame,
+            Polygon,
+            Point,
+        ],
         tags: Optional[List[str]] = None,
     ):
         """
