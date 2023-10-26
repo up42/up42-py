@@ -205,12 +205,12 @@ plot_coverage(
 
 <h5> Arguments </h5>
 
-| Argument        | Overview                                                                                                                                               |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `scenes`        | **GeoDataFrame / required**<br/>The scenes matching the search parameters.                                                                             |
-| `aoi`           | **GeoDataFrame**<br/>The order AOI.                                                                                                                    |
-| `legend_column` | **str**<br/>The column name of `scenes` to arrange legend entries by ascending order. The default value is `sceneId`.                                  |
-| `figsize`       | **tuple[int, int]**<br/>The size of the visualization in inches. The first number is length, the second one is width. The default value is `(12, 16)`. |
+| Argument        | Overview                                                                                                                                                |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scenes`        | **GeoDataFrame / required**<br/>The scenes matching the search parameters.                                                                              |
+| `aoi`           | **GeoDataFrame**<br/>The order AOI.                                                                                                                     |
+| `legend_column` | **str**<br/>The column name of `scenes` to arrange legend entries by ascending order. The default value is `sceneId`.                                   |
+| `figsize`       | **tuple[int, int]**<br/>The size of the visualization, in inches. The first number is length, the second one is width. The default value is `(12, 16)`. |
 
 <h5> Example </h5>
 
@@ -319,11 +319,11 @@ plot_quicklooks(
 
 <h5> Arguments </h5>
 
-| Argument    | Overview                                                                                                                                             |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `figsize`   | **tuple[int, int]**<br/>The size of the visualization in inches. The first number is length, the second one is width. The default value is `(8, 8)`. |
-| `filepaths` | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths.The file paths. By default, the last downloaded quicklooks will be used.            |
-| `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                                       |
+| Argument    | Overview                                                                                                                                              |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `figsize`   | **tuple[int, int]**<br/>The size of the visualization, in inches. The first number is length, the second one is width. The default value is `(8, 8)`. |
+| `filepaths` | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths.The file paths. By default, the last downloaded quicklooks will be used.             |
+| `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                                        |
 
 <h5> Example </h5>
 
