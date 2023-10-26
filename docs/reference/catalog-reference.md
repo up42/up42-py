@@ -84,6 +84,7 @@ catalog.search(
         limit=20,
         max_cloudcover=25,
     ),
+    as_dataframe=False,
 )
 ```
 
