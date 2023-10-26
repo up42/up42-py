@@ -5,6 +5,8 @@ The workflow class enables you to configure, run, and query jobs related to a wo
 To create a new workflow, use the following:
 
 ```python
+project = up42.initialize_project()
+
 workflow = project.create_workflow(name="new_workflow")
 ```
 
@@ -18,14 +20,14 @@ workflow = up42.initialize_workflow(workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b5
 
 ### max_concurrent_jobs
 
-The `attribute_name` attribute returns <...>.
+The `max_concurrent_jobs` attribute returns the maximum number of jobs that can be running simultaneously.
 
-The returned format is `type`. # If it's NONE, don't include it.
+The returned format is `int`.
 
 <h5> Example </h5>
 
 ```python
-class.attribute_name
+workflow.max_concurrent_jobs
 ```
 
 ## Workflows
