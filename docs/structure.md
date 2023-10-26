@@ -148,10 +148,43 @@
 
     === "Workflow"
 
-        {{ docstring_workflow }}
-        <br>
-        Available functions, see also [**Workflow reference**](workflow-reference.md):
-        {{ format_funcs(funcs_workflow) }}
+        The workflow class enables you to configure, run, and query jobs related to a workflow.
+
+        To create a new workflow, use the following:
+
+        ```python
+        project = up42.initialize_project()
+
+        workflow = project.create_workflow(name="new_workflow")
+        ```
+
+        To use an existing workflow, use the following:
+
+        ```python
+        workflow = up42.initialize_workflow(workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98")
+        ```
+
+        See available attributes and functions on the [Workflow](workflow-reference.md) reference page:
+
+        <ul>
+            <li>`max_concurrent_jobs`</li>
+            <li>`info`</li>
+            <li>`update_name()`</li>
+            <li>`delete()`</li>
+            <li>`get_parameters_info()`</li>
+            <li>`construct_parameters()`</li>
+            <li>`construct_parameters_parallel()`</li>
+            <li>`get_compatible_blocks()`</li>
+            <li>`workflow_tasks`</li>
+            <li>`get workflow_tasks()`</li>
+            <li>`add_workflow_tasks()`</li>
+            <li>`estimate_job()`</li>
+            <li>`get_jobs()`</li>
+            <li>`test_job()`</li>
+            <li>`test_jobs_parallel()`</li>
+            <li>`run_job()`</li>
+            <li>`run_jobs_parallel()`</li>
+            </ul>
 
     === "Job"
 
