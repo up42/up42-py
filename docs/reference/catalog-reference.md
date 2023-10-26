@@ -322,7 +322,7 @@ plot_quicklooks(
 | Argument    | Overview                                                                                                                                              |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `figsize`   | **tuple[int, int]**<br/>The size of the visualization, in inches. The first number is length, the second one is width. The default value is `(8, 8)`. |
-| `filepaths` | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths.The file paths. By default, the last downloaded quicklooks will be used.             |
+| `filepaths` | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                            |
 | `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                                        |
 
 <h5> Example </h5>
