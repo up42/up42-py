@@ -34,47 +34,40 @@ workflow.max_concurrent_jobs
 
 ### info
 
-The `attribute_name` attribute returns <...>.
+The `info` attribute returns metadata of the workflow.
 
-The returned format is `type`. # If it's NONE, don't include it.
+The returned format is `dict`.
 
 <h5> Example </h5>
 
 ```python
-class.attribute_name
+workflow.info
 ```
 
 ### update_name()
 
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
+The `update_name()` function allows you to update the workflow name and description.
 
 ```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
+update_name(
+    name,
+    description,
 )
 ```
 
-The returned format is `type`.
-
 <h5> Arguments </h5>
 
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
+| Argument      | Overview                                  |
+| ------------- | ----------------------------------------- |
+| `name`        | **str**<br/>The new workflow name.        |
+| `description` | **str**<br/>The new workflow description. |
 
 <h5> Example </h5>
 
 ```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
+workflow.update_name(
+    name="updated_workflow",
+    description="An UP42 image processing workflow",
 )
 ```
 
@@ -332,7 +325,6 @@ class.function_name(
 )
 ```
 
-
 ## Jobs
 
 ### estimate_job()
@@ -538,4 +530,3 @@ class.function_name(
     argument3=False, # Note the comma at the end of the last argument
 )
 ```
-
