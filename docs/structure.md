@@ -76,8 +76,6 @@
             <li>`map_quicklooks()`</li>
             <li>`plot_quicklooks()`</li>
         </ul>
-        <br>
-        This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
 
     === "CatalogBase"
 
