@@ -66,7 +66,11 @@ def initialize_workflow(workflow_id: str) -> "Workflow":
     Args:
         workflow_id: The UP42 workflow_id
     """
-    workflow = Workflow(auth=main._auth, workflow_id=workflow_id, project_id=str(main._auth.project_id))
+    workflow = Workflow(
+        auth=main._auth,
+        workflow_id=workflow_id,
+        project_id=str(main._auth.project_id),
+    )
     logger.info(f"Initialized {workflow}")
     return workflow
 
@@ -108,7 +112,14 @@ def initialize_jobcollection(job_ids: List[str]) -> "JobCollection":
     Args:
         job_ids: List of UP42 job_ids
     """
-    jobs = [Job(auth=main._auth, job_id=job_id, project_id=str(main._auth.project_id)) for job_id in job_ids]
+    jobs = [
+        Job(
+            auth=main._auth,
+            job_id=job_id,
+            project_id=str(main._auth.project_id),
+        )
+        for job_id in job_ids
+    ]
     jobcollection = JobCollection(auth=main._auth, project_id=str(main._auth.project_id), jobs=jobs)
     logger.info(f"Initialized {jobcollection}")
     return jobcollection

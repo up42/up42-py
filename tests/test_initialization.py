@@ -4,17 +4,7 @@ import pytest
 import up42
 
 # pylint: disable=unused-import
-from .context import (
-    Asset,
-    Catalog,
-    Job,
-    JobCollection,
-    JobTask,
-    Order,
-    Project,
-    Storage,
-    Workflow,
-)
+from .context import Asset, Catalog, Job, JobCollection, JobTask, Order, Project, Storage, Workflow
 from .fixtures import (
     ASSET_ID,
     JOB_ID,
