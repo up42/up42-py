@@ -199,7 +199,7 @@ class Auth:
                 url=self._endpoint() + "/oauth/token",
                 data=req_body,
                 headers=req_headers,
-                timeout=1200,
+                timeout=120,
             )
             if token_response.status_code != 200:
                 raise AuthenticationError(
