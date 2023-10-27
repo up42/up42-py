@@ -31,6 +31,10 @@ class AuthType(Enum):
     ACCOUNT = "account-based"
 
 
+class AuthenticationError(Exception):
+    pass
+
+
 class retry_if_401_invalid_token(retry_if_exception):
     """
     Custom tenacity error response that enables separate retry strategy for
@@ -119,7 +123,7 @@ class Auth:
         except KeyError:
             self.authenticate = True
 
-        if all([arg in kwargs for arg in ["project_id", "project_api_key"]]):
+        if all([arg in kwargs for arg in ["project_id", "project_api_key"]]) and auth_type == AuthType.PROJECT.value:
             self.credentials_id = kwargs["project_id"]
             self.credentials_key = kwargs["project_api_key"]
             self.project_id = self.credentials_id
@@ -127,7 +131,7 @@ class Auth:
         if self.authenticate:
             self._find_credentials()
             self._get_token()
-            self._get_workspace()
+            self._get_user_id()
             logger.info("Authentication with UP42 successful!")
 
     def __repr__(self):
@@ -156,7 +160,10 @@ class Auth:
                         self.credentials_id = config[self.cred_mapping[self.auth_type]["credentials_id"]]
                         self.credentials_key = config[self.cred_mapping[self.auth_type]["credentials_key"]]
                     except KeyError as e:
-                        raise ValueError("Provided config file does not contain valid credentials.") from e
+                        raise ValueError(
+                            "Provided config file does not credentials keys"
+                            "(credential_id, credential_key or project_id, project_api_key)."
+                        ) from e
                 logger.info("Got credentials from config file.")
             except FileNotFoundError as e:
                 raise ValueError("Selected config file does not exist!") from e
@@ -194,9 +201,14 @@ class Auth:
                 timeout=1200,
             )
             if token_response.status_code != 200:
-                raise ValueError("Authentication was not successful, check the provided credentials.")
+                raise AuthenticationError(
+                    f"Authentication failed with status code {token_response.status_code}."
+                    "Check the provided credentials."
+                )
         except requests.exceptions.RequestException as err:
-            raise ValueError("Authentication was not successful, check the provided credentials.") from err
+            raise AuthenticationError(
+                "Authentication failed due to a network error. Check the provided credentials and network connectivity."
+            ) from err
         self.token = token_response.json()["data"]["accessToken"]
 
     def _get_token_project_based(self):
@@ -211,7 +223,7 @@ class Auth:
 
         self.token = token_response["data"]["accessToken"]
 
-    def _get_workspace(self) -> None:
+    def _get_user_id(self) -> None:
         """Get user id belonging to authenticated account."""
         url = f"https://api.up42.{self.env}/users/me"
         resp = self._request("GET", url)
@@ -260,7 +272,7 @@ class Auth:
                 url=url,
                 data=json.dumps(data),
                 headers=headers,
-                timeout=1200,
+                timeout=120,
             )
         else:
             response = requests.request(
@@ -269,7 +281,7 @@ class Auth:
                 data=json.dumps(data),
                 headers=headers,
                 params=querystring,
-                timeout=1200,
+                timeout=120,
             )
         logger.debug(response)
         logger.debug(data)
