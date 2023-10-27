@@ -116,14 +116,14 @@ The returned format is `folium.Map`.
 
 <h5> Arguments </h5>
 
-| Argument        | Overview                                                                                                                                                                                                                                            |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bands`         | **list[int]**<br/>A list of image bands to show on the map and their order.                                                                                                                                                                         |
-| `aoi`           | **GeoDataFrame**<br/>An additional geometry to visualize on the map.                                                                                                                                                                                |
-| `show_images`   | **bool**<br/>Determines whether to visualize the job task results:<ul><li>`True`: show the job task results on the map.</li><li>`False`: don't show the job task results on the map.</li></ul> The default value is `True`.                   |
+| Argument        | Overview                                                                                                                                                                                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bands`         | **list[int]**<br/>A list of image bands to show on the map and their order.                                                                                                                                                                       |
+| `aoi`           | **GeoDataFrame**<br/>An additional geometry to visualize on the map.                                                                                                                                                                              |
+| `show_images`   | **bool**<br/>Determines whether to visualize the job task results:<ul><li>`True`: show the job task results on the map.</li><li>`False`: don't show the job task results on the map.</li></ul> The default value is `True`.                       |
 | `show_features` | **bool**<br/>Determines whether to visualize the geometry of the job task results:<br/><ul><li>`True`: show the job task geometry on the map.</li><li>`False`: don't show the job task geometry on the map.</li></ul>The default value is `True`. |
-| `name_column`   | **str**<br/>The name of the feature property that provides the feature name. The default value is `uid`.                                                                                                                                            |
-| `save_html`     | **path**<br/>Use to specify a path to save the map as an HTML file.                                                                                                                                                                                 |
+| `name_column`   | **str**<br/>The name of the feature property that provides the feature name. The default value is `uid`.                                                                                                                                          |
+| `save_html`     | **path**<br/>Use to specify a path to save the map as an HTML file.                                                                                                                                                                               |
 
 <h5> Example </h5>
 
@@ -149,7 +149,7 @@ plot_results(
     titles,
     filepaths,
     plot_file_format,
-    kwargs,
+    **kwargs,
 )
 ```
 
@@ -164,7 +164,7 @@ The returned format is `type`.
 | `titles`           | **list[str]**<br/>Titles for the subplots.                                                                                                  |
 | `filepaths`        | **Union[list[Union[str, Path]], dict, none]**<br/>The file path. By default, the downloaded results will be used.                           |
 | `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                   |
-| `kwargs`           | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
+| `**kwargs`         | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
 
 <h5> Example </h5>
 
