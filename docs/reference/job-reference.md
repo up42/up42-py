@@ -344,7 +344,7 @@ plot_results(
     titles,
     filpaths,
     plot_file_format,
-    kwargs,
+    **kwargs,
 )
 ```
 
@@ -359,7 +359,7 @@ The returned format is `type`.
 | `titles`           | **list[str]**<br/>Titles for the subplots.                                                                                                  |
 | `filpaths`         | **Union[list[Union[str, Path]], dict, none]**<br/>The file path. By default, the downloaded results will be used.                           |
 | `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                   |
-| `kwargs`           | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
+| `**kwargs`         | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
 
 <h5> Example </h5>
 

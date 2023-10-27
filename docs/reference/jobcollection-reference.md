@@ -1,12 +1,12 @@
 # JobCollection
 
-The JobCollection class enables access to [results of multiple jobs as one object](../examples/advanced/ship-identification/).
-
-A job is an instance of a workflow. A job collection is created as the result of [running multiple jobs in parallel](../reference/workflow-reference/#run_jobs_parallel).
+The JobCollection class enables access to [results of multiple jobs](analytics.md). A job is an instance of a workflow. A job collection is the results of multiple jobs as one object.
 
 ```python
-jobcollection = up42.initialize_jobcollection(job_ids=["12345", "6789"])
+jobcollection = up42.initialize_jobcollection(job_ids=["0479cdb8-99d0-4de1-b0e2-6ff6b69d0f68", "a0d443a2-41e8-4995-8b54-a5cc4c448227"])
 ```
+
+You can also create a job collection by [running jobs in parallel](../../reference/workflow-reference/#run_jobs_parallel).
 
 ## Job collections
 
@@ -84,15 +84,15 @@ The returned format is `dict[str, list[str]]`.
 | Argument           | Overview                                                                                                                                                                                                  |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory.                                                                                                     |
-| `merge`            | **bool**<br/>Determines how `data.json` is returned:<br/><ul><li>`True`: return a merged file.</li><li>`False`: do not return a merged file.</li></ul>The default value is `True`.                        |
+| `merge`            | **bool**<br/>Determines how `data.json` is returned:<br/><ul><li>`True`: return a merged `data.json`.</li><li>`False`: don't return a merged `data.json`.</li></ul>The default value is `True`.           |
 | `unpacking`        | **bool**<br/>Determines how to download the job collection results<br/><ul><li>`True`: download and unpack the file.</li><li>`False`: download the compressed file.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
 
 ```python
 jobcollection.download_results(
-    output_directory="value",
-    merge="value",
+    output_directory="/Users/max.mustermann/Desktop/",
+    merge=False,
     unpacking=False,
 )
 ```
@@ -153,7 +153,7 @@ plot_results(
     titles,
     filepaths,
     plot_file_format,
-    kwargs,
+    **kwargs,
 )
 ```
 
@@ -168,7 +168,7 @@ The returned format is `type`.
 | `titles`           | **list[str]**<br/>Titles for the subplots.                                                                                                  |
 | `filepaths`        | **Union[list[Union[str, Path]], dict, none]**<br/>The file path. By default, the downloaded results will be used.                           |
 | `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                   |
-| `kwargs`           | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
+| `**kwargs`         | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
 
 <h5> Example </h5>
 
