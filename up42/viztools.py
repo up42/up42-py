@@ -330,7 +330,10 @@ class VizTools:
                 m.add_child(
                     folium.raster_layers.ImageOverlay(
                         np.moveaxis(np.stack(dst_array), 0, 2),
-                        bounds=[[miny, minx], [maxy, maxx]],  # different order.
+                        bounds=[
+                            [miny, minx],
+                            [maxy, maxx],
+                        ],  # different order.
                         name=f"Image {idx + 1} - {feature_name}",
                     )
                 )
@@ -535,7 +538,11 @@ if _viz_installed:
             lng_formatter=formatter,
         ).add_to(m)
 
-        folium.plugins.MiniMap(tile_layer="OpenStreetMap", position="bottomright", zoom_level_offset=-6).add_to(m)
+        folium.plugins.MiniMap(
+            tile_layer="OpenStreetMap",
+            position="bottomright",
+            zoom_level_offset=-6,
+        ).add_to(m)
         folium.plugins.Fullscreen().add_to(m)
         folium.plugins.FloatImage(
             image="https://cdn-images-1.medium.com/max/140/1*XJ_B7ur_c8bYKniXpKVpWg@2x.png",
