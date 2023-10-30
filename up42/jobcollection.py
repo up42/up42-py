@@ -120,7 +120,7 @@ class JobCollection(VizTools):
             data.json.
         """
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}"
+            output_directory = Path.cwd() / f"project_{self.project_id}"
         else:
             output_directory = Path(output_directory)
 

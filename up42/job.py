@@ -193,7 +193,7 @@ class Job(VizTools):
         logger.info(f"Downloading results of job {self.job_id}")
 
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}/job_{self.job_id}"
+            output_directory = Path.cwd() / f"project_{self.project_id}/job_{self.job_id}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
