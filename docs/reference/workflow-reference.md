@@ -149,7 +149,6 @@ workflow.construct_parameters(
 
 The `construct_parameters()` function allows you to map geometries and time series into the workflow input parameters.
 
-
 ```python
 construct_parameters_parallel(
         geometries,
@@ -339,7 +338,7 @@ workflow.get_jobs(
 
 ### test_job()
 
-The `test_jobs()` function allows you to run a test query.
+The `test_jobs()` function allows you to create and run a test query.
 
 ```python
 test_jobs(
@@ -372,7 +371,7 @@ input_parameters=workflow.construct_parameters(
     limit=1,
 )
 
-# Test job
+# Create and run test query
 
 workflow.test_jobs(
     input_parameters=input_parameters,
@@ -383,7 +382,7 @@ workflow.test_jobs(
 
 ### test_jobs_parallel()
 
-The `test_jobs_parallel()` function allows to run multiple test queries in parallel.
+The `test_jobs_parallel()` function allows to create and run multiple test queries in parallel.
 
 ```python
 test_jobs_parallel(
@@ -425,7 +424,7 @@ input_parameters_list=workflow.construct_parameters_parallel(
     geometry_operation="bbox",
 )
 
-# Test jobs
+# Create and run test queries
 
 workflow.test_jobs_parallel(
     input_parameters_list=input_parameters_list,
@@ -436,68 +435,97 @@ workflow.test_jobs_parallel(
 
 ### run_job()
 
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
+The `run_job()` function allows you to create and run a new job.
 
 ```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
+run_job(
+    input_parameters,
+    track_status,
+    name,
 )
 ```
 
-The returned format is `type`.
+The returned format is `Job`.
 
 <h5> Arguments </h5>
 
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
+| Argument           | Overview                                                                                                                                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `input_parameters` | **Union[dict, str, Path]**<br/>The workflow parameters.                                                                                                                                          |
+| `track_status`     | **bool**<br/>Determines whether to query job status every 30 seconds:<br/><ul><li>`True`: track job status.</li><li>`False`: don't track job status that.</li></ul>The default value is `False`. |
+| `name`             | **str**<br/>The job name. By default, the workflow name will be used.                                                                                                                            |
 
 <h5> Example </h5>
 
 ```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
+# Construct input parameters
+
+input_parameters=workflow.construct_parameters(
+    geometry=up42.get_example_aoi(location="Berlin"),
+    geometry_operation="bbox",
+    start_date="2020-01-01",
+    end_date="2022-12-31",
+    limit=1,
+)
+
+# Create and run job
+
+workflow.run_jobs(
+    input_parameters=input_parameters,
+    track_status=True,
+    name="Processing workflow",
 )
 ```
 
 ### run_jobs_parallel()
 
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
+The `run_job()` function allows you to create and run multiple jobs in parallel.
 
 ```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
+run_jobs_parallel(
+    input_parameters_list,
+    name,
+    max_concurrent_jobs,
 )
 ```
 
-The returned format is `type`.
+The returned format is `JobCollection`.
 
 <h5> Arguments </h5>
 
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
+| Argument                | Overview                                                                                              |
+| ----------------------- | ----------------------------------------------------------------------------------------------------- |
+| `input_parameters_list` | **list[dict]**<br/>The workflow parameters.                                                           |
+| `name`                  | **str**<br/>The job names. By default, the workflow name will be used.                                |
+| `max_concurrent_jobs`   | **int**<br/>The maximum number of jobs that can be running simultaneously. The default value is `10`. |
 
 <h5> Example </h5>
 
 ```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
+# Construct input parameters
+
+input_parameters_list=workflow.construct_parameters_parallel(
+    geometries=[
+        up42.get_example_aoi(location="Berlin"),
+        up42.get_example_aoi(location="Potsdam"),
+    ],
+    interval_dates=[
+        ("2023-01-01", "2023-01-30"),
+        ("2023-02-01", "2023-02-26")
+        ],
+    scene_ids=[
+        "a4c9e729-1b62-43be-82e4-4e02c31963dd",
+        "ea36dee9-fed6-457e-8400-2c20ebd30f44",
+    ],
+    limit_per_job=2,
+    geometry_operation="bbox",
+)
+
+# Create and run jobs
+
+workflow.run_jobs_parallel(
+    input_parameters_list=input_parameters_list,
+    name="Processing workflow",
+    max_concurrent_jobs=5,
 )
 ```
