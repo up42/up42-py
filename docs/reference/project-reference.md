@@ -63,11 +63,11 @@ The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Argument              | Overview                                                                                                            |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `max_aoi_size`        | **int**<br/>The largest area of interest that can be specified. Use a value from 1 to 1,000 km<sup>2</sup>.         |
-| `max_concurrent_jobs` | **int**<br/>The maximum number of jobs that can be running simultaneously. Use a value from 1 to 10 km<sup>2</sup>. |
-| `number_of_images`    | **int**<br/>The maximum number of images that can be returned. Use a value from 1 to 20 km<sup>2</sup>.             |
+| Argument              | Overview                                                                                                    |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `max_aoi_size`        | **int**<br/>The largest area of interest that can be specified. Use a value from 1 to 1,000 km<sup>2</sup>. |
+| `max_concurrent_jobs` | **int**<br/>The maximum number of jobs that can be running simultaneously. Use a value from 1 to 10.        |
+| `number_of_images`    | **int**<br/>The maximum number of images that can be returned. Use a value from 1 to 20.                    |
 
 <h5> Example </h5>
 
