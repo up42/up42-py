@@ -346,7 +346,7 @@ plot_results(
     titles,
     filepaths,
     plot_file_format,
-    kwargs,
+    **kwargs,
 )
 ```
 
