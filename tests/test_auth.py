@@ -29,6 +29,16 @@ def test_no_credentials_raises(auth_mock):
         auth_mock._find_credentials()
 
 
+def test_cfg_file_not_found(auth_mock):
+    auth_mock.credentials_id = None
+    auth_mock.credentials_key = None
+    fp = Path(__file__).resolve().parent / "mock_data" / "test_config_fake.json"
+    auth_mock.cfg_file = fp
+    with pytest.raises(ValueError) as e:
+        auth_mock._find_credentials()
+    assert "Selected config file does not exist!" in str(e.value)
+
+
 def test_find_credentials_cfg_file(auth_mock):
     auth_mock.credentials_id = None
     auth_mock.credentials_key = None
