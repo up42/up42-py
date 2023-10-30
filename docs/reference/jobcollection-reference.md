@@ -3,7 +3,12 @@
 The JobCollection class enables access to [results of multiple jobs](analytics.md). A job is an instance of a workflow. A job collection is the results of multiple jobs as one object.
 
 ```python
-jobcollection = up42.initialize_jobcollection(job_ids=["0479cdb8-99d0-4de1-b0e2-6ff6b69d0f68", "a0d443a2-41e8-4995-8b54-a5cc4c448227"])
+jobcollection = up42.initialize_jobcollection(
+    job_ids=[
+        "0479cdb8-99d0-4de1-b0e2-6ff6b69d0f68",
+        "a0d443a2-41e8-4995-8b54-a5cc4c448227",
+    ]
+)
 ```
 
 You can also create a job collection by [running jobs in parallel](../../reference/workflow-reference/#up42.workflow.Workflow.run_jobs_parallel).
@@ -12,7 +17,7 @@ You can also create a job collection by [running jobs in parallel](../../referen
 
 ### info
 
-The `info` attribute returns metadata of jobs in the job collection.
+The `info` attribute returns metadata of jobs in a job collection.
 
 The returned format is `dict[str, dict]`.
 
@@ -24,7 +29,7 @@ jobcollection.info
 
 ### status
 
-The `status` attribute returns the [status](../../reference/job-reference/#status) of jobs in the job collection.
+The `status` attribute returns the [status](../../reference/job-reference/#status) of jobs in a job collection.
 
 The returned format is `dict[str, dict]`.
 
@@ -36,13 +41,14 @@ jobcollection.status
 
 ### apply()
 
-The `apply()` function allows you to apply `worker` on jobs in the job collection.
+The `apply()` function allows you to apply `worker` on jobs in a job collection.
 
 ```python
 apply(
     worker,
     only_succeeded,
-    **kwargs,)
+    **kwargs,
+)
 ```
 
 The returned format is `dict[str, any]`.
@@ -61,9 +67,9 @@ The returned format is `dict[str, any]`.
 worker = lambda job: job.info
 
 jobcollection.apply(
-    worker,
+    worker=worker,
     only_succeeded=True,
-    )
+)
 ```
 
 ### download_results()
@@ -74,7 +80,8 @@ The `download_results()` function allows you to download job collection results 
 download_results(
     output_directory,
     merge,
-    unpacking,)
+    unpacking,
+)
 ```
 
 The returned format is `dict[str, list[str]]`.
