@@ -103,9 +103,7 @@ class JobTask(VizTools):
         logger.info(f"Downloading results of jobtask {self.jobtask_id}")
 
         if output_directory is None:
-            output_directory = (
-                Path.cwd() / f"project_{self.project_id}/job_{self.job_id}/jobtask_{self.jobtask_id}"
-            )
+            output_directory = Path.cwd() / f"project_{self.project_id}/job_{self.job_id}/jobtask_{self.jobtask_id}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)

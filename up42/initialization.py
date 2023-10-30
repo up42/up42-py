@@ -43,6 +43,8 @@ def _check_deprecated_implicit_project_id(project_id: Optional[str]):
 def initialize_project(project_id: Optional[str] = None) -> "Project":
     """
     Returns the correct Project object (has to exist on UP42).
+    Args:
+        project_id: The UP42 project id
     """
     _check_deprecated_implicit_project_id(project_id)
     project = Project(auth=main._auth, project_id=project_id or str(main._auth.project_id))
