@@ -195,36 +195,19 @@ workflow.construct_parameters_parallel(
 
 ### get_compatible_blocks()
 
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
+The `get_compatible_blocks()` function returns all compatible blocks for the workflow.
+If the the workflow is empty, it will return all data blocks.
 
 ```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
-)
+get_compatible_blocks()
 ```
 
-The returned format is `type`.
-
-<h5> Arguments </h5>
-
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
+The returned format is `dict`.
 
 <h5> Example </h5>
 
 ```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
-)
+workflow.get_compatible_workflows()
 ```
 
 ## Workflow tasks
