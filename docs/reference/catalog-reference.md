@@ -43,7 +43,7 @@ The returned format is `dict`.
 
 ```python
 catalog.construct_search_parameters(
-    geometry="/Users/max.mustermann/Desktop/aoi.geojson",
+    geometry=up42.get_example_aoi(location="Berlin"),
     collections=["phr"],
     start_date="2022-06-01",
     end_date="2022-12-31",
@@ -77,7 +77,7 @@ The returned format is `Union[GeoDataFrame, dict]`.
 ```python
 catalog.search(
     search_parameters=catalog.construct_search_parameters(
-        geometry="/Users/max.mustermann/Desktop/aoi.geojson",
+        geometry=up42.get_example_aoi(),
         collections=["phr"],
         start_date="2022-06-01",
         end_date="2022-12-31",
@@ -182,7 +182,7 @@ catalog.estimate_order(
         data_product_id="4f1b2f62-98df-4c74-81f4-5dce45deee99",
         image_id="a4c9e729-1b62-43be-82e4-4e02c31963dd",
         aoi="/Users/max.mustermann/Desktop/aoi.geojson",
-    )
+    ),
 )
 ```
 
@@ -219,7 +219,7 @@ plot_coverage(
 # Construct search parameters
 
 search_parameters = catalog.construct_search_parameters(
-    geometry="/Users/max.mustermann/Desktop/aoi.geojson",
+    geometry=up42.get_example_aoi(location="Berlin"),
     collections=["phr"],
     start_date="2022-06-01",
     end_date="2022-12-31",
@@ -231,7 +231,7 @@ search_parameters = catalog.construct_search_parameters(
 
 catalog.plot_coverage(
     scenes=catalog.search(search_parameters),
-    aoi="/Users/max.mustermann/Desktop/aoi.geojson",
+    geometry=up42.get_example_aoi(location="Berlin"),
     legend_column="cloudCoverage",
     figsize=(14, 18),
 )
@@ -275,10 +275,10 @@ The returned format is `folium.Map`.
 
 scenes = catalog.search(
     search_parameters=catalog.construct_search_parameters(
-        geometry="/Users/max.mustermann/Desktop/aoi.geojson",
+        geometry=up42.get_example_aoi(location="Berlin"),
         collections=["phr"],
         limit=2,
-    )
+    ),
 )
 
 # Download quicklooks
@@ -333,10 +333,10 @@ plot_quicklooks(
 
 scenes = catalog.search(
     search_parameters=catalog.construct_search_parameters(
-        geometry="/Users/max.mustermann/Desktop/aoi.geojson",
+        geometry=up42.get_example_aoi(location="Berlin"),
         collections=["phr"],
         limit=2,
-    )
+    ),
 )
 
 # Download quicklooks
