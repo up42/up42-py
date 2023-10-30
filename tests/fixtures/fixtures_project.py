@@ -17,7 +17,7 @@ from .fixtures_globals import (
 @pytest.fixture()
 def project_mock(auth_mock, requests_mock):
     # info
-    url_project_info = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}"
+    url_project_info = f"{auth_mock._endpoint()}/projects/{PROJECT_ID}"
     json_project_info = {
         "data": {
             "xyz": 789,
@@ -30,7 +30,7 @@ def project_mock(auth_mock, requests_mock):
     }
     requests_mock.get(url=url_project_info, json=json_project_info)
 
-    project = Project(auth=auth_mock, project_id=auth_mock.project_id)
+    project = Project(auth=auth_mock, project_id=PROJECT_ID)
 
     # create_workflow.
     url_create_workflow = f"{project.auth._endpoint()}/projects/{project.project_id}/workflows/"

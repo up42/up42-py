@@ -3,12 +3,21 @@ import os
 import pytest
 
 from ..context import Job
-from .fixtures_globals import DOWNLOAD_URL, JOB_ID, JOB_ID_2, JOB_NAME, JOBTASK_ID, MOCK_CREDITS, WORKFLOW_NAME
+from .fixtures_globals import (
+    DOWNLOAD_URL,
+    JOB_ID,
+    JOB_ID_2,
+    JOB_NAME,
+    JOBTASK_ID,
+    MOCK_CREDITS,
+    PROJECT_ID,
+    WORKFLOW_NAME,
+)
 
 
 @pytest.fixture()
 def job_mock(auth_mock, requests_mock):
-    url_job_info = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
+    url_job_info = f"{auth_mock._endpoint()}/projects/{PROJECT_ID}/jobs/{JOB_ID}"
     json_job_info = {
         "data": {
             "xyz": 789,
@@ -25,7 +34,7 @@ def job_mock(auth_mock, requests_mock):
     }
     requests_mock.get(url=url_job_info, json=json_job_info)
 
-    job = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID)
+    job = Job(auth=auth_mock, project_id=PROJECT_ID, job_id=JOB_ID)
 
     # get_jobtasks
     url_job_tasks = f"{job.auth._endpoint()}/projects/{job.project_id}/jobs/{job.job_id}/tasks/"
@@ -75,18 +84,18 @@ def job_live(auth_live):
 
 @pytest.fixture()
 def jobs_mock(auth_mock, requests_mock):
-    url_job_info = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
+    url_job_info = f"{auth_mock._endpoint()}/projects/{PROJECT_ID}/jobs/{JOB_ID}"
     requests_mock.get(
         url=url_job_info,
         json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
     )
 
-    job1 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID)
+    job1 = Job(auth=auth_mock, project_id=PROJECT_ID, job_id=JOB_ID)
 
-    url_job_info = f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID_2}"
+    url_job_info = f"{auth_mock._endpoint()}/projects/{PROJECT_ID}/jobs/{JOB_ID_2}"
     requests_mock.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
 
-    job2 = Job(auth=auth_mock, project_id=auth_mock.project_id, job_id=JOB_ID_2)
+    job2 = Job(auth=auth_mock, project_id=PROJECT_ID, job_id=JOB_ID_2)
     return [job1, job2]
 
 
