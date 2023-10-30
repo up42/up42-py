@@ -216,14 +216,15 @@ Workflow tasks are blocks in a workflow.
 
 ### workflow_tasks
 
-The `attribute_name` attribute returns <...>.
+The `workflow_tasks` attribute returns the workflow tasks in a workflow.
 
-The returned format is `type`. # If it's NONE, don't include it.
+
+The returned format is `dict[str, str]`.
 
 <h5> Example </h5>
 
 ```python
-class.attribute_name
+workflow.workflow_tasks
 ```
 
 ### get workflow_tasks()
