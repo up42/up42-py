@@ -153,9 +153,9 @@ class Auth:
             try:
                 if self.auth_type == AuthType.PROJECT.value:
                     logger.info(
-                        "Project based authentication will be deprecated in March 2024."
-                        "Please use Account based authentication instead."
-                        "For more info: [authentication guidelines](https://sdk.up42.com/authentication/)."
+                        "Project-based authentication will be deprecated in March 2024."
+                        "Please use account-based authentication instead."
+                        "For more info, see [authentication guidelines](https://sdk.up42.com/authentication/)."
                     )
                 with open(self.cfg_file, encoding="utf-8") as src:
                     config = json.load(src)
