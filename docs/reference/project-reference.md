@@ -3,7 +3,7 @@
 The Project class enables access to the UP42 [analytics functionality](analytics.md). A project stores workflows and their corresponding job runs.
 
 ```python
-project = up42.initialize_project()
+project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 ```
 
 ## Projects
