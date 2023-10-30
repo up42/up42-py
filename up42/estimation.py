@@ -39,7 +39,7 @@ class Estimation:
         Returns:
             A dictionary with credit cost & duration estimate for each workflow task.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.auth.project_id}/estimate/job"
+        url = f"{self.auth._endpoint()}/projects/{self.auth.credentials_id}/estimate/job"
         self.payload = {
             "tasks": self.input_tasks,
             "inputs": self.input_parameters,

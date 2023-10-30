@@ -23,22 +23,22 @@ def test_auth_kwargs():
 
 
 def test_no_credentials_raises(auth_mock):
-    auth_mock.project_id = None
-    auth_mock.project_api_key = None
+    auth_mock.credentials_id = None
+    auth_mock.credentials_key = None
     with pytest.raises(ValueError):
         auth_mock._find_credentials()
 
 
 def test_find_credentials_cfg_file(auth_mock):
-    auth_mock.project_id = None
-    auth_mock.project_api_key = None
+    auth_mock.credentials_id = None
+    auth_mock.credentials_key = None
 
     fp = Path(__file__).resolve().parent / "mock_data" / "test_config.json"
     auth_mock.cfg_file = fp
 
     auth_mock._find_credentials()
-    assert auth_mock.project_id is not None
-    assert auth_mock.project_api_key is not None
+    assert auth_mock.credentials_id is not None
+    assert auth_mock.credentials_key is not None
 
 
 def test_endpoint(auth_mock):
@@ -55,10 +55,13 @@ def test_get_token(auth_mock):
 
 @pytest.mark.live
 def test_get_token_raises_wrong_credentials_live(auth_live):
-    auth_live.project_id = "123"
+    auth_live.credentials_id = "123"
     with pytest.raises(ValueError) as e:
         auth_live._get_token()
-    assert "Authentication was not successful, check the provided project credentials." in str(e.value)
+    assert (
+        "Authentication was not successful, check the provided project credentials."
+        in str(e.value)
+    )
 
 
 @pytest.mark.live
@@ -67,7 +70,7 @@ def test_get_token_live(auth_live):
 
 
 def test_get_workspace(auth_mock):
-    auth_mock._get_workspace()
+    auth_mock._get_user_id()
     assert auth_mock.workspace_id == WORKSPACE_ID
 
 
@@ -84,7 +87,9 @@ def test_generate_headers(auth_mock):
         .joinpath("up42/_version.txt")
         .read_text(encoding="utf-8")
     )
-    assert isinstance(version, str) and "\n" not in version, "check integrity of your version file"
+    assert (
+        isinstance(version, str) and "\n" not in version
+    ), "check integrity of your version file"
     expected_headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer token_1011",
@@ -97,7 +102,9 @@ def test_generate_headers(auth_mock):
 def test_request_helper(auth_mock, requests_mock):
     requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
 
-    response = auth_mock._request_helper(request_type="GET", url="http://test.com", data={}, querystring={})
+    response = auth_mock._request_helper(
+        request_type="GET", url="http://test.com", data={}, querystring={}
+    )
     response_json = json.loads(response.text)
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 
