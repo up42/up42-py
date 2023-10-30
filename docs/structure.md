@@ -176,7 +176,7 @@
             <li>`construct_parameters_parallel()`</li>
             <li>`get_compatible_blocks()`</li>
             <li>`workflow_tasks`</li>
-            <li>`get workflow_tasks()`</li>
+            <li>`get_workflow_tasks()`</li>
             <li>`add_workflow_tasks()`</li>
             <li>`estimate_job()`</li>
             <li>`get_jobs()`</li>
