@@ -136,7 +136,7 @@ class Auth:
 
     def __repr__(self):
         env_string = f" ,{self.env}" if self.env != "com" else ""
-        return f"UP42ProjectAuth(project_id={self.project_id}{env_string})"
+        return f"UP42ProjectAuth(project_id={self.credentials_id}{env_string})"
 
     def _find_credentials(self) -> None:
         """
@@ -151,9 +151,9 @@ class Auth:
             try:
                 if self.auth_type == AuthType.PROJECT.value:
                     logger.info(
-                        "Project based authentication will be deprecated in March 2024."
-                        "Please use Account based authentication instead."
-                        "For more info: [authentication guidelines](https://sdk.up42.com/authentication/)."
+                        "Project-based authentication will be deprecated in March 2024."
+                        "Please use account-based authentication instead."
+                        "For more info, see [authentication guidelines](https://sdk.up42.com/authentication/)."
                     )
                 with open(self.cfg_file, encoding="utf-8") as src:
                     config = json.load(src)
