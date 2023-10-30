@@ -11,8 +11,9 @@ The `authenticate()` function allows you to access UP42 SDK requests. For more i
 ```python
 authenticate(
     cfg_file,
-    project_id,
-    project_api_key,
+    credentials_id,
+    credentials_key,
+    auth_type,
 )
 ```
 
@@ -21,8 +22,9 @@ authenticate(
 | Argument          | Overview                                                                                           |
 | ----------------- | -------------------------------------------------------------------------------------------------- |
 | `cfg_file`        | **Union[str, Path]**<br/>The file path to the JSON file containing the project ID and the API key. |
-| `project_id`      | **str**<br/>The project ID.                                                                        |
-| `project_api_key` | **str**<br/>The project API key.                                                                   |
+| `credentials_id`  | **str**<br/>The email address used for logging into the console.                                   |
+| `credentials_key` | **str**<br/>The password used for logging into the console.                                        |
+| `auth_type`       | **str**<br/>The authentication type. Use `account-based` to enable account-based authentication.   |
 
 <h5> Example </h5>
 
@@ -30,8 +32,9 @@ authenticate(
 # Authenticate directly in code
 
 up42.authenticate(
-    project_id="your-project-ID",
-    project_api_key="your-project-API-key",
+    credentials_id="example@email.com",
+    credentials_key="12345",
+    auth_type="account-based",
 )
 
 # Authenticate in a configuration file
