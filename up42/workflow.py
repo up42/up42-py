@@ -482,6 +482,7 @@ class Workflow:
 
         estimation = Estimation(
             auth=self.auth,
+            project_id=self.project_id,
             input_parameters=input_parameters,
             input_tasks=input_tasks,
         ).estimate()
