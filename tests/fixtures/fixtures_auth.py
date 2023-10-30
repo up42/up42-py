@@ -43,10 +43,20 @@ def auth_mock(requests_mock):
 
 
 @pytest.fixture(scope="module")
-def auth_live():
+def project_id_live():
+    return os.getenv("TEST_UP42_PROJECT_ID")
+
+
+@pytest.fixture(scope="module")
+def project_api_key_live():
+    return os.getenv("TEST_UP42_PROJECT_API_KEY")
+
+
+@pytest.fixture(scope="module")
+def auth_live(project_id_live, project_api_key_live):
     auth = Auth(
-        project_id=os.getenv("TEST_UP42_PROJECT_ID"),
-        project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
+        project_id=project_id_live,
+        project_api_key=project_api_key_live
     )
     main._auth = auth  # instead of authenticate()
     return auth

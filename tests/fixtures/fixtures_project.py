@@ -140,8 +140,8 @@ def project_mock(auth_mock, requests_mock):
 
 
 @pytest.fixture()
-def project_live(auth_live):
-    project = Project(auth=auth_live, project_id=auth_live.project_id)
+def project_live(auth_live, project_id_live):
+    project = Project(auth=auth_live, project_id=project_id_live)
     return project
 
 

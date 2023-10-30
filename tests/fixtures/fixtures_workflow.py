@@ -133,10 +133,10 @@ def workflow_mock(auth_mock, requests_mock):
 
 
 @pytest.fixture()
-def workflow_live(auth_live):
+def workflow_live(auth_live, project_id_live):
     workflow = Workflow(
         auth=auth_live,
-        project_id=auth_live.project_id,
+        project_id=project_id_live,
         workflow_id=os.getenv("TEST_UP42_WORKFLOW_ID"),
     )
     return workflow

@@ -20,5 +20,5 @@ def jobcollection_empty_mock(auth_mock):
 
 
 @pytest.fixture()
-def jobcollection_live(auth_live, jobs_live):
-    return JobCollection(auth=auth_live, project_id=auth_live.project_id, jobs=jobs_live)
+def jobcollection_live(auth_live, project_id_live, jobs_live):
+    return JobCollection(auth=auth_live, project_id=project_id_live, jobs=jobs_live)
