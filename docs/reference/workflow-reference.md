@@ -147,35 +147,49 @@ workflow.construct_parameters(
 
 ### construct_parameters_parallel()
 
-The `function_name()` function returns <...> # When it just returns info
-The `function_name()` function allows you to <...>. # When it allows to perform an action and it's not important what it returns
-The `function_name()` function allows you to <...> and returns <...> # When it allows to perform an action and it's important what it returns
+The `construct_parameters()` function allows you to map geometries and time series into the workflow input parameters.
+fill out the workflow input parameters.
 
 ```python
-function_name( # Or function_name(argument1) when there's only 1 argument
-    argument1,
-    argument2,
-    argument3, # Note the comma at the end of the last argument
+construct_parameters_parallel(
+        geometries,
+        interval_dates,
+        scene_ids,
+        limit_per_job,
+        geometry_operation,
 )
 ```
 
-The returned format is `type`.
+The returned format is `list[dict]`.
 
 <h5> Arguments </h5>
 
-| Argument    | Overview                                                                                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `argument1` | **type / required**<br/>Description. Use a value from X to X km<sup>2</sup>. The default value is `value`.                   |
-| `argument2` | **type[type]**<br/>Description. The allowed values:<br/><ul><li>`VALUE1`</li><li>`VALUE2`</li></ul>                          |
-| `argument3` | **bool**<br/>Determines <...> :<br/><ul><li>`True`: do this.</li><li>`False`: do that.</li></ul>The default value is `True`. |
+| Argument             | Overview                                                                                                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `geometries`         | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point]**<br/>The geometries of interest.                                               |
+| `interval_dates`     | **list[tuple[str, str]]**<br/>The start and end dates in the `YYYY-MM-DD` format.                                                                             |
+| `scene_ids`          | **list[str]**<br/>The scene IDs. If used, all other parameters except `geometry` are ignored                                                                  |
+| `limit_per_job`      | **int**<br/>The number of search results to show per job. The default value is `1`.                                                                                                          |
+| `geometry_operation` | **str**<br/>The geometric filter. The allowed values:<br/><ul><li>`bbox`</li><li>`intersects`</li><li>`contains`</li></ul>The default value is `instersects`. |
 
 <h5> Example </h5>
 
 ```python
-class.function_name(
-    argument1="value",
-    argument2="value",
-    argument3=False, # Note the comma at the end of the last argument
+workflow.construct_parameters_parallel(
+    geometries=[
+        up42.get_example_aoi(location="Berlin"),
+        up42.get_example_aoi(location="Hamburg"),
+    ],
+    interval_dates=[
+        ("2023-01-01", "2023-01-30"),
+        ("2023-02-01", "2023-02-26")
+        ],
+    scene_ids=[
+        "a4c9e729-1b62-43be-82e4-4e02c31963dd",
+        "ea36dee9-fed6-457e-8400-2c20ebd30f44",
+    ],
+    limit_per_job=2,
+    geometry_operation="bbox",
 )
 ```
 
