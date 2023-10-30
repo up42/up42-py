@@ -4,10 +4,10 @@ from pathlib import Path
 import pytest
 import requests
 
-from .context import Auth
+from .context import Auth, AuthenticationError
 
 # pylint: disable=unused-import
-from .fixtures import PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID, auth_live, auth_mock
+from .fixtures import PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID, auth_live, auth_live_account, auth_mock
 
 
 def test_auth_kwargs():
@@ -53,9 +53,25 @@ def test_get_token(auth_mock):
     assert auth_mock.token == TOKEN
 
 
-def test_auth_repr():
-    auth = Auth(credentials_id="TEST", credentials_key="TEST", authenticate=False)
-    assert repr(auth) == ""
+def test_repr_project():
+    auth = Auth(
+        credentials_id=PROJECT_ID,
+        credentials_key=PROJECT_APIKEY,
+        authenticate=False,
+        env="dev",
+    )
+    assert repr(auth) == f"UP42ProjectAuth(project_id={PROJECT_ID} ,dev)"
+
+
+def test_repr_account():
+    auth = Auth(
+        credentials_id=PROJECT_ID,
+        credentials_key=PROJECT_APIKEY,
+        authenticate=False,
+        auth_type="account-based",
+        env="dev",
+    )
+    assert repr(auth) == f"UP42UserAuth(user_id={PROJECT_ID} ,dev)"
 
 
 @pytest.mark.live
@@ -67,6 +83,14 @@ def test_get_token_raises_wrong_credentials_live(auth_live):
         "Authentication was not successful, check the provided project credentials."
         in str(e.value)
     )
+
+
+@pytest.mark.live
+def test_get_token_account_live_fail(auth_live_account):
+    auth_live_account.credentials_id = "123"
+    with pytest.raises(AuthenticationError) as e:
+        auth_live_account._get_token()
+    assert "Check the provided credentials." in str(e.value)
 
 
 @pytest.mark.live

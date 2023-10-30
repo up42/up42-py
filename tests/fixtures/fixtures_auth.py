@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from ..context import Auth, main
+from ..context import Auth, AuthType, main
 from .fixtures_globals import JSON_BALANCE, JSON_BLOCKS, PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID
 
 
@@ -56,6 +56,17 @@ def auth_live():
     auth = Auth(
         credentials_id=os.getenv("TEST_UP42_PROJECT_ID"),
         credentials_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
+    )
+    main._auth = auth  # instead of authenticate()
+    return auth
+
+
+@pytest.fixture(scope="module")
+def auth_live_account():
+    auth = Auth(
+        credentials_id=os.getenv("TEST_USERNAME"),
+        credentials_key=os.getenv("TEST_PASSWORD"),
+        auth_type=AuthType.ACCOUNT.value,
     )
     main._auth = auth  # instead of authenticate()
     return auth
