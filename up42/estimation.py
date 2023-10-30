@@ -45,7 +45,7 @@ class Estimation:
                 "Switch to project-based authentication,"
                 "this method is planned to be deprecated."
             )
-        url = f"{self.auth._endpoint()}/projects/{self.auth.project_id}/estimate/job"
+        url = f"{self.auth._endpoint()}/projects/{self.auth.credentials_id}/estimate/job"
         self.payload = {
             "tasks": self.input_tasks,
             "inputs": self.input_parameters,

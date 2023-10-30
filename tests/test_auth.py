@@ -53,6 +53,11 @@ def test_get_token(auth_mock):
     assert auth_mock.token == TOKEN
 
 
+def test_auth_repr():
+    auth = Auth(credentials_id="TEST", credentials_key="TEST", authenticate=False)
+    assert repr(auth) == ""
+
+
 @pytest.mark.live
 def test_get_token_raises_wrong_credentials_live(auth_live):
     auth_live.credentials_id = "123"
