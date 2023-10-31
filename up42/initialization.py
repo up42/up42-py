@@ -95,7 +95,7 @@ def initialize_job(job_id: str, project_id: Optional[str] = None) -> "Job":
         project_id: The id of the UP42 project, containing the job
     """
     _check_deprecated_implicit_project_id(project_id)
-    job = Job(auth=main._auth, job_id=job_id, project_id=str(main._auth.project_id))
+    job = Job(auth=main._auth, job_id=job_id, project_id=project_id or str(main._auth.project_id))
     logger.info(f"Initialized {job}")
     return job
 
@@ -133,7 +133,7 @@ def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = Non
         Job(
             auth=main._auth,
             job_id=job_id,
-            project_id=str(main._auth.project_id),
+            project_id=project_id or str(main._auth.project_id),
         )
         for job_id in job_ids
     ]
