@@ -147,7 +147,7 @@ asset.download_stac_asset(
 
 ### get_stac_asset_url()
 
-The `get_stac_asset_url()` function returns a pre-signed download URL for a STAC asset.
+The `get_stac_asset_url()` function returns a signed download URL for a STAC asset.
 The generated URL can be used for up to 5 minutes to download the asset without authentication.
 
 ```python
