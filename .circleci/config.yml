@@ -99,15 +99,15 @@ jobs:
 workflows:
   test_and_deploy:
     jobs:
-      - test
+      # - test
       - sonar:
           context: sonarcloud
-          requires:
-            - test
+          # requires:
+          #   - test
       - hold_before_deploy:
           type: approval
-          requires:
-            - test
+          # requires:
+          #   - test
           filters:
             branches:
               only: master

@@ -2,8 +2,8 @@ name: Publish docs via GitHub Pages
 
 on:
   push:
-    # branches:
-    #   - master
+    branches:
+      - AT_3869_fix_docs_deployment
     paths:
       # Only rebuild website when docs have changed
       # Comment out when testing locally via act!
