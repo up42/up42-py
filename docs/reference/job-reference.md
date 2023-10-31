@@ -292,6 +292,8 @@ job.get_jobtasks_results_json()
 
 ## Visualization
 
+To use the visualization functionalities, [install](../../installation/) the advanced up42-py package.
+
 ### map_results()
 
 The `map_results()` function allows you to visualize job results on a Folium map. Use together with [`download_results()`](#download_results).
@@ -342,24 +344,22 @@ plot_results(
     figsize,
     bands,
     titles,
-    filpaths,
+    filepaths,
     plot_file_format,
     **kwargs,
 )
 ```
 
-The returned format is `type`.
-
 <h5> Arguments </h5>
 
-| Argument           | Overview                                                                                                                                    |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `figsize`          | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(14, 8)`. |
-| `bands`            | **list[int]**<br/>A list of image bands to plot and their order.                                                                            |
-| `titles`           | **list[str]**<br/>Titles for the subplots.                                                                                                  |
-| `filpaths`         | **Union[list[Union[str, Path]], dict, none]**<br/>The file path. By default, the downloaded results will be used.                           |
-| `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                   |
-| `**kwargs`         | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
+| Argument           | Overview                                                                                                                                               |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `figsize`          | **tuple[int, int]**<br/>The size of the visualization, in inches. The first number is height, the second one is width. The default value is `(14, 8)`. |
+| `bands`            | **list[int]**<br/>A list of image bands to plot and their order.                                                                                       |
+| `titles`           | **list[str]**<br/>The titles for the subplots.                                                                                                         |
+| `filepaths`        | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths. By default, the last downloaded results will be used.                                |
+| `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                              |
+| `**kwargs`         | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).                 |
 
 <h5> Example </h5>
 
