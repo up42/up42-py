@@ -197,10 +197,29 @@
 
     === "JobCollection"
 
-        {{ docstring_jobcollection }}
-        <br>
-        Available functions, see also [**JobCollection reference**](jobcollection-reference.md):
-        {{ format_funcs(funcs_jobcollection) }}
+        The JobCollection class enables access to [results of multiple jobs](analytics.md). A job is an instance of a workflow. A job collection is the results of multiple jobs as one object.
+
+        ```python
+        jobcollection = up42.initialize_jobcollection(
+            job_ids=[
+                "0479cdb8-99d0-4de1-b0e2-6ff6b69d0f68",
+                "a0d443a2-41e8-4995-8b54-a5cc4c448227",
+            ]
+        )
+        ```
+
+        You can also create a job collection by [running jobs in parallel](../reference/workflow-reference#up42.workflow.Workflow.run_jobs_parallel).
+
+        See available attributes and functions on the [JobCollection](jobcollection-reference.md) reference page:
+        <ul>
+            <li>`info`</li>
+            <li>`status`</li>
+            <li>`apply()`</li>
+            <li>`download_results()`</li>
+            <li>`map_results()`</li>
+            <li>`plot_results()`</li>
+        </ul>
+
 
     === "JobTask"
 
