@@ -110,7 +110,7 @@ The returned format is `list[str]`.
 
 | Argument           | Overview                                                                                              |
 | ------------------ | ----------------------------------------------------------------------------------------------------- |
-| `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory. |
+| `output_directory` | **Union[str, Path, None]**<br/>The file output directory. The default value is the current directory. |
 
 <h5> Example </h5>
 
@@ -157,7 +157,7 @@ The returned format is `list[str]`.
 
 | Argument           | Overview                                                                                                                                                                                        |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory.                                                                                           |
+| `output_directory` | **Union[str, Path, None]**<br/>The file output directory. The default value is the current directory.                                                                                           |
 | `unpacking`        | **bool**<br/>Determines how to download the job results:<br/><ul><li>`True`: download and unpack the file.</li><li>`False`: download the compressed file.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
@@ -221,7 +221,7 @@ job.cancel_job()
 
 ## Job tasks
 
-Job tasks are unique configurations of workflow tasks in a job.
+Job tasks are unique configurations of workflow tasks in a job. You can access a specific job task's results with the [JobTask](../../reference/jobtask-reference) class.
 
 ### get_jobtasks()
 
@@ -357,7 +357,7 @@ plot_results(
 | `figsize`          | **tuple[int, int]**<br/>The size of the visualization, in inches. The first number is height, the second one is width. The default value is `(14, 8)`. |
 | `bands`            | **list[int]**<br/>A list of image bands to plot and their order.                                                                                       |
 | `titles`           | **list[str]**<br/>The titles for the subplots.                                                                                                         |
-| `filepaths`        | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths. By default, the last downloaded results will be used.                                |
+| `filepaths`        | **Union[list[Union[str, Path]], dict, None]**<br/>The file paths. By default, the last downloaded results will be used.                                |
 | `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                              |
 | `**kwargs`         | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).                 |
 
@@ -368,7 +368,7 @@ job.plot_results(
     figsize=(10, 10),
     bands=[1],
     titles=["SPOT imagery over Berlin"],
-    filpaths="/Users/max.mustermann/Desktop/IMG_SPOT6_PMS.TIF",
+    filepaths="/Users/max.mustermann/Desktop/IMG_SPOT6_PMS.TIF",
     plot_file_format=[".tif"],
 )
 ```
