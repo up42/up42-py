@@ -85,6 +85,85 @@ delete()
 workflow.delete()
 ```
 
+## Workflow tasks
+
+Workflow tasks are blocks in a workflow.
+
+### workflow_tasks
+
+The `workflow_tasks` attribute returns the workflow tasks in a workflow.
+
+The returned format is `dict[str, str]`.
+
+<h5> Example </h5>
+
+```python
+workflow.workflow_tasks
+```
+
+### get_compatible_blocks()
+
+The `get_compatible_blocks()` function returns all compatible blocks for the workflow.
+If the the workflow is empty, it will return all data blocks.
+
+```python
+get_compatible_blocks()
+```
+
+The returned format is `dict`.
+
+<h5> Example </h5>
+
+```python
+workflow.get_compatible_workflows()
+```
+
+### get_workflow_tasks()
+
+The `get_workflow_tasks` function returns the workflow tasks in a workflow.
+
+```python
+get_workflow_tasks(basic)
+```
+
+The returned format is `Union[list, dict]`.
+
+<h5> Arguments </h5>
+
+| Argument | Overview                                                                                                                                                                                                             |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `basic`  | **bool**<br/>Determines how to return the workflow tasks:</br/><ul><li>`True`: return only simplified task name and block version.</li><li>`False`: return the full response.</li></ul>The default value is `False`. |
+
+<h5> Example </h5>
+
+```python
+workflow.get_workflow_tasks(basic=True)
+```
+
+### add_workflow_tasks()
+
+The `add_workflow_tasks()` function allows you to add or overwrite workflow tasks in a workflow.
+
+```python
+add_workflow_tasks(input_tasks)
+```
+
+<h5> Arguments </h5>
+
+| Argument      | Overview                                                                                                                                                                                                                               |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `input_tasks` | **Union[List[str], List[dict]] / required**<br/>The workflow tasks to be added to the workflow. To use a specific version of a block, use block IDs. Otherwise, use block names or block display names to use the most recent version. |
+
+<h5> Example </h5>
+
+```python
+workflow.add_workflow_tasks(
+    input_tasks=["sentinelhub-s2-aoiclipped:1", "tiling"],
+)
+```
+
+## Jobs
+
 ### get_parameters_info()
 
 The `get_parameters_info()` function returns the parameters of each block in the workflow.
@@ -103,7 +182,7 @@ workflow.get_parameters_info()
 
 ### construct_parameters()
 
-The `construct_parameters()` function allows you to fill out the workflow input parameters.
+The `construct_parameters()` function allows you to fill out the job input parameters.
 
 ```python
 construct_parameters(
@@ -147,7 +226,7 @@ workflow.construct_parameters(
 
 ### construct_parameters_parallel()
 
-The `construct_parameters()` function allows you to map geometries and time series into the workflow input parameters.
+The `construct_parameters()` function allows you to map geometries and time series to the input parameters for multiple jobs.
 
 ```python
 construct_parameters_parallel(
@@ -175,10 +254,7 @@ The returned format is `list[dict]`.
 
 ```python
 workflow.construct_parameters_parallel(
-    geometries=[
-        up42.get_example_aoi(location="Berlin"),
-        up42.get_example_aoi(location="Potsdam"),
-    ],
+    geometries=[up42.get_example_aoi(location="Berlin")],
     interval_dates=[
         ("2023-01-01", "2023-01-30"),
         ("2023-02-01", "2023-02-26")
@@ -191,88 +267,6 @@ workflow.construct_parameters_parallel(
     geometry_operation="bbox",
 )
 ```
-
-### get_compatible_blocks()
-
-The `get_compatible_blocks()` function returns all compatible blocks for the workflow.
-If the the workflow is empty, it will return all data blocks.
-
-```python
-get_compatible_blocks()
-```
-
-The returned format is `dict`.
-
-<h5> Example </h5>
-
-```python
-workflow.get_compatible_workflows()
-```
-
-## Workflow tasks
-
-Workflow tasks are blocks in a workflow.
-
-### workflow_tasks
-
-The `workflow_tasks` attribute returns the workflow tasks in a workflow.
-
-The returned format is `dict[str, str]`.
-
-<h5> Example </h5>
-
-```python
-workflow.workflow_tasks
-```
-
-### get_workflow_tasks()
-
-The `get_workflow_tasks` function returns the workflow tasks in a workflow.
-
-```python
-get_workflow_tasks(basic)
-```
-
-The returned format is `Union[list, dict]`.
-
-<h5> Arguments </h5>
-
-| Argument | Overview                                                                                                                                                                                                             |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `basic`  | **bool**<br/>Determines how to return the workflow tasks:</br/><ul><li>`True`: return only simplified task name and block version.</li><li>`False`: return the full response.</li></ul>The default value is `False`. |
-
-<h5> Example </h5>
-
-```python
-workflow.get_workflow_tasks(basic=True)
-```
-
-### add_workflow_tasks()
-
-The `add_workflow_tasks()` function allows you to add or overwrite workflow tasks in a workflow.
-
-```python
-add_workflow_tasks(input_tasks)
-```
-
-<h5> Arguments </h5>
-
-| Argument      | Overview                                                                                                                                                                                                                               |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `input_tasks` | **Union[List[str], List[dict]] / required**<br/>The workflow tasks to be added to the workflow. To use a specific version of a block, use block IDs. Otherwise, use block names or block display names to use the most recent version. |
-
-<h5> Example </h5>
-
-```python
-workflow.add_workflow_tasks(
-    input_tasks=[
-        "sentinelhub-s2",
-        "tiling"
-        ],
-)
-```
-
-## Jobs
 
 ### estimate_job()
 
@@ -408,10 +402,7 @@ The returned format is `JobCollection`.
 # Construct input parameters
 
 input_parameters_list=workflow.construct_parameters_parallel(
-    geometries=[
-        up42.get_example_aoi(location="Berlin"),
-        up42.get_example_aoi(location="Potsdam"),
-    ],
+    geometries=[up42.get_example_aoi(location="Berlin")],
     interval_dates=[
         ("2023-01-01", "2023-01-30"),
         ("2023-02-01", "2023-02-26")
@@ -505,10 +496,7 @@ The returned format is `JobCollection`.
 # Construct input parameters
 
 input_parameters_list=workflow.construct_parameters_parallel(
-    geometries=[
-        up42.get_example_aoi(location="Berlin"),
-        up42.get_example_aoi(location="Potsdam"),
-    ],
+    geometries=[up42.get_example_aoi(location="Berlin")],
     interval_dates=[
         ("2023-01-01", "2023-01-30"),
         ("2023-02-01", "2023-02-26")
