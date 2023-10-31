@@ -221,9 +221,9 @@
             <li>`download_quicklooks()`</li>
             <li>`get_results_json()`</li>
             <li>`download_results()`</li>
-            <li>`plot_quicklooks()`</li>
             <li>`map_results()`</li>
             <li>`plot_results()`</li>
+            <li>`plot_quicklooks()`</li>
         </ul>
 
     === "Webhooks"
