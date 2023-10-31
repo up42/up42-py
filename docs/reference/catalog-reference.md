@@ -109,7 +109,7 @@ The returned format is `list[str]`.
 | ------------------ | ----------------------------------------------------------------------------------------------------- |
 | `image_ids`        | **list[str] / required**<br/>The scene IDs.                                                           |
 | `collection`       | **str / required**<br/>The geospatial collection name.                                                |
-| `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory. |
+| `output_directory` | **Union[str, Path, None]**<br/>The file output directory. The default value is the current directory. |
 
 <h5> Example </h5>
 
@@ -172,7 +172,7 @@ The returned format is `int`.
 
 | Argument           | Overview                                                                      |
 | ------------------ | ----------------------------------------------------------------------------- |
-| `order_parameters` | **Union[dict, none] / required**<br/>Parameters with which to place an order. |
+| `order_parameters` | **Union[dict, None] / required**<br/>Parameters with which to place an order. |
 
 <h5> Example </h5>
 
@@ -323,7 +323,7 @@ plot_quicklooks(
 | Argument    | Overview                                                                                                                                              |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `figsize`   | **tuple[int, int]**<br/>The size of the visualization, in inches. The first number is height, the second one is width. The default value is `(8, 8)`. |
-| `filepaths` | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                            |
+| `filepaths` | **Union[list[Union[str, Path]], dict, None]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                            |
 | `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                                        |
 
 <h5> Example </h5>
