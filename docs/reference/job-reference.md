@@ -354,7 +354,7 @@ plot_results(
 
 | Argument           | Overview                                                                                                                                               |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `figsize`          | **tuple[int, int]**<br/>The size of the visualization, in inches. The first number is length, the second one is width. The default value is `(14, 8)`. |
+| `figsize`          | **tuple[int, int]**<br/>The size of the visualization, in inches. The first number is height, the second one is width. The default value is `(14, 8)`. |
 | `bands`            | **list[int]**<br/>A list of image bands to plot and their order.                                                                                       |
 | `titles`           | **list[str]**<br/>The titles for the subplots.                                                                                                         |
 | `filepaths`        | **Union[list[Union[str, Path]], dict, none]**<br/>The file paths. By default, the last downloaded results will be used.                                |

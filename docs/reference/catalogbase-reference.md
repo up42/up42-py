@@ -100,7 +100,7 @@ The returned format is `Order`.
 
 | Argument           | Overview                                                                                                                                                                                                                                      |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `order_parameters` | **Union[dict, none]**<br/>Parameters with which to place an order.                                                                                                                                                                            |
+| `order_parameters` | **Union[dict, None]**<br/>Parameters with which to place an order.                                                                                                                                                                            |
 | `track_status`     | **bool**<br/>Determines when to return order data:</p><ul><li>`True`: return order data only when the order status changes to `FULFILLED` or `FAILED`.</li><li>`False`: return order data immediately.</li></ul>The default value is `False`. |
 | `report_time`      | **int**<br/>Use if `track_status=True`.<br/><br/>The time interval for querying whether the order status has changed to `FULFILLED` or `FAILED`, in seconds. The default value is `120`.                                                      |
 
