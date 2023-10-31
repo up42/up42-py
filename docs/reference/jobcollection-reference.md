@@ -90,7 +90,7 @@ The returned format is `dict[str, list[str]]`.
 
 | Argument           | Overview                                                                                                                                                                                                  |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `output_directory` | **Union[str, Path, none]**<br/>The file output directory. The default value is the current directory.                                                                                                     |
+| `output_directory` | **Union[str, Path, None]**<br/>The file output directory. The default value is the current directory.                                                                                                     |
 | `merge`            | **bool**<br/>Determines how `data.json` is returned:<br/><ul><li>`True`: return a merged `data.json`.</li><li>`False`: don't return a merged `data.json`.</li></ul>The default value is `True`.           |
 | `unpacking`        | **bool**<br/>Determines how to download the job collection results<br/><ul><li>`True`: download and unpack the file.</li><li>`False`: download the compressed file.</li></ul>The default value is `True`. |
 
@@ -164,18 +164,16 @@ plot_results(
 )
 ```
 
-The returned format is `type`.
-
 <h5> Arguments </h5>
 
-| Argument           | Overview                                                                                                                                    |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `figsize`          | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(14, 8)`. |
-| `bands`            | **list[int]**<br/>A list of image bands to plot and their order.                                                                            |
-| `titles`           | **list[str]**<br/>Titles for the subplots.                                                                                                  |
-| `filepaths`        | **Union[list[Union[str, Path]], dict, none]**<br/>The file path. By default, the downloaded results will be used.                           |
-| `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                   |
-| `**kwargs`         | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
+| Argument           | Overview                                                                                                                                               |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `figsize`          | **tuple[int, int]**<br/>The size of the visualization, in inches. The first number is height, the second one is width. The default value is `(14, 8)`. |
+| `bands`            | **list[int]**<br/>A list of image bands to plot and their order.                                                                                       |
+| `titles`           | **list[str]**<br/>The titles for the subplots.                                                                                                         |
+| `filepaths`        | **Union[list[Union[str, Path]], dict, None]**<br/>The file paths. By default, the last downloaded results will be used.                                |
+| `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                              |
+| `**kwargs`         | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).                 |
 
 <h5> Example </h5>
 
