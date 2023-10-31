@@ -93,10 +93,6 @@ jobtask.download_results(output_directory="/Users/max.mustermann/Desktop/")
 
 To use the visualization functions, [install](installation.md) the SDK's advanced installation with plotting functionalities.
 
-### plot_quicklooks()
-
-The `plot_quicklooks()` function allows you to visualize downloaded quicklooks. Use together with [`download_quicklooks()`](#download_quicklooks).
-
 ### map_results()
 
 The `map_results()` function allows you to visualize a specific job task's results on a Folium map. Use together with [`download_results()`](#download_results).
@@ -153,18 +149,16 @@ plot_results(
 )
 ```
 
-The returned format is `type`.
-
 <h5> Arguments </h5>
 
-| Argument           | Overview                                                                                                                                    |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `figsize`          | **tuple[int, int]**<br/>The size of the visualization. The first number is length, the second one is width. The default value is `(14, 8)`. |
-| `bands`            | **list[int]**<br/>A list of image bands to plot and their order.                                                                            |
-| `titles`           | **list[str]**<br/>Titles for the subplots.                                                                                                  |
-| `filepaths`        | **Union[list[Union[str, Path]], dict, none]**<br/>The file path. By default, the downloaded results will be used.                           |
-| `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                   |
-| `**kwargs`         | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).      |
+| Argument           | Overview                                                                                                                                               |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `figsize`          | **tuple[int, int]**<br/>The size of the visualization, in inches. The first number is height, the second one is width. The default value is `(14, 8)`. |
+| `bands`            | **list[int]**<br/>A list of image bands to plot and their order.                                                                                       |
+| `titles`           | **list[str]**<br/>The titles for the subplots.                                                                                                         |
+| `filepaths`        | **Union[list[Union[str, Path]], dict, None]**<br/>The file paths. By default, the last downloaded results will be used.                                |
+| `plot_file_format` | **list[str]**<br/>Accepted file formats. The default value is `[".tif"]`.                                                                              |
+| `**kwargs`         | Any additional arguments of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show).                 |
 
 <h5> Example </h5>
 
@@ -175,5 +169,44 @@ jobtask.plot_results(
     titles=["SPOT imagery over Berlin"],
     filepaths="/Users/max.mustermann/Desktop/IMG_SPOT6_PMS.TIF",
     plot_file_format=[".tif"],
+)
+```
+
+### plot_quicklooks()
+
+The `plot_quicklooks()` function allows you to visualize downloaded quicklooks. Use together with [`download_quicklooks()`](#download_quicklooks).
+
+```python
+plot_quicklooks(
+    figsize,
+    filepaths,
+    titles
+)
+```
+
+<h5> Arguments </h5>
+
+| Argument    | Overview                                                                                                                                              |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `figsize`   | **tuple[int, int]**<br/>The size of the visualization, in inches. The first number is height, the second one is width. The default value is `(8, 8)`. |
+| `filepaths` | **Union[list[Union[str, Path]], dict, None]**<br/>The file paths. By default, the last downloaded quicklooks will be used.                            |
+| `titles`    | **list[str]**<br/>The titles for the subplots.                                                                                                        |
+
+<h5> Example </h5>
+
+```python
+# Download quicklooks
+
+jobtask.download_quicklooks(output_directory="/Users/max.mustermann/Desktop/")
+
+# Map quicklooks
+
+jobtask.plot_quicklooks(
+    figsize=(10, 10),
+    filepaths=[
+        "/Users/max.mustermann/Desktop/quicklook_d0a7e38a-0087-48c9-b3f7-8b422388e101.jpg",
+        "/Users/max.mustermann/Desktop/quicklook_b7f2c82f-641d-4119-baff-7001a5ceb4f6.jpg",
+    ],
+    titles=["Scene 1", "Scene 2"],
 )
 ```
