@@ -143,5 +143,7 @@ docs/CHANGELOG.md
 docs/mkdocs_macros
 /examples/project*
 project_*/
+quicklook_*
+asset_*/
 
 .DS_Store
