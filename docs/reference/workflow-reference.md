@@ -37,7 +37,7 @@ workflow.max_concurrent_jobs
 
 ### info
 
-The `info` attribute returns metadata of the workflow.
+The `info` attribute returns the metadata of a workflow.
 
 The returned format is `dict`.
 
@@ -49,7 +49,7 @@ workflow.info
 
 ### update_name()
 
-The `update_name()` function allows you to update the workflow name and description.
+The `update_name()` function allows you to update the name and description of a workflow.
 
 ```python
 update_name(
@@ -76,7 +76,7 @@ workflow.update_name(
 
 ### delete()
 
-The `delete()` function allows you to delete the workflow and sets the `workflow` object to None.
+The `delete()` function allows you to delete a workflow and set the `workflow` object to None.
 
 ```python
 delete()
@@ -106,8 +106,8 @@ workflow.workflow_tasks
 
 ### get_compatible_blocks()
 
-The `get_compatible_blocks()` function returns all compatible blocks for the workflow.
-If the the workflow is empty, it will return all available data blocks.
+The `get_compatible_blocks()` function returns all compatible blocks for a workflow.
+If the workflow is empty, it will return all available data blocks.
 
 ```python
 get_compatible_blocks()
@@ -118,7 +118,7 @@ The returned format is `dict`.
 <h5> Example </h5>
 
 ```python
-workflow.get_compatible_workflows()
+workflow.get_compatible_blocks()
 ```
 
 ### get_workflow_tasks()
@@ -133,9 +133,9 @@ The returned format is `Union[list, dict]`.
 
 <h5> Arguments </h5>
 
-| Argument | Overview                                                                                                                                                                                                             |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `basic`  | **bool**<br/>Determines how to return the workflow tasks:</br/><ul><li>`True`: return only simplified task name and block version.</li><li>`False`: return the full response.</li></ul>The default value is `False`. |
+| Argument | Overview                                                                                                                                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `basic`  | **bool**<br/>Determines how to return a list of workflow tasks:</br/><ul><li>`True`: return only simplified task names and block versions.</li><li>`False`: return the full response.</li></ul>The default value is `False`. |
 
 <h5> Example </h5>
 
@@ -153,9 +153,9 @@ add_workflow_tasks(input_tasks)
 
 <h5> Arguments </h5>
 
-| Argument      | Overview                                                                                                                                                                                                                               |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `input_tasks` | **Union[List[str], List[dict]] / required**<br/>The workflow tasks to be added to the workflow. To use a specific version of a block, use block IDs. Otherwise, use block names or block display names to use the most recent version. |
+| Argument      | Overview                                                                                                                                                                                                                             |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `input_tasks` | **Union[List[str], List[dict]] / required**<br/>The workflow tasks to be added to a workflow. To use a specific version of a block, use block IDs. Otherwise, use block names or block display names to use the most recent version. |
 
 <h5> Example </h5>
 
@@ -169,7 +169,7 @@ workflow.add_workflow_tasks(
 
 ### get_parameters_info()
 
-The `get_parameters_info()` function returns the parameters of each block in the workflow.
+The `get_parameters_info()` function returns the JSON parameters of each workflow task.
 
 ```python
 get_parameters_info()
@@ -185,7 +185,7 @@ workflow.get_parameters_info()
 
 ### construct_parameters()
 
-The `construct_parameters()` function allows you to fill out the job input parameters.
+The `construct_parameters()` function allows you to fill out the job JSON parameters.
 
 ```python
 construct_parameters(
@@ -199,19 +199,19 @@ construct_parameters(
 )
 ```
 
-The returned format is `type`.
+The returned format is `dict`.
 
 <h5> Arguments </h5>
 
 | Argument             | Overview                                                                                                                   |
 | -------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `geometry`           | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point]**<br/>The geometry of interest.              |
+| `geometry`           | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, geojson_Polygon]**<br/>The geometry of interest.    |
 | `geometry_operation` | **str**<br/>The geometric filter. The allowed values:<br/><ul><li>`bbox`</li><li>`intersects`</li><li>`contains`</li></ul> |
 | `start_date`         | **Union[str, datetime]**<br/>The start date of the search period in the `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` format.      |
 | `end_date`           | **Union[str, datetime]**<br/>The end date of the search period in the `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` format.        |
 | `limit`              | **int**<br/>The number of search results to show.                                                                          |
 | `scene_ids`          | **list[str]**<br/>The scene IDs. If used, all other parameters except `geometry` are ignored                               |
-| `asset_ids`          | **list[str]**<br/>The asset IDs.                                                                                           |
+| `asset_ids`          | **list[str]**<br/>The asset IDs. Use with Processing from Storage block.                                                   |
 
 <h5> Example </h5>
 
@@ -222,14 +222,12 @@ workflow.construct_parameters(
     start_date="2020-01-01",
     end_date="2022-12-31",
     limit=1,
-    scene_ids=["a4c9e729-1b62-43be-82e4-4e02c31963dd"],
-    asset_ids=["ea36dee9-fed6-457e-8400-2c20ebd30f44"],
 )
 ```
 
 ### construct_parameters_parallel()
 
-The `construct_parameters()` function allows you to map geometries and time series to the input parameters for multiple jobs.
+The `construct_parameters()` function allows you to fill out the job JSON parameters for multiple jobs to be run in parallel.
 
 ```python
 construct_parameters_parallel(
@@ -247,7 +245,7 @@ The returned format is `list[dict]`.
 
 | Argument             | Overview                                                                                                                                                      |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `geometries`         | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point]**<br/>The geometries of interest.                                               |
+| `geometries`         | **List[Union[dict, Feature, geojson_Polygon, Polygon]]**<br/>The geometries of interest.                                                                      |
 | `interval_dates`     | **list[tuple[str, str]]**<br/>The start and end dates in the `YYYY-MM-DD` format.                                                                             |
 | `scene_ids`          | **list[str]**<br/>The scene IDs. If used, all other parameters except `geometry` are ignored                                                                  |
 | `limit_per_job`      | **int**<br/>The number of search results to show per job. The default value is `1`.                                                                           |
@@ -258,14 +256,7 @@ The returned format is `list[dict]`.
 ```python
 workflow.construct_parameters_parallel(
     geometries=[up42.get_example_aoi(location="Berlin")],
-    interval_dates=[
-        ("2023-01-01", "2023-01-30"),
-        ("2023-02-01", "2023-02-26")
-        ],
-    scene_ids=[
-        "a4c9e729-1b62-43be-82e4-4e02c31963dd",
-        "ea36dee9-fed6-457e-8400-2c20ebd30f44",
-    ],
+    interval_dates=[("2023-01-01", "2023-01-30"), ("2023-02-01", "2023-02-26")],
     limit_per_job=2,
     geometry_operation="bbox",
 )
@@ -285,7 +276,7 @@ The returned format is `dict`.
 
 | Argument           | Overview                                                |
 | ------------------ | ------------------------------------------------------- |
-| `input_parameters` | **Union[dict, str, Path]**<br/>The workflow parameters. |
+| `input_parameters` | **Union[dict, str, Path]**<br/>The job JSON parameters. |
 
 <h5> Example </h5>
 
@@ -313,7 +304,7 @@ get_jobs(
 )
 ```
 
-The returned format is `Union[JobCollection, List[Dict]]`.
+The returned format is `Union[JobCollection, list[dict]]`.
 
 <h5> Arguments </h5>
 
@@ -335,7 +326,7 @@ workflow.get_jobs(
 
 ### test_job()
 
-The `test_jobs()` function allows you to create and run a test query.
+The `test_jobs()` function allows you to run a test query.
 
 ```python
 test_jobs(
@@ -349,16 +340,16 @@ The returned format is `Job`.
 
 <h5> Arguments </h5>
 
-| Argument           | Overview                                                                                                                                                                                         |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `input_parameters` | **Union[dict, str, Path]**<br/>The workflow parameters.                                                                                                                                          |
-| `track_status`     | **bool**<br/>Determines whether to query job status every 30 seconds:<br/><ul><li>`True`: track job status.</li><li>`False`: don't track job status that.</li></ul>The default value is `False`. |
-| `name`             | **str**<br/>The job name. By default, the workflow name will be used.                                                                                                                            |
+| Argument           | Overview                                                                                                                                                                                    |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `input_parameters` | **Union[dict, str, Path]**<br/>The job JSON parameters.                                                                                                                                     |
+| `track_status`     | **bool**<br/>Determines whether to query job status every 30 seconds:<br/><ul><li>`True`: track job status.</li><li>`False`: don't track job status.</li></ul>The default value is `False`. |
+| `name`             | **str**<br/>The job name. By default, the workflow name is used.                                                                                                                            |
 
 <h5> Example </h5>
 
 ```python
-# Construct input parameters
+# Construct job JSON parameters
 
 input_parameters=workflow.construct_parameters(
     geometry=up42.get_example_aoi(location="Berlin"),
@@ -368,7 +359,7 @@ input_parameters=workflow.construct_parameters(
     limit=1,
 )
 
-# Create and run test query
+# Run test query
 
 workflow.test_jobs(
     input_parameters=input_parameters,
@@ -379,7 +370,7 @@ workflow.test_jobs(
 
 ### test_jobs_parallel()
 
-The `test_jobs_parallel()` function allows to create and run multiple test queries in parallel.
+The `test_jobs_parallel()` function allows to run multiple test queries in parallel.
 
 ```python
 test_jobs_parallel(
@@ -395,30 +386,23 @@ The returned format is `JobCollection`.
 
 | Argument                | Overview                                                                                              |
 | ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| `input_parameters_list` | **list[dict]**<br/>The workflow parameters.                                                           |
-| `name`                  | **str**<br/>The job names. By default, the workflow name will be used.                                |
+| `input_parameters_list` | **list[dict]**<br/>The parallel jobs' JSON parameters.                                                |
+| `name`                  | **str**<br/>The prefix for the job names. By default, the workflow name is used.                      |
 | `max_concurrent_jobs`   | **int**<br/>The maximum number of jobs that can be running simultaneously. The default value is `10`. |
 
 <h5> Example </h5>
 
 ```python
-# Construct input parameters
+# Construct parallel jobs' JSON parameters
 
 input_parameters_list=workflow.construct_parameters_parallel(
     geometries=[up42.get_example_aoi(location="Berlin")],
-    interval_dates=[
-        ("2023-01-01", "2023-01-30"),
-        ("2023-02-01", "2023-02-26")
-        ],
-    scene_ids=[
-        "a4c9e729-1b62-43be-82e4-4e02c31963dd",
-        "ea36dee9-fed6-457e-8400-2c20ebd30f44",
-    ],
+    interval_dates=[("2023-01-01", "2023-01-30"), ("2023-02-01", "2023-02-26")],
     limit_per_job=2,
     geometry_operation="bbox",
 )
 
-# Create and run test queries
+# Run test queries
 
 workflow.test_jobs_parallel(
     input_parameters_list=input_parameters_list,
@@ -429,7 +413,7 @@ workflow.test_jobs_parallel(
 
 ### run_job()
 
-The `run_job()` function allows you to create and run a new job.
+The `run_job()` function allows you to run a new job.
 
 ```python
 run_job(
@@ -445,14 +429,14 @@ The returned format is `Job`.
 
 | Argument           | Overview                                                                                                                                                                                         |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `input_parameters` | **Union[dict, str, Path]**<br/>The workflow parameters.                                                                                                                                          |
-| `track_status`     | **bool**<br/>Determines whether to query job status every 30 seconds:<br/><ul><li>`True`: track job status.</li><li>`False`: don't track job status that.</li></ul>The default value is `False`. |
-| `name`             | **str**<br/>The job name. By default, the workflow name will be used.                                                                                                                            |
+| `input_parameters` | **Union[dict, str, Path]**<br/>The job JSON parameters.                                                                                                                                          |
+| `track_status`     | **bool**<br/>Determines whether to query job status every 30 seconds:<br/><ul><li>`True`: track job status.</li><li>`False`: don't track job status.</li></ul>The default value is `False`. |
+| `name`             | **str**<br/>The job name. By default, the workflow name is used.                                                                                                                                 |
 
 <h5> Example </h5>
 
 ```python
-# Construct input parameters
+# Construct job JSON parameters
 
 input_parameters=workflow.construct_parameters(
     geometry=up42.get_example_aoi(location="Berlin"),
@@ -462,7 +446,7 @@ input_parameters=workflow.construct_parameters(
     limit=1,
 )
 
-# Create and run job
+# Run job
 
 workflow.run_jobs(
     input_parameters=input_parameters,
@@ -473,7 +457,7 @@ workflow.run_jobs(
 
 ### run_jobs_parallel()
 
-The `run_job()` function allows you to create and run multiple jobs in parallel.
+The `run_job()` function allows you to run multiple jobs in parallel.
 
 ```python
 run_jobs_parallel(
@@ -489,30 +473,23 @@ The returned format is `JobCollection`.
 
 | Argument                | Overview                                                                                              |
 | ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| `input_parameters_list` | **list[dict]**<br/>The workflow parameters.                                                           |
-| `name`                  | **str**<br/>The job names. By default, the workflow name will be used.                                |
+| `input_parameters_list` | **list[dict]**<br/>The parallel jobs' JSON parameters.                                                |
+| `name`                  | **str**<br/>The prefix for the job names. By default, the workflow name is used.                      |
 | `max_concurrent_jobs`   | **int**<br/>The maximum number of jobs that can be running simultaneously. The default value is `10`. |
 
 <h5> Example </h5>
 
 ```python
-# Construct input parameters
+# Construct parallel jobs' JSON parameters
 
 input_parameters_list=workflow.construct_parameters_parallel(
     geometries=[up42.get_example_aoi(location="Berlin")],
-    interval_dates=[
-        ("2023-01-01", "2023-01-30"),
-        ("2023-02-01", "2023-02-26")
-        ],
-    scene_ids=[
-        "a4c9e729-1b62-43be-82e4-4e02c31963dd",
-        "ea36dee9-fed6-457e-8400-2c20ebd30f44",
-    ],
+    interval_dates=[("2023-01-01", "2023-01-30"), ("2023-02-01", "2023-02-26")],
     limit_per_job=2,
     geometry_operation="bbox",
 )
 
-# Create and run jobs
+# Run jobs
 
 workflow.run_jobs_parallel(
     input_parameters_list=input_parameters_list,
