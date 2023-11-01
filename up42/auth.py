@@ -136,6 +136,8 @@ class Auth:
 
     def __repr__(self):
         env_string = f" ,{self.env}" if self.env != "com" else ""
+        if self.auth_type == AuthType.ACCOUNT.value:
+            return f"UP42UserAuth(user_id={self.credentials_id}{env_string})"
         return f"UP42ProjectAuth(project_id={self.credentials_id}{env_string})"
 
     def _find_credentials(self) -> None:

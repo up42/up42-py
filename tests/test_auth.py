@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import requests
 
-from .context import Auth
+from .context import Auth, AuthenticationError
 
 # pylint: disable=unused-import
 from .fixtures import (
@@ -38,6 +38,16 @@ def test_no_credentials_raises(auth_mock):
         auth_mock._find_credentials()
 
 
+def test_cfg_file_not_found(auth_mock):
+    auth_mock.credentials_id = None
+    auth_mock.credentials_key = None
+    fp = Path(__file__).resolve().parent / "mock_data" / "test_config_fake.json"
+    auth_mock.cfg_file = fp
+    with pytest.raises(ValueError) as e:
+        auth_mock._find_credentials()
+    assert "Selected config file does not exist!" in str(e.value)
+
+
 def test_find_credentials_cfg_file(auth_mock):
     auth_mock.credentials_id = None
     auth_mock.credentials_id = None
@@ -60,6 +70,27 @@ def test_endpoint(auth_mock):
 def test_get_token(auth_mock):
     auth_mock._get_token()
     assert auth_mock.token == TOKEN
+
+
+def test_repr_project():
+    auth = Auth(
+        credentials_id=PROJECT_ID,
+        credentials_key=PROJECT_APIKEY,
+        authenticate=False,
+        env="dev",
+    )
+    assert repr(auth) == f"UP42ProjectAuth(project_id={PROJECT_ID} ,dev)"
+
+
+def test_repr_account():
+    auth = Auth(
+        credentials_id=PROJECT_ID,
+        credentials_key=PROJECT_APIKEY,
+        authenticate=False,
+        auth_type="account-based",
+        env="dev",
+    )
+    assert repr(auth) == f"UP42UserAuth(user_id={PROJECT_ID} ,dev)"
 
 
 @pytest.mark.live
