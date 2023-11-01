@@ -5,7 +5,7 @@ The workflow class enables you to configure, run, and query jobs related to a wo
 To create a new workflow, use the following:
 
 ```python
-project = up42.initialize_project()
+project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 
 workflow = project.create_workflow(name="new_workflow")
 ```
@@ -13,7 +13,10 @@ workflow = project.create_workflow(name="new_workflow")
 To use an existing workflow, use the following:
 
 ```python
-workflow = up42.initialize_workflow(workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98")
+workflow = up42.initialize_workflow(
+    workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98",
+    project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
+)
 ```
 
 ## Projects
