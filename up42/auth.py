@@ -4,6 +4,7 @@ UP42 authentication mechanism and base requests functionality
 import json
 from pathlib import Path
 from typing import Dict, Optional, Union
+from warnings import warn
 
 import requests
 import requests.exceptions
@@ -156,6 +157,11 @@ class Auth:
 
         for parameters, schema in schemas.items():
             if set(schema).issubset(source.keys()):
+                if parameters == "project":
+                    warn(
+                        "Project based authentication will be deprecated."
+                        "Please follow authentication guidelines (/docs/authentication.md)."
+                    )
                 self._credentials_id = source[schema[0]]
                 self._credentials_key = source[schema[1]]
                 self._get_token = token_retrievers[parameters]
