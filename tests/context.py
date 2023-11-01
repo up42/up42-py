@@ -4,7 +4,7 @@ import sys
 
 from up42 import main
 from up42.asset import Asset
-from up42.auth import Auth, AuthenticationError, AuthType
+from up42.auth import Auth, AuthenticationError
 from up42.catalog import Catalog
 from up42.estimation import Estimation
 from up42.initialization import (

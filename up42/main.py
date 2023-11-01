@@ -38,6 +38,8 @@ def authenticate(
     cfg_file: Union[str, Path] = None,
     project_id: Optional[str] = None,
     project_api_key: Optional[str] = None,
+    username: Optional[str] = None,
+    password: Optional[str] = None,
     **kwargs,
 ):
     """
@@ -62,6 +64,8 @@ def authenticate(
         cfg_file=cfg_file,
         project_id=project_id,
         project_api_key=project_api_key,
+        username=username,
+        password=password,
         **kwargs,
     )
 

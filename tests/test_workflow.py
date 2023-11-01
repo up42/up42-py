@@ -607,7 +607,7 @@ def test_update_name(workflow_mock, requests_mock):
 
 def test_delete(workflow_mock, requests_mock):
     delete_url = (
-        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.auth._endpoint()}/projects/{PROJECT_ID}/workflows/"
         f"{workflow_mock.workflow_id}"
     )
     requests_mock.delete(url=delete_url)

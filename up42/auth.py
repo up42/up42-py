@@ -2,7 +2,6 @@
 UP42 authentication mechanism and base requests functionality
 """
 import json
-from enum import Enum
 from pathlib import Path
 from typing import Dict, Optional, Union
 
@@ -24,11 +23,6 @@ from tenacity import (
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
-
-
-class AuthType(Enum):
-    PROJECT = "project-based"
-    ACCOUNT = "account-based"
 
 
 class AuthenticationError(Exception):
@@ -75,23 +69,13 @@ class retry_if_429_rate_limit(retry_if_exception):
 
 
 class Auth:
-    cred_mapping = {
-        AuthType.PROJECT.value: {
-            "credentials_id": "project_id",
-            "credentials_key": "project_api_key",
-        },
-        AuthType.ACCOUNT.value: {
-            "credentials_id": "username",
-            "credentials_key": "password",
-        },
-    }
-
     def __init__(
         self,
-        auth_type: str = AuthType.PROJECT.value,
         cfg_file: Union[str, Path, None] = None,
-        credentials_id: Optional[str] = None,
-        credentials_key: Optional[str] = None,
+        project_id: Optional[str] = None,
+        project_api_key: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
         **kwargs,
     ):
         """
@@ -108,11 +92,14 @@ class Auth:
             project_api_key: The project-specific API key.
         """
         self.cfg_file = cfg_file
-        self.auth_type = auth_type
-        self.credentials_id = credentials_id
-        self.credentials_key = credentials_key
         self.workspace_id: Optional[str] = None
         self.token: Optional[str] = None
+
+        local_vars = locals()
+        credentials_filter = ["project_id", "project_api_key", "username", "password"]
+        credentials_dict = {
+            key: value for key, value in local_vars.items() if key in credentials_filter and value is not None
+        }
 
         try:
             self.env: str = kwargs["env"]
@@ -123,68 +110,61 @@ class Auth:
         except KeyError:
             self.authenticate = True
 
-        if all([arg in kwargs for arg in ["project_id", "project_api_key"]]) and auth_type == AuthType.PROJECT.value:
-            self.credentials_id = kwargs["project_id"]
-            self.credentials_key = kwargs["project_api_key"]
-            self.project_id = self.credentials_id
+        self._credentials_id = None
+
+        if project_id:
+            self.project_id = project_id
+
+        config = self._choose_credential_source(cfg_file, credentials_dict)
+        self._set_credentials(source=config)
 
         if self.authenticate:
-            self._find_credentials()
             self._get_token()
             self._get_user_id()
             logger.info("Authentication with UP42 successful!")
 
     def __repr__(self):
         env_string = f" ,{self.env}" if self.env != "com" else ""
-        if self.auth_type == AuthType.ACCOUNT.value:
-            return f"UP42UserAuth(user_id={self.credentials_id}{env_string})"
-        return f"UP42ProjectAuth(project_id={self.credentials_id}{env_string})"
+        return f"UP42Auth(id={self._credentials_id}{env_string})"
 
-    def _find_credentials(self) -> None:
-        """
-        Sources the project credentials from a provided config file, error handling
-        if no credentials are provided in arguments or config file.
-        """
-        if self.credentials_id is None or self.credentials_key is None:
-            if self.cfg_file is None:
-                raise ValueError("Provide credentials via arguments or config file!")
-
-            # Source credentials from config file.
+    def _choose_credential_source(self, cfg_file: Union[str, Path, None], kwargs: dict) -> dict:
+        config = {}
+        if cfg_file:
             try:
-                if self.auth_type == AuthType.PROJECT.value:
-                    logger.info(
-                        "Project-based authentication will be deprecated in March 2024."
-                        "Please use account-based authentication instead."
-                        "For more info, see [authentication guidelines](https://sdk.up42.com/authentication/)."
-                    )
-                with open(self.cfg_file, encoding="utf-8") as src:
-                    config = json.load(src)
-                    try:
-                        self.credentials_id = config[self.cred_mapping[self.auth_type]["credentials_id"]]
-                        self.credentials_key = config[self.cred_mapping[self.auth_type]["credentials_key"]]
-                    except KeyError as e:
-                        raise ValueError(
-                            "Provided config file does not credentials keys"
-                            "(credential_id, credential_key or project_id, project_api_key)."
-                        ) from e
+                with open(cfg_file, encoding="utf-8") as src:
+                    config.update(json.load(src))
                 logger.info("Got credentials from config file.")
             except FileNotFoundError as e:
                 raise ValueError("Selected config file does not exist!") from e
 
-        elif all(v is not None for v in [self.cfg_file, self.credentials_id, self.credentials_key]):
-            logger.info(
-                "Credentials are provided via arguments and config file, " "now using the argument credentials."
-            )
+            if set(config.keys()).intersection(set(kwargs.keys())):
+                raise ValueError("Credentials must be provided either via config file or arguments, but not both")
+        return config if config else kwargs
+
+    def _set_credentials(self, source: dict):
+        schemas = {
+            "user": ("username", "password"),
+            "project": ("project_id", "project_api_key"),
+        }
+        token_retrievers = {
+            "user": self._get_token_account_based,
+            "project": self._get_token_project_based,
+        }
+
+        if set(source.keys()) == {"project_id"}:
+            return
+
+        for parameters, schema in schemas.items():
+            if set(schema).issubset(source.keys()):
+                self._credentials_id = source[schema[0]]
+                self._credentials_key = source[schema[1]]
+                self._get_token = token_retrievers[parameters]
+        if self._credentials_id is None:
+            raise ValueError("No credentials provided either via config file or arguments.")
 
     def _endpoint(self) -> str:
         """Gets the endpoint."""
         return f"https://api.up42.{self.env}"
-
-    def _get_token(self):
-        if self.auth_type == AuthType.PROJECT.value:
-            self._get_token_project_based()
-        elif self.auth_type == AuthType.ACCOUNT.value:
-            self._get_token_account_based()
 
     def _get_token_account_based(self):
         """Account based authentication via username and password."""
@@ -194,8 +174,8 @@ class Auth:
             }
             req_body = {
                 "grant_type": "password",
-                "username": self.credentials_id,
-                "password": self.credentials_key,
+                "username": self._credentials_id,
+                "password": self._credentials_key,
             }
             token_response = requests.post(
                 url=self._endpoint() + "/oauth/token",
@@ -217,8 +197,8 @@ class Auth:
     def _get_token_project_based(self):
         """Project specific authentication via project id and project api key."""
         try:
-            client = BackendApplicationClient(client_id=self.credentials_id, client_secret=self.credentials_key)
-            auth = HTTPBasicAuth(self.credentials_id, self.credentials_key)
+            client = BackendApplicationClient(client_id=self._credentials_id, client_secret=self._credentials_key)
+            auth = HTTPBasicAuth(self._credentials_id, self._credentials_key)
             get_token_session = OAuth2Session(client=client)
             token_response = get_token_session.fetch_token(token_url=self._endpoint() + "/oauth/token", auth=auth)
         except MissingTokenError as err:

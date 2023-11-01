@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import requests
 
-from .context import Auth, AuthenticationError
+from .context import Auth
 
 # pylint: disable=unused-import
 from .fixtures import (
@@ -31,33 +31,23 @@ def test_auth_kwargs():
     assert not auth.authenticate
 
 
-def test_no_credentials_raises(auth_mock):
-    auth_mock.credentials_id = None
-    auth_mock.credentials_id = None
+def test_no_credentials_raises():
     with pytest.raises(ValueError):
-        auth_mock._find_credentials()
+        Auth()
 
 
-def test_cfg_file_not_found(auth_mock):
-    auth_mock.credentials_id = None
-    auth_mock.credentials_key = None
+def test_cfg_file_not_found():
     fp = Path(__file__).resolve().parent / "mock_data" / "test_config_fake.json"
-    auth_mock.cfg_file = fp
     with pytest.raises(ValueError) as e:
-        auth_mock._find_credentials()
+        Auth(cfg_file=fp)
     assert "Selected config file does not exist!" in str(e.value)
 
 
-def test_find_credentials_cfg_file(auth_mock):
-    auth_mock.credentials_id = None
-    auth_mock.credentials_id = None
-
+def test_find_credentials_cfg_file():
     fp = Path(__file__).resolve().parent / "mock_data" / "test_config.json"
-    auth_mock.cfg_file = fp
-
-    auth_mock._find_credentials()
-    assert auth_mock.credentials_id is not None
-    assert auth_mock.credentials_id is not None
+    auth = Auth(cfg_file=fp, authenticate=False)
+    assert auth._credentials_id is not None
+    assert auth._credentials_key is not None
 
 
 def test_endpoint(auth_mock):
@@ -74,28 +64,27 @@ def test_get_token(auth_mock):
 
 def test_repr_project():
     auth = Auth(
-        credentials_id=PROJECT_ID,
-        credentials_key=PROJECT_APIKEY,
+        project_id=PROJECT_ID,
+        project_api_key=PROJECT_APIKEY,
         authenticate=False,
         env="dev",
     )
-    assert repr(auth) == f"UP42ProjectAuth(project_id={PROJECT_ID} ,dev)"
+    assert repr(auth) == f"UP42Auth(id={PROJECT_ID} ,dev)"
 
 
 def test_repr_account():
     auth = Auth(
-        credentials_id=PROJECT_ID,
-        credentials_key=PROJECT_APIKEY,
+        username=PROJECT_ID,
+        password=PROJECT_APIKEY,
         authenticate=False,
-        auth_type="account-based",
         env="dev",
     )
-    assert repr(auth) == f"UP42UserAuth(user_id={PROJECT_ID} ,dev)"
+    assert repr(auth) == f"UP42Auth(id={PROJECT_ID} ,dev)"
 
 
 @pytest.mark.live
 def test_get_token_raises_wrong_credentials_live(auth_live):
-    auth_live.credentials_id = "123"
+    auth_live._credentials_id = "123"
     with pytest.raises(ValueError) as e:
         auth_live._get_token()
     assert (

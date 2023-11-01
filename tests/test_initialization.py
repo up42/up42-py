@@ -51,15 +51,15 @@ def test_initialize_object_without_auth_raises():
 
 # pylint: disable=unused-argument
 def test_global_auth_initialize_objects(
-        auth_mock,
-        project_mock,
-        workflow_mock,
-        job_mock,
-        jobtask_mock,
-        jobcollection_single_mock,
-        storage_mock,
-        order_mock,
-        asset_mock,
+    auth_mock,
+    project_mock,
+    workflow_mock,
+    job_mock,
+    jobtask_mock,
+    jobcollection_single_mock,
+    storage_mock,
+    order_mock,
+    asset_mock,
 ):
     up42.authenticate(
         project_id=PROJECT_ID,
@@ -122,7 +122,9 @@ def test_should_initialize_workflow(auth_mock, requests_mock):
         authenticate=False,
     )
     project_id = "project_id"
-    url_workflow_info = f"{auth_mock._endpoint()}/projects/{project_id}/workflows/{WORKFLOW_ID}"
+    url_workflow_info = (
+        f"{auth_mock._endpoint()}/projects/{project_id}/workflows/{WORKFLOW_ID}"
+    )
     json_workflow_info = {
         "data": {
             "name": "name",
@@ -184,7 +186,9 @@ def test_should_initialize_jobtask(auth_mock, requests_mock, jobtask_mock):
         authenticate=False,
     )
     project_id = "project_id"
-    url_jobtask_info = f"{auth_mock._endpoint()}/projects/{project_id}/jobs/{JOB_ID}/tasks/"
+    url_jobtask_info = (
+        f"{auth_mock._endpoint()}/projects/{project_id}/jobs/{JOB_ID}/tasks/"
+    )
     requests_mock.get(
         url=url_jobtask_info,
         json={

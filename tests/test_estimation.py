@@ -63,7 +63,10 @@ def test_estimate_price_live(auth_live):
         },
     ]
     estimation = Estimation(
-        auth=auth_live, input_parameters=input_parameters, input_tasks=input_tasks
+        auth=auth_live,
+        project_id=auth_live._credentials_id,
+        input_parameters=input_parameters,
+        input_tasks=input_tasks,
     ).estimate()
     assert isinstance(estimation, dict)
     assert len(estimation) == 2
