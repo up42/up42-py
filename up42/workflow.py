@@ -34,7 +34,10 @@ class Workflow:
 
     Use an existing workflow:
     ```python
-    workflow = up42.initialize_workflow(workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98")
+    workflow = up42.initialize_workflow(
+        workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98",
+        project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321"
+    )
     ```
     """
 
@@ -482,6 +485,7 @@ class Workflow:
 
         estimation = Estimation(
             auth=self.auth,
+            project_id=self.project_id,
             input_parameters=input_parameters,
             input_tasks=input_tasks,
         ).estimate()

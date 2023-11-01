@@ -28,7 +28,10 @@ class Job(VizTools):
 
     Use an existing job:
     ```python
-    job = up42.initialize_job(job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021")
+    job = up42.initialize_job(
+        job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021",
+        project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321"
+    )
     ```
     """
 
@@ -193,7 +196,7 @@ class Job(VizTools):
         logger.info(f"Downloading results of job {self.job_id}")
 
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}/job_{self.job_id}"
+            output_directory = Path.cwd() / f"project_{self.project_id}/job_{self.job_id}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)

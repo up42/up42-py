@@ -154,7 +154,7 @@ class Asset:
         logger.info(f"Downloading asset {self.asset_id}")
 
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}/asset_{self.asset_id}"
+            output_directory = Path.cwd() / f"asset_{self.asset_id}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
@@ -198,7 +198,7 @@ class Asset:
         """
         logger.info(f"Downloading STAC asset {stac_asset.title}")
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}/asset_{self.asset_id}/{stac_asset.title}"
+            output_directory = Path.cwd() / f"asset_{self.asset_id}/{stac_asset.title}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)

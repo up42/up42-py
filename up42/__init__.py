@@ -21,7 +21,7 @@
     catalog = up42.initialize_catalog()
     ```
     ```python
-    project = up42.initialize_project()
+    project = up42.initialize_project(project_id="your-project-ID")
     ```
 """
 

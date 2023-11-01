@@ -33,7 +33,7 @@ make install[dev]
 import up42
 
 up42.authenticate(cfg_file="config.json")
-project = up42.initialize_project()
+project = up42.initialize_project(project_id="your-project-id")
 print(project)
 ```
 
