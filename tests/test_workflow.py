@@ -319,7 +319,7 @@ def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
     }
     # get_workflow_tasks
     url_workflow_tasks = (
-        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
         f"{workflow_mock.workflow_id}/tasks"
     )
     url_workflow_estimation = (
@@ -593,7 +593,7 @@ def test_get_jobs_live(workflow_live):
 def test_update_name(workflow_mock, requests_mock):
     new_name = "new_workflow_name"
     url_update_name = (
-        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
         f"{workflow_mock.workflow_id}"
     )
     json_new_properties = {"data": {}, "error": {}}
