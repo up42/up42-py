@@ -161,7 +161,7 @@
 
     === "Workflow"
 
-        The workflow class enables you to configure, run, and query jobs related to a workflow.
+        The workflow class enables you to configure and run a workflow.
 
         To create a new workflow, use the following:
 

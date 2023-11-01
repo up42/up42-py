@@ -22,7 +22,7 @@ project.info
 
 ### max_concurrent_jobs
 
-The `max_concurrent_jobs` attribute returns the maximum number of jobs that can be running simultaneously.
+The `max_concurrent_jobs` attribute returns the maximum number of jobs that can run simultaneously.
 
 The returned format is `int`.
 
@@ -39,6 +39,7 @@ The `get_project_settings()` function returns threshold limits applied to the pr
 ```python
 get_project_settings()
 ```
+
 The returned format is `list[dict[str, str]]`.
 
 <h5> Example </h5>
@@ -66,7 +67,7 @@ The returned format is `dict`.
 | Argument              | Overview                                                                                                    |
 | --------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `max_aoi_size`        | **int**<br/>The largest area of interest that can be specified. Use a value from 1 to 1,000 km<sup>2</sup>. |
-| `max_concurrent_jobs` | **int**<br/>The maximum number of jobs that can be running simultaneously. Use a value from 1 to 10.        |
+| `max_concurrent_jobs` | **int**<br/>The maximum number of jobs that can run simultaneously. Use a value from 1 to 10.               |
 | `number_of_images`    | **int**<br/>The maximum number of images that can be returned. Use a value from 1 to 20.                    |
 
 <h5> Example </h5>

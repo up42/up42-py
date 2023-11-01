@@ -1,6 +1,6 @@
 # Workflow
 
-The workflow class enables you to configure, run, and query jobs related to a workflow.
+The workflow class enables you to configure and run a workflow.
 
 To create a new workflow, use the following:
 
@@ -15,7 +15,7 @@ To use an existing workflow, use the following:
 ```python
 workflow = up42.initialize_workflow(
     workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98",
-    project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
+    project_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
 )
 ```
 
@@ -23,7 +23,7 @@ workflow = up42.initialize_workflow(
 
 ### max_concurrent_jobs
 
-The `max_concurrent_jobs` attribute returns the maximum number of jobs that can be running simultaneously.
+The `max_concurrent_jobs` attribute returns the maximum number of jobs that can run simultaneously.
 
 The returned format is `int`.
 
@@ -37,7 +37,7 @@ workflow.max_concurrent_jobs
 
 ### info
 
-The `info` attribute returns the metadata of a workflow.
+The `info` attribute returns metadata of a specific workflow.
 
 The returned format is `dict`.
 
@@ -49,7 +49,7 @@ workflow.info
 
 ### update_name()
 
-The `update_name()` function allows you to update the name and description of a workflow.
+The `update_name()` function allows you to change the name and description of a workflow.
 
 ```python
 update_name(
@@ -94,7 +94,7 @@ Workflow tasks are blocks in a workflow.
 
 ### workflow_tasks
 
-The `workflow_tasks` attribute returns the workflow tasks in a workflow.
+The `workflow_tasks` attribute returns a list of the workflow tasks in a workflow.
 
 The returned format is `dict[str, str]`.
 
@@ -106,8 +106,8 @@ workflow.workflow_tasks
 
 ### get_compatible_blocks()
 
-The `get_compatible_blocks()` function returns all compatible blocks for a workflow.
-If the workflow is empty, it will return all available data blocks.
+The `get_compatible_blocks()` function returns a list of compatible blocks for a workflow.
+If the workflow is empty, it will return a list of all available data blocks.
 
 ```python
 get_compatible_blocks()
@@ -123,7 +123,7 @@ workflow.get_compatible_blocks()
 
 ### get_workflow_tasks()
 
-The `get_workflow_tasks` function returns the workflow tasks in a workflow.
+The `get_workflow_tasks` function returns a list of the workflow tasks in a workflow.
 
 ```python
 get_workflow_tasks(basic)
@@ -153,9 +153,9 @@ add_workflow_tasks(input_tasks)
 
 <h5> Arguments </h5>
 
-| Argument      | Overview                                                                                                                                                                                                                             |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `input_tasks` | **Union[List[str], List[dict]] / required**<br/>The workflow tasks to be added to a workflow. To use a specific version of a block, use block IDs. Otherwise, use block names or block display names to use the most recent version. |
+| Argument      | Overview                                                                                                                                                                                                            |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `input_tasks` | **Union[list[str], list[dict]] / required**<br/>The workflow tasks. To specify a specific version of a block, use block IDs. To specify the most recent version of a block, use block names or block display names. |
 
 <h5> Example </h5>
 
@@ -169,7 +169,7 @@ workflow.add_workflow_tasks(
 
 ### get_parameters_info()
 
-The `get_parameters_info()` function returns the JSON parameters of each workflow task.
+The `get_parameters_info()` function returns the input JSON parameters of each workflow task.
 
 ```python
 get_parameters_info()
@@ -185,7 +185,7 @@ workflow.get_parameters_info()
 
 ### construct_parameters()
 
-The `construct_parameters()` function allows you to fill out the job JSON parameters.
+The `construct_parameters()` function allows you to fill out the JSON parameters for a job.
 
 ```python
 construct_parameters(
@@ -209,7 +209,7 @@ The returned format is `dict`.
 | `geometry_operation` | **str**<br/>The geometric filter. The allowed values:<br/><ul><li>`bbox`</li><li>`intersects`</li><li>`contains`</li></ul> |
 | `start_date`         | **Union[str, datetime]**<br/>The start date of the search period in the `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` format.      |
 | `end_date`           | **Union[str, datetime]**<br/>The end date of the search period in the `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` format.        |
-| `limit`              | **int**<br/>The number of search results to show.                                                                          |
+| `limit`              | **int**<br/>The maximum number of expected results.                                                                        |
 | `scene_ids`          | **list[str]**<br/>The scene IDs. If used, all other parameters except `geometry` are ignored                               |
 | `asset_ids`          | **list[str]**<br/>The asset IDs. Use with Processing from Storage block.                                                   |
 
@@ -227,7 +227,7 @@ workflow.construct_parameters(
 
 ### construct_parameters_parallel()
 
-The `construct_parameters()` function allows you to fill out the job JSON parameters for multiple jobs to be run in parallel.
+The `construct_parameters()` function allows you to fill out the JSON parameters for multiple jobs to run in parallel.
 
 ```python
 construct_parameters_parallel(
@@ -243,13 +243,13 @@ The returned format is `list[dict]`.
 
 <h5> Arguments </h5>
 
-| Argument             | Overview                                                                                                                                                      |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `geometries`         | **List[Union[dict, Feature, geojson_Polygon, Polygon]]**<br/>The geometries of interest.                                                                      |
-| `interval_dates`     | **list[tuple[str, str]]**<br/>The start and end dates in the `YYYY-MM-DD` format.                                                                             |
-| `scene_ids`          | **list[str]**<br/>The scene IDs. If used, all other parameters except `geometry` are ignored                                                                  |
-| `limit_per_job`      | **int**<br/>The number of search results to show per job. The default value is `1`.                                                                           |
-| `geometry_operation` | **str**<br/>The geometric filter. The allowed values:<br/><ul><li>`bbox`</li><li>`intersects`</li><li>`contains`</li></ul>The default value is `instersects`. |
+| Argument             | Overview                                                                                                                                                     |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `geometries`         | **list[Union[dict, Feature, geojson_Polygon, Polygon]]**<br/>The geometries of interest.                                                                     |
+| `interval_dates`     | **list[tuple[str, str]]**<br/>The start and end dates in the `YYYY-MM-DD` format.                                                                            |
+| `scene_ids`          | **list[str]**<br/>The scene IDs. If used, all other parameters except `geometry` are ignored.                                                                |
+| `limit_per_job`      | **int**<br/>The maximum number of expected results per job. The default value is `1`.                                                                        |
+| `geometry_operation` | **str**<br/>The geometric filter. The allowed values:<br/><ul><li>`bbox`</li><li>`intersects`</li><li>`contains`</li></ul>The default value is `intersects`. |
 
 <h5> Example </h5>
 
@@ -326,10 +326,10 @@ workflow.get_jobs(
 
 ### test_job()
 
-The `test_jobs()` function allows you to run a test query.
+The `test_job()` function allows you to create a test query and run it.
 
 ```python
-test_jobs(
+test_job(
     input_parameters,
     track_status,
     name,
@@ -370,7 +370,7 @@ workflow.test_jobs(
 
 ### test_jobs_parallel()
 
-The `test_jobs_parallel()` function allows to run multiple test queries in parallel.
+The `test_jobs_parallel()` function allows you to create multiple test queries and run them in parallel.
 
 ```python
 test_jobs_parallel(
@@ -384,11 +384,11 @@ The returned format is `JobCollection`.
 
 <h5> Arguments </h5>
 
-| Argument                | Overview                                                                                              |
-| ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| `input_parameters_list` | **list[dict]**<br/>The parallel jobs' JSON parameters.                                                |
-| `name`                  | **str**<br/>The prefix for the job names. By default, the workflow name is used.                      |
-| `max_concurrent_jobs`   | **int**<br/>The maximum number of jobs that can be running simultaneously. The default value is `10`. |
+| Argument                | Overview                                                                                       |
+| ----------------------- | ---------------------------------------------------------------------------------------------- |
+| `input_parameters_list` | **list[dict]**<br/>The parallel jobs' JSON parameters.                                         |
+| `name`                  | **str**<br/>The prefix for the job names. By default, the workflow name is used.               |
+| `max_concurrent_jobs`   | **int**<br/>The maximum number of jobs that can run simultaneously. The default value is `10`. |
 
 <h5> Example </h5>
 
@@ -413,7 +413,7 @@ workflow.test_jobs_parallel(
 
 ### run_job()
 
-The `run_job()` function allows you to run a new job.
+The `run_job()` function allows you to create a job and run it.
 
 ```python
 run_job(
@@ -427,11 +427,11 @@ The returned format is `Job`.
 
 <h5> Arguments </h5>
 
-| Argument           | Overview                                                                                                                                                                                         |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `input_parameters` | **Union[dict, str, Path]**<br/>The job JSON parameters.                                                                                                                                          |
+| Argument           | Overview                                                                                                                                                                                    |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `input_parameters` | **Union[dict, str, Path]**<br/>The job JSON parameters.                                                                                                                                     |
 | `track_status`     | **bool**<br/>Determines whether to query job status every 30 seconds:<br/><ul><li>`True`: track job status.</li><li>`False`: don't track job status.</li></ul>The default value is `False`. |
-| `name`             | **str**<br/>The job name. By default, the workflow name is used.                                                                                                                                 |
+| `name`             | **str**<br/>The job name. By default, the workflow name is used.                                                                                                                            |
 
 <h5> Example </h5>
 
@@ -457,7 +457,7 @@ workflow.run_jobs(
 
 ### run_jobs_parallel()
 
-The `run_job()` function allows you to run multiple jobs in parallel.
+The `run_jobs_parallel()` function allows you to create multiple jobs and run them in parallel.
 
 ```python
 run_jobs_parallel(
@@ -471,11 +471,11 @@ The returned format is `JobCollection`.
 
 <h5> Arguments </h5>
 
-| Argument                | Overview                                                                                              |
-| ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| `input_parameters_list` | **list[dict]**<br/>The parallel jobs' JSON parameters.                                                |
-| `name`                  | **str**<br/>The prefix for the job names. By default, the workflow name is used.                      |
-| `max_concurrent_jobs`   | **int**<br/>The maximum number of jobs that can be running simultaneously. The default value is `10`. |
+| Argument                | Overview                                                                                       |
+| ----------------------- | ---------------------------------------------------------------------------------------------- |
+| `input_parameters_list` | **list[dict]**<br/>The parallel jobs' JSON parameters.                                         |
+| `name`                  | **str**<br/>The prefix for the job names. By default, the workflow name is used.               |
+| `max_concurrent_jobs`   | **int**<br/>The maximum number of jobs that can run simultaneously. The default value is `10`. |
 
 <h5> Example </h5>
 

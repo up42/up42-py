@@ -32,7 +32,7 @@ A workflow starts with a data block, which may be followed by processing blocks.
 
 ## Step 2. Retrieve an input schema
 
-Retrieve input parameters of the first block in a workflow:
+Retrieve input JSON parameters of the first block in a workflow:
 ```python
 workflow.get_parameters_info()
 ```
