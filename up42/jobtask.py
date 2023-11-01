@@ -27,9 +27,9 @@ class JobTask(VizTools):
     def __init__(
         self,
         auth: Auth,
+        project_id: str,
         job_id: str,
         jobtask_id: str,
-        project_id: str,
     ):
         self.auth = auth
         self.project_id = project_id

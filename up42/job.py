@@ -38,8 +38,8 @@ class Job(VizTools):
     def __init__(
         self,
         auth: Auth,
-        job_id: str,
         project_id: str,
+        job_id: str,
         job_info: Optional[dict] = None,
     ):
         self.auth = auth

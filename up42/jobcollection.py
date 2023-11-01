@@ -31,7 +31,7 @@ class JobCollection(VizTools):
     ```
     """
 
-    def __init__(self, auth: Auth, jobs: List[Job], project_id: str):
+    def __init__(self, auth: Auth, project_id: str, jobs: List[Job]):
         self.auth = auth
         self.project_id = project_id
         self.jobs = jobs

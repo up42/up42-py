@@ -44,8 +44,8 @@ class Workflow:
     def __init__(
         self,
         auth: Auth,
-        workflow_id: str,
         project_id: str,
+        workflow_id: str,
         workflow_info: Optional[dict] = None,
     ):
         self.auth = auth
