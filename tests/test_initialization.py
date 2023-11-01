@@ -93,13 +93,13 @@ def test_should_initialize_project_with_project_id(auth_mock, requests_mock):
         project_id=PROJECT_ID,
         authenticate=False,
     )
-    project_id = "project-id"
+    project_id = "project_id"
     url_project_info = f"{auth_mock._endpoint()}/projects/{project_id}"
     json_project_info = {
         "data": {
             "name": "name",
-            "description": "some-desc",
-            "createdAt": "some-date",
+            "description": "description",
+            "createdAt": "date",
         },
     }
     requests_mock.get(url=url_project_info, json=json_project_info)
@@ -121,14 +121,14 @@ def test_should_initialize_workflow(auth_mock, requests_mock):
         project_id=PROJECT_ID,
         authenticate=False,
     )
-    project_id = "project-id"
+    project_id = "project_id"
     url_workflow_info = f"{auth_mock._endpoint()}/projects/{project_id}/workflows/{WORKFLOW_ID}"
     json_workflow_info = {
         "data": {
             "name": "name",
             "id": WORKFLOW_ID,
-            "description": "some-desc",
-            "createdAt": "some_date",
+            "description": "description",
+            "createdAt": "date",
         },
     }
     requests_mock.get(url=url_workflow_info, json=json_workflow_info)
@@ -150,18 +150,18 @@ def test_should_initialize_job(auth_mock, requests_mock):
         project_id=PROJECT_ID,
         authenticate=False,
     )
-    project_id = "project-id"
+    project_id = "project_id"
     url_job_info = f"{auth_mock._endpoint()}/projects/{project_id}/jobs/{JOB_ID}"
     json_job_info = {
         "data": {
             "mode": "DEFAULT",
-            "description": "some_description",
-            "startedAt": "some_date",
+            "description": "description",
+            "startedAt": "date",
             "workflowName": "workflow_name",
             "name": "name",
-            "finishedAt": "some_date",
+            "finishedAt": "date",
             "status": "SUCCESSFUL",
-            "inputs": "some_inputs",
+            "inputs": "inputs",
         },
     }
     requests_mock.get(url=url_job_info, json=json_job_info)
@@ -194,8 +194,8 @@ def test_should_initialize_jobtask(auth_mock, requests_mock, jobtask_mock):
                     "xyz": 789,
                     "name": "name",
                     "status": "SUCCESSFUL",
-                    "startedAt": "some_date",
-                    "finishedAt": "some_date",
+                    "startedAt": "date",
+                    "finishedAt": "date",
                     "block": {"name": "a_block"},
                     "blockVersion": "1.0.0",
                 }
@@ -225,13 +225,13 @@ def test_should_initialize_job_collection(auth_mock, requests_mock):
     json_job_info = {
         "data": {
             "mode": "DEFAULT",
-            "description": "some_description",
-            "startedAt": "some_date",
+            "description": "description",
+            "startedAt": "date",
             "workflowName": "workflow_name",
             "name": "name",
-            "finishedAt": "some_date",
+            "finishedAt": "date",
             "status": "SUCCESSFUL",
-            "inputs": "some_inputs",
+            "inputs": "inputs",
         },
     }
     requests_mock.get(url=url_job_info, json=json_job_info)
