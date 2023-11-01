@@ -12,6 +12,7 @@ from .fixtures import (
     JOBTASK_ID,
     JSON_WORKFLOW_ESTIMATION,
     JSON_WORKFLOW_TASKS,
+    PROJECT_ID,
     asset_mock,
     auth_live,
     auth_mock,
@@ -320,7 +321,7 @@ def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
         f"{workflow_mock.workflow_id}/tasks"
     )
     url_workflow_estimation = (
-        f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/estimate/job"
+        f"{auth_mock._endpoint()}/projects/{PROJECT_ID}/estimate/job"
     )
     requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
     requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
@@ -590,7 +591,7 @@ def test_get_jobs_live(workflow_live):
 def test_update_name(workflow_mock, requests_mock):
     new_name = "new_workflow_name"
     url_update_name = (
-        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
         f"{workflow_mock.workflow_id}"
     )
     json_new_properties = {"data": {}, "error": {}}

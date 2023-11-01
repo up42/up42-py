@@ -1,6 +1,7 @@
 import pytest
 
 from ..context import Estimation
+from .fixtures_globals import PROJECT_ID
 
 
 @pytest.fixture()
@@ -29,7 +30,7 @@ def estimation_mock(auth_mock):
         },
     ]
 
-    return Estimation(auth_mock, input_parameters, input_tasks)
+    return Estimation(auth_mock, PROJECT_ID, input_parameters, input_tasks)
 
 
 @pytest.fixture()

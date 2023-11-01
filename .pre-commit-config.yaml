@@ -8,7 +8,7 @@ repos:
       - id: end-of-file-fixer
         exclude: ^up42/_version\.txt$|.github/CODEOWNERS
       - id: check-added-large-files
-        args: ["--maxkb=1000"]
+        args: ["--maxkb=3000"]
       - id: check-yaml
       - id: mixed-line-ending
 

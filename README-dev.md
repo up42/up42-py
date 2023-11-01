@@ -18,10 +18,24 @@ cd up42-py
 make install[dev]
 ```
 
-3. [Authenticate](/docs/authentication.md).
+3. Follow authentication guidelines [Authenticate](/docs/authentication.md).
 
+4. Create a `config.json` file and fill in the credentials.
+```json
+{
+  "credentials_id": "...",
+  "credentials_key": "..."
+}
+```
 
-4. Test it in Python.
+4. Test it in Python! This will authenticate with the UP42 Server and get the project information.
+```python
+import up42
+
+up42.authenticate(cfg_file="config.json")
+project = up42.initialize_project(project_id="your-project-id")
+print(project)
+```
 
 
 ## Edit the docs
