@@ -173,7 +173,10 @@
         A job is an instance of a workflow. It delivers geospatial outputs defined by job parameters.
 
         ```python
-        job = up42.initialize_job(job_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
+        job = up42.initialize_job(
+            job_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
+            project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
+        )
         ```
 
         See available attributes and functions on the [Job](job-reference.md) reference page:
@@ -204,7 +207,8 @@
             job_ids=[
                 "0479cdb8-99d0-4de1-b0e2-6ff6b69d0f68",
                 "a0d443a2-41e8-4995-8b54-a5cc4c448227",
-            ]
+            ],
+            project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
         )
         ```
 
@@ -231,6 +235,7 @@
         jobtask = up42.initialize_jobtask(
             jobtask_id="3f772637-09aa-4164-bded-692fcd746d20",
             job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021",
+            project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
         )
         ```
 

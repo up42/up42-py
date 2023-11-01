@@ -6,6 +6,7 @@ The JobTask class enables access to [results of a specific job task](analytics.m
 jobtask = up42.initialize_jobtask(
     jobtask_id="3f772637-09aa-4164-bded-692fcd746d20",
     job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021",
+    project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
 )
 ```
 
