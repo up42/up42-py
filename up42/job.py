@@ -28,7 +28,10 @@ class Job(VizTools):
 
     Use an existing job:
     ```python
-    job = up42.initialize_job(job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021")
+    job = up42.initialize_job(
+        job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021",
+        project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321"
+    )
     ```
     """
 

@@ -19,7 +19,8 @@ class JobTask(VizTools):
     Use an existing jobtask:
     ```python
     jobtask = up42.initialize_jobtask(jobtask_id="3f772637-09aa-4164-bded-692fcd746d20",
-                                      job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021")
+                                      job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021",
+                                      project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321")
     ```
     """
 
