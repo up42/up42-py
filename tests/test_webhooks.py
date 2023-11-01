@@ -7,6 +7,8 @@ from .fixtures import (
     WORKSPACE_ID,
     auth_live,
     auth_mock,
+    project_api_key_live,
+    project_id_live,
     webhook_live,
     webhook_mock,
     webhooks_live,

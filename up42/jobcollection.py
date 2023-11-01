@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import geojson
 from geojson import FeatureCollection
@@ -31,9 +31,9 @@ class JobCollection(VizTools):
     ```
     """
 
-    def __init__(self, auth: Auth, project_id: str, jobs: List[Job]):
+    def __init__(self, auth: Auth, jobs: List[Job], project_id: Optional[str] = None):
         self.auth = auth
-        self.project_id = project_id
+        self.project_id = project_id if project_id is not None else self.auth.credentials_id
         self.jobs = jobs
         if jobs is not None:
             self.jobs_id = [job.job_id for job in jobs]

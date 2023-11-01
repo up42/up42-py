@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 from geopandas import GeoDataFrame
 from tqdm import tqdm
@@ -27,12 +27,12 @@ class JobTask(VizTools):
     def __init__(
         self,
         auth: Auth,
-        project_id: str,
         job_id: str,
         jobtask_id: str,
+        project_id: Optional[str] = None,
     ):
         self.auth = auth
-        self.project_id = project_id
+        self.project_id = project_id if project_id is not None else self.auth.credentials_id
         self.job_id = job_id
         self.jobtask_id = jobtask_id
         self.quicklooks = None

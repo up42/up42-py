@@ -14,6 +14,8 @@ from .fixtures import (
     WRONG_OPTION_ID,
     auth_live,
     auth_mock,
+    project_api_key_live,
+    project_id_live,
     tasking_choose_feasibility_mock,
     tasking_get_feasibility_mock,
     tasking_live,
@@ -24,7 +26,9 @@ LIVE_TEST_WORKSPACE_ID = os.getenv("LIVE_TEST_WORKSPACE_ID")
 LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
 LIVE_OPTION_ID = os.getenv("LIVE_OPTION_ID")
 
-with open(Path(__file__).resolve().parent / "mock_data/search_params_simple.json") as json_file:
+with open(
+    Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
+) as json_file:
     mock_search_parameters = json.load(json_file)
 
 
@@ -79,13 +83,20 @@ def test_get_quotations(tasking_mock):
     get_quotations = tasking_mock.get_quotations()
     assert len(get_quotations) == 23
     get_quotations = tasking_mock.get_quotations(workspace_id=WORKSPACE_ID)
-    quotations_accepted = (quotation["workspaceId"] == WORKSPACE_ID for quotation in get_quotations)
+    quotations_accepted = (
+        quotation["workspaceId"] == WORKSPACE_ID for quotation in get_quotations
+    )
     assert all(quotations_accepted)
     get_quotations = tasking_mock.get_quotations(decision=["ACCEPTED"])
-    quotations_accepted = (quotation["decision"] == "ACCEPTED" for quotation in get_quotations)
+    quotations_accepted = (
+        quotation["decision"] == "ACCEPTED" for quotation in get_quotations
+    )
     assert all(quotations_accepted)
     get_quotations = tasking_mock.get_quotations(decision=["ACCEPTED", "REJECTED"])
-    quotations_accepted = (quotation["decision"] in ["ACCEPTED", "REJECTED"] for quotation in get_quotations)
+    quotations_accepted = (
+        quotation["decision"] in ["ACCEPTED", "REJECTED"]
+        for quotation in get_quotations
+    )
     assert all(quotations_accepted)
 
 
@@ -111,15 +122,22 @@ def test_get_quotations_live(tasking_live):
     workspace_id_filter = "80357ed6-9fa2-403c-9af0-65e4955d4816"
 
     get_quotations = tasking_live.get_quotations(workspace_id=workspace_id_filter)
-    quotations_accepted = (quotation["workspaceId"] == workspace_id_filter for quotation in get_quotations)
+    quotations_accepted = (
+        quotation["workspaceId"] == workspace_id_filter for quotation in get_quotations
+    )
     assert all(quotations_accepted)
 
     get_quotations = tasking_live.get_quotations(decision=["ACCEPTED"])
-    quotations_accepted = (quotation["decision"] == "ACCEPTED" for quotation in get_quotations)
+    quotations_accepted = (
+        quotation["decision"] == "ACCEPTED" for quotation in get_quotations
+    )
     assert all(quotations_accepted)
 
     get_quotations = tasking_live.get_quotations(decision=["ACCEPTED", "REJECTED"])
-    quotations_accepted = (quotation["decision"] in ["ACCEPTED", "REJECTED"] for quotation in get_quotations)
+    quotations_accepted = (
+        quotation["decision"] in ["ACCEPTED", "REJECTED"]
+        for quotation in get_quotations
+    )
     assert all(quotations_accepted)
 
 
@@ -157,9 +175,13 @@ def test_get_feasibility(tasking_get_feasibility_mock):
         "decisionAt",
         "decisionOption",
     ]
-    feasibility_studies = tasking_get_feasibility_mock.get_feasibility(decision=["NOT_DECIDED"])
+    feasibility_studies = tasking_get_feasibility_mock.get_feasibility(
+        decision=["NOT_DECIDED"]
+    )
     assert len(feasibility_studies) == 1
-    feasibility_studies = tasking_get_feasibility_mock.get_feasibility(decision=["some_wrong_string"])
+    feasibility_studies = tasking_get_feasibility_mock.get_feasibility(
+        decision=["some_wrong_string"]
+    )
     assert len(feasibility_studies) == 26
 
 
@@ -168,32 +190,50 @@ def test_get_feasibility(tasking_get_feasibility_mock):
 def test_get_feasibility_live(tasking_live):
     feasibility_studies = tasking_live.get_feasibility()
     assert len(feasibility_studies) > 10
-    feasibility_studies = tasking_live.get_feasibility(workspace_id=LIVE_TEST_WORKSPACE_ID)
-    accepted_studies = (feasibility["workspaceId"] == LIVE_TEST_WORKSPACE_ID for feasibility in feasibility_studies)
+    feasibility_studies = tasking_live.get_feasibility(
+        workspace_id=LIVE_TEST_WORKSPACE_ID
+    )
+    accepted_studies = (
+        feasibility["workspaceId"] == LIVE_TEST_WORKSPACE_ID
+        for feasibility in feasibility_studies
+    )
     assert all(accepted_studies)
 
     feasibility_studies = tasking_live.get_feasibility(decision=["ACCEPTED"])
-    accepted_studies = (feasibility["decision"] == "ACCEPTED" for feasibility in feasibility_studies)
+    accepted_studies = (
+        feasibility["decision"] == "ACCEPTED" for feasibility in feasibility_studies
+    )
     assert len(list(accepted_studies)) > 10
     assert all(accepted_studies)
 
-    feasibility_studies = tasking_live.get_feasibility(decision=["ACCEPTED", "NOT_DECIDED"])
-    accepted_studies = (feasibility["decision"] in ["ACCEPTED", "NOT_DECIDED"] for feasibility in feasibility_studies)
+    feasibility_studies = tasking_live.get_feasibility(
+        decision=["ACCEPTED", "NOT_DECIDED"]
+    )
+    accepted_studies = (
+        feasibility["decision"] in ["ACCEPTED", "NOT_DECIDED"]
+        for feasibility in feasibility_studies
+    )
     assert len(list(accepted_studies)) > 10
     assert all(accepted_studies)
-    feasibility_studies = tasking_live.get_feasibility(feasibility_id=WRONG_FEASIBILITY_ID)
+    feasibility_studies = tasking_live.get_feasibility(
+        feasibility_id=WRONG_FEASIBILITY_ID
+    )
     assert len(feasibility_studies) == 0
 
 
 def test_choose_feasibility(tasking_choose_feasibility_mock):
     with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_choose_feasibility_mock.choose_feasibility(WRONG_FEASIBILITY_ID, WRONG_OPTION_ID)
+        tasking_choose_feasibility_mock.choose_feasibility(
+            WRONG_FEASIBILITY_ID, WRONG_OPTION_ID
+        )
     response = json.loads(str(e.value))
     assert isinstance(e.value, requests.exceptions.RequestException)
     assert response["status"] == 404
 
     with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_choose_feasibility_mock.choose_feasibility(LIVE_FEASIBILITY_ID, LIVE_OPTION_ID)
+        tasking_choose_feasibility_mock.choose_feasibility(
+            LIVE_FEASIBILITY_ID, LIVE_OPTION_ID
+        )
     response = json.loads(str(e.value))
     assert isinstance(e.value, requests.exceptions.RequestException)
     assert response["status"] == 405

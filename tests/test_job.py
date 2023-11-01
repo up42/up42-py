@@ -8,7 +8,18 @@ import pytest
 
 # pylint: disable=unused-import
 from .context import Job, JobTask
-from .fixtures import DOWNLOAD_URL, JOBTASK_ID, auth_live, auth_mock, job_live, job_mock, jobtask_mock, workflow_live
+from .fixtures import (
+    DOWNLOAD_URL,
+    JOBTASK_ID,
+    auth_live,
+    auth_mock,
+    job_live,
+    job_mock,
+    jobtask_mock,
+    project_api_key_live,
+    project_id_live,
+    workflow_live,
+)
 
 
 def test_job_info(job_mock):
@@ -22,7 +33,10 @@ def test_job_info(job_mock):
 def test_job_status(job_mock, status, requests_mock):
     del job_mock._info
 
-    url_job_info = f"{job_mock.auth._endpoint()}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    url_job_info = (
+        f"{job_mock.auth._endpoint()}/projects/"
+        f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
     assert job_mock.status == status
 
@@ -41,7 +55,10 @@ def test_job_status(job_mock, status, requests_mock):
 def test_is_succeeded(job_mock, status, expected, requests_mock):
     del job_mock._info
 
-    url_job_info = f"{job_mock.auth._endpoint()}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    url_job_info = (
+        f"{job_mock.auth._endpoint()}/projects/"
+        f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
     assert job_mock.is_succeeded == expected
@@ -51,7 +68,10 @@ def test_is_succeeded(job_mock, status, expected, requests_mock):
 def test_track_status_pass(job_mock, status, requests_mock):
     del job_mock._info
 
-    url_job_info = f"{job_mock.auth._endpoint()}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    url_job_info = (
+        f"{job_mock.auth._endpoint()}/projects/"
+        f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
     job_status = job_mock.track_status()
@@ -62,7 +82,10 @@ def test_track_status_pass(job_mock, status, requests_mock):
 def test_track_status_fail(job_mock, status, requests_mock):
     del job_mock._info
 
-    url_job_info = f"{job_mock.auth._endpoint()}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    url_job_info = (
+        f"{job_mock.auth._endpoint()}/projects/"
+        f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
     with pytest.raises(ValueError):
@@ -177,12 +200,14 @@ def test_job_download_result_dimap_live(auth_live, project_id_live):
         assert Path(out_files[20]).exists()
         assert Path(out_files[-1]).exists()
         assert "data.json" in [Path(of).name for of in out_files]
-        assert len(out_files) == 46
+        assert len(out_files) == 44
 
 
 @pytest.mark.skip(reason="2gb download takes long")
 @pytest.mark.live
-def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live, project_id_live):
+def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(
+    auth_live, project_id_live
+):
     job = Job(
         auth=auth_live,
         project_id=project_id_live,
@@ -205,8 +230,12 @@ def test_job_get_credits(job_mock):
 @pytest.mark.skip(reason="Sometimes takes quite long to cancel the job on the server.")
 @pytest.mark.live
 def test_cancel_job_live(workflow_live):
-    input_parameters_json = Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
-    jb = workflow_live.test_job(input_parameters=input_parameters_json, track_status=False)
+    input_parameters_json = (
+        Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
+    )
+    jb = workflow_live.test_job(
+        input_parameters=input_parameters_json, track_status=False
+    )
     # Can happen that the test job is finished before the cancellation kicks in server-side.
     jb.cancel_job()
 

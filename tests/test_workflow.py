@@ -19,6 +19,8 @@ from .fixtures import (
     job_mock,
     jobcollection_single_mock,
     jobtask_mock,
+    project_api_key_live,
+    project_id_live,
     project_mock,
     project_mock_max_concurrent_jobs,
     workflow_mock,
@@ -317,7 +319,7 @@ def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
     }
     # get_workflow_tasks
     url_workflow_tasks = (
-        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
         f"{workflow_mock.workflow_id}/tasks"
     )
     url_workflow_estimation = (

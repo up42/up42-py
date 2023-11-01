@@ -63,9 +63,6 @@ def project_api_key_live():
 
 @pytest.fixture(scope="module")
 def auth_live(project_id_live, project_api_key_live):
-    auth = Auth(
-        project_id=project_id_live,
-        project_api_key=project_api_key_live
-    )
+    auth = Auth(project_id=project_id_live, project_api_key=project_api_key_live)
     main._auth = auth  # instead of authenticate()
     return auth

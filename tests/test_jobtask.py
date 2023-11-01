@@ -4,7 +4,7 @@ from pathlib import Path
 
 # pylint: disable=unused-import
 from .context import JobTask
-from .fixtures import DOWNLOAD_URL, auth_live, auth_mock, jobtask_mock
+from .fixtures import DOWNLOAD_URL, auth_live, auth_mock, jobtask_mock, project_api_key_live, project_id_live
 
 
 def test_info(jobtask_mock):
@@ -60,7 +60,9 @@ def test_download_quicklook(jobtask_mock, requests_mock):
         f"/tasks/{jobtask_mock.jobtask_id}/outputs/quicklooks/a_quicklook.png"
     )
     quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    requests_mock.get(url_download_quicklooks, content=open(quicklook_file, "rb").read())
+    requests_mock.get(
+        url_download_quicklooks, content=open(quicklook_file, "rb").read()
+    )
 
     with tempfile.TemporaryDirectory() as tempdir:
         quick = jobtask_mock.download_quicklooks(tempdir)
