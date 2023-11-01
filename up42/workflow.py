@@ -45,11 +45,11 @@ class Workflow:
         self,
         auth: Auth,
         workflow_id: str,
-        project_id: Optional[str] = None,
+        project_id: str,
         workflow_info: Optional[dict] = None,
     ):
         self.auth = auth
-        self.project_id = project_id if project_id is not None else self.auth.credentials_id
+        self.project_id = project_id
         self.workflow_id = workflow_id
         if workflow_info is not None:
             self._info = workflow_info

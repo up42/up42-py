@@ -23,9 +23,9 @@ class Project:
     ```
     """
 
-    def __init__(self, auth: Auth, project_id: Optional[str] = None):
+    def __init__(self, auth: Auth, project_id: str):
         self.auth = auth
-        self.project_id = project_id if project_id is not None else self.auth.credentials_id
+        self.project_id = project_id
         self._info = self.info
 
     def __repr__(self):

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Union
 
 from up42.auth import Auth
 from up42.utils import get_logger
@@ -11,9 +11,9 @@ class Estimation:
     def __init__(
         self,
         auth: Auth,
+        project_id: str,
         input_parameters: Union[dict, str, Path],
         input_tasks: List[dict],
-        project_id: Optional[str] = None,
     ):
         """
         The Estimation class provides facilities for getting estimation of a workflow.
@@ -29,7 +29,7 @@ class Estimation:
                 },]
         """
         self.auth = auth
-        self.project_id = project_id if project_id is not None else self.auth.credentials_id
+        self.project_id = project_id
         self.input_parameters = input_parameters
         self.input_tasks = input_tasks
         self.payload: dict = {}
