@@ -107,7 +107,7 @@ workflow.workflow_tasks
 ### get_compatible_blocks()
 
 The `get_compatible_blocks()` function returns all compatible blocks for the workflow.
-If the the workflow is empty, it will return all data blocks.
+If the the workflow is empty, it will return all available data blocks.
 
 ```python
 get_compatible_blocks()

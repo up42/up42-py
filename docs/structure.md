@@ -166,7 +166,7 @@
         To create a new workflow, use the following:
 
         ```python
-        project = up42.initialize_project()
+        project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 
         workflow = project.create_workflow(name="new_workflow")
         ```
@@ -174,7 +174,10 @@
         To use an existing workflow, use the following:
 
         ```python
-        workflow = up42.initialize_workflow(workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98")
+        workflow = up42.initialize_workflow(
+            workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98",
+            project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
+        )
         ```
 
         See available attributes and functions on the [Workflow](workflow-reference.md) reference page:
@@ -184,13 +187,13 @@
             <li>`info`</li>
             <li>`update_name()`</li>
             <li>`delete()`</li>
+            <li>`workflow_tasks`</li>
+            <li>`get_compatible_blocks()`</li>
+            <li>`get_workflow_tasks()`</li>
+            <li>`add_workflow_tasks()`</li>
             <li>`get_parameters_info()`</li>
             <li>`construct_parameters()`</li>
             <li>`construct_parameters_parallel()`</li>
-            <li>`get_compatible_blocks()`</li>
-            <li>`workflow_tasks`</li>
-            <li>`get_workflow_tasks()`</li>
-            <li>`add_workflow_tasks()`</li>
             <li>`estimate_job()`</li>
             <li>`get_jobs()`</li>
             <li>`test_job()`</li>
