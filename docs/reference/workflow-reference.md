@@ -5,7 +5,7 @@ The Workflow class enables you to configure and run a workflow. A workflow is a 
 ```python
 project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 
-workflow = project.create_workflow(name="UP42 processing workflow")
+workflow = project.create_workflow(name="UP42 analytics workflow")
 ```
 
 ```python
