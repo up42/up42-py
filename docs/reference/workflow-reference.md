@@ -1,17 +1,17 @@
 # Workflow
 
-The Workflow class enables you to configure and run a workflow. A workflow is a sequence of data blocks and processing blocks. It defines an order for operations. A workflow starts with a data block, which may be followed by up to five processing blocks.
+The Workflow class enables you to configure and run a workflow. A workflow is a sequence of data blocks and processing blocks. It defines an order of operations that start with a data block, which may be followed by up to five processing blocks.
 
 ```python
 project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 
-workflow = project.create_workflow(name="new_workflow")
+workflow = project.create_workflow(name="UP42 processing workflow")
 ```
 
 ```python
 workflow = up42.initialize_workflow(
-    workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98",
     project_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
+    workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98",
 )
 ```
 
@@ -66,7 +66,7 @@ update_name(
 ```python
 workflow.update_name(
     name="Sentinel-2 with tiling",
-    description="Conducts tiling on free Sentinel-2 data",
+    description="Implements tiling on free Sentinel-2 data",
 )
 ```
 
@@ -86,8 +86,7 @@ workflow.delete()
 
 ## Workflow tasks
 
-Workflow tasks are blocks that are added to a workflow.
-A workflow task contains a specific block version which specifies what blocks can be added before and after it.
+Workflow tasks are blocks that are added to a workflow. A workflow task uses a specific block version that specifies its input JSON parameters and what blocks can be added before and after it.
 
 ### workflow_tasks
 
