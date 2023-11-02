@@ -1,6 +1,8 @@
 # Workflow
 
-The Workflow class enables you to configure and run a workflow. A workflow is a sequence of data blocks and processing blocks. It defines an order of operations that start with a data block, which may be followed by up to five processing blocks.
+The Workflow class enables access to the UP42 [analytics functionality](analytics.md).
+
+A workflow is a sequence of data blocks and processing blocks. It defines an order of operations that start with a data block, which may be followed by up to five processing blocks.
 
 ```python
 project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
