@@ -204,7 +204,7 @@
 
         The Job class enables access to the UP42 [analytics functionality](analytics.md).
 
-        A job is an instance of a workflow. It delivers geospatial outputs defined by job parameters.
+        A job is an instance of a workflow. It delivers geospatial outputs defined by job JSON parameters.
 
         ```python
         job = up42.initialize_job(job_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
