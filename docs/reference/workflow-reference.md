@@ -124,7 +124,7 @@ workflow.get_workflow_tasks(basic=True)
 
 ### add_workflow_tasks()
 
-The `add_workflow_tasks()` function allows you to add workflow tasks to a workflow. The function overwrites existing workflow tasks, so include the full sequence of selected workflow tasks.
+The `add_workflow_tasks()` function allows you to add workflow tasks to a workflow. Include the full sequence of selected workflow tasks as the function overwrites existing workflow tasks.
 
 ```python
 add_workflow_tasks(input_tasks)
