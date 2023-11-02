@@ -161,17 +161,13 @@
 
     === "Workflow"
 
-        The workflow class enables you to configure and run a workflow.
-
-        To create a new workflow, use the following:
+        The Workflow class enables you to configure and run a workflow. A workflow is a sequence of data blocks and processing blocks. It defines an order of operations that start with a data block, which may be followed by up to five processing blocks.
 
         ```python
         project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 
         workflow = project.create_workflow(name="new_workflow")
         ```
-
-        To use an existing workflow, use the following:
 
         ```python
         workflow = up42.initialize_workflow(
@@ -188,9 +184,9 @@
             <li>`update_name()`</li>
             <li>`delete()`</li>
             <li>`workflow_tasks`</li>
-            <li>`get_compatible_blocks()`</li>
             <li>`get_workflow_tasks()`</li>
             <li>`add_workflow_tasks()`</li>
+            <li>`get_compatible_blocks()`</li>
             <li>`get_parameters_info()`</li>
             <li>`construct_parameters()`</li>
             <li>`construct_parameters_parallel()`</li>

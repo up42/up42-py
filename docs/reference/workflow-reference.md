@@ -1,16 +1,12 @@
 # Workflow
 
-The workflow class enables you to configure and run a workflow.
-
-To create a new workflow, use the following:
+The Workflow class enables you to configure and run a workflow. A workflow is a sequence of data blocks and processing blocks. It defines an order for operations. A workflow starts with a data block, which may be followed by up to five processing blocks.
 
 ```python
 project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 
 workflow = project.create_workflow(name="new_workflow")
 ```
-
-To use an existing workflow, use the following:
 
 ```python
 workflow = up42.initialize_workflow(
@@ -60,23 +56,23 @@ update_name(
 
 <h5> Arguments </h5>
 
-| Argument      | Overview                                  |
-| ------------- | ----------------------------------------- |
-| `name`        | **str**<br/>The new workflow name.        |
-| `description` | **str**<br/>The new workflow description. |
+| Argument      | Overview                              |
+| ------------- | ------------------------------------- |
+| `name`        | **str**<br/>The workflow name.        |
+| `description` | **str**<br/>The workflow description. |
 
 <h5> Example </h5>
 
 ```python
 workflow.update_name(
-    name="updated_workflow",
-    description="An UP42 image processing workflow",
+    name="Sentinel-2 with tiling",
+    description="Conducts tiling on free Sentinel-2 data",
 )
 ```
 
 ### delete()
 
-The `delete()` function allows you to delete a workflow and set the `workflow` object to None.
+The `delete()` function allows you to delete a workflow.
 
 ```python
 delete()
@@ -90,11 +86,12 @@ workflow.delete()
 
 ## Workflow tasks
 
-Workflow tasks are blocks in a workflow.
+Workflow tasks are blocks that are added to a workflow.
+A workflow task contains a specific block version which specifies what blocks can be added before and after it.
 
 ### workflow_tasks
 
-The `workflow_tasks` attribute returns a list of the workflow tasks in a workflow.
+The `workflow_tasks` attribute returns a list of workflow tasks in a workflow.
 
 The returned format is `dict[str, str]`.
 
@@ -102,23 +99,6 @@ The returned format is `dict[str, str]`.
 
 ```python
 workflow.workflow_tasks
-```
-
-### get_compatible_blocks()
-
-The `get_compatible_blocks()` function returns a list of compatible blocks for a workflow.
-If the workflow is empty, it will return a list of all available data blocks.
-
-```python
-get_compatible_blocks()
-```
-
-The returned format is `dict`.
-
-<h5> Example </h5>
-
-```python
-workflow.get_compatible_blocks()
 ```
 
 ### get_workflow_tasks()
@@ -145,7 +125,7 @@ workflow.get_workflow_tasks(basic=True)
 
 ### add_workflow_tasks()
 
-The `add_workflow_tasks()` function allows you to add or overwrite workflow tasks in a workflow.
+The `add_workflow_tasks()` function allows you to add workflow tasks to a workflow. The function overwrites existing workflow tasks, so include the full sequence of selected workflow tasks.
 
 ```python
 add_workflow_tasks(input_tasks)
@@ -161,11 +141,26 @@ add_workflow_tasks(input_tasks)
 
 ```python
 workflow.add_workflow_tasks(
-    input_tasks=["sentinelhub-s2-aoiclipped:1", "tiling"],
+    input_tasks=["sentinelhub-s2-aoiclipped", "tiling"],
 )
 ```
 
-## Jobs
+### get_compatible_blocks()
+
+The `get_compatible_blocks()` function returns a list of compatible blocks that can be added after the last workflow task in a workflow.
+If there are no workflow tasks, it will return a list of all available data blocks.
+
+```python
+get_compatible_blocks()
+```
+
+The returned format is `dict`.
+
+<h5> Example </h5>
+
+```python
+workflow.get_compatible_blocks()
+```
 
 ### get_parameters_info()
 
@@ -182,6 +177,8 @@ The returned format is `dict`.
 ```python
 workflow.get_parameters_info()
 ```
+
+## Jobs
 
 ### construct_parameters()
 
@@ -210,7 +207,7 @@ The returned format is `dict`.
 | `start_date`         | **Union[str, datetime]**<br/>The start date of the search period in the `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` format.      |
 | `end_date`           | **Union[str, datetime]**<br/>The end date of the search period in the `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` format.        |
 | `limit`              | **int**<br/>The maximum number of expected results.                                                                        |
-| `scene_ids`          | **list[str]**<br/>The scene IDs. If used, all other parameters except `geometry` are ignored                               |
+| `scene_ids`          | **list[str]**<br/>The scene IDs. If used, all other parameters except `geometry` are ignored.                              |
 | `asset_ids`          | **list[str]**<br/>The asset IDs. Use with Processing from Storage block.                                                   |
 
 <h5> Example </h5>
@@ -294,7 +291,7 @@ workflow.estimate_job(
 
 ### get_jobs()
 
-The `get_jobs()` function returns all the jobs associated with a workflow.
+The `get_jobs()` function returns all jobs associated with a workflow.
 
 ```python
 get_jobs(
