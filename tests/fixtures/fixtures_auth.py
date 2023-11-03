@@ -17,18 +17,11 @@ def auth_mock(requests_mock):
     }
     requests_mock.post(url_get_token, json=json_get_token)
 
-    url_get_workspace = f"https://api.up42.com/projects/{PROJECT_ID}"
-    json_get_workspace = {"data": {"workspaceId": WORKSPACE_ID}}
+    url_get_workspace = f"https://api.up42.com/users/me"
+    json_get_workspace = {"data": {"id": WORKSPACE_ID}}
     requests_mock.get(
         url=url_get_workspace,
         json=json_get_workspace,
-    )
-
-    url_get_workspace_v2 = f"https://api.up42.com/users/me"
-    json_get_workspace_v2 = {"data": {"id": WORKSPACE_ID}}
-    requests_mock.get(
-        url=url_get_workspace_v2,
-        json=json_get_workspace_v2,
     )
     auth = Auth(
         project_id=PROJECT_ID, project_api_key=PROJECT_APIKEY, authenticate=True
@@ -51,6 +44,27 @@ def auth_mock(requests_mock):
     return auth
 
 
+@pytest.fixture()
+def auth_account_mock(requests_mock):
+    USERNAME_TEST = "something@up42.com"
+    PASSWORD_TEST = "password"
+    url_get_token = "https://api.up42.com/oauth/token"
+    json_get_token = {
+        "data": {"accessToken": TOKEN},
+        "access_token": TOKEN,
+        "token_type": "bearer",
+    }
+    requests_mock.post(url_get_token, json=json_get_token)
+    url_get_workspace = f"https://api.up42.com/users/me"
+    json_get_workspace = {"data": {"id": WORKSPACE_ID}}
+    requests_mock.get(
+        url=url_get_workspace,
+        json=json_get_workspace,
+    )
+    auth = Auth(username=USERNAME_TEST, password=PASSWORD_TEST, authenticate=True)
+    return auth
+
+
 @pytest.fixture(scope="module")
 def project_id_live():
     return os.getenv("TEST_UP42_PROJECT_ID")
@@ -64,5 +78,22 @@ def project_api_key_live():
 @pytest.fixture(scope="module")
 def auth_live(project_id_live, project_api_key_live):
     auth = Auth(project_id=project_id_live, project_api_key=project_api_key_live)
+    main._auth = auth  # instead of authenticate()
+    return auth
+
+
+@pytest.fixture(scope="module")
+def username_test_live():
+    return os.getenv("TEST_USERNAME")
+
+
+@pytest.fixture(scope="module")
+def password_test_live():
+    return os.getenv("TEST_PASSWORD")
+
+
+@pytest.fixture(scope="module")
+def auth_account_live(username_test_live, password_test_live):
+    auth = Auth(username=username_test_live, password=password_test_live)
     main._auth = auth  # instead of authenticate()
     return auth

@@ -12,10 +12,14 @@ from .fixtures import (
     PROJECT_ID,
     TOKEN,
     WORKSPACE_ID,
+    auth_account_live,
+    auth_account_mock,
     auth_live,
     auth_mock,
+    password_test_live,
     project_api_key_live,
     project_id_live,
+    username_test_live,
 )
 
 
@@ -57,25 +61,27 @@ def test_endpoint(auth_mock):
     assert auth_mock._endpoint() == "https://api.up42.abc"
 
 
-def test_get_token(auth_mock):
-    auth_mock._get_token()
-    assert auth_mock.token == TOKEN
+@pytest.mark.parametrize("authentication_fixture", ("auth_mock", "auth_account_mock"))
+def test_get_token(request, authentication_fixture):
+    auth = request.getfixturevalue(authentication_fixture)
+    auth._get_token()
+    assert auth.token == TOKEN
 
 
 @pytest.mark.live
-def test_get_token_raises_wrong_credentials_live(auth_live):
-    auth_live._credentials_id = "123"
+@pytest.mark.parametrize("authentication_fixture", ("auth_live", "auth_account_live"))
+def test_get_token_raises_wrong_credentials_live(request, authentication_fixture):
+    auth = request.getfixturevalue(authentication_fixture)
+    auth._credentials_id = "123"
     with pytest.raises(ValueError) as e:
-        auth_live._get_token()
-    assert (
-        "Authentication was not successful, check the provided project credentials."
-        in str(e.value)
-    )
+        auth._get_token()
+    assert "Authentication" in str(e.value)
 
 
 @pytest.mark.live
-def test_get_token_live(auth_live):
-    assert hasattr(auth_live, "token")
+@pytest.mark.parametrize("authentication_fixture", ("auth_live", "auth_account_live"))
+def test_get_token_live(request, authentication_fixture):
+    assert hasattr(request.getfixturevalue(authentication_fixture), "token")
 
 
 def test_get_workspace(auth_mock):
@@ -84,8 +90,9 @@ def test_get_workspace(auth_mock):
 
 
 @pytest.mark.live
-def test_get_workspace_live(auth_live):
-    assert hasattr(auth_live, "workspace_id")
+@pytest.mark.parametrize("authentication_fixture", ("auth_live", "auth_account_live"))
+def test_get_workspace_live(request, authentication_fixture):
+    assert hasattr(request.getfixturevalue(authentication_fixture), "workspace_id")
 
 
 def test_generate_headers(auth_mock):

@@ -95,14 +95,14 @@ def test_asset_download(asset_mock, requests_mock, tmp_path, with_output_directo
     [
         ("asset_mock", DOWNLOAD_URL, "output.tgz"),
         (
-                "asset_mock2",
-                DOWNLOAD_URL2,
-                "DS_SPOT6_202206240959075_FR1_FR1_SV1_SV1_E013N52_01709.tgz",
+            "asset_mock2",
+            DOWNLOAD_URL2,
+            "DS_SPOT6_202206240959075_FR1_FR1_SV1_SV1_E013N52_01709.tgz",
         ),
     ],
 )
 def test_asset_download_no_unpacking(
-        asset_fixture, download_url, out_file_name, requests_mock, request, tmp_path
+    asset_fixture, download_url, out_file_name, requests_mock, request, tmp_path
 ):
     asset_fixture = request.getfixturevalue(asset_fixture)
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
@@ -122,7 +122,9 @@ def test_asset_download_no_unpacking(
 
 
 @pytest.mark.parametrize("with_output_directory", [True, False])
-def test_download_stac_asset(asset_mock2, requests_mock, tmp_path, with_output_directory):
+def test_download_stac_asset(
+    asset_mock2, requests_mock, tmp_path, with_output_directory
+):
     out_file_path = Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
     with open(out_file_path, "rb") as src_file:
         out_file = src_file.read()

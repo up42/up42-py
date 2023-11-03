@@ -26,10 +26,6 @@ from up42.utils import get_logger
 logger = get_logger(__name__)
 
 
-class AuthenticationError(Exception):
-    pass
-
-
 class retry_if_401_invalid_token(retry_if_exception):
     """
     Custom tenacity error response that enables separate retry strategy for
@@ -191,12 +187,12 @@ class Auth:
                 timeout=120,
             )
             if token_response.status_code != 200:
-                raise AuthenticationError(
+                raise ValueError(
                     f"Authentication failed with status code {token_response.status_code}."
                     "Check the provided credentials."
                 )
         except requests.exceptions.RequestException as err:
-            raise AuthenticationError(
+            raise ValueError(
                 "Authentication failed due to a network error. Check the provided credentials and network connectivity."
             ) from err
         self.token = token_response.json()["data"]["accessToken"]
