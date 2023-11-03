@@ -108,9 +108,9 @@ The returned format is `Union[list, dict]`.
 
 <h5> Arguments </h5>
 
-| Argument | Overview                                                                                                                                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `basic`  | **bool**<br/>Determines how to return a list of workflow tasks:</br/><ul><li>`True`: return only simplified task names and block versions.</li><li>`False`: return the full response.</li></ul>The default value is `False`. |
+| Argument | Overview                                                                                                                                                                                                                    |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `basic`  | **bool**<br/>Determines how to return a list of workflow tasks:<br/><ul><li>`True`: return only simplified task names and block versions.</li><li>`False`: return the full response.</li></ul>The default value is `False`. |
 
 <h5> Example </h5>
 
@@ -353,7 +353,7 @@ input_parameters=workflow.construct_parameters(
 
 # Run test query
 
-workflow.test_jobs(
+workflow.test_job(
     input_parameters=input_parameters,
     track_status=True,
     name="Test Job 1",
