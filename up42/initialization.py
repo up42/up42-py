@@ -43,6 +43,19 @@ def _check_deprecated_implicit_project_id(project_id: Optional[str]):
         )
 
 
+def _get_project_id(project_id: Optional[str]) -> str:
+    if not project_id:
+        warn(
+            "Provide the project ID as the value of the `project_id` argument.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+    result = project_id or str(main._auth.project_id)
+    if not result:
+        raise ValueError("Project ID can't be null")
+    return result
+
+
 @_check_auth
 def initialize_project(project_id: Optional[str] = None) -> "Project":
     """
@@ -51,7 +64,7 @@ def initialize_project(project_id: Optional[str] = None) -> "Project":
         project_id: The UP42 project id
     """
     _check_deprecated_implicit_project_id(project_id)
-    project = Project(auth=main._auth, project_id=project_id or str(main._auth.project_id))
+    project = Project(auth=main._auth, project_id=_get_project_id(project_id=project_id))
     logger.info(f"Initialized {project}")
     return project
 
@@ -84,7 +97,7 @@ def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> "
     workflow = Workflow(
         auth=main._auth,
         workflow_id=workflow_id,
-        project_id=project_id or str(main._auth.project_id),
+        project_id=_get_project_id(project_id=project_id),
     )
     logger.info(f"Initialized {workflow}")
     return workflow
@@ -102,7 +115,7 @@ def initialize_job(job_id: str, project_id: Optional[str] = None) -> "Job":
     job = Job(
         auth=main._auth,
         job_id=job_id,
-        project_id=project_id or str(main._auth.project_id),
+        project_id=_get_project_id(project_id=project_id),
     )
     logger.info(f"Initialized {job}")
     return job
@@ -122,7 +135,7 @@ def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] =
         auth=main._auth,
         jobtask_id=jobtask_id,
         job_id=job_id,
-        project_id=project_id or str(main._auth.project_id),
+        project_id=_get_project_id(project_id=project_id),
     )
     logger.info(f"Initialized {jobtask}")
     return jobtask
@@ -141,13 +154,13 @@ def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = Non
         Job(
             auth=main._auth,
             job_id=job_id,
-            project_id=project_id or str(main._auth.project_id),
+            project_id=_get_project_id(project_id=project_id),
         )
         for job_id in job_ids
     ]
     jobcollection = JobCollection(
         auth=main._auth,
-        project_id=project_id or str(main._auth.project_id),
+        project_id=_get_project_id(project_id=project_id),
         jobs=jobs,
     )
     logger.info(f"Initialized {jobcollection}")

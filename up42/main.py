@@ -47,17 +47,16 @@ def authenticate(
     Also see the documentation https://sdk.up42.com/authentication/
 
     Args:
-        cfg_file: A JSON file containing project_id & project_api_key
-        project_id: The UP42 project id.
-        project_api_key: The UP42 project api key.
+        cfg_file: File path to the cfg.json with either
+        {project_id: "...", project_api_key: "..."} or {username: "...", password: "..."}.
+        project_id: The unique identifier of the project.
+        project_api_key: The project-specific API key.
+        username: The username for the UP42 account (email UP42 console).
+        password: Password for the UP42 console login.
 
-    Examples:
-        ```python
-        up42.authenticate(
-            project_id="your-project-ID",
-            project_api_key="your-project-API-key"
-        )
-        ```
+    Authenticate with UP42:
+        https://sdk.up42.com/authentication/.
+
     """
     global _auth
     _auth = Auth(

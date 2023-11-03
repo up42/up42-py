@@ -82,15 +82,16 @@ class Auth:
         """
         The Auth class handles the authentication with UP42.
 
-        Info:
-            Authentication is possible via the credentials of a specific project (project_id &
-            project_api_key). To get your **project id** and **project api key**, follow
-            the instructions in the docs authentication chapter.
+        Authenticate with UP42:
+            https://sdk.up42.com/authentication/.
 
         Args:
-            cfg_file: File path to the cfg.json with {project_id: "...", project_api_key: "..."}.
+            cfg_file: File path to the cfg.json with either
+            {project_id: "...", project_api_key: "..."} or {username: "...", password: "..."}.
             project_id: The unique identifier of the project.
             project_api_key: The project-specific API key.
+            username: The username for the UP42 account (email UP42 console).
+            password: Password for the UP42 console login.
         """
         self.cfg_file = cfg_file
         self.workspace_id: Optional[str] = None
@@ -110,8 +111,6 @@ class Auth:
             self.authenticate: bool = kwargs["authenticate"]
         except KeyError:
             self.authenticate = True
-
-        self._credentials_id = None
 
         if project_id:
             self.project_id = project_id
@@ -152,19 +151,21 @@ class Auth:
             "project": self._get_token_project_based,
         }
 
+        self._credentials_id = None
+
         if set(source.keys()) == {"project_id"}:
             return
 
-        for parameters, schema in schemas.items():
-            if set(schema).issubset(source.keys()):
-                if parameters == "project":
+        for schema, parameters in schemas.items():
+            if set(parameters).issubset(source.keys()):
+                if schema == "project":
                     warn(
                         "Project based authentication will be deprecated."
                         "Please follow authentication guidelines (/docs/authentication.md)."
                     )
-                self._credentials_id = source[schema[0]]
-                self._credentials_key = source[schema[1]]
-                self._get_token = token_retrievers[parameters]
+                self._credentials_id = source[parameters[0]]
+                self._credentials_key = source[parameters[1]]
+                self._get_token = token_retrievers[schema]
         if self._credentials_id is None:
             raise ValueError("No credentials provided either via config file or arguments.")
 

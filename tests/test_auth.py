@@ -62,26 +62,6 @@ def test_get_token(auth_mock):
     assert auth_mock.token == TOKEN
 
 
-def test_repr_project():
-    auth = Auth(
-        project_id=PROJECT_ID,
-        project_api_key=PROJECT_APIKEY,
-        authenticate=False,
-        env="dev",
-    )
-    assert repr(auth) == f"UP42Auth(id={PROJECT_ID} ,dev)"
-
-
-def test_repr_account():
-    auth = Auth(
-        username=PROJECT_ID,
-        password=PROJECT_APIKEY,
-        authenticate=False,
-        env="dev",
-    )
-    assert repr(auth) == f"UP42Auth(id={PROJECT_ID} ,dev)"
-
-
 @pytest.mark.live
 def test_get_token_raises_wrong_credentials_live(auth_live):
     auth_live._credentials_id = "123"

@@ -39,7 +39,7 @@ def test_estimate_price(requests_mock, auth_mock, estimation_mock):
 
 
 @pytest.mark.live
-def test_estimate_price_live(auth_live):
+def test_estimate_price_live(auth_live, project_id_live):
     input_parameters = {
         "esa-s2-l2a-gtiff-visual:1": {
             "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
@@ -64,7 +64,7 @@ def test_estimate_price_live(auth_live):
     ]
     estimation = Estimation(
         auth=auth_live,
-        project_id=auth_live._credentials_id,
+        project_id=project_id_live,
         input_parameters=input_parameters,
         input_tasks=input_tasks,
     ).estimate()
