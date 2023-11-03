@@ -5,12 +5,6 @@ The Workflow class enables access to the UP42 [analytics functionality](analytic
 A workflow is a sequence of data blocks and processing blocks. It defines an order of operations that start with a data block, which may be followed by up to five processing blocks.
 
 ```python
-project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
-
-workflow = project.create_workflow(name="UP42 analytics workflow")
-```
-
-```python
 workflow = up42.initialize_workflow(
     project_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
     workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98",
@@ -104,7 +98,7 @@ workflow.workflow_tasks
 
 ### get_workflow_tasks()
 
-The `get_workflow_tasks` function returns a list of the workflow tasks in a workflow.
+The `get_workflow_tasks` function returns a list of workflow tasks in a workflow.
 
 ```python
 get_workflow_tasks(basic)
