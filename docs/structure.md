@@ -161,16 +161,44 @@
 
     === "Workflow"
 
-        {{ docstring_workflow }}
-        <br>
-        Available functions, see also [**Workflow reference**](workflow-reference.md):
-        {{ format_funcs(funcs_workflow) }}
+        The Workflow class enables access to the UP42 [analytics functionality](analytics.md).
+
+        A workflow is a sequence of data blocks and processing blocks. It defines an order of operations that start with a data block, which may be followed by up to five processing blocks.
+
+        ```python
+        workflow = up42.initialize_workflow(
+            project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
+            workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98",
+        )
+        ```
+
+        See available attributes and functions on the [Workflow](workflow-reference.md) reference page:
+
+        <ul>
+            <li>`max_concurrent_jobs`</li>
+            <li>`info`</li>
+            <li>`update_name()`</li>
+            <li>`delete()`</li>
+            <li>`workflow_tasks`</li>
+            <li>`get_workflow_tasks()`</li>
+            <li>`add_workflow_tasks()`</li>
+            <li>`get_compatible_blocks()`</li>
+            <li>`get_parameters_info()`</li>
+            <li>`construct_parameters()`</li>
+            <li>`construct_parameters_parallel()`</li>
+            <li>`estimate_job()`</li>
+            <li>`get_jobs()`</li>
+            <li>`test_job()`</li>
+            <li>`test_jobs_parallel()`</li>
+            <li>`run_job()`</li>
+            <li>`run_jobs_parallel()`</li>
+            </ul>
 
     === "Job"
 
         The Job class enables access to the UP42 [analytics functionality](analytics.md).
 
-        A job is an instance of a workflow. It delivers geospatial outputs defined by job parameters.
+        A job is an instance of a workflow. It delivers geospatial outputs defined by job JSON parameters.
 
         ```python
         job = up42.initialize_job(
