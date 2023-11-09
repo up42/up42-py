@@ -21,6 +21,10 @@ make install[dev]
 3. [Authenticate](/docs/authentication.md).
 
 4. Test it in Python.
+
+```python
+up42.initialize_asset(asset_id="your-asset-id")
+```
 ```
 
 
