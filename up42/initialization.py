@@ -36,7 +36,7 @@ logger = get_logger(__name__, level=logging.INFO)
 
 def _check_deprecated_implicit_project_id(project_id: Optional[str]):
     if not project_id:
-        warn("Implicit project_id is deprecated", DeprecationWarning, stacklevel=2)
+        warn("Provide the project ID as the value of the `project_id` argument.", DeprecationWarning, stacklevel=2)
 
 
 @_check_auth
