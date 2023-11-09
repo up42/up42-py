@@ -77,6 +77,16 @@ def auth_project_live(project_id_live, project_api_key_live):
 
 
 @pytest.fixture(scope="module")
+def username_test_live():
+    return os.getenv("TEST_USERNAME")
+
+
+@pytest.fixture(scope="module")
+def password_test_live():
+    return os.getenv("TEST_PASSWORD")
+
+
+@pytest.fixture(scope="module")
 def auth_account_live(username_test_live, password_test_live):
     auth = Auth(username=username_test_live, password=password_test_live)
     main._auth = auth  # instead of authenticate()
@@ -87,13 +97,3 @@ def auth_account_live(username_test_live, password_test_live):
 def auth_live(request, auth_project_live, auth_account_live):
     mocks = {"project": auth_project_live, "account": auth_account_live}
     return mocks[request.param]
-
-
-@pytest.fixture(scope="module")
-def username_test_live():
-    return os.getenv("TEST_USERNAME")
-
-
-@pytest.fixture(scope="module")
-def password_test_live():
-    return os.getenv("TEST_PASSWORD")
