@@ -15,8 +15,13 @@ from .fixtures import (
     asset_live,
     asset_mock,
     asset_mock2,
+    assets_fixture,
+    auth_account_live,
+    auth_account_mock,
     auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
 )
 
 
@@ -47,15 +52,9 @@ def test_asset_update_metadata(asset_mock):
     assert updated_info["tags"] == ["othertag1", "othertag2"]
 
 
-@pytest.mark.parametrize(
-    "asset_fixture, download_url",
-    [
-        ("asset_mock", DOWNLOAD_URL),
-        ("asset_mock2", DOWNLOAD_URL2),
-    ],
-)
-def test_asset_get_download_url(asset_fixture, download_url, request):
-    asset_fixture = request.getfixturevalue(asset_fixture)
+def test_asset_get_download_url(assets_fixture):
+    asset_fixture = assets_fixture["asset_fixture"]
+    download_url = assets_fixture["download_url"]
     url = asset_fixture._get_download_url()
     assert url == download_url
 
@@ -90,21 +89,10 @@ def test_asset_download(asset_mock, requests_mock, tmp_path, with_output_directo
     assert out_paths[1].parent.is_dir()
 
 
-@pytest.mark.parametrize(
-    "asset_fixture, download_url, out_file_name",
-    [
-        ("asset_mock", DOWNLOAD_URL, "output.tgz"),
-        (
-            "asset_mock2",
-            DOWNLOAD_URL2,
-            "DS_SPOT6_202206240959075_FR1_FR1_SV1_SV1_E013N52_01709.tgz",
-        ),
-    ],
-)
-def test_asset_download_no_unpacking(
-    asset_fixture, download_url, out_file_name, requests_mock, request, tmp_path
-):
-    asset_fixture = request.getfixturevalue(asset_fixture)
+def test_asset_download_no_unpacking(assets_fixture, requests_mock, tmp_path):
+    asset_fixture = assets_fixture["asset_fixture"]
+    download_url = assets_fixture["download_url"]
+    out_file_name = assets_fixture["outfile_name"]
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as src_tgz:
         out_tgz_file = src_tgz.read()

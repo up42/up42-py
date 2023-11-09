@@ -116,7 +116,7 @@ class Auth:
 
         if self.authenticate:
             self._get_token()
-            self._get_user_id()
+            self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
     def __repr__(self):
@@ -209,7 +209,7 @@ class Auth:
 
         self.token = token_response["data"]["accessToken"]
 
-    def _get_user_id(self) -> None:
+    def _get_workspace(self) -> None:
         """Get user id belonging to authenticated account."""
         url = f"https://api.up42.{self.env}/users/me"
         resp = self._request("GET", url)

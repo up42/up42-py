@@ -13,15 +13,21 @@ from .context import Order
 from .fixtures import (
     DATA_PRODUCT_ID,
     ORDER_ID,
+    auth_account_live,
+    auth_account_mock,
     auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
     catalog_live,
     catalog_mock,
     catalog_pagination_mock,
     catalog_usagetype_mock,
     order_mock,
+    password_test_live,
     project_api_key_live,
     project_id_live,
+    username_test_live,
 )
 
 # pylint: disable=unused-import

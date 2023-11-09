@@ -16,7 +16,18 @@ import requests
 from .context import get_block_coverage, get_block_details, get_blocks, get_credits_balance, main, validate_manifest
 
 # pylint: disable=unused-import
-from .fixtures import auth_live, auth_mock, project_api_key_live, project_id_live
+from .fixtures import (
+    auth_account_live,
+    auth_account_mock,
+    auth_live,
+    auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
+    username_test_live,
+)
 
 
 def test_get_blocks(auth_mock, requests_mock, monkeypatch):

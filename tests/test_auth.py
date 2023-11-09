@@ -16,6 +16,8 @@ from .fixtures import (
     auth_account_mock,
     auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
     password_test_live,
     project_api_key_live,
     project_id_live,
@@ -61,38 +63,31 @@ def test_endpoint(auth_mock):
     assert auth_mock._endpoint() == "https://api.up42.abc"
 
 
-@pytest.mark.parametrize("authentication_fixture", ("auth_mock", "auth_account_mock"))
-def test_get_token(request, authentication_fixture):
-    auth = request.getfixturevalue(authentication_fixture)
-    auth._get_token()
-    assert auth.token == TOKEN
+def test_get_token(auth_mock):
+    auth_mock._get_token()
+    assert auth_mock.token == TOKEN
 
 
-@pytest.mark.live
-@pytest.mark.parametrize("authentication_fixture", ("auth_live", "auth_account_live"))
-def test_get_token_raises_wrong_credentials_live(request, authentication_fixture):
-    auth = request.getfixturevalue(authentication_fixture)
-    auth._credentials_id = "123"
+def test_get_token_raises_wrong_credentials_live(auth_live):
+    auth_live._credentials_id = "123"
     with pytest.raises(ValueError) as e:
-        auth._get_token()
+        auth_live._get_token()
     assert "Authentication" in str(e.value)
 
 
 @pytest.mark.live
-@pytest.mark.parametrize("authentication_fixture", ("auth_live", "auth_account_live"))
-def test_get_token_live(request, authentication_fixture):
-    assert hasattr(request.getfixturevalue(authentication_fixture), "token")
+def test_get_token_live(auth_live):
+    assert hasattr(auth_live, "token")
 
 
 def test_get_workspace(auth_mock):
-    auth_mock._get_user_id()
+    auth_mock._get_workspace()
     assert auth_mock.workspace_id == WORKSPACE_ID
 
 
 @pytest.mark.live
-@pytest.mark.parametrize("authentication_fixture", ("auth_live", "auth_account_live"))
-def test_get_workspace_live(request, authentication_fixture):
-    assert hasattr(request.getfixturevalue(authentication_fixture), "workspace_id")
+def test_get_workspace_live(auth_live):
+    assert hasattr(auth_live, "workspace_id")
 
 
 def test_generate_headers(auth_mock):

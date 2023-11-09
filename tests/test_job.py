@@ -11,13 +11,19 @@ from .context import Job, JobTask
 from .fixtures import (
     DOWNLOAD_URL,
     JOBTASK_ID,
+    auth_account_live,
+    auth_account_mock,
     auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
     job_live,
     job_mock,
     jobtask_mock,
+    password_test_live,
     project_api_key_live,
     project_id_live,
+    username_test_live,
     workflow_live,
 )
 
