@@ -68,6 +68,7 @@ def test_get_token(auth_mock):
     assert auth_mock.token == TOKEN
 
 
+@pytest.mark.live
 def test_get_token_raises_wrong_credentials_live(auth_live):
     auth_live._credentials_id = "123"
     with pytest.raises(ValueError) as e:
