@@ -112,9 +112,9 @@ class Auth:
             self.project_id = project_id
 
         config = self._choose_credential_source(cfg_file, credentials_dict)
-        self._set_credentials(source=config)
 
         if self.authenticate:
+            self._set_credentials(source=config)
             self._get_token()
             self._get_workspace()
             logger.info("Authentication with UP42 successful!")
@@ -144,9 +144,6 @@ class Auth:
         }
 
         self._credentials_id = None
-
-        if set(source.keys()) == {"project_id"}:
-            return
 
         for schema, parameters in schemas.items():
             if set(parameters).issubset(source.keys()):

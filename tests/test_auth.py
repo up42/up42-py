@@ -49,11 +49,9 @@ def test_cfg_file_not_found():
     assert "Selected config file does not exist!" in str(e.value)
 
 
-def test_find_credentials_cfg_file():
+def test_choose_credential_source_cfg_file():
     fp = Path(__file__).resolve().parent / "mock_data" / "test_config.json"
-    auth = Auth(cfg_file=fp, authenticate=False)
-    assert auth._credentials_id is not None
-    assert auth._credentials_key is not None
+    _ = Auth(cfg_file=fp, authenticate=False)  # Test an error was not raised
 
 
 def test_endpoint(auth_mock):
