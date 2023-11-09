@@ -64,7 +64,6 @@ search_parameters = catalog.construct_search_parameters(
     start_date="2022-06-01",
     end_date="2022-12-31",
     max_cloudcover=20,
-    sortby="cloudCoverage",
     limit=10,
 )
 
