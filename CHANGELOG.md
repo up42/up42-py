@@ -32,11 +32,10 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 0.33.0
 
-**October XX, 2023**
+**November XX, 2023**
 
-A new function added to the [Asset class](https://sdk.up42.com/reference/asset-reference):
-
-- `get_stac_asset_url` generates a signed URL that allows you to download a STAC asset from storage without authentication.
+- Updated [authentication](https://sdk.up42.com/authentication) by changing it from project-based to account-based.
+- Added a new function added to the [Asset class](https://sdk.up42.com/reference/asset-reference): `get_stac_asset_url` generates a signed URL that allows you to download a STAC asset from storage without authentication.
 
 ## 0.32.0
 
