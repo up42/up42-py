@@ -119,10 +119,6 @@ class Auth:
             self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
-    def __repr__(self):
-        env_string = f" ,{self.env}" if self.env != "com" else ""
-        return f"UP42Auth(id={self._credentials_id}{env_string})"
-
     def _choose_credential_source(self, cfg_file: Union[str, Path, None], kwargs: dict) -> dict:
         config = {}
         if cfg_file:
