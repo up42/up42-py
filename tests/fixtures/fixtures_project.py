@@ -165,8 +165,7 @@ def project_mock_max_concurrent_jobs(project_mock):
         url_project_info = f"{project_mock.auth._endpoint()}/projects/{PROJECT_ID}"
         m.get(url=url_project_info, json={"data": {"xyz": 789}, "error": {}})
         url_project_settings = (
-            f"{project_mock.auth._endpoint()}/projects"
-            f"/{project_mock.project_id}/settings"
+            f"{project_mock.auth._endpoint()}/projects" f"/{PROJECT_ID}/settings"
         )
         m.get(
             url=url_project_settings,

@@ -25,7 +25,7 @@ make install[dev]
 ```python
 up42.initialize_asset(asset_id="your-asset-id")
 ```
-```
+
 
 
 ## Edit the docs

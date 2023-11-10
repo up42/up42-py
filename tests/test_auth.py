@@ -49,12 +49,12 @@ def test_cfg_file_not_found():
     assert "Selected config file does not exist!" in str(e.value)
 
 
-def test_choose_credential_source_cfg_file():
+def test_should_not_authenticate_with_config_file_if_not_requested():
     fp = Path(__file__).resolve().parent / "mock_data" / "test_config.json"
-    _ = Auth(cfg_file=fp, authenticate=False)  # Test an error was not raised
+    Auth(cfg_file=fp, authenticate=False)
 
 
-def test_endpoint(auth_mock):
+def test_should_set_endpoint_with_environment(auth_mock):
     assert auth_mock._endpoint() == "https://api.up42.com"
 
     auth_mock.env = "abc"

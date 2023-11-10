@@ -1,6 +1,6 @@
 # Authentication
 
-=== "Directly in code"
+### "Directly in code"
 
     ```python
     import up42
@@ -10,7 +10,7 @@
     )
     ```
 
-=== "In a configuration file"
+### "In a configuration file"
 
     1. Create a `config.json` file.
     2. Paste the following code:

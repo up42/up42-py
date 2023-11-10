@@ -43,7 +43,8 @@ def authenticate(
     **kwargs,
 ):
     """
-    Authenticate with UP42, either via project_id & project_api_key, or a config JSON file containing both.
+    Authenticate with UP42, either using project api credentials or
+    account credentials or a config JSON file containing the corresponding credentials.
     Also see the documentation https://sdk.up42.com/authentication/
 
     Args:
@@ -53,10 +54,6 @@ def authenticate(
         project_api_key: The project-specific API key.
         username: The username for the UP42 account (email UP42 console).
         password: Password for the UP42 console login.
-
-    Authenticate with UP42:
-        https://sdk.up42.com/authentication/.
-
     """
     global _auth
     _auth = Auth(

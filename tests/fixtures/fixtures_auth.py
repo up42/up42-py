@@ -6,7 +6,7 @@ from ..context import Auth, main
 from .fixtures_globals import JSON_BALANCE, JSON_BLOCKS, PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID
 
 
-@pytest.fixture()
+@pytest.fixture
 def auth_project_mock(requests_mock):
     json_get_token = {
         "data": {"accessToken": TOKEN},
@@ -38,7 +38,7 @@ def auth_project_mock(requests_mock):
     return auth
 
 
-@pytest.fixture()
+@pytest.fixture
 def auth_account_mock(requests_mock):
     json_get_token = {
         "data": {"accessToken": TOKEN},
@@ -49,8 +49,7 @@ def auth_account_mock(requests_mock):
     requests_mock.get(
         url="https://api.up42.com/users/me", json={"data": {"id": WORKSPACE_ID}}
     )
-    auth = Auth(username="user@up42.com", password="password", authenticate=True)
-    return auth
+    return Auth(username="user@up42.com", password="password", authenticate=True)
 
 
 @pytest.fixture(params=["project", "account"])
