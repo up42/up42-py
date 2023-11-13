@@ -30,8 +30,8 @@ authenticate(
 # Authenticate directly in code
 
 up42.authenticate(
-    username="example@email.com",
-    password="12345",
+    username="<your-email-address>",
+    password="<your-password>",
 )
 
 # Authenticate in a configuration file
