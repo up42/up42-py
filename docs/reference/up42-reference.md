@@ -18,11 +18,11 @@ authenticate(
 
 <h5> Arguments </h5>
 
-| Argument   | Overview                                                                                     |
-| ---------- | -------------------------------------------------------------------------------------------- |
-| `cfg_file` | **Union[str, Path]**<br/>The file path to the JSON file containing the username and password |
-| `username` | **str**<br/>The email address used for logging into the console.                             |
-| `password` | **str**<br/>The password used for logging into the console.                                  |
+| Argument   | Overview                                                                                      |
+| ---------- | --------------------------------------------------------------------------------------------- |
+| `cfg_file` | **Union[str, Path]**<br/>The file path to the JSON file containing the username and password. |
+| `username` | **str**<br/>The email address used for logging into the console.                              |
+| `password` | **str**<br/>The password used for logging into the console.                                   |
 
 <h5> Example </h5>
 
