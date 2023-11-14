@@ -45,7 +45,7 @@ jobs:
           paths:
             - ~/.cache/pre-commit
       - run:
-          name: Runnning tests
+          name: Running tests
           command: poetry run make test
       - store_artifacts:
           path: .coverage-reports/coverage.xml

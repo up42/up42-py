@@ -19,7 +19,8 @@ class JobTask(VizTools):
     Use an existing jobtask:
     ```python
     jobtask = up42.initialize_jobtask(jobtask_id="3f772637-09aa-4164-bded-692fcd746d20",
-                                      job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021")
+                                      job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021",
+                                      project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321")
     ```
     """
 
@@ -68,7 +69,7 @@ class JobTask(VizTools):
             Json of the results, alternatively geodataframe.
         """
         url = (
-            f"{self.auth._endpoint()}/projects/{self.auth.project_id}/jobs/{self.job_id}"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
             f"/tasks/{self.jobtask_id}/outputs/data-json/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
@@ -103,9 +104,7 @@ class JobTask(VizTools):
         logger.info(f"Downloading results of jobtask {self.jobtask_id}")
 
         if output_directory is None:
-            output_directory = (
-                Path.cwd() / f"project_{self.auth.project_id}/job_{self.job_id}/jobtask_{self.jobtask_id}"
-            )
+            output_directory = Path.cwd() / f"project_{self.project_id}/job_{self.job_id}/jobtask_{self.jobtask_id}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
@@ -140,7 +139,7 @@ class JobTask(VizTools):
             # On purpose downloading the quicklooks to the jobs folder and not the
             # jobtasks folder,since only relevant for data block task. And clearer
             # for job.download_quicklooks.
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}" / f"job_{self.job_id}"
+            output_directory = Path.cwd() / f"project_{self.project_id}" / f"job_{self.job_id}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)

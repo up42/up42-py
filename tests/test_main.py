@@ -16,7 +16,18 @@ import requests
 from .context import get_block_coverage, get_block_details, get_blocks, get_credits_balance, main, validate_manifest
 
 # pylint: disable=unused-import
-from .fixtures import auth_live, auth_mock
+from .fixtures import (
+    auth_account_live,
+    auth_account_mock,
+    auth_live,
+    auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
+    username_test_live,
+)
 
 
 def test_get_blocks(auth_mock, requests_mock, monkeypatch):
@@ -98,11 +109,15 @@ def test_get_block_coverage(auth_mock, requests_mock, monkeypatch):
     requests_mock.get(
         url=url_get_blocks_coverage,
         json={
-            "data": {"url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"},
+            "data": {
+                "url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
+            },
             "error": {},
         },
     )
-    url_geojson_response = "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
+    url_geojson_response = (
+        "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
+    )
     requests_mock.get(
         url=url_geojson_response,
         json={
@@ -193,7 +208,9 @@ def test_validate_manifest_invalid_live(auth_live, monkeypatch):
         mainfest_json.update(
             {
                 "_up42_specification_version": 1,
-                "input_capabilities": {"invalidtype": {"up42_standard": {"format": "GTiff"}}},
+                "input_capabilities": {
+                    "invalidtype": {"up42_standard": {"format": "GTiff"}}
+                },
             }
         )
     with pytest.raises(requests.exceptions.RequestException):

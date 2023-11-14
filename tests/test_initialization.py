@@ -14,13 +14,23 @@ from .fixtures import (
     PROJECT_ID,
     WORKFLOW_ID,
     asset_mock,
+    auth_account_live,
+    auth_account_mock,
+    auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
     job_mock,
     jobcollection_single_mock,
+    jobs_mock,
     jobtask_mock,
     order_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
     project_mock,
     storage_mock,
+    username_test_live,
     workflow_mock,
 )
 
@@ -85,3 +95,169 @@ def test_global_auth_initialize_objects(
     assert isinstance(order, Order)
     asset = up42.initialize_asset(asset_id=ASSET_ID)
     assert isinstance(asset, Asset)
+
+
+def test_should_initialize_project_with_project_id(auth_mock, requests_mock):
+    up42.authenticate(
+        project_id=PROJECT_ID,
+        authenticate=False,
+    )
+    project_id = "project_id"
+    url_project_info = f"{auth_mock._endpoint()}/projects/{project_id}"
+    json_project_info = {
+        "data": {
+            "name": "name",
+            "description": "description",
+            "createdAt": "date",
+        },
+    }
+    requests_mock.get(url=url_project_info, json=json_project_info)
+    project = up42.initialize_project(project_id=project_id)
+    assert project.project_id == project_id
+
+
+def test_should_initialize_project_with_implicit_project_id(auth_mock, project_mock):
+    up42.authenticate(
+        project_id=PROJECT_ID,
+        authenticate=False,
+    )
+    project = up42.initialize_project()
+    assert project.project_id == PROJECT_ID
+
+
+def test_should_initialize_workflow(auth_mock, requests_mock):
+    up42.authenticate(
+        project_id=PROJECT_ID,
+        authenticate=False,
+    )
+    project_id = "project_id"
+    url_workflow_info = (
+        f"{auth_mock._endpoint()}/projects/{project_id}/workflows/{WORKFLOW_ID}"
+    )
+    json_workflow_info = {
+        "data": {
+            "name": "name",
+            "id": WORKFLOW_ID,
+            "description": "description",
+            "createdAt": "date",
+        },
+    }
+    requests_mock.get(url=url_workflow_info, json=json_workflow_info)
+    workflow = up42.initialize_workflow(WORKFLOW_ID, project_id)
+    assert workflow.project_id == project_id
+
+
+def test_should_initialize_workflow_with_implicit_project_id(auth_mock, workflow_mock):
+    up42.authenticate(
+        project_id=PROJECT_ID,
+        authenticate=False,
+    )
+    workflow = up42.initialize_workflow(WORKFLOW_ID)
+    assert workflow.project_id == PROJECT_ID
+
+
+def test_should_initialize_job(auth_mock, requests_mock):
+    up42.authenticate(
+        project_id=PROJECT_ID,
+        authenticate=False,
+    )
+    project_id = "project_id"
+    url_job_info = f"{auth_mock._endpoint()}/projects/{project_id}/jobs/{JOB_ID}"
+    json_job_info = {
+        "data": {
+            "mode": "DEFAULT",
+            "description": "description",
+            "startedAt": "date",
+            "workflowName": "workflow_name",
+            "name": "name",
+            "finishedAt": "date",
+            "status": "SUCCESSFUL",
+            "inputs": "inputs",
+        },
+    }
+    requests_mock.get(url=url_job_info, json=json_job_info)
+    job = up42.initialize_job(JOB_ID, project_id)
+    assert job.project_id == project_id
+
+
+def test_should_initialize_job_with_implicit_project_id(auth_mock, job_mock):
+    up42.authenticate(
+        project_id=PROJECT_ID,
+        authenticate=False,
+    )
+    job = up42.initialize_job(JOB_ID)
+    assert job.project_id == PROJECT_ID
+
+
+def test_should_initialize_jobtask(auth_mock, requests_mock, jobtask_mock):
+    up42.authenticate(
+        project_id=PROJECT_ID,
+        authenticate=False,
+    )
+    project_id = "project_id"
+    url_jobtask_info = (
+        f"{auth_mock._endpoint()}/projects/{project_id}/jobs/{JOB_ID}/tasks/"
+    )
+    requests_mock.get(
+        url=url_jobtask_info,
+        json={
+            "data": [
+                {
+                    "id": JOBTASK_ID,
+                    "xyz": 789,
+                    "name": "name",
+                    "status": "SUCCESSFUL",
+                    "startedAt": "date",
+                    "finishedAt": "date",
+                    "block": {"name": "a_block"},
+                    "blockVersion": "1.0.0",
+                }
+            ]
+        },
+    )
+    job = up42.initialize_jobtask(JOBTASK_ID, JOB_ID, project_id)
+    assert job.project_id == project_id
+
+
+def test_should_initialize_job_task_with_implicit_project_id(auth_mock, jobtask_mock):
+    up42.authenticate(
+        project_id=PROJECT_ID,
+        authenticate=False,
+    )
+    job = up42.initialize_jobtask(JOBTASK_ID, JOB_ID)
+    assert job.project_id == PROJECT_ID
+
+
+def test_should_initialize_job_collection(auth_mock, requests_mock):
+    up42.authenticate(
+        project_id=PROJECT_ID,
+        authenticate=False,
+    )
+    project_id = "project_id"
+    url_job_info = f"{auth_mock._endpoint()}/projects/{project_id}/jobs/{JOB_ID}"
+    json_job_info = {
+        "data": {
+            "mode": "DEFAULT",
+            "description": "description",
+            "startedAt": "date",
+            "workflowName": "workflow_name",
+            "name": "name",
+            "finishedAt": "date",
+            "status": "SUCCESSFUL",
+            "inputs": "inputs",
+        },
+    }
+    requests_mock.get(url=url_job_info, json=json_job_info)
+    collection = up42.initialize_jobcollection([JOB_ID], project_id)
+    assert all(job.project_id == project_id for job in collection.jobs)
+    assert collection.project_id == project_id
+
+
+def test_should_initialize_job_collection_with_implicit_project_id(auth_mock, job_mock):
+    up42.authenticate(
+        project_id=PROJECT_ID,
+        authenticate=False,
+    )
+    collection = up42.initialize_jobcollection([JOB_ID])
+    assert all(job.project_id == PROJECT_ID for job in collection.jobs)
+    assert collection.project_id == PROJECT_ID

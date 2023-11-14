@@ -24,7 +24,10 @@ class JobCollection(VizTools):
 
     Initialize a jobcollection from existing jobs:
     ```python
-    jobcollection = up42.initialize_jobcollection(job_ids=["12345", "6789"])
+    jobcollection = up42.initialize_jobcollection(
+        job_ids=["12345", "6789"],
+        project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321"
+    )
     ```
     """
 
@@ -120,7 +123,7 @@ class JobCollection(VizTools):
             data.json.
         """
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}"
+            output_directory = Path.cwd() / f"project_{self.project_id}"
         else:
             output_directory = Path(output_directory)
 

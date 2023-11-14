@@ -49,8 +49,11 @@ Search & order satellite images from the UP42 catalog.
 
 ```python
 import up42
+up42.authenticate(
+    username="<your-email-address>",
+    password="<your-password>",
+)
 
-up42.authenticate(project_id="your project ID", project_api_key="your-project-API-key")
 catalog = up42.initialize_catalog()
 
 # See the available data products and collections

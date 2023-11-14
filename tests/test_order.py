@@ -9,10 +9,18 @@ from .fixtures import (
     WORKSPACE_ID,
     asset_live,
     asset_mock,
+    auth_account_live,
+    auth_account_mock,
     auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
     catalog_mock,
     order_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
+    username_test_live,
 )
 
 
@@ -142,7 +150,8 @@ def test_track_status_running(order_mock, requests_mock):
     del order_mock._info
 
     url_job_info = (
-        f"{order_mock.auth._endpoint()}/workspaces/" f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
+        f"{order_mock.auth._endpoint()}/workspaces/"
+        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
     )
 
     status_responses = [
@@ -187,7 +196,8 @@ def test_track_status_pass(order_mock, status, requests_mock):
     del order_mock._info
 
     url_job_info = (
-        f"{order_mock.auth._endpoint()}/workspaces/" f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
+        f"{order_mock.auth._endpoint()}/workspaces/"
+        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
@@ -200,7 +210,8 @@ def test_track_status_fail(order_mock, status, requests_mock):
     del order_mock._info
 
     url_job_info = (
-        f"{order_mock.auth._endpoint()}/workspaces/" f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
+        f"{order_mock.auth._endpoint()}/workspaces/"
+        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
     )
     requests_mock.get(
         url=url_job_info,
@@ -212,7 +223,9 @@ def test_track_status_fail(order_mock, status, requests_mock):
 
 
 def test_estimate_order(order_parameters, auth_mock, requests_mock):
-    url_order_estimation = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/estimate"
+    url_order_estimation = (
+        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/estimate"
+    )
     requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
     estimation = Order.estimate(auth_mock, order_parameters)
     assert isinstance(estimation, int)

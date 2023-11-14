@@ -15,10 +15,18 @@ from .fixtures import (
     JSON_STORAGE_STAC,
     ORDER_ID,
     WORKSPACE_ID,
+    auth_account_live,
+    auth_account_mock,
     auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
     storage_live,
     storage_mock,
+    username_test_live,
 )
 
 
@@ -296,7 +304,9 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     }
 
     # assets pages
-    url_storage_assets_paginated = f"{auth_mock._endpoint()}/v2/assets?sort=createdAt,asc&size=50"
+    url_storage_assets_paginated = (
+        f"{auth_mock._endpoint()}/v2/assets?sort=createdAt,asc&size=50"
+    )
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
     storage = Storage(auth=auth_mock)
@@ -318,7 +328,9 @@ def test_get_assets_raise_error_live(storage_live):
 
 
 def test_get_orders(storage_mock):
-    orders = storage_mock.get_orders(order_type="ARCHIVE", tags=["project-7", "optical"])
+    orders = storage_mock.get_orders(
+        order_type="ARCHIVE", tags=["project-7", "optical"]
+    )
     assert len(orders) == 1
     assert isinstance(orders[0], Order)
     assert orders[0].order_id == ORDER_ID
