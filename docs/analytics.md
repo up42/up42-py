@@ -12,7 +12,7 @@ A workflow starts with a data block, which may be followed by processing blocks.
 
 1. Create a workflow and populate it with blocks, for example:
   ```python
-  project = up42.initialize_project()
+  project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 
   workflow = project.create_workflow(name="My workflow with Processing from Storage")
   workflow.add_workflow_tasks(["Processing from Storage"])

@@ -16,13 +16,7 @@ class Project:
     new workflows, query already existing workflows & jobs in the project and manage
     the project settings.
 
-    Create a new project on the
-    [**UP42 Console website**](https://sdk.up42.com/authentication/#get-your-project-credentials).
-
-    Use an existing project:
     ```python
-    up42.authenticate(project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321",
-                      project_api_key="9i7uec8a-45be-41ad-a50f-98bewb528b10")
     project = up42.initialize_project(project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321")
     ```
     """

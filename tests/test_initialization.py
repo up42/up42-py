@@ -14,14 +14,23 @@ from .fixtures import (
     PROJECT_ID,
     WORKFLOW_ID,
     asset_mock,
+    auth_account_live,
+    auth_account_mock,
+    auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
     job_mock,
     jobcollection_single_mock,
     jobs_mock,
     jobtask_mock,
     order_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
     project_mock,
     storage_mock,
+    username_test_live,
     workflow_mock,
 )
 
@@ -51,15 +60,15 @@ def test_initialize_object_without_auth_raises():
 
 # pylint: disable=unused-argument
 def test_global_auth_initialize_objects(
-        auth_mock,
-        project_mock,
-        workflow_mock,
-        job_mock,
-        jobtask_mock,
-        jobcollection_single_mock,
-        storage_mock,
-        order_mock,
-        asset_mock,
+    auth_mock,
+    project_mock,
+    workflow_mock,
+    job_mock,
+    jobtask_mock,
+    jobcollection_single_mock,
+    storage_mock,
+    order_mock,
+    asset_mock,
 ):
     up42.authenticate(
         project_id=PROJECT_ID,
@@ -122,7 +131,9 @@ def test_should_initialize_workflow(auth_mock, requests_mock):
         authenticate=False,
     )
     project_id = "project_id"
-    url_workflow_info = f"{auth_mock._endpoint()}/projects/{project_id}/workflows/{WORKFLOW_ID}"
+    url_workflow_info = (
+        f"{auth_mock._endpoint()}/projects/{project_id}/workflows/{WORKFLOW_ID}"
+    )
     json_workflow_info = {
         "data": {
             "name": "name",
@@ -184,7 +195,9 @@ def test_should_initialize_jobtask(auth_mock, requests_mock, jobtask_mock):
         authenticate=False,
     )
     project_id = "project_id"
-    url_jobtask_info = f"{auth_mock._endpoint()}/projects/{project_id}/jobs/{JOB_ID}/tasks/"
+    url_jobtask_info = (
+        f"{auth_mock._endpoint()}/projects/{project_id}/jobs/{JOB_ID}/tasks/"
+    )
     requests_mock.get(
         url=url_jobtask_info,
         json={

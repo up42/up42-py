@@ -8,11 +8,19 @@ from .fixtures import (
     JOB_ID,
     WORKFLOW_DESCRIPTION,
     WORKFLOW_NAME,
+    auth_account_live,
+    auth_account_mock,
     auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
     project_live,
     project_mock,
     project_mock_max_concurrent_jobs,
+    username_test_live,
 )
 
 MAX_CONCURRENT_JOBS = 12
@@ -27,7 +35,9 @@ def test_project_info(project_mock):
 
 
 def test_create_workflow(project_mock):
-    workflow = project_mock.create_workflow(name=WORKFLOW_NAME, description=WORKFLOW_DESCRIPTION)
+    workflow = project_mock.create_workflow(
+        name=WORKFLOW_NAME, description=WORKFLOW_DESCRIPTION
+    )
     assert isinstance(workflow, Workflow)
     assert hasattr(workflow, "_info")
 
@@ -58,7 +68,10 @@ def test_get_workflows_live(project_live):
 
 
 def test_get_jobs(project_mock, requests_mock):
-    url_job_info = f"{project_mock.auth._endpoint()}/projects/" f"{project_mock.project_id}/jobs/{JOB_ID}"
+    url_job_info = (
+        f"{project_mock.auth._endpoint()}/projects/"
+        f"{project_mock.project_id}/jobs/{JOB_ID}"
+    )
     json_job_info = {"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}}
     requests_mock.get(
         url=url_job_info,
@@ -84,7 +97,9 @@ def test_get_jobs_pagination_limit(project_mock):
     assert len(jobcollection.jobs) == 110
 
 
-@pytest.mark.skip(reason="too many jobs in test project, triggers too many job info requests.")
+@pytest.mark.skip(
+    reason="too many jobs in test project, triggers too many job info requests."
+)
 @pytest.mark.live
 def test_get_jobs_live(project_live):
     jobcollection = project_live.get_jobs()

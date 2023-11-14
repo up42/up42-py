@@ -9,9 +9,9 @@
     - Project → Workflow → Job/JobCollection → JobTask
 
 - Each class object can spawn elements of one level below, for example:
-    - `project = up42.initialize_project()`
+    - `project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")`
     - `workflow = project.create_workflow()`
-    - `job = workflow.run_job()`
+    - `job = workflow.run_job(job_id="a0d443a2-41e8-4995-8b54-a5cc4c448227")`
 
 
 ## Classes
@@ -145,7 +145,7 @@
         The Project class enables access to the UP42 [analytics functionality](analytics.md). A project stores workflows and their corresponding job runs.
 
         ```python
-        project = up42.initialize_project()
+        project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
         ```
 
         See available attributes and functions on the [Project](project-reference.md) reference page:
