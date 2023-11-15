@@ -34,7 +34,7 @@ order.order_details
 
 ### status
 
-The `status` attribute returns the [order status](https://docs.up42.com/developers/api-orders/monitor#order-statuses).
+The `status` attribute returns the [order status](https://docs.up42.com/developers/api-tasking/tasking-monitor#order-statuses).
 
 The returned format is `str`.
 
