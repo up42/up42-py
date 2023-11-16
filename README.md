@@ -43,7 +43,7 @@ pip install up42-py
 conda install -c conda-forge up42-py
 ```
 
-## 30-second Example
+## Quick example to order and download data
 
 Search & order satellite images from the UP42 catalog.
 
@@ -57,29 +57,37 @@ up42.authenticate(
 catalog = up42.initialize_catalog()
 
 # See the available data products and collections
-catalog.get_data_products(basic=True)
-
+data_products = catalog.get_data_products(basic=True)
+data_product_id = data_products.get("Sentinel-2").get("data_products").get("Level-2A")
 # Search in the catalog with your search parameters
-aoi = up42.read_vector_file("data/aoi_washington.geojson")
-search_parameters = catalog.construct_search_parameters(geometry=aoi,
-                                                        start_date="2019-01-01",
-                                                        end_date="2021-12-31",
-                                                        collections=["phr"],
-                                                        max_cloudcover=20,
-                                                        limit=10)
+aoi = up42.read_vector_file("up42/data/aoi_berlin.geojson")
+search_parameters = catalog.construct_search_parameters(
+    geometry=aoi,
+    start_date="2022-01-01",
+    end_date="2023-11-01",
+    collections=[data_products.get("Sentinel-2").get("collection")],
+    max_cloudcover=10,
+    limit=10,
+)
+
 search_results = catalog.search(search_parameters=search_parameters)
+# Sort the results for latest 'acquisitionDate' and least 'cloudCoverage'
+sorted_results = search_results.sort_values(
+    by=["cloudCoverage", "acquisitionDate"], ascending=[True, False]
+)
 
 # Estimate the order price and place the order
-order_parameters = catalog.construct_order_parameters(data_product_id='647780db-5a06-4b61-b525-577a8b68bb54',
-                                                      image_id='6434e7af-2d41-4ded-a789-fb1b2447ac92',
-                                                      aoi=aoi)
+order_parameters = catalog.construct_order_parameters(
+    data_product_id=data_product_id, image_id=sorted_results.iloc[0].id, aoi=aoi
+)
 
 catalog.estimate_order(order_parameters)
-order = catalog.place_order(order_parameters)
+order = catalog.place_order(order_parameters, track_status=True)
 
-# Download the finished order
-assets = order.get_assets()
-assets[0].download()
+# Get download URL for blue band
+asset = up42.initialize_order(order_id=order.order_id).get_assets()[0]
+stac_items = asset.stac_items
+asset.get_stac_asset_url(stac_asset=stac_items[0].assets.get("b02.tiff"))
 ```
 
 ## Support
