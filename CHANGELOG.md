@@ -30,6 +30,13 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.33.1
+
+**November 23, 2023**
+
+- Deprecation announcement for geometry, acquired_before, acquired_after and custom_filter parameters in `get_asset` to enforce use of `pystac_client` search in the future.
+- Bugfix on `get_asset` to ignore assets without `up42-system:asset_id` field when using the geometry, acquired_before, acquired_after and custom_filter fields search filter.
+
 ## 0.33.0
 
 **November 14, 2023**

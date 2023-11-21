@@ -1,6 +1,7 @@
 import math
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
+from warnings import warn
 
 from geojson import Feature, FeatureCollection
 from geopandas import GeoDataFrame
@@ -259,13 +260,27 @@ class Storage:
             or geometry is not None
             or custom_filter is not None
         ):
+            warn(
+                "Search for geometry or other STAC related fields will be deprecated soon."
+                "Use the pystac client provided for these types of queries.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+            # This merge can lead to incorrect results.
+            # merging stac_search features will be deprecated
             stac_features = self._search_stac(
                 acquired_after=acquired_after,
                 acquired_before=acquired_before,
                 geometry=geometry,
                 custom_filter=custom_filter,
             )
-            stac_assets_ids = [feature["properties"]["up42-system:asset_id"] for feature in stac_features]
+            stac_assets_ids = []
+            for feature in stac_features:
+                asset_id = feature.get("properties", {}).get("up42-system:asset_id", None)
+                if asset_id is not None:
+                    stac_assets_ids.append(asset_id)
+
             assets_json = [asset_json for asset_json in assets_json if asset_json["id"] in stac_assets_ids]
 
         if workspace_id is not None:
