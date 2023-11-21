@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, List, Optional, Union
-
 from warnings import warn
+
 from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection
