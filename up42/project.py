@@ -1,6 +1,7 @@
 import logging
 from typing import Dict, List, Optional, Union
 
+from warnings import warn
 from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection
@@ -57,6 +58,7 @@ class Project:
         Returns:
             The workflow object.
         """
+        warn("Workflows will be deprecated soon.")
         if use_existing:
             logger.info("Getting existing workflows in project ...")
             logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
@@ -221,6 +223,7 @@ class Project:
         """
         # The ranges and default values of the project settings can potentially get
         # increased, so need to be dynamically queried from the server.
+        warn("Workflows will be deprecated soon.")
         current_settings = {d["name"]: d for d in self.get_project_settings()}
 
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"

@@ -5,6 +5,7 @@ from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
+from warnings import warn
 
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
@@ -91,6 +92,7 @@ class Workflow:
 
         Currently no data blocks can be attached to other data blocks.
         """
+        warn("Blocks will be deprecated soon.")
         tasks: dict = self.get_workflow_tasks(basic=True)  # type: ignore
         if not tasks:
             logger.info("The workflow is empty, returning all data blocks.")
@@ -120,6 +122,7 @@ class Workflow:
         Returns:
             The workflow task info.
         """
+        warn("Workflows will be deprecated soon.")
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks"
 
         response_json = self.auth._request(request_type="GET", url=url)
@@ -259,6 +262,7 @@ class Workflow:
             ```
         """
         # Construct proper task definition from simplified input.
+        warn("Workflows will be deprecated soon.")
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
 
@@ -673,6 +677,7 @@ class Workflow:
         Returns:
             The spawned test job object.
         """
+        warn("Jobs will be deprecated soon.")
         if get_estimation:
             self.estimate_job(input_parameters)
 
@@ -705,6 +710,7 @@ class Workflow:
         Raises:
             ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
+        warn("Jobs will be deprecated soon.")
         return self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
             max_concurrent_jobs=max_concurrent_jobs,
@@ -730,6 +736,7 @@ class Workflow:
         Returns:
             The spawned job object.
         """
+        warn("Jobs will be deprecated soon.")
         return self._helper_run_job(
             input_parameters=input_parameters,
             track_status=track_status,
@@ -756,6 +763,7 @@ class Workflow:
         Raises:
             ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
+        warn("Jobs will be deprecated soon.")
         jobcollection = self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
             max_concurrent_jobs=max_concurrent_jobs,
@@ -804,6 +812,7 @@ class Workflow:
             name: New name of the workflow.
             description: New description of the workflow.
         """
+        warn("Workflows will be deprecated soon.")
         properties_to_update = {"name": name, "description": description}
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}"
         self.auth._request(request_type="PUT", url=url, data=properties_to_update)
