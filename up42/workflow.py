@@ -92,7 +92,8 @@ class Workflow:
 
         Currently no data blocks can be attached to other data blocks.
         """
-        warn("Blocks are getting deprecated. The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new processing functionalities.")
+        warn("Blocks are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.")
         tasks: dict = self.get_workflow_tasks(basic=True)  # type: ignore
         if not tasks:
             logger.info("The workflow is empty, returning all data blocks.")
@@ -122,7 +123,8 @@ class Workflow:
         Returns:
             The workflow task info.
         """
-        warn("Workflows are getting deprecated. The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new processing functionalities.")
+        warn("Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.")
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks"
 
         response_json = self.auth._request(request_type="GET", url=url)
@@ -262,7 +264,8 @@ class Workflow:
             ```
         """
         # Construct proper task definition from simplified input.
-        warn("Workflows are getting deprecated. The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new processing functionalities.")
+        warn("Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.")
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
 
@@ -677,7 +680,8 @@ class Workflow:
         Returns:
             The spawned test job object.
         """
-        warn("Jobs are getting deprecated. The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new processing functionalities.")
+        warn("Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.")
         if get_estimation:
             self.estimate_job(input_parameters)
 
@@ -710,7 +714,8 @@ class Workflow:
         Raises:
             ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
-        warn("Jobs are getting deprecated. The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new processing functionalities.")
+        warn("Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.")
         return self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
             max_concurrent_jobs=max_concurrent_jobs,
@@ -736,7 +741,8 @@ class Workflow:
         Returns:
             The spawned job object.
         """
-        warn("Jobs are getting deprecated. The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new processing functionalities.")
+        warn("Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.")
         return self._helper_run_job(
             input_parameters=input_parameters,
             track_status=track_status,
@@ -763,7 +769,8 @@ class Workflow:
         Raises:
             ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
-        warn("Jobs are getting deprecated. The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new processing functionalities.")
+        warn("Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.")
         jobcollection = self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
             max_concurrent_jobs=max_concurrent_jobs,
@@ -812,7 +819,8 @@ class Workflow:
             name: New name of the workflow.
             description: New description of the workflow.
         """
-        warn("Workflows are getting deprecated. The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new processing functionalities.")
+        warn("Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.")
         properties_to_update = {"name": name, "description": description}
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}"
         self.auth._request(request_type="PUT", url=url, data=properties_to_update)
