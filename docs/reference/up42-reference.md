@@ -183,7 +183,7 @@ The returned format is `dict`.
 <h5> Example </h5>
 
 ```python
-validate_manifest(path_or_json="/Users/max.mustermann/Desktop/UP42Manifest.json")
+up42.validate_manifest(path_or_json="/Users/max.mustermann/Desktop/UP42Manifest.json")
 ```
 
 ## Geometries
