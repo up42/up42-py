@@ -94,7 +94,9 @@ class Workflow:
         """
         warn(
             "Blocks are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities."
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
         )
         tasks: dict = self.get_workflow_tasks(basic=True)  # type: ignore
         if not tasks:
@@ -127,7 +129,9 @@ class Workflow:
         """
         warn(
             "Workflows are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities."
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
         )
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks"
 
@@ -270,7 +274,9 @@ class Workflow:
         # Construct proper task definition from simplified input.
         warn(
             "Workflows are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities."
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
         )
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
@@ -688,7 +694,9 @@ class Workflow:
         """
         warn(
             "Jobs are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities."
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
         )
         if get_estimation:
             self.estimate_job(input_parameters)
@@ -724,7 +732,9 @@ class Workflow:
         """
         warn(
             "Jobs are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities."
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
         )
         return self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
@@ -753,7 +763,9 @@ class Workflow:
         """
         warn(
             "Jobs are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities."
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
         )
         return self._helper_run_job(
             input_parameters=input_parameters,
@@ -783,7 +795,9 @@ class Workflow:
         """
         warn(
             "Jobs are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities."
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
         )
         jobcollection = self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
@@ -835,7 +849,9 @@ class Workflow:
         """
         warn(
             "Workflows are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities."
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
         )
         properties_to_update = {"name": name, "description": description}
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}"

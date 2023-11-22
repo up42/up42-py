@@ -56,7 +56,8 @@ def initialize_project(project_id: Optional[str] = None) -> "Project":
     """
     warn(
         "Projects are getting deprecated. The current analytics platform will be discontinued "
-        "after January 31, 2024, and will be replaced by new processing functionalities."
+        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        DeprecationWarning,
     )
     project = Project(auth=main._auth, project_id=_get_project_id(project_id=project_id))
     logger.info(f"Initialized {project}")
@@ -89,7 +90,8 @@ def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> "
     """
     warn(
         "Workflows are getting deprecated. The current analytics platform will be discontinued "
-        "after January 31, 2024, and will be replaced by new processing functionalities."
+        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        DeprecationWarning,
     )
     workflow = Workflow(
         auth=main._auth,
@@ -110,7 +112,8 @@ def initialize_job(job_id: str, project_id: Optional[str] = None) -> "Job":
     """
     warn(
         "Jobs are getting deprecated. The current analytics platform will be discontinued "
-        "after January 31, 2024, and will be replaced by new processing functionalities."
+        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        DeprecationWarning,
     )
     job = Job(
         auth=main._auth,
@@ -132,7 +135,8 @@ def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] =
     """
     warn(
         "Job tasks are getting deprecated. The current analytics platform will be discontinued "
-        "after January 31, 2024, and will be replaced by new processing functionalities."
+        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        DeprecationWarning,
     )
     jobtask = JobTask(
         auth=main._auth,
@@ -154,7 +158,8 @@ def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = Non
     """
     warn(
         "Job Collections are getting deprecated. The current analytics platform will be discontinued "
-        "after January 31, 2024, and will be replaced by new processing functionalities."
+        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        DeprecationWarning,
     )
     jobs = [
         Job(

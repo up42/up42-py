@@ -60,7 +60,9 @@ class Project:
         """
         warn(
             "Workflows are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities."
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
         )
         if use_existing:
             logger.info("Getting existing workflows in project ...")
@@ -228,7 +230,9 @@ class Project:
         # increased, so need to be dynamically queried from the server.
         warn(
             "Workflows are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities."
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
         )
         current_settings = {d["name"]: d for d in self.get_project_settings()}
 
