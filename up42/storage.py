@@ -199,14 +199,6 @@ class Storage:
                 in `"YYYY-MM-DD"` format.
             created_before: Search for assets created before the specified timestamp,\
                 in `"YYYY-MM-DD"` format.
-            acquired_after: Search for assets that contain data acquired after the specified timestamp,\
-                in `"YYYY-MM-DD"` format.
-            acquired_before: Search for assets that contain data acquired before the specified timestamp,\
-            in `"YYYY-MM-DD"` format.
-            geometry: Search for assets that contain STAC items intersecting the provided geometry,\
-                in EPSG:4326 (WGS84) format.\
-                For more information on STAC items,\
-                see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
             workspace_id: Search by the workspace ID.
             collection_names: Search for assets from any of the provided geospatial collections.
             producer_names: Search for assets from any of the provided producers.
@@ -215,7 +207,6 @@ class Storage:
                 The allowed values: `"ARCHIVE"`, `"TASKING"`, `"ANALYTICS"`, `"USER"`.
             search: Search for assets that contain the provided search query in their name,\
                 title, or order ID.
-            custom_filter: CQL2 filters used to search for assets that contain STAC\
             items with specific property values.\
                 For more information on filters,\
                     see \
@@ -253,7 +244,6 @@ class Storage:
 
         assets_json = self._query_paginated_endpoints(url=url, limit=limit)
 
-        # Comparison of asset results with storage stac search results which can be related to the assets via asset-id
         if (
             acquired_before is not None
             or acquired_after is not None
@@ -261,27 +251,14 @@ class Storage:
             or custom_filter is not None
         ):
             warn(
-                "Search for geometry or other STAC related fields will be deprecated soon."
-                "Use the pystac client provided for these types of queries.",
+                "Search for geometry, acquired_before, acquired_after and custom_filter has been deprecated."
+                "Use pystac client https://sdk.up42.com/storage/#pystac for STAC queries.",
                 DeprecationWarning,
                 stacklevel=2,
             )
-
-            # This merge can lead to incorrect results.
-            # merging stac_search features will be deprecated
-            stac_features = self._search_stac(
-                acquired_after=acquired_after,
-                acquired_before=acquired_before,
-                geometry=geometry,
-                custom_filter=custom_filter,
+            raise ValueError(
+                "Search for geometry, acquired_before, acquired_after and custom_filter is no longer supported."
             )
-            stac_assets_ids = []
-            for feature in stac_features:
-                asset_id = feature.get("properties", {}).get("up42-system:asset_id", None)
-                if asset_id is not None:
-                    stac_assets_ids.append(asset_id)
-
-            assets_json = [asset_json for asset_json in assets_json if asset_json["id"] in stac_assets_ids]
 
         if workspace_id is not None:
             logger.info(f"Queried {len(assets_json)} assets for workspace {self.workspace_id}.")

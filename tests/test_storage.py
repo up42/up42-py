@@ -188,13 +188,14 @@ def test_get_assets_live(storage_live):
     # default descending, newest to oldest.
     descending_dates = sorted(dates)[::-1]
     assert descending_dates == dates
-    assets = storage_live.get_assets(
-        created_after="2020-01-01",
-        created_before="2023-01-01",
-        acquired_after="2020-01-01",
-        acquired_before="2023-01-01",
-    )
-    assert len(assets) >= 2
+    with pytest.raises(ValueError) as e:
+        storage_live.get_assets(
+            created_after="2020-01-01",
+            created_before="2023-01-01",
+            acquired_after="2020-01-01",
+            acquired_before="2023-01-01",
+        )
+    assert "no longer supported" in str(e.value)
 
 
 @pytest.mark.live
@@ -204,38 +205,15 @@ def test_get_assets_by_source_live(storage_live):
 
 
 def test_get_assets_with_search_stac(storage_mock):
-    assets = storage_mock.get_assets(acquired_after="2021-05-30")
-    assert len(assets) == 1
-    assert isinstance(assets[0], Asset)
-    assert assets[0].asset_id == ASSET_ID
-    assets = storage_mock.get_assets(
-        created_after="2020-01-01",
-        created_before="2023-01-01",
-        acquired_after="2020-01-01",
-        acquired_before="2023-01-01",
-        tags=["project-7", "optical"],
-    )
-    assert len(assets) == 1
-    assert isinstance(assets[0], Asset)
-
-
-@pytest.mark.live
-def test_get_assets_with_stac_query_live(storage_live):
-    filter_geometry = {
-        "coordinates": [
-            [
-                [13.353338545805542, 52.52576354784705],
-                [13.353338545805542, 52.52400476917347],
-                [13.355812219301214, 52.52400476917347],
-                [13.355812219301214, 52.52576354784705],
-                [13.353338545805542, 52.52576354784705],
-            ]
-        ],
-        "type": "Polygon",
-    }
-
-    storage_live.get_assets(geometry=filter_geometry)
-    # TODO assertions
+    with pytest.raises(ValueError) as e:
+        storage_mock.get_assets(
+            created_after="2020-01-01",
+            created_before="2023-01-01",
+            acquired_after="2020-01-01",
+            acquired_before="2023-01-01",
+            tags=["project-7", "optical"],
+        )
+        assert "no longer supported" in str(e.value)
 
 
 def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
