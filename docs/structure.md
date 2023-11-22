@@ -280,7 +280,21 @@
 
     === "Webhooks"
 
-        {{ docstring_webhooks }}
-        <br>
-        Available functions, see also [**Webhooks reference**](webhooks-reference.md):
-        {{ format_funcs(funcs_webhook) }}
+        The Webhooks class enables creation and modification of custom event notifications with [webhooks](webhooks.md).
+
+        ```python
+        webhook = up42.initialize_webhook(webhook_id="1df1ebb0-78a4-55d9-b806-15d22e391bd3")
+        ```
+
+        A webhook is a method for sending event notifications from one application to another. When something happens in a source system indicated by an event, the webhook transmits an event notification via HTTPS to a specific URL.
+
+        See available attributes and functions on the [Webhooks](webhooks-reference.md) reference page:
+        <ul>
+            <li>`info`</li>
+            <li>`get_webhooks()`</li>
+            <li>`create_webhook()`</li>
+            <li>`update()`</li>
+            <li>`delete()`</li>
+            <li>`get_webhook_events()`</li>
+            <li>`trigger_test_events()`</li>
+        </ul>
