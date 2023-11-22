@@ -1,6 +1,6 @@
 import math
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import List, Optional, Union
 from warnings import warn
 
 from geojson import Feature, FeatureCollection
@@ -11,7 +11,7 @@ from up42.asset import Asset
 from up42.auth import Auth
 from up42.order import Order
 from up42.stac_client import PySTACAuthClient
-from up42.utils import any_vector_to_fc, fc_to_query_geometry, format_time, get_logger
+from up42.utils import format_time, get_logger
 
 logger = get_logger(__name__)
 
@@ -107,71 +107,6 @@ class Storage:
                 break
         return response_features
 
-    def _search_stac(
-        self,
-        acquired_after: Optional[Union[str, datetime]] = None,
-        acquired_before: Optional[Union[str, datetime]] = None,
-        geometry: Optional[
-            Union[
-                dict,
-                Feature,
-                FeatureCollection,
-                list,
-                GeoDataFrame,
-                Polygon,
-            ]
-        ] = None,
-        custom_filter=None,
-    ) -> list:
-        """
-        Search query for storage STAC collection items.
-
-        Args:
-            acquired_after: Search for assets that contain data acquired after the specified timestamp,\
-                in `"YYYY-MM-DD"` format.
-            acquired_before: Search for assets that contain data acquired before the specified timestamp,\
-                in `"YYYY-MM-DD"` format.
-            geometry: Search for assets that contain STAC items intersecting the provided geometry,\
-                in EPSG:4326 (WGS84) format.\
-                    For more information on STAC items,\
-                        see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
-            custom_filter:\
-                CQL2 filters used to search for assets that contain STAC items with specific property values.\
-                For more information on filters,\
-                see [PySTAC Client Documentation — CQL2 Filtering]\
-                    (https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters).\
-                For more information on STAC items, see [Introduction to STAC]\
-                    (https://docs.up42.com/developers/api-assets/stac-about).
-
-        Returns:
-            A list of STAC items.
-        """
-        stac_search_parameters: Dict[str, Any] = {
-            "max_items": 100,
-            "limit": 10000,
-        }
-        if geometry is not None:
-            geometry = any_vector_to_fc(vector=geometry)
-            geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
-            stac_search_parameters["intersects"] = geometry
-        if custom_filter is not None:
-            # e.g. {"op": "gte","args": [{"property": "eo:cloud_cover"}, 10]}
-            stac_search_parameters["filter"] = custom_filter
-
-        datetime_filter = None
-        if acquired_after is not None:
-            datetime_filter = f"{format_time(acquired_after)}/.."
-        if acquired_before is not None:
-            datetime_filter = f"../{format_time(acquired_before)}"
-        if acquired_after is not None and acquired_before is not None:
-            datetime_filter = f"{format_time(acquired_after)}/{format_time(acquired_before)}"
-        stac_search_parameters["datetime"] = datetime_filter  # type: ignore
-
-        url = f"{self.auth._endpoint()}/v2/assets/stac/search"
-
-        features = self._query_paginated_stac_search(url, stac_search_parameters)
-        return features
-
     def get_assets(
         self,
         created_after: Optional[Union[str, datetime]] = None,
@@ -194,30 +129,26 @@ class Storage:
         """
         Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#functionality_1)
         objects or in JSON format.
+
         Args:
-            created_after: Search for assets created after the specified timestamp,\
-                in `"YYYY-MM-DD"` format.
-            created_before: Search for assets created before the specified timestamp,\
-                in `"YYYY-MM-DD"` format.
+            created_after: Search for assets created after the specified timestamp, in `"YYYY-MM-DD"` format.
+            created_before: Search for assets created before the specified timestamp, in `"YYYY-MM-DD"` format.
+            acquired_after: Deprecated filter.
+            acquired_before: Deprecated filter.
+            geometry: Deprecated filter.
             workspace_id: Search by the workspace ID.
             collection_names: Search for assets from any of the provided geospatial collections.
             producer_names: Search for assets from any of the provided producers.
             tags: Search for assets with any of the provided tags.
             sources: Search for assets from any of the provided sources.\
                 The allowed values: `"ARCHIVE"`, `"TASKING"`, `"ANALYTICS"`, `"USER"`.
-            search: Search for assets that contain the provided search query in their name,\
-                title, or order ID.
-            items with specific property values.\
-                For more information on filters,\
-                    see \
-                        [CQL2 Filtering](https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html).\
-                    For more information on STAC items,\
-                        see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            search: Search for assets that contain the provided search query in their name, title, or order ID.
+            custom_filter: Deprecated filter.
             limit: The number of results on a results page.
             sortby: The property to sort by.
             descending: The sorting order: <ul><li>`true` — descending</li><li>`false` — ascending</li></ul>
-            return_json: If `true`, returns a JSON dictionary. If `false`,\
-                returns a list of [Asset](https://sdk.up42.com/structure/#functionality_1) objects.
+            return_json: If `true`, returns a JSON dictionary.\
+                If `false`, returns a list of [Asset](https://sdk.up42.com/structure/#functionality_1) objects.
 
         Returns:
             A list of Asset objects.
