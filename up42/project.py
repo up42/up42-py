@@ -58,7 +58,7 @@ class Project:
         Returns:
             The workflow object.
         """
-        warn("Workflows will be deprecated soon.")
+        warn("Workflows are getting deprecated. The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new processing functionalities.")
         if use_existing:
             logger.info("Getting existing workflows in project ...")
             logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
@@ -223,7 +223,7 @@ class Project:
         """
         # The ranges and default values of the project settings can potentially get
         # increased, so need to be dynamically queried from the server.
-        warn("Workflows will be deprecated soon.")
+        warn("Workflows are getting deprecated. The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new processing functionalities.")
         current_settings = {d["name"]: d for d in self.get_project_settings()}
 
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
