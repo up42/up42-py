@@ -2,7 +2,7 @@
 
 !!! info "Analytics platform discontinued after January 31, 2024"
 
-    The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new [advanced functionalities](https://docs.up42.com/processing-platform/advanced). This change will affect projects, workflows, jobs, data blocks, processing blocks, and custom blocks. For more information, see the [blog post.](BLOG-LINK)
+    The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new [advanced processing functionalities](https://docs.up42.com/processing-platform/advanced). This change will affect projects, workflows, jobs, data blocks, processing blocks, and custom blocks. For more information, see the [blog post.](BLOG-LINK)
 
 The JobTask class enables access to [results of a specific job task](analytics.md). Job tasks are unique configurations of workflow tasks in a job.
 
