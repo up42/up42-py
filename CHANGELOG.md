@@ -34,7 +34,12 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **November 23, 2023**
 
-- Deprecation for geometry, acquired_before, acquired_after and custom_filter parameters in `get_asset` to enforce use of `pystac_client` search.
+Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of the [PySTAC client](https://sdk.up42.com/storage/#pystac) search.
+
+- `geometry`
+- `acquired_before`
+- `acquired_after`
+- `custom_filter`
 
 ## 0.33.0
 
