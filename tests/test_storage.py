@@ -15,10 +15,18 @@ from .fixtures import (
     JSON_STORAGE_STAC,
     ORDER_ID,
     WORKSPACE_ID,
+    auth_account_live,
+    auth_account_mock,
     auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
     storage_live,
     storage_mock,
+    username_test_live,
 )
 
 
@@ -49,53 +57,6 @@ def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
             "number": page_nr,
         },
     }
-
-
-def test__search_stac(storage_mock):
-    geometry = {
-        "coordinates": [
-            [
-                [13.353338545805542, 52.52576354784705],
-                [13.353338545805542, 52.52400476917347],
-                [13.355812219301214, 52.52400476917347],
-                [13.355812219301214, 52.52576354784705],
-                [13.353338545805542, 52.52576354784705],
-            ]
-        ],
-        "type": "Polygon",
-    }
-    stac_results = storage_mock._search_stac(
-        acquired_after="2021-05-30",
-        acquired_before=datetime.datetime(2023, 5, 17),
-        geometry=geometry,
-        custom_filter={"op": "gte", "args": [{"property": "eo:cloud_cover"}, 10]},
-    )
-    assert isinstance(stac_results, list)
-    assert stac_results[0]["assets"]
-
-
-@pytest.mark.live
-def test__search_stac_live(storage_live):
-    geometry = {
-        "coordinates": [
-            [
-                [13.290655771836441, 52.54215979691358],
-                [13.290655771836441, 52.42035305277207],
-                [13.582819011302632, 52.42035305277207],
-                [13.582819011302632, 52.54215979691358],
-                [13.290655771836441, 52.54215979691358],
-            ]
-        ],
-        "type": "Polygon",
-    }
-    stac_results = storage_live._search_stac(
-        acquired_after=datetime.datetime(2020, 5, 17),
-        acquired_before=datetime.datetime(2023, 5, 17),
-        geometry=geometry,
-    )
-    assert isinstance(stac_results, list)
-    assert stac_results[0]["assets"]
-    # TODO: assertions
 
 
 def test_paginate_one_page(storage_mock, requests_mock):
@@ -180,13 +141,14 @@ def test_get_assets_live(storage_live):
     # default descending, newest to oldest.
     descending_dates = sorted(dates)[::-1]
     assert descending_dates == dates
-    assets = storage_live.get_assets(
-        created_after="2020-01-01",
-        created_before="2023-01-01",
-        acquired_after="2020-01-01",
-        acquired_before="2023-01-01",
-    )
-    assert len(assets) >= 2
+    with pytest.raises(ValueError) as e:
+        storage_live.get_assets(
+            created_after="2020-01-01",
+            created_before="2023-01-01",
+            acquired_after="2020-01-01",
+            acquired_before="2023-01-01",
+        )
+    assert "no longer supported" in str(e.value)
 
 
 @pytest.mark.live
@@ -196,38 +158,15 @@ def test_get_assets_by_source_live(storage_live):
 
 
 def test_get_assets_with_search_stac(storage_mock):
-    assets = storage_mock.get_assets(acquired_after="2021-05-30")
-    assert len(assets) == 1
-    assert isinstance(assets[0], Asset)
-    assert assets[0].asset_id == ASSET_ID
-    assets = storage_mock.get_assets(
-        created_after="2020-01-01",
-        created_before="2023-01-01",
-        acquired_after="2020-01-01",
-        acquired_before="2023-01-01",
-        tags=["project-7", "optical"],
-    )
-    assert len(assets) == 1
-    assert isinstance(assets[0], Asset)
-
-
-@pytest.mark.live
-def test_get_assets_with_stac_query_live(storage_live):
-    filter_geometry = {
-        "coordinates": [
-            [
-                [13.353338545805542, 52.52576354784705],
-                [13.353338545805542, 52.52400476917347],
-                [13.355812219301214, 52.52400476917347],
-                [13.355812219301214, 52.52576354784705],
-                [13.353338545805542, 52.52576354784705],
-            ]
-        ],
-        "type": "Polygon",
-    }
-
-    storage_live.get_assets(geometry=filter_geometry)
-    # TODO assertions
+    with pytest.raises(ValueError) as e:
+        storage_mock.get_assets(
+            created_after="2020-01-01",
+            created_before="2023-01-01",
+            acquired_after="2020-01-01",
+            acquired_before="2023-01-01",
+            tags=["project-7", "optical"],
+        )
+        assert "no longer supported" in str(e.value)
 
 
 def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
@@ -296,7 +235,9 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     }
 
     # assets pages
-    url_storage_assets_paginated = f"{auth_mock._endpoint()}/v2/assets?sort=createdAt,asc&size=50"
+    url_storage_assets_paginated = (
+        f"{auth_mock._endpoint()}/v2/assets?sort=createdAt,asc&size=50"
+    )
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
     storage = Storage(auth=auth_mock)
@@ -318,7 +259,9 @@ def test_get_assets_raise_error_live(storage_live):
 
 
 def test_get_orders(storage_mock):
-    orders = storage_mock.get_orders(order_type="ARCHIVE", tags=["project-7", "optical"])
+    orders = storage_mock.get_orders(
+        order_type="ARCHIVE", tags=["project-7", "optical"]
+    )
     assert len(orders) == 1
     assert isinstance(orders[0], Order)
     assert orders[0].order_id == ORDER_ID

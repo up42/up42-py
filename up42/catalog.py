@@ -448,7 +448,7 @@ class Catalog(CatalogBase, VizTools):
         logger.info(f"Downloading quicklooks from provider {host}.")
 
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}/catalog"
+            output_directory = Path.cwd() / "catalog"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)

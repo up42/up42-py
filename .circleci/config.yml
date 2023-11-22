@@ -4,7 +4,7 @@ venv-cache: &venv-cache venv-{{ checksum "poetry.lock" }}
 pre-commit-cache: &pre-commit-cache pre-commit-{{ checksum ".pre-commit-config.yaml" }}
 
 orbs:
-  sonarcloud: sonarsource/sonarcloud@1.0.3
+  sonarcloud: sonarsource/sonarcloud@2.0.0
 
 # variables
 workspace: &workspace-dir /tmp/workspace
@@ -45,7 +45,7 @@ jobs:
           paths:
             - ~/.cache/pre-commit
       - run:
-          name: Runnning tests
+          name: Running tests
           command: poetry run make test
       - store_artifacts:
           path: .coverage-reports/coverage.xml

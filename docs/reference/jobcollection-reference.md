@@ -11,7 +11,8 @@ jobcollection = up42.initialize_jobcollection(
     job_ids=[
         "0479cdb8-99d0-4de1-b0e2-6ff6b69d0f68",
         "a0d443a2-41e8-4995-8b54-a5cc4c448227",
-    ]
+    ],
+    project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
 )
 ```
 

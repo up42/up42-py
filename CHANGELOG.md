@@ -30,13 +30,23 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.33.1
+
+**November 23, 2023**
+
+Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of the [PySTAC client](https://sdk.up42.com/storage/#pystac) search.
+
+- `geometry`
+- `acquired_before`
+- `acquired_after`
+- `custom_filter`
+
 ## 0.33.0
 
-**October XX, 2023**
+**November 14, 2023**
 
-A new function added to the [Asset class](https://sdk.up42.com/reference/asset-reference):
-
-- `get_stac_asset_url` generates a signed URL that allows you to download a STAC asset from storage without authentication.
+- Updated [authentication](https://sdk.up42.com/authentication) by changing it from project-based to account-based.
+- Added a new function to the [Asset class](https://sdk.up42.com/reference/asset-reference): `get_stac_asset_url` generates a signed URL that allows to download a STAC asset from storage without authentication.
 
 ## 0.32.0
 

@@ -9,9 +9,9 @@
     - Project → Workflow → Job/JobCollection → JobTask
 
 - Each class object can spawn elements of one level below, for example:
-    - `project = up42.initialize_project()`
+    - `project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")`
     - `workflow = project.create_workflow()`
-    - `job = workflow.run_job()`
+    - `job = workflow.run_job(job_id="a0d443a2-41e8-4995-8b54-a5cc4c448227")`
 
 
 ## Classes
@@ -145,7 +145,7 @@
         The Project class enables access to the UP42 [analytics functionality](analytics.md). A project stores workflows and their corresponding job runs.
 
         ```python
-        project = up42.initialize_project()
+        project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
         ```
 
         See available attributes and functions on the [Project](project-reference.md) reference page:
@@ -161,19 +161,50 @@
 
     === "Workflow"
 
-        {{ docstring_workflow }}
-        <br>
-        Available functions, see also [**Workflow reference**](workflow-reference.md):
-        {{ format_funcs(funcs_workflow) }}
+        The Workflow class enables access to the UP42 [analytics functionality](analytics.md).
+
+        A workflow is a sequence of data blocks and processing blocks. It defines an order of operations that start with a data block, which may be followed by up to five processing blocks.
+
+        ```python
+        workflow = up42.initialize_workflow(
+            project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
+            workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98",
+        )
+        ```
+
+        See available attributes and functions on the [Workflow](workflow-reference.md) reference page:
+
+        <ul>
+            <li>`max_concurrent_jobs`</li>
+            <li>`info`</li>
+            <li>`update_name()`</li>
+            <li>`delete()`</li>
+            <li>`workflow_tasks`</li>
+            <li>`get_workflow_tasks()`</li>
+            <li>`add_workflow_tasks()`</li>
+            <li>`get_compatible_blocks()`</li>
+            <li>`get_parameters_info()`</li>
+            <li>`construct_parameters()`</li>
+            <li>`construct_parameters_parallel()`</li>
+            <li>`estimate_job()`</li>
+            <li>`get_jobs()`</li>
+            <li>`test_job()`</li>
+            <li>`test_jobs_parallel()`</li>
+            <li>`run_job()`</li>
+            <li>`run_jobs_parallel()`</li>
+            </ul>
 
     === "Job"
 
         The Job class enables access to the UP42 [analytics functionality](analytics.md).
 
-        A job is an instance of a workflow. It delivers geospatial outputs defined by job parameters.
+        A job is an instance of a workflow. It delivers geospatial outputs defined by job JSON parameters.
 
         ```python
-        job = up42.initialize_job(job_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
+        job = up42.initialize_job(
+            job_id="68567134-27ad-7bd7-4b65-d61adb11fc78",
+            project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
+        )
         ```
 
         See available attributes and functions on the [Job](job-reference.md) reference page:
@@ -204,7 +235,8 @@
             job_ids=[
                 "0479cdb8-99d0-4de1-b0e2-6ff6b69d0f68",
                 "a0d443a2-41e8-4995-8b54-a5cc4c448227",
-            ]
+            ],
+            project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
         )
         ```
 
@@ -231,6 +263,7 @@
         jobtask = up42.initialize_jobtask(
             jobtask_id="3f772637-09aa-4164-bded-692fcd746d20",
             job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021",
+            project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
         )
         ```
 
