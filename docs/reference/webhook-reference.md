@@ -5,7 +5,7 @@ The Webhooks class enables you to view, test, and modify custom event notificati
 ```python
 webhook = up42.initialize_webhook(webhook_id="1df1ebb0-78a4-55d9-b806-15d22e391bd3")
 ```
-To create a webhook, see the [up42 base library](up42-reference.md).
+To learn how to create a webhook, see the [up42 class](up42-reference.md).
 
 ## Webhooks
 
@@ -55,7 +55,7 @@ webhook.update(
     url="https://new-receiving-url.com",
     events=["job.status"],
     active=True,
-    secret="new-secret",
+    secret="RFZTJnNAChqZKNmo",
 )
 ```
 
