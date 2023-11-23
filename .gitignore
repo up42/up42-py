@@ -147,3 +147,4 @@ quicklook_*
 asset_*/
 
 .DS_Store
+.vscode

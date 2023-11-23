@@ -5,14 +5,11 @@ env:
 	workon up42-py
 
 install:
-	pip install up42-py
+	poetry install --without dev, docs, viz
 
 install[dev]:
-	pip install -r $(SRC)/requirements.txt
-	pip install -e .
-	pip install -r $(SRC)/requirements-dev.txt
-	pip install -r $(SRC)/requirements-viz.txt
-	pip install -r $(SRC)/requirements-docs.txt
+# TODO: not sure how to install in editable mode with poetry
+	poetry install
 	unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
 
 test:
@@ -42,10 +39,10 @@ gh-pages:
 	mkdocs gh-deploy -m "update gh-pages [ci skip]"
 
 package:
-	python setup.py sdist bdist_wheel
-	twine check dist/*
+	poetry build
 
 upload:
+# TODO: use poetry publish instead --> need to update circleci context
 	twine upload --skip-existing dist/*
 
 clean:

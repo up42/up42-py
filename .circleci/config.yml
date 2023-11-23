@@ -88,12 +88,15 @@ jobs:
       - checkout
       - run:
           name: Installing packaging utils
+          #TODO: remove this step when poetry build and publish are supported
           command: python -m pip install --user packaging twine
       - run:
           name: Build package
+          # TODO: direclty use poetry build
           command: make package
       - run:
           name: Upload to PyPi
+          #TODO: directly use poetry publish
           command: make upload
 
 workflows:
