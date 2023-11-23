@@ -1,6 +1,6 @@
 # Webhook
 
-The Webhooks class enables you to view, test, and modify custom event notifications with [webhooks](webhooks.md).
+The Webhook class enables you to view, test, and modify custom event notifications with [webhooks](webhooks.md).
 
 ```python
 webhook = up42.initialize_webhook(webhook_id="1df1ebb0-78a4-55d9-b806-15d22e391bd3")
