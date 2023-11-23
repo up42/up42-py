@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 from time import sleep
 from typing import List, Optional, Union
+from warnings import warn
 
 import requests
 import requests.exceptions
@@ -98,6 +99,12 @@ class Job(VizTools):
         Args:
             report_time: The intervall (in seconds) when to query the job status.
         """
+        warn(
+            "Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         logger.info(
             f"Tracking job status continuously, reporting every {report_time} seconds...",
         )
@@ -129,6 +136,12 @@ class Job(VizTools):
 
     def cancel_job(self) -> None:
         """Cancels a pending or running job."""
+        warn(
+            "Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}/cancel/"
         self.auth._request(request_type="POST", url=url)
         logger.info(f"Job canceled: {self.job_id}")
