@@ -26,7 +26,7 @@ jobs:
           name: Install requirements
           command: |
             poetry lock
-            poetry install --no-interaction
+            poetry install --no-interaction --no-ansi
       - save_cache:
           name: Saving poetry cache
           key: *venv-cache
