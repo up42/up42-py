@@ -38,13 +38,6 @@ gh-pages:
 	ln -sfn $(PWD)/CHANGELOG.md docs
 	mkdocs gh-deploy -m "update gh-pages [ci skip]"
 
-package:
-	poetry build
-
-upload:
-# TODO: use poetry publish instead --> need to update circleci context
-	twine upload --skip-existing dist/*
-
 clean:
 	find . -name "__pycache__" -exec rm -rf {} +
 	find . -name ".mypy_cache" -exec rm -rf {} +
