@@ -44,6 +44,7 @@ class retry_if_401_invalid_token(retry_if_exception):
                         requests.exceptions.RequestException,
                     ),
                 )
+                and hasattr(exception.response, "status_code")
                 and exception.response.status_code == 401
             )
 
