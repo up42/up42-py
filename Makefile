@@ -8,7 +8,6 @@ install:
 	poetry install --without dev, docs, viz
 
 install[dev]:
-# TODO: not sure how to install in editable mode with poetry
 	poetry install
 	unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
 
