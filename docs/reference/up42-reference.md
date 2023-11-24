@@ -301,3 +301,80 @@ up42.viztools.folium_base_map(
     layer_control=False,
 )
 ```
+## Webhooks
+
+### get_webhook_events()
+
+The `get_webhook_events()` function returns all available webhook events. For more information, see [Webhooks](webhooks.md).
+
+```python
+get_webhook_events()
+```
+
+The returned format is `dict`.
+
+<h5> Example </h5>
+
+```python
+up42.get_webhook_events()
+```
+
+### create_webhook()
+
+The `create_webhook()` function allows you to register a new webhook in the system.
+
+```python
+create_webhook(
+    name,
+    url,
+    events,
+    active,
+    secret,
+)
+```
+
+The returned format is `Webhook`.
+
+<h5> Arguments </h5>
+
+| Argument | Overview                                                                                                                                                                                  |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`   | **str / required**<br/>The name of the webhook.                                                                                                                                           |
+| `url`    | **str / required**<br/>The URL of the webhook.                                                                                                                                            |
+| `events` | **list[str] / required**<br/>A list of events that trigger the webhook. The allowed values:<br/><ul><li>`job.status`</li><li>`order.status`</li></ul>                                     |
+| `active` | **bool**<br/>Whether this webhook should be active after the update:<br/><ul><li>`True`: webhook is active.</li><li>`False`: webhook isn't active.</li></ul>The default value is `False`. |
+| `secret` | **str**<br/>The secret used to generate webhook signatures.                                                                                                                               |
+
+<h5> Example </h5>
+
+```python
+up42.create_webhook(
+    name="new-webhook",
+    url="https://receiving-url.com",
+    events=["job.status", "order.status"],
+    active=True,
+    secret="QWZTFnMEXhqZKNmu",
+)
+```
+
+### get_webhooks()
+
+The `get_webhooks()` function returns all registered webhooks for this workspace.
+
+```python
+get_webhooks(return_json)
+```
+
+The returned format is `list[Webhook]`.
+
+<h5> Arguments </h5>
+
+| Argument      | Overview                                                                                                                                                               |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `return_json` | **bool**<br/>Determines how to return webhooks:<br/><ul><li>`True`: return JSON.</li><li>`False`: return webhook class objects.</li></ul>The default value is `False`. |
+
+<h5> Example </h5>
+
+```python
+up42.get_webhooks(return_json=False)
+```
