@@ -17,7 +17,7 @@
       ```json
       {
         "username": "<your-email-address>",
-        "password": "<your-password>",
+        "password": "<your-password>"
       }
       ```
     3. Authenticate from the created `config.json` file.

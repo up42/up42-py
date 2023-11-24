@@ -34,6 +34,9 @@
             <li>`read_vector_file()`</li>
             <li>`raw_aoi()`</li>
             <li>`viztools.folium_base_map()`</li>
+            <li>`get_webhook_events()`</li>
+            <li>`create_webhook()`</li>
+            <li>`get_webhooks()`</li>
         </ul>
 
     === "Tasking"
@@ -285,9 +288,19 @@
             <li>`plot_quicklooks()`</li>
         </ul>
 
-    === "Webhooks"
+    === "Webhook"
 
-        {{ docstring_webhooks }}
-        <br>
-        Available functions, see also [**Webhooks reference**](webhooks-reference.md):
-        {{ format_funcs(funcs_webhook) }}
+        The Webhook class enables you to view, test, and modify custom event notifications with [webhooks](webhooks.md).
+
+        ```python
+        webhook = up42.initialize_webhook(webhook_id="1df1ebb0-78a4-55d9-b806-15d22e391bd3")
+        ```
+        To learn how to create a webhook, see the [up42 class](up42-reference.md).
+
+        See available attributes and functions on the [Webhook](webhook-reference.md) reference page:
+        <ul>
+            <li>`info`</li>
+            <li>`update()`</li>
+            <li>`delete()`</li>
+            <li>`trigger_test_events()`</li>
+        </ul>
