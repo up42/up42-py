@@ -54,6 +54,11 @@ def initialize_project(project_id: Optional[str] = None) -> "Project":
     Args:
         project_id: The UP42 project id
     """
+    warn(
+        "Projects are getting deprecated. The current analytics platform will be discontinued "
+        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        DeprecationWarning,
+    )
     project = Project(auth=main._auth, project_id=_get_project_id(project_id=project_id))
     logger.info(f"Initialized {project}")
     return project
@@ -83,6 +88,11 @@ def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> "
         workflow_id: The UP42 workflow_id
         project_id: The id of the UP42 project, containing the workflow
     """
+    warn(
+        "Workflows are getting deprecated. The current analytics platform will be discontinued "
+        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        DeprecationWarning,
+    )
     workflow = Workflow(
         auth=main._auth,
         workflow_id=workflow_id,
@@ -100,6 +110,11 @@ def initialize_job(job_id: str, project_id: Optional[str] = None) -> "Job":
         job_id: The UP42 job_id
         project_id: The id of the UP42 project, containing the job
     """
+    warn(
+        "Jobs are getting deprecated. The current analytics platform will be discontinued "
+        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        DeprecationWarning,
+    )
     job = Job(
         auth=main._auth,
         job_id=job_id,
@@ -118,6 +133,11 @@ def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] =
         job_id: The UP42 job_id
         project_id: The id of the UP42 project, containing the job
     """
+    warn(
+        "Job tasks are getting deprecated. The current analytics platform will be discontinued "
+        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        DeprecationWarning,
+    )
     jobtask = JobTask(
         auth=main._auth,
         jobtask_id=jobtask_id,
@@ -136,6 +156,11 @@ def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = Non
         job_ids: List of UP42 job_ids
         project_id: The id of the UP42 project, containing the jobs
     """
+    warn(
+        "Job Collections are getting deprecated. The current analytics platform will be discontinued "
+        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        DeprecationWarning,
+    )
     jobs = [
         Job(
             auth=main._auth,

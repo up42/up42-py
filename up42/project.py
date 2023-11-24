@@ -1,5 +1,6 @@
 import logging
 from typing import Dict, List, Optional, Union
+from warnings import warn
 
 from up42.auth import Auth
 from up42.job import Job
@@ -57,6 +58,12 @@ class Project:
         Returns:
             The workflow object.
         """
+        warn(
+            "Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if use_existing:
             logger.info("Getting existing workflows in project ...")
             logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
@@ -221,6 +228,12 @@ class Project:
         """
         # The ranges and default values of the project settings can potentially get
         # increased, so need to be dynamically queried from the server.
+        warn(
+            "Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         current_settings = {d["name"]: d for d in self.get_project_settings()}
 
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
