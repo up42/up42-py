@@ -37,10 +37,10 @@ jobs:
 
       - name: Create symlinks for examples and changelog
         run: |
-              ls
-              mkdir docs/examples
-              mv examples/* docs/examples
-              mv CHANGELOG.md docs
+          ls
+          mkdir docs/examples
+          mv examples/* docs/examples
+          mv CHANGELOG.md docs
 
       - name: Deploy docs
-        run: mkdocs gh-deploy --force -m "update gh-pages [ci skip]"
+        run: poetry run mkdocs gh-deploy --force -m "update gh-pages [ci skip]"
