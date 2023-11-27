@@ -62,6 +62,7 @@ storage.get_assets(
     search=["NY Central Park"],
     limit=5,
     sortby="productId",
+    descending=False,
     return_json=True,
 )
 ```
@@ -92,9 +93,9 @@ The returned format is `Union[list[Order], dict]`.
 
 | Argument           | Overview                                                                                                                                                                                                                                                                                                                                                                                                            |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `workspace_orders` | **bool**<br/>Determines the orders to return.<br/><ul><li>`True`: return workspace orders.</li><li>`False`: return all account orders.</li></ul>The default value is `True`.                                                                                                                                                                                                                                        |
+| `workspace_orders` | **bool**<br/><br/>Determines the scope of orders to return.<br/><ul><li>`True`: return orders from your workspace.</li><li>`False`: return orders from the entire account.</li></ul>The default value is `True`.                                                                                                                                                                                                    |
 | `return_json`      | **bool**<br/>Determines how to return orders.<br/><ul><li>`True`: return JSON.</li><li>`False`: return a list of order objects.</li></ul>The default value is `False`.                                                                                                                                                                                                                                              |
-| `limit`            | **int**<br/>The number of assets on a result page.                                                                                                                                                                                                                                                                                                                                                                  |
+| `limit`            | **int**<br/>The number of orders on a result page.                                                                                                                                                                                                                                                                                                                                                                  |
 | `sortby`           | **str**<br/>Arrange elements in the order specified in `descending` based on a chosen field. The allowed values:<br/><ul><li>`createdAt`</li><li>`updatedAt`</li><li>`status`</li><li>`dataProvider`</li><li>`type`</li></ul>The default value is `createdAt`.                                                                                                                                                      |
 | `descending`       | **bool**<br/>Determines the arrangement of elements:<br/><ul><li>`True`: arrange elements in descending order based on the field specified in `sortby`.</li><li>`False`: arrange elements in ascending order based on the field specified in `sortby`.</li></ul>The default value is `True`.                                                                                                                        |
 | `order_type`       | **str**<br/>The type of orders to return. To get orders of all types, omit the parameter. The allowed values:<br/><ul><li>`TASKING`: use to get only tasking orders.</li><li>`ARCHIVE`: use to get only catalog orders.</li></ul>                                                                                                                                                                                   |
@@ -110,8 +111,9 @@ storage.get_orders(
     return_json=True,
     limit=2,
     sortby="status",
-    status="FULFILLED",
+    descending=False,
     order_type="ARCHIVE",
+    status="FULFILLED",
     name="Spot 6/7 Central Park"
     tags=["optical","us"],
 )
