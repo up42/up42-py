@@ -1,12 +1,12 @@
 from pathlib import Path
-from typing import Union, List
+from typing import List, Union
 
 from geopandas import GeoDataFrame
 from tqdm import tqdm
 
 from up42.auth import Auth
+from up42.utils import download_from_gcs_unpack, get_logger
 from up42.viztools import VizTools
-from up42.utils import get_logger, download_from_gcs_unpack
 
 logger = get_logger(__name__)
 
@@ -19,7 +19,8 @@ class JobTask(VizTools):
     Use an existing jobtask:
     ```python
     jobtask = up42.initialize_jobtask(jobtask_id="3f772637-09aa-4164-bded-692fcd746d20",
-                                      job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021")
+                                      job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021",
+                                      project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321")
     ```
     """
 
@@ -51,15 +52,10 @@ class JobTask(VizTools):
         """
         Gets and updates the jobtask metadata information.
         """
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
-            f"/tasks/"
-        )
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/"
         response_json = self.auth._request(request_type="GET", url=url)
         info_all_jobtasks = response_json["data"]
-        self._info = next(
-            item for item in info_all_jobtasks if item["id"] == self.jobtask_id
-        )
+        self._info = next(item for item in info_all_jobtasks if item["id"] == self.jobtask_id)
         return self._info
 
     def get_results_json(self, as_dataframe: bool = False) -> Union[dict, GeoDataFrame]:
@@ -73,7 +69,7 @@ class JobTask(VizTools):
             Json of the results, alternatively geodataframe.
         """
         url = (
-            f"{self.auth._endpoint()}/projects/{self.auth.project_id}/jobs/{self.job_id}"
+            f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
             f"/tasks/{self.jobtask_id}/outputs/data-json/"
         )
         response_json = self.auth._request(request_type="GET", url=url)
@@ -95,9 +91,7 @@ class JobTask(VizTools):
         download_url = response_json["data"]["url"]
         return download_url
 
-    def download_results(
-        self, output_directory: Union[str, Path, None] = None
-    ) -> List[str]:
+    def download_results(self, output_directory: Union[str, Path, None] = None) -> List[str]:
         """
         Downloads and unpacks the jobtask results. Default download to Desktop.
 
@@ -110,10 +104,7 @@ class JobTask(VizTools):
         logger.info(f"Downloading results of jobtask {self.jobtask_id}")
 
         if output_directory is None:
-            output_directory = (
-                Path.cwd()
-                / f"project_{self.auth.project_id}/job_{self.job_id}/jobtask_{self.jobtask_id}"
-            )
+            output_directory = Path.cwd() / f"project_{self.project_id}/job_{self.job_id}/jobtask_{self.jobtask_id}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
@@ -148,9 +139,7 @@ class JobTask(VizTools):
             # On purpose downloading the quicklooks to the jobs folder and not the
             # jobtasks folder,since only relevant for data block task. And clearer
             # for job.download_quicklooks.
-            output_directory = (
-                Path.cwd() / f"project_{self.auth.project_id}" / f"job_{self.job_id}"
-            )
+            output_directory = Path.cwd() / f"project_{self.project_id}" / f"job_{self.job_id}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
@@ -172,9 +161,7 @@ class JobTask(VizTools):
                 f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
                 f"/tasks/{self.jobtask_id}/outputs/quicklooks/{ql_id}"
             )
-            response = self.auth._request(
-                request_type="GET", url=url, return_text=False
-            )
+            response = self.auth._request(request_type="GET", url=url, return_text=False)
 
             with open(out_path, "wb") as dst:
                 for chunk in response:

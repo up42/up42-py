@@ -1,12 +1,23 @@
-from pathlib import Path
-import tempfile
 import shutil
-
+import tempfile
+from pathlib import Path
 
 # pylint: disable=unused-import
 from .context import JobTask
-from .fixtures import auth_mock, auth_live, jobtask_mock
-from .fixtures import DOWNLOAD_URL
+from .fixtures import (
+    DOWNLOAD_URL,
+    auth_account_live,
+    auth_account_mock,
+    auth_live,
+    auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    jobtask_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
+    username_test_live,
+)
 
 
 def test_info(jobtask_mock):
@@ -41,7 +52,7 @@ def test_jobtask_download_result(jobtask_mock, requests_mock):
     # With default outdir
     default_outdir = (
         Path.cwd()
-        / f"project_{jobtask_mock.auth.project_id}/job_{jobtask_mock.job_id}/jobtask_{jobtask_mock.jobtask_id}"
+        / f"project_{jobtask_mock.project_id}/job_{jobtask_mock.job_id}/jobtask_{jobtask_mock.jobtask_id}"
     )
     if default_outdir.exists():
         shutil.rmtree(default_outdir)

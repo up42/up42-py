@@ -79,6 +79,15 @@ class Order:
         """
         return self.status == "FULFILLED"
 
+    def get_assets(self) -> List[Asset]:
+        """
+        Gets the Order assets or results.
+        """
+        if self.is_fulfilled:
+            assets: List[str] = self.info["assets"]
+            return [Asset(self.auth, asset_id=asset) for asset in assets]
+        raise ValueError(f"Order {self.order_id} is not FULFILLED! Status is {self.status}")
+
     @classmethod
     def place(cls, auth: Auth, order_parameters: dict) -> "Order":
         """
@@ -92,9 +101,7 @@ class Order:
             Order: The placed order.
         """
         url = f"{auth._endpoint()}/workspaces/{auth.workspace_id}/orders"
-        response_json = auth._request(
-            request_type="POST", url=url, data=order_parameters
-        )
+        response_json = auth._request(request_type="POST", url=url, data=order_parameters)
         try:
             order_id = response_json["data"]["id"]  # type: ignore
         except KeyError as e:
@@ -117,9 +124,7 @@ class Order:
         """
         url = f"{auth._endpoint()}/workspaces/{auth.workspace_id}/orders/estimate"
 
-        response_json = auth._request(
-            request_type="POST", url=url, data=order_parameters
-        )
+        response_json = auth._request(request_type="POST", url=url, data=order_parameters)
         estimated_credits: int = response_json["data"]["credits"]  # type: ignore
         logger.info(
             f"Order is estimated to cost {estimated_credits} UP42 credits (order_parameters: {order_parameters})"
@@ -169,9 +174,7 @@ class Order:
         while not self.is_fulfilled:
             status = self.status
             substatus_message = (
-                substatus_messages(self.order_details.get("subStatus", ""))
-                if self.info["type"] == "TASKING"
-                else ""
+                substatus_messages(self.order_details.get("subStatus", "")) if self.info["type"] == "TASKING" else ""
             )
             if status in ["PLACED", "BEING_FULFILLED"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:

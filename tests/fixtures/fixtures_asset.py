@@ -1,5 +1,7 @@
 import datetime
 import os
+from pathlib import Path
+
 import pytest
 from pystac import Item, ItemCollection
 from pystac.collection import Extent, SpatialExtent, TemporalExtent
@@ -13,6 +15,8 @@ from .fixtures_globals import (
     DOWNLOAD_URL2,
     JSON_ASSET,
     JSON_STORAGE_STAC,
+    STAC_ASSET_ID,
+    STAC_ASSET_URL,
     STAC_COLLECTION_ID,
 )
 
@@ -153,8 +157,37 @@ def asset_mock2(auth_mock, requests_mock):
         url=f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID2}/download-url",
         json={"url": DOWNLOAD_URL2},
     )
+    requests_mock.post(
+        url=f"{auth_mock._endpoint()}/v2/assets/{STAC_ASSET_ID}/download-url",
+        json={"url": STAC_ASSET_URL},
+    )
+    mock_file = Path(__file__).resolve().parents[1] / "mock_data/aoi_berlin.geojson"
+    with open(mock_file, "rb") as src_file:
+        out_file = src_file.read()
+
+    requests_mock.get(
+        url=STAC_ASSET_URL,
+        content=out_file,
+    )
     asset = Asset(auth=auth_mock, asset_id=ASSET_ID2)
     return asset
+
+
+@pytest.fixture(params=["asset_mock", "asset_mock2"])
+def assets_fixture(request, asset_mock, asset_mock2):
+    mocks = {
+        "asset_mock": {
+            "asset_fixture": asset_mock,
+            "download_url": DOWNLOAD_URL,
+            "outfile_name": "output.tgz",
+        },
+        "asset_mock2": {
+            "asset_fixture": asset_mock2,
+            "download_url": DOWNLOAD_URL2,
+            "outfile_name": "DS_SPOT6_202206240959075_FR1_FR1_SV1_SV1_E013N52_01709.tgz",
+        },
+    }
+    return mocks[request.param]
 
 
 @pytest.fixture()

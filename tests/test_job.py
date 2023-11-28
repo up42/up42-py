@@ -1,23 +1,30 @@
-import os
-from pathlib import Path
 import json
-import time
+import os
 import tempfile
+import time
+from pathlib import Path
 
 import pytest
-
 
 # pylint: disable=unused-import
 from .context import Job, JobTask
 from .fixtures import (
-    auth_mock,
-    auth_live,
-    job_mock,
-    job_live,
-    jobtask_mock,
-    workflow_live,
     DOWNLOAD_URL,
     JOBTASK_ID,
+    auth_account_live,
+    auth_account_mock,
+    auth_live,
+    auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    job_live,
+    job_mock,
+    jobtask_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
+    username_test_live,
+    workflow_live,
 )
 
 
@@ -185,31 +192,12 @@ def test_job_download_gcs_no_unpacking(job_mock, requests_mock):
         assert len(out_files) == 1
 
 
-# This test tests existance of netCDF files for the given job id
-# unfortunately, the given job no longer exists.
-# commeting this test for the time being.
-# @pytest.mark.live
-# def test_job_download_result_no_tiff_live(auth_live):
-#     with tempfile.TemporaryDirectory() as tempdir:
-#         job = Job(
-#             auth=auth_live,
-#             project_id=auth_live.project_id,
-#             job_id=os.getenv("TEST_UP42_JOB_ID_NC_FILE"),
-#         )
-#         out_files = job.download_results(Path(tempdir))
-#         assert Path(out_files[0]).exists()
-#         assert Path(out_files[1]).exists()
-#         assert any(".nc" in s for s in out_files)
-#         assert any("data.json" in s for s in out_files)
-#         assert len(out_files) == 2
-
-
 @pytest.mark.live
-def test_job_download_result_dimap_live(auth_live):
+def test_job_download_result_dimap_live(auth_live, project_id_live):
     with tempfile.TemporaryDirectory() as tempdir:
         job = Job(
             auth=auth_live,
-            project_id=auth_live.project_id,
+            project_id=project_id_live,
             job_id=os.getenv("TEST_UP42_JOB_ID_DIMAP_FILE"),
         )
         out_files = job.download_results(Path(tempdir))
@@ -218,15 +206,17 @@ def test_job_download_result_dimap_live(auth_live):
         assert Path(out_files[20]).exists()
         assert Path(out_files[-1]).exists()
         assert "data.json" in [Path(of).name for of in out_files]
-        assert len(out_files) == 46
+        assert len(out_files) == 44
 
 
 @pytest.mark.skip(reason="2gb download takes long")
 @pytest.mark.live
-def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live):
+def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(
+    auth_live, project_id_live
+):
     job = Job(
         auth=auth_live,
-        project_id=auth_live.project_id,
+        project_id=project_id_live,
         job_id="30f82b44-1505-4773-ab23-31fa61ba9b4c",
     )
     with tempfile.TemporaryDirectory() as tempdir:

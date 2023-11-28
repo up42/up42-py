@@ -1,7 +1,10 @@
 version: 2.1
 
+venv-cache: &venv-cache venv-{{ checksum "poetry.lock" }}
+pre-commit-cache: &pre-commit-cache pre-commit-{{ checksum ".pre-commit-config.yaml" }}
+
 orbs:
-  sonarcloud: sonarsource/sonarcloud@1.0.3
+  sonarcloud: sonarsource/sonarcloud@2.0.0
 
 # variables
 workspace: &workspace-dir /tmp/workspace
@@ -10,20 +13,40 @@ jobs:
   test:
     working_directory: *workspace-dir
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
     steps:
       - attach_workspace:
           at: *workspace-dir
       - checkout
+      - restore_cache:
+          name: Restoring poetry cache
+          keys:
+            - *venv-cache
       - run:
           name: Install requirements
           command: |
-            pip install -r requirements.txt
-            pip install -r requirements-viz.txt
-            pip install -r requirements-dev.txt
+            poetry lock
+            poetry install --no-interaction --no-ansi
+      - save_cache:
+          name: Saving poetry cache
+          key: *venv-cache
+          paths:
+            - .venv
+      - restore_cache:
+          name: Restoring pre-commit cache
+          keys:
+            - *pre-commit-cache
       - run:
-          name: Runnning tests
-          command: make test
+          name: Running pre-commit
+          command: poetry run pre-commit run --all
+      - save_cache:
+          name: Saving pre-commit cache
+          key: *pre-commit-cache
+          paths:
+            - ~/.cache/pre-commit
+      - run:
+          name: Running tests
+          command: poetry run make test
       - store_artifacts:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
@@ -44,20 +67,20 @@ jobs:
           at: *workspace-dir
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
+
   test_live:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
     steps:
       - checkout
       - run:
           name: Install requirements
           command: |
-            pip install -r requirements.txt
-            pip install -r requirements-viz.txt
-            pip install -r requirements-dev.txt
+            poetry lock
+            poetry install --no-ansi
       - run:
           name: Runnning tests
-          command: python -m pytest --runlive --durations=5
+          command: poetry run python -m pytest --runlive --durations=5
   deploy:
     docker:
       - image: circleci/python:3.8
@@ -73,9 +96,7 @@ jobs:
           name: Upload to PyPi
           command: make upload
 
-
 workflows:
-  version: 2
   test_and_deploy:
     jobs:
       - test

@@ -4,25 +4,33 @@ import pytest
 from shapely.geometry import box
 
 # pylint: disable=unused-import,wrong-import-order
-from .context import Workflow, Job, JobCollection
-
+from .context import Job, JobCollection, Workflow
 from .fixtures import (
-    auth_mock,
-    auth_live,
-    workflow_mock_empty,
-    workflow_mock,
-    job_mock,
-    jobcollection_single_mock,
-    jobtask_mock,
-    project_mock,
-    project_mock_max_concurrent_jobs,
-    asset_mock,
     ASSET_ID,
     JOB_ID,
     JOB_NAME,
     JOBTASK_ID,
-    JSON_WORKFLOW_TASKS,
     JSON_WORKFLOW_ESTIMATION,
+    JSON_WORKFLOW_TASKS,
+    PROJECT_ID,
+    asset_mock,
+    auth_account_live,
+    auth_account_mock,
+    auth_live,
+    auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    job_mock,
+    jobcollection_single_mock,
+    jobtask_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
+    project_mock,
+    project_mock_max_concurrent_jobs,
+    username_test_live,
+    workflow_mock,
+    workflow_mock_empty,
 )
 
 
@@ -306,7 +314,7 @@ def test_construct_parameters_parallel_scene_ids(workflow_mock):
     }
 
 
-def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
+def test_estimate_jobs(workflow_mock, requests_mock):
     input_parameters = {
         "esa-s2-l2a-gtiff-visual:1": {
             "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
@@ -317,11 +325,11 @@ def test_estimate_jobs(workflow_mock, auth_mock, requests_mock):
     }
     # get_workflow_tasks
     url_workflow_tasks = (
-        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
         f"{workflow_mock.workflow_id}/tasks"
     )
     url_workflow_estimation = (
-        f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/estimate/job"
+        f"{workflow_mock.auth._endpoint()}/projects/{PROJECT_ID}/estimate/job"
     )
     requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
     requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
@@ -591,7 +599,7 @@ def test_get_jobs_live(workflow_live):
 def test_update_name(workflow_mock, requests_mock):
     new_name = "new_workflow_name"
     url_update_name = (
-        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.auth.project_id}/workflows/"
+        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
         f"{workflow_mock.workflow_id}"
     )
     json_new_properties = {"data": {}, "error": {}}

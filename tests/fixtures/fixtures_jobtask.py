@@ -2,20 +2,14 @@ import os
 
 import pytest
 
-from .fixtures_globals import JOB_ID, JOBTASK_ID, JOBTASK_NAME, DOWNLOAD_URL
-
-from ..context import (
-    JobTask,
-)
+from ..context import JobTask
+from .fixtures_globals import DOWNLOAD_URL, JOB_ID, JOBTASK_ID, JOBTASK_NAME, PROJECT_ID
 
 
 @pytest.fixture()
 def jobtask_mock(auth_mock, requests_mock):
     # info
-    url_jobtask_info = (
-        f"{auth_mock._endpoint()}/projects/{auth_mock.project_id}/jobs/{JOB_ID}"
-        f"/tasks/"
-    )
+    url_jobtask_info = f"{auth_mock._endpoint()}/projects/{PROJECT_ID}/jobs/{JOB_ID}" f"/tasks/"
     requests_mock.get(
         url=url_jobtask_info,
         json={
@@ -37,20 +31,18 @@ def jobtask_mock(auth_mock, requests_mock):
 
     jobtask = JobTask(
         auth=auth_mock,
-        project_id=auth_mock.project_id,
+        project_id=PROJECT_ID,
         job_id=JOB_ID,
         jobtask_id=JOBTASK_ID,
     )
 
     # get_results_json
     url_results_json = (
-        f"{jobtask.auth._endpoint()}/projects/{jobtask.auth.project_id}/"
+        f"{jobtask.auth._endpoint()}/projects/{jobtask.project_id}/"
         f"jobs/{jobtask.job_id}/tasks/{jobtask.jobtask_id}/"
         f"outputs/data-json/"
     )
-    requests_mock.get(
-        url_results_json, json={"type": "FeatureCollection", "features": []}
-    )
+    requests_mock.get(url_results_json, json={"type": "FeatureCollection", "features": []})
 
     # get_download_url
     url_download_result = (
@@ -58,9 +50,7 @@ def jobtask_mock(auth_mock, requests_mock):
         f"jobs/{jobtask.job_id}/tasks/{jobtask.jobtask_id}/"
         f"downloads/results/"
     )
-    requests_mock.get(
-        url_download_result, json={"data": {"url": DOWNLOAD_URL}, "error": {}}
-    )
+    requests_mock.get(url_download_result, json={"data": {"url": DOWNLOAD_URL}, "error": {}})
 
     # quicklooks
     url_quicklook = (
@@ -74,10 +64,10 @@ def jobtask_mock(auth_mock, requests_mock):
 
 
 @pytest.fixture()
-def jobtask_live(auth_live):
+def jobtask_live(auth_live, project_id_live):
     jobtask = JobTask(
         auth=auth_live,
-        project_id=auth_live.project_id,
+        project_id=project_id_live,
         job_id=os.getenv("TEST_UP42_JOB_ID"),
         jobtask_id=os.getenv("TEST_UP42_JOBTASK_ID"),
     )

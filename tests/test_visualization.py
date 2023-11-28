@@ -1,20 +1,19 @@
-from pathlib import Path
 import tarfile
+from pathlib import Path
 from shutil import copyfile
 
-import pytest
-import geopandas as gpd
-from mock import patch
-import pandas as pd
 import folium
-from shapely import wkt
+import geopandas as gpd
+import pandas as pd
+import pytest
 from folium import Map
+from mock import patch
+from shapely import wkt
 
-from .context import folium_base_map, VizTools
+from .context import VizTools, folium_base_map
 
 # pylint: disable=unused-import,wrong-import-order
-from .fixtures import auth_mock, job_mock
-
+from .fixtures import auth_account_mock, auth_mock, auth_project_mock, job_mock
 
 # pylint: disable=unused-argument
 

@@ -24,6 +24,8 @@ Types of assets:
 
 The `info` attribute returns metadata of a specific UP42 asset.
 
+The returned format is `dict`.
+
 <h5> Example </h5>
 
 ```python
@@ -37,61 +39,54 @@ The `update_metadata()` function allows you to change the title and tags of an U
 ```python
 update_metadata(
     title,
-    tags
+    tags,
 )
 ```
 
+The returned format is `dict`.
+
 <h5> Arguments </h5>
 
-| Name    | Type        | Description                                       |
-| ------- | ----------- | ------------------------------------------------- |
-| `title` | `str`       | An editable asset title.                          |
-| `tags`  | `List[str]` | An editable list of tags to categorize the asset. |
-
-<h5> Returns </h5>
-
-| Type   | Description     |
-| ------ | --------------- |
-| `dict` | Asset metadata. |
+| Argument | Overview                                                            |
+| -------- | ------------------------------------------------------------------- |
+| `title`  | **str**<br/>An editable asset title.                                |
+| `tags`   | **list[str]**<br/>An editable list of tags to categorize the asset. |
 
 <h5> Example </h5>
 
 ```python
 asset.update_metadata(
     title="Sentinel-2 over Western Europe",
-    tags=["optical", "WEU"]
+    tags=["optical", "WEU"],
 )
 ```
 
 ### download()
 
-The `download()` function allows you to download UP42 assets from storage.
+The `download()` function allows you to download UP42 assets from storage and returns a list of download paths.
 
 ```python
 download(
     output_directory,
-    unpacking
+    unpacking,
 )
 ```
+
+The returned format is `list[str]`.
+
 <h5> Arguments </h5>
 
-| Name               | Type                     | Description                         |
-| ------------------ | ------------------------ | ----------------------------------- |
-| `output_directory` | `Union[str, Path, None]` | The file output directory.          |
-| `unpacking`        | `bool`                   | Whether to unpack the archive file. |
-
-<h5> Returns </h5>
-
-| Type        | Description                                       |
-| ----------- | ------------------------------------------------- |
-| `List[str]` | A list of paths where the files were uploaded to. |
+| Argument           | Overview                                                                                                                                                                                  |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `output_directory` | **Union[str, Path, None]**<br/>The file output directory. The default value is the current directory.                                                                                     |
+| `unpacking`        | **bool**<br/>Determines how to download the asset:<br/><ul><li>`True`: download and unpack the file.</li><li>`False`: download the compressed file.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
 
 ```python
 asset.download(
     output_directory="/Users/max.mustermann/Desktop/",
-    unpacking=True
+    unpacking=False,
 )
 ```
 
@@ -100,6 +95,8 @@ asset.download(
 ### stac_info
 
 The `stac_info` attribute returns the STAC collection associated with a specific UP42 asset.
+
+The returned format is `pystac.Collection`.
 
 <h5> Example </h5>
 
@@ -111,6 +108,8 @@ asset.stac_info
 
 The `stac_items` attribute returns STAC items from a specific UP42 asset.
 
+The returned format is `pystac.ItemCollection`.
+
 <h5> Example </h5>
 
 ```python
@@ -119,32 +118,54 @@ asset.stac_items
 
 ### download_stac_asset()
 
-The `download_stac_asset()` function allows you to download STAC assets from storage.
+The `download_stac_asset()` function allows you to download a STAC asset from storage and returns the path to the downloaded file. A new directory for the file will be created.
 
 ```python
 download_stac_asset(
     stac_asset,
-    unpacking
+    output_directory,
 )
 ```
+
+The returned format is `pathlib.Path`.
+
 <h5> Arguments </h5>
 
-| Name               | Type                     | Description                |
-| ------------------ | ------------------------ | -------------------------- |
-| `stac_asset`       | `pystac.Asset`           | The STAC asset name.       |
-| `output_directory` | `Union[str, Path, None]` | The file output directory. |
-
-<h5> Returns </h5>
-
-| Type   | Description                               |
-| ------ | ----------------------------------------- |
-| `Path` | The path where the file were uploaded to. |
+| Argument           | Description                                                                                           |
+| ------------------ | ----------------------------------------------------------------------------------------------------- |
+| `stac_asset`       | **pystac.Asset / required**<br/>The STAC asset to be downloaded.                                      |
+| `output_directory` | **Union[str, Path, None]**<br/>The file output directory. The default value is the current directory. |
 
 <h5> Example </h5>
 
 ```python
 asset.download_stac_asset(
-    stac_asset="b12.tiff",
-    output_directory="/Users/max.mustermann/Desktop/"
+    stac_asset=asset.stac_items.items[0].assets.get("b01.tiff"),
+    output_directory="/Users/max.mustermann/Desktop/",
+)
+```
+
+### get_stac_asset_url()
+
+The `get_stac_asset_url()` function returns a signed download URL for a STAC asset.
+The generated URL can be used for up to 5 minutes to download the asset without authentication.
+
+```python
+get_stac_asset_url(stac_asset)
+```
+
+The returned format is `str`.
+
+<h5> Arguments </h5>
+
+| Argument     | Description                                                      |
+| ------------ | ---------------------------------------------------------------- |
+| `stac_asset` | **pystac.Asset / required**<br/>The STAC asset to be downloaded. |
+
+<h5> Example </h5>
+
+```python
+asset.get_stac_asset_url(
+    stac_asset=asset.stac_items.items[0].assets.get("b01.tiff"),
 )
 ```

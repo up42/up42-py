@@ -1,14 +1,13 @@
-from typing import Dict, List, Union, Callable, Any
 from pathlib import Path
+from typing import Any, Callable, Dict, List, Union
 
 import geojson
 from geojson import FeatureCollection
 
 from up42.auth import Auth
 from up42.job import Job
-from up42.viztools import VizTools
-
 from up42.utils import get_logger
+from up42.viztools import VizTools
 
 logger = get_logger(__name__)
 
@@ -25,7 +24,10 @@ class JobCollection(VizTools):
 
     Initialize a jobcollection from existing jobs:
     ```python
-    jobcollection = up42.initialize_jobcollection(job_ids=["12345", "6789"])
+    jobcollection = up42.initialize_jobcollection(
+        job_ids=["12345", "6789"],
+        project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321"
+    )
     ```
     """
 
@@ -64,9 +66,7 @@ class JobCollection(VizTools):
         """
         return self.apply(lambda job: job.status, only_succeeded=False)
 
-    def apply(
-        self, worker: Callable, only_succeeded: bool = True, **kwargs
-    ) -> Dict[str, Any]:
+    def apply(self, worker: Callable, only_succeeded: bool = True, **kwargs) -> Dict[str, Any]:
         """
         Helper function to apply `worker` on all jobs in the collection.
         `worker` needs to accept `Job` as first argument. For example, a
@@ -84,9 +84,7 @@ class JobCollection(VizTools):
             of `worker`.
         """
         if not self.jobs:
-            raise ValueError(
-                "This is an empty JobCollection. Cannot apply over an empty job list."
-            )
+            raise ValueError("This is an empty JobCollection. Cannot apply over an empty job list.")
 
         out_dict = {}
         for job in self.jobs:
@@ -97,9 +95,7 @@ class JobCollection(VizTools):
                 out_dict[job.job_id] = worker(job, **kwargs)
 
         if not out_dict:
-            raise ValueError(
-                "All jobs have failed! Cannot apply over an empty succeeded job list."
-            )
+            raise ValueError("All jobs have failed! Cannot apply over an empty succeeded job list.")
 
         return out_dict
 
@@ -127,15 +123,13 @@ class JobCollection(VizTools):
             data.json.
         """
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}"
+            output_directory = Path.cwd() / f"project_{self.project_id}"
         else:
             output_directory = Path(output_directory)
 
         def download_results_worker(job, output_directory, unpacking):
             out_dir = output_directory / f"job_{job.job_id}"
-            out_filepaths_job = job.download_results(
-                output_directory=out_dir, unpacking=unpacking
-            )
+            out_filepaths_job = job.download_results(output_directory=out_dir, unpacking=unpacking)
             return out_filepaths_job
 
         out_filepaths = self.apply(
@@ -156,13 +150,9 @@ class JobCollection(VizTools):
                         for feat in data_json_fc.features:
                             feat.properties["job_id"] = job_id
                             try:
-                                feat.properties[
-                                    "up42.data_path"
-                                ] = f"job_{job_id}/{feat.properties['up42.data_path']}"
+                                feat.properties["up42.data_path"] = f"job_{job_id}/{feat.properties['up42.data_path']}"
                             except KeyError:
-                                logger.warning(
-                                    "data.json does not contain up42.data_path, skipping..."
-                                )
+                                logger.warning("data.json does not contain up42.data_path, skipping...")
                             out_features.append(feat)
                 geojson.dump(FeatureCollection(out_features), dst)
 

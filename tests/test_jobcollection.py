@@ -1,24 +1,32 @@
-from pathlib import Path
 import tempfile
-import geojson
+from pathlib import Path
 
+import geojson
 import pytest
 
 from .context import Job
 
 # pylint: disable=unused-import,wrong-import-order
 from .fixtures import (
-    auth_mock,
-    job_mock,
-    jobs_mock,
-    jobcollection_single_mock,
-    jobcollection_multiple_mock,
-    jobcollection_empty_mock,
-    auth_live,
-    jobs_live,
-    jobcollection_live,
     JOB_ID,
     JOB_ID_2,
+    auth_account_live,
+    auth_account_mock,
+    auth_live,
+    auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    job_mock,
+    jobcollection_empty_mock,
+    jobcollection_live,
+    jobcollection_multiple_mock,
+    jobcollection_single_mock,
+    jobs_live,
+    jobs_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
+    username_test_live,
 )
 
 
@@ -204,4 +212,3 @@ def test_jobcollection_subscripted(jobcollection_single_mock):
 def test_jobcollection_iterator(jobcollection_multiple_mock):
     for job in jobcollection_multiple_mock:
         assert isinstance(job, Job)
-

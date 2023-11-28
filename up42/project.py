@@ -1,10 +1,11 @@
 import logging
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Optional, Union
+from warnings import warn
 
 from up42.auth import Auth
 from up42.job import Job
 from up42.jobcollection import JobCollection
-from up42.utils import get_logger, filter_jobs_on_mode
+from up42.utils import filter_jobs_on_mode, get_logger
 from up42.workflow import Workflow
 
 logger = get_logger(__name__)
@@ -16,14 +17,8 @@ class Project:
     new workflows, query already existing workflows & jobs in the project and manage
     the project settings.
 
-    Create a new project on the
-    [**UP42 Console website**](https://sdk.up42.com/authentication/#get-your-project-credentials).
-
-    Use an existing project:
     ```python
-    up42.authenticate(project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321",
-                      project_api_key="9i7uec8a-45be-41ad-a50f-98bewb528b10")
-    project = up42.initialize_project()
+    project = up42.initialize_project(project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321")
     ```
     """
 
@@ -50,9 +45,7 @@ class Project:
         self._info = response_json["data"]
         return self._info
 
-    def create_workflow(
-        self, name: str, description: str = "", use_existing: bool = False
-    ) -> "Workflow":
+    def create_workflow(self, name: str, description: str = "", use_existing: bool = False) -> "Workflow":
         """
         Creates a new workflow and returns a workflow object.
 
@@ -65,6 +58,12 @@ class Project:
         Returns:
             The workflow object.
         """
+        warn(
+            "Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if use_existing:
             logger.info("Getting existing workflows in project ...")
             logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
@@ -82,9 +81,7 @@ class Project:
                     project_id=self.project_id,
                     workflow_id=matching_workflows[0]["id"],
                 )
-                logger.info(
-                    f"Using existing workflow: {name} - {existing_workflow.workflow_id}"
-                )
+                logger.info(f"Using existing workflow: {name} - {existing_workflow.workflow_id}")
                 return existing_workflow
 
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
@@ -92,14 +89,10 @@ class Project:
         response_json = self.auth._request(request_type="POST", url=url, data=payload)
         workflow_id = response_json["data"]["id"]
         logger.info(f"Created new workflow: {workflow_id}")
-        workflow = Workflow(
-            self.auth, project_id=self.project_id, workflow_id=workflow_id
-        )
+        workflow = Workflow(self.auth, project_id=self.project_id, workflow_id=workflow_id)
         return workflow
 
-    def get_workflows(
-        self, return_json: bool = False
-    ) -> Union[List["Workflow"], List[dict]]:
+    def get_workflows(self, return_json: bool = False) -> Union[List["Workflow"], List[dict]]:
         """
         Gets all workflows in a project as workflow objects or JSON.
 
@@ -112,9 +105,7 @@ class Project:
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows"
         response_json = self.auth._request(request_type="GET", url=url)
         workflows_json = response_json["data"]
-        logger.info(
-            f"Got {len(workflows_json)} workflows for project {self.project_id}."
-        )
+        logger.info(f"Got {len(workflows_json)} workflows for project {self.project_id}.")
 
         if return_json:
             return workflows_json
@@ -166,9 +157,7 @@ class Project:
             "finishedAt",
         ]
         if sortby not in allowed_sorting_criteria:
-            raise ValueError(
-                f"sortby parameter must be one of {allowed_sorting_criteria}!"
-            )
+            raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
         sort = f"{sortby},{'desc' if descending else 'asc'}"
 
         page = 0
@@ -183,14 +172,10 @@ class Project:
             url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs?page={page}&sort={sort}"
             response_json = self.auth._request(request_type="GET", url=url)
             if len(response_json["data"]) > 0:
-                jobs_json.extend(
-                    filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
-                )
+                jobs_json.extend(filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs))
         logging.getLogger("up42.utils").setLevel(logging.INFO)
         jobs_json = jobs_json[:limit]
-        logger.info(
-            f"Got {len(jobs_json)} jobs (limit parameter {limit}) in project {self.project_id}."
-        )
+        logger.info(f"Got {len(jobs_json)} jobs (limit parameter {limit}) in project {self.project_id}.")
         if return_json:
             return jobs_json
         else:
@@ -203,9 +188,7 @@ class Project:
                 )
                 for job_json in jobs_json
             ]
-            jobcollection = JobCollection(
-                auth=self.auth, project_id=self.project_id, jobs=jobs
-            )
+            jobcollection = JobCollection(auth=self.auth, project_id=self.project_id, jobs=jobs)
             return jobcollection
 
     def get_project_settings(self) -> List[Dict[str, str]]:
@@ -245,6 +228,12 @@ class Project:
         """
         # The ranges and default values of the project settings can potentially get
         # increased, so need to be dynamically queried from the server.
+        warn(
+            "Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         current_settings = {d["name"]: d for d in self.get_project_settings()}
 
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"

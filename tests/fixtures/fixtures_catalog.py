@@ -1,14 +1,11 @@
+import copy
 import json
 from pathlib import Path
-import copy
 
 import pytest
 
+from ..context import Catalog
 from .fixtures_globals import DATA_PRODUCT_ID
-
-from ..context import (
-    Catalog,
-)
 
 
 @pytest.fixture()
