@@ -36,7 +36,7 @@ The returned format is `Union[list[Asset], dict]`.
 | Argument           | Overview                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `created_after`    | **Union[str, datetime]**<br/>Search for assets created after the timestamp specified in the `YYYY-MM-DD` format.                                                                                                                                                                                                                                                                                                                                                       |
-| `created_before`   | **Union[str, datetime]**<br/>Search for assets created before the specified timestamp in the `YYYY-MM-DD` format.                                                                                                                                                                                                                                                                                                                                                      |
+| `created_before`   | **Union[str, datetime]**<br/>Search for assets created before the timestamp specified in the `YYYY-MM-DD` format.                                                                                                                                                                                                                                                                                                                                                      |
 | `workspace_id`     | **str**<br/>Search by workspace ID.                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `collection_names` | **list[str]**<br/>Search for assets from any of the provided [geospatial collections](https://docs.up42.com/data).                                                                                                                                                                                                                                                                                                                                                     |
 | `producer_names`   | **list[str]**<br/>Search for assets from any of the provided [producers](https://docs.up42.com/developers/api-glossary#producers).                                                                                                                                                                                                                                                                                                                                     |
@@ -59,7 +59,7 @@ storage.get_assets(
     producer_names=["airbus"],
     tags=["optical", "us"],
     sources=["ARCHIVE"],
-    search=["NY Central Park"],
+    search="NY Central Park",
     limit=5,
     sortby="productId",
     descending=False,
@@ -75,7 +75,7 @@ The `get_orders()` function allows you to search for tasking and catalog orders.
 
 ```python
 get_orders(
-    workspace_orders
+    workspace_orders,
     return_json,
     limit,
     sortby,
@@ -93,7 +93,7 @@ The returned format is `Union[list[Order], dict]`.
 
 | Argument           | Overview                                                                                                                                                                                                                                                                                                                                                                                                            |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `workspace_orders` | **bool**<br/><br/>Determines the scope of orders to return.<br/><ul><li>`True`: return orders from your workspace.</li><li>`False`: return orders from the entire account.</li></ul>The default value is `True`.                                                                                                                                                                                                    |
+| `workspace_orders` | **bool**<br/>Determines the scope of orders to return.<br/><ul><li>`True`: return orders from your workspace.</li><li>`False`: return orders from the entire account.</li></ul>The default value is `True`.                                                                                                                                                                                                    |
 | `return_json`      | **bool**<br/>Determines how to return orders.<br/><ul><li>`True`: return JSON.</li><li>`False`: return a list of order objects.</li></ul>The default value is `False`.                                                                                                                                                                                                                                              |
 | `limit`            | **int**<br/>The number of orders on a result page.                                                                                                                                                                                                                                                                                                                                                                  |
 | `sortby`           | **str**<br/>Arrange elements in the order specified in `descending` based on a chosen field. The allowed values:<br/><ul><li>`createdAt`</li><li>`updatedAt`</li><li>`status`</li><li>`dataProvider`</li><li>`type`</li></ul>The default value is `createdAt`.                                                                                                                                                      |
@@ -113,7 +113,7 @@ storage.get_orders(
     sortby="status",
     descending=False,
     order_type="ARCHIVE",
-    status="FULFILLED",
+    status=["FULFILLED"],
     name="Spot 6/7 Central Park"
     tags=["optical","us"],
 )
