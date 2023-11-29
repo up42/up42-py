@@ -11,9 +11,7 @@ from .fixtures_globals import ORDER_ID
 @pytest.fixture()
 def order_mock(auth_mock, requests_mock):
     # order info
-    url_order_info = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}"
-    )
+    url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
 
     with open(
         Path(__file__).resolve().parents[1]

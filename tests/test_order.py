@@ -18,6 +18,7 @@ from .fixtures import (
     auth_project_live,
     auth_project_mock,
     catalog_mock,
+    order_live,
     order_mock,
     password_test_live,
     project_api_key_live,
@@ -26,17 +27,15 @@ from .fixtures import (
 )
 
 
-def test_init(order_mock_v2):
-    assert isinstance(order_mock_v2, Order)
-    assert order_mock_v2.order_id == ORDER_ID
-    assert order_mock_v2.workspace_id == WORKSPACE_ID
+def test_init(order_mock):
+    assert isinstance(order_mock, Order)
+    assert order_mock.order_id == ORDER_ID
+    assert order_mock.workspace_id == WORKSPACE_ID
 
 
 def test_order_info(order_mock):
     assert order_mock.info
     assert order_mock.info["id"] == ORDER_ID
-    assert order_mock.info["dataProvider"] == JSON_ORDER["data"]["dataProvider"]
-    assert order_mock.info["assets"][0] == ASSET_ID
 
 
 @pytest.mark.live
@@ -48,9 +47,9 @@ def test_order_info_live(order_live):
 
 # pylint: disable=unused-argument
 @pytest.mark.parametrize("status", ["PLACED", "FULFILLED"])
-def test_order_status(order_mock_v2, status, monkeypatch):
+def test_order_status(order_mock, status, monkeypatch):
     monkeypatch.setattr(Order, "info", {"status": status})
-    assert order_mock_v2.status == status
+    assert order_mock.status == status
 
 
 @pytest.mark.parametrize(
@@ -74,9 +73,9 @@ def test_order_details(order_mock, status, order_type, order_details, monkeypatc
     "status,expected",
     [("NOT STARTED", False), ("PLACED", False), ("FULFILLED", True)],
 )
-def test_is_fulfilled(order_mock_v2, status, expected, monkeypatch):
+def test_is_fulfilled(order_mock, status, expected, monkeypatch):
     monkeypatch.setattr(Order, "info", {"status": status})
-    assert order_mock_v2.is_fulfilled == expected
+    assert order_mock.is_fulfilled == expected
 
 
 def test_order_parameters(order_mock):

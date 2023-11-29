@@ -68,7 +68,6 @@ def test_global_auth_initialize_objects(
     jobcollection_single_mock,
     storage_mock,
     order_mock,
-    order_mock_v2,
     asset_mock,
 ):
     up42.authenticate(
