@@ -183,11 +183,8 @@ def test_track_status_running(order_mock, requests_mock):
 def test_track_status_pass(order_mock, status, requests_mock):
     del order_mock._info
 
-    url_job_info = (
-        f"{order_mock.auth._endpoint()}/workspaces/"
-        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
-    )
-    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+    url_job_info = f"{order_mock.auth._endpoint()}/v2/orders/{order_mock.order_id}"
+    requests_mock.get(url=url_job_info, json={"status": status})
 
     order_status = order_mock.track_status()
     assert order_status == status
@@ -197,13 +194,10 @@ def test_track_status_pass(order_mock, status, requests_mock):
 def test_track_status_fail(order_mock, status, requests_mock):
     del order_mock._info
 
-    url_job_info = (
-        f"{order_mock.auth._endpoint()}/workspaces/"
-        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
-    )
+    url_job_info = f"{order_mock.auth._endpoint()}/v2/{order_mock.order_id}"
     requests_mock.get(
         url=url_job_info,
-        json={"data": {"status": status, "type": "ARCHIVE"}, "error": {}},
+        json={"status": status, "type": "ARCHIVE"},
     )
 
     with pytest.raises(ValueError):

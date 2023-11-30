@@ -1,7 +1,6 @@
 from time import sleep
-from typing import List, Optional
+from typing import Optional
 
-from up42.asset import Asset
 from up42.auth import Auth
 from up42.utils import get_logger
 
@@ -65,11 +64,8 @@ class Order:
         """
         Gets the Order Details.
         """
-        if self.info["type"] == "TASKING":
-            order_details = self.info["orderDetails"]
-            return order_details
-        logger.info("Order is not TASKING type. Order details are not provided.")
-        return {}
+        order_details = self.info["orderDetails"]
+        return order_details
 
     @property
     def is_fulfilled(self) -> bool:
@@ -78,15 +74,6 @@ class Order:
         Also see [status attribute](order-reference.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
-
-    def get_assets(self) -> List[Asset]:
-        """
-        Gets the Order assets or results.
-        """
-        if self.is_fulfilled:
-            assets: List[str] = self.info["assets"]
-            return [Asset(self.auth, asset_id=asset) for asset in assets]
-        raise ValueError(f"Order {self.order_id} is not FULFILLED! Status is {self.status}")
 
     @classmethod
     def place(cls, auth: Auth, order_parameters: dict) -> "Order":
@@ -187,6 +174,8 @@ class Order:
 
             sleep(report_time)
             time_asleep += report_time
+            if time_asleep > 300:
+                raise ValueError("order is taking too much to complete!")
 
         logger.info(f"Order is fulfilled successfully! - {self.order_id}")
         return self.status

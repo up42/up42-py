@@ -32,12 +32,12 @@ def storage_mock(auth_mock, requests_mock):
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
 
     # orders
-    url_storage_assets = (
-        f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
-        # f"{auth_mock._endpoint()}/v2/orders?sort=createdAt,desc&workspaceId={auth_mock.workspace_id}"
-        # "&type=ARCHIVE&tags=project-7&tags=optical&size=50"
+    url_storage_orders = (
+        f"{auth_mock._endpoint()}/v2/orders"
+        "?sort=createdAt,desc&workspaceId=workspace_id_123"
+        "&type=ARCHIVE&tags=project-7&tags=optical&size=50"
     )
-    requests_mock.get(url=url_storage_assets, json=JSON_ORDERS)
+    requests_mock.get(url=url_storage_orders, json=JSON_ORDERS)
 
     # orders info
     url_order_info = (

@@ -1,6 +1,7 @@
 import math
 from datetime import datetime
 from typing import List, Optional, Union
+from urllib.parse import urlencode, urljoin
 from warnings import warn
 
 from geojson import Feature, FeatureCollection
@@ -254,28 +255,20 @@ class Storage:
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/v2/orders?sort={sort}"
-        if workspace_orders:
-            url += f"&workspaceId={self.workspace_id}"
-        if name is not None:
-            url += f"&displayName={name}"
-        if status is not None:
-            for order_status in status:
-                if order_status not in allowed_status:
-                    raise ValueError(f"status parameters must be one of {allowed_status}!")
-                for order_status in allowed_status:
-                    url += f"&status={order_status}"
+        base_url = f"{self.auth._endpoint()}/v2/orders"
 
-            if order_type in ["TASKING", "ARCHIVE"]:
-                url += f"&type={order_type}"
-        if order_type is not None:
-            if order_type in ["TASKING", "ARCHIVE"]:
-                url += f"&type={order_type}"
-            else:
-                logger.warning("order_type should be TASKING or ARCHIVE. Ignoring this filter.")
-        if tags is not None:
-            for tag in tags:
-                url += f"&tags={tag}"
+        params = {
+            "sort": sort,
+            "workspaceId": self.workspace_id if workspace_orders else None,
+            "displayName": name,
+            "type": order_type if order_type in ["TASKING", "ARCHIVE"] else None,
+            "tags": tags,
+            "status": [s for s in status if s in allowed_status] if status else None,
+        }
+        params = {k: v for k, v in params.items() if v is not None}
+
+        url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
+
         orders_json = self._query_paginated_endpoints(url=url, limit=limit)
         logger.info(f"Got {len(orders_json)} orders for workspace {self.workspace_id}.")
 
