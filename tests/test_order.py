@@ -194,7 +194,7 @@ def test_track_status_pass(order_mock, status, requests_mock):
 def test_track_status_fail(order_mock, status, requests_mock):
     del order_mock._info
 
-    url_job_info = f"{order_mock.auth._endpoint()}/v2/{order_mock.order_id}"
+    url_job_info = f"{order_mock.auth._endpoint()}/v2/orders/{order_mock.order_id}"
     requests_mock.get(
         url=url_job_info,
         json={"status": status, "type": "ARCHIVE"},

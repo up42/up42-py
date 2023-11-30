@@ -35,8 +35,7 @@ class Order:
 
     def __repr__(self):
         return (
-            f"Order(order_id: {self.order_id}, assets: {self._info['assets']}, "
-            f"dataProvider: {self._info['dataProvider']}, status: {self._info['status']}, "
+            f"Order(order_id: {self.order_id}, status: {self._info['status']}"
             f"createdAt: {self._info['createdAt']}, updatedAt: {self._info['updatedAt']})"
         )
 
@@ -174,8 +173,6 @@ class Order:
 
             sleep(report_time)
             time_asleep += report_time
-            if time_asleep > 300:
-                raise ValueError("order is taking too much to complete!")
 
         logger.info(f"Order is fulfilled successfully! - {self.order_id}")
         return self.status
