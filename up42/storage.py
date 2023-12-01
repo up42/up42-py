@@ -251,7 +251,6 @@ class Storage:
             "updatedAt",
             "type",
             "status",
-            "dataProvider",
         }
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
