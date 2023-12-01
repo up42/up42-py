@@ -141,7 +141,7 @@ class Storage:
             producer_names: Search for assets from any of the provided producers.
             tags: Search for assets with any of the provided tags.
             sources: Search for assets from any of the provided sources.\
-                The allowed values: `"ARCHIVE"`, `"TASKING"`, `"ANALYTICS"`, `"USER"`.
+                The allowed values: `"ARCHIVE"`, `"TASKING"`, `"USER"`.
             search: Search for assets that contain the provided search query in their name, title, or order ID.
             custom_filter: Deprecated filter.
             limit: The number of results on a results page.
