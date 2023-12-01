@@ -98,11 +98,6 @@ def test_order_parameters(order_mock):
     assert not order_mock.order_parameters
 
 
-@pytest.mark.live
-def test_order_parameters_live(order_live):
-    assert not order_live.order_parameters
-
-
 @pytest.fixture
 def order_parameters():
     return {
