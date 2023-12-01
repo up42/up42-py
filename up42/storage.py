@@ -1,5 +1,6 @@
 import math
 from datetime import datetime
+from enum import Enum
 from typing import List, Optional, Union
 from urllib.parse import urlencode, urljoin
 from warnings import warn
@@ -15,6 +16,19 @@ from up42.stac_client import PySTACAuthClient
 from up42.utils import format_time, get_logger
 
 logger = get_logger(__name__)
+
+
+class AllowedStatuses(Enum):
+    CREATED = ("CREATED",)
+    BEING_PLACED = ("BEING_PLACED",)
+    PLACED = ("PLACED",)
+    PLACEMENT_FAILED = ("PLACEMENT_FAILED",)
+    DELIVERY_INITIALIZATION_FAILED = ("DELIVERY_INITIALIZATION_FAILED",)
+    BEING_FULFILLED = ("BEING_FULFILLED",)
+    DOWNLOAD_FAILED = ("DOWNLOAD_FAILED",)
+    DOWNLOADED = ("DOWNLOADED",)
+    FULFILLED = ("FULFILLED",)
+    FAILED_PERMANENTLY = ("FAILED_PERMANENTLY",)
 
 
 class Storage:
@@ -211,7 +225,7 @@ class Storage:
         sortby: str = "createdAt",
         descending: bool = True,
         order_type: Optional[str] = None,
-        statuses: Optional[List[str]] = None,
+        statuses: Optional[List[AllowedStatuses]] = None,
         name: Optional[str] = None,
         tags: Optional[List[str]] = None,
     ) -> Union[List[Order], dict]:
