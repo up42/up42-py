@@ -211,7 +211,7 @@ class Storage:
         sortby: str = "createdAt",
         descending: bool = True,
         order_type: Optional[str] = None,
-        status: Optional[List[str]] = None,
+        statuses: Optional[List[str]] = None,
         name: Optional[str] = None,
         tags: Optional[List[str]] = None,
     ) -> Union[List[Order], dict]:
@@ -226,13 +226,14 @@ class Storage:
             sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "type".
             descending: The sorting order, True for descending (default), False for ascending.
             order_type: Can be either "TASKING" or "ARCHIVE". Pass this param to filter orders based on order_type.
-            status: Search for orders with any of the status provided.
+            statuses: Search for orders with any of the statuses provided.
+            name: Search for orders that contain this string in their name.
             tags: Search for orders with any of the provided tags.
 
         Returns:
             Order objects in the workspace or alternatively JSON info of the orders.
         """
-        allowed_status = [
+        allowed_statuses = {
             "CREATED",
             "BEING_PLACED",
             "PLACED",
@@ -243,15 +244,15 @@ class Storage:
             "DOWNLOADED",
             "FULFILLED",
             "FAILED_PERMANENTLY",
-        ]
+        }
 
-        allowed_sorting_criteria = [
+        allowed_sorting_criteria = {
             "createdAt",
             "updatedAt",
             "type",
             "status",
             "dataProvider",
-        ]
+        }
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
         sort = f"{sortby},{'desc' if descending else 'asc'}"
@@ -263,7 +264,7 @@ class Storage:
             "displayName": name,
             "type": order_type if order_type in ["TASKING", "ARCHIVE"] else None,
             "tags": tags,
-            "status": [s for s in status if s in allowed_status] if status else None,
+            "status": list(set(statuses) & allowed_statuses) if statuses else None,
         }
         params = {k: v for k, v in params.items() if v is not None}
 

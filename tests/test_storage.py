@@ -267,6 +267,19 @@ def test_get_orders(storage_mock):
     assert orders[0].order_id == ORDER_ID
 
 
+def test_get_orders_params(storage_mock):
+    orders = storage_mock.get_orders(
+        order_type="ARCHIVE",
+        statuses=["FULFILLED", "PLACED"],
+        name="Test",
+        workspace_orders=False,
+        return_json=True,
+    )
+    assert len(orders) == 1
+    assert isinstance(orders[0], dict)
+    assert orders[0]["id"] == ORDER_ID
+
+
 @pytest.mark.live
 def test_get_orders_live(storage_live):
     """
@@ -294,27 +307,24 @@ def test_get_orders_pagination(auth_mock, requests_mock):
     Mock result holds 2 pages, each with 50 results.
     """
     json_orders_paginated = {
-        "data": {
-            "content": [JSON_ORDER["data"]] * 50,
-            "pageable": {
-                "sort": {"sorted": True, "unsorted": False, "empty": False},
-                "pageNumber": 0,
-                "pageSize": 50,
-                "offset": 0,
-                "paged": True,
-                "unpaged": False,
-            },
-            "totalPages": 2,
-            "totalElements": 100,
-            "last": True,
+        "content": [JSON_ORDER["data"]] * 50,
+        "pageable": {
             "sort": {"sorted": True, "unsorted": False, "empty": False},
-            "numberOfElements": 100,
-            "first": True,
-            "size": 50,
-            "number": 0,
-            "empty": False,
+            "pageNumber": 0,
+            "pageSize": 50,
+            "offset": 0,
+            "paged": True,
+            "unpaged": False,
         },
-        "error": None,
+        "totalPages": 2,
+        "totalElements": 100,
+        "last": True,
+        "sort": {"sorted": True, "unsorted": False, "empty": False},
+        "numberOfElements": 100,
+        "first": True,
+        "size": 50,
+        "number": 0,
+        "empty": False,
     }
 
     # assets pages

@@ -39,6 +39,13 @@ def storage_mock(auth_mock, requests_mock):
     )
     requests_mock.get(url=url_storage_orders, json=JSON_ORDERS)
 
+    url_storage_orders_params = (
+        f"{auth_mock._endpoint()}/v2/orders"
+        "?sort=createdAt,desc"
+        "&displayName=Test&type=ARCHIVE&status=FULFILLED&status=PLACED&size=50"
+    )
+    requests_mock.get(url=url_storage_orders_params, json=JSON_ORDERS)
+
     # orders info
     url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
     requests_mock.get(url=url_order_info, json=JSON_ORDER)

@@ -63,8 +63,7 @@ class Order:
         """
         Gets the Order Details.
         """
-        order_details = self.info["orderDetails"]
-        return order_details
+        return self.info["orderDetails"]
 
     @property
     def is_fulfilled(self) -> bool:
