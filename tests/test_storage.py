@@ -153,7 +153,7 @@ def test_get_assets_live(storage_live):
 
 @pytest.mark.live
 def test_get_assets_by_source_live(storage_live):
-    assets = storage_live.get_assets(sources=["ARCHIVE", "ANALYTICS"])
+    assets = storage_live.get_assets(sources=["ARCHIVE"])
     assert len(assets) >= 2
 
 
