@@ -12,6 +12,7 @@ from .fixtures import (
     ASSET_ID,
     JSON_ASSET,
     JSON_ORDER,
+    JSON_ORDERS,
     JSON_STORAGE_STAC,
     ORDER_ID,
     WORKSPACE_ID,
@@ -267,17 +268,138 @@ def test_get_orders(storage_mock):
     assert orders[0].order_id == ORDER_ID
 
 
-def test_get_orders_params(storage_mock):
-    orders = storage_mock.get_orders(
-        order_type="ARCHIVE",
-        statuses=["FULFILLED", "PLACED"],
-        name="Test",
-        workspace_orders=False,
-        return_json=True,
+@pytest.mark.parametrize(
+    "params, expected_output",
+    [
+        (
+            {
+                "workspace_orders": True,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": None,
+                "name": None,
+            },
+            JSON_ORDERS,
+        ),
+        (
+            {
+                "workspace_orders": True,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": ["CREATED"],
+                "name": None,
+            },
+            JSON_ORDERS,
+        ),
+        (
+            {
+                "workspace_orders": True,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": ["TEST"],
+                "name": None,
+            },
+            JSON_ORDERS,
+        ),
+        (
+            {
+                "workspace_orders": True,
+                "return_json": False,
+                "order_type": "TASKING",
+                "statuses": ["CREATED"],
+                "name": None,
+            },
+            [
+                {
+                    "id": "ddb207c0-3b7f-4186-bc0b-c033f0d2f32b",
+                    "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
+                    "workspaceId": "workspace_id_123",
+                    "dataProvider": "OneAtlas",
+                    "status": "FULFILLED",
+                    "createdAt": "2021-01-18T16:18:16.105851Z",
+                    "updatedAt": "2021-01-18T16:21:31.966805Z",
+                    "assets": ["363f89c1-3586-4b14-9a49-03a890c3b593"],
+                    "createdBy": {
+                        "id": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
+                        "type": "USER",
+                    },
+                    "updatedBy": {"id": "system", "type": "INTERNAL"},
+                },
+            ],
+        ),
+        (
+            {
+                "workspace_orders": True,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": None,
+                "name": "Testing Name",
+            },
+            JSON_ORDERS,
+        ),
+        (
+            {
+                "workspace_orders": False,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": None,
+                "name": None,
+            },
+            JSON_ORDERS,
+        ),
+        (
+            {
+                "workspace_orders": False,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": None,
+                "name": None,
+            },
+            JSON_ORDERS,
+        ),
+    ],
+    ids=[
+        "Sc 1: statuses None, workspace_orders and return_json True, name None",
+        "Sc 2: statuses allowed, workspace_orders and return_json True, name None",
+        "Sc 3: statuses non allowed, workspace_orders and return_json True, name None",
+        "Sc 4: statuses allowed, workspace_orders True, return_json False, name None -> orders output expected",
+        "Sc 5: statuses None, workspace_orders and return_json True, name Test",
+        "Sc 6: Workspace Orders, Return JSON True, Statuses Test, name None",
+        "Sc 7: statuses None, workspace_orders False, Return JSON True, name None",
+    ],
+)
+def test_get_orders_v2_endpoint_params(
+    auth_mock, requests_mock, params, expected_output
+):
+    workspace_url_param = (
+        "&workspaceId=workspace_id_123" if params["workspace_orders"] else ""
     )
-    assert len(orders) == 1
-    assert isinstance(orders[0], dict)
-    assert orders[0]["id"] == ORDER_ID
+    url_storage_assets_paginated = f"{auth_mock._endpoint()}/v2/orders?sort=createdAt%2Cdesc{workspace_url_param}&type={params['order_type']}&size=50"
+    requests_mock.get(url=url_storage_assets_paginated, json=JSON_ORDERS)
+    expected_results = {}
+    if not params["return_json"]:
+        expected_results["content"] = [
+            Order(
+                auth=auth_mock,
+                order_id=output["id"],
+                order_info=output,
+            )
+            for output in expected_output
+        ]
+    else:
+        expected_results = expected_output
+
+    storage = Storage(auth=auth_mock)
+    orders = storage.get_orders(
+        order_type=params["order_type"],
+        statuses=params["statuses"],
+        name=params["name"],
+        workspace_orders=params["workspace_orders"],
+        return_json=params["return_json"],
+    )
+
+    for order, expected_result in zip(orders, expected_results["content"]):
+        assert repr(order) == repr(expected_result)
 
 
 @pytest.mark.live
