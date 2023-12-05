@@ -30,7 +30,6 @@ from .fixtures import (
 def test_init(order_mock):
     assert isinstance(order_mock, Order)
     assert order_mock.order_id == ORDER_ID
-    assert order_mock.workspace_id == WORKSPACE_ID
 
 
 def test_order_info(order_mock):

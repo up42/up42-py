@@ -19,16 +19,16 @@ logger = get_logger(__name__)
 
 
 class AllowedStatuses(Enum):
-    CREATED = ("CREATED",)
-    BEING_PLACED = ("BEING_PLACED",)
-    PLACED = ("PLACED",)
-    PLACEMENT_FAILED = ("PLACEMENT_FAILED",)
-    DELIVERY_INITIALIZATION_FAILED = ("DELIVERY_INITIALIZATION_FAILED",)
-    BEING_FULFILLED = ("BEING_FULFILLED",)
-    DOWNLOAD_FAILED = ("DOWNLOAD_FAILED",)
-    DOWNLOADED = ("DOWNLOADED",)
-    FULFILLED = ("FULFILLED",)
-    FAILED_PERMANENTLY = ("FAILED_PERMANENTLY",)
+    CREATED = "CREATED"
+    BEING_PLACED = "BEING_PLACED"
+    PLACED = "PLACED"
+    PLACEMENT_FAILED = "PLACEMENT_FAILED"
+    DELIVERY_INITIALIZATION_FAILED = "DELIVERY_INITIALIZATION_FAILED"
+    BEING_FULFILLED = "BEING_FULFILLED"
+    DOWNLOAD_FAILED = "DOWNLOAD_FAILED"
+    DOWNLOADED = "DOWNLOADED"
+    FULFILLED = "FULFILLED"
+    FAILED_PERMANENTLY = "FAILED_PERMANENTLY"
 
 
 class Storage:
@@ -247,18 +247,7 @@ class Storage:
         Returns:
             Order objects in the workspace or alternatively JSON info of the orders.
         """
-        allowed_statuses = {
-            "CREATED",
-            "BEING_PLACED",
-            "PLACED",
-            "PLACEMENT_FAILED",
-            "DELIVERY_INITIALIZATION_FAILED",
-            "BEING_FULFILLED",
-            "DOWNLOAD_FAILED",
-            "DOWNLOADED",
-            "FULFILLED",
-            "FAILED_PERMANENTLY",
-        }
+        allowed_statuses = {entry.value for entry in AllowedStatuses}
 
         allowed_sorting_criteria = {
             "createdAt",

@@ -25,7 +25,6 @@ class Order:
         order_info: Optional[dict] = None,
     ):
         self.auth = auth
-        self.workspace_id = auth.workspace_id
         self.order_id = order_id
         self.order_parameters = order_parameters
         if order_info is not None:
