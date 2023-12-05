@@ -171,7 +171,7 @@ class Auth:
                 "password": self._credentials_key,
             }
             token_response = requests.post(
-                url= host.endpoint("/oauth/token"),
+                url=host.endpoint("/oauth/token"),
                 data=req_body,
                 headers=req_headers,
                 timeout=120,

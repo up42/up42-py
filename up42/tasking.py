@@ -9,8 +9,8 @@ from geopandas import GeoDataFrame
 from shapely.geometry import Point, Polygon
 
 from up42.auth import Auth
-from up42.host import endpoint
 from up42.catalog import CatalogBase
+from up42.host import endpoint
 from up42.utils import (
     any_vector_to_fc,
     autocomplete_order_parameters,

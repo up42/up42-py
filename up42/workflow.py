@@ -70,7 +70,7 @@ class Workflow:
         """
         Gets and updates the workflow metadata information.
         """
-        url = endpoint(f"/projects/{self.project_id}/workflows/" f"{self.workflow_id}")
+        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}")
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
@@ -110,8 +110,7 @@ class Workflow:
 
         last_task = list(tasks.keys())[-1]
         url = endpoint(
-            f"/projects/{self.project_id}/workflows/{self.workflow_id}/"
-            f"compatible-blocks?parentTaskName={last_task}"
+            f"/projects/{self.project_id}/workflows/{self.workflow_id}/" f"compatible-blocks?parentTaskName={last_task}"
         )
         response_json = self.auth._request(request_type="GET", url=url)
         compatible_blocks = response_json["data"]["blocks"]
@@ -282,7 +281,7 @@ class Workflow:
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
 
-        url = endpoint(f"/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks/")
+        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}/tasks/")
         self.auth._request(request_type="POST", url=url, data=input_tasks)
         logger.info(f"Added tasks to workflow: {input_tasks}")
 
@@ -567,7 +566,7 @@ class Workflow:
         if name is None:
             name = self._info["name"]
         name = f"{name}_py"  # Temporary recognition of python API usage.
-        url = endpoint(f"/projects/{self.project_id}/" f"workflows/{self.workflow_id}/jobs?name={name}")
+        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}/jobs?name={name}")
         response_json = self.auth._request(request_type="POST", url=url, data=input_parameters)  # type: ignore
         job_json = response_json["data"]
         logger.info(f"Created and running new job: {job_json['id']}.")
@@ -644,10 +643,7 @@ class Workflow:
 
                 job_name = f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
 
-                url = endpoint(
-                    f"/projects/{self.project_id}/"
-                    f"workflows/{self.workflow_id}/jobs?name={job_name}"
-                )
+                url = endpoint(f"/projects/{self.project_id}/" f"workflows/{self.workflow_id}/jobs?name={job_name}")
                 response_json = self.auth._request(request_type="POST", url=url, data=params)
                 job_json = response_json["data"]
                 logger.info(f"Created and running new job: {job_json['id']}")
@@ -855,7 +851,7 @@ class Workflow:
             stacklevel=2,
         )
         properties_to_update = {"name": name, "description": description}
-        url = endpoint(f"/projects/{self.project_id}/workflows/" f"{self.workflow_id}")
+        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}")
         self.auth._request(request_type="PUT", url=url, data=properties_to_update)
         # TODO: Renew info
         logger.info(f"Updated workflow name: {properties_to_update}")

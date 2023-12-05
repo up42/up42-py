@@ -38,11 +38,11 @@ class Job(VizTools):
     """
 
     def __init__(
-            self,
-            auth: Auth,
-            project_id: str,
-            job_id: str,
-            job_info: Optional[dict] = None,
+        self,
+        auth: Auth,
+        project_id: str,
+        job_id: str,
+        job_info: Optional[dict] = None,
     ):
         self.auth = auth
         self.project_id = project_id
@@ -192,9 +192,9 @@ class Job(VizTools):
         return download_url
 
     def download_results(
-            self,
-            output_directory: Union[str, Path, None] = None,
-            unpacking: bool = True,
+        self,
+        output_directory: Union[str, Path, None] = None,
+        unpacking: bool = True,
     ) -> List[str]:
         """
         Downloads the job results. Unpacking the final file will happen as default.
@@ -232,12 +232,12 @@ class Job(VizTools):
         return out_filepaths
 
     def upload_results_to_bucket(
-            self,
-            gs_client,
-            bucket,
-            folder: str,
-            extension: str = ".tgz",
-            version: str = "v0",
+        self,
+        gs_client,
+        bucket,
+        folder: str,
+        extension: str = ".tgz",
+        version: str = "v0",
     ) -> None:
         """
         Uploads the results of a job directly to a custom google cloud storage bucket.
@@ -298,7 +298,7 @@ class Job(VizTools):
         Returns:
             The job task objects in a list.
         """
-        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/")
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/")
         logger.info(f"Getting job tasks: {self.job_id}")
         response_json = self.auth._request(request_type="GET", url=url)
         jobtasks_json: List[dict] = response_json["data"]
@@ -329,9 +329,7 @@ class Job(VizTools):
         jobtasks_ids = [task["id"] for task in jobtasks]
         jobtasks_results_json = {}
         for jobtask_id in jobtasks_ids:
-            url = (
-                endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/outputs/data-json")
-            )
+            url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/outputs/data-json")
             response_json = self.auth._request(request_type="GET", url=url)
 
             jobtasks_results_json[jobtask_id] = response_json
