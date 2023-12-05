@@ -21,6 +21,7 @@ from tenacity import (
     wait_random_exponential,
 )
 
+from up42 import host
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
@@ -100,10 +101,9 @@ class Auth:
             key: value for key, value in local_vars.items() if key in credentials_filter and value is not None
         }
 
-        try:
-            self.env: str = kwargs["env"]
-        except KeyError:
-            self.env = "com"
+        if "env" in kwargs:
+            host.DOMAIN = kwargs["env"]
+
         try:
             self.authenticate: bool = kwargs["authenticate"]
         except KeyError:
@@ -159,10 +159,6 @@ class Auth:
         if self._credentials_id is None:
             raise ValueError("No credentials provided either via config file or arguments.")
 
-    def _endpoint(self) -> str:
-        """Gets the endpoint."""
-        return f"https://api.up42.{self.env}"
-
     def _get_token_account_based(self):
         """Account based authentication via username and password."""
         try:
@@ -175,7 +171,7 @@ class Auth:
                 "password": self._credentials_key,
             }
             token_response = requests.post(
-                url=self._endpoint() + "/oauth/token",
+                url= host.endpoint("/oauth/token"),
                 data=req_body,
                 headers=req_headers,
                 timeout=120,
@@ -197,15 +193,19 @@ class Auth:
             client = BackendApplicationClient(client_id=self._credentials_id, client_secret=self._credentials_key)
             auth = HTTPBasicAuth(self._credentials_id, self._credentials_key)
             get_token_session = OAuth2Session(client=client)
-            token_response = get_token_session.fetch_token(token_url=self._endpoint() + "/oauth/token", auth=auth)
+            token_response = get_token_session.fetch_token(token_url=host.endpoint("/oauth/token"), auth=auth)
         except MissingTokenError as err:
             raise ValueError("Authentication was not successful, check the provided project credentials.") from err
 
         self.token = token_response["data"]["accessToken"]
 
+    def _endpoint(self) -> str:
+        """Gets the endpoint."""
+        return host.endpoint("")
+
     def _get_workspace(self) -> None:
         """Get user id belonging to authenticated account."""
-        url = f"https://api.up42.{self.env}/users/me"
+        url = host.endpoint("/users/me")
         resp = self._request("GET", url)
         self.workspace_id = resp["data"]["id"]  # type: ignore
 
