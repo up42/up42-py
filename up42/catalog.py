@@ -12,6 +12,7 @@ from shapely.geometry import Polygon
 from tqdm import tqdm
 
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.order import Order
 from up42.utils import (
     any_vector_to_fc,
@@ -44,7 +45,7 @@ class CatalogBase:
             basic: A dictionary containing only the collection title, name, host and available
                 data product configurations, default True.
         """
-        url = f"{self.auth._endpoint()}/data-products"
+        url = endpoint("/data-products")
         json_response = self.auth._request("GET", url)
         unfiltered_products: list = json_response["data"]
 
@@ -104,7 +105,7 @@ class CatalogBase:
         """
         Get the available data collections.
         """
-        url = f"{self.auth._endpoint()}/collections"
+        url = endpoint("/collections")
         json_response = self.auth._request("GET", url)
         collections = [c for c in json_response["data"] if c["type"] == self.type]
         return collections
@@ -460,7 +461,7 @@ class Catalog(CatalogBase, VizTools):
         out_paths: List[str] = []
         for image_id in tqdm(image_ids):
             try:
-                url = f"{self.auth._endpoint()}/catalog/{host}/image/{image_id}/quicklook"
+                url = endpoint(f"/catalog/{host}/image/{image_id}/quicklook")
                 response = self.auth._request(request_type="GET", url=url, return_text=False)
                 out_path = output_directory / f"quicklook_{image_id}.jpg"
                 out_paths.append(str(out_path))

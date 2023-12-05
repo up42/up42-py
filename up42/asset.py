@@ -5,6 +5,7 @@ import pystac
 from pystac_client import Client, ItemSearch
 
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.stac_client import PySTACAuthClient
 from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_filename, get_logger
 
@@ -50,14 +51,14 @@ class Asset:
         """
         Gets and updates the asset metadata information.
         """
-        url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
+        url = endpoint(f"/v2/assets/{self.asset_id}/metadata")
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json
         return self._info
 
     @property
     def _stac_search(self) -> Tuple[Client, ItemSearch]:
-        url = f"{self.auth._endpoint()}/v2/assets/stac"
+        url = endpoint("/v2/assets/stac")
         pystac_client_aux = PySTACAuthClient(auth=self.auth).open(url=url)
         stac_search_parameters = {
             "max_items": MAX_ITEM,
@@ -107,7 +108,7 @@ class Asset:
         Returns:
             The updated asset metadata information
         """
-        url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/metadata"
+        url = endpoint(f"/v2/assets/{self.asset_id}/metadata")
         body_update = {"title": title, "tags": tags, **kwargs}
         response_json = self.auth._request(request_type="POST", url=url, data=body_update)
         self._info = response_json
@@ -115,9 +116,9 @@ class Asset:
 
     def _get_download_url(self, stac_asset_id: Optional[str] = None, request_type: str = "POST") -> str:
         if stac_asset_id is None:
-            url = f"{self.auth._endpoint()}/v2/assets/{self.asset_id}/download-url"
+            url = endpoint(f"/v2/assets/{self.asset_id}/download-url")
         else:
-            url = f"{self.auth._endpoint()}/v2/assets/{stac_asset_id}/download-url"
+            url = endpoint(f"/v2/assets/{stac_asset_id}/download-url")
         response_json = self.auth._request(request_type=request_type, url=url)
         download_url = response_json["url"]
         return download_url

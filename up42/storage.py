@@ -9,6 +9,7 @@ from shapely.geometry import Polygon
 
 from up42.asset import Asset
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.order import Order
 from up42.stac_client import PySTACAuthClient
 from up42.utils import format_time, get_logger
@@ -37,7 +38,7 @@ class Storage:
 
     @property
     def pystac_client(self):
-        url = f"{self.auth._endpoint()}/v2/assets/stac"
+        url = endpoint("/v2/assets/stac")
         pystac_client_auth = PySTACAuthClient(auth=self.auth).open(url=url)
         return pystac_client_auth
 
@@ -154,7 +155,7 @@ class Storage:
             A list of Asset objects.
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/v2/assets?sort={sort}"
+        url = endpoint(f"/v2/assets?sort={sort}")
         if created_before is not None:
             url += f"&createdBefore={format_time(created_before)}"
         if created_after is not None:
@@ -236,7 +237,7 @@ class Storage:
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}"
+        url = endpoint(f"/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}")
         if order_type is not None:
             if order_type in ["TASKING", "ARCHIVE"]:
                 url += f"&type={order_type}"

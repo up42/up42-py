@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import List, Union
 
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
@@ -41,7 +42,7 @@ class Estimation:
         Returns:
             A dictionary with credit cost & duration estimate for each workflow task.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/estimate/job"
+        url = endpoint(f"/projects/{self.project_id}/estimate/job")
         self.payload = {
             "tasks": self.input_tasks,
             "inputs": self.input_parameters,
