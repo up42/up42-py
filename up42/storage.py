@@ -266,7 +266,7 @@ class Storage:
             "displayName": name,
             "type": order_type if order_type in ["TASKING", "ARCHIVE"] else None,
             "tags": tags,
-            "status": list(set(statuses) & allowed_statuses) if statuses else None,
+            "status": set(statuses) & allowed_statuses if statuses else None,
         }
         params = {k: v for k, v in params.items() if v is not None}
 
