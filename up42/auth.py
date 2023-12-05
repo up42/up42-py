@@ -199,10 +199,6 @@ class Auth:
 
         self.token = token_response["data"]["accessToken"]
 
-    def _endpoint(self) -> str:
-        """Gets the endpoint."""
-        return host.endpoint("")
-
     @property
     def env(self):
         return host.DOMAIN

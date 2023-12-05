@@ -97,7 +97,7 @@ class CatalogBase:
         Args:
             data_product_id: The id of a catalog/tasking data product.
         """
-        url = f"{self.auth._endpoint()}/orders/schema/{data_product_id}"
+        url = endpoint(f"/orders/schema/{data_product_id}")
         json_response = self.auth._request("GET", url)
         return json_response  # Does not contain APIv1 "data" key
 
@@ -335,7 +335,7 @@ class Catalog(CatalogBase, VizTools):
             )
         host = hosts[0]
 
-        url = f"{self.auth._endpoint()}/catalog/hosts/{host}/stac/search"
+        url = endpoint(f"/catalog/hosts/{host}/stac/search")
         response_json: dict = self.auth._request("POST", url, search_parameters)
         features = response_json["features"]
 

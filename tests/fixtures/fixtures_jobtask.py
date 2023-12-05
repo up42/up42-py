@@ -3,13 +3,13 @@ import os
 import pytest
 
 from ..context import JobTask
-from .fixtures_globals import DOWNLOAD_URL, JOB_ID, JOBTASK_ID, JOBTASK_NAME, PROJECT_ID
+from .fixtures_globals import API_HOST, DOWNLOAD_URL, JOB_ID, JOBTASK_ID, JOBTASK_NAME, PROJECT_ID
 
 
 @pytest.fixture()
 def jobtask_mock(auth_mock, requests_mock):
     # info
-    url_jobtask_info = f"{auth_mock._endpoint()}/projects/{PROJECT_ID}/jobs/{JOB_ID}" f"/tasks/"
+    url_jobtask_info = f"{API_HOST}/projects/{PROJECT_ID}/jobs/{JOB_ID}" f"/tasks/"
     requests_mock.get(
         url=url_jobtask_info,
         json={
@@ -38,7 +38,7 @@ def jobtask_mock(auth_mock, requests_mock):
 
     # get_results_json
     url_results_json = (
-        f"{jobtask.auth._endpoint()}/projects/{jobtask.project_id}/"
+        f"{API_HOST}/projects/{jobtask.project_id}/"
         f"jobs/{jobtask.job_id}/tasks/{jobtask.jobtask_id}/"
         f"outputs/data-json/"
     )
@@ -46,7 +46,7 @@ def jobtask_mock(auth_mock, requests_mock):
 
     # get_download_url
     url_download_result = (
-        f"{jobtask.auth._endpoint()}/projects/{jobtask.project_id}/"
+        f"{API_HOST}/projects/{jobtask.project_id}/"
         f"jobs/{jobtask.job_id}/tasks/{jobtask.jobtask_id}/"
         f"downloads/results/"
     )
@@ -54,7 +54,7 @@ def jobtask_mock(auth_mock, requests_mock):
 
     # quicklooks
     url_quicklook = (
-        f"{jobtask.auth._endpoint()}/projects/{jobtask.project_id}/"
+        f"{API_HOST}/projects/{jobtask.project_id}/"
         f"jobs/{jobtask.job_id}"
         f"/tasks/{jobtask.jobtask_id}/outputs/quicklooks/"
     )

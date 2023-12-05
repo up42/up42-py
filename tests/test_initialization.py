@@ -33,6 +33,7 @@ from .fixtures import (
     username_test_live,
     workflow_mock,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_initialize_object_without_auth_raises():
@@ -103,7 +104,7 @@ def test_should_initialize_project_with_project_id(auth_mock, requests_mock):
         authenticate=False,
     )
     project_id = "project_id"
-    url_project_info = f"{auth_mock._endpoint()}/projects/{project_id}"
+    url_project_info = f"{API_HOST}/projects/{project_id}"
     json_project_info = {
         "data": {
             "name": "name",
@@ -132,7 +133,7 @@ def test_should_initialize_workflow(auth_mock, requests_mock):
     )
     project_id = "project_id"
     url_workflow_info = (
-        f"{auth_mock._endpoint()}/projects/{project_id}/workflows/{WORKFLOW_ID}"
+        f"{API_HOST}/projects/{project_id}/workflows/{WORKFLOW_ID}"
     )
     json_workflow_info = {
         "data": {
@@ -162,7 +163,7 @@ def test_should_initialize_job(auth_mock, requests_mock):
         authenticate=False,
     )
     project_id = "project_id"
-    url_job_info = f"{auth_mock._endpoint()}/projects/{project_id}/jobs/{JOB_ID}"
+    url_job_info = f"{API_HOST}/projects/{project_id}/jobs/{JOB_ID}"
     json_job_info = {
         "data": {
             "mode": "DEFAULT",
@@ -196,7 +197,7 @@ def test_should_initialize_jobtask(auth_mock, requests_mock, jobtask_mock):
     )
     project_id = "project_id"
     url_jobtask_info = (
-        f"{auth_mock._endpoint()}/projects/{project_id}/jobs/{JOB_ID}/tasks/"
+        f"{API_HOST}/projects/{project_id}/jobs/{JOB_ID}/tasks/"
     )
     requests_mock.get(
         url=url_jobtask_info,
@@ -234,7 +235,7 @@ def test_should_initialize_job_collection(auth_mock, requests_mock):
         authenticate=False,
     )
     project_id = "project_id"
-    url_job_info = f"{auth_mock._endpoint()}/projects/{project_id}/jobs/{JOB_ID}"
+    url_job_info = f"{API_HOST}/projects/{project_id}/jobs/{JOB_ID}"
     json_job_info = {
         "data": {
             "mode": "DEFAULT",

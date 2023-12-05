@@ -1,5 +1,4 @@
 import copy
-import datetime
 
 import pystac
 import pystac_client
@@ -28,6 +27,7 @@ from .fixtures import (
     storage_mock,
     username_test_live,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_init(storage_mock):
@@ -236,7 +236,7 @@ def test_get_assets_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_assets_paginated = (
-        f"{auth_mock._endpoint()}/v2/assets?sort=createdAt,asc&size=50"
+        f"{API_HOST}/v2/assets?sort=createdAt,asc&size=50"
     )
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
@@ -319,7 +319,7 @@ def test_get_orders_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_orders_paginated = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/"
+        f"{API_HOST}/workspaces/{auth_mock.workspace_id}/"
         f"orders?format=paginated&sort=createdAt,asc&size=50"
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)

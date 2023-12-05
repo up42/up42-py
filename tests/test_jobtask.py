@@ -18,6 +18,7 @@ from .fixtures import (
     project_id_live,
     username_test_live,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_info(jobtask_mock):
@@ -68,7 +69,7 @@ def test_jobtask_download_result(jobtask_mock, requests_mock):
 
 def test_download_quicklook(jobtask_mock, requests_mock):
     url_download_quicklooks = (
-        f"{jobtask_mock.auth._endpoint()}/projects/{jobtask_mock.project_id}/"
+        f"{API_HOST}/projects/{jobtask_mock.project_id}/"
         f"jobs/{jobtask_mock.job_id}"
         f"/tasks/{jobtask_mock.jobtask_id}/outputs/quicklooks/a_quicklook.png"
     )

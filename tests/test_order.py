@@ -22,6 +22,7 @@ from .fixtures import (
     project_id_live,
     username_test_live,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_init(order_mock):
@@ -114,7 +115,7 @@ def order_parameters():
 
 def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
+        url=f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders",
         json={
             "data": {"id": ORDER_ID},
             "error": {},
@@ -128,7 +129,7 @@ def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
 
 def test_place_order_no_id(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
+        url=f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders",
         json={
             "data": {"xyz": 892},
             "error": {},
@@ -150,7 +151,7 @@ def test_track_status_running(order_mock, requests_mock):
     del order_mock._info
 
     url_job_info = (
-        f"{order_mock.auth._endpoint()}/workspaces/"
+        f"{API_HOST}/workspaces/"
         f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
     )
 
@@ -196,7 +197,7 @@ def test_track_status_pass(order_mock, status, requests_mock):
     del order_mock._info
 
     url_job_info = (
-        f"{order_mock.auth._endpoint()}/workspaces/"
+        f"{API_HOST}/workspaces/"
         f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
@@ -210,7 +211,7 @@ def test_track_status_fail(order_mock, status, requests_mock):
     del order_mock._info
 
     url_job_info = (
-        f"{order_mock.auth._endpoint()}/workspaces/"
+        f"{API_HOST}/workspaces/"
         f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
     )
     requests_mock.get(
@@ -224,7 +225,7 @@ def test_track_status_fail(order_mock, status, requests_mock):
 
 def test_estimate_order(order_parameters, auth_mock, requests_mock):
     url_order_estimation = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/estimate"
+        f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders/estimate"
     )
     requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
     estimation = Order.estimate(auth_mock, order_parameters)

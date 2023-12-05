@@ -5,8 +5,6 @@ import geojson
 import pytest
 
 from .context import Job
-
-# pylint: disable=unused-import,wrong-import-order
 from .fixtures import (
     JOB_ID,
     JOB_ID_2,
@@ -28,6 +26,9 @@ from .fixtures import (
     project_id_live,
     username_test_live,
 )
+
+# pylint: disable=unused-import,wrong-import-order
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_jobcollection(jobcollection_single_mock):
@@ -56,7 +57,7 @@ def test_job_iterator(
     status = ["FAILED", "SUCCEEDED"]
     for i, job in enumerate(jobcollection_multiple_mock):
         url_job_info = (
-            f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
+            f"{API_HOST}/projects/"
             f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
         )
         requests_mock.get(
@@ -77,7 +78,7 @@ def test_job_iterator(
 
 def test_jobcollection_info(jobcollection_single_mock, requests_mock):
     url_job_info = (
-        f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+        f"{API_HOST}/projects/"
         f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
@@ -90,7 +91,7 @@ def test_jobcollection_info(jobcollection_single_mock, requests_mock):
 @pytest.mark.parametrize("status", ["NOT STARTED", "PENDING", "RUNNING"])
 def test_jobcollection_jobs_status(jobcollection_single_mock, status, requests_mock):
     url_job_info = (
-        f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+        f"{API_HOST}/projects/"
         f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
@@ -103,7 +104,7 @@ def test_jobcollection_jobs_status(jobcollection_single_mock, status, requests_m
 def test_jobcollection_download_results(jobcollection_single_mock, requests_mock):
     download_url = "http://up42.api.com/abcdef"
     url_download_result = (
-        f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+        f"{API_HOST}/projects/"
         f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}/downloads/results/"
     )
     requests_mock.get(
@@ -111,7 +112,7 @@ def test_jobcollection_download_results(jobcollection_single_mock, requests_mock
     )
 
     url_job_info = (
-        f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+        f"{API_HOST}/projects/"
         f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
     requests_mock.get(
@@ -137,7 +138,7 @@ def test_jobcollection_download_results_failed(
     jobcollection_single_mock, requests_mock
 ):
     url_job_info = (
-        f"{jobcollection_single_mock.auth._endpoint()}/projects/"
+        f"{API_HOST}/projects/"
         f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
     requests_mock.get(
@@ -159,7 +160,7 @@ def test_jobcollection_download_results_merged(
 
     for job in jobcollection_multiple_mock.jobs:
         url_download_result = (
-            f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
+            f"{API_HOST}/projects/"
             f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}/downloads/results/"
         )
         requests_mock.get(
@@ -167,7 +168,7 @@ def test_jobcollection_download_results_merged(
         )
 
         url_job_info = (
-            f"{jobcollection_multiple_mock.auth._endpoint()}/projects/"
+            f"{API_HOST}/projects/"
             f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
         )
         requests_mock.get(

@@ -5,13 +5,13 @@ from pathlib import Path
 import pytest
 
 from ..context import Order
-from .fixtures_globals import ORDER_ID
+from .fixtures_globals import API_HOST, ORDER_ID
 
 
 @pytest.fixture()
 def order_mock(auth_mock, requests_mock):
     # order info
-    url_order_info = f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}"
+    url_order_info = f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}"
 
     with open(
         Path(__file__).resolve().parents[1] / "mock_data/order_data/archive_order_info.json",
