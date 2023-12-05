@@ -5,8 +5,7 @@ from up42 import host
 
 @pytest.fixture(autouse=True)
 def restore_default_domain():
-    # The restoration of the default domain value is needed
-    # to avoid breaking urls in other tests when domain is changed in a test
+    # To avoid breaking urls in other tests when the domain is changed in a test
     default_domain = host.DOMAIN
     yield
     host.DOMAIN = default_domain
