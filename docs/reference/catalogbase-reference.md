@@ -2,7 +2,7 @@
 
 The CatalogBase class is inherited by the [Tasking](tasking-reference.md) and [Catalog](catalog-reference.md) classes.
 
-To use these functions, first initialize the Tasking or Catalog class as follows:
+To use its functions, first initialize the Tasking or Catalog class as follows:
 
 ```python
 tasking = up42.initialize_tasking()
