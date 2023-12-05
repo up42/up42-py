@@ -80,86 +80,85 @@ class JobTask(VizTools):
         else:
             return response_json
 
+    def _get_download_url(self):
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/{self.jobtask_id}/downloads/results/")
+        response_json = self.auth._request(request_type="GET", url=url)
+        download_url = response_json["data"]["url"]
+        return download_url
 
-def _get_download_url(self):
-    url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/{self.jobtask_id}/downloads/results/")
-    response_json = self.auth._request(request_type="GET", url=url)
-    download_url = response_json["data"]["url"]
-    return download_url
+    def download_results(self, output_directory: Union[str, Path, None] = None) -> List[str]:
+        """
+        Downloads and unpacks the jobtask results. Default download to Desktop.
 
+        Args:
+            output_directory: The file output directory, defaults to the current working
+                directory.
+        Returns:
+            List of the downloaded results' filepaths.
+        """
+        logger.info(f"Downloading results of jobtask {self.jobtask_id}")
 
-def download_results(self, output_directory: Union[str, Path, None] = None) -> List[str]:
-    """
-    Downloads and unpacks the jobtask results. Default download to Desktop.
+        if output_directory is None:
+            output_directory = Path.cwd() / f"project_{self.project_id}/job_{self.job_id}/jobtask_{self.jobtask_id}"
+        else:
+            output_directory = Path(output_directory)
+        output_directory.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Download directory: {str(output_directory)}")
 
-    Args:
-        output_directory: The file output directory, defaults to the current working
-            directory.
-    Returns:
-        List of the downloaded results' filepaths.
-    """
-    logger.info(f"Downloading results of jobtask {self.jobtask_id}")
+        download_url = self._get_download_url()
+        out_filepaths = download_from_gcs_unpack(
+            download_url=download_url,
+            output_directory=output_directory,
+        )
 
-    if output_directory is None:
-        output_directory = Path.cwd() / f"project_{self.project_id}/job_{self.job_id}/jobtask_{self.jobtask_id}"
-    else:
-        output_directory = Path(output_directory)
-    output_directory.mkdir(parents=True, exist_ok=True)
-    logger.info(f"Download directory: {str(output_directory)}")
+        self.results = out_filepaths
+        return out_filepaths
 
-    download_url = self._get_download_url()
-    out_filepaths = download_from_gcs_unpack(
-        download_url=download_url,
-        output_directory=output_directory,
-    )
+    def download_quicklooks(
+        self,
+        output_directory: Union[str, Path, None] = None,
+    ) -> List[str]:
+        """
+        Downloads quicklooks of the job task to disk.
 
-    self.results = out_filepaths
-    return out_filepaths
+        After download, can be plotted via jobtask.plot_quicklooks().
 
+        Args:
+            output_directory: The file output directory, defaults to the current working
+                directory.
 
-def download_quicklooks(
-    self,
-    output_directory: Union[str, Path, None] = None,
-) -> List[str]:
-    """
-    Downloads quicklooks of the job task to disk.
-
-    After download, can be plotted via jobtask.plot_quicklooks().
-
-    Args:
-        output_directory: The file output directory, defaults to the current working
-            directory.
-
-    Returns:
-        The quicklooks filepaths.
-    """
-    if output_directory is None:
-        # On purpose downloading the quicklooks to the jobs folder and not the
-        # jobtasks folder,since only relevant for data block task. And clearer
-        # for job.download_quicklooks.
-        output_directory = Path.cwd() / f"project_{self.project_id}" / f"job_{self.job_id}"
-    else:
-        output_directory = Path(output_directory)
-    output_directory.mkdir(parents=True, exist_ok=True)
-    logger.info(f"Download directory: {str(output_directory)}")
-
-    url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/{self.jobtask_id}/outputs/quicklooks/")
-    response_json = self.auth._request(request_type="GET", url=url)
-    quicklooks_ids = response_json["data"]
-
-    out_paths: List[str] = []
-    for ql_id in tqdm(quicklooks_ids):
-        out_path = output_directory / f"quicklook_{ql_id}"  # No suffix required.
-        out_paths.append(str(out_path))
+        Returns:
+            The quicklooks filepaths.
+        """
+        if output_directory is None:
+            # On purpose downloading the quicklooks to the jobs folder and not the
+            # jobtasks folder,since only relevant for data block task. And clearer
+            # for job.download_quicklooks.
+            output_directory = Path.cwd() / f"project_{self.project_id}" / f"job_{self.job_id}"
+        else:
+            output_directory = Path(output_directory)
+        output_directory.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Download directory: {str(output_directory)}")
 
         url = endpoint(
-            f"/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/{self.jobtask_id}/outputs/quicklooks/{ql_id}"
+            f"/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/{self.jobtask_id}/outputs/quicklooks/"
         )
-        response = self.auth._request(request_type="GET", url=url, return_text=False)
+        response_json = self.auth._request(request_type="GET", url=url)
+        quicklooks_ids = response_json["data"]
 
-        with open(out_path, "wb") as dst:
-            for chunk in response:
-                dst.write(chunk)
+        out_paths: List[str] = []
+        for ql_id in tqdm(quicklooks_ids):
+            out_path = output_directory / f"quicklook_{ql_id}"  # No suffix required.
+            out_paths.append(str(out_path))
 
-    self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
-    return out_paths
+            url = endpoint(
+                f"/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/{self.jobtask_id}/outputs/quicklooks/{ql_id}"
+            )
+            response = self.auth._request(request_type="GET", url=url, return_text=False)
+
+            with open(out_path, "wb") as dst:
+                for chunk in response:
+                    dst.write(chunk)
+
+        self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
+        return out_paths

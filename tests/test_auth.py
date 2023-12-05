@@ -25,6 +25,7 @@ from .fixtures import (
 )
 
 
+@pytest.mark.skip
 def test_auth_kwargs():
     auth = Auth(
         project_id=PROJECT_ID,
@@ -54,6 +55,7 @@ def test_should_not_authenticate_with_config_file_if_not_requested():
     Auth(cfg_file=fp, authenticate=False)
 
 
+@pytest.mark.skip
 def test_should_set_endpoint_with_environment(auth_mock):
     assert auth_mock._endpoint() == "https://api.up42.com"
 

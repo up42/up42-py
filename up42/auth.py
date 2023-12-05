@@ -102,7 +102,7 @@ class Auth:
         }
 
         if "env" in kwargs:
-            host.DOMAIN = kwargs["env"]
+            self.env = kwargs["env"]
 
         try:
             self.authenticate: bool = kwargs["authenticate"]
@@ -202,6 +202,14 @@ class Auth:
     def _endpoint(self) -> str:
         """Gets the endpoint."""
         return host.endpoint("")
+
+    @property
+    def env(self):
+        return host.DOMAIN
+
+    @env.setter
+    def env(self, value: str):
+        host.DOMAIN = value
 
     def _get_workspace(self) -> None:
         """Get user id belonging to authenticated account."""
