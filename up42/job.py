@@ -174,7 +174,7 @@ class Job(VizTools):
         Returns:
             The job data.json.
         """
-        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}" f"/outputs/data-json/")
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/outputs/data-json/")
         response_json = self.auth._request(request_type="GET", url=url)
         logger.info(f"Retrieved {len(response_json['features'])} features.")
 
@@ -186,7 +186,7 @@ class Job(VizTools):
             return response_json
 
     def _get_download_url(self) -> str:
-        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}" f"/downloads/results/")
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/downloads/results/")
         response_json = self.auth._request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
         return download_url
@@ -274,7 +274,7 @@ class Job(VizTools):
             print(f"Printing logs of {len(jobtasks_ids)} JobTasks in Job with job_id " f"{self.job_id}:\n")
 
         for idx, jobtask_id in enumerate(jobtasks_ids):
-            url = endpoint(f"/projects/{self.project_id}/jobs/" f"{self.job_id}/tasks/{jobtask_id}/logs")
+            url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/logs")
             response_json = self.auth._request(request_type="GET", url=url)
 
             job_logs[jobtask_id] = response_json

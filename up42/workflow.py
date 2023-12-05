@@ -110,7 +110,7 @@ class Workflow:
 
         last_task = list(tasks.keys())[-1]
         url = endpoint(
-            f"/projects/{self.project_id}/workflows/{self.workflow_id}/" f"compatible-blocks?parentTaskName={last_task}"
+            f"/projects/{self.project_id}/workflows/{self.workflow_id}/compatible-blocks?parentTaskName={last_task}"
         )
         response_json = self.auth._request(request_type="GET", url=url)
         compatible_blocks = response_json["data"]["blocks"]
@@ -643,7 +643,7 @@ class Workflow:
 
                 job_name = f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
 
-                url = endpoint(f"/projects/{self.project_id}/" f"workflows/{self.workflow_id}/jobs?name={job_name}")
+                url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}/jobs?name={job_name}")
                 response_json = self.auth._request(request_type="POST", url=url, data=params)
                 job_json = response_json["data"]
                 logger.info(f"Created and running new job: {job_json['id']}")

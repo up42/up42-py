@@ -69,7 +69,7 @@ class JobTask(VizTools):
         Returns:
             Json of the results, alternatively geodataframe.
         """
-        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/{self.jobtask_id}/outputs/data-json/")
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/outputs/data-json/")
         response_json = self.auth._request(request_type="GET", url=url)
         logger.info(f"Retrieved {len(response_json['features'])} features.")
 
@@ -81,7 +81,7 @@ class JobTask(VizTools):
             return response_json
 
     def _get_download_url(self):
-        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/{self.jobtask_id}/downloads/results/")
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/downloads/results/")
         response_json = self.auth._request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
         return download_url
@@ -140,9 +140,7 @@ class JobTask(VizTools):
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info(f"Download directory: {str(output_directory)}")
 
-        url = endpoint(
-            f"/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/{self.jobtask_id}/outputs/quicklooks/"
-        )
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/outputs/quicklooks/")
         response_json = self.auth._request(request_type="GET", url=url)
         quicklooks_ids = response_json["data"]
 
@@ -152,7 +150,7 @@ class JobTask(VizTools):
             out_paths.append(str(out_path))
 
             url = endpoint(
-                f"/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/{self.jobtask_id}/outputs/quicklooks/{ql_id}"
+                f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/outputs/quicklooks/{ql_id}"
             )
             response = self.auth._request(request_type="GET", url=url, return_text=False)
 
