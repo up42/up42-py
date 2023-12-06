@@ -269,7 +269,7 @@ def test_get_orders(storage_mock):
 
 
 @pytest.mark.parametrize(
-    "params, expected_output_endpoint, expected_output_method",
+    "params, expected_payload, expected_results",
     [
         (
             {
@@ -376,29 +376,25 @@ def test_get_orders(storage_mock):
     ],
 )
 def test_get_orders_v2_endpoint_params(
-    auth_mock, requests_mock, params, expected_output_endpoint, expected_output_method
+    auth_mock, requests_mock, params, expected_payload, expected_results
 ):
-    workspace_url_param = (
-        f"&workspaceId={WORKSPACE_ID}" if params["workspace_orders"] else ""
-    )
-
     allowed_statuses = {entry.value for entry in AllowedStatuses}
     endpoint_statuses = (
-        set(params["statuses"]) & allowed_statuses if params["statuses"] else None
+        set(params["statuses"]) & allowed_statuses if params["statuses"] else []
     )
-    statuses_url_param = (
-        f"""&status={"&status=".join([status for status in endpoint_statuses])}"""
-        if endpoint_statuses
-        else ""
+    url_params = "&".join(
+        [
+            "sort=createdAt%2Cdesc",
+            f"workspaceId={WORKSPACE_ID}" if params["workspace_orders"] else "",
+            f"""displayName={params["name"]}""" if params["name"] else "",
+            *[f"status={status}" for status in endpoint_statuses],
+            "size=50",
+        ]
     )
 
-    name_url_param = f"""&displayName={params["name"]}""" if params["name"] else ""
+    url_storage_assets_paginated = f"{auth_mock._endpoint()}/v2/orders?{url_params}"
 
-    url_storage_assets_paginated = (
-        f"{auth_mock._endpoint()}/v2/orders?sort=createdAt%2Cdesc{workspace_url_param}{name_url_param}"
-        f"&type={params['order_type']}{statuses_url_param}&size=50"
-    )
-    requests_mock.get(url=url_storage_assets_paginated, json=expected_output_endpoint)
+    requests_mock.get(url=url_storage_assets_paginated, json=expected_payload)
     if not params["return_json"]:
         expected_results = [
             Order(
@@ -406,16 +402,11 @@ def test_get_orders_v2_endpoint_params(
                 order_id=output["id"],
                 order_info=output,
             )
-            for output in expected_output_method
+            for output in expected_results
         ]
-    else:
-        expected_results = expected_output_method
-
     storage = Storage(auth=auth_mock)
     orders = storage.get_orders(**params)
-
-    for order, expected_result in zip(orders, expected_results):
-        assert order == expected_result
+    assert orders == expected_results
 
 
 @pytest.mark.live
