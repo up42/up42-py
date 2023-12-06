@@ -12,8 +12,16 @@ from .fixtures import (
     PROJECT_ID,
     TOKEN,
     WORKSPACE_ID,
+    auth_account_live,
+    auth_account_mock,
     auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
+    username_test_live,
 )
 
 
@@ -29,26 +37,24 @@ def test_auth_kwargs():
     assert not auth.authenticate
 
 
-def test_no_credentials_raises(auth_mock):
-    auth_mock.project_id = None
-    auth_mock.project_api_key = None
+def test_no_credentials_raises():
     with pytest.raises(ValueError):
-        auth_mock._find_credentials()
+        Auth()
 
 
-def test_find_credentials_cfg_file(auth_mock):
-    auth_mock.project_id = None
-    auth_mock.project_api_key = None
+def test_cfg_file_not_found():
+    fp = Path(__file__).resolve().parent / "mock_data" / "test_config_fake.json"
+    with pytest.raises(ValueError) as e:
+        Auth(cfg_file=fp)
+    assert "Selected config file does not exist!" in str(e.value)
 
+
+def test_should_not_authenticate_with_config_file_if_not_requested():
     fp = Path(__file__).resolve().parent / "mock_data" / "test_config.json"
-    auth_mock.cfg_file = fp
-
-    auth_mock._find_credentials()
-    assert auth_mock.project_id is not None
-    assert auth_mock.project_api_key is not None
+    Auth(cfg_file=fp, authenticate=False)
 
 
-def test_endpoint(auth_mock):
+def test_should_set_endpoint_with_environment(auth_mock):
     assert auth_mock._endpoint() == "https://api.up42.com"
 
     auth_mock.env = "abc"
@@ -62,10 +68,10 @@ def test_get_token(auth_mock):
 
 @pytest.mark.live
 def test_get_token_raises_wrong_credentials_live(auth_live):
-    auth_live.project_id = "123"
+    auth_live._credentials_id = "123"
     with pytest.raises(ValueError) as e:
         auth_live._get_token()
-    assert "Authentication was not successful, check the provided project credentials." in str(e.value)
+    assert "Authentication" in str(e.value)
 
 
 @pytest.mark.live
@@ -91,7 +97,9 @@ def test_generate_headers(auth_mock):
         .joinpath("up42/_version.txt")
         .read_text(encoding="utf-8")
     )
-    assert isinstance(version, str) and "\n" not in version, "check integrity of your version file"
+    assert (
+        isinstance(version, str) and "\n" not in version
+    ), "check integrity of your version file"
     expected_headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer token_1011",
@@ -104,7 +112,9 @@ def test_generate_headers(auth_mock):
 def test_request_helper(auth_mock, requests_mock):
     requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
 
-    response = auth_mock._request_helper(request_type="GET", url="http://test.com", data={}, querystring={})
+    response = auth_mock._request_helper(
+        request_type="GET", url="http://test.com", data={}, querystring={}
+    )
     response_json = json.loads(response.text)
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 

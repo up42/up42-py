@@ -11,18 +11,18 @@ The `authenticate()` function allows you to access UP42 SDK requests. For more i
 ```python
 authenticate(
     cfg_file,
-    project_id,
-    project_api_key,
+    username,
+    password,
 )
 ```
 
 <h5> Arguments </h5>
 
-| Argument          | Overview                                                                                           |
-| ----------------- | -------------------------------------------------------------------------------------------------- |
-| `cfg_file`        | **Union[str, Path]**<br/>The file path to the JSON file containing the project ID and the API key. |
-| `project_id`      | **str**<br/>The project ID.                                                                        |
-| `project_api_key` | **str**<br/>The project API key.                                                                   |
+| Argument   | Overview                                                                                      |
+| ---------- | --------------------------------------------------------------------------------------------- |
+| `cfg_file` | **Union[str, Path]**<br/>The file path to the JSON file containing the username and password. |
+| `username` | **str**<br/>The email address used for logging into the console.                              |
+| `password` | **str**<br/>The password used for logging into the console.                                   |
 
 <h5> Example </h5>
 
@@ -30,8 +30,8 @@ authenticate(
 # Authenticate directly in code
 
 up42.authenticate(
-    project_id="your-project-ID",
-    project_api_key="your-project-API-key",
+    username="<your-email-address>",
+    password="<your-password>",
 )
 
 # Authenticate in a configuration file
@@ -183,7 +183,7 @@ The returned format is `dict`.
 <h5> Example </h5>
 
 ```python
-validate_manifest(path_or_json="/Users/max.mustermann/Desktop/UP42Manifest.json")
+up42.validate_manifest(path_or_json="/Users/max.mustermann/Desktop/UP42Manifest.json")
 ```
 
 ## Geometries
@@ -205,7 +205,7 @@ The returned format is `Union[dict, GeoDataFrame]`.
 
 | Argument       | Overview                                                                                                                                                          |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `location`     | **str**<br/>A defined location. The allowed values:<br/><ul><li>`Berlin`</li><li>`Washington`</li></ul>The default value is `Berlin`.                             |
+| `location`     | **str**<br/>A defined location. The allowed values are as follows:<br/><ul><li>`Berlin`</li><li>`Washington`</li></ul>The default value is `Berlin`.                             |
 | `as_dataframe` | **bool**<br/>Determines how to return the information:<br/><ul><li>`True`: return DataFrame.</li><li>`False`: return JSON.</li></ul>The default value is `False`. |
 
 <h5> Example </h5>
@@ -300,4 +300,81 @@ up42.viztools.folium_base_map(
     width_percent="100%",
     layer_control=False,
 )
+```
+## Webhooks
+
+### get_webhook_events()
+
+The `get_webhook_events()` function returns all available webhook events. For more information, see [Webhooks](webhooks.md).
+
+```python
+get_webhook_events()
+```
+
+The returned format is `dict`.
+
+<h5> Example </h5>
+
+```python
+up42.get_webhook_events()
+```
+
+### create_webhook()
+
+The `create_webhook()` function allows you to register a new webhook in the system.
+
+```python
+create_webhook(
+    name,
+    url,
+    events,
+    active,
+    secret,
+)
+```
+
+The returned format is `Webhook`.
+
+<h5> Arguments </h5>
+
+| Argument | Overview                                                                                                                                                                                  |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`   | **str / required**<br/>The name of the webhook.                                                                                                                                           |
+| `url`    | **str / required**<br/>The URL of the webhook.                                                                                                                                            |
+| `events` | **list[str] / required**<br/>A list of events that trigger the webhook. The allowed values are as follows:<br/><ul><li>`job.status`</li><li>`order.status`</li></ul>                                     |
+| `active` | **bool**<br/>Whether this webhook should be active after the update:<br/><ul><li>`True`: webhook is active.</li><li>`False`: webhook isn't active.</li></ul>The default value is `False`. |
+| `secret` | **str**<br/>The secret used to generate webhook signatures.                                                                                                                               |
+
+<h5> Example </h5>
+
+```python
+up42.create_webhook(
+    name="new-webhook",
+    url="https://receiving-url.com",
+    events=["job.status", "order.status"],
+    active=True,
+    secret="QWZTFnMEXhqZKNmu",
+)
+```
+
+### get_webhooks()
+
+The `get_webhooks()` function returns all registered webhooks for this workspace.
+
+```python
+get_webhooks(return_json)
+```
+
+The returned format is `list[Webhook]`.
+
+<h5> Arguments </h5>
+
+| Argument      | Overview                                                                                                                                                               |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `return_json` | **bool**<br/>Determines how to return webhooks:<br/><ul><li>`True`: return JSON.</li><li>`False`: return webhook class objects.</li></ul>The default value is `False`. |
+
+<h5> Example </h5>
+
+```python
+up42.get_webhooks(return_json=False)
 ```

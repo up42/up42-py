@@ -4,6 +4,7 @@ UP42 authentication mechanism and base requests functionality
 import json
 from pathlib import Path
 from typing import Dict, Optional, Union
+from warnings import warn
 
 import requests
 import requests.exceptions
@@ -43,6 +44,7 @@ class retry_if_401_invalid_token(retry_if_exception):
                         requests.exceptions.RequestException,
                     ),
                 )
+                and hasattr(exception.response, "status_code")  # check if response has status_code
                 and exception.response.status_code == 401
             )
 
@@ -70,26 +72,33 @@ class Auth:
         cfg_file: Union[str, Path, None] = None,
         project_id: Optional[str] = None,
         project_api_key: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
         **kwargs,
     ):
         """
         The Auth class handles the authentication with UP42.
 
-        Info:
-            Authentication is possible via the credentials of a specific project (project_id &
-            project_api_key). To get your **project id** and **project api key**, follow
-            the instructions in the docs authentication chapter.
+        Authenticate with UP42:
+            https://sdk.up42.com/authentication/.
 
         Args:
-            cfg_file: File path to the cfg.json with {project_id: "...", project_api_key: "..."}.
+            cfg_file: File path to the cfg.json with either
+            {project_id: "...", project_api_key: "..."} or {username: "...", password: "..."}.
             project_id: The unique identifier of the project.
             project_api_key: The project-specific API key.
+            username: The username for the UP42 account (email UP42 console).
+            password: Password for the UP42 console login.
         """
         self.cfg_file = cfg_file
-        self.project_id = project_id
-        self.project_api_key = project_api_key
         self.workspace_id: Optional[str] = None
         self.token: Optional[str] = None
+
+        local_vars = locals()
+        credentials_filter = ["project_id", "project_api_key", "username", "password"]
+        credentials_dict = {
+            key: value for key, value in local_vars.items() if key in credentials_filter and value is not None
+        }
 
         try:
             self.env: str = kwargs["env"]
@@ -100,54 +109,93 @@ class Auth:
         except KeyError:
             self.authenticate = True
 
+        if project_id:
+            self.project_id = project_id
+
+        config = self._choose_credential_source(cfg_file, credentials_dict)
+
         if self.authenticate:
-            self._find_credentials()
+            self._set_credentials(source=config)
             self._get_token()
             self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
-    def __repr__(self):
-        env_string = f" ,{self.env}" if self.env != "com" else ""
-        return f"UP42ProjectAuth(project_id={self.project_id}{env_string})"
-
-    def _find_credentials(self) -> None:
-        """
-        Sources the project credentials from a provided config file, error handling
-        if no credentials are provided in arguments or config file.
-        """
-        if self.project_id is None or self.project_api_key is None:
-            if self.cfg_file is None:
-                raise ValueError("Provide project_id and project_api_key via arguments or config file!")
-
-            # Source credentials from config file.
+    def _choose_credential_source(self, cfg_file: Union[str, Path, None], kwargs: dict) -> dict:
+        config = {}
+        if cfg_file:
             try:
-                with open(self.cfg_file) as src:
-                    config = json.load(src)
-                    try:
-                        self.project_id = config["project_id"]
-                        self.project_api_key = config["project_api_key"]
-                    except KeyError as e:
-                        raise ValueError(
-                            "Provided config file does not contain project_id and " "project_api_key!"
-                        ) from e
+                with open(cfg_file, encoding="utf-8") as src:
+                    config.update(json.load(src))
                 logger.info("Got credentials from config file.")
             except FileNotFoundError as e:
                 raise ValueError("Selected config file does not exist!") from e
 
-        elif all(v is not None for v in [self.cfg_file, self.project_id, self.project_api_key]):
-            logger.info(
-                "Credentials are provided via arguments and config file, " "now using the argument credentials."
-            )
+            if set(config.keys()).intersection(set(kwargs.keys())):
+                raise ValueError("Credentials must be provided either via config file or arguments, but not both")
+        return config if config else kwargs
+
+    def _set_credentials(self, source: dict):
+        schemas = {
+            "user": ("username", "password"),
+            "project": ("project_id", "project_api_key"),
+        }
+        token_retrievers = {
+            "user": self._get_token_account_based,
+            "project": self._get_token_project_based,
+        }
+
+        self._credentials_id = None
+
+        for schema, parameters in schemas.items():
+            if set(parameters).issubset(source.keys()):
+                if schema == "project":
+                    warn(
+                        "Project based authentication will be deprecated."
+                        "Please follow authentication guidelines (/docs/authentication.md)."
+                    )
+                self._credentials_id = source[parameters[0]]
+                self._credentials_key = source[parameters[1]]
+                self._get_token = token_retrievers[schema]
+        if self._credentials_id is None:
+            raise ValueError("No credentials provided either via config file or arguments.")
 
     def _endpoint(self) -> str:
         """Gets the endpoint."""
         return f"https://api.up42.{self.env}"
 
-    def _get_token(self):
+    def _get_token_account_based(self):
+        """Account based authentication via username and password."""
+        try:
+            req_headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+            }
+            req_body = {
+                "grant_type": "password",
+                "username": self._credentials_id,
+                "password": self._credentials_key,
+            }
+            token_response = requests.post(
+                url=self._endpoint() + "/oauth/token",
+                data=req_body,
+                headers=req_headers,
+                timeout=120,
+            )
+            if token_response.status_code != 200:
+                raise ValueError(
+                    f"Authentication failed with status code {token_response.status_code}."
+                    "Check the provided credentials."
+                )
+        except requests.exceptions.RequestException as err:
+            raise ValueError(
+                "Authentication failed due to a network error. Check the provided credentials and network connectivity."
+            ) from err
+        self.token = token_response.json()["data"]["accessToken"]
+
+    def _get_token_project_based(self):
         """Project specific authentication via project id and project api key."""
         try:
-            client = BackendApplicationClient(client_id=self.project_id, client_secret=self.project_api_key)
-            auth = HTTPBasicAuth(self.project_id, self.project_api_key)
+            client = BackendApplicationClient(client_id=self._credentials_id, client_secret=self._credentials_key)
+            auth = HTTPBasicAuth(self._credentials_id, self._credentials_key)
             get_token_session = OAuth2Session(client=client)
             token_response = get_token_session.fetch_token(token_url=self._endpoint() + "/oauth/token", auth=auth)
         except MissingTokenError as err:
@@ -156,10 +204,10 @@ class Auth:
         self.token = token_response["data"]["accessToken"]
 
     def _get_workspace(self) -> None:
-        """Get workspace id belonging to authenticated project."""
-        url = f"https://api.up42.{self.env}/projects/{self.project_id}"
+        """Get user id belonging to authenticated account."""
+        url = f"https://api.up42.{self.env}/users/me"
         resp = self._request("GET", url)
-        self.workspace_id = resp["data"]["workspaceId"]  # type: ignore
+        self.workspace_id = resp["data"]["id"]  # type: ignore
 
     @staticmethod
     def _generate_headers(token: str) -> Dict[str, str]:
@@ -179,7 +227,11 @@ class Auth:
         reraise=True,
     )
     def _request_helper(
-        self, request_type: str, url: str, data: dict = {}, querystring: dict = {}
+        self,
+        request_type: str,
+        url: str,
+        data: dict = {},
+        querystring: dict = {},
     ) -> requests.Response:
         """
         Helper function for the request, running the actual request with the correct headers.
@@ -196,7 +248,11 @@ class Auth:
         headers = self._generate_headers(self.token)  # type: ignore
         if querystring == {}:
             response: requests.Response = requests.request(
-                method=request_type, url=url, data=json.dumps(data), headers=headers
+                method=request_type,
+                url=url,
+                data=json.dumps(data),
+                headers=headers,
+                timeout=120,
             )
         else:
             response = requests.request(
@@ -205,6 +261,7 @@ class Auth:
                 data=json.dumps(data),
                 headers=headers,
                 params=querystring,
+                timeout=120,
             )
         logger.debug(response)
         logger.debug(data)

@@ -59,7 +59,7 @@ nav:
         - Job: reference/job-reference.md
         - JobCollection: reference/jobcollection-reference.md
         - JobTask: reference/jobtask-reference.md
-        - Webhooks: reference/webhooks-reference.md
+        - Webhook: reference/webhook-reference.md
     - Changelog and FAQ:
         - CHANGELOG.md
         - support-faq.md

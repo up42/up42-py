@@ -7,18 +7,27 @@ import pytest
 import requests
 
 # pylint: disable=unused-import
-from .context import Asset, Order, Storage
+from .context import AllowedStatuses, Asset, Order, Storage
 from .fixtures import (
     ASSET_ID,
     JSON_ASSET,
     JSON_ORDER,
+    JSON_ORDERS,
     JSON_STORAGE_STAC,
     ORDER_ID,
     WORKSPACE_ID,
+    auth_account_live,
+    auth_account_mock,
     auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
     storage_live,
     storage_mock,
+    username_test_live,
 )
 
 
@@ -49,53 +58,6 @@ def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
             "number": page_nr,
         },
     }
-
-
-def test__search_stac(storage_mock):
-    geometry = {
-        "coordinates": [
-            [
-                [13.353338545805542, 52.52576354784705],
-                [13.353338545805542, 52.52400476917347],
-                [13.355812219301214, 52.52400476917347],
-                [13.355812219301214, 52.52576354784705],
-                [13.353338545805542, 52.52576354784705],
-            ]
-        ],
-        "type": "Polygon",
-    }
-    stac_results = storage_mock._search_stac(
-        acquired_after="2021-05-30",
-        acquired_before=datetime.datetime(2023, 5, 17),
-        geometry=geometry,
-        custom_filter={"op": "gte", "args": [{"property": "eo:cloud_cover"}, 10]},
-    )
-    assert isinstance(stac_results, list)
-    assert stac_results[0]["assets"]
-
-
-@pytest.mark.live
-def test__search_stac_live(storage_live):
-    geometry = {
-        "coordinates": [
-            [
-                [13.290655771836441, 52.54215979691358],
-                [13.290655771836441, 52.42035305277207],
-                [13.582819011302632, 52.42035305277207],
-                [13.582819011302632, 52.54215979691358],
-                [13.290655771836441, 52.54215979691358],
-            ]
-        ],
-        "type": "Polygon",
-    }
-    stac_results = storage_live._search_stac(
-        acquired_after=datetime.datetime(2020, 5, 17),
-        acquired_before=datetime.datetime(2023, 5, 17),
-        geometry=geometry,
-    )
-    assert isinstance(stac_results, list)
-    assert stac_results[0]["assets"]
-    # TODO: assertions
 
 
 def test_paginate_one_page(storage_mock, requests_mock):
@@ -180,54 +142,32 @@ def test_get_assets_live(storage_live):
     # default descending, newest to oldest.
     descending_dates = sorted(dates)[::-1]
     assert descending_dates == dates
-    assets = storage_live.get_assets(
-        created_after="2020-01-01",
-        created_before="2023-01-01",
-        acquired_after="2020-01-01",
-        acquired_before="2023-01-01",
-    )
-    assert len(assets) >= 2
+    with pytest.raises(ValueError) as e:
+        storage_live.get_assets(
+            created_after="2020-01-01",
+            created_before="2023-01-01",
+            acquired_after="2020-01-01",
+            acquired_before="2023-01-01",
+        )
+    assert "no longer supported" in str(e.value)
 
 
 @pytest.mark.live
 def test_get_assets_by_source_live(storage_live):
-    assets = storage_live.get_assets(sources=["ARCHIVE", "ANALYTICS"])
+    assets = storage_live.get_assets(sources=["ARCHIVE"])
     assert len(assets) >= 2
 
 
 def test_get_assets_with_search_stac(storage_mock):
-    assets = storage_mock.get_assets(acquired_after="2021-05-30")
-    assert len(assets) == 1
-    assert isinstance(assets[0], Asset)
-    assert assets[0].asset_id == ASSET_ID
-    assets = storage_mock.get_assets(
-        created_after="2020-01-01",
-        created_before="2023-01-01",
-        acquired_after="2020-01-01",
-        acquired_before="2023-01-01",
-        tags=["project-7", "optical"],
-    )
-    assert len(assets) == 1
-    assert isinstance(assets[0], Asset)
-
-
-@pytest.mark.live
-def test_get_assets_with_stac_query_live(storage_live):
-    filter_geometry = {
-        "coordinates": [
-            [
-                [13.353338545805542, 52.52576354784705],
-                [13.353338545805542, 52.52400476917347],
-                [13.355812219301214, 52.52400476917347],
-                [13.355812219301214, 52.52576354784705],
-                [13.353338545805542, 52.52576354784705],
-            ]
-        ],
-        "type": "Polygon",
-    }
-
-    storage_live.get_assets(geometry=filter_geometry)
-    # TODO assertions
+    with pytest.raises(ValueError) as e:
+        storage_mock.get_assets(
+            created_after="2020-01-01",
+            created_before="2023-01-01",
+            acquired_after="2020-01-01",
+            acquired_before="2023-01-01",
+            tags=["project-7", "optical"],
+        )
+        assert "no longer supported" in str(e.value)
 
 
 def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
@@ -296,7 +236,9 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     }
 
     # assets pages
-    url_storage_assets_paginated = f"{auth_mock._endpoint()}/v2/assets?sort=createdAt,asc&size=50"
+    url_storage_assets_paginated = (
+        f"{auth_mock._endpoint()}/v2/assets?sort=createdAt,asc&size=50"
+    )
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
     storage = Storage(auth=auth_mock)
@@ -318,10 +260,153 @@ def test_get_assets_raise_error_live(storage_live):
 
 
 def test_get_orders(storage_mock):
-    orders = storage_mock.get_orders(order_type="ARCHIVE", tags=["project-7", "optical"])
+    orders = storage_mock.get_orders(
+        order_type="ARCHIVE", tags=["project-7", "optical"]
+    )
     assert len(orders) == 1
     assert isinstance(orders[0], Order)
     assert orders[0].order_id == ORDER_ID
+
+
+@pytest.mark.parametrize(
+    "params, expected_payload, expected_results",
+    [
+        (
+            {
+                "workspace_orders": True,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": None,
+                "name": None,
+            },
+            JSON_ORDERS,
+            JSON_ORDERS["content"],
+        ),
+        (
+            {
+                "workspace_orders": True,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": ["CREATED", "FULFILLED"],
+                "name": None,
+            },
+            JSON_ORDERS,
+            JSON_ORDERS["content"],
+        ),
+        (
+            {
+                "workspace_orders": True,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": ["TEST"],
+                "name": None,
+            },
+            JSON_ORDERS,
+            JSON_ORDERS["content"],
+        ),
+        (
+            {
+                "workspace_orders": True,
+                "return_json": False,
+                "order_type": "TASKING",
+                "statuses": ["CREATED"],
+                "name": None,
+            },
+            JSON_ORDERS,
+            [
+                {
+                    "id": "ddb207c0-3b7f-4186-bc0b-c033f0d2f32b",
+                    "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
+                    "workspaceId": "workspace_id_123",
+                    "dataProvider": "OneAtlas",
+                    "status": "FULFILLED",
+                    "createdAt": "2021-01-18T16:18:16.105851Z",
+                    "updatedAt": "2021-01-18T16:21:31.966805Z",
+                    "assets": ["363f89c1-3586-4b14-9a49-03a890c3b593"],
+                    "createdBy": {
+                        "id": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
+                        "type": "USER",
+                    },
+                    "updatedBy": {"id": "system", "type": "INTERNAL"},
+                },
+            ],
+        ),
+        (
+            {
+                "workspace_orders": True,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": None,
+                "name": "Testing",
+            },
+            JSON_ORDERS,
+            JSON_ORDERS["content"],
+        ),
+        (
+            {
+                "workspace_orders": False,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": None,
+                "name": None,
+            },
+            JSON_ORDERS,
+            JSON_ORDERS["content"],
+        ),
+        (
+            {
+                "workspace_orders": False,
+                "return_json": True,
+                "order_type": "TASKING",
+                "statuses": None,
+                "name": None,
+            },
+            JSON_ORDERS,
+            JSON_ORDERS["content"],
+        ),
+    ],
+    ids=[
+        "Sc 1: statuses None, workspace_orders and return_json True, name None",
+        "Sc 2: statuses allowed, workspace_orders and return_json True, name None",
+        "Sc 3: statuses non allowed, workspace_orders and return_json True, name None",
+        "Sc 4: statuses allowed, workspace_orders True, return_json False, name None -> orders output expected",
+        "Sc 5: statuses None, workspace_orders and return_json True, name Test",
+        "Sc 6: Workspace Orders, Return JSON True, Statuses Test, name None",
+        "Sc 7: statuses None, workspace_orders False, Return JSON True, name None",
+    ],
+)
+def test_get_orders_v2_endpoint_params(
+    auth_mock, requests_mock, params, expected_payload, expected_results
+):
+    allowed_statuses = {entry.value for entry in AllowedStatuses}
+    endpoint_statuses = (
+        set(params["statuses"]) & allowed_statuses if params["statuses"] else []
+    )
+    url_params = "&".join(
+        [
+            "sort=createdAt%2Cdesc",
+            f"workspaceId={WORKSPACE_ID}" if params["workspace_orders"] else "",
+            f"""displayName={params["name"]}""" if params["name"] else "",
+            *[f"status={status}" for status in endpoint_statuses],
+            "size=50",
+        ]
+    )
+
+    url_storage_assets_paginated = f"{auth_mock._endpoint()}/v2/orders?{url_params}"
+
+    requests_mock.get(url=url_storage_assets_paginated, json=expected_payload)
+    if not params["return_json"]:
+        expected_results = [
+            Order(
+                auth=auth_mock,
+                order_id=output["id"],
+                order_info=output,
+            )
+            for output in expected_results
+        ]
+    storage = Storage(auth=auth_mock)
+    orders = storage.get_orders(**params)
+    assert orders == expected_results
 
 
 @pytest.mark.live
@@ -351,33 +436,30 @@ def test_get_orders_pagination(auth_mock, requests_mock):
     Mock result holds 2 pages, each with 50 results.
     """
     json_orders_paginated = {
-        "data": {
-            "content": [JSON_ORDER["data"]] * 50,
-            "pageable": {
-                "sort": {"sorted": True, "unsorted": False, "empty": False},
-                "pageNumber": 0,
-                "pageSize": 50,
-                "offset": 0,
-                "paged": True,
-                "unpaged": False,
-            },
-            "totalPages": 2,
-            "totalElements": 100,
-            "last": True,
+        "content": [JSON_ORDER["data"]] * 50,
+        "pageable": {
             "sort": {"sorted": True, "unsorted": False, "empty": False},
-            "numberOfElements": 100,
-            "first": True,
-            "size": 50,
-            "number": 0,
-            "empty": False,
+            "pageNumber": 0,
+            "pageSize": 50,
+            "offset": 0,
+            "paged": True,
+            "unpaged": False,
         },
-        "error": None,
+        "totalPages": 2,
+        "totalElements": 100,
+        "last": True,
+        "sort": {"sorted": True, "unsorted": False, "empty": False},
+        "numberOfElements": 100,
+        "first": True,
+        "size": 50,
+        "number": 0,
+        "empty": False,
     }
 
     # assets pages
     url_storage_orders_paginated = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/"
-        f"orders?format=paginated&sort=createdAt,asc&size=50"
+        f"{auth_mock._endpoint()}/v2/"
+        f"orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)
 

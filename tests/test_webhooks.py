@@ -5,8 +5,16 @@ from .context import Webhook
 from .fixtures import (
     WEBHOOK_ID,
     WORKSPACE_ID,
+    auth_account_live,
+    auth_account_mock,
     auth_live,
     auth_mock,
+    auth_project_live,
+    auth_project_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
+    username_test_live,
     webhook_live,
     webhook_mock,
     webhooks_live,
@@ -70,7 +78,7 @@ def test_get_webhooks_return_json(webhooks_mock):
 def test_get_webhooks_live(webhooks_live):
     webhooks = webhooks_live.get_webhooks()
     assert isinstance(webhooks, list)
-    assert len(webhooks) == 0  # TEST_UP42_WEBHOOK_ID env variable needs to be updated
+    assert len(webhooks) == 3  # TEST_UP42_WEBHOOK_ID env variable needs to be updated
     # assert isinstance(webhooks[0], Webhook)
 
 

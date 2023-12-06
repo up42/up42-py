@@ -5,6 +5,7 @@ from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
+from warnings import warn
 
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
@@ -17,13 +18,7 @@ from up42.auth import Auth
 from up42.estimation import Estimation
 from up42.job import Job
 from up42.jobcollection import JobCollection
-from up42.utils import (
-    any_vector_to_fc,
-    fc_to_query_geometry,
-    filter_jobs_on_mode,
-    format_time,
-    get_logger,
-)
+from up42.utils import any_vector_to_fc, fc_to_query_geometry, filter_jobs_on_mode, format_time, get_logger
 
 logger = get_logger(__name__)
 
@@ -40,7 +35,10 @@ class Workflow:
 
     Use an existing workflow:
     ```python
-    workflow = up42.initialize_workflow(workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98")
+    workflow = up42.initialize_workflow(
+        workflow_id="7fb2ec8a-45be-41ad-a50f-98ba6b528b98",
+        project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321"
+    )
     ```
     """
 
@@ -94,6 +92,12 @@ class Workflow:
 
         Currently no data blocks can be attached to other data blocks.
         """
+        warn(
+            "Blocks are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         tasks: dict = self.get_workflow_tasks(basic=True)  # type: ignore
         if not tasks:
             logger.info("The workflow is empty, returning all data blocks.")
@@ -123,6 +127,12 @@ class Workflow:
         Returns:
             The workflow task info.
         """
+        warn(
+            "Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks"
 
         response_json = self.auth._request(request_type="GET", url=url)
@@ -262,6 +272,12 @@ class Workflow:
             ```
         """
         # Construct proper task definition from simplified input.
+        warn(
+            "Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
 
@@ -486,7 +502,12 @@ class Workflow:
         for task in input_tasks:
             task["blockVersionTag"] = workflow_tasks[task["name"]]
 
-        estimation = Estimation(auth=self.auth, input_parameters=input_parameters, input_tasks=input_tasks).estimate()
+        estimation = Estimation(
+            auth=self.auth,
+            project_id=self.project_id,
+            input_parameters=input_parameters,
+            input_tasks=input_tasks,
+        ).estimate()
 
         min_credits, max_credits, min_duration, max_duration = [], [], [], []
         for e in estimation.values():
@@ -671,6 +692,12 @@ class Workflow:
         Returns:
             The spawned test job object.
         """
+        warn(
+            "Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if get_estimation:
             self.estimate_job(input_parameters)
 
@@ -703,6 +730,12 @@ class Workflow:
         Raises:
             ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
+        warn(
+            "Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
             max_concurrent_jobs=max_concurrent_jobs,
@@ -728,7 +761,17 @@ class Workflow:
         Returns:
             The spawned job object.
         """
-        return self._helper_run_job(input_parameters=input_parameters, track_status=track_status, name=name)
+        warn(
+            "Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._helper_run_job(
+            input_parameters=input_parameters,
+            track_status=track_status,
+            name=name,
+        )
 
     def run_jobs_parallel(
         self,
@@ -750,6 +793,12 @@ class Workflow:
         Raises:
             ValueError: When max_concurrent_jobs is greater than max_concurrent_jobs set in project settings.
         """
+        warn(
+            "Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         jobcollection = self._helper_run_parallel_jobs(
             input_parameters_list=input_parameters_list,
             max_concurrent_jobs=max_concurrent_jobs,
@@ -758,7 +807,10 @@ class Workflow:
         return jobcollection
 
     def get_jobs(
-        self, return_json: bool = False, test_jobs: bool = True, real_jobs: bool = True
+        self,
+        return_json: bool = False,
+        test_jobs: bool = True,
+        real_jobs: bool = True,
     ) -> Union[JobCollection, List[Dict]]:
         """
         Get all jobs associated with the workflow as a JobCollection or JSON.
@@ -795,6 +847,12 @@ class Workflow:
             name: New name of the workflow.
             description: New description of the workflow.
         """
+        warn(
+            "Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         properties_to_update = {"name": name, "description": description}
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}"
         self.auth._request(request_type="PUT", url=url, data=properties_to_update)

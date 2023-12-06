@@ -1,6 +1,9 @@
 import math
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from enum import Enum
+from typing import List, Optional, Union
+from urllib.parse import urlencode, urljoin
+from warnings import warn
 
 from geojson import Feature, FeatureCollection
 from geopandas import GeoDataFrame
@@ -10,9 +13,22 @@ from up42.asset import Asset
 from up42.auth import Auth
 from up42.order import Order
 from up42.stac_client import PySTACAuthClient
-from up42.utils import any_vector_to_fc, fc_to_query_geometry, format_time, get_logger
+from up42.utils import format_time, get_logger
 
 logger = get_logger(__name__)
+
+
+class AllowedStatuses(Enum):
+    CREATED = "CREATED"
+    BEING_PLACED = "BEING_PLACED"
+    PLACED = "PLACED"
+    PLACEMENT_FAILED = "PLACEMENT_FAILED"
+    DELIVERY_INITIALIZATION_FAILED = "DELIVERY_INITIALIZATION_FAILED"
+    BEING_FULFILLED = "BEING_FULFILLED"
+    DOWNLOAD_FAILED = "DOWNLOAD_FAILED"
+    DOWNLOADED = "DOWNLOADED"
+    FULFILLED = "FULFILLED"
+    FAILED_PERMANENTLY = "FAILED_PERMANENTLY"
 
 
 class Storage:
@@ -106,71 +122,6 @@ class Storage:
                 break
         return response_features
 
-    def _search_stac(
-        self,
-        acquired_after: Optional[Union[str, datetime]] = None,
-        acquired_before: Optional[Union[str, datetime]] = None,
-        geometry: Optional[
-            Union[
-                dict,
-                Feature,
-                FeatureCollection,
-                list,
-                GeoDataFrame,
-                Polygon,
-            ]
-        ] = None,
-        custom_filter=None,
-    ) -> list:
-        """
-        Search query for storage STAC collection items.
-
-        Args:
-            acquired_after: Search for assets that contain data acquired after the specified timestamp,\
-                in `"YYYY-MM-DD"` format.
-            acquired_before: Search for assets that contain data acquired before the specified timestamp,\
-                in `"YYYY-MM-DD"` format.
-            geometry: Search for assets that contain STAC items intersecting the provided geometry,\
-                in EPSG:4326 (WGS84) format.\
-                    For more information on STAC items,\
-                        see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
-            custom_filter:\
-                CQL2 filters used to search for assets that contain STAC items with specific property values.\
-                For more information on filters,\
-                see [PySTAC Client Documentation — CQL2 Filtering]\
-                    (https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html#CQL2-Filters).\
-                For more information on STAC items, see [Introduction to STAC]\
-                    (https://docs.up42.com/developers/api-assets/stac-about).
-
-        Returns:
-            A list of STAC items.
-        """
-        stac_search_parameters: Dict[str, Any] = {
-            "max_items": 100,
-            "limit": 10000,
-        }
-        if geometry is not None:
-            geometry = any_vector_to_fc(vector=geometry)
-            geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
-            stac_search_parameters["intersects"] = geometry
-        if custom_filter is not None:
-            # e.g. {"op": "gte","args": [{"property": "eo:cloud_cover"}, 10]}
-            stac_search_parameters["filter"] = custom_filter
-
-        datetime_filter = None
-        if acquired_after is not None:
-            datetime_filter = f"{format_time(acquired_after)}/.."
-        if acquired_before is not None:
-            datetime_filter = f"../{format_time(acquired_before)}"
-        if acquired_after is not None and acquired_before is not None:
-            datetime_filter = f"{format_time(acquired_after)}/{format_time(acquired_before)}"
-        stac_search_parameters["datetime"] = datetime_filter  # type: ignore
-
-        url = f"{self.auth._endpoint()}/v2/assets/stac/search"
-
-        features = self._query_paginated_stac_search(url, stac_search_parameters)
-        return features
-
     def get_assets(
         self,
         created_after: Optional[Union[str, datetime]] = None,
@@ -193,39 +144,26 @@ class Storage:
         """
         Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#functionality_1)
         objects or in JSON format.
+
         Args:
-            created_after: Search for assets created after the specified timestamp,\
-                in `"YYYY-MM-DD"` format.
-            created_before: Search for assets created before the specified timestamp,\
-                in `"YYYY-MM-DD"` format.
-            acquired_after: Search for assets that contain data acquired after the specified timestamp,\
-                in `"YYYY-MM-DD"` format.
-            acquired_before: Search for assets that contain data acquired before the specified timestamp,\
-            in `"YYYY-MM-DD"` format.
-            geometry: Search for assets that contain STAC items intersecting the provided geometry,\
-                in EPSG:4326 (WGS84) format.\
-                For more information on STAC items,\
-                see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+            created_after: Search for assets created after the specified timestamp, in `"YYYY-MM-DD"` format.
+            created_before: Search for assets created before the specified timestamp, in `"YYYY-MM-DD"` format.
+            acquired_after: Deprecated filter.
+            acquired_before: Deprecated filter.
+            geometry: Deprecated filter.
             workspace_id: Search by the workspace ID.
             collection_names: Search for assets from any of the provided geospatial collections.
             producer_names: Search for assets from any of the provided producers.
             tags: Search for assets with any of the provided tags.
             sources: Search for assets from any of the provided sources.\
-                The allowed values: `"ARCHIVE"`, `"TASKING"`, `"ANALYTICS"`, `"USER"`.
-            search: Search for assets that contain the provided search query in their name,\
-                title, or order ID.
-            custom_filter: CQL2 filters used to search for assets that contain STAC\
-            items with specific property values.\
-                For more information on filters,\
-                    see \
-                        [CQL2 Filtering](https://pystac-client.readthedocs.io/en/stable/tutorials/cql2-filter.html).\
-                    For more information on STAC items,\
-                        see [Introduction to STAC](https://docs.up42.com/developers/api-assets/stac-about).
+                The allowed values: `"ARCHIVE"`, `"TASKING"`, `"USER"`.
+            search: Search for assets that contain the provided search query in their name, title, or order ID.
+            custom_filter: Deprecated filter.
             limit: The number of results on a results page.
             sortby: The property to sort by.
             descending: The sorting order: <ul><li>`true` — descending</li><li>`false` — ascending</li></ul>
-            return_json: If `true`, returns a JSON dictionary. If `false`,\
-                returns a list of [Asset](https://sdk.up42.com/structure/#functionality_1) objects.
+            return_json: If `true`, returns a JSON dictionary.\
+                If `false`, returns a list of [Asset](https://sdk.up42.com/structure/#functionality_1) objects.
 
         Returns:
             A list of Asset objects.
@@ -252,21 +190,21 @@ class Storage:
 
         assets_json = self._query_paginated_endpoints(url=url, limit=limit)
 
-        # Comparison of asset results with storage stac search results which can be related to the assets via asset-id
         if (
             acquired_before is not None
             or acquired_after is not None
             or geometry is not None
             or custom_filter is not None
         ):
-            stac_features = self._search_stac(
-                acquired_after=acquired_after,
-                acquired_before=acquired_before,
-                geometry=geometry,
-                custom_filter=custom_filter,
+            warn(
+                "Search for geometry, acquired_before, acquired_after and custom_filter has been deprecated."
+                "Use pystac client https://sdk.up42.com/storage/#pystac for STAC queries.",
+                DeprecationWarning,
+                stacklevel=2,
             )
-            stac_assets_ids = [feature["properties"]["up42-system:asset_id"] for feature in stac_features]
-            assets_json = [asset_json for asset_json in assets_json if asset_json["id"] in stac_assets_ids]
+            raise ValueError(
+                "Search for geometry, acquired_before, acquired_after and custom_filter is no longer supported."
+            )
 
         if workspace_id is not None:
             logger.info(f"Queried {len(assets_json)} assets for workspace {self.workspace_id}.")
@@ -281,47 +219,65 @@ class Storage:
 
     def get_orders(
         self,
+        workspace_orders: bool = True,
         return_json: bool = False,
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
         order_type: Optional[str] = None,
+        statuses: Optional[List[AllowedStatuses]] = None,
+        name: Optional[str] = None,
         tags: Optional[List[str]] = None,
     ) -> Union[List[Order], dict]:
         """
-        Gets all orders in the workspace as Order objects or JSON.
+        Gets all orders in the account/workspace as Order objects or JSON.
 
         Args:
+            workspace_orders: If set to True, only returns workspace orders. Otherwise, returns all account orders.
             return_json: If set to True, returns JSON object.
             limit: Optional, only return n first assets by sorting criteria and order.
                 Optimal to select if your workspace contains many assets.
             sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "type".
             descending: The sorting order, True for descending (default), False for ascending.
             order_type: Can be either "TASKING" or "ARCHIVE". Pass this param to filter orders based on order_type.
+            statuses: Search for orders with any of the statuses provided.
+            name: Search for orders that contain this string in their name.
             tags: Search for orders with any of the provided tags.
 
         Returns:
             Order objects in the workspace or alternatively JSON info of the orders.
         """
-        allowed_sorting_criteria = [
+        allowed_statuses = {entry.value for entry in AllowedStatuses}
+
+        allowed_sorting_criteria = {
             "createdAt",
             "updatedAt",
             "type",
             "status",
-            "dataProvider",
-        ]
+        }
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}"
-        if order_type is not None:
-            if order_type in ["TASKING", "ARCHIVE"]:
-                url += f"&type={order_type}"
-            else:
-                logger.warning("order_type should be TASKING or ARCHIVE. Ignoring this filter.")
-        if tags is not None:
-            for tag in tags:
-                url += f"&tags={tag}"
+        base_url = f"{self.auth._endpoint()}/v2/orders"
+
+        params = {
+            "sort": sort,
+            "workspaceId": self.workspace_id if workspace_orders else None,
+            "displayName": name,
+            "type": order_type if order_type in ["TASKING", "ARCHIVE"] else None,
+            "tags": tags,
+            "status": set(statuses) & allowed_statuses if statuses else None,
+        }
+        params = {k: v for k, v in params.items() if v is not None}
+
+        if statuses is not None and len(statuses) > len(params["status"]):
+            logger.info(
+                "statuses not included in allowed_statuses"
+                f"{set(statuses).difference(allowed_statuses)} were ignored."
+            )
+
+        url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
+
         orders_json = self._query_paginated_endpoints(url=url, limit=limit)
         logger.info(f"Got {len(orders_json)} orders for workspace {self.workspace_id}.")
 

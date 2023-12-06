@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 from time import sleep
 from typing import List, Optional, Union
+from warnings import warn
 
 import requests
 import requests.exceptions
@@ -28,11 +29,20 @@ class Job(VizTools):
 
     Use an existing job:
     ```python
-    job = up42.initialize_job(job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021")
+    job = up42.initialize_job(
+        job_id="de5806aa-5ef1-4dc9-ab1d-06d7ec1a5021",
+        project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321"
+    )
     ```
     """
 
-    def __init__(self, auth: Auth, project_id: str, job_id: str, job_info: Optional[dict] = None):
+    def __init__(
+        self,
+        auth: Auth,
+        project_id: str,
+        job_id: str,
+        job_info: Optional[dict] = None,
+    ):
         self.auth = auth
         self.project_id = project_id
         self.job_id = job_id
@@ -89,6 +99,12 @@ class Job(VizTools):
         Args:
             report_time: The intervall (in seconds) when to query the job status.
         """
+        warn(
+            "Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         logger.info(
             f"Tracking job status continuously, reporting every {report_time} seconds...",
         )
@@ -120,6 +136,12 @@ class Job(VizTools):
 
     def cancel_job(self) -> None:
         """Cancels a pending or running job."""
+        warn(
+            "Jobs are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}/cancel/"
         self.auth._request(request_type="POST", url=url)
         logger.info(f"Job canceled: {self.job_id}")
@@ -168,7 +190,11 @@ class Job(VizTools):
         download_url = response_json["data"]["url"]
         return download_url
 
-    def download_results(self, output_directory: Union[str, Path, None] = None, unpacking: bool = True) -> List[str]:
+    def download_results(
+        self,
+        output_directory: Union[str, Path, None] = None,
+        unpacking: bool = True,
+    ) -> List[str]:
         """
         Downloads the job results. Unpacking the final file will happen as default.
 
@@ -183,7 +209,7 @@ class Job(VizTools):
         logger.info(f"Downloading results of job {self.job_id}")
 
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}/job_{self.job_id}"
+            output_directory = Path.cwd() / f"project_{self.project_id}/job_{self.job_id}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)

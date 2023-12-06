@@ -8,20 +8,15 @@
     import up42
     ```
 
-    Authenticate with UP42 via
-    ```python
-    up42.authenticate(
-        project_id="your-project-ID",
-        project_api_key="your-project-API-key"
-    )
-    ```
+    Authenticate with UP42:
+        https://sdk.up42.com/authentication/.
 
     To initialize any lower level functionality use e.g.
     ```python
     catalog = up42.initialize_catalog()
     ```
     ```python
-    project = up42.initialize_project()
+    project = up42.initialize_project(project_id="your-project-ID")
     ```
 """
 

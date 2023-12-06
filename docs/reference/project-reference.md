@@ -1,9 +1,13 @@
 # Project
 
+!!! info "Analytics platform discontinued after January 31, 2024"
+
+    The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new [advanced processing functionalities](https://docs.up42.com/processing-platform/advanced). This change will affect projects, workflows, jobs, data blocks, processing blocks, and custom blocks. For more information, see the [blog post.](https://up42.com/blog/pansharpening-an-initial-view-into-our-advanced-analytic-capabilities?utm_source=documentation)
+
 The Project class enables access to the UP42 [analytics functionality](analytics.md). A project stores workflows and their corresponding job runs.
 
 ```python
-project = up42.initialize_project()
+project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 ```
 
 ## Projects
@@ -22,7 +26,7 @@ project.info
 
 ### max_concurrent_jobs
 
-The `max_concurrent_jobs` attribute returns the maximum number of jobs that can be running simultaneously.
+The `max_concurrent_jobs` attribute returns the maximum number of jobs that can run simultaneously.
 
 The returned format is `int`.
 
@@ -39,6 +43,7 @@ The `get_project_settings()` function returns threshold limits applied to the pr
 ```python
 get_project_settings()
 ```
+
 The returned format is `list[dict[str, str]]`.
 
 <h5> Example </h5>
@@ -63,11 +68,11 @@ The returned format is `dict`.
 
 <h5> Arguments </h5>
 
-| Argument              | Overview                                                                                                            |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `max_aoi_size`        | **int**<br/>The largest area of interest that can be specified. Use a value from 1 to 1,000 km<sup>2</sup>.         |
-| `max_concurrent_jobs` | **int**<br/>The maximum number of jobs that can be running simultaneously. Use a value from 1 to 10 km<sup>2</sup>. |
-| `number_of_images`    | **int**<br/>The maximum number of images that can be returned. Use a value from 1 to 20 km<sup>2</sup>.             |
+| Argument              | Overview                                                                                                    |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `max_aoi_size`        | **int**<br/>The largest area of interest that can be specified. Use a value from 1 to 1,000 km<sup>2</sup>. |
+| `max_concurrent_jobs` | **int**<br/>The maximum number of jobs that can run simultaneously. Use a value from 1 to 10.               |
+| `number_of_images`    | **int**<br/>The maximum number of images that can be returned. Use a value from 1 to 20.                    |
 
 <h5> Example </h5>
 
@@ -162,7 +167,7 @@ The returned format is `Union[JobCollection, list[dict]]`.
 | `test_jobs`   | **bool**<br/>Determines whether to return test queries:<br/><ul><li>`True`: return test queries.</li><li>`False`: don't return test queries.</li></ul>The default value is `True`.                                                                                                           |
 | `real_jobs`   | **bool**<br/>Determines whether to return live jobs:<br/><ul><li>`True`: return live jobs.</li><li>`False`: don't return live jobs.</li></ul>The default value is `True`.                                                                                                                    |
 | `limit`       | **int**<br/>The number of results to show. The default value is `500`.                                                                                                                                                                                                                       |
-| `sortby`      | **str**<br/>Arrange elements in the order specified in `descending` based on a chosen field. The allowed values:<br><ul><li>`createdAt`</li><li>`name`</li><li>`id`</li><li>`mode`</li><li>`status`</li><li>`startedAt`</li><li>`finishedAt`</li></ul> The default value is `createdAt`.     |
+| `sortby`      | **str**<br/>Arranges elements in the order specified in `descending` based on a chosen field. The allowed values are as follows:<br><ul><li>`createdAt`</li><li>`name`</li><li>`id`</li><li>`mode`</li><li>`status`</li><li>`startedAt`</li><li>`finishedAt`</li></ul> The default value is `createdAt`.     |
 | `descending`  | **bool**<br/>Determines the arrangement of elements:<br/><ul><li>`True`: arrange elements in descending order based on the field specified in `sortby`.</li><li>`False`: arrange elements in ascending order based on the field specified in `sortby`.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>

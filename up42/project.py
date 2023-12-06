@@ -1,5 +1,6 @@
 import logging
 from typing import Dict, List, Optional, Union
+from warnings import warn
 
 from up42.auth import Auth
 from up42.job import Job
@@ -16,14 +17,8 @@ class Project:
     new workflows, query already existing workflows & jobs in the project and manage
     the project settings.
 
-    Create a new project on the
-    [**UP42 Console website**](https://sdk.up42.com/authentication/#get-your-project-credentials).
-
-    Use an existing project:
     ```python
-    up42.authenticate(project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321",
-                      project_api_key="9i7uec8a-45be-41ad-a50f-98bewb528b10")
-    project = up42.initialize_project()
+    project = up42.initialize_project(project_id="uz92-8uo0-4dc9-ab1d-06d7ec1a5321")
     ```
     """
 
@@ -63,6 +58,12 @@ class Project:
         Returns:
             The workflow object.
         """
+        warn(
+            "Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if use_existing:
             logger.info("Getting existing workflows in project ...")
             logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
@@ -227,6 +228,12 @@ class Project:
         """
         # The ranges and default values of the project settings can potentially get
         # increased, so need to be dynamically queried from the server.
+        warn(
+            "Workflows are getting deprecated. The current analytics platform will be discontinued "
+            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         current_settings = {d["name"]: d for d in self.get_project_settings()}
 
         url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"

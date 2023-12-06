@@ -34,7 +34,7 @@ order.order_details
 
 ### status
 
-The `status` attribute returns the [order status](https://docs.up42.com/developers/api-orders/monitor#order-statuses).
+The `status` attribute returns the [order status](https://docs.up42.com/developers/api-tasking/tasking-monitor#order-statuses).
 
 The returned format is `str`.
 
@@ -79,22 +79,4 @@ The returned format is `str`.
 
 ```python
 order.track_status(report_time=150)
-```
-
-## Assets
-
-### get_assets()
-
-The `get_assets()` function returns a list of order assets. Use to get an asset ID for the [Asset class](asset-reference.md) initialization.
-
-```python
-get_assets()
-```
-
-The returned format is `list[Asset]`.
-
-<h5> Example </h5>
-
-```python
-order.get_assets()
 ```

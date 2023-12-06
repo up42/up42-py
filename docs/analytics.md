@@ -1,5 +1,9 @@
 # Analytics
 
+!!! info "Analytics platform discontinued after January 31, 2024"
+
+    The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new [advanced processing functionalities](https://docs.up42.com/processing-platform/advanced). This change will affect projects, workflows, jobs, data blocks, processing blocks, and custom blocks. For more information, see the [blog post.](https://up42.com/blog/pansharpening-an-initial-view-into-our-advanced-analytic-capabilities?utm_source=documentation)
+
 Apply analytics on geospatial data by using workflows with [data blocks](https://docs.up42.com/processing-platform/blocks/data) and [processing blocks](https://docs.up42.com/processing-platform/blocks/processing).
 
 ## Step 1. Create and populate a workflow
@@ -12,12 +16,10 @@ A workflow starts with a data block, which may be followed by processing blocks.
 
 1. Create a workflow and populate it with blocks, for example:
   ```python
-  project = up42.initialize_project()
+  project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
 
   workflow = project.create_workflow(name="My workflow with Processing from Storage")
-  workflow.add_workflow_tasks([
-    "Processing from Storage"
-  ])
+  workflow.add_workflow_tasks(["Processing from Storage"])
   ```
 1. If needed, search for compatible blocks:
   ```python
@@ -25,14 +27,12 @@ A workflow starts with a data block, which may be followed by processing blocks.
   ```
   The search outputs a dataframe with blocks that can be added to your workflow, for example:
   ```python
-  workflow.add_workflow_tasks([
-    "Sharpening Filter"
-  ])
+  workflow.add_workflow_tasks(["Processing from Storage", "Sharpening Filter"])
   ```
 
 ## Step 2. Retrieve an input schema
 
-Retrieve input parameters of the first block in a workflow:
+Retrieve input JSON parameters of the first block in a workflow:
 ```python
 workflow.get_parameters_info()
 ```

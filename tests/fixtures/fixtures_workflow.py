@@ -8,6 +8,7 @@ from .fixtures_globals import (
     JOB_NAME,
     JSON_WORKFLOW_TASKS,
     PROJECT_DESCRIPTION,
+    PROJECT_ID,
     WORKFLOW_ID,
     WORKFLOW_NAME,
 )
@@ -20,7 +21,9 @@ def workflow_mock_empty(auth_mock, requests_mock):
     without tasks (blocks). For the fully mocked workflow see workflow_mock fixture.
     """
     # info
-    url_workflow_info = f"{auth_mock._endpoint()}/projects/" f"{auth_mock.project_id}/workflows/" f"{WORKFLOW_ID}"
+    url_workflow_info = (
+        f"{auth_mock._endpoint()}/projects/{PROJECT_ID}/workflows/{WORKFLOW_ID}"
+    )
     json_workflow_info = {
         "data": {
             "name": WORKFLOW_NAME,
@@ -36,7 +39,7 @@ def workflow_mock_empty(auth_mock, requests_mock):
     workflow = Workflow(
         auth=auth_mock,
         workflow_id=WORKFLOW_ID,
-        project_id=auth_mock.project_id,
+        project_id=PROJECT_ID,
     )
 
     # get_workflow_tasks
@@ -45,7 +48,8 @@ def workflow_mock_empty(auth_mock, requests_mock):
         "data": [],
     }
     url_workflow_tasks = (
-        f"{workflow.auth._endpoint()}/projects/{workflow.auth.project_id}/workflows/" f"{workflow.workflow_id}/tasks"
+        f"{workflow.auth._endpoint()}/projects/{workflow.project_id}/workflows/"
+        f"{workflow.workflow_id}/tasks"
     )
     requests_mock.get(url=url_workflow_tasks, json=json_empty_workflow_tasks)
 
@@ -55,7 +59,9 @@ def workflow_mock_empty(auth_mock, requests_mock):
 @pytest.fixture()
 def workflow_mock(auth_mock, requests_mock):
     # info
-    url_workflow_info = f"{auth_mock._endpoint()}/projects/" f"{auth_mock.project_id}/workflows/" f"{WORKFLOW_ID}"
+    url_workflow_info = (
+        f"{auth_mock._endpoint()}/projects/{PROJECT_ID}/workflows/{WORKFLOW_ID}"
+    )
     json_workflow_info = {
         "data": {
             "name": WORKFLOW_NAME,
@@ -71,13 +77,11 @@ def workflow_mock(auth_mock, requests_mock):
     workflow = Workflow(
         auth=auth_mock,
         workflow_id=WORKFLOW_ID,
-        project_id=auth_mock.project_id,
+        project_id=PROJECT_ID,
     )
 
     # get_workflow_tasks
-    url_workflow_tasks = (
-        f"{workflow.auth._endpoint()}/projects/{workflow.auth.project_id}/workflows/" f"{workflow.workflow_id}/tasks"
-    )
+    url_workflow_tasks = f"{workflow.auth._endpoint()}/projects/{PROJECT_ID}/workflows/{workflow.workflow_id}/tasks"
     requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
 
     # get_compatible_blocks
@@ -132,10 +136,10 @@ def workflow_mock(auth_mock, requests_mock):
 
 
 @pytest.fixture()
-def workflow_live(auth_live):
+def workflow_live(auth_live, project_id_live):
     workflow = Workflow(
         auth=auth_live,
-        project_id=auth_live.project_id,
+        project_id=project_id_live,
         workflow_id=os.getenv("TEST_UP42_WORKFLOW_ID"),
     )
     return workflow

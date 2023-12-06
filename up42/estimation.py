@@ -11,6 +11,7 @@ class Estimation:
     def __init__(
         self,
         auth: Auth,
+        project_id: str,
         input_parameters: Union[dict, str, Path],
         input_tasks: List[dict],
     ):
@@ -28,6 +29,7 @@ class Estimation:
                 },]
         """
         self.auth = auth
+        self.project_id = project_id
         self.input_parameters = input_parameters
         self.input_tasks = input_tasks
         self.payload: dict = {}
@@ -39,7 +41,7 @@ class Estimation:
         Returns:
             A dictionary with credit cost & duration estimate for each workflow task.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.auth.project_id}/estimate/job"
+        url = f"{self.auth._endpoint()}/projects/{self.project_id}/estimate/job"
         self.payload = {
             "tasks": self.input_tasks,
             "inputs": self.input_parameters,

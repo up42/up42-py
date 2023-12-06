@@ -1,10 +1,13 @@
 [tool.poetry]
 name = "up42-py"
-version = "0.32.0"
+version = "0.33.1"
 description = "Python SDK for UP42, the geospatial marketplace and developer platform."
 authors = ["UP42 GmbH"]
 license = "https://github.com/up42/up42-py/blob/master/LICENSE"
 readme = "README.md"
+packages = [
+    { include = "up42", from = "." },
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
@@ -15,6 +18,7 @@ tqdm = "^4.66.0"
 geojson = "^3.0.1"
 geopandas = "^0.13.2"
 pystac-client = "^0.7.2"
+
 
 [tool.poetry.dev-dependencies]
 nbconvert = "^6.5.4"
@@ -35,6 +39,7 @@ pytest-cov = "^4.0.0"
 pytest-mypy = "^0.10.2"
 mock = "^4.0.3"
 twine = "^4.0.2"
+pre-commit = "^3.5.0"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "^8.5.11"

@@ -6,12 +6,7 @@ from pystac_client import Client, ItemSearch
 
 from up42.auth import Auth
 from up42.stac_client import PySTACAuthClient
-from up42.utils import (
-    download_from_gcs_unpack,
-    download_gcs_not_unpack,
-    get_filename,
-    get_logger,
-)
+from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_filename, get_logger
 
 logger = get_logger(__name__)
 
@@ -123,18 +118,22 @@ class Asset:
 
     def get_stac_asset_url(self, stac_asset: pystac.Asset):
         """
-        Returns the pre-signed URL for the STAC Asset.
+        Returns the signed URL for the STAC Asset.
         Args:
             stac_asset: pystac Asset object.
 
         Returns:
-            Pre-signed URL for the STAC Asset.
+            Signed URL for the STAC Asset.
         """
         stac_asset_id = stac_asset.href.split("/")[-1]
         # so we can utilize all functionalities of Auth class
         return self._get_download_url(stac_asset_id=stac_asset_id)
 
-    def download(self, output_directory: Union[str, Path, None] = None, unpacking: bool = True) -> List[str]:
+    def download(
+        self,
+        output_directory: Union[str, Path, None] = None,
+        unpacking: bool = True,
+    ) -> List[str]:
         """
         Downloads the asset. Unpacking the downloaded file will happen as default.
 
@@ -149,7 +148,7 @@ class Asset:
         logger.info(f"Downloading asset {self.asset_id}")
 
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}/asset_{self.asset_id}"
+            output_directory = Path.cwd() / f"asset_{self.asset_id}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
@@ -170,7 +169,11 @@ class Asset:
         self.results = out_filepaths
         return out_filepaths
 
-    def download_stac_asset(self, stac_asset: pystac.Asset, output_directory: Union[str, Path, None] = None) -> Path:
+    def download_stac_asset(
+        self,
+        stac_asset: pystac.Asset,
+        output_directory: Union[str, Path, None] = None,
+    ) -> Path:
         """
         Downloads a STAC asset to a specified output directory.
 
@@ -189,7 +192,7 @@ class Asset:
         """
         logger.info(f"Downloading STAC asset {stac_asset.title}")
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.auth.project_id}/asset_{self.asset_id}/{stac_asset.title}"
+            output_directory = Path.cwd() / f"asset_{self.asset_id}/{stac_asset.title}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)

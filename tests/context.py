@@ -36,7 +36,7 @@ from up42.main import (
 )
 from up42.order import Order
 from up42.project import Project
-from up42.storage import Storage
+from up42.storage import AllowedStatuses, Storage
 from up42.tasking import Tasking
 
 # Import the required classes and functions
