@@ -47,7 +47,7 @@ def test_repr(auth_mock):
     order = Order(auth_mock, order_id="your_order_id", order_info=order_info)
 
     expected_repr = (
-        "Order(order_id: your_order_id, status: PLACED"
+        "Order(order_id: your_order_id, status: PLACED,"
         "createdAt: 2023-01-01T12:00:00Z, updatedAt: 2023-01-01T12:30:00Z)"
     )
     assert repr(order) == expected_repr

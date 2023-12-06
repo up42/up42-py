@@ -34,9 +34,12 @@ class Order:
 
     def __repr__(self):
         return (
-            f"Order(order_id: {self.order_id}, status: {self._info['status']}"
+            f"Order(order_id: {self.order_id}, status: {self._info['status']},"
             f"createdAt: {self._info['createdAt']}, updatedAt: {self._info['updatedAt']})"
         )
+
+    def __eq__(self, other: Optional[object]):
+        return other and hasattr(other, "_info") and other._info == self._info
 
     @property
     def info(self) -> dict:

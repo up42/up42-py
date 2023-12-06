@@ -7,7 +7,7 @@ import pytest
 import requests
 
 # pylint: disable=unused-import
-from .context import Asset, Order, Storage
+from .context import AllowedStatuses, Asset, Order, Storage
 from .fixtures import (
     ASSET_ID,
     JSON_ASSET,
@@ -269,7 +269,7 @@ def test_get_orders(storage_mock):
 
 
 @pytest.mark.parametrize(
-    "params, expected_output",
+    "params, expected_output_endpoint, expected_output_method",
     [
         (
             {
@@ -280,16 +280,18 @@ def test_get_orders(storage_mock):
                 "name": None,
             },
             JSON_ORDERS,
+            JSON_ORDERS["content"],
         ),
         (
             {
                 "workspace_orders": True,
                 "return_json": True,
                 "order_type": "TASKING",
-                "statuses": ["CREATED"],
+                "statuses": ["CREATED", "FULFILLED"],
                 "name": None,
             },
             JSON_ORDERS,
+            JSON_ORDERS["content"],
         ),
         (
             {
@@ -300,6 +302,7 @@ def test_get_orders(storage_mock):
                 "name": None,
             },
             JSON_ORDERS,
+            JSON_ORDERS["content"],
         ),
         (
             {
@@ -309,6 +312,7 @@ def test_get_orders(storage_mock):
                 "statuses": ["CREATED"],
                 "name": None,
             },
+            JSON_ORDERS,
             [
                 {
                     "id": "ddb207c0-3b7f-4186-bc0b-c033f0d2f32b",
@@ -333,9 +337,10 @@ def test_get_orders(storage_mock):
                 "return_json": True,
                 "order_type": "TASKING",
                 "statuses": None,
-                "name": "Testing Name",
+                "name": "Testing",
             },
             JSON_ORDERS,
+            JSON_ORDERS["content"],
         ),
         (
             {
@@ -346,6 +351,7 @@ def test_get_orders(storage_mock):
                 "name": None,
             },
             JSON_ORDERS,
+            JSON_ORDERS["content"],
         ),
         (
             {
@@ -356,6 +362,7 @@ def test_get_orders(storage_mock):
                 "name": None,
             },
             JSON_ORDERS,
+            JSON_ORDERS["content"],
         ),
     ],
     ids=[
@@ -369,37 +376,46 @@ def test_get_orders(storage_mock):
     ],
 )
 def test_get_orders_v2_endpoint_params(
-    auth_mock, requests_mock, params, expected_output
+    auth_mock, requests_mock, params, expected_output_endpoint, expected_output_method
 ):
     workspace_url_param = (
-        "&workspaceId=workspace_id_123" if params["workspace_orders"] else ""
+        f"&workspaceId={WORKSPACE_ID}" if params["workspace_orders"] else ""
     )
-    url_storage_assets_paginated = f"{auth_mock._endpoint()}/v2/orders?sort=createdAt%2Cdesc{workspace_url_param}&type={params['order_type']}&size=50"
-    requests_mock.get(url=url_storage_assets_paginated, json=JSON_ORDERS)
-    expected_results = {}
+
+    allowed_statuses = {entry.value for entry in AllowedStatuses}
+    endpoint_statuses = (
+        set(params["statuses"]) & allowed_statuses if params["statuses"] else None
+    )
+    statuses_url_param = (
+        f"""&status={"&status=".join([status for status in endpoint_statuses])}"""
+        if endpoint_statuses
+        else ""
+    )
+
+    name_url_param = f"""&displayName={params["name"]}""" if params["name"] else ""
+
+    url_storage_assets_paginated = (
+        f"{auth_mock._endpoint()}/v2/orders?sort=createdAt%2Cdesc{workspace_url_param}{name_url_param}"
+        f"&type={params['order_type']}{statuses_url_param}&size=50"
+    )
+    requests_mock.get(url=url_storage_assets_paginated, json=expected_output_endpoint)
     if not params["return_json"]:
-        expected_results["content"] = [
+        expected_results = [
             Order(
                 auth=auth_mock,
                 order_id=output["id"],
                 order_info=output,
             )
-            for output in expected_output
+            for output in expected_output_method
         ]
     else:
-        expected_results = expected_output
+        expected_results = expected_output_method
 
     storage = Storage(auth=auth_mock)
-    orders = storage.get_orders(
-        order_type=params["order_type"],
-        statuses=params["statuses"],
-        name=params["name"],
-        workspace_orders=params["workspace_orders"],
-        return_json=params["return_json"],
-    )
+    orders = storage.get_orders(**params)
 
-    for order, expected_result in zip(orders, expected_results["content"]):
-        assert repr(order) == repr(expected_result)
+    for order, expected_result in zip(orders, expected_results):
+        assert order == expected_result
 
 
 @pytest.mark.live
