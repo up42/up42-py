@@ -273,7 +273,7 @@ class Storage:
         if statuses is not None and len(statuses) > len(params["status"]):
             logger.info(
                 "statuses not included in allowed_statuses"
-                f"{set(statuses) - allowed_statuses} were ignored."  # type: ignore
+                f"{set(statuses).difference(allowed_statuses)} were ignored."
             )
 
         url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
