@@ -153,9 +153,7 @@ def asset_mock(auth_mock, requests_mock):
 @pytest.fixture()
 def asset_mock_2(auth_mock, requests_mock):
     url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID2}/metadata"
-    json_asset_metadata_2 = copy.deepcopy(JSON_ASSET)
-    json_asset_metadata_2["id"] = ASSET_ID2
-    requests_mock.get(url=url_asset_info, json=json_asset_metadata_2)
+    requests_mock.get(url=url_asset_info, json={**JSON_ASSET, "id": ASSET_ID2})
     requests_mock.post(
         url=f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID2}/download-url",
         json={"url": DOWNLOAD_URL2},
@@ -176,16 +174,16 @@ def asset_mock_2(auth_mock, requests_mock):
     return asset
 
 
-@pytest.fixture(params=["asset_mock", "asset_mock2"])
-def assets_fixture(request, asset_mock, asset_mock2):
+@pytest.fixture(params=["asset_mock", "asset_mock_2"])
+def assets_fixture(request, asset_mock, asset_mock_2):
     mocks = {
         "asset_mock": {
             "asset_fixture": asset_mock,
             "download_url": DOWNLOAD_URL,
             "outfile_name": "output.tgz",
         },
-        "asset_mock2": {
-            "asset_fixture": asset_mock2,
+        "asset_mock_2": {
+            "asset_fixture": asset_mock_2,
             "download_url": DOWNLOAD_URL2,
             "outfile_name": "DS_SPOT6_202206240959075_FR1_FR1_SV1_SV1_E013N52_01709.tgz",
         },

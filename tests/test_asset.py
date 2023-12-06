@@ -9,12 +9,10 @@ from .context import Asset
 from .fixtures import (
     ASSET_ID,
     DOWNLOAD_URL,
-    DOWNLOAD_URL2,
     JSON_ASSET,
     STAC_ASSET_HREF,
-    asset_live,
     asset_mock,
-    asset_mock2,
+    asset_mock_2,
     assets_fixture,
     auth_account_live,
     auth_account_mock,
@@ -22,6 +20,12 @@ from .fixtures import (
     auth_mock,
     auth_project_live,
     auth_project_mock,
+    password_test_live,
+    project_api_key_live,
+    project_id_live,
+    storage_live,
+    storage_mock,
+    username_test_live,
 )
 
 
@@ -30,20 +34,36 @@ def test_init(asset_mock):
     assert asset_mock.asset_id == ASSET_ID
 
 
-def test_init_asset_failure(auth_mock):
-    with pytest.raises(ValueError) as e:
-        failed_asset = Asset(
-            auth_mock, asset_id="some_asset_id", asset_info={"id": "some_asset_id"}
-        )
-    assert "cannot be provided simultaneously." in str(e.value)
+@pytest.mark.parametrize(
+    "asset_id, asset_info, expected_error",
+    [
+        (
+            None,
+            None,
+            "Either asset_id or asset_info should be provided in the constructor.",
+        ),
+        (
+            "some_asset_id",
+            {"id": ASSET_ID},
+            "asset_id and asset_info cannot be provided simultaneously.",
+        ),
+    ],
+    ids=[
+        "Sc 1: Both asset_id and asset_info provided",
+        "Sc 2: Both asset_id and asset_info not provided",
+    ],
+)
+def test_init_asset_failure(auth_mock, asset_id, asset_info, expected_error):
+    with pytest.raises(ValueError) as err:
+        Asset(auth_mock, asset_id=asset_id, asset_info=asset_info)
+        assert expected_error == err
 
-    with pytest.raises(ValueError) as e:
-        failed_asset = Asset(auth_mock)
-    assert "Either asset_id or asset_info should be provided" in str(e.value)
 
-
-def test_asset_id(asset_mock):
-    assert asset_mock.asset_id == ASSET_ID
+def test_should_get_id_from_info(auth_mock, requests_mock):
+    url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/metadata"
+    requests_mock.get(url=url_asset_info, json=JSON_ASSET)
+    asset = Asset(auth=auth_mock, asset_info={"id": ASSET_ID})
+    assert asset.asset_id == ASSET_ID
 
 
 def test_asset_info(asset_mock):
@@ -127,7 +147,7 @@ def test_asset_download_no_unpacking(assets_fixture, requests_mock, tmp_path):
 
 @pytest.mark.parametrize("with_output_directory", [True, False])
 def test_download_stac_asset(
-    asset_mock2, requests_mock, tmp_path, with_output_directory
+    asset_mock_2, requests_mock, tmp_path, with_output_directory
 ):
     out_file_path = Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
     with open(out_file_path, "rb") as src_file:
@@ -141,7 +161,7 @@ def test_download_stac_asset(
     )
 
     output_directory = tmp_path if with_output_directory else None
-    out_path = asset_mock2.download_stac_asset(
+    out_path = asset_mock_2.download_stac_asset(
         pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]), output_directory
     )
     assert out_path.exists()

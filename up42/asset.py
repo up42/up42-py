@@ -40,7 +40,7 @@ class Asset:
         self.results: Union[List[str], None] = None
 
     def __repr__(self):
-        return f"{self.info.__repr__()}"
+        return self.info.__repr__()
 
     def _get_info(self, asset_id: str):
         url = f"{self.auth._endpoint()}/v2/assets/{asset_id}/metadata"
