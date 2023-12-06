@@ -114,7 +114,6 @@
             <li>`status`</li>
             <li>`is_fulfilled`</li>
             <li>`track_status()`</li>
-            <li>`get_assets()`</li>
         </ul>
 
     === "Storage"
