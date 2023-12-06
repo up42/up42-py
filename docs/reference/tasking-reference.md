@@ -1,6 +1,6 @@
 # Tasking
 
-The Tasking class enables access to the UP42 [tasking functionality](../../examples/tasking/tasking-example/).
+The Tasking class enables access to the UP42 [tasking functionality](../../notebooks/tasking-example/).
 
 ```python
 tasking = up42.initialize_tasking()
