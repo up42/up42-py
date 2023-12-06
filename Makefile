@@ -7,10 +7,6 @@ env:
 install:
 	poetry install --without dev, docs, viz
 
-install[dev]:
-	poetry install
-	unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
-
 test:
 	-rm -r .pytest_cache
 	python -m pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
