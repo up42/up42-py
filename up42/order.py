@@ -1,7 +1,6 @@
 from time import sleep
-from typing import List, Optional
+from typing import Optional
 
-from up42.asset import Asset
 from up42.auth import Auth
 from up42.utils import get_logger
 
@@ -26,7 +25,6 @@ class Order:
         order_info: Optional[dict] = None,
     ):
         self.auth = auth
-        self.workspace_id = auth.workspace_id
         self.order_id = order_id
         self.order_parameters = order_parameters
         if order_info is not None:
@@ -36,19 +34,21 @@ class Order:
 
     def __repr__(self):
         return (
-            f"Order(order_id: {self.order_id}, assets: {self._info['assets']}, "
-            f"dataProvider: {self._info['dataProvider']}, status: {self._info['status']}, "
+            f"Order(order_id: {self.order_id}, status: {self._info['status']},"
             f"createdAt: {self._info['createdAt']}, updatedAt: {self._info['updatedAt']})"
         )
+
+    def __eq__(self, other: Optional[object]):
+        return other and hasattr(other, "_info") and other._info == self._info
 
     @property
     def info(self) -> dict:
         """
         Gets and updates the order information.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders/{self.order_id}"
+        url = f"{self.auth._endpoint()}/v2/orders/{self.order_id}"
         response_json = self.auth._request(request_type="GET", url=url)
-        self._info = response_json["data"]
+        self._info = response_json
         return self._info
 
     @property
@@ -65,11 +65,7 @@ class Order:
         """
         Gets the Order Details.
         """
-        if self.info["type"] == "TASKING":
-            order_details = self.info["orderDetails"]
-            return order_details
-        logger.info("Order is not TASKING type. Order details are not provided.")
-        return {}
+        return self.info["orderDetails"]
 
     @property
     def is_fulfilled(self) -> bool:
@@ -78,15 +74,6 @@ class Order:
         Also see [status attribute](order-reference.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
-
-    def get_assets(self) -> List[Asset]:
-        """
-        Gets the Order assets or results.
-        """
-        if self.is_fulfilled:
-            assets: List[str] = self.info["assets"]
-            return [Asset(self.auth, asset_id=asset) for asset in assets]
-        raise ValueError(f"Order {self.order_id} is not FULFILLED! Status is {self.status}")
 
     @classmethod
     def place(cls, auth: Auth, order_parameters: dict) -> "Order":
