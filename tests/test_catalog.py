@@ -528,16 +528,13 @@ def test_order_from_catalog_track_status(
             "error": {},
         },
     )
-    url_order_info = (
-        f"{order_mock.auth._endpoint()}/workspaces/"
-        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
-    )
+    url_order_info = f"{order_mock.auth._endpoint()}/v2/orders/{order_mock.order_id}"
     requests_mock.get(
         url_order_info,
         [
-            {"json": {"data": {"status": "PLACED"}, "error": {}}},
-            {"json": {"data": {"status": "BEING_FULFILLED"}, "error": {}}},
-            {"json": {"data": {"status": "FULFILLED"}, "error": {}}},
+            {"json": {"status": "PLACED"}},
+            {"json": {"status": "BEING_FULFILLED"}},
+            {"json": {"status": "FULFILLED"}},
         ],
     )
     order = catalog_mock.place_order(

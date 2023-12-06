@@ -241,7 +241,11 @@ JSON_STORAGE_STAC = {
     "type": "FeatureCollection",
     "features": [
         {
-            "assets": {"data": {"href": "https://api.up42.com/v2/assets/01ad657e-12f7-4046-a94c-abc90d86106a"}},
+            "assets": {
+                "data": {
+                    "href": "https://api.up42.com/v2/assets/01ad657e-12f7-4046-a94c-abc90d86106a"
+                }
+            },
             "links": [
                 {
                     "href": "https://api.up42.com/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6/"
@@ -375,27 +379,24 @@ JSON_ORDER = {
 }
 
 JSON_ORDERS = {
-    "data": {
-        "content": [JSON_ORDER["data"]],
-        "pageable": {
-            "sort": {"sorted": True, "unsorted": False, "empty": False},
-            "pageNumber": 0,
-            "pageSize": 10,
-            "offset": 0,
-            "paged": True,
-            "unpaged": False,
-        },
-        "totalPages": 1,
-        "totalElements": 1,
-        "last": True,
+    "content": [JSON_ORDER["data"]],
+    "pageable": {
         "sort": {"sorted": True, "unsorted": False, "empty": False},
-        "numberOfElements": 1,
-        "first": True,
-        "size": 10,
-        "number": 0,
-        "empty": False,
+        "pageNumber": 0,
+        "pageSize": 10,
+        "offset": 0,
+        "paged": True,
+        "unpaged": False,
     },
-    "error": None,
+    "totalPages": 1,
+    "totalElements": 1,
+    "last": True,
+    "sort": {"sorted": True, "unsorted": False, "empty": False},
+    "numberOfElements": 1,
+    "first": True,
+    "size": 10,
+    "number": 0,
+    "empty": False,
 }
 
 JSON_WEBHOOK = {
