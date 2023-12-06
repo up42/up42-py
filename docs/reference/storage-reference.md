@@ -81,7 +81,7 @@ get_orders(
     sortby,
     descending,
     order_type,
-    status,
+    statuses,
     name,
     tags,
 )
@@ -99,7 +99,7 @@ The returned format is `Union[list[Order], dict]`.
 | `sortby`           | **str**<br/>Arranges elements in the order specified in `descending` based on a chosen field. The allowed values are as follows:<br/><ul><li>`createdAt`</li><li>`updatedAt`</li><li>`status`</li><li>`dataProvider`</li><li>`type`</li></ul>The default value is `createdAt`.                                                                                                                                                     |
 | `descending`       | **bool**<br/>Determines the arrangement of elements:<br/><ul><li>`True`: arrange elements in descending order based on the field specified in `sortby`.</li><li>`False`: arrange elements in ascending order based on the field specified in `sortby`.</li></ul>The default value is `True`.                                                                                                                                       |
 | `order_type`       | **str**<br/>The type of orders to return. To get orders of all types, omit the parameter. The allowed values are as follows:<br/><ul><li>`TASKING`: use to get only tasking orders.</li><li>`ARCHIVE`: use to get only catalog orders.</li></ul>                                                                                                                                                                                   |
-| `status`           | **list[str]**<br/>The [status](https://docs.up42.com/developers/api-tasking/tasking-monitor#order-statuses) of the order. The allowed values are as follows:<br/><ul><li>`CREATED`</li><li>`BEING_PLACED`</li><li>`PLACED`</li><li>`PLACEMENT_FAILED`</li><li>`DELIVERY_INITIALIZATION_FAILED`</li><li>`BEING_FULFILLED`</li><li>`DOWNLOAD_FAILED`</li><li>`DOWNLOADED`</li><li>`FULFILLED`</li><li>`FAILED_PERMANENTLY`</li></ul> |
+| `statuses`           | **list[str]**<br/>The [status](https://docs.up42.com/developers/api-tasking/tasking-monitor#order-statuses) of the order. The allowed values are as follows:<br/><ul><li>`CREATED`</li><li>`BEING_PLACED`</li><li>`PLACED`</li><li>`PLACEMENT_FAILED`</li><li>`DELIVERY_INITIALIZATION_FAILED`</li><li>`BEING_FULFILLED`</li><li>`DOWNLOAD_FAILED`</li><li>`DOWNLOADED`</li><li>`FULFILLED`</li><li>`FAILED_PERMANENTLY`</li></ul> |
 | `name`             | **str**<br/>The name of the order.                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `tags`             | **list[str]**<br/>Order tags. Use to search for orders with any of the provided tags.                                                                                                                                                                                                                                                                                                                                              |
 
@@ -113,7 +113,7 @@ storage.get_orders(
     sortby="status",
     descending=False,
     order_type="ARCHIVE",
-    status=["FULFILLED"],
+    statuses=["FULFILLED"],
     name="Spot 6/7 Central Park",
     tags=["optical","us"],
 )
