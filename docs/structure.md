@@ -118,10 +118,17 @@
 
     === "Storage"
 
-        {{ docstring_storage }}
-        <br>
-        Available functions, see also [**Storage reference**](storage-reference.md):
-        {{ format_funcs(funcs_storage) }}
+        The Storage class enables access to UP42 [storage](storage.md).
+
+        ```python
+        storage = up42.initialize_storage()
+        ```
+
+        See available attributes and functions on the [Storage](storage-reference.md) reference page:
+        <ul>
+            <li>`get_assets()`</li>
+            <li>`get_orders()`</li>
+        </ul>
 
     === "Asset"
 
