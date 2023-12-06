@@ -34,6 +34,13 @@ def test_init(asset_mock):
     assert asset_mock.asset_id == ASSET_ID
 
 
+def test_repr(auth_mock):
+    asset_info = {"id": ASSET_ID}
+    asset = Asset(auth_mock, asset_info=asset_info)
+    expected_repr = "{'id': '363f89c1-3586-4b14-9a49-03a890c3b593'}"
+    assert repr(asset) == expected_repr
+
+
 @pytest.mark.parametrize(
     "asset_id, asset_info, expected_error",
     [
