@@ -271,7 +271,10 @@ class Storage:
         params = {k: v for k, v in params.items() if v is not None}
 
         if statuses is not None and len(statuses) > len(params["status"]):
-            logger.info(f"statuses not included {set(statuses) - allowed_statuses} were ignored.")  # type: ignore
+            logger.info(
+                "statuses not included in allowed_statuses"
+                f"{set(statuses) - allowed_statuses} were ignored."  # type: ignore
+            )
 
         url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
 
