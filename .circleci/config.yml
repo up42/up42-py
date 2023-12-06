@@ -5,9 +5,13 @@ pre-commit-cache: &pre-commit-cache pre-commit-{{ checksum ".pre-commit-config.y
 
 orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
+  automated-test: interstellar/automated-test@volatile
 
 # variables
 workspace: &workspace-dir /tmp/workspace
+
+# E2E Tests
+slack-channel-id-qa-alert: &slack-channel-id-qa-alert 'C04QXJP2RCZ'
 
 jobs:
   test:
@@ -118,6 +122,19 @@ workflows:
           filters:
             branches:
               only: master
+      - automated-test/run-sdk-tests:
+          machine-size: medium+
+          name: sdk-e2e-tests
+          fingerprint: 'c5:5a:28:b3:5e:21:8d:9c:6c:b1:9b:a7:7b:f3:41:0c'
+          run-command: poetry run pytest spec --junitxml=./report/junit.xml
+          requires:
+            - deploy
+          context:
+            - 'sdk-tests-staging-build'
+          post-steps:
+            - automated-test/notify-slack:
+                test-name: 'SDK E2E tests for up42-py failed!'
+                channel: *slack-channel-id-qa-alert
   test_live:
     triggers:
       - schedule:
