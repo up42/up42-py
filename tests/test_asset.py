@@ -12,7 +12,7 @@ from .fixtures import (
     JSON_ASSET,
     STAC_ASSET_HREF,
     asset_mock,
-    asset_mock_2,
+    asset_mock2,
     assets_fixture,
     auth_account_live,
     auth_account_mock,
@@ -147,7 +147,7 @@ def test_asset_download_no_unpacking(assets_fixture, requests_mock, tmp_path):
 
 @pytest.mark.parametrize("with_output_directory", [True, False])
 def test_download_stac_asset(
-    asset_mock_2, requests_mock, tmp_path, with_output_directory
+    asset_mock2, requests_mock, tmp_path, with_output_directory
 ):
     out_file_path = Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
     with open(out_file_path, "rb") as src_file:
@@ -161,7 +161,7 @@ def test_download_stac_asset(
     )
 
     output_directory = tmp_path if with_output_directory else None
-    out_path = asset_mock_2.download_stac_asset(
+    out_path = asset_mock2.download_stac_asset(
         pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]), output_directory
     )
     assert out_path.exists()
