@@ -40,3 +40,4 @@ repos:
           - "types-requests"
           - "sqlalchemy2-stubs"
           - "types-attrs"
+          - "types-toml"
