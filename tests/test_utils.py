@@ -1,6 +1,7 @@
 import json
 import tempfile
 from pathlib import Path
+from unittest.mock import Mock, patch
 
 import geopandas as gpd
 import pandas as pd
@@ -291,9 +292,7 @@ def test_autocomplete_order_parameters():
     assert order_parameters["params"]["acquisitionMode"] is None
 
 
-def test_get_up42_py_version():
-    # need to update this test on every version bump
-    from up42 import __version__
-    assert __version__ == "0.33.1"
-    version = get_up42_py_version()
-    assert version == "0.33.1"
+@patch("importlib.metadata.version", return_value="0.33.0")
+def test_get_up42_py_version(version: Mock):
+    assert get_up42_py_version() == "0.33.0"
+    version.assert_called_with("up42-py")

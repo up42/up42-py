@@ -1,4 +1,5 @@
 import copy
+import importlib.metadata
 import logging
 import tarfile
 import tempfile
@@ -13,7 +14,6 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 import requests
 import shapely
-import toml
 from geojson import Feature, FeatureCollection
 from geojson import Polygon as geojson_Polygon
 from geopandas import GeoDataFrame
@@ -409,10 +409,4 @@ def replace_page_query(url: str, new_page: int) -> str:
 
 def get_up42_py_version():
     """Get the version of the up42-py package."""
-    try:
-        here = Path(__file__).parents[1].resolve()
-        with open(here / "pyproject.toml") as f:
-            pyproject = toml.load(f)
-            return pyproject.get("tool", {}).get("poetry", {}).get("version")
-    except toml.TomlDecodeError:
-        raise RuntimeError("Unable to read version from pyproject.toml")
+    return importlib.metadata.version("up42-py")

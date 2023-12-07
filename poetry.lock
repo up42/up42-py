@@ -3183,7 +3183,7 @@ test = ["flake8", "isort", "pytest"]
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 files = [
@@ -3323,18 +3323,6 @@ files = [
 
 [package.dependencies]
 urllib3 = ">=2"
-
-[[package]]
-name = "types-toml"
-version = "0.10.8.7"
-description = "Typing stubs for toml"
-category = "dev"
-optional = false
-python-versions = "*"
-files = [
-    {file = "types-toml-0.10.8.7.tar.gz", hash = "sha256:58b0781c681e671ff0b5c0319309910689f4ab40e8a2431e205d70c94bb6efb1"},
-    {file = "types_toml-0.10.8.7-py3-none-any.whl", hash = "sha256:61951da6ad410794c97bec035d59376ce1cbf4453dc9b6f90477e81e4442d631"},
-]
 
 [[package]]
 name = "typing-extensions"
@@ -3549,4 +3537,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "4d12cb30ba6da18b3ed639d19358cd26232fe20cdbed0dee480cb84762245a7b"
+content-hash = "6bbd5c2811d0ff5d7ec122f79ca20c810137b10e85e81823bc4990c1738bb578"
