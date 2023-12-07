@@ -1,6 +1,8 @@
 import math
 from datetime import datetime
+from enum import Enum
 from typing import List, Optional, Union
+from urllib.parse import urlencode, urljoin
 from warnings import warn
 
 from geojson import Feature, FeatureCollection
@@ -14,6 +16,19 @@ from up42.stac_client import PySTACAuthClient
 from up42.utils import format_time, get_logger
 
 logger = get_logger(__name__)
+
+
+class AllowedStatuses(Enum):
+    CREATED = "CREATED"
+    BEING_PLACED = "BEING_PLACED"
+    PLACED = "PLACED"
+    PLACEMENT_FAILED = "PLACEMENT_FAILED"
+    DELIVERY_INITIALIZATION_FAILED = "DELIVERY_INITIALIZATION_FAILED"
+    BEING_FULFILLED = "BEING_FULFILLED"
+    DOWNLOAD_FAILED = "DOWNLOAD_FAILED"
+    DOWNLOADED = "DOWNLOADED"
+    FULFILLED = "FULFILLED"
+    FAILED_PERMANENTLY = "FAILED_PERMANENTLY"
 
 
 class Storage:
@@ -204,47 +219,65 @@ class Storage:
 
     def get_orders(
         self,
+        workspace_orders: bool = True,
         return_json: bool = False,
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
         order_type: Optional[str] = None,
+        statuses: Optional[List[AllowedStatuses]] = None,
+        name: Optional[str] = None,
         tags: Optional[List[str]] = None,
     ) -> Union[List[Order], dict]:
         """
-        Gets all orders in the workspace as Order objects or JSON.
+        Gets all orders in the account/workspace as Order objects or JSON.
 
         Args:
+            workspace_orders: If set to True, only returns workspace orders. Otherwise, returns all account orders.
             return_json: If set to True, returns JSON object.
             limit: Optional, only return n first assets by sorting criteria and order.
                 Optimal to select if your workspace contains many assets.
             sortby: The sorting criteria, one of "createdAt", "updatedAt", "status", "dataProvider", "type".
             descending: The sorting order, True for descending (default), False for ascending.
             order_type: Can be either "TASKING" or "ARCHIVE". Pass this param to filter orders based on order_type.
+            statuses: Search for orders with any of the statuses provided.
+            name: Search for orders that contain this string in their name.
             tags: Search for orders with any of the provided tags.
 
         Returns:
             Order objects in the workspace or alternatively JSON info of the orders.
         """
-        allowed_sorting_criteria = [
+        allowed_statuses = {entry.value for entry in AllowedStatuses}
+
+        allowed_sorting_criteria = {
             "createdAt",
             "updatedAt",
             "type",
             "status",
-            "dataProvider",
-        ]
+        }
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/orders?format=paginated&sort={sort}"
-        if order_type is not None:
-            if order_type in ["TASKING", "ARCHIVE"]:
-                url += f"&type={order_type}"
-            else:
-                logger.warning("order_type should be TASKING or ARCHIVE. Ignoring this filter.")
-        if tags is not None:
-            for tag in tags:
-                url += f"&tags={tag}"
+        base_url = f"{self.auth._endpoint()}/v2/orders"
+
+        params = {
+            "sort": sort,
+            "workspaceId": self.workspace_id if workspace_orders else None,
+            "displayName": name,
+            "type": order_type if order_type in ["TASKING", "ARCHIVE"] else None,
+            "tags": tags,
+            "status": set(statuses) & allowed_statuses if statuses else None,
+        }
+        params = {k: v for k, v in params.items() if v is not None}
+
+        if statuses is not None and len(statuses) > len(params["status"]):
+            logger.info(
+                "statuses not included in allowed_statuses"
+                f"{set(statuses).difference(allowed_statuses)} were ignored."
+            )
+
+        url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
+
         orders_json = self._query_paginated_endpoints(url=url, limit=limit)
         logger.info(f"Got {len(orders_json)} orders for workspace {self.workspace_id}.")
 
