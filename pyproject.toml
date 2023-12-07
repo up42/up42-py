@@ -25,6 +25,7 @@ tqdm = "^4.66.0"
 geojson = "^3.0.1"
 geopandas = "^0.13.2"
 pystac-client = "^0.7.2"
+toml = "^0.10.2"
 
 
 [tool.poetry.dev-dependencies]
