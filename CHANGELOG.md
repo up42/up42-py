@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **November 23, 2023**
 
-Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of the [PySTAC client](https://sdk.up42.com/storage/#pystac) search.
+Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of the [PySTAC client](https://sdk.up42.com/notebooks/stac-example/#pystac) search.
 
 - `geometry`
 - `acquired_before`
