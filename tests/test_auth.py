@@ -4,6 +4,8 @@ from pathlib import Path
 import pytest
 import requests
 
+from up42.utils import get_up42_py_version
+
 from .context import Auth
 
 # pylint: disable=unused-import
@@ -90,13 +92,7 @@ def test_get_workspace_live(auth_live):
 
 
 def test_generate_headers(auth_mock):
-    version = (
-        Path(__file__)  # pylint: disable=no-member
-        .resolve()
-        .parents[1]
-        .joinpath("up42/_version.txt")
-        .read_text(encoding="utf-8")
-    )
+    version = get_up42_py_version()
     assert (
         isinstance(version, str) and "\n" not in version
     ), "check integrity of your version file"

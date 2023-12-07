@@ -49,6 +49,7 @@ from up42.utils import (
     fc_to_query_geometry,
     filter_jobs_on_mode,
     format_time,
+    get_up42_py_version,
 )
 from up42.viztools import VizTools, folium_base_map
 from up42.webhooks import Webhook, Webhooks
