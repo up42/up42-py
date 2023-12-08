@@ -1,16 +1,5 @@
 SRC := .
 
-install:
-	poetry install --without dev, docs, viz
-
-test:
-	-rm -r .pytest_cache
-	poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
-
-test[live]:
-	-rm -r .pytest_cache
-	poetry run pytest --cov=up42/ --runlive --durations=5
-
 e2e:
 	rm -rf project_20abe*/
 	poetry run python $(SRC)/tests/test_e2e_30sec.py
