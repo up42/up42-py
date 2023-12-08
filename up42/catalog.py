@@ -133,7 +133,7 @@ class CatalogBase:
         **kwargs,
     ) -> List[Order]:
         """
-        Place an order.
+        Create a new tasking or catalog order.
 
         Args:
             order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ... }, "featureCollection": ...}
@@ -377,6 +377,7 @@ class Catalog(CatalogBase, VizTools):
         self,
         data_product_id: str,
         image_id: str,
+        extra_params: Optional[dict] = {},
         aoi: Union[
             dict,
             Feature,
@@ -395,6 +396,8 @@ class Catalog(CatalogBase, VizTools):
         Args:
             data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
             image_id: The id of the desired image (from search results)
+            extra_params: user params for the data product schema, not provided params or\
+                empty will be autocompleted.
             aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
                 list, GeoDataFrame, Polygon. Optional for "full-image products".
             tags: A list of tags that categorize the order.
@@ -416,7 +419,7 @@ class Catalog(CatalogBase, VizTools):
         """
         order_parameters = {
             "dataProduct": data_product_id,
-            "params": {"id": image_id},
+            "params": {"id": image_id, **extra_params},
         }
         if tags is not None:
             order_parameters["tags"] = tags
