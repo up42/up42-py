@@ -292,7 +292,7 @@ def test_autocomplete_order_parameters():
     assert order_parameters["params"]["acquisitionMode"] is None
 
 
-@patch("importlib.metadata.version", return_value="0.33.0")
+@patch("importlib.metadata.version", return_value="some_version")
 def test_get_up42_py_version(version: Mock):
-    assert get_up42_py_version() == "0.33.0"
+    assert get_up42_py_version() == "some_version"
     version.assert_called_with("up42-py")

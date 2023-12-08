@@ -5,11 +5,11 @@ install:
 
 test:
 	-rm -r .pytest_cache
-	poetry run python -m pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
+	poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
 
 test[live]:
 	-rm -r .pytest_cache
-	poetry run python -m pytest --cov=up42/ --runlive --durations=5
+	poetry run pytest --cov=up42/ --runlive --durations=5
 
 e2e:
 	rm -rf project_20abe*/
