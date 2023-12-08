@@ -1,6 +1,6 @@
 # Catalog
 
-The Catalog class enables access to the UP42 [catalog functionality](../../catalog/).
+The Catalog class enables access to the UP42 [catalog functionality](../../notebooks/catalog-example).
 
 ```python
 catalog = up42.initialize_catalog()
