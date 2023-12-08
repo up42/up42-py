@@ -2,12 +2,19 @@
 name = "up42-py"
 version = "0.33.1"
 description = "Python SDK for UP42, the geospatial marketplace and developer platform."
-authors = ["UP42 GmbH"]
+authors = ["UP42 GmbH <support@up42.com>"]
 license = "https://github.com/up42/up42-py/blob/master/LICENSE"
 readme = "README.md"
 packages = [
     { include = "up42", from = "." },
 ]
+classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+    ]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
@@ -38,7 +45,6 @@ mypy-extensions = "^0.4.3"
 pytest-cov = "^4.0.0"
 pytest-mypy = "^0.10.2"
 mock = "^4.0.3"
-twine = "^4.0.2"
 pre-commit = "^3.5.0"
 
 [tool.poetry.group.docs.dependencies]
