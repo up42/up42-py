@@ -78,7 +78,7 @@ class Order:
     @classmethod
     def place(cls, auth: Auth, order_parameters: dict) -> List["Order"]:
         """
-        Places an order.
+        Create a new tasking or catalog order.
 
         Args:
             auth: An authentication object.
@@ -87,7 +87,7 @@ class Order:
         Returns:
             Order: The placed order.
         """
-        url = f"{auth._endpoint()}/v2/orders"
+        url = f"{auth._endpoint()}/v2/orders?workspaceId={auth.workspace_id}"
         response_json = auth._request(request_type="POST", url=url, data=order_parameters)
         try:
             order_ids = [order_id["id"] for order_id in response_json["results"]]  # type: ignore

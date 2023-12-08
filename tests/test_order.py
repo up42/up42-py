@@ -139,7 +139,7 @@ def order_parameters():
 
 def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{auth_mock._endpoint()}/v2/orders",
+        url=f"{auth_mock._endpoint()}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "id": ORDER_ID}],
             "error": [],
@@ -154,7 +154,7 @@ def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
 
 def test_place_order_no_id(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{auth_mock._endpoint()}/v2/orders",
+        url=f"{auth_mock._endpoint()}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "xyz": 892}],
             "error": [],

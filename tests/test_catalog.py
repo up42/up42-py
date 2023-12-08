@@ -13,6 +13,7 @@ from .context import Order
 from .fixtures import (
     DATA_PRODUCT_ID,
     ORDER_ID,
+    WORKSPACE_ID,
     auth_account_live,
     auth_account_mock,
     auth_live,
@@ -518,7 +519,7 @@ def test_estimate_order_from_catalog(
 
 def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests_mock):
     requests_mock.post(
-        url=f"{catalog_mock.auth._endpoint()}/v2/orders",
+        url=f"{catalog_mock.auth._endpoint()}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "id": ORDER_ID}],
             "error": [],
@@ -534,7 +535,7 @@ def test_order_from_catalog_track_status(
     order_parameters, order_mock, catalog_mock, requests_mock
 ):
     requests_mock.post(
-        url=f"{catalog_mock.auth._endpoint()}/v2/orders",
+        url=f"{catalog_mock.auth._endpoint()}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "id": ORDER_ID}],
             "error": [],
