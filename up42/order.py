@@ -63,7 +63,7 @@ class Order:
     @property
     def order_details(self) -> dict:
         """
-        Gets the Order Details. Only for tasking type orders.
+        Gets the Order Details. Only for tasking type orders, archive types return empty.
         """
         return self.info.get("orderDetails", {})
 
