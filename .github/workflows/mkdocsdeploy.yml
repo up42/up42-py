@@ -21,22 +21,26 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v2
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.11
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.11
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1.1.6
+        with:
+          version: 1.6.1
 
       - name: Install dependencies
         run: |
-          python -m pip install -r requirements-docs.txt
-          python -m pip install -e .
+          poetry install only docs
 
       - name: Create symlinks for examples and changelog
         run: |
-              ls
-              mkdir docs/examples
-              mv examples/* docs/examples
-              mv CHANGELOG.md docs
+          ls
+          mkdir docs/examples
+          mv examples/* docs/examples
+          mv CHANGELOG.md docs
 
       - name: Deploy docs
-        run: mkdocs gh-deploy --force -m "update gh-pages [ci skip]"
+        run: poetry run mkdocs gh-deploy --force -m "update gh-pages [ci skip]"
