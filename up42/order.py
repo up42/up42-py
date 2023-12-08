@@ -82,10 +82,11 @@ class Order:
 
         Args:
             auth: An authentication object.
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ...}, "featureCollection": ...}
 
         Returns:
-            Order: The placed order.
+            Orders: Details of the created orders. If you have defined multiple geometries, \
+                each geometry will result in a separate order.
         """
         url = f"{auth._endpoint()}/v2/orders?workspaceId={auth.workspace_id}"
         response_json = auth._request(request_type="POST", url=url, data=order_parameters)

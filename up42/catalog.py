@@ -136,13 +136,9 @@ class CatalogBase:
         Place an order.
 
         Args:
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
-            track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ... }, "featureCollection": ...}
+            track_status (bool): If set to True, will only return the Orders once they are `FULFILLED` or `FAILED`.
             report_time (int): The interval (in seconds) to query the order status if `track_status` is True.
-
-        Warning "Deprecated order parameters"
-            The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. Please use the new
-            order_parameters parameter as described above.
 
          Warning:
             When placing orders of items that are in archive or cold storage,
