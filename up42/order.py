@@ -106,7 +106,7 @@ class Order:
 
         Args:
             auth: An authentication object.
-            order_parameters: A dictionary with the required order params.
+            order_parameters: A dictionary  like {dataProduct: ..., "params": {"id": ...}, "featureCollection": ...}.
 
         Returns:
             dict: representation of a JSON estimation response with summary, results, and errors.
