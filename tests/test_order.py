@@ -100,48 +100,64 @@ def test_order_parameters(order_mock):
 @pytest.fixture
 def order_parameters():
     return {
-        "dataProduct": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
+        "dataProduct": "b1f8c48e-d16b-44c4-a1bb-5e8a24892e69",
+        "displayName": "Pléiades Neo over North America",
+        "tags": ["project-7"],
         "params": {
-            "id": "aa1b5abf-8864-4092-9b65-35f8d0d413bb",
-            "aoi": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [13.357031, 52.52361],
-                        [13.350981, 52.524362],
-                        [13.351544, 52.526326],
-                        [13.355284, 52.526765],
-                        [13.356944, 52.525067],
-                        [13.357257, 52.524409],
-                        [13.357031, 52.52361],
-                    ]
-                ],
-            },
+            "id": "14e49010-9fab-4ba8-b4c5-ed929a083400",
+            "extraDescription": "Order Description",
+            "radiometricProcessing": "HH",
+            "acquisitionMode": "spotlight",
+            "acquisitionEnd": "2022-05-18T22:00:00.000Z",
+            "acquisitionStart": "2022-05-17T22:00:00.000Z",
         },
-        "tags": ["Test", "SDK"],
+        "featureCollection": {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [13.357031, 52.52361],
+                                [13.350981, 52.524362],
+                                [13.351544, 52.526326],
+                                [13.355284, 52.526765],
+                                [13.356944, 52.525067],
+                                [13.357257, 52.524409],
+                                [13.357031, 52.52361],
+                            ]
+                        ],
+                    },
+                    "properties": {},
+                }
+            ],
+        },
     }
 
 
 def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
+        url=f"{auth_mock._endpoint()}/v2/orders",
         json={
-            "data": {"id": ORDER_ID},
-            "error": {},
+            "results": [{"index": 0, "id": ORDER_ID}],
+            "error": [],
         },
     )
+
     order = Order.place(auth_mock, order_parameters)
-    assert isinstance(order, Order)
-    assert order.order_id == ORDER_ID
-    assert order.order_parameters == order_parameters
+    assert isinstance(order, list)
+    assert order[0].order_id == ORDER_ID
+    assert order[0].order_parameters == order_parameters
 
 
 def test_place_order_no_id(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
+        url=f"{auth_mock._endpoint()}/v2/orders",
         json={
-            "data": {"xyz": 892},
-            "error": {},
+            "results": [{"index": 0, "xyz": 892}],
+            "error": [],
         },
     )
     with pytest.raises(ValueError):
@@ -215,17 +231,30 @@ def test_track_status_fail(order_mock, status, requests_mock):
 
 
 def test_estimate_order(order_parameters, auth_mock, requests_mock):
-    url_order_estimation = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/estimate"
-    )
-    requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
+    url_order_estimation = f"{auth_mock._endpoint()}/v2/orders/estimate"
+    expected_payload = {
+        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
+        "results": [{"index": 0, "credits": 38, "unit": "SQ_KM", "size": 0.1}],
+        "errors": [],
+    }
+    expected_output = {
+        "errors": [],
+        "results": [{"credits": 38, "index": 0, "size": 0.1, "unit": "SQ_KM"}],
+        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
+    }
+    requests_mock.post(url=url_order_estimation, json=expected_payload)
     estimation = Order.estimate(auth_mock, order_parameters)
-    assert isinstance(estimation, int)
-    assert estimation == 100
+    assert isinstance(estimation, dict)
+    assert estimation == expected_output
 
 
 @pytest.mark.live
 def test_estimate_order_live(order_parameters, auth_live):
+    expected_output = {
+        "errors": [],
+        "results": [{"credits": 38, "index": 0, "size": 0.1, "unit": "SQ_KM"}],
+        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
+    }
     estimation = Order.estimate(auth_live, order_parameters=order_parameters)
-    assert isinstance(estimation, int)
-    assert estimation == 100
+    assert isinstance(estimation, dict)
+    assert estimation == expected_output

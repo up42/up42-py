@@ -1,5 +1,5 @@
 from time import sleep
-from typing import Optional
+from typing import List, Optional
 
 from up42.auth import Auth
 from up42.utils import get_logger
@@ -63,9 +63,9 @@ class Order:
     @property
     def order_details(self) -> dict:
         """
-        Gets the Order Details.
+        Gets the Order Details. Only for tasking type orders.
         """
-        return self.info["orderDetails"]
+        return self.info.get("orderDetails", {})
 
     @property
     def is_fulfilled(self) -> bool:
@@ -76,7 +76,7 @@ class Order:
         return self.status == "FULFILLED"
 
     @classmethod
-    def place(cls, auth: Auth, order_parameters: dict) -> "Order":
+    def place(cls, auth: Auth, order_parameters: dict) -> List["Order"]:
         """
         Places an order.
 
@@ -87,36 +87,45 @@ class Order:
         Returns:
             Order: The placed order.
         """
-        url = f"{auth._endpoint()}/workspaces/{auth.workspace_id}/orders"
+        url = f"{auth._endpoint()}/v2/orders"
         response_json = auth._request(request_type="POST", url=url, data=order_parameters)
         try:
-            order_id = response_json["data"]["id"]  # type: ignore
+            order_ids = [order_id["id"] for order_id in response_json["results"]]  # type: ignore
         except KeyError as e:
             raise ValueError(f"Order was not placed: {response_json}") from e
-        order = cls(auth=auth, order_id=order_id, order_parameters=order_parameters)
-        logger.info(f"Order {order.order_id} is now {order.status}.")
-        return order
+        orders = [cls(auth=auth, order_id=order_id, order_parameters=order_parameters) for order_id in order_ids]
+        for order in orders:
+            logger.info(f"Order {order.order_id} is now {order.status}.")
+        return orders
 
     @staticmethod
-    def estimate(auth: Auth, order_parameters: dict) -> int:
+    def estimate(auth: Auth, order_parameters: dict) -> dict:
         """
         Returns an estimation of the cost of an order.
 
         Args:
             auth: An authentication object.
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            order_parameters: A dictionary with the required order params.
 
         Returns:
-            int: The estimated cost of the order
+            dict: representation of a JSON estimation response with summary, results, and errors.
         """
-        url = f"{auth._endpoint()}/workspaces/{auth.workspace_id}/orders/estimate"
+        url = f"{auth._endpoint()}/v2/orders/estimate"
 
         response_json = auth._request(request_type="POST", url=url, data=order_parameters)
-        estimated_credits: int = response_json["data"]["credits"]  # type: ignore
-        logger.info(
-            f"Order is estimated to cost {estimated_credits} UP42 credits (order_parameters: {order_parameters})"
-        )
-        return estimated_credits
+
+        summary_data = response_json.get("summary", {})
+        result_data = response_json.get("results", [])
+        errors_data = response_json.get("errors", [])
+
+        total_credits = summary_data.get("totalCredits", None)
+
+        if total_credits is None:
+            raise ValueError("Order estimation was not successful.")
+
+        logger.info(f"Order is estimated to cost {total_credits} UP42 credits (order_parameters: {order_parameters})")
+
+        return {"summary": summary_data, "results": result_data, "errors": errors_data}
 
     def track_status(self, report_time: int = 120) -> str:
         """
@@ -156,13 +165,9 @@ class Order:
         )
         time_asleep = 0
 
-        # check order details and react for tasking orders.
-
         while not self.is_fulfilled:
             status = self.status
-            substatus_message = (
-                substatus_messages(self.order_details.get("subStatus", "")) if self.info["type"] == "TASKING" else ""
-            )
+            substatus_message = substatus_messages(self.order_details.get("subStatus", ""))
             if status in ["PLACED", "BEING_FULFILLED"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info(f"Order is {status}! - {self.order_id}")

@@ -3,6 +3,7 @@ Catalog search functionality
 """
 
 import warnings
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -109,13 +110,28 @@ class CatalogBase:
         collections = [c for c in json_response["data"] if c["type"] == self.type]
         return collections
 
+    def _track_multiple_orders(self, orders: List[Order], report_time: int) -> None:
+        """Allows tracking of multiple orders in parallel
+        Args:
+            orders (list[Order]): list of the orders to track
+            report_time (int): report time
+        """
+
+        def track_order_status(order, report_time):
+            order.track_status(report_time)
+
+        with ThreadPoolExecutor() as executor:
+            futures = [executor.submit(track_order_status, order, report_time) for order in orders]
+            for future in futures:
+                future.result()
+
     def place_order(
         self,
         order_parameters: Union[dict, None],
         track_status: bool = False,
         report_time: int = 120,
         **kwargs,
-    ) -> Order:
+    ) -> List[Order]:
         """
         Place an order.
 
@@ -147,10 +163,12 @@ class CatalogBase:
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
 
-        order = Order.place(self.auth, order_parameters)  # type: ignore
+        orders = Order.place(self.auth, order_parameters)  # type: ignore
+
         if track_status:
-            order.track_status(report_time)
-        return order
+            self._track_multiple_orders(orders=orders, report_time=report_time)
+
+        return orders
 
 
 class Catalog(CatalogBase, VizTools):
@@ -414,8 +432,7 @@ class Catalog(CatalogBase, VizTools):
         # Handled on API level, don't manipulate in SDK, providers might accept geometries in the future.
         if aoi is not None:
             aoi = any_vector_to_fc(vector=aoi)
-            aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
-            order_parameters["params"]["aoi"] = aoi  # type: ignore
+            order_parameters["featureCollection"] = aoi  # type: ignore
 
         return order_parameters
 

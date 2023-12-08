@@ -455,7 +455,11 @@ def test_construct_order_parameters(catalog_mock):
         aoi=mock_search_parameters["intersects"],
     )
     assert isinstance(order_parameters, dict)
-    assert list(order_parameters.keys()) == ["dataProduct", "params"]
+    assert list(order_parameters.keys()) == [
+        "dataProduct",
+        "params",
+        "featureCollection",
+    ]
     assert order_parameters["params"]["acquisitionMode"] is None
 
 
@@ -495,37 +499,45 @@ def test_construct_order_parameters_live(catalog_live, product_id):
 def test_estimate_order_from_catalog(
     order_parameters, order_mock, catalog_mock, requests_mock
 ):
-    url_order_estimation = (
-        f"{catalog_mock.auth._endpoint()}/workspaces/"
-        f"{catalog_mock.auth.workspace_id}/orders/estimate"
-    )
-    requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
+    expected_payload = {
+        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
+        "results": [{"index": 0, "credits": 38, "unit": "SQ_KM", "size": 0.1}],
+        "errors": [],
+    }
+    expected_output = {
+        "errors": [],
+        "results": [{"credits": 38, "index": 0, "size": 0.1, "unit": "SQ_KM"}],
+        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
+    }
+    url_order_estimation = f"{catalog_mock.auth._endpoint()}/v2/orders/estimate"
+    requests_mock.post(url=url_order_estimation, json=expected_payload)
     estimation = catalog_mock.estimate_order(order_parameters)
-    assert isinstance(estimation, int)
-    assert estimation == 100
+    assert isinstance(estimation, dict)
+    assert estimation == expected_output
 
 
 def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests_mock):
     requests_mock.post(
-        url=f"{catalog_mock.auth._endpoint()}/workspaces/{catalog_mock.auth.workspace_id}/orders",
+        url=f"{catalog_mock.auth._endpoint()}/v2/orders",
         json={
-            "data": {"id": ORDER_ID},
-            "error": {},
+            "results": [{"index": 0, "id": ORDER_ID}],
+            "error": [],
         },
     )
     order = catalog_mock.place_order(order_parameters=order_parameters)
-    assert isinstance(order, Order)
-    assert order.order_id == ORDER_ID
+    assert isinstance(order, list)
+    assert order[0].order_id == ORDER_ID
+    assert order[0].order_parameters == order_parameters
 
 
 def test_order_from_catalog_track_status(
     order_parameters, order_mock, catalog_mock, requests_mock
 ):
     requests_mock.post(
-        url=f"{catalog_mock.auth._endpoint()}/workspaces/{catalog_mock.auth.workspace_id}/orders",
+        url=f"{catalog_mock.auth._endpoint()}/v2/orders",
         json={
-            "data": {"id": ORDER_ID},
-            "error": {},
+            "results": [{"index": 0, "id": ORDER_ID}],
+            "error": [],
         },
     )
     url_order_info = f"{order_mock.auth._endpoint()}/v2/orders/{order_mock.order_id}"
@@ -542,20 +554,25 @@ def test_order_from_catalog_track_status(
         track_status=True,
         report_time=0.1,
     )
-    assert isinstance(order, Order)
-    assert order.order_id == ORDER_ID
+    assert isinstance(order, list)
+    assert order[0].order_id == ORDER_ID
 
 
 @pytest.mark.live
 def test_estimate_order_from_catalog_live(order_parameters, catalog_live):
+    expected_output = {
+        "errors": [],
+        "results": [{"credits": 38, "index": 0, "size": 0.1, "unit": "SQ_KM"}],
+        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
+    }
     estimation = catalog_live.estimate_order(order_parameters)
-    assert isinstance(estimation, int)
-    assert estimation == 100
+    assert isinstance(estimation, dict)
+    assert estimation == expected_output
 
 
 @pytest.mark.skip(reason="Placing orders costs credits.")
 @pytest.mark.live
 def test_order_from_catalog_live(order_parameters, catalog_live):
     order = catalog_live.place_order(order_parameters)
-    assert isinstance(order, Order)
-    assert order.order_id
+    assert isinstance(order, list)
+    assert order[0].order_id
