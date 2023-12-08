@@ -50,7 +50,7 @@ jobs:
             - ~/.cache/pre-commit
       - run:
           name: Running tests
-          command: poetry run make test
+          command: poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
       - store_artifacts:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
