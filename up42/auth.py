@@ -21,7 +21,7 @@ from tenacity import (
     wait_random_exponential,
 )
 
-from up42.utils import get_logger
+from up42.utils import get_logger, get_up42_py_version
 
 logger = get_logger(__name__)
 
@@ -211,7 +211,7 @@ class Auth:
 
     @staticmethod
     def _generate_headers(token: str) -> Dict[str, str]:
-        version = Path(__file__).resolve().parent.joinpath("_version.txt").read_text(encoding="utf-8")
+        version = get_up42_py_version()
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",

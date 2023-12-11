@@ -15,7 +15,8 @@ This will install all the neccessary dependencies for up42-py, running the tests
 ```bash
 git clone git@github.com:up42/up42-py.git
 cd up42-py
-make install[dev]
+poetry install
+unlink $(PWD)/docs/examples; ln -s $(PWD)/examples docs
 ```
 
 3. [Authenticate](/docs/authentication.md).

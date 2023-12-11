@@ -1,4 +1,5 @@
 import copy
+import importlib.metadata
 import logging
 import tarfile
 import tempfile
@@ -404,3 +405,8 @@ def replace_page_query(url: str, new_page: int) -> str:
     )
 
     return modified_url
+
+
+def get_up42_py_version():
+    """Get the version of the up42-py package."""
+    return importlib.metadata.version("up42-py")
