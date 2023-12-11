@@ -33,7 +33,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          poetry install only docs
+          poetry install --only docs
 
       - name: Create symlinks for examples and changelog
         run: |
