@@ -430,8 +430,8 @@ class Catalog(CatalogBase, VizTools):
         # Some catalog orders, e.g. Capella don't require AOI (full image order)
         # Handled on API level, don't manipulate in SDK, providers might accept geometries in the future.
         if aoi is not None:
-            aoi = any_vector_to_fc(vector=aoi)
-            order_parameters["featureCollection"] = aoi  # type: ignore
+            feature_collection = any_vector_to_fc(vector=aoi)
+            order_parameters["featureCollection"] = feature_collection  # type: ignore
 
         return order_parameters
 
