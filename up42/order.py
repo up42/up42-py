@@ -122,9 +122,9 @@ class Order:
         total_credits = summary_data.get("totalCredits", None)
 
         if total_credits is None:
-            raise ValueError("Order estimation was not successful.")
+            raise ValueError(f"Order estimation was not successful. {errors_data}")
 
-        logger.info(f"Order is estimated to cost {total_credits} UP42 credits (order_parameters: {order_parameters})")
+        logger.info(f"Orders are estimated to cost {total_credits} UP42 credits (order_parameters: {order_parameters})")
 
         return {"summary": summary_data, "results": result_data, "errors": errors_data}
 

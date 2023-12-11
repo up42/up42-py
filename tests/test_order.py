@@ -137,7 +137,7 @@ def order_parameters():
     }
 
 
-def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
+def test_place_order(order_parameters, auth_mock, requests_mock):
     requests_mock.post(
         url=f"{auth_mock._endpoint()}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
@@ -246,6 +246,37 @@ def test_estimate_order(order_parameters, auth_mock, requests_mock):
     estimation = Order.estimate(auth_mock, order_parameters)
     assert isinstance(estimation, dict)
     assert estimation == expected_output
+
+
+@pytest.mark.parametrize(
+    "expected_payload",
+    [
+        {
+            "data": None,
+            "error": {
+                "code": 400,
+                "message": "AOI area must be more than 0.1 km².",
+                "details": None,
+            },
+        },
+        {
+            "summary": {},
+            "results": [],
+            "errors": [],
+        },
+    ],
+    ids=[
+        "Sc1: Error log with http response",
+        "Sc2: Error log total_estimation None",
+    ],
+)
+def test_estimate_order_fail(
+    order_parameters, auth_mock, requests_mock, expected_payload
+):
+    url_order_estimation = f"{auth_mock._endpoint()}/v2/orders/estimate"
+    requests_mock.post(url=url_order_estimation, json=expected_payload)
+    with pytest.raises(ValueError):
+        Order.estimate(auth_mock, order_parameters)
 
 
 @pytest.mark.live

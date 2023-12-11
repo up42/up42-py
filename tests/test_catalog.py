@@ -449,10 +449,28 @@ def test_download_quicklook_live(catalog_live):
         assert Path(out_paths[0]).suffix == ".jpg"
 
 
-def test_construct_order_parameters(catalog_mock):
+@pytest.mark.parametrize(
+    "extra_params",
+    [
+        {},
+        {
+            "extraDescription": "Order Description",
+            "radiometricProcessing": "HH",
+            "acquisitionMode": "spotlight",
+            "acquisitionEnd": "2022-05-18T22:00:00.000Z",
+            "acquisitionStart": "2022-05-17T22:00:00.000Z",
+        },
+    ],
+    ids=[
+        "Sc1: Without extraparams",
+        "Sc2: With extraparams",
+    ],
+)
+def test_construct_order_parameters(catalog_mock, extra_params):
     order_parameters = catalog_mock.construct_order_parameters(
         data_product_id=DATA_PRODUCT_ID,
         image_id="123",
+        extra_params=extra_params,
         aoi=mock_search_parameters["intersects"],
     )
     assert isinstance(order_parameters, dict)
@@ -461,7 +479,13 @@ def test_construct_order_parameters(catalog_mock):
         "params",
         "featureCollection",
     ]
-    assert order_parameters["params"]["acquisitionMode"] is None
+    if extra_params:
+        assert all(
+            order_parameters["params"][key] == extra_params[key]
+            for key in extra_params.keys()
+        )
+    else:
+        assert order_parameters["params"]["acquisitionMode"] is None
 
 
 @pytest.mark.skip(reason="No live tests in the SDK.")
