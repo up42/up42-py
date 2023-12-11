@@ -1,4 +1,6 @@
+import json
 import os
+from pathlib import Path
 
 import pytest
 
@@ -137,7 +139,7 @@ def order_parameters():
     }
 
 
-def test_place_order(order_parameters, auth_mock, requests_mock):
+def test_place_order(order_parameters, auth_mock, requests_mock, order_mock):
     requests_mock.post(
         url=f"{auth_mock._endpoint()}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
@@ -145,7 +147,6 @@ def test_place_order(order_parameters, auth_mock, requests_mock):
             "error": [],
         },
     )
-
     order = Order.place(auth_mock, order_parameters)
     assert isinstance(order, list)
     assert order[0].order_id == ORDER_ID
