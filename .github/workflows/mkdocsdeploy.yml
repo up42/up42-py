@@ -27,13 +27,13 @@ jobs:
           python-version: 3.11
 
       - name: Install Poetry
-        uses: snok/install-poetry@v1.1.6
+        uses: snok/install-poetry@v1.3.4
         with:
           version: 1.6.1
 
       - name: Install dependencies
         run: |
-          poetry install only docs
+          poetry install --only docs
 
       - name: Create symlinks for examples and changelog
         run: |
