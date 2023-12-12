@@ -549,7 +549,7 @@ def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests
             "error": [],
         },
     )
-    order = catalog_mock.place_order(order_parameters=order_parameters)
+    order = catalog_mock.create_order(order_parameters=order_parameters)
     assert isinstance(order, list)
     assert order[0].order_id == ORDER_ID
     assert order[0].order_parameters == order_parameters
@@ -574,7 +574,7 @@ def test_order_from_catalog_track_status(
             {"json": {"status": "FULFILLED"}},
         ],
     )
-    order = catalog_mock.place_order(
+    order = catalog_mock.create_order(
         order_parameters=order_parameters,
         track_status=True,
         report_time=0.1,
