@@ -5,6 +5,8 @@ from pathlib import Path
 import pytest
 import requests
 
+from .context import Tasking
+
 # pylint: disable=unused-import
 from .fixtures import (
     DATA_PRODUCT_ID,
@@ -31,6 +33,51 @@ from .fixtures import (
 LIVE_TEST_WORKSPACE_ID = os.getenv("LIVE_TEST_WORKSPACE_ID")
 LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
 LIVE_OPTION_ID = os.getenv("LIVE_OPTION_ID")
+
+ORDER_PARAMS_TASKING = {
+    "dataProduct": "83e21b35-e431-43a0-a1c4-22a6ad313911",
+    "displayName": "beautiful 100km2 aoi",
+    "params": {
+        "acquisitionStart": "2023-12-14T00:00:00.000Z",
+        "acquisitionEnd": "2023-12-29T00:00:00.000Z",
+        "extraDescription": "Alias magna rerum du",
+        "acquisitionMode": "spotlight",
+        "incidenceAngle": 20,
+        "cloudCoverage": 20,
+        "pixelCoding": "8bits",
+        "projection": "4326",
+        "priority": "rush",
+        "processingLevel": "1o",
+        "spectralProcessing": "bundle",
+        "radiometricProcessing": "display",
+        "geometricProcessing": "projected",
+        "resolution": "basic",
+        "polarization": "vv",
+        "deliveredAs": "geotiff",
+    },
+    "featureCollection": {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [13.321266, 52.551306],
+                            [13.450999, 52.551254],
+                            [13.457565, 52.450151],
+                            [13.324013, 52.450988],
+                            [13.321266, 52.551306],
+                        ]
+                    ],
+                },
+            }
+        ],
+    },
+    "tags": [],
+}
 
 with open(
     Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
@@ -260,3 +307,35 @@ def test_choose_feasibility_live(tasking_live):
             str(e.value)
             == "{'status': 405, 'title': 'Resource (FeasibilityStudy) is write-protected.', 'detail': None}"
         )
+
+
+# pylint: disable=unused-argument
+def test_estimate_order_from_tasking(requests_mock, auth_mock):
+    expected_payload = {
+        "summary": {"totalCredits": 318200, "totalSize": 1.0, "unit": "SCENE"},
+        "results": [{"index": 0, "credits": 318200, "unit": "SCENE", "size": 1.0}],
+        "errors": [],
+    }
+    expected_output = {
+        "summary": {"totalCredits": 318200, "totalSize": 1.0, "unit": "SCENE"},
+        "results": [{"index": 0, "credits": 318200, "unit": "SCENE", "size": 1.0}],
+        "errors": [],
+    }
+    tasking_instance = Tasking(auth=auth_mock)
+    url_order_estimation = f"{tasking_instance.auth._endpoint()}/v2/orders/estimate"
+    requests_mock.post(url=url_order_estimation, json=expected_payload)
+    estimation = tasking_instance.estimate_order(ORDER_PARAMS_TASKING)
+    assert isinstance(estimation, dict)
+    assert estimation == expected_output
+
+
+@pytest.mark.live
+def test_estimate_order_from_tasking_live(tasking_live):
+    expected_output = {
+        "summary": {"totalCredits": 318200, "totalSize": 1.0, "unit": "SCENE"},
+        "results": [{"index": 0, "credits": 318200, "unit": "SCENE", "size": 1.0}],
+        "errors": [],
+    }
+    estimation = tasking_live.estimate_order(ORDER_PARAMS_TASKING)
+    assert isinstance(estimation, dict)
+    assert estimation == expected_output
