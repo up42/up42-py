@@ -26,14 +26,22 @@ jobs:
         with:
           python-version: 3.11
 
+      - name: Install GDAL
+        run: |
+          apt update
+          add-apt-repository ppa:ubuntugis/ppa -y
+          apt update -y
+          apt-get install python3-dev -y
+          apt-get install libpq-dev gdal-bin libgdal-dev -y
+
       - name: Install Poetry
         uses: snok/install-poetry@v1.3.4
         with:
-          version: 1.6.1
+          version: 1.7.1
 
       - name: Install dependencies
         run: |
-          poetry install --only docs
+          poetry install --no-interaction --no-ansi
 
       - name: Create symlinks for examples and changelog
         run: |
@@ -43,4 +51,5 @@ jobs:
           mv CHANGELOG.md docs
 
       - name: Deploy docs
-        run: poetry run mkdocs gh-deploy --force -m "update gh-pages [ci skip]"
+        run: |
+          poetry run mkdocs gh-deploy --force -m "update gh-pages [ci skip]"
