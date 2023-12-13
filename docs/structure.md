@@ -27,7 +27,7 @@ The up42 class is the base library module imported to Python. It provides the el
 
 ### Webhook
 
-The Webhook class enables you to view, test, and modify custom event notifications with [webhooks](webhooks.md).
+The Webhook class enables you to view, test, and modify custom event notifications with webhooks.
 
 !!! abstract "Attributes and functions of the Webhook class"
 
@@ -42,7 +42,7 @@ The Webhook class enables you to view, test, and modify custom event notificatio
 
 ### Tasking
 
-The Tasking class enables access to the UP42 [tasking functionality](../examples/tasking/tasking-example).
+The Tasking class enables access to the UP42 tasking functionality.
 
 !!! abstract "Attributes and functions of the Tasking class"
 
@@ -56,7 +56,7 @@ The Tasking class enables access to the UP42 [tasking functionality](../examples
 
 ### Catalog
 
-The Catalog class enables access to the UP42 [catalog functionality](../catalog/).
+The Catalog class enables access to the UP42 catalog functionality.
 
 !!! abstract "Attributes and functions of the Catalog class"
 
@@ -102,7 +102,7 @@ The Order class enables access to order tracking.
 
 ### Storage
 
-The Storage class enables access to UP42 [storage](storage.md).
+The Storage class enables access to UP42 storage.
 
 !!! abstract "Attributes and functions of the Storage class"
 
@@ -113,7 +113,7 @@ The Storage class enables access to UP42 [storage](storage.md).
 
 ### Asset
 
-The Asset class enables access to [assets in storage](../examples/asset/asset-example).
+The Asset class enables access to assets in storage and their STAC information.
 
 !!! abstract "Attributes and functions of the Asset class"
 
