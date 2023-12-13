@@ -34,11 +34,9 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **December 13, 2023**
 
-- `storage.get_orders` endpoints are updated to the latest API version [Order V2](https://docs.up42.com/developers/api#tag/Orders/operation/listOrdersV2)
-- `order.get_assets` not available since new order endpoint response does not have assets.
-- Updating and improvement of documentation and notebooks examples.
-- Setting poetry as the only dependency manager.
-
+- Updated the `storage.get_orders` function to the latest version of the API.
+- Set Poetry as the only dependency manager.
+- Discontinued support for the `order.get_assets` function.
 
 ## 0.33.1
 
