@@ -106,14 +106,14 @@ class Order:
         """
         if self.is_fulfilled:
             _, pystac_asset_search = self._stac_search_order
-            assets = {
+            asset_ids = {
                 item.to_dict().get("properties", {}).get("up42-system:asset_id")
                 for item in pystac_asset_search.item_collection()
             }
-            if not assets:
-                raise ValueError(f"No asset STAC metadata information available for this order {self.order_id}")
-            return [Asset(self.auth, asset_id=asset) for asset in assets]
-        raise ValueError(f"Order {self.order_id} is not FULFILLED! Status is {self.status}")
+            if not asset_ids:
+                raise ValueError(f"No assets found for the order_id: {self.order_id}")
+            return [Asset(self.auth, asset_id=asset_id) for asset_id in asset_ids]
+        raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
     def place(cls, auth: Auth, order_parameters: dict) -> "Order":
