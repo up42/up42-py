@@ -87,7 +87,7 @@ jobs:
           command: poetry run pytest --runlive --durations=5
   deploy:
     docker:
-      - image: circleci/python:3.11
+      - image: cimg/python:3.11
     steps:
       - checkout
       - run:
