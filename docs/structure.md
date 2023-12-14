@@ -97,6 +97,7 @@ The Order class enables access to order tracking.
     - `status`
     - `is_fulfilled`
     - `track_status()`
+    - `get_assets()`
 
 ## Download data
 

@@ -80,3 +80,21 @@ The returned format is `str`.
 ```python
 order.track_status(report_time=150)
 ```
+
+## Assets
+
+### get_assets()
+
+The `get_assets()` function returns a list of order assets. Use to get an asset ID for the [Asset class](asset-reference.md) initialization.
+
+```python
+get_assets()
+```
+
+The returned format is `list[Asset]`.
+
+<h5> Example </h5>
+
+```python
+order.get_assets()
+```
