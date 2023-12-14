@@ -279,7 +279,12 @@ class Storage:
         url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
 
         orders_json = self._query_paginated_endpoints(url=url, limit=limit)
-        logger.info(f"Got {len(orders_json)} orders for workspace {self.workspace_id}.")
+        logger_message = (
+            f"Got {len(orders_json)} orders for workspace {self.workspace_id}."
+            if workspace_orders
+            else f"Got {len(orders_json)} orders."
+        )
+        logger.info(logger_message)
 
         if return_json:
             return orders_json  # type: ignore
