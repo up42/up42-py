@@ -315,7 +315,7 @@ def test_get_orders(storage_mock):
             JSON_ORDERS,
             [
                 {
-                    "id": "ddb207c0-3b7f-4186-bc0b-c033f0d2f32b",
+                    "id": ORDER_ID,
                     "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
                     "workspaceId": "workspace_id_123",
                     "dataProvider": "OneAtlas",

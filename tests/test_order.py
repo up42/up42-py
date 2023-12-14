@@ -6,6 +6,7 @@ import pytest
 from .context import Asset, Order
 from .fixtures import (
     ASSET_ID,
+    ASSET_ORDER_ID,
     JSON_ORDER,
     ORDER_ID,
     WORKSPACE_ID,
@@ -95,6 +96,28 @@ def test_is_fulfilled(order_mock, status, expected, monkeypatch):
 
 def test_order_parameters(order_mock):
     assert not order_mock.order_parameters
+
+
+def test_get_assets(order_mock, monkeypatch):
+    monkeypatch.setattr(Order, "info", {"status": "FULFILLED"})
+    assets = order_mock.get_assets()
+    assert len(assets) == 1
+    assert isinstance(assets[0], Asset)
+    assert assets[0].asset_id == ASSET_ORDER_ID
+
+
+def test_get_assets_placed(order_mock, asset_mock, monkeypatch):
+    monkeypatch.setattr(Order, "info", {"status": "PLACED"})
+    with pytest.raises(ValueError):
+        order_mock.get_assets()
+
+
+@pytest.mark.live
+def test_get_assets_live(auth_live, order_parameters):
+    order_instance = Order(auth=auth_live, order_id=ORDER_ID)
+    assets = order_instance.get_assets()
+    assert isinstance(assets[0], Asset)
+    assert assets[0].asset_id == ASSET_ORDER_ID
 
 
 @pytest.fixture

@@ -1,10 +1,17 @@
 from time import sleep
-from typing import Optional
+from typing import List, Optional, Tuple
 
+from pystac_client import Client, ItemSearch
+
+from up42.asset import Asset
 from up42.auth import Auth
+from up42.stac_client import PySTACAuthClient
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
+
+MAX_ITEM = 200
+LIMIT = 200
 
 
 class Order:
@@ -63,9 +70,9 @@ class Order:
     @property
     def order_details(self) -> dict:
         """
-        Gets the Order Details.
+        Gets the Order Details. Only for tasking type orders, archive types return empty.
         """
-        return self.info["orderDetails"]
+        return self.info.get("orderDetails", {})
 
     @property
     def is_fulfilled(self) -> bool:
@@ -74,6 +81,39 @@ class Order:
         Also see [status attribute](order-reference.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
+
+    @property
+    def _stac_search_order(self) -> Tuple[Client, ItemSearch]:
+        url = f"{self.auth._endpoint()}/v2/assets/stac"
+        pystac_client_aux = PySTACAuthClient(auth=self.auth).open(url=url)
+        stac_search_parameters = {
+            "max_items": MAX_ITEM,
+            "limit": LIMIT,
+            "filter": {
+                "op": "=",
+                "args": [
+                    {"property": "order_id"},
+                    self.order_id,
+                ],
+            },
+        }
+        pystac_asset_search = pystac_client_aux.search(filter=stac_search_parameters)
+        return (pystac_client_aux, pystac_asset_search)
+
+    def get_assets(self) -> List[Asset]:
+        """
+        Gets the Order assets or results.
+        """
+        if self.is_fulfilled:
+            _, pystac_asset_search = self._stac_search_order
+            assets = {
+                item.to_dict().get("properties", {}).get("up42-system:asset_id")
+                for item in pystac_asset_search.item_collection()
+            }
+            if not assets:
+                raise ValueError(f"No STAC metadata information available for this asset {self.order_id}")
+            return [Asset(self.auth, asset_id=asset) for asset in assets]
+        raise ValueError(f"Order {self.order_id} is not FULFILLED! Status is {self.status}")
 
     @classmethod
     def place(cls, auth: Auth, order_parameters: dict) -> "Order":
