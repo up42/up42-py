@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **December 15, 2023**
 
-- Restoring `order.get_assets` function.
+- Restored the `order.get_assets` function.
 
 ## 0.34.0
 
