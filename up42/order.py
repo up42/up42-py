@@ -111,7 +111,7 @@ class Order:
                 for item in pystac_asset_search.item_collection()
             }
             if not assets:
-                raise ValueError(f"No STAC metadata information available for this asset {self.order_id}")
+                raise ValueError(f"No asser STAC metadata information available for this order {self.order_id}")
             return [Asset(self.auth, asset_id=asset) for asset in assets]
         raise ValueError(f"Order {self.order_id} is not FULFILLED! Status is {self.status}")
 
