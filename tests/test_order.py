@@ -105,6 +105,9 @@ def test_get_assets(order_mock, monkeypatch):
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ORDER_ID
 
+    with pytest.raises(ValueError) as error:
+        assets = order_mock.get_assets()
+
 
 def test_get_assets_placed(order_mock, asset_mock, monkeypatch):
     monkeypatch.setattr(Order, "info", {"status": "PLACED"})

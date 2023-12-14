@@ -34,6 +34,29 @@ JSON_ORDER_ASSET = {
 }
 
 
+JSON_STAC_ORDER_EMPTY = {
+    "links": [
+        {
+            "href": "https://api.up42.com/v2/assets/stac/",
+            "rel": "root",
+            "type": "application/json",
+        },
+        {
+            "href": "https://api.up42.com/v2/assets/stac/",
+            "rel": "parent",
+            "type": "application/json",
+        },
+        {
+            "href": "https://api.up42.com/v2/assets/stac/search",
+            "rel": "self",
+            "type": "application/json",
+        },
+    ],
+    "type": "FeatureCollection",
+    "features": [],
+}
+
+
 @pytest.fixture()
 def order_mock(auth_mock, requests_mock):
     url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
@@ -51,7 +74,7 @@ def order_mock(auth_mock, requests_mock):
     url_asset_stac_info = f"{auth_mock._endpoint()}/v2/assets/stac/search"
     requests_mock.post(
         url_asset_stac_info,
-        [{"json": JSON_ORDER_STAC}],
+        [{"json": JSON_ORDER_STAC}, {"json": JSON_STAC_ORDER_EMPTY}],
     )
     url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ORDER_ID}/metadata"
     requests_mock.get(url=url_asset_info, json=JSON_ORDER_ASSET)
