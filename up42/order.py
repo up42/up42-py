@@ -1,12 +1,9 @@
 from time import sleep
 from typing import List, Optional
 
-from pystac_client import ItemSearch
-
 from up42.asset import Asset
 from up42.asset_searcher import AssetSearchParams, asset_search
 from up42.auth import Auth
-from up42.stac_client import PySTACAuthClient
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
@@ -82,22 +79,6 @@ class Order:
         Also see [status attribute](order-reference.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
-
-    def _stac_search_order(self) -> ItemSearch:
-        url = f"{self.auth._endpoint()}/v2/assets/stac"
-        pystac_client_aux = PySTACAuthClient(auth=self.auth).open(url=url)
-        stac_search_parameters = {
-            "max_items": MAX_ITEM,
-            "limit": LIMIT,
-            "filter": {
-                "op": "=",
-                "args": [
-                    {"property": "order_id"},
-                    self.order_id,
-                ],
-            },
-        }
-        return pystac_client_aux.search(filter=stac_search_parameters)
 
     def get_assets(self) -> List[Asset]:
         """
