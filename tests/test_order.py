@@ -108,6 +108,9 @@ def test_get_assets(order_mock, monkeypatch):
     with pytest.raises(ValueError) as error:
         assets = order_mock.get_assets()
 
+    assets = order_mock.get_assets()
+    assert len(assets) == 0
+
 
 def test_get_assets_placed(order_mock, asset_mock, monkeypatch):
     monkeypatch.setattr(Order, "info", {"status": "PLACED"})
