@@ -106,16 +106,10 @@ def test_get_assets_return_expected_responses(order_mock, monkeypatch):
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ORDER_ID
 
-    # Order with no assets
-    with pytest.raises(ValueError) as err:
-        assets = order_mock.get_assets()
 
-    # Order with assets but no asset_id
-    assets = order_mock.get_assets()
-    assert len(assets) == 0
-
-
-def test_get_assets_placed(order_mock, asset_mock, monkeypatch):
+def test_should_fail_to_get_assets_for_unfulfilled_order(
+    order_mock, asset_mock, monkeypatch
+):
     monkeypatch.setattr(Order, "info", {"status": "PLACED"})
     with pytest.raises(ValueError):
         order_mock.get_assets()

@@ -1,9 +1,10 @@
 from time import sleep
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
-from pystac_client import Client, ItemSearch
+from pystac_client import ItemSearch
 
 from up42.asset import Asset
+from up42.asset_searcher import AssetSearchParams, asset_search
 from up42.auth import Auth
 from up42.stac_client import PySTACAuthClient
 from up42.utils import get_logger
@@ -82,8 +83,7 @@ class Order:
         """
         return self.status == "FULFILLED"
 
-    @property
-    def _stac_search_order(self) -> Tuple[Client, ItemSearch]:
+    def _stac_search_order(self) -> ItemSearch:
         url = f"{self.auth._endpoint()}/v2/assets/stac"
         pystac_client_aux = PySTACAuthClient(auth=self.auth).open(url=url)
         stac_search_parameters = {
@@ -97,22 +97,23 @@ class Order:
                 ],
             },
         }
-        pystac_asset_search = pystac_client_aux.search(filter=stac_search_parameters)
-        return (pystac_client_aux, pystac_asset_search)
+        return pystac_client_aux.search(filter=stac_search_parameters)
 
     def get_assets(self) -> List[Asset]:
         """
         Gets the Order assets or results.
         """
         if self.is_fulfilled:
-            _, pystac_asset_search = self._stac_search_order
-            asset_ids = {
-                item.to_dict().get("properties", {}).get("up42-system:asset_id", None)
-                for item in pystac_asset_search.item_collection()
-            }
-            if not asset_ids:
+            params: AssetSearchParams = {
+                "search": self.order_id,
+            }  # type: ignore
+            assets_json = asset_search(
+                self.auth,
+                params_asset_search=params,
+            )
+            if not assets_json:
                 raise ValueError(f"No assets found for the order_id: {self.order_id}")
-            return [Asset(self.auth, asset_id=asset_id) for asset_id in asset_ids if asset_id is not None]
+            return [Asset(self.auth, asset_id=asset_json["id"], asset_info=asset_json) for asset_json in assets_json]
         raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod

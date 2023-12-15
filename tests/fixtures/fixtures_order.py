@@ -5,14 +5,7 @@ from pathlib import Path
 import pytest
 
 from ..context import Order
-from .fixtures_globals import (
-    ASSET_ORDER_ID,
-    JSON_ORDER_STAC,
-    JSON_STAC_CATALOG_RESPONSE,
-    ORDER_ID,
-    URL_STAC_CATALOG,
-    WORKSPACE_ID,
-)
+from .fixtures_globals import ASSET_ORDER_ID, ORDER_ID, WORKSPACE_ID
 
 JSON_ORDER_ASSET = {
     "accountId": "69353acb-f942-423f-8f32-11d6d67caa77",
@@ -31,6 +24,27 @@ JSON_ORDER_ASSET = {
     "geospatialMetadataExtraction": "SUCCESSFUL",
     "title": "string",
     "tags": ["string"],
+}
+
+JSON_GET_ORDERS_RESPONSE = {
+    "content": [JSON_ORDER_ASSET],
+    "pageable": {
+        "sort": {"sorted": True, "unsorted": False, "empty": False},
+        "pageNumber": 0,
+        "pageSize": 10,
+        "offset": 0,
+        "paged": True,
+        "unpaged": False,
+    },
+    "totalPages": 1,
+    "totalElements": 1,
+    "last": True,
+    "sort": {"sorted": True, "unsorted": False, "empty": False},
+    "numberOfElements": 1,
+    "first": True,
+    "size": 10,
+    "number": 0,
+    "empty": False,
 }
 
 
@@ -183,20 +197,8 @@ def order_mock(auth_mock, requests_mock):
     ) as json_file:
         json_oder_schenma = json.load(json_file)
         requests_mock.get(url=url_order_info, json=json_oder_schenma)
-
-    requests_mock.get(url=URL_STAC_CATALOG, json=JSON_STAC_CATALOG_RESPONSE)
-
-    url_asset_stac_info = f"{auth_mock._endpoint()}/v2/assets/stac/search"
-    requests_mock.post(
-        url_asset_stac_info,
-        [
-            {"json": JSON_ORDER_STAC},
-            {"json": JSON_STAC_ORDER_EMPTY},
-            {"json": JSON_ORDER_STAC_NO_ASSET_ID},
-        ],
-    )
-    url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ORDER_ID}/metadata"
-    requests_mock.get(url=url_asset_info, json=JSON_ORDER_ASSET)
+    url_asset_info = f"{auth_mock._endpoint()}/v2/assets?sort=createdAt%2Cdesc&search={ORDER_ID}&size=50"
+    requests_mock.get(url=url_asset_info, json=JSON_GET_ORDERS_RESPONSE)
 
     return Order(auth=auth_mock, order_id=ORDER_ID)
 

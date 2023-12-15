@@ -1,4 +1,3 @@
-import math
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional, Union
@@ -10,6 +9,7 @@ from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
 
 from up42.asset import Asset
+from up42.asset_searcher import AssetSearchParams, asset_search, query_paginated_endpoints
 from up42.auth import Auth
 from up42.order import Order
 from up42.stac_client import PySTACAuthClient
@@ -55,45 +55,6 @@ class Storage:
         url = f"{self.auth._endpoint()}/v2/assets/stac"
         pystac_client_auth = PySTACAuthClient(auth=self.auth).open(url=url)
         return pystac_client_auth
-
-    def _query_paginated_endpoints(self, url: str, limit: Optional[int] = None, size: int = 50) -> List[dict]:
-        """
-        Helper to fetch list of items in paginated endpoint, e.g. assets, orders.
-
-        Args:
-            url (str): The base url for paginated endpoint.
-            limit: Return n first elements sorted by date of creation, optional.
-            size: Default number of results per pagination page. Tradeoff of number
-                of results per page and API response time to query one page. Default 50.
-
-        Returns:
-            List[dict]: List of all paginated items.
-        """
-        url = url + f"&size={size}"
-
-        first_page_response = self.auth._request(request_type="GET", url=url)
-        if "data" in first_page_response:  # UP42 API v2 convention without data key, but still in e.g. get order
-            # endpoint
-            first_page_response = first_page_response["data"]
-        num_pages = first_page_response["totalPages"]
-        num_elements = first_page_response["totalElements"]
-        results_list = first_page_response["content"]
-
-        if limit is None:
-            # Also covers single page (without limit)
-            num_pages_to_query = num_pages
-        elif limit <= size:
-            return results_list[:limit]
-        else:
-            # Also covers single page (with limit)
-            num_pages_to_query = math.ceil(min(limit, num_elements) / size)
-
-        for page in range(1, num_pages_to_query):
-            response_json = self.auth._request(request_type="GET", url=url + f"&page={page}")
-            if "data" in response_json:
-                response_json = response_json["data"]
-            results_list += response_json["content"]
-        return results_list[:limit]
 
     def _query_paginated_stac_search(
         self,
@@ -168,27 +129,23 @@ class Storage:
         Returns:
             A list of Asset objects.
         """
-        sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/v2/assets?sort={sort}"
-        if created_before is not None:
-            url += f"&createdBefore={format_time(created_before)}"
-        if created_after is not None:
-            url += f"&createdAfter={format_time(created_after)}"
-        if workspace_id is not None:
-            url += f"&workspaceId={workspace_id}"
-        if collection_names is not None:
-            url += f"&collectionNames={collection_names}"
-        if producer_names is not None:
-            url += f"&producerNames={producer_names}"
-        if tags is not None:
-            for tag in tags:
-                url += f"&tags={tag}"
-        if sources is not None:
-            url += f"&sources={','.join(sources)}"
-        if search is not None:
-            url += f"&search={search}"
-
-        assets_json = self._query_paginated_endpoints(url=url, limit=limit)
+        params: AssetSearchParams = {
+            "createdAfter": format_time(created_after) if created_after is not None else None,
+            "createdBefore": format_time(created_before) if created_before is not None else None,
+            "workspaceId": workspace_id,
+            "collectionNames": collection_names,
+            "producerNames": producer_names,
+            "tags": tags,
+            "sources": sources,
+            "search": search,
+        }
+        assets_json = asset_search(
+            self.auth,
+            params_asset_search=params,
+            limit=limit,
+            sortby=sortby,
+            descending=descending,
+        )
 
         if (
             acquired_before is not None
@@ -278,7 +235,7 @@ class Storage:
 
         url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
 
-        orders_json = self._query_paginated_endpoints(url=url, limit=limit)
+        orders_json = query_paginated_endpoints(auth=self.auth, url=url, limit=limit)
         logger_message = (
             f"Got {len(orders_json)} orders for workspace {self.workspace_id}."
             if workspace_orders

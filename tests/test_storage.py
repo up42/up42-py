@@ -1,5 +1,4 @@
 import copy
-import datetime
 
 import pystac
 import pystac_client
@@ -7,7 +6,7 @@ import pytest
 import requests
 
 # pylint: disable=unused-import
-from .context import AllowedStatuses, Asset, Order, Storage
+from .context import AllowedStatuses, Asset, Order, Storage, query_paginated_endpoints
 from .fixtures import (
     ASSET_ID,
     JSON_ASSET,
@@ -60,7 +59,7 @@ def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
     }
 
 
-def test_paginate_one_page(storage_mock, requests_mock):
+def test_paginate_one_page(auth_mock, requests_mock):
     url = "http://some_url/assets"
 
     limit = None
@@ -72,11 +71,11 @@ def test_paginate_one_page(storage_mock, requests_mock):
         url + f"&size={size}",
         json=_mock_one_page_reponse(0, expected, total_pages, total_elements),
     )
-    res = storage_mock._query_paginated_endpoints(url=url, limit=limit, size=size)
+    res = query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
-def test_paginate_multiple_pages(storage_mock, requests_mock):
+def test_paginate_multiple_pages(auth_mock, requests_mock):
     url = "http://some_url/assets"
 
     limit = 20
@@ -100,11 +99,11 @@ def test_paginate_multiple_pages(storage_mock, requests_mock):
         url + f"&size={size}&page=3",
         json=_mock_one_page_reponse(3, size, total_pages, total_elements),
     )
-    res = storage_mock._query_paginated_endpoints(url=url, limit=limit, size=size)
+    res = query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
-def test_paginate_with_limit_smaller_page_size(storage_mock, requests_mock):
+def test_paginate_with_limit_smaller_page_size(auth_mock, requests_mock):
     """
     Test pagination with limit <= pagination size.
     """
@@ -123,7 +122,7 @@ def test_paginate_with_limit_smaller_page_size(storage_mock, requests_mock):
         url + f"&size={limit}&page=1",
         json=_mock_one_page_reponse(0, size, total_pages, total_elements),
     )
-    res = storage_mock._query_paginated_endpoints(url=url, limit=limit, size=size)
+    res = query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
