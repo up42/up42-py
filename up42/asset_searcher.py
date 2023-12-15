@@ -59,45 +59,39 @@ class AssetSearchParams(TypedDict):
     search: Optional[str]
 
 
-def asset_search(
+def search_assets(
     auth,
-    params_asset_search: AssetSearchParams,
+    params: AssetSearchParams,
     limit: Optional[int] = None,
     sortby: str = "createdAt",
     descending: bool = True,
-) -> dict:
+) -> List[dict]:
     """
-        Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#functionality_1)
-        objects or in JSON format.
+    Get a list of assets based on specified search parameters.
 
-        Args:
-            created_after: Search for assets created after the specified timestamp, in `"YYYY-MM-DD"` format.
-            created_before: Search for assets created before the specified timestamp, in `"YYYY-MM-DD"` format.
-            workspace_id: Search by the workspace ID.
-            collection_names: Search for assets from any of the provided geospatial collections.
-            producer_names: Search for assets from any of the provided producers.
-            tags: Search for assets with any of the provided tags.
-            sources: Search for assets from any of the provided sources.\
-                The allowed values: `"ARCHIVE"`, `"TASKING"`, `"USER"`.
-            search: Search for assets that contain the provided search query in their name, title, or order ID.
-            limit: The number of results on a results page.
-            sortby: The property to sort by.
-            descending: The sorting order: <ul><li>`true` — descending</li><li>`false` — ascending</li></ul>
-            return_json: If `true`, returns a JSON dictionary.\
-                If `false`, returns a list of [Asset](https://sdk.up42.com/structure/#functionality_1) objects.
+    Args:
+        auth: An instance of the authentication class.
+        params: A dictionary containing search parameters defined by the `AssetSearchParams` TypedDict.
+        limit: The number of results on a results page (default is `None`).
+        sortby: The property to sort the results by (default is "createdAt").
+        descending: The sorting order, where `True` is descending and `False` is ascending (default is `True`).
 
-        Returns:
-            A list of Asset objects.
-        """
+    Returns:
+        A list of the objects of the class `Asset`, representing the JSON result for the queried assets.
+
+    Note:
+        - For detailed information on the supported search parameters, refer to the `AssetSearchParams` TypedDict.
+        - The function returns a list of objects of class `Asset`.
+    """
     sort = f"{sortby},{'desc' if descending else 'asc'}"
-    params = {"sort": sort, **params_asset_search}  # type: ignore[arg-type]
-    params = {k: v for k, v in params.items() if v is not None}
+    params_request = {"sort": sort, **params}  # type: ignore[arg-type]
+    params_request = {k: v for k, v in params.items() if v is not None}  # type: ignore
     base_url = f"{auth._endpoint()}/v2/assets?sort={sort}"
-    url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
+    url = urljoin(base_url, "?" + urlencode(params_request, doseq=True, safe=""))
     assets_json = query_paginated_endpoints(auth, url=url, limit=limit)
 
-    if params.get("workspace_id"):
+    if "workspace_id" in params_request:
         logger.info(f"Queried {len(assets_json)} assets for workspace {auth.workspace_id}.")
     else:
         logger.info(f"Queried {len(assets_json)} assets from all workspaces in account.")
-    return assets_json  # type: ignore
+    return assets_json

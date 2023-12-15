@@ -2,7 +2,7 @@ from time import sleep
 from typing import List, Optional
 
 from up42.asset import Asset
-from up42.asset_searcher import AssetSearchParams, asset_search
+from up42.asset_searcher import AssetSearchParams, search_assets
 from up42.auth import Auth
 from up42.utils import get_logger
 
@@ -70,7 +70,11 @@ class Order:
         """
         Gets the Order Details. Only for tasking type orders, archive types return empty.
         """
-        return self.info.get("orderDetails", {})
+        if self.info["type"] == "TASKING":
+            order_details = self.info["orderDetails"]
+            return order_details
+        logger.info("Order is not TASKING type. Order details are not provided.")
+        return {}
 
     @property
     def is_fulfilled(self) -> bool:
@@ -88,13 +92,13 @@ class Order:
             params: AssetSearchParams = {
                 "search": self.order_id,
             }  # type: ignore
-            assets_json = asset_search(
+            assets_response = search_assets(
                 self.auth,
-                params_asset_search=params,
+                params=params,
             )
-            if not assets_json:
-                raise ValueError(f"No assets found for the order_id: {self.order_id}")
-            return [Asset(self.auth, asset_id=asset_json["id"], asset_info=asset_json) for asset_json in assets_json]
+            return [
+                Asset(self.auth, asset_id=asset_info["id"], asset_info=asset_info) for asset_info in assets_response
+            ]
         raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod

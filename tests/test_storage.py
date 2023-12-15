@@ -14,6 +14,7 @@ from .fixtures import (
     JSON_ORDERS,
     JSON_STORAGE_STAC,
     ORDER_ID,
+    USER_ID,
     WORKSPACE_ID,
     auth_account_live,
     auth_account_mock,
@@ -315,15 +316,15 @@ def test_get_orders(storage_mock):
             [
                 {
                     "id": ORDER_ID,
-                    "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-                    "workspaceId": "workspace_id_123",
+                    "userId": USER_ID,
+                    "workspaceId": WORKSPACE_ID,
                     "dataProvider": "OneAtlas",
                     "status": "FULFILLED",
                     "createdAt": "2021-01-18T16:18:16.105851Z",
                     "updatedAt": "2021-01-18T16:21:31.966805Z",
                     "assets": ["363f89c1-3586-4b14-9a49-03a890c3b593"],
                     "createdBy": {
-                        "id": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
+                        "id": USER_ID,
                         "type": "USER",
                     },
                     "updatedBy": {"id": "system", "type": "INTERNAL"},

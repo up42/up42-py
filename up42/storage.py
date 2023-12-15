@@ -9,7 +9,7 @@ from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
 
 from up42.asset import Asset
-from up42.asset_searcher import AssetSearchParams, asset_search, query_paginated_endpoints
+from up42.asset_searcher import AssetSearchParams, query_paginated_endpoints, search_assets
 from up42.auth import Auth
 from up42.order import Order
 from up42.stac_client import PySTACAuthClient
@@ -139,9 +139,9 @@ class Storage:
             "sources": sources,
             "search": search,
         }
-        assets_json = asset_search(
+        assets_json = search_assets(
             self.auth,
-            params_asset_search=params,
+            params=params,
             limit=limit,
             sortby=sortby,
             descending=descending,
@@ -162,11 +162,6 @@ class Storage:
             raise ValueError(
                 "Search for geometry, acquired_before, acquired_after and custom_filter is no longer supported."
             )
-
-        if workspace_id is not None:
-            logger.info(f"Queried {len(assets_json)} assets for workspace {self.workspace_id}.")
-        else:
-            logger.info(f"Queried {len(assets_json)} assets from all workspaces in account.")
 
         if return_json:
             return assets_json  # type: ignore
@@ -236,10 +231,8 @@ class Storage:
         url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
 
         orders_json = query_paginated_endpoints(auth=self.auth, url=url, limit=limit)
-        logger_message = (
-            f"Got {len(orders_json)} orders for workspace {self.workspace_id}."
-            if workspace_orders
-            else f"Got {len(orders_json)} orders."
+        logger_message = f"Got {len(orders_json)} orders" + (
+            f" for workspace {self.workspace_id}." if workspace_orders else ""
         )
         logger.info(logger_message)
 

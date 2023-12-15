@@ -1,15 +1,15 @@
 import os
+from copy import deepcopy
 
 import pytest
 
 # pylint: disable=unused-import
 from .context import Asset, Order
 from .fixtures import (
-    ASSET_ID,
     ASSET_ORDER_ID,
-    JSON_ORDER,
+    JSON_GET_ORDERS_RESPONSE,
+    JSON_ORDER_ASSET,
     ORDER_ID,
-    WORKSPACE_ID,
     asset_live,
     asset_mock,
     auth_account_live,
@@ -24,6 +24,7 @@ from .fixtures import (
     password_test_live,
     project_api_key_live,
     project_id_live,
+    read_test_order_info,
     username_test_live,
 )
 
@@ -98,21 +99,53 @@ def test_order_parameters(order_mock):
     assert not order_mock.order_parameters
 
 
-def test_get_assets_return_expected_responses(order_mock, monkeypatch):
-    monkeypatch.setattr(Order, "info", {"status": "FULFILLED"})
-    # Order id with assets and asset_id
-    assets = order_mock.get_assets()
+def set_status_test_order(status: str) -> dict:
+    asset_response = deepcopy(read_test_order_info())
+    asset_response["status"] = status
+    asset_response["id"] = ASSET_ORDER_ID
+    order_response = deepcopy(JSON_GET_ORDERS_RESPONSE)
+    order_response["content"] = [asset_response]
+    return asset_response, order_response
+
+
+def test_get_assets_return_expected_responses(auth_mock, requests_mock):
+    asset_response, order_response = set_status_test_order("FULFILLED")
+    url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
+    requests_mock.get(url=url_order_info, json=asset_response)
+    url_asset_info = f"{auth_mock._endpoint()}/v2/assets?search={ORDER_ID}&size=50"
+    requests_mock.get(url=url_asset_info, json=order_response)
+    order_instance = Order(auth=auth_mock, order_id=ORDER_ID)
+    assets = order_instance.get_assets()
     assert len(assets) == 1
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ORDER_ID
 
 
+@pytest.mark.parametrize(
+    "status",
+    [
+        "CREATED",
+        "BEING_PLACED",
+        "PLACED",
+        "PLACEMENT_FAILED",
+        "DELIVERY_INITIALIZATION_FAILED",
+        "BEING_FULFILLED",
+        "DOWNLOAD_FAILED",
+        "DOWNLOADED",
+        "FAILED_PERMANENTLY",
+    ],
+)
 def test_should_fail_to_get_assets_for_unfulfilled_order(
-    order_mock, asset_mock, monkeypatch
+    auth_mock, requests_mock, status
 ):
-    monkeypatch.setattr(Order, "info", {"status": "PLACED"})
+    asset_response, order_response = set_status_test_order(status)
+    url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
+    requests_mock.get(url=url_order_info, json=asset_response)
+    url_asset_info = f"{auth_mock._endpoint()}/v2/assets?sort=createdAt%2Cdesc&search={ORDER_ID}&size=50"
+    requests_mock.get(url=url_asset_info, json=order_response)
+    order_instance = Order(auth=auth_mock, order_id=ORDER_ID)
     with pytest.raises(ValueError):
-        order_mock.get_assets()
+        order_instance.get_assets()
 
 
 @pytest.mark.live

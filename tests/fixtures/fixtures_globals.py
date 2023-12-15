@@ -41,7 +41,7 @@ WORKFLOW_ID = "c74d73c0-6929-4549-a5c9-5a3f517f6d63"
 WORKFLOW_NAME = "workflow_name_123"
 WORKFLOW_DESCRIPTION = "workflow_description_123"
 WORKSPACE_ID = "workspace_id_123"
-
+USER_ID = "1094497b-11d8-4fb8-9d6a-5e24a88aa825"
 JOB_ID = "13ba070a-55b7-4b3f-95f1-7b11ac8f1175"
 JOB_ID_2 = "ce6286e2-aebb-49ce-8a09-272d6466f3c5"
 JOB_NAME = "job_name_123"
@@ -313,121 +313,6 @@ JSON_STORAGE_STAC = {
     ],
 }
 
-JSON_ORDER_STAC = {
-    "links": [
-        {
-            "href": "https://api.up42.com/v2/assets/stac/",
-            "rel": "root",
-            "type": "application/json",
-        },
-        {
-            "href": "https://api.up42.com/v2/assets/stac/",
-            "rel": "parent",
-            "type": "application/json",
-        },
-        {
-            "href": "https://api.up42.com/v2/assets/stac/search",
-            "rel": "self",
-            "type": "application/json",
-        },
-    ],
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "assets": {
-                "data": {
-                    "href": f"https://api.up42.com/v2/assets/{ASSET_ORDER_ID}",
-                    "title": "Data",
-                    "description": "Storage Data",
-                    "type": "application/zip",
-                    "roles": ["data"],
-                }
-            },
-            "links": [
-                {
-                    "href": "https://api.up42.com/v2/assets/stac/collections/7947d269-117a-4954-8cab-adf6be623ca9/items/363e7831-48ff-4311-83c1-a37d3ef54b66",
-                    "rel": "self",
-                    "type": "application/geo+json",
-                },
-                {
-                    "href": "https://api.up42.com/v2/assets/stac/collections/7947d269-117a-4954-8cab-adf6be623ca9",
-                    "rel": "parent",
-                    "type": "application/json",
-                },
-                {
-                    "href": "https://api.up42.com/v2/assets/stac/collections/7947d269-117a-4954-8cab-adf6be623ca9",
-                    "rel": "collection",
-                    "type": "application/json",
-                },
-                {
-                    "href": "https://api.up42.com/v2/assets/stac/",
-                    "rel": "root",
-                    "type": "application/json",
-                },
-            ],
-            "stac_extensions": [
-                "https://stac-extensions.github.io/view/v1.0.0/schema.json",
-                "https://api.up42.com/stac-extensions/up42-system/v1.0.0/schema.json",
-                "https://api.up42.com/stac-extensions/up42-order/v1.0.0/schema.json",
-                "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
-                "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
-                "https://api.up42.com/stac-extensions/up42-product/v1.0.0/schema.json",
-            ],
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [13.355241206273849, 52.52676203252064],
-                        [13.355300478383226, 52.52675386522252],
-                        [13.356956160907195, 52.5250505720669],
-                        [13.35726007462071, 52.52441192697056],
-                        [13.357032090123967, 52.52360855273764],
-                        [13.350989718479445, 52.524360678086275],
-                        [13.351542524330116, 52.5263284439625],
-                        [13.355241206273849, 52.52676203252064],
-                    ]
-                ],
-            },
-            "bbox": [
-                13.350989718479445,
-                52.52360855273764,
-                13.35726007462071,
-                52.52676203252064,
-            ],
-            "properties": {
-                "gsd": 0.819460017886369,
-                "title": "DS_PHR1A_202009301038498_FR1_PX_E013N52_0513_00365_R1C1",
-                "datetime": "2020-09-30T10:39:26.600000+00:00",
-                "platform": "PHR-1A",
-                "proj:epsg": 32633,
-                "end_datetime": "2020-09-30T10:39:26.600000+00:00",
-                "view:azimuth": 179.66501598193926,
-                "constellation": "PHR",
-                "up42-order:id": "da2310a2-c7fb-42ed-bead-fb49ad862c67",
-                "eo:cloud_cover": 0.0,
-                "start_datetime": "2020-09-30T10:39:26.600000+00:00",
-                "view:sun_azimuth": 174.870231299609,
-                "up42-system:source": "ARCHIVE",
-                "view:sun_elevation": 34.28921400755616,
-                "up42-system:asset_id": ASSET_ORDER_ID,
-                "view:incidence_angle": 25.943721144567032,
-                "up42-product:modality": "multispectral",
-                "up42-product:data_type": "raster",
-                "up42-system:account_id": "some-account-id",
-                "up42-product:product_id": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
-                "up42-system:workspace_id": "some-workspace-id",
-                "up42-product:collection_name": "phr",
-                "up42-system:metadata_version": "0.0.4",
-                "created": "2023-02-17T11:33:18.876308+00:00",
-                "updated": "2023-03-13T15:33:06.800619+00:00",
-            },
-            "type": "Feature",
-            "stac_version": "1.0.0",
-            "id": "363e7831-48ff-4311-83c1-a37d3ef54b66",
-            "collection": "7947d269-117a-4954-8cab-adf6be623ca9",
-        }
-    ],
-}
 
 PYSTAC_MOCK_CLIENT = mock_pystac_client = {
     "conformsTo": [
