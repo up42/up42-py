@@ -98,16 +98,19 @@ def test_order_parameters(order_mock):
     assert not order_mock.order_parameters
 
 
-def test_get_assets(order_mock, monkeypatch):
+def test_get_assets_return_expected_responses(order_mock, monkeypatch):
     monkeypatch.setattr(Order, "info", {"status": "FULFILLED"})
+    # Order id with assets and asset_id
     assets = order_mock.get_assets()
     assert len(assets) == 1
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ORDER_ID
 
-    with pytest.raises(ValueError) as error:
+    # Order with no assets
+    with pytest.raises(ValueError) as err:
         assets = order_mock.get_assets()
 
+    # Order with assets but no asset_id
     assets = order_mock.get_assets()
     assert len(assets) == 0
 
