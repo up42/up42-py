@@ -107,7 +107,7 @@ class Order:
         if self.is_fulfilled:
             _, pystac_asset_search = self._stac_search_order
             asset_ids = {
-                item.to_dict().get("properties", {}).get("up42-system:asset_id")
+                item.to_dict().get("properties", {}).get("up42-system:asset_id", None)
                 for item in pystac_asset_search.item_collection()
             }
             if not asset_ids:
