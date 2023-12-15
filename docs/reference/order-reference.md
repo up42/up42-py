@@ -85,7 +85,7 @@ order.track_status(report_time=150)
 
 ### get_assets()
 
-The `get_assets()` function returns a list of order assets. Use to get an asset ID for the [Asset class](asset-reference.md) initialization.
+The `get_assets()` function returns a list of order assets.
 
 ```python
 get_assets()
