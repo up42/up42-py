@@ -112,7 +112,7 @@ class Order:
             }
             if not asset_ids:
                 raise ValueError(f"No assets found for the order_id: {self.order_id}")
-            return [Asset(self.auth, asset_id=asset_id) for asset_id in asset_ids]
+            return [Asset(self.auth, asset_id=asset_id) for asset_id in asset_ids if asset_id is not None]
         raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
