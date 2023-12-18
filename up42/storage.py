@@ -103,8 +103,7 @@ class Storage:
         return_json: bool = False,
     ) -> Union[List[Asset], dict]:
         """
-        Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#functionality_1)
-        objects or in JSON format.
+        Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#asset) objects or in JSON format.
 
         Args:
             created_after: Search for assets created after the specified timestamp, in `"YYYY-MM-DD"` format.
@@ -130,8 +129,8 @@ class Storage:
             A list of Asset objects.
         """
         params: AssetSearchParams = {
-            "createdAfter": format_time(created_after) if created_after is not None else None,
-            "createdBefore": format_time(created_before) if created_before is not None else None,
+            "createdAfter": created_after and format_time(created_after),
+            "createdBefore": created_before and format_time(created_before),
             "workspaceId": workspace_id,
             "collectionNames": collection_names,
             "producerNames": producer_names,
@@ -164,10 +163,9 @@ class Storage:
             )
 
         if return_json:
-            return assets_json  # type: ignore
+            return assets_json
         else:
-            assets = [Asset(self.auth, asset_id=asset_json["id"], asset_info=asset_json) for asset_json in assets_json]
-            return assets
+            return [Asset(self.auth, asset_id=asset_json["id"], asset_info=asset_json) for asset_json in assets_json]
 
     def get_orders(
         self,
@@ -237,7 +235,6 @@ class Storage:
         logger.info(logger_message)
 
         if return_json:
-            return orders_json  # type: ignore
+            return orders_json
         else:
-            orders = [Order(self.auth, order_id=order_json["id"], order_info=order_json) for order_json in orders_json]
-            return orders
+            return [Order(self.auth, order_id=order_json["id"], order_info=order_json) for order_json in orders_json]

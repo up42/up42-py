@@ -89,13 +89,8 @@ class Order:
         Gets the Order assets or results.
         """
         if self.is_fulfilled:
-            params: AssetSearchParams = {
-                "search": self.order_id,
-            }  # type: ignore
-            assets_response = search_assets(
-                self.auth,
-                params=params,
-            )
+            params: AssetSearchParams = {"search": self.order_id}
+            assets_response = search_assets(self.auth, params=params)
             return [
                 Asset(self.auth, asset_id=asset_info["id"], asset_info=asset_info) for asset_info in assets_response
             ]

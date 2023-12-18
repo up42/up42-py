@@ -1,6 +1,6 @@
 import math
 from datetime import datetime
-from typing import List, Optional, TypedDict, Union
+from typing import Any, List, Optional, TypedDict, Union
 from urllib.parse import urlencode, urljoin
 
 from up42.utils import get_logger
@@ -48,7 +48,7 @@ def query_paginated_endpoints(auth, url: str, limit: Optional[int] = None, size:
     return results_list[:limit]
 
 
-class AssetSearchParams(TypedDict):
+class AssetSearchParams(TypedDict, total=False):
     createdAfter: Optional[Union[str, datetime]]
     createdBefore: Optional[Union[str, datetime]]
     workspaceId: Optional[str]
@@ -77,20 +77,16 @@ def search_assets(
         descending: The sorting order, where `True` is descending and `False` is ascending (default is `True`).
 
     Returns:
-        A list of the objects of the class `Asset`, representing the JSON result for the queried assets.
-
-    Note:
-        - For detailed information on the supported search parameters, refer to the `AssetSearchParams` TypedDict.
-        - The function returns a list of objects of class `Asset`.
+        A list of assets metadata as dictionaries.
     """
     sort = f"{sortby},{'desc' if descending else 'asc'}"
-    params_request = {"sort": sort, **params}  # type: ignore[arg-type]
-    params_request = {k: v for k, v in params.items() if v is not None}  # type: ignore
-    base_url = f"{auth._endpoint()}/v2/assets?sort={sort}"
-    url = urljoin(base_url, "?" + urlencode(params_request, doseq=True, safe=""))
+    request_params: dict[str, Any] = {"sort": sort}
+    request_params.update({key: value for key, value in params.items() if value is not None})
+    base_url = f"{auth._endpoint()}/v2/assets"
+    url = urljoin(base_url, "?" + urlencode(request_params, doseq=True, safe=""))
     assets_json = query_paginated_endpoints(auth, url=url, limit=limit)
 
-    if "workspace_id" in params_request:
+    if "workspace_id" in request_params:
         logger.info(f"Queried {len(assets_json)} assets for workspace {auth.workspace_id}.")
     else:
         logger.info(f"Queried {len(assets_json)} assets from all workspaces in account.")
