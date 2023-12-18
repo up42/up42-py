@@ -7,7 +7,7 @@ import pytest
 from .context import Asset, Order
 from .fixtures import (
     ASSET_ORDER_ID,
-    JSON_GET_ORDERS_RESPONSE,
+    JSON_GET_ASSETS_RESPONSE,
     JSON_ORDER_ASSET,
     ORDER_ID,
     asset_live,
@@ -99,26 +99,17 @@ def test_order_parameters(order_mock):
     assert not order_mock.order_parameters
 
 
-def set_status_test_order(status: str) -> dict:
-    asset_response = deepcopy(read_test_order_info())
-    asset_response["status"] = status
-    asset_response["id"] = ASSET_ORDER_ID
-    order_response = deepcopy(JSON_GET_ORDERS_RESPONSE)
-    order_response["content"] = [asset_response]
-    return asset_response, order_response
+def test_get_assets_should_search_assets_by_order_id(auth_mock, requests_mock):
+    order_response = {"id": ORDER_ID, "status": "FULFILLED"}
 
-
-def test_get_assets_return_expected_responses(auth_mock, requests_mock):
-    asset_response, order_response = set_status_test_order("FULFILLED")
     url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
-    requests_mock.get(url=url_order_info, json=asset_response)
+    requests_mock.get(url=url_order_info, json=order_response)
     url_asset_info = f"{auth_mock._endpoint()}/v2/assets?search={ORDER_ID}&size=50"
-    requests_mock.get(url=url_asset_info, json=order_response)
-    order_instance = Order(auth=auth_mock, order_id=ORDER_ID)
-    assets = order_instance.get_assets()
-    assert len(assets) == 1
-    assert isinstance(assets[0], Asset)
-    assert assets[0].asset_id == ASSET_ORDER_ID
+    requests_mock.get(url=url_asset_info, json=JSON_GET_ASSETS_RESPONSE)
+    order = Order(auth=auth_mock, order_id=ORDER_ID)
+    asset, = order.get_assets()
+    assert isinstance(asset, Asset)
+    assert asset.asset_id == ASSET_ORDER_ID
 
 
 @pytest.mark.parametrize(
@@ -136,16 +127,14 @@ def test_get_assets_return_expected_responses(auth_mock, requests_mock):
     ],
 )
 def test_should_fail_to_get_assets_for_unfulfilled_order(
-    auth_mock, requests_mock, status
+        auth_mock, requests_mock, status
 ):
-    asset_response, order_response = set_status_test_order(status)
+    order_response = {"id": ORDER_ID, "status": status}
     url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
-    requests_mock.get(url=url_order_info, json=asset_response)
-    url_asset_info = f"{auth_mock._endpoint()}/v2/assets?sort=createdAt%2Cdesc&search={ORDER_ID}&size=50"
-    requests_mock.get(url=url_asset_info, json=order_response)
-    order_instance = Order(auth=auth_mock, order_id=ORDER_ID)
+    requests_mock.get(url=url_order_info, json=order_response)
+    order = Order(auth=auth_mock, order_id=ORDER_ID)
     with pytest.raises(ValueError):
-        order_instance.get_assets()
+        order.get_assets()
 
 
 @pytest.mark.live

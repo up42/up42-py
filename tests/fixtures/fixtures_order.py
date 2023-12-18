@@ -26,7 +26,7 @@ JSON_ORDER_ASSET = {
     "tags": ["string"],
 }
 
-JSON_GET_ORDERS_RESPONSE = {
+JSON_GET_ASSETS_RESPONSE = {
     "content": [JSON_ORDER_ASSET],
     "pageable": {
         "sort": {"sorted": True, "unsorted": False, "empty": False},
@@ -54,11 +54,10 @@ def read_test_order_info() -> dict:
         / "mock_data/order_data/archive_order_info.json",
         encoding="utf-8",
     ) as json_file:
-        json_oder_schenma = json.load(json_file)
-        return json_oder_schenma
+        return json.load(json_file)
 
 
-@pytest.fixture()
+@pytest.fixture
 def order_mock(auth_mock, requests_mock):
     url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
     requests_mock.get(url=url_order_info, json=read_test_order_info())
