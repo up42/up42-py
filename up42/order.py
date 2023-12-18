@@ -1,10 +1,15 @@
 from time import sleep
-from typing import Optional
+from typing import List, Optional
 
+from up42.asset import Asset
+from up42.asset_searcher import AssetSearchParams, search_assets
 from up42.auth import Auth
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
+
+MAX_ITEM = 200
+LIMIT = 200
 
 
 class Order:
@@ -63,9 +68,13 @@ class Order:
     @property
     def order_details(self) -> dict:
         """
-        Gets the Order Details.
+        Gets the Order Details. Only for tasking type orders, archive types return empty.
         """
-        return self.info["orderDetails"]
+        if self.info["type"] == "TASKING":
+            order_details = self.info["orderDetails"]
+            return order_details
+        logger.info("Order is not TASKING type. Order details are not provided.")
+        return {}
 
     @property
     def is_fulfilled(self) -> bool:
@@ -74,6 +83,18 @@ class Order:
         Also see [status attribute](order-reference.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
+
+    def get_assets(self) -> List[Asset]:
+        """
+        Gets the Order assets or results.
+        """
+        if self.is_fulfilled:
+            params: AssetSearchParams = {"search": self.order_id}
+            assets_response = search_assets(self.auth, params=params)
+            return [
+                Asset(self.auth, asset_id=asset_info["id"], asset_info=asset_info) for asset_info in assets_response
+            ]
+        raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
     def place(cls, auth: Auth, order_parameters: dict) -> "Order":
