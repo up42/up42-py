@@ -3,8 +3,8 @@ from datetime import datetime
 from typing import Any, List, Optional, TypedDict, Union
 from urllib.parse import urlencode, urljoin
 
-from up42.utils import get_logger
 from up42.host import endpoint
+from up42.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -61,11 +61,11 @@ class AssetSearchParams(TypedDict, total=False):
 
 
 def search_assets(
-        auth,
-        params: AssetSearchParams,
-        limit: Optional[int] = None,
-        sortby: str = "createdAt",
-        descending: bool = True,
+    auth,
+    params: AssetSearchParams,
+    limit: Optional[int] = None,
+    sortby: str = "createdAt",
+    descending: bool = True,
 ) -> List[dict]:
     """
     Get a list of assets based on specified search parameters.
