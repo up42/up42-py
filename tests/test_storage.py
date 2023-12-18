@@ -393,7 +393,7 @@ def test_get_orders_v2_endpoint_params(
         ]
     )
 
-    url_storage_assets_paginated = f"{auth_mock._endpoint()}/v2/orders?{url_params}"
+    url_storage_assets_paginated = f"{API_HOST}/v2/orders?{url_params}"
 
     requests_mock.get(url=url_storage_assets_paginated, json=expected_payload)
     if not params["return_json"]:

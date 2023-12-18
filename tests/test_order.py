@@ -103,9 +103,9 @@ def test_order_parameters(order_mock):
 def test_get_assets_should_search_assets_by_order_id(auth_mock, requests_mock):
     order_response = {"id": ORDER_ID, "status": "FULFILLED"}
 
-    url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
+    url_order_info = f"{API_HOST}/v2/orders/{ORDER_ID}"
     requests_mock.get(url=url_order_info, json=order_response)
-    url_asset_info = f"{auth_mock._endpoint()}/v2/assets?search={ORDER_ID}&size=50"
+    url_asset_info = f"{API_HOST}/v2/assets?search={ORDER_ID}&size=50"
     requests_mock.get(url=url_asset_info, json=JSON_GET_ASSETS_RESPONSE)
     order = Order(auth=auth_mock, order_id=ORDER_ID)
     asset, = order.get_assets()
@@ -131,7 +131,7 @@ def test_should_fail_to_get_assets_for_unfulfilled_order(
         auth_mock, requests_mock, status
 ):
     order_response = {"id": ORDER_ID, "status": status}
-    url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
+    url_order_info = f"{API_HOST}/v2/orders/{ORDER_ID}"
     requests_mock.get(url=url_order_info, json=order_response)
     order = Order(auth=auth_mock, order_id=ORDER_ID)
     with pytest.raises(ValueError):
