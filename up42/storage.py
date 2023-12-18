@@ -101,7 +101,7 @@ class Storage:
         sortby: str = "createdAt",
         descending: bool = True,
         return_json: bool = False,
-    ) -> Union[List[Asset], dict]:
+    ) -> Union[List[Asset], List[dict]]:
         """
         Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#asset) objects or in JSON format.
 
@@ -178,7 +178,7 @@ class Storage:
         statuses: Optional[List[AllowedStatuses]] = None,
         name: Optional[str] = None,
         tags: Optional[List[str]] = None,
-    ) -> Union[List[Order], dict]:
+    ) -> Union[List[Order], List[dict]]:
         """
         Gets all orders in the account/workspace as Order objects or JSON.
 
