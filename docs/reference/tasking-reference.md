@@ -1,6 +1,6 @@
 # Tasking
 
-The Tasking class enables access to the UP42 [tasking functionality](../../examples/tasking/tasking-example/).
+The Tasking class enables access to the UP42 [tasking functionality](../../notebooks/tasking-example/).
 
 ```python
 tasking = up42.initialize_tasking()
@@ -86,10 +86,10 @@ The returned format is `list`.
 | Argument         | Overview                                                                                                                                                                                                                                                                                     |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `feasibility_id` | **str**<br/>The feasibility study ID.                                                                                                                                                                                                                                                        |
-| `workspace_id`   | **str**<br/>The workspace ID. Use to get objects from a specific workspace. Otherwise, objects from the entire account will be returned.                                                                                                                                                     |
+| `workspace_id`   | **str**<br/>The workspace ID. Use to get feasibility studies from a specific workspace. Otherwise, feasibility studies from the entire account will be returned.                                                                                                                                                     |
 | `order_id`       | **str**<br/>The order ID.                                                                                                                                                                                                                                                                    |
-| `decision`       | **List[str]**<br/>The status of feasibility studies. The allowed values:<br/><ul><li>`NOT_DECIDED`</li><li>`ACCEPTED`</li></ul>                                                                                                                                                              |
-| `sortby`         | **str**<br/>Arrange elements in the order specified in `descending` based on a chosen field. The default value is `createdAt`.                                                                                                                                                               |
+| `decision`       | **List[str]**<br/>The status of feasibility studies. The allowed values are as follows:<br/><ul><li>`NOT_DECIDED`</li><li>`ACCEPTED`</li></ul>                                                                                                                                                              |
+| `sortby`         | **str**<br/>Arranges elements in the order specified in `descending` based on a chosen field. The default value is `createdAt`.                                                                                                                                                               |
 | `descending`     | **bool**<br/>Determines the arrangement of elements:<br/><ul><li>`True`: arrange elements in descending order based on the field specified in `sortby`.</li><li>`False`: arrange elements in ascending order based on the field specified in `sortby`.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
@@ -158,10 +158,10 @@ The returned format is `list`.
 | Argument       | Overview                                                                                                                                                                                                                                                                                     |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `quotation_id` | **str**<br/>The quotation ID.                                                                                                                                                                                                                                                                |
-| `workspace_id` | **str**<br/>The workspace ID. Use to get objects from a specific workspace. Otherwise, objects from the entire account will be returned.                                                                                                                                                     |
+| `workspace_id` | **str**<br/>The workspace ID. Use to get quotations from a specific workspace. Otherwise, quotations from the entire account will be returned.                                                                                                                                                     |
 | `order_id`     | **str**<br/>The order ID.                                                                                                                                                                                                                                                                    |
-| `decision`     | **List[str]**<br/>The status of quotations. The allowed values:<br/><ul><li>`NOT_DECIDED`</li><li>`ACCEPTED`</li><li>`REJECTED`</li></ul>                                                                                                                                                    |
-| `sortby`       | **str**<br/>Arrange elements in the order specified in `descending` based on a chosen field. The default value is `createdAt`.                                                                                                                                                               |
+| `decision`     | **List[str]**<br/>The status of quotations. The allowed values are as follows:<br/><ul><li>`NOT_DECIDED`</li><li>`ACCEPTED`</li><li>`REJECTED`</li></ul>                                                                                                                                                    |
+| `sortby`       | **str**<br/>Arranges elements in the order specified in `descending` based on a chosen field. The default value is `createdAt`.                                                                                                                                                               |
 | `descending`   | **bool**<br/>Determines the arrangement of elements:<br/><ul><li>`True`: arrange elements in descending order based on the field specified in `sortby`.</li><li>`False`: arrange elements in ascending order based on the field specified in `sortby`.</li></ul>The default value is `True`. |
 
 <h5> Example </h5>
@@ -195,7 +195,7 @@ The returned format is `dict`.
 | Argument       | Description                                                                                                                     |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `quotation_id` | **str / required**<br/>The quotation ID.                                                                                        |
-| `decision`     | **str / required**<br/>The decision made for this quotation. The allowed values:<ul><li>`ACCEPTED`</li><li>`REJECTED`</li></ul> |
+| `decision`     | **str / required**<br/>The decision made for this quotation. The allowed values are as follows:<ul><li>`ACCEPTED`</li><li>`REJECTED`</li></ul> |
 
 <h5> Example </h5>
 

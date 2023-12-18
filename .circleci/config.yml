@@ -5,15 +5,19 @@ pre-commit-cache: &pre-commit-cache pre-commit-{{ checksum ".pre-commit-config.y
 
 orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
+  automated-test: interstellar/automated-test@volatile
 
 # variables
 workspace: &workspace-dir /tmp/workspace
+
+# E2E Tests
+slack-channel-id-qa-alert: &slack-channel-id-qa-alert 'C04QXJP2RCZ'
 
 jobs:
   test:
     working_directory: *workspace-dir
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.11
     steps:
       - attach_workspace:
           at: *workspace-dir
@@ -46,7 +50,7 @@ jobs:
             - ~/.cache/pre-commit
       - run:
           name: Running tests
-          command: poetry run make test
+          command: poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
       - store_artifacts:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
@@ -70,7 +74,7 @@ jobs:
 
   test_live:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.11
     steps:
       - checkout
       - run:
@@ -80,21 +84,15 @@ jobs:
             poetry install --no-ansi
       - run:
           name: Runnning tests
-          command: poetry run python -m pytest --runlive --durations=5
+          command: poetry run pytest --runlive --durations=5
   deploy:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.11
     steps:
       - checkout
       - run:
-          name: Installing packaging utils
-          command: python -m pip install --user packaging twine
-      - run:
-          name: Build package
-          command: make package
-      - run:
-          name: Upload to PyPi
-          command: make upload
+          name: Build and upload package
+          command: poetry publish --build
 
 workflows:
   test_and_deploy:
@@ -118,6 +116,19 @@ workflows:
           filters:
             branches:
               only: master
+      - automated-test/run-sdk-tests:
+          machine-size: medium+
+          name: sdk-e2e-tests
+          fingerprint: 'c5:5a:28:b3:5e:21:8d:9c:6c:b1:9b:a7:7b:f3:41:0c'
+          run-command: poetry run pytest spec --junitxml=./report/junit.xml
+          requires:
+            - deploy
+          context:
+            - 'sdk-tests-staging-build'
+          post-steps:
+            - automated-test/notify-slack:
+                test-name: 'SDK E2E tests for up42-py failed!'
+                channel: *slack-channel-id-qa-alert
   test_live:
     triggers:
       - schedule:

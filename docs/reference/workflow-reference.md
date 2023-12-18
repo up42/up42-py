@@ -202,7 +202,7 @@ The returned format is `dict`.
 | Argument             | Overview                                                                                                                   |
 | -------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `geometry`           | **Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, geojson_Polygon]**<br/>The geometry of interest.    |
-| `geometry_operation` | **str**<br/>The geometric filter. The allowed values:<br/><ul><li>`bbox`</li><li>`intersects`</li><li>`contains`</li></ul> |
+| `geometry_operation` | **str**<br/>The geometric filter. The allowed values are as follows:<br/><ul><li>`bbox`</li><li>`intersects`</li><li>`contains`</li></ul> |
 | `start_date`         | **Union[str, datetime]**<br/>The start date of the search period in the `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` format.      |
 | `end_date`           | **Union[str, datetime]**<br/>The end date of the search period in the `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` format.        |
 | `limit`              | **int**<br/>The maximum number of expected results.                                                                        |
@@ -245,7 +245,7 @@ The returned format is `list[dict]`.
 | `interval_dates`     | **list[tuple[str, str]]**<br/>The start and end dates in the `YYYY-MM-DD` format.                                                                            |
 | `scene_ids`          | **list[str]**<br/>The scene IDs. If used, all other parameters except `geometry` are ignored.                                                                |
 | `limit_per_job`      | **int**<br/>The maximum number of expected results per job. The default value is `1`.                                                                        |
-| `geometry_operation` | **str**<br/>The geometric filter. The allowed values:<br/><ul><li>`bbox`</li><li>`intersects`</li><li>`contains`</li></ul>The default value is `intersects`. |
+| `geometry_operation` | **str**<br/>The geometric filter. The allowed values are as follows:<br/><ul><li>`bbox`</li><li>`intersects`</li><li>`contains`</li></ul>The default value is `intersects`. |
 
 <h5> Example </h5>
 

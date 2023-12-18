@@ -33,11 +33,22 @@ def storage_mock(auth_mock, requests_mock):
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
 
     # orders
-    url_storage_assets = f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders"
-    requests_mock.get(url=url_storage_assets, json=JSON_ORDERS)
+    url_storage_orders = (
+        f"{API_HOST}/v2/orders"
+        "?sort=createdAt,desc&workspaceId=workspace_id_123"
+        "&type=ARCHIVE&tags=project-7&tags=optical&size=50"
+    )
+    requests_mock.get(url=url_storage_orders, json=JSON_ORDERS)
+
+    url_storage_orders_params = (
+        f"{API_HOST}/v2/orders"
+        "?sort=createdAt,desc"
+        "&displayName=Test&type=ARCHIVE&status=FULFILLED&status=PLACED&size=50"
+    )
+    requests_mock.get(url=url_storage_orders_params, json=JSON_ORDERS)
 
     # orders info
-    url_order_info = f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders/{ORDER_ID}"
+    url_order_info = f"{API_HOST}/v2/orders/{ORDER_ID}"
     requests_mock.get(url=url_order_info, json=JSON_ORDER)
 
     storage = Storage(auth=auth_mock)

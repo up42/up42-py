@@ -36,15 +36,14 @@ nav:
     - Tutorials:
       - installation.md
       - authentication.md
-      - Tasking: examples/tasking/tasking-example.ipynb
-      - catalog.md
-      - storage.md
-      - Assets: examples/asset/asset-example.ipynb
+      - Tasking: notebooks/tasking-example.ipynb
+      - Catalog: notebooks/catalog-example.ipynb
+      - Storage:
+        - Order assets: notebooks/order-assets-example.ipynb
+        - Storage assets: notebooks/storage-assets-example.ipynb
+      - STAC: notebooks/stac-example.ipynb
       - analytics.md
       - webhooks.md
-      - Example notebooks:
-        - NEXTMap One and Viewshed workflow: examples/data-block-examples/nextmapone-viewshed-data-example.ipynb
-        - Ship detection and Ship identification workflow: examples/advanced/ship-identification.ipynb
     - Code reference:
         - structure.md
         - up42: reference/up42-reference.md
@@ -100,12 +99,11 @@ plugins:
   - mkdocs-jupyter:
       include_source: False
       ignore_h1_titles: True
-      include: ["examples/data-block-examples/pleiades-download-example.ipynb",
-                "examples/data-block-examples/nextmapone-viewshed-data-example.ipynb",
-                "examples/data-block-examples/osm-example.ipynb",
-                "examples/advanced/ship-identification.ipynb",
-                "examples/tasking/tasking-example.ipynb",
-                "examples/asset/asset-example.ipynb"]
+      include: ["notebooks/tasking-example.ipynb",
+                "notebooks/catalog-example.ipynb",
+                "notebooks/stac-example.ipynb",
+                "notebooks/storage-assets-example.ipynb",
+                "notebooks/order-assets-example.ipynb"]
   - macros:
       module_name: docs/macros
   - exclude:

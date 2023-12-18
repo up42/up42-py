@@ -15,10 +15,12 @@ from .fixtures_globals import (
     DOWNLOAD_URL,
     DOWNLOAD_URL2,
     JSON_ASSET,
+    JSON_STAC_CATALOG_RESPONSE,
     JSON_STORAGE_STAC,
     STAC_ASSET_ID,
     STAC_ASSET_URL,
     STAC_COLLECTION_ID,
+    URL_STAC_CATALOG,
 )
 
 
@@ -52,58 +54,7 @@ def asset_mock(auth_mock, requests_mock):
     )
 
     # asset stac item
-    url_asset_stac = f"{API_HOST}/v2/assets/stac"
-
-    catalog = {
-        "type": "Catalog",
-        "id": "up42-storage",
-        "stac_version": "1.0.0",
-        "description": "UP42 Storage STAC API",
-        "links": [
-            {
-                "rel": "root",
-                "href": "https://api.up42.com/v2/assets/stac",
-                "type": "application/json",
-                "title": "UP42 Storage",
-            },
-            {
-                "rel": "data",
-                "href": "https://api.up42.com/v2/assets/stac/collections",
-                "type": "application/json",
-            },
-            {
-                "rel": "search",
-                "href": "https://api.up42.com/v2/assets/stac/search",
-                "type": "application/json",
-                "method": "POST",
-            },
-            {
-                "rel": "self",
-                "href": "https://api.up42.com/v2/assets/stac",
-                "type": "application/json",
-            },
-        ],
-        "stac_extensions": [],
-        "conformsTo": [
-            "https://api.stacspec.org/v1.0.0-rc.1/collections",
-            "https://api.stacspec.org/v1.0.0-rc.1/core",
-            "http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/features-filter",
-            "http://www.opengis.net/spec/ogcapi-features-4/1.0/conf/simpletx",
-            "https://api.stacspec.org/v1.0.0-rc.1/item-search#filter",
-            "http://www.opengis.net/spec/cql2/1.0/conf/cql2-text",
-            "https://api.stacspec.org/v1.0.0-rc.1/item-search",
-            "https://api.stacspec.org/v1.0.0-rc.1/ogcapi-features/extensions/transaction",
-            "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core",
-            "http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/filter",
-            "http://www.opengis.net/spec/cql2/1.0/conf/basic-cql2",
-            "https://api.stacspec.org/v1.0.0-rc.1/ogcapi-features",
-            "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson",
-            "https://api.stacspec.org/v1.0.0-rc.1/item-search#sort",
-            "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30",
-        ],
-        "title": "UP42 Storage",
-    }
-    requests_mock.get(url=url_asset_stac, json=catalog)
+    requests_mock.get(url=URL_STAC_CATALOG, json=JSON_STAC_CATALOG_RESPONSE)
 
     # asset update
     updated_json_asset = JSON_ASSET.copy()

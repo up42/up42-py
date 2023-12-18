@@ -1,12 +1,15 @@
+import os
+from copy import deepcopy
+
 import pytest
 
 # pylint: disable=unused-import
 from .context import Asset, Order
 from .fixtures import (
-    ASSET_ID,
-    JSON_ORDER,
+    ASSET_ORDER_ID,
+    JSON_GET_ASSETS_RESPONSE,
+    JSON_ORDER_ASSET,
     ORDER_ID,
-    WORKSPACE_ID,
     asset_live,
     asset_mock,
     auth_account_live,
@@ -16,10 +19,12 @@ from .fixtures import (
     auth_project_live,
     auth_project_mock,
     catalog_mock,
+    order_live,
     order_mock,
     password_test_live,
     project_api_key_live,
     project_id_live,
+    read_test_order_info,
     username_test_live,
 )
 from .fixtures.fixtures_globals import API_HOST
@@ -28,14 +33,34 @@ from .fixtures.fixtures_globals import API_HOST
 def test_init(order_mock):
     assert isinstance(order_mock, Order)
     assert order_mock.order_id == ORDER_ID
-    assert order_mock.workspace_id == WORKSPACE_ID
 
 
 def test_order_info(order_mock):
     assert order_mock.info
     assert order_mock.info["id"] == ORDER_ID
-    assert order_mock.info["dataProvider"] == JSON_ORDER["data"]["dataProvider"]
-    assert order_mock.info["assets"][0] == ASSET_ID
+
+
+def test_repr(auth_mock):
+    order_info = {
+        "id": "your_order_id",
+        "status": "PLACED",
+        "createdAt": "2023-01-01T12:00:00Z",
+        "updatedAt": "2023-01-01T12:30:00Z",
+    }
+    order = Order(auth_mock, order_id="your_order_id", order_info=order_info)
+
+    expected_repr = (
+        "Order(order_id: your_order_id, status: PLACED,"
+        "createdAt: 2023-01-01T12:00:00Z, updatedAt: 2023-01-01T12:30:00Z)"
+    )
+    assert repr(order) == expected_repr
+
+
+@pytest.mark.live
+def test_order_info_live(order_live):
+    assert order_live.info
+    assert order_live.info["id"] == os.getenv("TEST_UP42_ORDER_ID")
+    assert order_live.info["dataProductId"] == "4f1b2f62-98df-4c74-81f4-5dce45deee99"
 
 
 # pylint: disable=unused-argument
@@ -75,17 +100,50 @@ def test_order_parameters(order_mock):
     assert not order_mock.order_parameters
 
 
-def test_get_assets(order_mock, asset_mock):
-    assets = order_mock.get_assets()
-    assert len(assets) == 1
-    assert isinstance(assets[0], Asset)
-    assert assets[0].asset_id == order_mock.info["assets"][0]
+def test_get_assets_should_search_assets_by_order_id(auth_mock, requests_mock):
+    order_response = {"id": ORDER_ID, "status": "FULFILLED"}
+
+    url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
+    requests_mock.get(url=url_order_info, json=order_response)
+    url_asset_info = f"{auth_mock._endpoint()}/v2/assets?search={ORDER_ID}&size=50"
+    requests_mock.get(url=url_asset_info, json=JSON_GET_ASSETS_RESPONSE)
+    order = Order(auth=auth_mock, order_id=ORDER_ID)
+    asset, = order.get_assets()
+    assert isinstance(asset, Asset)
+    assert asset.asset_id == ASSET_ORDER_ID
 
 
-def test_get_assets_placed(order_mock, asset_mock, monkeypatch):
-    monkeypatch.setattr(Order, "info", {"status": "PLACED"})
+@pytest.mark.parametrize(
+    "status",
+    [
+        "CREATED",
+        "BEING_PLACED",
+        "PLACED",
+        "PLACEMENT_FAILED",
+        "DELIVERY_INITIALIZATION_FAILED",
+        "BEING_FULFILLED",
+        "DOWNLOAD_FAILED",
+        "DOWNLOADED",
+        "FAILED_PERMANENTLY",
+    ],
+)
+def test_should_fail_to_get_assets_for_unfulfilled_order(
+        auth_mock, requests_mock, status
+):
+    order_response = {"id": ORDER_ID, "status": status}
+    url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
+    requests_mock.get(url=url_order_info, json=order_response)
+    order = Order(auth=auth_mock, order_id=ORDER_ID)
     with pytest.raises(ValueError):
-        order_mock.get_assets()
+        order.get_assets()
+
+
+@pytest.mark.live
+def test_get_assets_live(auth_live, order_parameters):
+    order_instance = Order(auth=auth_live, order_id=ORDER_ID)
+    assets = order_instance.get_assets()
+    assert isinstance(assets[0], Asset)
+    assert assets[0].asset_id == ASSET_ORDER_ID
 
 
 @pytest.fixture
@@ -150,40 +208,28 @@ def test_place_order_live(auth_live, order_parameters):
 def test_track_status_running(order_mock, requests_mock):
     del order_mock._info
 
-    url_job_info = (
-        f"{API_HOST}/workspaces/"
-        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
-    )
+    url_job_info = f"{API_HOST}/v2/orders/{order_mock.order_id}"
 
     status_responses = [
         {
             "json": {
-                "data": {
-                    "status": "PLACED",
-                    "type": "TASKING",
-                    "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
-                },
-                "error": {},
+                "status": "PLACED",
+                "type": "TASKING",
+                "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
             }
         },
         {
             "json": {
-                "data": {
-                    "status": "BEING_FULFILLED",
-                    "type": "TASKING",
-                    "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
-                },
-                "error": {},
+                "status": "BEING_FULFILLED",
+                "type": "TASKING",
+                "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
             }
         },
         {
             "json": {
-                "data": {
-                    "status": "FULFILLED",
-                    "type": "TASKING",
-                    "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
-                },
-                "error": {},
+                "status": "FULFILLED",
+                "type": "TASKING",
+                "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
             }
         },
     ]
@@ -196,11 +242,8 @@ def test_track_status_running(order_mock, requests_mock):
 def test_track_status_pass(order_mock, status, requests_mock):
     del order_mock._info
 
-    url_job_info = (
-        f"{API_HOST}/workspaces/"
-        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
-    )
-    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+    url_job_info = f"{API_HOST}/v2/orders/{order_mock.order_id}"
+    requests_mock.get(url=url_job_info, json={"status": status})
 
     order_status = order_mock.track_status()
     assert order_status == status
@@ -210,13 +253,10 @@ def test_track_status_pass(order_mock, status, requests_mock):
 def test_track_status_fail(order_mock, status, requests_mock):
     del order_mock._info
 
-    url_job_info = (
-        f"{API_HOST}/workspaces/"
-        f"{order_mock.workspace_id}/orders/{order_mock.order_id}"
-    )
+    url_job_info = f"{API_HOST}/v2/orders/{order_mock.order_id}"
     requests_mock.get(
         url=url_job_info,
-        json={"data": {"status": status, "type": "ARCHIVE"}, "error": {}},
+        json={"status": status, "type": "ARCHIVE"},
     )
 
     with pytest.raises(ValueError):

@@ -8,7 +8,7 @@ Redirected to custom domain [https://sdk.up42.com/](https://sdk.up42.com/)
 ## Installation for doc development:
 ```
 cd docs
-pip install -r requirements_dev.txt
+poetry install --only docs
 ```
 
 ## HTML Preview
