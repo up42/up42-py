@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Any, List, Optional, TypedDict, Union
 from urllib.parse import urlencode, urljoin
 
+from up42.host import endpoint
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
@@ -82,7 +83,7 @@ def search_assets(
     sort = f"{sortby},{'desc' if descending else 'asc'}"
     request_params: dict[str, Any] = {"sort": sort}
     request_params.update({key: value for key, value in params.items() if value is not None})
-    base_url = f"{auth._endpoint()}/v2/assets"
+    base_url = endpoint("/v2/assets")
     url = urljoin(base_url, "?" + urlencode(request_params, doseq=True, safe=""))
     assets_json = query_paginated_endpoints(auth, url=url, limit=limit)
 

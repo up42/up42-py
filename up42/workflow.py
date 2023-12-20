@@ -16,6 +16,7 @@ from tqdm import tqdm
 import up42.main as main
 from up42.auth import Auth
 from up42.estimation import Estimation
+from up42.host import endpoint
 from up42.job import Job
 from up42.jobcollection import JobCollection
 from up42.utils import any_vector_to_fc, fc_to_query_geometry, filter_jobs_on_mode, format_time, get_logger
@@ -69,7 +70,7 @@ class Workflow:
         """
         Gets and updates the workflow metadata information.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}"
+        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}")
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
@@ -108,9 +109,8 @@ class Workflow:
             return data_blocks  # type: ignore
 
         last_task = list(tasks.keys())[-1]
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/{self.workflow_id}/"
-            f"compatible-blocks?parentTaskName={last_task}"
+        url = endpoint(
+            f"/projects/{self.project_id}/workflows/{self.workflow_id}/compatible-blocks?parentTaskName={last_task}"
         )
         response_json = self.auth._request(request_type="GET", url=url)
         compatible_blocks = response_json["data"]["blocks"]
@@ -133,7 +133,7 @@ class Workflow:
             DeprecationWarning,
             stacklevel=2,
         )
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks"
+        url = endpoint(f"/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks")
 
         response_json = self.auth._request(request_type="GET", url=url)
         tasks = response_json["data"]
@@ -281,7 +281,7 @@ class Workflow:
         if isinstance(input_tasks[0], str) and not isinstance(input_tasks[0], dict):
             input_tasks = self._construct_full_workflow_tasks_dict(input_tasks)
 
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks/"
+        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}/tasks/")
         self.auth._request(request_type="POST", url=url, data=input_tasks)
         logger.info(f"Added tasks to workflow: {input_tasks}")
 
@@ -566,7 +566,7 @@ class Workflow:
         if name is None:
             name = self._info["name"]
         name = f"{name}_py"  # Temporary recognition of python API usage.
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/" f"workflows/{self.workflow_id}/jobs?name={name}"
+        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}/jobs?name={name}")
         response_json = self.auth._request(request_type="POST", url=url, data=input_parameters)  # type: ignore
         job_json = response_json["data"]
         logger.info(f"Created and running new job: {job_json['id']}.")
@@ -643,10 +643,7 @@ class Workflow:
 
                 job_name = f"{name}_{job_nr}_py"  # Temporary recognition of python API usage.
 
-                url = (
-                    f"{self.auth._endpoint()}/projects/{self.project_id}/"
-                    f"workflows/{self.workflow_id}/jobs?name={job_name}"
-                )
+                url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}/jobs?name={job_name}")
                 response_json = self.auth._request(request_type="POST", url=url, data=params)
                 job_json = response_json["data"]
                 logger.info(f"Created and running new job: {job_json['id']}")
@@ -823,7 +820,7 @@ class Workflow:
         Returns:
             A JobCollection, or alternatively the jobs info as JSON.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs"
+        url = endpoint(f"/projects/{self.project_id}/jobs")
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
 
@@ -854,7 +851,7 @@ class Workflow:
             stacklevel=2,
         )
         properties_to_update = {"name": name, "description": description}
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}"
+        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}")
         self.auth._request(request_type="PUT", url=url, data=properties_to_update)
         # TODO: Renew info
         logger.info(f"Updated workflow name: {properties_to_update}")
@@ -863,7 +860,7 @@ class Workflow:
         """
         Deletes the workflow and sets the Python object to None.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/" f"{self.workflow_id}"
+        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}")
         self.auth._request(request_type="DELETE", url=url, return_text=False)
         logger.info(f"Successfully deleted workflow: {self.workflow_id}")
         del self
@@ -873,7 +870,7 @@ class Workflow:
         """
         Gets the maximum number of concurrent jobs allowed by the project settings.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
+        url = endpoint(f"/projects/{self.project_id}/settings")
         response_json = self.auth._request(request_type="GET", url=url)
         project_settings = response_json["data"]
         project_settings_dict = {d["name"]: int(d["value"]) for d in project_settings}

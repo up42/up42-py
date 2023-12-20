@@ -26,6 +26,7 @@ from .fixtures import (
     username_test_live,
     workflow_live,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_job_info(job_mock):
@@ -40,7 +41,7 @@ def test_job_status(job_mock, status, requests_mock):
     del job_mock._info
 
     url_job_info = (
-        f"{job_mock.auth._endpoint()}/projects/"
+        f"{API_HOST}/projects/"
         f"{job_mock.project_id}/jobs/{job_mock.job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
@@ -62,7 +63,7 @@ def test_is_succeeded(job_mock, status, expected, requests_mock):
     del job_mock._info
 
     url_job_info = (
-        f"{job_mock.auth._endpoint()}/projects/"
+        f"{API_HOST}/projects/"
         f"{job_mock.project_id}/jobs/{job_mock.job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
@@ -75,7 +76,7 @@ def test_track_status_pass(job_mock, status, requests_mock):
     del job_mock._info
 
     url_job_info = (
-        f"{job_mock.auth._endpoint()}/projects/"
+        f"{API_HOST}/projects/"
         f"{job_mock.project_id}/jobs/{job_mock.job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
@@ -89,7 +90,7 @@ def test_track_status_fail(job_mock, status, requests_mock):
     del job_mock._info
 
     url_job_info = (
-        f"{job_mock.auth._endpoint()}/projects/"
+        f"{API_HOST}/projects/"
         f"{job_mock.project_id}/jobs/{job_mock.job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
@@ -99,14 +100,14 @@ def test_track_status_fail(job_mock, status, requests_mock):
 
 
 def test_cancel_job(job_mock, requests_mock):
-    url = f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}/cancel/"
+    url = f"{API_HOST}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}/cancel/"
     requests_mock.post(url, status_code=200)
     job_mock.cancel_job()
 
 
 def test_download_quicklook(job_mock, requests_mock):
     url = (
-        f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
+        f"{API_HOST}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
         f"/tasks/{JOBTASK_ID}/outputs/quicklooks/a_quicklook.png"
     )
     quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"

@@ -11,6 +11,7 @@ from shapely.geometry import Polygon
 from up42.asset import Asset
 from up42.asset_searcher import AssetSearchParams, query_paginated_endpoints, search_assets
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.order import Order
 from up42.stac_client import PySTACAuthClient
 from up42.utils import format_time, get_logger
@@ -52,7 +53,7 @@ class Storage:
 
     @property
     def pystac_client(self):
-        url = f"{self.auth._endpoint()}/v2/assets/stac"
+        url = endpoint("/v2/assets/stac")
         pystac_client_auth = PySTACAuthClient(auth=self.auth).open(url=url)
         return pystac_client_auth
 
@@ -208,7 +209,7 @@ class Storage:
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        base_url = f"{self.auth._endpoint()}/v2/orders"
+        base_url = endpoint("/v2/orders")
 
         params = {
             "sort": sort,

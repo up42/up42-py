@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from ..context import Order
-from .fixtures_globals import ASSET_ORDER_ID, ORDER_ID, WORKSPACE_ID
+from .fixtures_globals import API_HOST, ASSET_ORDER_ID, ORDER_ID, WORKSPACE_ID
 
 JSON_ORDER_ASSET = {
     "accountId": "69353acb-f942-423f-8f32-11d6d67caa77",
@@ -59,7 +59,7 @@ def read_test_order_info() -> dict:
 
 @pytest.fixture
 def order_mock(auth_mock, requests_mock):
-    url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
+    url_order_info = f"{API_HOST}/v2/orders/{ORDER_ID}"
     requests_mock.get(url=url_order_info, json=read_test_order_info())
 
     return Order(auth=auth_mock, order_id=ORDER_ID)

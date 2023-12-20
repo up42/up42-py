@@ -29,6 +29,7 @@ from .fixtures import (
     storage_mock,
     username_test_live,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_init(storage_mock):
@@ -237,7 +238,7 @@ def test_get_assets_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_assets_paginated = (
-        f"{auth_mock._endpoint()}/v2/assets?sort=createdAt,asc&size=50"
+        f"{API_HOST}/v2/assets?sort=createdAt,asc&size=50"
     )
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
@@ -392,7 +393,7 @@ def test_get_orders_v2_endpoint_params(
         ]
     )
 
-    url_storage_assets_paginated = f"{auth_mock._endpoint()}/v2/orders?{url_params}"
+    url_storage_assets_paginated = f"{API_HOST}/v2/orders?{url_params}"
 
     requests_mock.get(url=url_storage_assets_paginated, json=expected_payload)
     if not params["return_json"]:
@@ -458,7 +459,7 @@ def test_get_orders_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_orders_paginated = (
-        f"{auth_mock._endpoint()}/v2/"
+        f"{API_HOST}/v2/"
         f"orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)

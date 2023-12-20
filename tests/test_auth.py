@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 import requests
 
+from up42 import host
 from up42.utils import get_up42_py_version
 
 from .context import Auth
@@ -36,6 +37,7 @@ def test_auth_kwargs():
         retry=False,
     )
     assert auth.env == "abc"
+    assert host.DOMAIN == "abc"
     assert not auth.authenticate
 
 
@@ -56,11 +58,9 @@ def test_should_not_authenticate_with_config_file_if_not_requested():
     Auth(cfg_file=fp, authenticate=False)
 
 
-def test_should_set_endpoint_with_environment(auth_mock):
-    assert auth_mock._endpoint() == "https://api.up42.com"
-
+def test_should_set_api_host_domain_with_environment(auth_mock):
     auth_mock.env = "abc"
-    assert auth_mock._endpoint() == "https://api.up42.abc"
+    assert host.DOMAIN == "abc"
 
 
 def test_get_token(auth_mock):
@@ -94,7 +94,7 @@ def test_get_workspace_live(auth_live):
 def test_generate_headers(auth_mock):
     version = get_up42_py_version()
     assert (
-        isinstance(version, str) and "\n" not in version
+            isinstance(version, str) and "\n" not in version
     ), "check integrity of your version file"
     expected_headers = {
         "Content-Type": "application/json",

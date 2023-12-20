@@ -32,6 +32,7 @@ from .fixtures import (
     workflow_mock,
     workflow_mock_empty,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_workflow_info(workflow_mock):
@@ -124,7 +125,7 @@ def test_add_workflow_tasks_full(workflow_mock, requests_mock):
         },
     ]
     job_url = (
-        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
+        f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/"
         f"{workflow_mock.workflow_id}/tasks/"
     )
     requests_mock.post(url=job_url, status_code=200)
@@ -325,11 +326,11 @@ def test_estimate_jobs(workflow_mock, requests_mock):
     }
     # get_workflow_tasks
     url_workflow_tasks = (
-        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
+        f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/"
         f"{workflow_mock.workflow_id}/tasks"
     )
     url_workflow_estimation = (
-        f"{workflow_mock.auth._endpoint()}/projects/{PROJECT_ID}/estimate/job"
+        f"{API_HOST}/projects/{PROJECT_ID}/estimate/job"
     )
     requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
     requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
@@ -341,7 +342,7 @@ def test_estimate_jobs(workflow_mock, requests_mock):
 def test_run_job(workflow_mock, job_mock, requests_mock):
     # job info
     url_job_info = (
-        f"{job_mock.auth._endpoint()}/projects/{job_mock.project_id}/"
+        f"{API_HOST}/projects/{job_mock.project_id}/"
         f"jobs/{job_mock.job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {}})
@@ -372,13 +373,13 @@ def test_helper_run_parallel_jobs_dry_run(
         for i, _ in enumerate(input_parameters_list):
             job_name = f"{workflow_mock._info['name']}_{i}_py"
             url_job = (
-                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"{API_HOST}/projects/{workflow_mock.project_id}/"
                 f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
             )
             print(url_job)
             m.post(url=url_job, json={"data": {"id": job_name}})
             m.get(
-                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                url=f"{API_HOST}/projects/{workflow_mock.project_id}/"
                 f"jobs/{job_name}",
                 json=example_response,
             )
@@ -409,22 +410,22 @@ def test_helper_run_parallel_jobs_all_fails(
         for i, _ in enumerate(input_parameters_list):
             job_name = f"{workflow_mock._info['name']}_{i}_py"
             job_url = (
-                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"{API_HOST}/projects/{workflow_mock.project_id}/"
                 f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
             )
             m.post(url=job_url, json={"data": {"id": job_name}})
             m.get(
-                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                url=f"{API_HOST}/projects/{workflow_mock.project_id}/"
                 f"jobs/{job_name}",
                 json=response_failed,
             )
             url_job_tasks = (
-                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/{job_name}"
+                f"{API_HOST}/projects/{workflow_mock.project_id}/jobs/{job_name}"
                 f"/tasks/"
             )
             m.get(url=url_job_tasks, json={"data": [{"id": jobtask_mock.jobtask_id}]})
             url_log = (
-                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/"
+                f"{API_HOST}/projects/{workflow_mock.project_id}/jobs/"
                 f"{job_name}/tasks/{jobtask_mock.jobtask_id}/logs"
             )
             m.get(url_log, json="")
@@ -463,22 +464,22 @@ def test_helper_run_parallel_jobs_one_fails(
         for i, _ in enumerate(input_parameters_list):
             job_name = f"{workflow_mock._info['name']}_{i}_py"
             job_url = (
-                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"{API_HOST}/projects/{workflow_mock.project_id}/"
                 f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
             )
             m.post(url=job_url, json={"data": {"id": job_name}})
             m.get(
-                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                url=f"{API_HOST}/projects/{workflow_mock.project_id}/"
                 f"jobs/{job_name}",
                 json=responses[i],
             )
             url_job_tasks = (
-                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/{job_name}"
+                f"{API_HOST}/projects/{workflow_mock.project_id}/jobs/{job_name}"
                 f"/tasks/"
             )
             m.get(url=url_job_tasks, json={"data": [{"id": JOBTASK_ID}]})
             url_log = (
-                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/jobs/"
+                f"{API_HOST}/projects/{workflow_mock.project_id}/jobs/"
                 f"{job_name}/tasks/{JOBTASK_ID}/logs"
             )
             m.get(url_log, json="")
@@ -512,12 +513,12 @@ def test_helper_run_parallel_jobs_default(
         for i, _ in enumerate(input_parameters_list):
             job_name = f"{workflow_mock._info['name']}_{i}_py"
             job_url = (
-                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"{API_HOST}/projects/{workflow_mock.project_id}/"
                 f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
             )
             m.post(url=job_url, json={"data": {"id": job_name}})
             m.get(
-                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                url=f"{API_HOST}/projects/{workflow_mock.project_id}/"
                 f"jobs/{job_name}",
                 json=example_response,
             )
@@ -548,12 +549,12 @@ def test_helper_run_parallel_jobs_fail_concurrent_jobs(
         for i, _ in enumerate(input_parameters_list):
             job_name = f"{workflow_mock._info['name']}_{i}_py"
             job_url = (
-                f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                f"{API_HOST}/projects/{workflow_mock.project_id}/"
                 f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
             )
             m.post(url=job_url, json={"data": {"id": job_name}})
             m.get(
-                url=f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/"
+                url=f"{API_HOST}/projects/{workflow_mock.project_id}/"
                 f"jobs/{job_name}",
                 json=example_response,
             )
@@ -566,7 +567,7 @@ def test_helper_run_parallel_jobs_fail_concurrent_jobs(
 
 def test_get_jobs(workflow_mock, requests_mock):
     url_job_info = (
-        f"{workflow_mock.auth._endpoint()}/projects/"
+        f"{API_HOST}/projects/"
         f"{workflow_mock.project_id}/jobs/{JOB_ID}"
     )
     requests_mock.get(
@@ -599,7 +600,7 @@ def test_get_jobs_live(workflow_live):
 def test_update_name(workflow_mock, requests_mock):
     new_name = "new_workflow_name"
     url_update_name = (
-        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
+        f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/"
         f"{workflow_mock.workflow_id}"
     )
     json_new_properties = {"data": {}, "error": {}}
@@ -613,7 +614,7 @@ def test_update_name(workflow_mock, requests_mock):
 
 def test_delete(workflow_mock, requests_mock):
     delete_url = (
-        f"{workflow_mock.auth._endpoint()}/projects/{workflow_mock.project_id}/workflows/"
+        f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/"
         f"{workflow_mock.workflow_id}"
     )
     requests_mock.delete(url=delete_url)

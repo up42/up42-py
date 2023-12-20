@@ -27,6 +27,7 @@ from .fixtures import (
     read_test_order_info,
     username_test_live,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_init(order_mock):
@@ -102,9 +103,9 @@ def test_order_parameters(order_mock):
 def test_get_assets_should_search_assets_by_order_id(auth_mock, requests_mock):
     order_response = {"id": ORDER_ID, "status": "FULFILLED"}
 
-    url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
+    url_order_info = f"{API_HOST}/v2/orders/{ORDER_ID}"
     requests_mock.get(url=url_order_info, json=order_response)
-    url_asset_info = f"{auth_mock._endpoint()}/v2/assets?search={ORDER_ID}&size=50"
+    url_asset_info = f"{API_HOST}/v2/assets?search={ORDER_ID}&size=50"
     requests_mock.get(url=url_asset_info, json=JSON_GET_ASSETS_RESPONSE)
     order = Order(auth=auth_mock, order_id=ORDER_ID)
     asset, = order.get_assets()
@@ -130,7 +131,7 @@ def test_should_fail_to_get_assets_for_unfulfilled_order(
         auth_mock, requests_mock, status
 ):
     order_response = {"id": ORDER_ID, "status": status}
-    url_order_info = f"{auth_mock._endpoint()}/v2/orders/{ORDER_ID}"
+    url_order_info = f"{API_HOST}/v2/orders/{ORDER_ID}"
     requests_mock.get(url=url_order_info, json=order_response)
     order = Order(auth=auth_mock, order_id=ORDER_ID)
     with pytest.raises(ValueError):
@@ -172,7 +173,7 @@ def order_parameters():
 
 def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
+        url=f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders",
         json={
             "data": {"id": ORDER_ID},
             "error": {},
@@ -186,7 +187,7 @@ def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
 
 def test_place_order_no_id(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders",
+        url=f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders",
         json={
             "data": {"xyz": 892},
             "error": {},
@@ -207,7 +208,7 @@ def test_place_order_live(auth_live, order_parameters):
 def test_track_status_running(order_mock, requests_mock):
     del order_mock._info
 
-    url_job_info = f"{order_mock.auth._endpoint()}/v2/orders/{order_mock.order_id}"
+    url_job_info = f"{API_HOST}/v2/orders/{order_mock.order_id}"
 
     status_responses = [
         {
@@ -241,7 +242,7 @@ def test_track_status_running(order_mock, requests_mock):
 def test_track_status_pass(order_mock, status, requests_mock):
     del order_mock._info
 
-    url_job_info = f"{order_mock.auth._endpoint()}/v2/orders/{order_mock.order_id}"
+    url_job_info = f"{API_HOST}/v2/orders/{order_mock.order_id}"
     requests_mock.get(url=url_job_info, json={"status": status})
 
     order_status = order_mock.track_status()
@@ -252,7 +253,7 @@ def test_track_status_pass(order_mock, status, requests_mock):
 def test_track_status_fail(order_mock, status, requests_mock):
     del order_mock._info
 
-    url_job_info = f"{order_mock.auth._endpoint()}/v2/orders/{order_mock.order_id}"
+    url_job_info = f"{API_HOST}/v2/orders/{order_mock.order_id}"
     requests_mock.get(
         url=url_job_info,
         json={"status": status, "type": "ARCHIVE"},
@@ -264,7 +265,7 @@ def test_track_status_fail(order_mock, status, requests_mock):
 
 def test_estimate_order(order_parameters, auth_mock, requests_mock):
     url_order_estimation = (
-        f"{auth_mock._endpoint()}/workspaces/{auth_mock.workspace_id}/orders/estimate"
+        f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders/estimate"
     )
     requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
     estimation = Order.estimate(auth_mock, order_parameters)

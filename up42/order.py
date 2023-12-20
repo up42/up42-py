@@ -4,6 +4,7 @@ from typing import List, Optional
 from up42.asset import Asset
 from up42.asset_searcher import AssetSearchParams, search_assets
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
@@ -51,7 +52,7 @@ class Order:
         """
         Gets and updates the order information.
         """
-        url = f"{self.auth._endpoint()}/v2/orders/{self.order_id}"
+        url = endpoint(f"/v2/orders/{self.order_id}")
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json
         return self._info
@@ -108,7 +109,7 @@ class Order:
         Returns:
             Order: The placed order.
         """
-        url = f"{auth._endpoint()}/workspaces/{auth.workspace_id}/orders"
+        url = endpoint(f"/workspaces/{auth.workspace_id}/orders")
         response_json = auth._request(request_type="POST", url=url, data=order_parameters)
         try:
             order_id = response_json["data"]["id"]  # type: ignore
@@ -130,7 +131,7 @@ class Order:
         Returns:
             int: The estimated cost of the order
         """
-        url = f"{auth._endpoint()}/workspaces/{auth.workspace_id}/orders/estimate"
+        url = endpoint(f"/workspaces/{auth.workspace_id}/orders/estimate")
 
         response_json = auth._request(request_type="POST", url=url, data=order_parameters)
         estimated_credits: int = response_json["data"]["credits"]  # type: ignore

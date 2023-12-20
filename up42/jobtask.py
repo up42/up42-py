@@ -5,6 +5,7 @@ from geopandas import GeoDataFrame
 from tqdm import tqdm
 
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.utils import download_from_gcs_unpack, get_logger
 from up42.viztools import VizTools
 
@@ -52,7 +53,7 @@ class JobTask(VizTools):
         """
         Gets and updates the jobtask metadata information.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/"
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/")
         response_json = self.auth._request(request_type="GET", url=url)
         info_all_jobtasks = response_json["data"]
         self._info = next(item for item in info_all_jobtasks if item["id"] == self.jobtask_id)
@@ -68,10 +69,7 @@ class JobTask(VizTools):
         Returns:
             Json of the results, alternatively geodataframe.
         """
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
-            f"/tasks/{self.jobtask_id}/outputs/data-json/"
-        )
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/outputs/data-json/")
         response_json = self.auth._request(request_type="GET", url=url)
         logger.info(f"Retrieved {len(response_json['features'])} features.")
 
@@ -83,10 +81,7 @@ class JobTask(VizTools):
             return response_json
 
     def _get_download_url(self):
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
-            f"/tasks/{self.jobtask_id}/downloads/results/"
-        )
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/downloads/results/")
         response_json = self.auth._request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
         return download_url
@@ -145,10 +140,7 @@ class JobTask(VizTools):
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info(f"Download directory: {str(output_directory)}")
 
-        url = (
-            f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
-            f"/tasks/{self.jobtask_id}/outputs/quicklooks/"
-        )
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/outputs/quicklooks/")
         response_json = self.auth._request(request_type="GET", url=url)
         quicklooks_ids = response_json["data"]
 
@@ -157,9 +149,8 @@ class JobTask(VizTools):
             out_path = output_directory / f"quicklook_{ql_id}"  # No suffix required.
             out_paths.append(str(out_path))
 
-            url = (
-                f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
-                f"/tasks/{self.jobtask_id}/outputs/quicklooks/{ql_id}"
+            url = endpoint(
+                f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/outputs/quicklooks/{ql_id}"
             )
             response = self.auth._request(request_type="GET", url=url, return_text=False)
 

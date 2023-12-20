@@ -9,6 +9,7 @@ import requests.exceptions
 from geopandas import GeoDataFrame
 
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.jobtask import JobTask
 from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_logger
 from up42.viztools import VizTools
@@ -66,7 +67,7 @@ class Job(VizTools):
         """
         Gets and updates the job metadata information.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}")
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
@@ -142,7 +143,7 @@ class Job(VizTools):
             DeprecationWarning,
             stacklevel=2,
         )
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}/cancel/"
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/cancel/")
         self.auth._request(request_type="POST", url=url)
         logger.info(f"Job canceled: {self.job_id}")
 
@@ -173,7 +174,7 @@ class Job(VizTools):
         Returns:
             The job data.json.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}" f"/outputs/data-json/"
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/outputs/data-json/")
         response_json = self.auth._request(request_type="GET", url=url)
         logger.info(f"Retrieved {len(response_json['features'])} features.")
 
@@ -185,7 +186,7 @@ class Job(VizTools):
             return response_json
 
     def _get_download_url(self) -> str:
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}" f"/downloads/results/"
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/downloads/results/")
         response_json = self.auth._request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
         return download_url
@@ -273,14 +274,14 @@ class Job(VizTools):
             print(f"Printing logs of {len(jobtasks_ids)} JobTasks in Job with job_id " f"{self.job_id}:\n")
 
         for idx, jobtask_id in enumerate(jobtasks_ids):
-            url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/" f"{self.job_id}/tasks/{jobtask_id}/logs"
+            url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/logs")
             response_json = self.auth._request(request_type="GET", url=url)
 
             job_logs[jobtask_id] = response_json
 
             if as_print:
                 print("----------------------------------------------------------")
-                print(f"JobTask {idx+1} with jobtask_id {jobtask_id}:\n")
+                print(f"JobTask {idx + 1} with jobtask_id {jobtask_id}:\n")
                 print(response_json)
         if as_return:
             return job_logs
@@ -297,7 +298,7 @@ class Job(VizTools):
         Returns:
             The job task objects in a list.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}" f"/tasks/"
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/")
         logger.info(f"Getting job tasks: {self.job_id}")
         response_json = self.auth._request(request_type="GET", url=url)
         jobtasks_json: List[dict] = response_json["data"]
@@ -328,10 +329,7 @@ class Job(VizTools):
         jobtasks_ids = [task["id"] for task in jobtasks]
         jobtasks_results_json = {}
         for jobtask_id in jobtasks_ids:
-            url = (
-                f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}"
-                f"/tasks/{jobtask_id}/outputs/data-json"
-            )
+            url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/outputs/data-json")
             response_json = self.auth._request(request_type="GET", url=url)
 
             jobtasks_results_json[jobtask_id] = response_json
@@ -344,7 +342,7 @@ class Job(VizTools):
         Returns:
             The consumed credits for the job.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs/{self.job_id}/credits"
+        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/credits")
         response_json = self.auth._request(request_type="GET", url=url)
         credits_used = response_json["data"]["creditsUsed"]
         credits_used_dict = {"creditsUsed": credits_used}
