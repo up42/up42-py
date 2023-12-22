@@ -17,7 +17,6 @@ repos:
     hooks:
       - id: black
         args: ['--line-length', '120']
-        exclude: ^.*__init__\.py$|^tests/|.github/CODEOWNERS
   - repo: https://github.com/PyCQA/isort
     rev: 5.12.0
     hooks:

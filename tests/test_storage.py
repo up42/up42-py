@@ -237,9 +237,7 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     }
 
     # assets pages
-    url_storage_assets_paginated = (
-        f"{API_HOST}/v2/assets?sort=createdAt,asc&size=50"
-    )
+    url_storage_assets_paginated = f"{API_HOST}/v2/assets?sort=createdAt,asc&size=50"
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
     storage = Storage(auth=auth_mock)
@@ -261,9 +259,7 @@ def test_get_assets_raise_error_live(storage_live):
 
 
 def test_get_orders(storage_mock):
-    orders = storage_mock.get_orders(
-        order_type="ARCHIVE", tags=["project-7", "optical"]
-    )
+    orders = storage_mock.get_orders(order_type="ARCHIVE", tags=["project-7", "optical"])
     assert len(orders) == 1
     assert isinstance(orders[0], Order)
     assert orders[0].order_id == ORDER_ID
@@ -376,13 +372,9 @@ def test_get_orders(storage_mock):
         "Sc 7: statuses None, workspace_orders False, Return JSON True, name None",
     ],
 )
-def test_get_orders_v2_endpoint_params(
-    auth_mock, requests_mock, params, expected_payload, expected_results
-):
+def test_get_orders_v2_endpoint_params(auth_mock, requests_mock, params, expected_payload, expected_results):
     allowed_statuses = {entry.value for entry in AllowedStatuses}
-    endpoint_statuses = (
-        set(params["statuses"]) & allowed_statuses if params["statuses"] else []
-    )
+    endpoint_statuses = set(params["statuses"]) & allowed_statuses if params["statuses"] else []
     url_params = "&".join(
         [
             "sort=createdAt%2Cdesc",
@@ -459,8 +451,7 @@ def test_get_orders_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_orders_paginated = (
-        f"{API_HOST}/v2/"
-        f"orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
+        f"{API_HOST}/v2/" f"orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)
 

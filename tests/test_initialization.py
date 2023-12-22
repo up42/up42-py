@@ -132,9 +132,7 @@ def test_should_initialize_workflow(auth_mock, requests_mock):
         authenticate=False,
     )
     project_id = "project_id"
-    url_workflow_info = (
-        f"{API_HOST}/projects/{project_id}/workflows/{WORKFLOW_ID}"
-    )
+    url_workflow_info = f"{API_HOST}/projects/{project_id}/workflows/{WORKFLOW_ID}"
     json_workflow_info = {
         "data": {
             "name": "name",
@@ -196,9 +194,7 @@ def test_should_initialize_jobtask(auth_mock, requests_mock, jobtask_mock):
         authenticate=False,
     )
     project_id = "project_id"
-    url_jobtask_info = (
-        f"{API_HOST}/projects/{project_id}/jobs/{JOB_ID}/tasks/"
-    )
+    url_jobtask_info = f"{API_HOST}/projects/{project_id}/jobs/{JOB_ID}/tasks/"
     requests_mock.get(
         url=url_jobtask_info,
         json={

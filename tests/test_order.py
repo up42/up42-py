@@ -108,7 +108,7 @@ def test_get_assets_should_search_assets_by_order_id(auth_mock, requests_mock):
     url_asset_info = f"{API_HOST}/v2/assets?search={ORDER_ID}&size=50"
     requests_mock.get(url=url_asset_info, json=JSON_GET_ASSETS_RESPONSE)
     order = Order(auth=auth_mock, order_id=ORDER_ID)
-    asset, = order.get_assets()
+    (asset,) = order.get_assets()
     assert isinstance(asset, Asset)
     assert asset.asset_id == ASSET_ORDER_ID
 
@@ -127,9 +127,7 @@ def test_get_assets_should_search_assets_by_order_id(auth_mock, requests_mock):
         "FAILED_PERMANENTLY",
     ],
 )
-def test_should_fail_to_get_assets_for_unfulfilled_order(
-        auth_mock, requests_mock, status
-):
+def test_should_fail_to_get_assets_for_unfulfilled_order(auth_mock, requests_mock, status):
     order_response = {"id": ORDER_ID, "status": status}
     url_order_info = f"{API_HOST}/v2/orders/{ORDER_ID}"
     requests_mock.get(url=url_order_info, json=order_response)
@@ -264,9 +262,7 @@ def test_track_status_fail(order_mock, status, requests_mock):
 
 
 def test_estimate_order(order_parameters, auth_mock, requests_mock):
-    url_order_estimation = (
-        f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders/estimate"
-    )
+    url_order_estimation = f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders/estimate"
     requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
     estimation = Order.estimate(auth_mock, order_parameters)
     assert isinstance(estimation, int)

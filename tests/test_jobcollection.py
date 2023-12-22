@@ -39,9 +39,7 @@ def test_jobcollection_multiple(jobcollection_multiple_mock):
     assert len(jobcollection_multiple_mock.jobs) == 2
 
 
-def test_job_iterator(
-    jobcollection_multiple_mock, jobcollection_empty_mock, requests_mock
-):
+def test_job_iterator(jobcollection_multiple_mock, jobcollection_empty_mock, requests_mock):
     worker = lambda job: 1
     res = jobcollection_multiple_mock.apply(worker, only_succeeded=False)
     assert len(res) == 2
@@ -56,13 +54,8 @@ def test_job_iterator(
 
     status = ["FAILED", "SUCCEEDED"]
     for i, job in enumerate(jobcollection_multiple_mock):
-        url_job_info = (
-            f"{API_HOST}/projects/"
-            f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
-        )
-        requests_mock.get(
-            url=url_job_info, json={"data": {"status": status[i]}, "error": {}}
-        )
+        url_job_info = f"{API_HOST}/projects/" f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
+        requests_mock.get(url=url_job_info, json={"data": {"status": status[i]}, "error": {}})
 
     res = jobcollection_multiple_mock.apply(worker, add=5, only_succeeded=True)
     assert len(res) == 1
@@ -70,16 +63,12 @@ def test_job_iterator(
 
     with pytest.raises(ValueError) as e:
         jobcollection_empty_mock.apply(worker, add=5, only_succeeded=True)
-        assert (
-            str(e)
-            == "This is an empty JobCollection. Cannot apply over an empty job list."
-        )
+        assert str(e) == "This is an empty JobCollection. Cannot apply over an empty job list."
 
 
 def test_jobcollection_info(jobcollection_single_mock, requests_mock):
     url_job_info = (
-        f"{API_HOST}/projects/"
-        f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        f"{API_HOST}/projects/" f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
 
@@ -91,8 +80,7 @@ def test_jobcollection_info(jobcollection_single_mock, requests_mock):
 @pytest.mark.parametrize("status", ["NOT STARTED", "PENDING", "RUNNING"])
 def test_jobcollection_jobs_status(jobcollection_single_mock, status, requests_mock):
     url_job_info = (
-        f"{API_HOST}/projects/"
-        f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        f"{API_HOST}/projects/" f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
@@ -107,17 +95,12 @@ def test_jobcollection_download_results(jobcollection_single_mock, requests_mock
         f"{API_HOST}/projects/"
         f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}/downloads/results/"
     )
-    requests_mock.get(
-        url_download_result, json={"data": {"url": download_url}, "error": {}}
-    )
+    requests_mock.get(url_download_result, json={"data": {"url": download_url}, "error": {}})
 
     url_job_info = (
-        f"{API_HOST}/projects/"
-        f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        f"{API_HOST}/projects/" f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
-    requests_mock.get(
-        url=url_job_info, json={"data": {"status": "SUCCEEDED"}, "error": {}}
-    )
+    requests_mock.get(url=url_job_info, json={"data": {"status": "SUCCEEDED"}, "error": {}})
 
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as out_tgz_file:
@@ -134,46 +117,28 @@ def test_jobcollection_download_results(jobcollection_single_mock, requests_mock
             assert len(out_dict[job_id]) == 2
 
 
-def test_jobcollection_download_results_failed(
-    jobcollection_single_mock, requests_mock
-):
+def test_jobcollection_download_results_failed(jobcollection_single_mock, requests_mock):
     url_job_info = (
-        f"{API_HOST}/projects/"
-        f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        f"{API_HOST}/projects/" f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
-    requests_mock.get(
-        url=url_job_info, json={"data": {"status": "FAILED"}, "error": {}}
-    )
+    requests_mock.get(url=url_job_info, json={"data": {"status": "FAILED"}, "error": {}})
     with tempfile.TemporaryDirectory() as tmpdir:
         with pytest.raises(ValueError) as e:
             jobcollection_single_mock.download_results(tmpdir, merge=False)
-            assert (
-                str(e)
-                == "All jobs have failed! Cannot apply over an empty succeeded job list."
-            )
+            assert str(e) == "All jobs have failed! Cannot apply over an empty succeeded job list."
 
 
-def test_jobcollection_download_results_merged(
-    jobcollection_multiple_mock, requests_mock
-):
+def test_jobcollection_download_results_merged(jobcollection_multiple_mock, requests_mock):
     download_url = "http://up42.api.com/abcdef"
 
     for job in jobcollection_multiple_mock.jobs:
         url_download_result = (
-            f"{API_HOST}/projects/"
-            f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}/downloads/results/"
+            f"{API_HOST}/projects/" f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}/downloads/results/"
         )
-        requests_mock.get(
-            url_download_result, json={"data": {"url": download_url}, "error": {}}
-        )
+        requests_mock.get(url_download_result, json={"data": {"url": download_url}, "error": {}})
 
-        url_job_info = (
-            f"{API_HOST}/projects/"
-            f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
-        )
-        requests_mock.get(
-            url=url_job_info, json={"data": {"status": "SUCCEEDED"}, "error": {}}
-        )
+        url_job_info = f"{API_HOST}/projects/" f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
+        requests_mock.get(url=url_job_info, json={"data": {"status": "SUCCEEDED"}, "error": {}})
 
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as out_tgz_file:
@@ -200,9 +165,7 @@ def test_jobcollection_download_results_merged(
             assert len(merged_data_json.features) == 2
             assert merged_data_json.features[0].properties["job_id"] == JOB_ID
             assert JOB_ID in merged_data_json.features[0].properties["up42.data_path"]
-            assert (
-                tmpdir / Path(merged_data_json.features[0].properties["up42.data_path"])
-            ).exists()
+            assert (tmpdir / Path(merged_data_json.features[0].properties["up42.data_path"])).exists()
 
 
 def test_jobcollection_subscripted(jobcollection_single_mock):

@@ -110,15 +110,11 @@ def test_get_block_coverage(auth_mock, requests_mock, monkeypatch):
     requests_mock.get(
         url=url_get_blocks_coverage,
         json={
-            "data": {
-                "url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
-            },
+            "data": {"url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"},
             "error": {},
         },
     )
-    url_geojson_response = (
-        "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
-    )
+    url_geojson_response = "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
     requests_mock.get(
         url=url_geojson_response,
         json={
@@ -209,9 +205,7 @@ def test_validate_manifest_invalid_live(auth_live, monkeypatch):
         mainfest_json.update(
             {
                 "_up42_specification_version": 1,
-                "input_capabilities": {
-                    "invalidtype": {"up42_standard": {"format": "GTiff"}}
-                },
+                "input_capabilities": {"invalidtype": {"up42_standard": {"format": "GTiff"}}},
             }
         )
     with pytest.raises(requests.exceptions.RequestException):

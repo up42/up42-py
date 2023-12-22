@@ -42,10 +42,7 @@ def project_mock(auth_mock, requests_mock):
     requests_mock.post(url=url_create_workflow, json=json_create_workflow)
 
     # workflow.info (for create_workflow)
-    url_workflow_info = (
-        f"{API_HOST}/projects/"
-        f"{project.project_id}/workflows/{WORKFLOW_ID}"
-    )
+    url_workflow_info = f"{API_HOST}/projects/" f"{project.project_id}/workflows/{WORKFLOW_ID}"
     json_workflow_info = {
         "data": {
             "name": WORKFLOW_NAME,
@@ -56,9 +53,7 @@ def project_mock(auth_mock, requests_mock):
     requests_mock.get(url=url_workflow_info, json=json_workflow_info)
 
     # get_workflows
-    url_get_workflows = (
-        f"{API_HOST}/projects/" f"{PROJECT_ID}/workflows"
-    )
+    url_get_workflows = f"{API_HOST}/projects/" f"{PROJECT_ID}/workflows"
     json_get_workflows = {
         "data": [
             {
@@ -78,9 +73,7 @@ def project_mock(auth_mock, requests_mock):
 
     # get_jobs_pagination.
     # page 0
-    url_get_jobs_page_0 = (
-        f"{API_HOST}/projects/{PROJECT_ID}/jobs?page=0"
-    )
+    url_get_jobs_page_0 = f"{API_HOST}/projects/{PROJECT_ID}/jobs?page=0"
     json_get_jobs_page_0 = {
         "data": [
             {
@@ -95,9 +88,7 @@ def project_mock(auth_mock, requests_mock):
     }
     requests_mock.get(url=url_get_jobs_page_0, json=json_get_jobs_page_0)
     # page 1
-    url_get_jobs_page_1 = (
-        f"{API_HOST}/projects/{PROJECT_ID}/jobs?page=1"
-    )
+    url_get_jobs_page_1 = f"{API_HOST}/projects/{PROJECT_ID}/jobs?page=1"
     json_get_jobs_page_1 = {
         "data": [
             {
@@ -112,9 +103,7 @@ def project_mock(auth_mock, requests_mock):
     }
     requests_mock.get(url=url_get_jobs_page_1, json=json_get_jobs_page_1)
     # page 2
-    url_get_jobs_page_2 = (
-        f"{API_HOST}/projects/{PROJECT_ID}/jobs?page=2"
-    )
+    url_get_jobs_page_2 = f"{API_HOST}/projects/{PROJECT_ID}/jobs?page=2"
     json_get_jobs_page_2 = {"data": []}
     requests_mock.get(url=url_get_jobs_page_2, json=json_get_jobs_page_2)
 
@@ -131,9 +120,7 @@ def project_mock(auth_mock, requests_mock):
     requests_mock.get(url=url_project_settings, json=json_project_settings)
 
     # project settings update
-    url_projects_settings_update = (
-        f"{API_HOST}/projects/{PROJECT_ID}/settings"
-    )
+    url_projects_settings_update = f"{API_HOST}/projects/{PROJECT_ID}/settings"
     json_desired_project_settings = {
         "data": [
             {"name": "MAX_CONCURRENT_JOBS", "value": "500"},
@@ -165,9 +152,7 @@ def project_mock_max_concurrent_jobs(project_mock):
         m = requests_mock.Mocker()
         url_project_info = f"{API_HOST}/projects/{PROJECT_ID}"
         m.get(url=url_project_info, json={"data": {"xyz": 789}, "error": {}})
-        url_project_settings = (
-            f"{API_HOST}/projects" f"/{PROJECT_ID}/settings"
-        )
+        url_project_settings = f"{API_HOST}/projects" f"/{PROJECT_ID}/settings"
         m.get(
             url=url_project_settings,
             json={

@@ -93,9 +93,7 @@ def test_get_workspace_live(auth_live):
 
 def test_generate_headers(auth_mock):
     version = get_up42_py_version()
-    assert (
-            isinstance(version, str) and "\n" not in version
-    ), "check integrity of your version file"
+    assert isinstance(version, str) and "\n" not in version, "check integrity of your version file"
     expected_headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer token_1011",
@@ -108,9 +106,7 @@ def test_generate_headers(auth_mock):
 def test_request_helper(auth_mock, requests_mock):
     requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
 
-    response = auth_mock._request_helper(
-        request_type="GET", url="http://test.com", data={}, querystring={}
-    )
+    response = auth_mock._request_helper(request_type="GET", url="http://test.com", data={}, querystring={})
     response_json = json.loads(response.text)
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 

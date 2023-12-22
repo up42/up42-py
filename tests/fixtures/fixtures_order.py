@@ -50,8 +50,7 @@ JSON_GET_ASSETS_RESPONSE = {
 
 def read_test_order_info() -> dict:
     with open(
-        Path(__file__).resolve().parents[1]
-        / "mock_data/order_data/archive_order_info.json",
+        Path(__file__).resolve().parents[1] / "mock_data/order_data/archive_order_info.json",
         encoding="utf-8",
     ) as json_file:
         return json.load(json_file)

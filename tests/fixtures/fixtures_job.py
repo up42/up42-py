@@ -46,9 +46,7 @@ def job_mock(auth_mock, requests_mock):
     requests_mock.get(url_logs, json="")
 
     # quicklooks
-    url_quicklook = (
-        f"{API_HOST}/projects/{job.project_id}/jobs/{job.job_id}" f"/tasks/{JOBTASK_ID}/outputs/quicklooks/"
-    )
+    url_quicklook = f"{API_HOST}/projects/{job.project_id}/jobs/{job.job_id}" f"/tasks/{JOBTASK_ID}/outputs/quicklooks/"
     requests_mock.get(url_quicklook, json={"data": ["a_quicklook.png"]})
 
     # get_results_json

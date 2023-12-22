@@ -45,9 +45,7 @@ def test_asset_stac_info(asset_mock):
 
 
 def test_asset_update_metadata(asset_mock):
-    updated_info = asset_mock.update_metadata(
-        title="some_other_title", tags=["othertag1", "othertag2"]
-    )
+    updated_info = asset_mock.update_metadata(title="some_other_title", tags=["othertag1", "othertag2"])
     assert updated_info["title"] == "some_other_title"
     assert updated_info["tags"] == ["othertag1", "othertag2"]
 
@@ -110,9 +108,7 @@ def test_asset_download_no_unpacking(assets_fixture, requests_mock, tmp_path):
 
 
 @pytest.mark.parametrize("with_output_directory", [True, False])
-def test_download_stac_asset(
-    asset_mock2, requests_mock, tmp_path, with_output_directory
-):
+def test_download_stac_asset(asset_mock2, requests_mock, tmp_path, with_output_directory):
     out_file_path = Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
     with open(out_file_path, "rb") as src_file:
         out_file = src_file.read()
@@ -125,8 +121,6 @@ def test_download_stac_asset(
     )
 
     output_directory = tmp_path if with_output_directory else None
-    out_path = asset_mock2.download_stac_asset(
-        pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]), output_directory
-    )
+    out_path = asset_mock2.download_stac_asset(pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]), output_directory)
     assert out_path.exists()
     assert out_path.name == "bsg-104-20230522-044750-90756881_ortho.tiff"

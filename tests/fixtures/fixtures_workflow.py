@@ -22,9 +22,7 @@ def workflow_mock_empty(auth_mock, requests_mock):
     without tasks (blocks). For the fully mocked workflow see workflow_mock fixture.
     """
     # info
-    url_workflow_info = (
-        f"{API_HOST}/projects/{PROJECT_ID}/workflows/{WORKFLOW_ID}"
-    )
+    url_workflow_info = f"{API_HOST}/projects/{PROJECT_ID}/workflows/{WORKFLOW_ID}"
     json_workflow_info = {
         "data": {
             "name": WORKFLOW_NAME,
@@ -48,10 +46,7 @@ def workflow_mock_empty(auth_mock, requests_mock):
         "error": "None",
         "data": [],
     }
-    url_workflow_tasks = (
-        f"{API_HOST}/projects/{workflow.project_id}/workflows/"
-        f"{workflow.workflow_id}/tasks"
-    )
+    url_workflow_tasks = f"{API_HOST}/projects/{workflow.project_id}/workflows/" f"{workflow.workflow_id}/tasks"
     requests_mock.get(url=url_workflow_tasks, json=json_empty_workflow_tasks)
 
     return workflow
@@ -60,9 +55,7 @@ def workflow_mock_empty(auth_mock, requests_mock):
 @pytest.fixture()
 def workflow_mock(auth_mock, requests_mock):
     # info
-    url_workflow_info = (
-        f"{API_HOST}/projects/{PROJECT_ID}/workflows/{WORKFLOW_ID}"
-    )
+    url_workflow_info = f"{API_HOST}/projects/{PROJECT_ID}/workflows/{WORKFLOW_ID}"
     json_workflow_info = {
         "data": {
             "name": WORKFLOW_NAME,
@@ -103,8 +96,7 @@ def workflow_mock(auth_mock, requests_mock):
 
     # run_job
     url_run_job = (
-        f"{API_HOST}/projects/{workflow.project_id}/"
-        f"workflows/{workflow.workflow_id}/jobs?name={JOB_NAME + '_py'}"
+        f"{API_HOST}/projects/{workflow.project_id}/" f"workflows/{workflow.workflow_id}/jobs?name={JOB_NAME + '_py'}"
     )
     json_run_job = {"data": {"id": JOB_ID}}
     requests_mock.post(url=url_run_job, json=json_run_job)
