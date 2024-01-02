@@ -1,8 +1,9 @@
-import tempfile
 from pathlib import Path
 
 import pystac
 import pytest
+
+from up42.host import endpoint
 
 # pylint: disable=unused-import
 from .context import Asset
@@ -66,7 +67,7 @@ def test_init_asset_failure(auth_mock, asset_id, asset_info, expected_error):
 
 
 def test_should_get_id_from_info(auth_mock, requests_mock):
-    url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/metadata"
+    url_asset_info = endpoint(f"/v2/assets/{ASSET_ID}/metadata")
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
     asset = Asset(auth=auth_mock, asset_info={"id": ASSET_ID})
     assert asset.asset_id == ASSET_ID
