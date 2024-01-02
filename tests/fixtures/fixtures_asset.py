@@ -105,7 +105,7 @@ def asset_mock(auth_mock, requests_mock):
 @pytest.fixture()
 def asset_mock2(auth_mock, requests_mock):
     url_asset_info = f"{API_HOST}/v2/assets/{ASSET_ID2}/metadata"
-    requests_mock.get(url=url_asset_info, json=JSON_ASSET)
+    requests_mock.get(url=url_asset_info, json={**JSON_ASSET, "id": ASSET_ID2})
     requests_mock.post(
         url=f"{API_HOST}/v2/assets/{ASSET_ID2}/download-url",
         json={"url": DOWNLOAD_URL2},

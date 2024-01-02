@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pystac
 import pytest
@@ -30,14 +31,19 @@ from .fixtures import (
 )
 
 
+@pytest.fixture
+def auth_fixture(auth_mock):
+    return {"auth_mock": auth_mock, "magic_mock": MagicMock()}
+
+
 def test_init(asset_mock):
     assert isinstance(asset_mock, Asset)
     assert asset_mock.asset_id == ASSET_ID
 
 
-def test_repr(auth_mock):
+def test_should_delegate_repr_to_info():
     asset_info = {"id": ASSET_ID, "other": "data"}
-    asset = Asset(auth_mock, asset_info=asset_info)
+    asset = Asset(MagicMock(), asset_info=asset_info)
     assert repr(asset) == repr(asset_info)
 
 
@@ -60,16 +66,39 @@ def test_repr(auth_mock):
         "Sc 2: Both asset_id and asset_info not provided",
     ],
 )
-def test_init_asset_failure(auth_mock, asset_id, asset_info, expected_error):
+def test_init_should_accept_only_asset_id_or_info(asset_id, asset_info, expected_error):
     with pytest.raises(ValueError) as err:
-        Asset(auth_mock, asset_id=asset_id, asset_info=asset_info)
-        assert expected_error == err
+        Asset(MagicMock(), asset_id=asset_id, asset_info=asset_info)
+    assert expected_error == str(err.value)
 
 
-def test_should_get_id_from_info(auth_mock, requests_mock):
+@pytest.mark.parametrize(
+    "auth_object, asset_id, asset_info",
+    [
+        (
+            "auth_mock",
+            ASSET_ID,
+            None,
+        ),
+        (
+            "magic_mock",
+            None,
+            {"id": ASSET_ID, "other": "data"},
+        ),
+    ],
+    ids=[
+        "Sc 1: test_should_initialize_with_retrieved_info.",
+        "Sc 2: test_should_initialize_with_provided_info.",
+    ],
+)
+def test_should_get_id_from_info(
+    requests_mock, auth_fixture, auth_object, asset_id, asset_info
+):
     url_asset_info = endpoint(f"/v2/assets/{ASSET_ID}/metadata")
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
-    asset = Asset(auth=auth_mock, asset_info={"id": ASSET_ID})
+    asset = Asset(
+        auth=auth_fixture[auth_object], asset_info=asset_info, asset_id=asset_id
+    )
     assert asset.asset_id == ASSET_ID
 
 
