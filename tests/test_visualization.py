@@ -13,8 +13,6 @@ from shapely import wkt
 from .context import VizTools, folium_base_map
 
 # pylint: disable=unused-import,wrong-import-order
-from .fixtures import auth_account_mock, auth_mock, auth_project_mock, job_mock
-
 # pylint: disable=unused-argument
 
 

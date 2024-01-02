@@ -5,27 +5,7 @@ import geojson
 import pytest
 
 from .context import Job
-from .fixtures import (
-    JOB_ID,
-    JOB_ID_2,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    job_mock,
-    jobcollection_empty_mock,
-    jobcollection_live,
-    jobcollection_multiple_mock,
-    jobcollection_single_mock,
-    jobs_live,
-    jobs_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    username_test_live,
-)
+from .fixtures import JOB_ID, JOB_ID_2
 
 # pylint: disable=unused-import,wrong-import-order
 from .fixtures.fixtures_globals import API_HOST

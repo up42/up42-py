@@ -10,22 +10,7 @@ from up42.utils import get_up42_py_version
 from .context import Auth
 
 # pylint: disable=unused-import
-from .fixtures import (
-    PROJECT_APIKEY,
-    PROJECT_ID,
-    TOKEN,
-    WORKSPACE_ID,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    username_test_live,
-)
+from .fixtures import PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID
 
 
 def test_auth_kwargs():

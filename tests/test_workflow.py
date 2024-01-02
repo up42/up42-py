@@ -5,33 +5,7 @@ from shapely.geometry import box
 
 # pylint: disable=unused-import,wrong-import-order
 from .context import Job, JobCollection, Workflow
-from .fixtures import (
-    ASSET_ID,
-    JOB_ID,
-    JOB_NAME,
-    JOBTASK_ID,
-    JSON_WORKFLOW_ESTIMATION,
-    JSON_WORKFLOW_TASKS,
-    PROJECT_ID,
-    asset_mock,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    job_mock,
-    jobcollection_single_mock,
-    jobtask_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    project_mock,
-    project_mock_max_concurrent_jobs,
-    username_test_live,
-    workflow_mock,
-    workflow_mock_empty,
-)
+from .fixtures import ASSET_ID, JOB_ID, JOB_NAME, JOBTASK_ID, JSON_WORKFLOW_ESTIMATION, JSON_WORKFLOW_TASKS, PROJECT_ID
 from .fixtures.fixtures_globals import API_HOST
 
 

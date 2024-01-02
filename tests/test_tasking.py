@@ -6,27 +6,7 @@ import pytest
 import requests
 
 # pylint: disable=unused-import
-from .fixtures import (
-    DATA_PRODUCT_ID,
-    QUOTATION_ID,
-    WORKSPACE_ID,
-    WRONG_FEASIBILITY_ID,
-    WRONG_OPTION_ID,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    tasking_choose_feasibility_mock,
-    tasking_get_feasibility_mock,
-    tasking_live,
-    tasking_mock,
-    username_test_live,
-)
+from .fixtures import DATA_PRODUCT_ID, QUOTATION_ID, WORKSPACE_ID, WRONG_FEASIBILITY_ID, WRONG_OPTION_ID
 
 LIVE_TEST_WORKSPACE_ID = os.getenv("LIVE_TEST_WORKSPACE_ID")
 LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")

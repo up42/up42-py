@@ -4,24 +4,7 @@ import requests
 from .context import Job, Project, Workflow
 
 # pylint: disable=unused-import
-from .fixtures import (
-    JOB_ID,
-    WORKFLOW_DESCRIPTION,
-    WORKFLOW_NAME,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    project_live,
-    project_mock,
-    project_mock_max_concurrent_jobs,
-    username_test_live,
-)
+from .fixtures import JOB_ID, WORKFLOW_DESCRIPTION, WORKFLOW_NAME
 from .fixtures.fixtures_globals import API_HOST
 
 MAX_CONCURRENT_JOBS = 12

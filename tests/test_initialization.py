@@ -5,34 +5,7 @@ import up42
 
 # pylint: disable=unused-import
 from .context import Asset, Catalog, Job, JobCollection, JobTask, Order, Project, Storage, Workflow
-from .fixtures import (
-    ASSET_ID,
-    JOB_ID,
-    JOBTASK_ID,
-    ORDER_ID,
-    PROJECT_APIKEY,
-    PROJECT_ID,
-    WORKFLOW_ID,
-    asset_mock,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    job_mock,
-    jobcollection_single_mock,
-    jobs_mock,
-    jobtask_mock,
-    order_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    project_mock,
-    storage_mock,
-    username_test_live,
-    workflow_mock,
-)
+from .fixtures import ASSET_ID, JOB_ID, JOBTASK_ID, ORDER_ID, PROJECT_APIKEY, PROJECT_ID, WORKFLOW_ID
 from .fixtures.fixtures_globals import API_HOST
 
 

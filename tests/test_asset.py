@@ -1,4 +1,3 @@
-import tempfile
 from pathlib import Path
 
 import pystac
@@ -6,23 +5,7 @@ import pytest
 
 # pylint: disable=unused-import
 from .context import Asset
-from .fixtures import (
-    ASSET_ID,
-    DOWNLOAD_URL,
-    DOWNLOAD_URL2,
-    JSON_ASSET,
-    STAC_ASSET_HREF,
-    asset_live,
-    asset_mock,
-    asset_mock2,
-    assets_fixture,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-)
+from .fixtures import ASSET_ID, DOWNLOAD_URL, JSON_ASSET, STAC_ASSET_HREF
 
 
 def test_init(asset_mock):

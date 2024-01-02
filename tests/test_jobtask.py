@@ -3,21 +3,7 @@ import tempfile
 from pathlib import Path
 
 # pylint: disable=unused-import
-from .context import JobTask
-from .fixtures import (
-    DOWNLOAD_URL,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    jobtask_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    username_test_live,
-)
+from .fixtures import DOWNLOAD_URL
 from .fixtures.fixtures_globals import API_HOST
 
 

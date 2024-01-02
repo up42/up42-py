@@ -8,31 +8,12 @@ import pandas as pd
 import pytest
 
 from .context import Order
-from .fixtures import (
-    DATA_PRODUCT_ID,
-    ORDER_ID,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    catalog_live,
-    catalog_mock,
-    catalog_pagination_mock,
-    catalog_usagetype_mock,
-    order_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    username_test_live,
-)
+from .fixtures import DATA_PRODUCT_ID, ORDER_ID
 
 # pylint: disable=unused-import
 from .fixtures.fixtures_globals import API_HOST
 
 # pylint: disable=unused-import
-from .test_order import order_parameters
 
 with open(
     Path(__file__).resolve().parent / "mock_data/search_params_simple.json",

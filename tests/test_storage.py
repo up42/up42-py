@@ -7,28 +7,7 @@ import requests
 
 # pylint: disable=unused-import
 from .context import AllowedStatuses, Asset, Order, Storage, query_paginated_endpoints
-from .fixtures import (
-    ASSET_ID,
-    JSON_ASSET,
-    JSON_ORDER,
-    JSON_ORDERS,
-    JSON_STORAGE_STAC,
-    ORDER_ID,
-    USER_ID,
-    WORKSPACE_ID,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    storage_live,
-    storage_mock,
-    username_test_live,
-)
+from .fixtures import ASSET_ID, JSON_ASSET, JSON_ORDER, JSON_ORDERS, JSON_STORAGE_STAC, ORDER_ID, USER_ID, WORKSPACE_ID
 from .fixtures.fixtures_globals import API_HOST
 
 

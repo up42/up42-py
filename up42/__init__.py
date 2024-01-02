@@ -20,25 +20,7 @@
     ```
 """
 
-# from pathlib import Path
 
-# from up42.asset import Asset
-# from up42.auth import Auth
-# from up42.catalog import Catalog
-# from up42.initialization import *  # defined by __all__
-# from up42.job import Job
-# from up42.jobcollection import JobCollection
-# from up42.jobtask import JobTask
-# from up42.main import *  # defined by __all__
-# from up42.order import Order
-# from up42.project import Project
-# from up42.storage import Storage
-# from up42.tasking import Tasking
-# from up42.tools import get_example_aoi, read_vector_file
 from up42.utils import get_up42_py_version
-
-# from up42.viztools import draw_aoi
-# from up42.webhooks import Webhook
-# from up42.workflow import Workflow
 
 __version__ = get_up42_py_version()

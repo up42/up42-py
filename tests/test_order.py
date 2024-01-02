@@ -1,32 +1,10 @@
 import os
-from copy import deepcopy
 
 import pytest
 
 # pylint: disable=unused-import
 from .context import Asset, Order
-from .fixtures import (
-    ASSET_ORDER_ID,
-    JSON_GET_ASSETS_RESPONSE,
-    JSON_ORDER_ASSET,
-    ORDER_ID,
-    asset_live,
-    asset_mock,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    catalog_mock,
-    order_live,
-    order_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    read_test_order_info,
-    username_test_live,
-)
+from .fixtures import ASSET_ORDER_ID, JSON_GET_ASSETS_RESPONSE, ORDER_ID
 from .fixtures.fixtures_globals import API_HOST
 
 
