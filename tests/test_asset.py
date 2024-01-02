@@ -43,7 +43,7 @@ def test_init(asset_mock):
 
 def test_should_delegate_repr_to_info():
     asset_info = {"id": ASSET_ID, "other": "data"}
-    asset = Asset(MagicMock(), asset_info=asset_info)
+    asset = Asset(auth=MagicMock(), asset_info=asset_info)
     assert repr(asset) == repr(asset_info)
 
 
@@ -68,38 +68,22 @@ def test_should_delegate_repr_to_info():
 )
 def test_init_should_accept_only_asset_id_or_info(asset_id, asset_info, expected_error):
     with pytest.raises(ValueError) as err:
-        Asset(MagicMock(), asset_id=asset_id, asset_info=asset_info)
+        Asset(auth=MagicMock(), asset_id=asset_id, asset_info=asset_info)
     assert expected_error == str(err.value)
 
 
-@pytest.mark.parametrize(
-    "auth_object, asset_id, asset_info",
-    [
-        (
-            "auth_mock",
-            ASSET_ID,
-            None,
-        ),
-        (
-            "magic_mock",
-            None,
-            {"id": ASSET_ID, "other": "data"},
-        ),
-    ],
-    ids=[
-        "Sc 1: test_should_initialize_with_retrieved_info.",
-        "Sc 2: test_should_initialize_with_provided_info.",
-    ],
-)
-def test_should_get_id_from_info(
-    requests_mock, auth_fixture, auth_object, asset_id, asset_info
-):
+def test_should_initialize_with_retrieved_info(requests_mock, auth_mock):
     url_asset_info = endpoint(f"/v2/assets/{ASSET_ID}/metadata")
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
-    asset = Asset(
-        auth=auth_fixture[auth_object], asset_info=asset_info, asset_id=asset_id
-    )
+    asset = Asset(auth=auth_mock, asset_id=ASSET_ID)
     assert asset.asset_id == ASSET_ID
+
+
+def test_should_initialize_with_provided_info():
+    provided_info = {"id": ASSET_ID, "name": "test name"}
+    asset = Asset(auth=MagicMock(), asset_info=provided_info)
+    assert asset.asset_id == ASSET_ID
+    assert repr(asset.info) == repr(provided_info)
 
 
 def test_asset_info(asset_mock):
