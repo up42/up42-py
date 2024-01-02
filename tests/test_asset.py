@@ -31,11 +31,6 @@ from .fixtures import (
 )
 
 
-@pytest.fixture
-def auth_fixture(auth_mock):
-    return {"auth_mock": auth_mock, "magic_mock": MagicMock()}
-
-
 def test_init(asset_mock):
     assert isinstance(asset_mock, Asset)
     assert asset_mock.asset_id == ASSET_ID
@@ -76,14 +71,14 @@ def test_should_initialize_with_retrieved_info(requests_mock, auth_mock):
     url_asset_info = endpoint(f"/v2/assets/{ASSET_ID}/metadata")
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
     asset = Asset(auth=auth_mock, asset_id=ASSET_ID)
-    assert asset.asset_id == ASSET_ID
+    assert asset.info == JSON_ASSET
 
 
 def test_should_initialize_with_provided_info():
     provided_info = {"id": ASSET_ID, "name": "test name"}
     asset = Asset(auth=MagicMock(), asset_info=provided_info)
     assert asset.asset_id == ASSET_ID
-    assert repr(asset.info) == repr(provided_info)
+    assert asset.info == provided_info
 
 
 def test_asset_info(asset_mock):
