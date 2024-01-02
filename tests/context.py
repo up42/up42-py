@@ -4,6 +4,7 @@ import sys
 
 from up42 import main
 from up42.asset import Asset
+from up42.asset_searcher import query_paginated_endpoints
 from up42.auth import Auth
 from up42.catalog import Catalog
 from up42.estimation import Estimation
@@ -49,6 +50,7 @@ from up42.utils import (
     fc_to_query_geometry,
     filter_jobs_on_mode,
     format_time,
+    get_up42_py_version,
 )
 from up42.viztools import VizTools, folium_base_map
 from up42.webhooks import Webhook, Webhooks

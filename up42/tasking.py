@@ -10,6 +10,7 @@ from shapely.geometry import Point, Polygon
 
 from up42.auth import Auth
 from up42.catalog import CatalogBase
+from up42.host import endpoint
 from up42.utils import (
     any_vector_to_fc,
     autocomplete_order_parameters,
@@ -149,7 +150,7 @@ class Tasking(CatalogBase):
             JSON: The json representation with the quotations resulted from the search.
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/v2/tasking/quotation?page=0&sort={sort}"
+        url = endpoint(f"/v2/tasking/quotation?page=0&sort={sort}")
         if quotation_id is not None:
             url += f"&id={quotation_id}"
         if workspace_id is not None:
@@ -183,7 +184,7 @@ class Tasking(CatalogBase):
         if decision not in ["ACCEPTED", "REJECTED"]:
             raise ValueError("Possible desicions are only ACCEPTED or REJECTED.")
 
-        url = f"{self.auth._endpoint()}/v2/tasking/quotation/{quotation_id}"
+        url = endpoint(f"/v2/tasking/quotation/{quotation_id}")
 
         decision_payload = {"decision": decision}
 
@@ -217,7 +218,7 @@ class Tasking(CatalogBase):
             JSON: The json representation with the feasibility resulted from the search.
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/v2/tasking/feasibility?page=0&sort={sort}"
+        url = endpoint(f"/v2/tasking/feasibility?page=0&sort={sort}")
         if feasibility_id is not None:
             url += f"&id={feasibility_id}"
         if workspace_id is not None:
@@ -247,7 +248,7 @@ class Tasking(CatalogBase):
         Returns:
             dict: The confirmation to the decided quotation plus metadata.
         """
-        url = f"{self.auth._endpoint()}/v2/tasking/feasibility/{feasibility_id}"
+        url = endpoint(f"/v2/tasking/feasibility/{feasibility_id}")
         accepted_option_payload = {"acceptedOptionId": accepted_option_id}
         response_json = self.auth._request(request_type="PATCH", url=url, data=accepted_option_payload)
         return response_json

@@ -10,22 +10,25 @@ from pystac_client import CollectionClient
 
 from ..context import Asset
 from .fixtures_globals import (
+    API_HOST,
     ASSET_ID,
     ASSET_ID2,
     DOWNLOAD_URL,
     DOWNLOAD_URL2,
     JSON_ASSET,
+    JSON_STAC_CATALOG_RESPONSE,
     JSON_STORAGE_STAC,
     STAC_ASSET_ID,
     STAC_ASSET_URL,
     STAC_COLLECTION_ID,
+    URL_STAC_CATALOG,
 )
 
 
 @pytest.fixture()
 def asset_mock(auth_mock, requests_mock):
     # asset info
-    url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/metadata"
+    url_asset_info = f"{API_HOST}/v2/assets/{ASSET_ID}/metadata"
     requests_mock.get(url=url_asset_info, json=JSON_ASSET)
 
     mock_item_collection = ItemCollection(
@@ -40,7 +43,7 @@ def asset_mock(auth_mock, requests_mock):
         ]
     )
 
-    url_asset_stac_info = f"{auth_mock._endpoint()}/v2/assets/stac/search"
+    url_asset_stac_info = f"{API_HOST}/v2/assets/stac/search"
 
     requests_mock.post(
         url_asset_stac_info,
@@ -52,58 +55,7 @@ def asset_mock(auth_mock, requests_mock):
     )
 
     # asset stac item
-    url_asset_stac = f"{auth_mock._endpoint()}/v2/assets/stac"
-
-    catalog = {
-        "type": "Catalog",
-        "id": "up42-storage",
-        "stac_version": "1.0.0",
-        "description": "UP42 Storage STAC API",
-        "links": [
-            {
-                "rel": "root",
-                "href": "https://api.up42.com/v2/assets/stac",
-                "type": "application/json",
-                "title": "UP42 Storage",
-            },
-            {
-                "rel": "data",
-                "href": "https://api.up42.com/v2/assets/stac/collections",
-                "type": "application/json",
-            },
-            {
-                "rel": "search",
-                "href": "https://api.up42.com/v2/assets/stac/search",
-                "type": "application/json",
-                "method": "POST",
-            },
-            {
-                "rel": "self",
-                "href": "https://api.up42.com/v2/assets/stac",
-                "type": "application/json",
-            },
-        ],
-        "stac_extensions": [],
-        "conformsTo": [
-            "https://api.stacspec.org/v1.0.0-rc.1/collections",
-            "https://api.stacspec.org/v1.0.0-rc.1/core",
-            "http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/features-filter",
-            "http://www.opengis.net/spec/ogcapi-features-4/1.0/conf/simpletx",
-            "https://api.stacspec.org/v1.0.0-rc.1/item-search#filter",
-            "http://www.opengis.net/spec/cql2/1.0/conf/cql2-text",
-            "https://api.stacspec.org/v1.0.0-rc.1/item-search",
-            "https://api.stacspec.org/v1.0.0-rc.1/ogcapi-features/extensions/transaction",
-            "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core",
-            "http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/filter",
-            "http://www.opengis.net/spec/cql2/1.0/conf/basic-cql2",
-            "https://api.stacspec.org/v1.0.0-rc.1/ogcapi-features",
-            "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson",
-            "https://api.stacspec.org/v1.0.0-rc.1/item-search#sort",
-            "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30",
-        ],
-        "title": "UP42 Storage",
-    }
-    requests_mock.get(url=url_asset_stac, json=catalog)
+    requests_mock.get(url=URL_STAC_CATALOG, json=JSON_STAC_CATALOG_RESPONSE)
 
     # asset update
     updated_json_asset = JSON_ASSET.copy()
@@ -113,7 +65,7 @@ def asset_mock(auth_mock, requests_mock):
 
     # download url
     requests_mock.post(
-        url=f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID}/download-url",
+        url=f"{API_HOST}/v2/assets/{ASSET_ID}/download-url",
         json={"url": DOWNLOAD_URL},
     )
 
@@ -141,7 +93,7 @@ def asset_mock(auth_mock, requests_mock):
         ),
     )
     requests_mock.get(
-        url=f"{auth_mock._endpoint()}/v2/assets/stac/collections/{STAC_COLLECTION_ID}",
+        url=f"{API_HOST}/v2/assets/stac/collections/{STAC_COLLECTION_ID}",
         json=mock_client.to_dict(),
     )
 
@@ -152,14 +104,14 @@ def asset_mock(auth_mock, requests_mock):
 
 @pytest.fixture()
 def asset_mock2(auth_mock, requests_mock):
-    url_asset_info = f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID2}/metadata"
-    requests_mock.get(url=url_asset_info, json={**JSON_ASSET, "id": ASSET_ID2})
+    url_asset_info = f"{API_HOST}/v2/assets/{ASSET_ID2}/metadata"
+    requests_mock.get(url=url_asset_info, json=JSON_ASSET)
     requests_mock.post(
-        url=f"{auth_mock._endpoint()}/v2/assets/{ASSET_ID2}/download-url",
+        url=f"{API_HOST}/v2/assets/{ASSET_ID2}/download-url",
         json={"url": DOWNLOAD_URL2},
     )
     requests_mock.post(
-        url=f"{auth_mock._endpoint()}/v2/assets/{STAC_ASSET_ID}/download-url",
+        url=f"{API_HOST}/v2/assets/{STAC_ASSET_ID}/download-url",
         json={"url": STAC_ASSET_URL},
     )
     mock_file = Path(__file__).resolve().parents[1] / "mock_data/aoi_berlin.geojson"

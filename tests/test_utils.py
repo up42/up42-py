@@ -1,6 +1,7 @@
 import json
 import tempfile
 from pathlib import Path
+from unittest.mock import Mock, patch
 
 import geopandas as gpd
 import pandas as pd
@@ -16,6 +17,7 @@ from .context import (
     fc_to_query_geometry,
     filter_jobs_on_mode,
     format_time,
+    get_up42_py_version,
 )
 
 POLY = Polygon([(0, 0), (1, 1), (1, 0)])
@@ -288,3 +290,9 @@ def test_autocomplete_order_parameters():
     assert order_parameters["params"]["existing_param1"] is not None
     assert order_parameters["params"]["geometry"] is None
     assert order_parameters["params"]["acquisitionMode"] is None
+
+
+@patch("importlib.metadata.version", return_value="some_version")
+def test_get_up42_py_version(version: Mock):
+    assert get_up42_py_version() == "some_version"
+    version.assert_called_with("up42-py")

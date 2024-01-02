@@ -17,7 +17,7 @@ jobs:
   test:
     working_directory: *workspace-dir
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.11
     steps:
       - attach_workspace:
           at: *workspace-dir
@@ -50,7 +50,7 @@ jobs:
             - ~/.cache/pre-commit
       - run:
           name: Running tests
-          command: poetry run make test
+          command: poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
       - store_artifacts:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
@@ -74,7 +74,7 @@ jobs:
 
   test_live:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.11
     steps:
       - checkout
       - run:
@@ -84,21 +84,15 @@ jobs:
             poetry install --no-ansi
       - run:
           name: Runnning tests
-          command: poetry run python -m pytest --runlive --durations=5
+          command: poetry run pytest --runlive --durations=5
   deploy:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.11
     steps:
       - checkout
       - run:
-          name: Installing packaging utils
-          command: python -m pip install --user packaging twine
-      - run:
-          name: Build package
-          command: make package
-      - run:
-          name: Upload to PyPi
-          command: make upload
+          name: Build and upload package
+          command: poetry publish --build
 
 workflows:
   test_and_deploy:

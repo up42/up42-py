@@ -4,6 +4,7 @@ import pytest
 
 from ..context import Workflow
 from .fixtures_globals import (
+    API_HOST,
     JOB_ID,
     JOB_NAME,
     JSON_WORKFLOW_TASKS,
@@ -22,7 +23,7 @@ def workflow_mock_empty(auth_mock, requests_mock):
     """
     # info
     url_workflow_info = (
-        f"{auth_mock._endpoint()}/projects/{PROJECT_ID}/workflows/{WORKFLOW_ID}"
+        f"{API_HOST}/projects/{PROJECT_ID}/workflows/{WORKFLOW_ID}"
     )
     json_workflow_info = {
         "data": {
@@ -48,7 +49,7 @@ def workflow_mock_empty(auth_mock, requests_mock):
         "data": [],
     }
     url_workflow_tasks = (
-        f"{workflow.auth._endpoint()}/projects/{workflow.project_id}/workflows/"
+        f"{API_HOST}/projects/{workflow.project_id}/workflows/"
         f"{workflow.workflow_id}/tasks"
     )
     requests_mock.get(url=url_workflow_tasks, json=json_empty_workflow_tasks)
@@ -60,7 +61,7 @@ def workflow_mock_empty(auth_mock, requests_mock):
 def workflow_mock(auth_mock, requests_mock):
     # info
     url_workflow_info = (
-        f"{auth_mock._endpoint()}/projects/{PROJECT_ID}/workflows/{WORKFLOW_ID}"
+        f"{API_HOST}/projects/{PROJECT_ID}/workflows/{WORKFLOW_ID}"
     )
     json_workflow_info = {
         "data": {
@@ -81,12 +82,12 @@ def workflow_mock(auth_mock, requests_mock):
     )
 
     # get_workflow_tasks
-    url_workflow_tasks = f"{workflow.auth._endpoint()}/projects/{PROJECT_ID}/workflows/{workflow.workflow_id}/tasks"
+    url_workflow_tasks = f"{API_HOST}/projects/{PROJECT_ID}/workflows/{workflow.workflow_id}/tasks"
     requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
 
     # get_compatible_blocks
     url_compatible_blocks = (
-        f"{workflow.auth._endpoint()}/projects/{workflow.project_id}/"
+        f"{API_HOST}/projects/{workflow.project_id}/"
         f"workflows/{workflow.workflow_id}/compatible-blocks?parentTaskName=tiling:1"
     )
     json_compatible_blocks = {
@@ -102,14 +103,14 @@ def workflow_mock(auth_mock, requests_mock):
 
     # run_job
     url_run_job = (
-        f"{workflow.auth._endpoint()}/projects/{workflow.project_id}/"
+        f"{API_HOST}/projects/{workflow.project_id}/"
         f"workflows/{workflow.workflow_id}/jobs?name={JOB_NAME + '_py'}"
     )
     json_run_job = {"data": {"id": JOB_ID}}
     requests_mock.post(url=url_run_job, json=json_run_job)
 
     # get_jobs
-    url_get_jobs = f"{workflow.auth._endpoint()}/projects/{workflow.project_id}/jobs"
+    url_get_jobs = f"{API_HOST}/projects/{workflow.project_id}/jobs"
     json_get_jobs = {
         "data": [
             {

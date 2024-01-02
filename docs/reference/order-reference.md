@@ -1,6 +1,6 @@
 # Order
 
-The Order class enables access to [catalog](../../catalog) and [tasking](../../examples/tasking/tasking-example) orders tracking.
+The Order class enables access to [catalog](../../notebooks/catalog-example) and [tasking](../../notebooks/tasking-example) orders tracking.
 
 ```python
 order = up42.initialize_order(order_id="ea36dee9-fed6-457e-8400-2c20ebd30f44")
@@ -79,4 +79,22 @@ The returned format is `str`.
 
 ```python
 order.track_status(report_time=150)
+```
+
+## Assets
+
+### get_assets()
+
+The `get_assets()` function returns a list of order assets.
+
+```python
+get_assets()
+```
+
+The returned format is `list[Asset]`.
+
+<h5> Example </h5>
+
+```python
+order.get_assets()
 ```

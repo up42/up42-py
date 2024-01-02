@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Union
 from warnings import warn
 
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.job import Job
 from up42.jobcollection import JobCollection
 from up42.utils import filter_jobs_on_mode, get_logger
@@ -40,7 +41,7 @@ class Project:
         """
         Gets and updates the project metadata information.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}"
+        url = endpoint(f"/projects/{self.project_id}")
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
@@ -84,7 +85,7 @@ class Project:
                 logger.info(f"Using existing workflow: {name} - {existing_workflow.workflow_id}")
                 return existing_workflow
 
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows/"
+        url = endpoint(f"/projects/{self.project_id}/workflows/")
         payload = {"name": name, "description": description}
         response_json = self.auth._request(request_type="POST", url=url, data=payload)
         workflow_id = response_json["data"]["id"]
@@ -102,7 +103,7 @@ class Project:
         Returns:
             List of Workflow objects in the project or alternatively JSON info of the workflows.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/workflows"
+        url = endpoint(f"/projects/{self.project_id}/workflows")
         response_json = self.auth._request(request_type="GET", url=url)
         workflows_json = response_json["data"]
         logger.info(f"Got {len(workflows_json)} workflows for project {self.project_id}.")
@@ -161,7 +162,7 @@ class Project:
         sort = f"{sortby},{'desc' if descending else 'asc'}"
 
         page = 0
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs?page={page}&sort={sort}"
+        url = endpoint(f"/projects/{self.project_id}/jobs?page={page}&sort={sort}")
         response_json = self.auth._request(request_type="GET", url=url)
         jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
 
@@ -169,7 +170,7 @@ class Project:
         logging.getLogger("up42.utils").setLevel(logging.CRITICAL)
         while len(response_json["data"]) > 0 and len(jobs_json) < limit:
             page += 1
-            url = f"{self.auth._endpoint()}/projects/{self.project_id}/jobs?page={page}&sort={sort}"
+            url = endpoint(f"/projects/{self.project_id}/jobs?page={page}&sort={sort}")
             response_json = self.auth._request(request_type="GET", url=url)
             if len(response_json["data"]) > 0:
                 jobs_json.extend(filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs))
@@ -198,7 +199,7 @@ class Project:
         Returns:
             The project settings.
         """
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
+        url = endpoint(f"/projects/{self.project_id}/settings")
         response_json = self.auth._request(request_type="GET", url=url)
         project_settings = response_json["data"]
         return project_settings
@@ -236,7 +237,7 @@ class Project:
         )
         current_settings = {d["name"]: d for d in self.get_project_settings()}
 
-        url = f"{self.auth._endpoint()}/projects/{self.project_id}/settings"
+        url = endpoint(f"/projects/{self.project_id}/settings")
         payload: Dict = {"settings": {}}
         desired_settings = {
             "JOB_QUERY_MAX_AOI_SIZE": max_aoi_size,

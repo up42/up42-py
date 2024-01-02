@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
@@ -34,7 +35,7 @@ class Webhook:
         """
         Gets and updates the webhook metadata information.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
+        url = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
@@ -47,7 +48,7 @@ class Webhook:
         Returns:
             A dict with information about the test events.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}/tests"
+        url = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}/tests")
         response_json = self.auth._request(
             request_type="POST",
             url=url,
@@ -83,7 +84,7 @@ class Webhook:
             "secret": secret if secret is not None else self._info["secret"],
             "active": active if active is not None else self._info["active"],
         }
-        url_put = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
+        url_put = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
         response_json = self.auth._request(request_type="PUT", url=url_put, data=input_parameters)
         self._info = response_json["data"]
         logger.info(f"Updated webhook {self}")
@@ -93,7 +94,7 @@ class Webhook:
         """
         Deletes a registered webhook.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
+        url = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
         self.auth._request(request_type="DELETE", url=url)
         logger.info(f"Successfully deleted Webhook: {self.webhook_id}")
 
@@ -130,7 +131,7 @@ class Webhooks:
         Returns:
             A dict of the available webhook events.
         """
-        url = f"{self.auth._endpoint()}/webhooks/events"
+        url = endpoint("/webhooks/events")
         response_json = self.auth._request(request_type="GET", url=url)
         return response_json["data"]
 
@@ -144,7 +145,7 @@ class Webhooks:
         Returns:
             A list of the registered webhooks for this workspace.
         """
-        url = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks"
+        url = endpoint(f"/workspaces/{self.workspace_id}/webhooks")
         response_json = self.auth._request(request_type="GET", url=url)
         logger.info(f"Queried {len(response_json['data'])} webhooks.")
 
@@ -188,7 +189,7 @@ class Webhooks:
             "secret": secret,
             "active": active,
         }
-        url_post = f"{self.auth._endpoint()}/workspaces/{self.workspace_id}/webhooks"
+        url_post = endpoint(f"/workspaces/{self.workspace_id}/webhooks")
         response_json = self.auth._request(request_type="POST", url=url_post, data=input_parameters)
         webhook = Webhook(
             auth=self.auth,
