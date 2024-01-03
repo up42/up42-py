@@ -33,9 +33,10 @@ repos:
     hooks:
       - id: mypy
         args: [--no-strict-optional, --ignore-missing-imports]
-        exclude: ^tests/
         additional_dependencies:
           - "types-PyYAML"
           - "types-requests"
           - "sqlalchemy2-stubs"
           - "types-attrs"
+          - "types-python-dateutil"
+          - "types-mock"
