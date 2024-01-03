@@ -10,7 +10,7 @@ from datetime import datetime
 from datetime import time as datetime_time
 from functools import wraps
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Union, cast
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 import requests
@@ -421,4 +421,4 @@ def read_json(path_or_dict: Union[dict, str, Path, None]) -> Optional[dict]:
                     return json.load(file)
             except FileNotFoundError as ex:
                 raise ValueError(f"Selected file {path_or_dict} does not exist!") from ex
-    return path_or_dict
+    return cast(path_or_dict, Optional[dict])
