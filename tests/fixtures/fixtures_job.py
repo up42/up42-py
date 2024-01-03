@@ -2,7 +2,8 @@ import os
 
 import pytest
 
-from ..context import Job
+from up42.job import Job
+
 from .fixtures_globals import (
     API_HOST,
     DOWNLOAD_URL,

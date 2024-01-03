@@ -10,7 +10,7 @@ from folium import Map
 from mock import patch
 from shapely import wkt
 
-from .context import VizTools, folium_base_map
+from up42.viztools import VizTools, folium_base_map
 
 # pylint: disable=unused-import,wrong-import-order
 # pylint: disable=unused-argument

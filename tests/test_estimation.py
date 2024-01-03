@@ -1,7 +1,8 @@
 import pytest
 
 # pylint: disable=unused-import,wrong-import-order
-from .context import Estimation
+from up42.estimation import Estimation
+
 from .fixtures import JSON_WORKFLOW_ESTIMATION, PROJECT_ID
 from .fixtures.fixtures_globals import API_HOST
 

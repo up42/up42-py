@@ -10,7 +10,7 @@ from dateutil.parser import parse
 from geopandas import GeoDataFrame
 from shapely.geometry import LinearRing, Polygon
 
-from .context import (
+from up42.utils import (
     any_vector_to_fc,
     autocomplete_order_parameters,
     download_from_gcs_unpack,

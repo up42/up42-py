@@ -5,9 +5,8 @@ import pytest
 import requests
 
 from up42 import host
+from up42.auth import Auth
 from up42.utils import get_up42_py_version
-
-from .context import Auth
 
 # pylint: disable=unused-import
 from .fixtures import PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID

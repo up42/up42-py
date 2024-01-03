@@ -5,8 +5,13 @@ import pystac_client
 import pytest
 import requests
 
+from up42.asset import Asset
+from up42.asset_searcher import query_paginated_endpoints
+from up42.order import Order
+
 # pylint: disable=unused-import
-from .context import AllowedStatuses, Asset, Order, Storage, query_paginated_endpoints
+from up42.storage import AllowedStatuses, Storage
+
 from .fixtures import ASSET_ID, JSON_ASSET, JSON_ORDER, JSON_ORDERS, JSON_STORAGE_STAC, ORDER_ID, USER_ID, WORKSPACE_ID
 from .fixtures.fixtures_globals import API_HOST
 

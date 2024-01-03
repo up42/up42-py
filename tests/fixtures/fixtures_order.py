@@ -4,7 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from ..context import Order
+from up42.order import Order
+
 from .fixtures_globals import API_HOST, ASSET_ORDER_ID, ORDER_ID, WORKSPACE_ID
 
 JSON_ORDER_ASSET = {

@@ -4,7 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from ..context import Tasking
+from up42.tasking import Tasking
+
 from .fixtures_globals import API_HOST, DATA_PRODUCT_ID, QUOTATION_ID, WORKSPACE_ID, WRONG_FEASIBILITY_ID
 
 LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")

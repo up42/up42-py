@@ -4,7 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from ..context import Catalog
+from up42.catalog import Catalog
+
 from .fixtures_globals import API_HOST, DATA_PRODUCT_ID
 
 

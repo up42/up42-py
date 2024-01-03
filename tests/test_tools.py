@@ -3,7 +3,7 @@ from pathlib import Path
 import geopandas as gpd
 import pytest
 
-from .context import get_example_aoi, read_vector_file
+from up42.tools import get_example_aoi, read_vector_file
 
 
 @pytest.mark.parametrize("vector_format", ["geojson", "kml", "wkt"])

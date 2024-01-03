@@ -2,8 +2,11 @@ import os
 
 import pytest
 
+from up42.asset import Asset
+
 # pylint: disable=unused-import
-from .context import Asset, Order
+from up42.order import Order
+
 from .fixtures import ASSET_ORDER_ID, JSON_GET_ASSETS_RESPONSE, ORDER_ID
 from .fixtures.fixtures_globals import API_HOST
 

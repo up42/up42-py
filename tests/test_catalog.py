@@ -7,7 +7,8 @@ import geopandas as gpd
 import pandas as pd
 import pytest
 
-from .context import Order
+from up42.order import Order
+
 from .fixtures import DATA_PRODUCT_ID, ORDER_ID
 
 # pylint: disable=unused-import

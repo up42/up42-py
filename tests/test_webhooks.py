@@ -1,7 +1,8 @@
 import pytest
 
 # pylint: disable=unused-import
-from .context import Webhook
+from up42.webhooks import Webhook
+
 from .fixtures import WEBHOOK_ID, WORKSPACE_ID
 
 

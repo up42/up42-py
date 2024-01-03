@@ -2,7 +2,8 @@ import os
 
 import pytest
 
-from ..context import Workflow
+from up42.workflow import Workflow
+
 from .fixtures_globals import (
     API_HOST,
     JOB_ID,

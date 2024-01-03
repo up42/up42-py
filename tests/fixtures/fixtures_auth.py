@@ -2,7 +2,9 @@ import os
 
 import pytest
 
-from ..context import Auth, main
+from up42 import main
+from up42.auth import Auth
+
 from .fixtures_globals import API_HOST, JSON_BALANCE, JSON_BLOCKS, PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID
 
 

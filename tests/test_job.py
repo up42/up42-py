@@ -7,7 +7,9 @@ from pathlib import Path
 import pytest
 
 # pylint: disable=unused-import
-from .context import Job, JobTask
+from up42.job import Job
+from up42.jobtask import JobTask
+
 from .fixtures import DOWNLOAD_URL, JOBTASK_ID
 from .fixtures.fixtures_globals import API_HOST
 

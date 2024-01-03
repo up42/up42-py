@@ -1,7 +1,8 @@
 import pytest
 import requests_mock
 
-from ..context import Project
+from up42.project import Project
+
 from .fixtures_globals import (
     API_HOST,
     JOB_ID,

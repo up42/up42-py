@@ -13,7 +13,9 @@ import pandas as pd
 import pytest
 import requests
 
-from .context import get_block_coverage, get_block_details, get_blocks, get_credits_balance, main, validate_manifest
+from up42 import main
+from up42.main import get_block_coverage, get_block_details, get_blocks, get_credits_balance, validate_manifest
+
 from .fixtures.fixtures_globals import API_HOST
 
 

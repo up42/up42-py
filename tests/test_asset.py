@@ -4,7 +4,8 @@ import pystac
 import pytest
 
 # pylint: disable=unused-import
-from .context import Asset
+from up42.asset import Asset
+
 from .fixtures import ASSET_ID, DOWNLOAD_URL, JSON_ASSET, STAC_ASSET_HREF
 
 

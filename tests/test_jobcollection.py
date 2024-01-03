@@ -4,7 +4,8 @@ from pathlib import Path
 import geojson
 import pytest
 
-from .context import Job
+from up42.job import Job
+
 from .fixtures import JOB_ID, JOB_ID_2
 
 # pylint: disable=unused-import,wrong-import-order

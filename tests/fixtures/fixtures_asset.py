@@ -7,7 +7,8 @@ from pystac import Item, ItemCollection
 from pystac.collection import Extent, SpatialExtent, TemporalExtent
 from pystac_client import CollectionClient
 
-from ..context import Asset
+from up42.asset import Asset
+
 from .fixtures_globals import (
     API_HOST,
     ASSET_ID,
