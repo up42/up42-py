@@ -1,17 +1,16 @@
-import json
 import os
-from copy import deepcopy
-from pathlib import Path
 
 import pytest
+
+from up42.host import endpoint
 
 # pylint: disable=unused-import
 from .context import Asset, Order
 from .fixtures import (
     ASSET_ORDER_ID,
     JSON_GET_ASSETS_RESPONSE,
-    JSON_ORDER_ASSET,
     ORDER_ID,
+    WORKSPACE_ID,
     asset_live,
     asset_mock,
     auth_account_live,
@@ -323,7 +322,7 @@ def test_estimate_order(order_parameters, auth_mock, requests_mock):
 def test_estimate_order_fail(
     order_parameters, auth_mock, requests_mock, expected_payload
 ):
-    url_order_estimation = f"{auth_mock._endpoint()}/v2/orders/estimate"
+    url_order_estimation = endpoint("/v2/orders/estimate")
     requests_mock.post(url=url_order_estimation, json=expected_payload)
     with pytest.raises(ValueError):
         Order.estimate(auth_mock, order_parameters)
