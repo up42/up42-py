@@ -17,10 +17,9 @@ class ProjectKeyToken:
             auth = HTTPBasicAuth(self.project_id, self.project_api_key)
             get_token_session = OAuth2Session(client=client)
             token_response = get_token_session.fetch_token(token_url=host.endpoint("/oauth/token"), auth=auth)
+            return token_response["data"]["accessToken"]
         except MissingTokenError as err:
             raise ValueError("Authentication was not successful, check the provided project credentials.") from err
-
-        return token_response["data"]["accessToken"]
 
 
 class UserToken:

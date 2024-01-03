@@ -35,15 +35,15 @@ class retry_if_401_invalid_token(retry_if_exception):
     def __init__(self):
         def is_http_401_error(exception):
             return (
-                    isinstance(
-                        exception,
-                        (
-                            requests.exceptions.HTTPError,
-                            requests.exceptions.RequestException,
-                        ),
-                    )
-                    and hasattr(exception.response, "status_code")  # check if response has status_code
-                    and exception.response.status_code == 401
+                isinstance(
+                    exception,
+                    (
+                        requests.exceptions.HTTPError,
+                        requests.exceptions.RequestException,
+                    ),
+                )
+                and hasattr(exception.response, "status_code")  # check if response has status_code
+                and exception.response.status_code == 401
             )
 
         super().__init__(predicate=is_http_401_error)
@@ -66,13 +66,13 @@ class retry_if_429_rate_limit(retry_if_exception):
 
 class Auth:
     def __init__(
-            self,
-            cfg_file: Union[str, Path, None] = None,
-            project_id: Optional[str] = None,
-            project_api_key: Optional[str] = None,
-            username: Optional[str] = None,
-            password: Optional[str] = None,
-            **kwargs,
+        self,
+        cfg_file: Union[str, Path, None] = None,
+        project_id: Optional[str] = None,
+        project_api_key: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        **kwargs,
     ):
         """
         The Auth class handles the authentication with UP42.
@@ -188,11 +188,11 @@ class Auth:
         reraise=True,
     )
     def _request_helper(
-            self,
-            request_type: str,
-            url: str,
-            data: dict = {},
-            querystring: dict = {},
+        self,
+        request_type: str,
+        url: str,
+        data: dict = {},
+        querystring: dict = {},
     ) -> requests.Response:
         """
         Helper function for the request, running the actual request with the correct headers.
@@ -230,12 +230,12 @@ class Auth:
         return response
 
     def _request(
-            self,
-            request_type: str,
-            url: str,
-            data: Union[dict, list] = {},
-            querystring: dict = {},
-            return_text: bool = True,
+        self,
+        request_type: str,
+        url: str,
+        data: Union[dict, list] = {},
+        querystring: dict = {},
+        return_text: bool = True,
     ):  # Union[str, dict, requests.Response]:
         """
         Handles retrying the request and automatically retries and gets a new token if
@@ -297,8 +297,8 @@ class Auth:
                     raise ValueError(response_text["error"])
                 return response_text
             except (
-                    KeyError,
-                    TypeError,
+                KeyError,
+                TypeError,
             ):  # Catalog search, JobTask logs etc. does not have the usual {"data":"",
                 # "error":""} format.
                 return response_text

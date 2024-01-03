@@ -7,12 +7,12 @@ class PySTACAuthClient(Client):
     """Pystac Client authenticated to access stac catalog."""
 
     def __init__(
-            self,
-            *args,
-            id="id",
-            description="description",
-            auth: Auth = None,
-            **kwargs,
+        self,
+        *args,
+        id="id",
+        description="description",
+        auth: Auth = None,
+        **kwargs,
     ):  # pylint: disable=redefined-builtin
         super().__init__(id=id, description=description, *args, **kwargs)  # type: ignore
         self.auth = auth
