@@ -323,6 +323,7 @@ def test_should_read_json(str_or_path):
 
     assert read_json(path_or_dict=str_or_path) == value
 
+
 def test_read_json_fails_if_path_not_found(str_or_path):
     with pytest.raises(ValueError) as ex:
         assert read_json(path_or_dict=str_or_path)
