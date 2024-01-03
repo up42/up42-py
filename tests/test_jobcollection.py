@@ -18,15 +18,20 @@ def test_jobcollection_multiple(jobcollection_multiple_mock):
     assert len(jobcollection_multiple_mock.jobs) == 2
 
 
+def worker(job):
+    return 1
+
+
 def test_job_iterator(jobcollection_multiple_mock, jobcollection_empty_mock, requests_mock):
-    worker = lambda job: 1
     res = jobcollection_multiple_mock.apply(worker, only_succeeded=False)
     assert len(res) == 2
     assert res[JOB_ID] == 1
     assert res[JOB_ID_2] == 1
 
-    worker = lambda job, add: add
-    res = jobcollection_multiple_mock.apply(worker, add=5, only_succeeded=False)
+    def worker_with_add(job, add):
+        return add
+
+    res = jobcollection_multiple_mock.apply(worker_with_add, add=5, only_succeeded=False)
     assert len(res) == 2
     assert res[JOB_ID] == 5
     assert res[JOB_ID_2] == 5
@@ -36,12 +41,12 @@ def test_job_iterator(jobcollection_multiple_mock, jobcollection_empty_mock, req
         url_job_info = f"{API_HOST}/projects/" f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
         requests_mock.get(url=url_job_info, json={"data": {"status": status[i]}, "error": {}})
 
-    res = jobcollection_multiple_mock.apply(worker, add=5, only_succeeded=True)
+    res = jobcollection_multiple_mock.apply(worker_with_add, add=5, only_succeeded=True)
     assert len(res) == 1
     assert res[JOB_ID_2] == 5
 
     with pytest.raises(ValueError) as e:
-        jobcollection_empty_mock.apply(worker, add=5, only_succeeded=True)
+        jobcollection_empty_mock.apply(worker_with_add, add=5, only_succeeded=True)
         assert str(e) == "This is an empty JobCollection. Cannot apply over an empty job list."
 
 

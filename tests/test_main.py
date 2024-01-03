@@ -141,8 +141,8 @@ def test_get_block_coverage_noresults_live(auth_live, monkeypatch):
     # pylint: disable=unused-variable
     try:
         block_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
-        coverage = get_block_coverage(block_id=block_id)
-    except requests.exceptions.RequestException as err:
+        _ = get_block_coverage(block_id=block_id)
+    except requests.exceptions.RequestException:
         assert True
         return
     assert False
