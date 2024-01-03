@@ -6,10 +6,8 @@ import pytest
 
 from up42.job import Job
 
-from .fixtures import JOB_ID, JOB_ID_2
-
 # pylint: disable=unused-import,wrong-import-order
-from .fixtures.fixtures_globals import API_HOST
+from .fixtures.fixtures_globals import API_HOST, JOB_ID, JOB_ID_2
 
 
 def test_jobcollection(jobcollection_single_mock):

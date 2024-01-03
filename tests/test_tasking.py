@@ -6,7 +6,13 @@ import pytest
 import requests
 
 # pylint: disable=unused-import
-from .fixtures import DATA_PRODUCT_ID, QUOTATION_ID, WORKSPACE_ID, WRONG_FEASIBILITY_ID, WRONG_OPTION_ID
+from .fixtures.fixtures_globals import (
+    DATA_PRODUCT_ID,
+    QUOTATION_ID,
+    WORKSPACE_ID,
+    WRONG_FEASIBILITY_ID,
+    WRONG_OPTION_ID,
+)
 
 LIVE_TEST_WORKSPACE_ID = os.getenv("LIVE_TEST_WORKSPACE_ID")
 LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")

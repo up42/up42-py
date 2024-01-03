@@ -6,8 +6,7 @@ from up42.project import Project
 from up42.workflow import Workflow
 
 # pylint: disable=unused-import
-from .fixtures import JOB_ID, WORKFLOW_DESCRIPTION, WORKFLOW_NAME
-from .fixtures.fixtures_globals import API_HOST
+from .fixtures.fixtures_globals import API_HOST, JOB_ID, WORKFLOW_DESCRIPTION, WORKFLOW_NAME
 
 MAX_CONCURRENT_JOBS = 12
 

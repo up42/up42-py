@@ -9,8 +9,16 @@ from up42.jobcollection import JobCollection
 # pylint: disable=unused-import,wrong-import-order
 from up42.workflow import Workflow
 
-from .fixtures import ASSET_ID, JOB_ID, JOB_NAME, JOBTASK_ID, JSON_WORKFLOW_ESTIMATION, JSON_WORKFLOW_TASKS, PROJECT_ID
-from .fixtures.fixtures_globals import API_HOST
+from .fixtures.fixtures_globals import (
+    API_HOST,
+    ASSET_ID,
+    JOB_ID,
+    JOB_NAME,
+    JOBTASK_ID,
+    JSON_WORKFLOW_ESTIMATION,
+    JSON_WORKFLOW_TASKS,
+    PROJECT_ID,
+)
 
 
 def test_workflow_info(workflow_mock):

@@ -3,7 +3,7 @@ import pytest
 # pylint: disable=unused-import
 from up42.webhooks import Webhook
 
-from .fixtures import WEBHOOK_ID, WORKSPACE_ID
+from .fixtures.fixtures_globals import WEBHOOK_ID, WORKSPACE_ID
 
 
 def test_webhook_initiate(webhook_mock):

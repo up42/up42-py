@@ -14,8 +14,16 @@ from up42.project import Project
 from up42.storage import Storage
 from up42.workflow import Workflow
 
-from .fixtures import ASSET_ID, JOB_ID, JOBTASK_ID, ORDER_ID, PROJECT_APIKEY, PROJECT_ID, WORKFLOW_ID
-from .fixtures.fixtures_globals import API_HOST
+from .fixtures.fixtures_globals import (
+    API_HOST,
+    ASSET_ID,
+    JOB_ID,
+    JOBTASK_ID,
+    ORDER_ID,
+    PROJECT_APIKEY,
+    PROJECT_ID,
+    WORKFLOW_ID,
+)
 
 
 def test_initialize_object_without_auth_raises():

@@ -10,8 +10,7 @@ import pytest
 from up42.job import Job
 from up42.jobtask import JobTask
 
-from .fixtures import DOWNLOAD_URL, JOBTASK_ID
-from .fixtures.fixtures_globals import API_HOST
+from .fixtures.fixtures_globals import API_HOST, DOWNLOAD_URL, JOBTASK_ID
 
 
 def test_job_info(job_mock):

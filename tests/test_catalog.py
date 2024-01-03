@@ -9,11 +9,9 @@ import pytest
 
 from up42.order import Order
 
-from .fixtures import DATA_PRODUCT_ID, ORDER_ID
+from .fixtures.fixtures_globals import API_HOST, DATA_PRODUCT_ID, ORDER_ID
 
 # pylint: disable=unused-import
-from .fixtures.fixtures_globals import API_HOST
-
 # pylint: disable=unused-import
 
 with open(

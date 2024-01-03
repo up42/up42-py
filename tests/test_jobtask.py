@@ -3,8 +3,7 @@ import tempfile
 from pathlib import Path
 
 # pylint: disable=unused-import
-from .fixtures import DOWNLOAD_URL
-from .fixtures.fixtures_globals import API_HOST
+from .fixtures.fixtures_globals import API_HOST, DOWNLOAD_URL
 
 
 def test_info(jobtask_mock):

@@ -6,7 +6,7 @@ import pytest
 # pylint: disable=unused-import
 from up42.asset import Asset
 
-from .fixtures import ASSET_ID, DOWNLOAD_URL, JSON_ASSET, STAC_ASSET_HREF
+from .fixtures.fixtures_globals import ASSET_ID, DOWNLOAD_URL, JSON_ASSET, STAC_ASSET_HREF
 
 
 def test_init(asset_mock):

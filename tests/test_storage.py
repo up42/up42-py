@@ -12,8 +12,17 @@ from up42.order import Order
 # pylint: disable=unused-import
 from up42.storage import AllowedStatuses, Storage
 
-from .fixtures import ASSET_ID, JSON_ASSET, JSON_ORDER, JSON_ORDERS, JSON_STORAGE_STAC, ORDER_ID, USER_ID, WORKSPACE_ID
-from .fixtures.fixtures_globals import API_HOST
+from .fixtures.fixtures_globals import (
+    API_HOST,
+    ASSET_ID,
+    JSON_ASSET,
+    JSON_ORDER,
+    JSON_ORDERS,
+    JSON_STORAGE_STAC,
+    ORDER_ID,
+    USER_ID,
+    WORKSPACE_ID,
+)
 
 
 def test_init(storage_mock):

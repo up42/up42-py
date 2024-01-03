@@ -3,8 +3,7 @@ import pytest
 # pylint: disable=unused-import,wrong-import-order
 from up42.estimation import Estimation
 
-from .fixtures import JSON_WORKFLOW_ESTIMATION, PROJECT_ID
-from .fixtures.fixtures_globals import API_HOST
+from .fixtures.fixtures_globals import API_HOST, JSON_WORKFLOW_ESTIMATION, PROJECT_ID
 
 
 def test_estimate_price(requests_mock, auth_mock, estimation_mock):
