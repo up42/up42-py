@@ -414,11 +414,10 @@ def get_up42_py_version():
 
 
 def read_json(path_or_dict: Union[dict, str, Path, None]) -> Optional[dict]:
-    if path_or_dict:
-        if isinstance(path_or_dict, (str, Path)):
-            try:
-                with open(path_or_dict) as file:
-                    return json.load(file)
-            except FileNotFoundError as ex:
-                raise ValueError(f"Selected file {path_or_dict} does not exist!") from ex
+    if path_or_dict and isinstance(path_or_dict, (str, Path)):
+        try:
+            with open(path_or_dict) as file:
+                return json.load(file)
+        except FileNotFoundError as ex:
+            raise ValueError(f"Selected file {path_or_dict} does not exist!") from ex
     return cast(Optional[dict], path_or_dict)
