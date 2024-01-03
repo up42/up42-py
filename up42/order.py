@@ -92,9 +92,7 @@ class Order:
         if self.is_fulfilled:
             params: AssetSearchParams = {"search": self.order_id}
             assets_response = search_assets(self.auth, params=params)
-            return [
-                Asset(self.auth, asset_id=asset_info["id"], asset_info=asset_info) for asset_info in assets_response
-            ]
+            return [Asset(self.auth, asset_info=asset_info) for asset_info in assets_response]
         raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
