@@ -7,7 +7,8 @@ import geopandas as gpd
 import pandas as pd
 import pytest
 
-from .context import Order
+from up42.host import endpoint
+
 from .fixtures import (
     DATA_PRODUCT_ID,
     ORDER_ID,
@@ -531,7 +532,7 @@ def test_estimate_order_from_catalog(
         "results": [{"credits": 38, "index": 0, "size": 0.1, "unit": "SQ_KM"}],
         "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
     }
-    url_order_estimation = f"{catalog_mock.auth._endpoint()}/v2/orders/estimate"
+    url_order_estimation = endpoint("/v2/orders/estimate")
     requests_mock.post(url=url_order_estimation, json=expected_payload)
     estimation = catalog_mock.estimate_order(order_parameters)
     assert isinstance(estimation, dict)

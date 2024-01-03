@@ -1,9 +1,13 @@
 import json
 import os
+from copy import deepcopy
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pytest
 import requests
+
+from up42.host import endpoint
 
 from .context import Tasking
 
@@ -322,7 +326,7 @@ def test_estimate_order_from_tasking(requests_mock, auth_mock):
         "errors": [],
     }
     tasking_instance = Tasking(auth=auth_mock)
-    url_order_estimation = f"{tasking_instance.auth._endpoint()}/v2/orders/estimate"
+    url_order_estimation = endpoint("/v2/orders/estimate")
     requests_mock.post(url=url_order_estimation, json=expected_payload)
     estimation = tasking_instance.estimate_order(ORDER_PARAMS_TASKING)
     assert isinstance(estimation, dict)
@@ -336,6 +340,11 @@ def test_estimate_order_from_tasking_live(tasking_live):
         "results": [{"index": 0, "credits": 318200, "unit": "SCENE", "size": 1.0}],
         "errors": [],
     }
-    estimation = tasking_live.estimate_order(ORDER_PARAMS_TASKING)
+    order_params_live = deepcopy(ORDER_PARAMS_TASKING)
+    future_date = datetime.now() + timedelta(days=1)
+    order_params_live["params"]["acquisitionEnd"] = future_date.strftime(
+        "%Y-%m-%dT%H:%M:%S.000Z"
+    )
+    estimation = tasking_live.estimate_order(order_params_live)
     assert isinstance(estimation, dict)
     assert estimation == expected_output
