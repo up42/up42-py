@@ -1,14 +1,12 @@
-import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import pystac
 import pytest
 
-from up42.host import endpoint
-
 # pylint: disable=unused-import
 from up42.asset import Asset
+from up42.host import endpoint
 
 from .fixtures.fixtures_globals import ASSET_ID, DOWNLOAD_URL, JSON_ASSET, STAC_ASSET_HREF
 
