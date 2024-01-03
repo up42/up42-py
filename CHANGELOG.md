@@ -30,11 +30,25 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.34.1
+
+**December 15, 2023**
+
+- Restored the `order.get_assets` function.
+
+## 0.34.0
+
+**December 13, 2023**
+
+- Updated the `storage.get_orders` function to the latest version of the API.
+- Set Poetry as the only dependency manager.
+- Discontinued support for the `order.get_assets` function.
+
 ## 0.33.1
 
 **November 23, 2023**
 
-Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of the [PySTAC client](https://sdk.up42.com/storage/#pystac) search.
+Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of the [PySTAC client](https://sdk.up42.com/notebooks/stac-example/#pystac) search.
 
 - `geometry`
 - `acquired_before`
@@ -176,8 +190,7 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 
 - Integrates the UP42 [data products](https://docs.up42.com/developers/api#tag/data-products),
   e.g. the selection "Display" and "Reflectance" configuration in the ordering process. The new ordering process
-  requires the selection of a specific data product. For more information, see
-  [Catalog](https://sdk.up42.com/catalog).
+  requires the selection of a specific data product.
 - The `order_parameters` argument for `catalog.estimate_order` and `catalog.place_order` now has a
   [different structure](https://sdk.up42.com/reference/catalog-reference/#up42.catalog.Catalog.place_order).
   **The previous option to just specify the collection name will soon be deactivated in the UP42 API!**

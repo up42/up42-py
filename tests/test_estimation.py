@@ -17,6 +17,7 @@ from .fixtures import (
     project_id_live,
     username_test_live,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_estimate_price(requests_mock, auth_mock, estimation_mock):
@@ -36,7 +37,7 @@ def test_estimate_price(requests_mock, auth_mock, estimation_mock):
     ]
 
     url_workflow_estimation = (
-        f"{auth_mock._endpoint()}/projects/{PROJECT_ID}/estimate/job"
+        f"{API_HOST}/projects/{PROJECT_ID}/estimate/job"
     )
     requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
     _ = estimation_mock.estimate()

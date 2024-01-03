@@ -28,11 +28,12 @@ from .fixtures import (
     project_id_live,
     username_test_live,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_get_blocks(auth_mock, requests_mock, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_mock)
-    url_get_blocks = f"{auth_mock._endpoint()}/blocks"
+    url_get_blocks = f"{API_HOST}/blocks"
     requests_mock.get(
         url=url_get_blocks,
         json={
@@ -59,7 +60,7 @@ def test_get_blocks_live(auth_live, monkeypatch):
 
 def test_get_blocks_not_basic_dataframe(auth_mock, requests_mock, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_mock)
-    url_get_blocks = f"{auth_mock._endpoint()}/blocks"
+    url_get_blocks = f"{API_HOST}/blocks"
     json_get_blocks = {
         "data": [
             {"id": "789-2736-212", "name": "tiling"},
@@ -77,7 +78,7 @@ def test_get_blocks_not_basic_dataframe(auth_mock, requests_mock, monkeypatch):
 def test_get_block_details(auth_mock, requests_mock, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_mock)
     block_id = "273612-13"
-    url_get_blocks_details = f"{auth_mock._endpoint()}/blocks/{block_id}"
+    url_get_blocks_details = f"{API_HOST}/blocks/{block_id}"
     requests_mock.get(
         url=url_get_blocks_details,
         json={
@@ -105,7 +106,7 @@ def test_get_block_details_live(auth_live, monkeypatch):
 def test_get_block_coverage(auth_mock, requests_mock, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_mock)
     block_id = "273612-13"
-    url_get_blocks_coverage = f"{auth_mock._endpoint()}/blocks/{block_id}/coverage"
+    url_get_blocks_coverage = f"{API_HOST}/blocks/{block_id}/coverage"
     requests_mock.get(
         url=url_get_blocks_coverage,
         json={
@@ -181,7 +182,7 @@ def test_get_credits_balance_live(auth_live, monkeypatch):
 def test_validate_manifest(auth_mock, requests_mock, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_mock)
     fp = Path(__file__).resolve().parent / "mock_data/manifest.json"
-    url_validate_mainfest = f"{auth_mock._endpoint()}/validate-schema/block"
+    url_validate_mainfest = f"{API_HOST}/validate-schema/block"
     requests_mock.post(
         url=url_validate_mainfest,
         json={"data": {"valid": True, "errors": []}, "error": {}},

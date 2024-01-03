@@ -8,8 +8,6 @@ import pandas as pd
 import pytest
 
 from .context import Order
-
-# pylint: disable=unused-import
 from .fixtures import (
     DATA_PRODUCT_ID,
     ORDER_ID,
@@ -30,6 +28,9 @@ from .fixtures import (
     project_id_live,
     username_test_live,
 )
+
+# pylint: disable=unused-import
+from .fixtures.fixtures_globals import API_HOST
 
 # pylint: disable=unused-import
 from .test_order import order_parameters
@@ -380,9 +381,7 @@ def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
 def test_download_quicklook(catalog_mock, requests_mock):
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
     host = "oneatlas"
-    url_quicklooks = (
-        f"{catalog_mock.auth._endpoint()}/catalog/{host}/image/{sel_id}/quicklook"
-    )
+    url_quicklooks = f"{API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
     quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
     requests_mock.get(url_quicklooks, content=open(quicklook_file, "rb").read())
 
@@ -398,9 +397,7 @@ def test_download_quicklook(catalog_mock, requests_mock):
 def test_download_no_quicklook(catalog_mock, requests_mock):
     sel_id = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
     host = "oneatlas"
-    url_quicklook = (
-        f"{catalog_mock.auth._endpoint()}/catalog/{host}/image/{sel_id}/quicklook"
-    )
+    url_quicklook = f"{API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
     requests_mock.get(url_quicklook, status_code=404)
 
     with tempfile.TemporaryDirectory() as tempdir:
@@ -414,14 +411,10 @@ def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
     sel_id_no = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
     host = "oneatlas"
-    url_no_quicklook = (
-        f"{catalog_mock.auth._endpoint()}/catalog/{host}/image/{sel_id_no}/quicklook"
-    )
+    url_no_quicklook = f"{API_HOST}/catalog/{host}/image/{sel_id_no}/quicklook"
     requests_mock.get(url_no_quicklook, status_code=404)
 
-    url_quicklook = (
-        f"{catalog_mock.auth._endpoint()}/catalog/{host}/image/{sel_id}/quicklook"
-    )
+    url_quicklook = f"{API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
     quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
     requests_mock.get(url_quicklook, content=open(quicklook_file, "rb").read())
 
@@ -524,6 +517,10 @@ def test_construct_order_parameters_live(catalog_live, product_id):
 def test_estimate_order_from_catalog(
     order_parameters, order_mock, catalog_mock, requests_mock
 ):
+    url_order_estimation = (
+        f"{API_HOST}/workspaces/" f"{catalog_mock.auth.workspace_id}/orders/estimate"
+    )
+    requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
     expected_payload = {
         "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
         "results": [{"index": 0, "credits": 38, "unit": "SQ_KM", "size": 0.1}],
@@ -543,7 +540,7 @@ def test_estimate_order_from_catalog(
 
 def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests_mock):
     requests_mock.post(
-        url=f"{catalog_mock.auth._endpoint()}/v2/orders?workspaceId={WORKSPACE_ID}",
+        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "id": ORDER_ID}],
             "error": [],
@@ -559,13 +556,13 @@ def test_order_from_catalog_track_status(
     order_parameters, order_mock, catalog_mock, requests_mock
 ):
     requests_mock.post(
-        url=f"{catalog_mock.auth._endpoint()}/v2/orders?workspaceId={WORKSPACE_ID}",
+        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "id": ORDER_ID}],
             "error": [],
         },
     )
-    url_order_info = f"{order_mock.auth._endpoint()}/v2/orders/{order_mock.order_id}"
+    url_order_info = f"{API_HOST}/v2/orders/{order_mock.order_id}"
     requests_mock.get(
         url_order_info,
         [

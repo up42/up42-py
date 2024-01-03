@@ -1,4 +1,3 @@
-import math
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional, Union
@@ -10,7 +9,9 @@ from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
 
 from up42.asset import Asset
+from up42.asset_searcher import AssetSearchParams, query_paginated_endpoints, search_assets
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.order import Order
 from up42.stac_client import PySTACAuthClient
 from up42.utils import format_time, get_logger
@@ -52,48 +53,9 @@ class Storage:
 
     @property
     def pystac_client(self):
-        url = f"{self.auth._endpoint()}/v2/assets/stac"
+        url = endpoint("/v2/assets/stac")
         pystac_client_auth = PySTACAuthClient(auth=self.auth).open(url=url)
         return pystac_client_auth
-
-    def _query_paginated_endpoints(self, url: str, limit: Optional[int] = None, size: int = 50) -> List[dict]:
-        """
-        Helper to fetch list of items in paginated endpoint, e.g. assets, orders.
-
-        Args:
-            url (str): The base url for paginated endpoint.
-            limit: Return n first elements sorted by date of creation, optional.
-            size: Default number of results per pagination page. Tradeoff of number
-                of results per page and API response time to query one page. Default 50.
-
-        Returns:
-            List[dict]: List of all paginated items.
-        """
-        url = url + f"&size={size}"
-
-        first_page_response = self.auth._request(request_type="GET", url=url)
-        if "data" in first_page_response:  # UP42 API v2 convention without data key, but still in e.g. get order
-            # endpoint
-            first_page_response = first_page_response["data"]
-        num_pages = first_page_response["totalPages"]
-        num_elements = first_page_response["totalElements"]
-        results_list = first_page_response["content"]
-
-        if limit is None:
-            # Also covers single page (without limit)
-            num_pages_to_query = num_pages
-        elif limit <= size:
-            return results_list[:limit]
-        else:
-            # Also covers single page (with limit)
-            num_pages_to_query = math.ceil(min(limit, num_elements) / size)
-
-        for page in range(1, num_pages_to_query):
-            response_json = self.auth._request(request_type="GET", url=url + f"&page={page}")
-            if "data" in response_json:
-                response_json = response_json["data"]
-            results_list += response_json["content"]
-        return results_list[:limit]
 
     def _query_paginated_stac_search(
         self,
@@ -140,10 +102,9 @@ class Storage:
         sortby: str = "createdAt",
         descending: bool = True,
         return_json: bool = False,
-    ) -> Union[List[Asset], dict]:
+    ) -> Union[List[Asset], List[dict]]:
         """
-        Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#functionality_1)
-        objects or in JSON format.
+        Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#asset) objects or in JSON format.
 
         Args:
             created_after: Search for assets created after the specified timestamp, in `"YYYY-MM-DD"` format.
@@ -168,27 +129,23 @@ class Storage:
         Returns:
             A list of Asset objects.
         """
-        sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = f"{self.auth._endpoint()}/v2/assets?sort={sort}"
-        if created_before is not None:
-            url += f"&createdBefore={format_time(created_before)}"
-        if created_after is not None:
-            url += f"&createdAfter={format_time(created_after)}"
-        if workspace_id is not None:
-            url += f"&workspaceId={workspace_id}"
-        if collection_names is not None:
-            url += f"&collectionNames={collection_names}"
-        if producer_names is not None:
-            url += f"&producerNames={producer_names}"
-        if tags is not None:
-            for tag in tags:
-                url += f"&tags={tag}"
-        if sources is not None:
-            url += f"&sources={','.join(sources)}"
-        if search is not None:
-            url += f"&search={search}"
-
-        assets_json = self._query_paginated_endpoints(url=url, limit=limit)
+        params: AssetSearchParams = {
+            "createdAfter": created_after and format_time(created_after),
+            "createdBefore": created_before and format_time(created_before),
+            "workspaceId": workspace_id,
+            "collectionNames": collection_names,
+            "producerNames": producer_names,
+            "tags": tags,
+            "sources": sources,
+            "search": search,
+        }
+        assets_json = search_assets(
+            self.auth,
+            params=params,
+            limit=limit,
+            sortby=sortby,
+            descending=descending,
+        )
 
         if (
             acquired_before is not None
@@ -198,7 +155,7 @@ class Storage:
         ):
             warn(
                 "Search for geometry, acquired_before, acquired_after and custom_filter has been deprecated."
-                "Use pystac client https://sdk.up42.com/storage/#pystac for STAC queries.",
+                "Use the PySTAC client for STAC queries: https://sdk.up42.com/notebooks/stac-example/#pystac",
                 DeprecationWarning,
                 stacklevel=2,
             )
@@ -206,16 +163,10 @@ class Storage:
                 "Search for geometry, acquired_before, acquired_after and custom_filter is no longer supported."
             )
 
-        if workspace_id is not None:
-            logger.info(f"Queried {len(assets_json)} assets for workspace {self.workspace_id}.")
-        else:
-            logger.info(f"Queried {len(assets_json)} assets from all workspaces in account.")
-
         if return_json:
-            return assets_json  # type: ignore
+            return assets_json
         else:
-            assets = [Asset(self.auth, asset_id=asset_json["id"], asset_info=asset_json) for asset_json in assets_json]
-            return assets
+            return [Asset(self.auth, asset_info=asset_json) for asset_json in assets_json]
 
     def get_orders(
         self,
@@ -228,7 +179,7 @@ class Storage:
         statuses: Optional[List[AllowedStatuses]] = None,
         name: Optional[str] = None,
         tags: Optional[List[str]] = None,
-    ) -> Union[List[Order], dict]:
+    ) -> Union[List[Order], List[dict]]:
         """
         Gets all orders in the account/workspace as Order objects or JSON.
 
@@ -258,7 +209,7 @@ class Storage:
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        base_url = f"{self.auth._endpoint()}/v2/orders"
+        base_url = endpoint("/v2/orders")
 
         params = {
             "sort": sort,
@@ -278,11 +229,13 @@ class Storage:
 
         url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
 
-        orders_json = self._query_paginated_endpoints(url=url, limit=limit)
-        logger.info(f"Got {len(orders_json)} orders for workspace {self.workspace_id}.")
+        orders_json = query_paginated_endpoints(auth=self.auth, url=url, limit=limit)
+        logger_message = f"Got {len(orders_json)} orders" + (
+            f" for workspace {self.workspace_id}." if workspace_orders else ""
+        )
+        logger.info(logger_message)
 
         if return_json:
-            return orders_json  # type: ignore
+            return orders_json
         else:
-            orders = [Order(self.auth, order_id=order_json["id"], order_info=order_json) for order_json in orders_json]
-            return orders
+            return [Order(self.auth, order_id=order_json["id"], order_info=order_json) for order_json in orders_json]

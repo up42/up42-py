@@ -22,6 +22,7 @@ from .fixtures import (
     project_mock_max_concurrent_jobs,
     username_test_live,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 MAX_CONCURRENT_JOBS = 12
 
@@ -69,7 +70,7 @@ def test_get_workflows_live(project_live):
 
 def test_get_jobs(project_mock, requests_mock):
     url_job_info = (
-        f"{project_mock.auth._endpoint()}/projects/"
+        f"{API_HOST}/projects/"
         f"{project_mock.project_id}/jobs/{JOB_ID}"
     )
     json_job_info = {"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}}

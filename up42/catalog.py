@@ -13,6 +13,7 @@ from shapely.geometry import Polygon
 from tqdm import tqdm
 
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.order import Order
 from up42.utils import (
     any_vector_to_fc,
@@ -45,7 +46,7 @@ class CatalogBase:
             basic: A dictionary containing only the collection title, name, host and available
                 data product configurations, default True.
         """
-        url = f"{self.auth._endpoint()}/data-products"
+        url = endpoint("/data-products")
         json_response = self.auth._request("GET", url)
         unfiltered_products: list = json_response["data"]
 
@@ -97,7 +98,7 @@ class CatalogBase:
         Args:
             data_product_id: The id of a catalog/tasking data product.
         """
-        url = f"{self.auth._endpoint()}/orders/schema/{data_product_id}"
+        url = endpoint(f"/orders/schema/{data_product_id}")
         json_response = self.auth._request("GET", url)
         return json_response  # Does not contain APIv1 "data" key
 
@@ -105,7 +106,7 @@ class CatalogBase:
         """
         Get the available data collections.
         """
-        url = f"{self.auth._endpoint()}/collections"
+        url = endpoint("/collections")
         json_response = self.auth._request("GET", url)
         collections = [c for c in json_response["data"] if c["type"] == self.type]
         return collections
@@ -348,7 +349,7 @@ class Catalog(CatalogBase, VizTools):
             )
         host = hosts[0]
 
-        url = f"{self.auth._endpoint()}/catalog/hosts/{host}/stac/search"
+        url = endpoint(f"/catalog/hosts/{host}/stac/search")
         response_json: dict = self.auth._request("POST", url, search_parameters)
         features = response_json["features"]
 
@@ -476,7 +477,7 @@ class Catalog(CatalogBase, VizTools):
         out_paths: List[str] = []
         for image_id in tqdm(image_ids):
             try:
-                url = f"{self.auth._endpoint()}/catalog/{host}/image/{image_id}/quicklook"
+                url = endpoint(f"/catalog/{host}/image/{image_id}/quicklook")
                 response = self.auth._request(request_type="GET", url=url, return_text=False)
                 out_path = output_directory / f"quicklook_{image_id}.jpg"
                 out_paths.append(str(out_path))

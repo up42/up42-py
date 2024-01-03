@@ -3,7 +3,7 @@ import os
 import pytest
 
 from ..context import Auth, main
-from .fixtures_globals import JSON_BALANCE, JSON_BLOCKS, PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID
+from .fixtures_globals import API_HOST, JSON_BALANCE, JSON_BLOCKS, PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID
 
 
 @pytest.fixture
@@ -23,13 +23,13 @@ def auth_project_mock(requests_mock):
     )
 
     # get_blocks
-    url_get_blocks = f"{auth._endpoint()}/blocks"
+    url_get_blocks = f"{API_HOST}/blocks"
     requests_mock.get(
         url=url_get_blocks,
         json=JSON_BLOCKS,
     )
     # get_credits_balance
-    url_get_credits_balance = f"{auth._endpoint()}/accounts/me/credits/balance"
+    url_get_credits_balance = f"{API_HOST}/accounts/me/credits/balance"
     requests_mock.get(
         url=url_get_credits_balance,
         json=JSON_BALANCE,

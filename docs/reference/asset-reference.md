@@ -1,6 +1,6 @@
 # Asset
 
-The Asset class enables access to [assets in storage](../../examples/asset/asset-example/).
+The Asset class enables access to assets in storage and their [STAC](../../notebooks/stac-example/) information.
 
 ```python
 asset = up42.initialize_asset(asset_id="68567134-27ad-7bd7-4b65-d61adb11fc78")

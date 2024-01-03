@@ -1,10 +1,16 @@
 from time import sleep
 from typing import List, Optional
 
+from up42.asset import Asset
+from up42.asset_searcher import AssetSearchParams, search_assets
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.utils import get_logger
 
 logger = get_logger(__name__)
+
+MAX_ITEM = 200
+LIMIT = 200
 
 
 class Order:
@@ -46,7 +52,7 @@ class Order:
         """
         Gets and updates the order information.
         """
-        url = f"{self.auth._endpoint()}/v2/orders/{self.order_id}"
+        url = endpoint(f"/v2/orders/{self.order_id}")
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json
         return self._info
@@ -65,7 +71,11 @@ class Order:
         """
         Gets the Order Details. Only for tasking type orders, archive types return empty.
         """
-        return self.info.get("orderDetails", {})
+        if self.info["type"] == "TASKING":
+            order_details = self.info["orderDetails"]
+            return order_details
+        logger.info("Order is not TASKING type. Order details are not provided.")
+        return {}
 
     @property
     def is_fulfilled(self) -> bool:
@@ -74,6 +84,16 @@ class Order:
         Also see [status attribute](order-reference.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
+
+    def get_assets(self) -> List[Asset]:
+        """
+        Gets the Order assets or results.
+        """
+        if self.is_fulfilled:
+            params: AssetSearchParams = {"search": self.order_id}
+            assets_response = search_assets(self.auth, params=params)
+            return [Asset(self.auth, asset_info=asset_info) for asset_info in assets_response]
+        raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
     def place(cls, auth: Auth, order_parameters: dict) -> List["Order"]:
@@ -88,7 +108,7 @@ class Order:
             Orders: Details of the created orders. If you have defined multiple geometries, \
                 each geometry will result in a separate order.
         """
-        url = f"{auth._endpoint()}/v2/orders?workspaceId={auth.workspace_id}"
+        url = endpoint(f"/v2/orders?workspaceId={auth.workspace_id}")
         response_json = auth._request(request_type="POST", url=url, data=order_parameters)
         try:
             order_ids = [order_id["id"] for order_id in response_json["results"]]  # type: ignore
@@ -111,7 +131,7 @@ class Order:
         Returns:
             dict: representation of a JSON estimation response with summary, results, and errors.
         """
-        url = f"{auth._endpoint()}/v2/orders/estimate"
+        url = endpoint("/v2/orders/estimate")
 
         response_json = auth._request(request_type="POST", url=url, data=order_parameters)
 

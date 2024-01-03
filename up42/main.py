@@ -22,6 +22,7 @@ import requests.exceptions
 
 # pylint: disable=wrong-import-position
 from up42.auth import Auth
+from up42.host import endpoint
 from up42.utils import get_logger
 from up42.webhooks import Webhook, Webhooks
 
@@ -154,7 +155,7 @@ def get_blocks(
         block_type = block_type.lower()  # type: ignore
     except AttributeError:
         pass
-    url = f"{_auth._endpoint()}/blocks"
+    url = endpoint("/blocks")
     response_json = _auth._request(request_type="GET", url=url)
     public_blocks_json = response_json["data"]
 
@@ -196,7 +197,7 @@ def get_block_details(block_id: str, as_dataframe: bool = False) -> dict:
     Returns:
         A dict of the block details metadata for the specific block.
     """
-    url = f"{_auth._endpoint()}/blocks/{block_id}"  # public blocks
+    url = endpoint(f"/blocks/{block_id}")  # public blocks
     response_json = _auth._request(request_type="GET", url=url)
     details_json = response_json["data"]
 
@@ -218,7 +219,7 @@ def get_block_coverage(block_id: str) -> dict:
     Returns:
         A dict of the spatial coverage for the specific block.
     """
-    url = f"{_auth._endpoint()}/blocks/{block_id}/coverage"
+    url = endpoint(f"/blocks/{block_id}/coverage")
     response_json = _auth._request(request_type="GET", url=url)
     details_json = response_json["data"]
     response_coverage = requests.get(details_json["url"]).json()
@@ -233,7 +234,7 @@ def get_credits_balance() -> dict:
     Returns:
         A dict with the balance of credits available in your account.
     """
-    endpoint_url = f"{_auth._endpoint()}/accounts/me/credits/balance"
+    endpoint_url = endpoint("/accounts/me/credits/balance")
     response_json = _auth._request(request_type="GET", url=endpoint_url)
     details_json = response_json["data"]
     return details_json
@@ -259,7 +260,7 @@ def validate_manifest(path_or_json: Union[str, Path, dict]) -> dict:
             manifest_json = json.load(src)
     else:
         manifest_json = path_or_json
-    url = f"{_auth._endpoint()}/validate-schema/block"
+    url = endpoint("/validate-schema/block")
     response_json = _auth._request(request_type="POST", url=url, data=manifest_json)
     logger.info("The manifest is valid.")
     return response_json["data"]

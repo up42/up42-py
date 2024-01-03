@@ -1,5 +1,4 @@
 import copy
-import datetime
 
 import pystac
 import pystac_client
@@ -7,7 +6,7 @@ import pytest
 import requests
 
 # pylint: disable=unused-import
-from .context import AllowedStatuses, Asset, Order, Storage
+from .context import AllowedStatuses, Asset, Order, Storage, query_paginated_endpoints
 from .fixtures import (
     ASSET_ID,
     JSON_ASSET,
@@ -15,6 +14,7 @@ from .fixtures import (
     JSON_ORDERS,
     JSON_STORAGE_STAC,
     ORDER_ID,
+    USER_ID,
     WORKSPACE_ID,
     auth_account_live,
     auth_account_mock,
@@ -29,6 +29,7 @@ from .fixtures import (
     storage_mock,
     username_test_live,
 )
+from .fixtures.fixtures_globals import API_HOST
 
 
 def test_init(storage_mock):
@@ -60,7 +61,7 @@ def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
     }
 
 
-def test_paginate_one_page(storage_mock, requests_mock):
+def test_paginate_one_page(auth_mock, requests_mock):
     url = "http://some_url/assets"
 
     limit = None
@@ -72,11 +73,11 @@ def test_paginate_one_page(storage_mock, requests_mock):
         url + f"&size={size}",
         json=_mock_one_page_reponse(0, expected, total_pages, total_elements),
     )
-    res = storage_mock._query_paginated_endpoints(url=url, limit=limit, size=size)
+    res = query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
-def test_paginate_multiple_pages(storage_mock, requests_mock):
+def test_paginate_multiple_pages(auth_mock, requests_mock):
     url = "http://some_url/assets"
 
     limit = 20
@@ -100,11 +101,11 @@ def test_paginate_multiple_pages(storage_mock, requests_mock):
         url + f"&size={size}&page=3",
         json=_mock_one_page_reponse(3, size, total_pages, total_elements),
     )
-    res = storage_mock._query_paginated_endpoints(url=url, limit=limit, size=size)
+    res = query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
-def test_paginate_with_limit_smaller_page_size(storage_mock, requests_mock):
+def test_paginate_with_limit_smaller_page_size(auth_mock, requests_mock):
     """
     Test pagination with limit <= pagination size.
     """
@@ -123,7 +124,7 @@ def test_paginate_with_limit_smaller_page_size(storage_mock, requests_mock):
         url + f"&size={limit}&page=1",
         json=_mock_one_page_reponse(0, size, total_pages, total_elements),
     )
-    res = storage_mock._query_paginated_endpoints(url=url, limit=limit, size=size)
+    res = query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
@@ -237,7 +238,7 @@ def test_get_assets_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_assets_paginated = (
-        f"{auth_mock._endpoint()}/v2/assets?sort=createdAt,asc&size=50"
+        f"{API_HOST}/v2/assets?sort=createdAt,asc&size=50"
     )
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
@@ -315,16 +316,16 @@ def test_get_orders(storage_mock):
             JSON_ORDERS,
             [
                 {
-                    "id": "ddb207c0-3b7f-4186-bc0b-c033f0d2f32b",
-                    "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-                    "workspaceId": "workspace_id_123",
+                    "id": ORDER_ID,
+                    "userId": USER_ID,
+                    "workspaceId": WORKSPACE_ID,
                     "dataProvider": "OneAtlas",
                     "status": "FULFILLED",
                     "createdAt": "2021-01-18T16:18:16.105851Z",
                     "updatedAt": "2021-01-18T16:21:31.966805Z",
                     "assets": ["363f89c1-3586-4b14-9a49-03a890c3b593"],
                     "createdBy": {
-                        "id": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
+                        "id": USER_ID,
                         "type": "USER",
                     },
                     "updatedBy": {"id": "system", "type": "INTERNAL"},
@@ -392,7 +393,7 @@ def test_get_orders_v2_endpoint_params(
         ]
     )
 
-    url_storage_assets_paginated = f"{auth_mock._endpoint()}/v2/orders?{url_params}"
+    url_storage_assets_paginated = f"{API_HOST}/v2/orders?{url_params}"
 
     requests_mock.get(url=url_storage_assets_paginated, json=expected_payload)
     if not params["return_json"]:
@@ -458,7 +459,7 @@ def test_get_orders_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_orders_paginated = (
-        f"{auth_mock._endpoint()}/v2/"
+        f"{API_HOST}/v2/"
         f"orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)

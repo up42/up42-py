@@ -4,6 +4,7 @@ import sys
 
 from up42 import main
 from up42.asset import Asset
+from up42.asset_searcher import query_paginated_endpoints
 from up42.auth import Auth
 from up42.catalog import Catalog
 from up42.estimation import Estimation
