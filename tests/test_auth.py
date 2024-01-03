@@ -64,7 +64,7 @@ def test_should_set_api_host_domain_with_environment(auth_mock):
 
 
 def test_get_token(auth_mock):
-    auth_mock._get_token()
+    auth_mock._refresh_token()
     assert auth_mock.token == TOKEN
 
 

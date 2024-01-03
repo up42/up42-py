@@ -8,9 +8,6 @@ from warnings import warn
 
 import requests
 import requests.exceptions
-from oauthlib.oauth2 import BackendApplicationClient, MissingTokenError
-from requests.auth import HTTPBasicAuth
-from requests_oauthlib import OAuth2Session
 from tenacity import (
     Retrying,
     retry,
@@ -21,7 +18,7 @@ from tenacity import (
     wait_random_exponential,
 )
 
-from up42 import host
+from up42 import host, token
 from up42.utils import get_logger, get_up42_py_version
 
 logger = get_logger(__name__)
@@ -38,15 +35,15 @@ class retry_if_401_invalid_token(retry_if_exception):
     def __init__(self):
         def is_http_401_error(exception):
             return (
-                isinstance(
-                    exception,
-                    (
-                        requests.exceptions.HTTPError,
-                        requests.exceptions.RequestException,
-                    ),
-                )
-                and hasattr(exception.response, "status_code")  # check if response has status_code
-                and exception.response.status_code == 401
+                    isinstance(
+                        exception,
+                        (
+                            requests.exceptions.HTTPError,
+                            requests.exceptions.RequestException,
+                        ),
+                    )
+                    and hasattr(exception.response, "status_code")  # check if response has status_code
+                    and exception.response.status_code == 401
             )
 
         super().__init__(predicate=is_http_401_error)
@@ -69,13 +66,13 @@ class retry_if_429_rate_limit(retry_if_exception):
 
 class Auth:
     def __init__(
-        self,
-        cfg_file: Union[str, Path, None] = None,
-        project_id: Optional[str] = None,
-        project_api_key: Optional[str] = None,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        **kwargs,
+            self,
+            cfg_file: Union[str, Path, None] = None,
+            project_id: Optional[str] = None,
+            project_api_key: Optional[str] = None,
+            username: Optional[str] = None,
+            password: Optional[str] = None,
+            **kwargs,
     ):
         """
         The Auth class handles the authentication with UP42.
@@ -114,9 +111,11 @@ class Auth:
 
         config = self._choose_credential_source(cfg_file, credentials_dict)
 
+        self._get_token = None
+
         if self.authenticate:
             self._set_credentials(source=config)
-            self._get_token()
+            self._refresh_token()
             self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
@@ -139,11 +138,7 @@ class Auth:
             "user": ("username", "password"),
             "project": ("project_id", "project_api_key"),
         }
-        token_retrievers = {
-            "user": self._get_token_account_based,
-            "project": self._get_token_project_based,
-        }
-
+        token_classes = {"user": token.UserToken, "project": token.ProjectKeyToken}
         self._credentials_id = None
 
         for schema, parameters in schemas.items():
@@ -153,51 +148,14 @@ class Auth:
                         "Project based authentication will be deprecated."
                         "Please follow authentication guidelines (/docs/authentication.md)."
                     )
-                self._credentials_id = source[parameters[0]]
-                self._credentials_key = source[parameters[1]]
-                self._get_token = token_retrievers[schema]
-        if self._credentials_id is None:
+                retriever = token_classes[schema](**source)
+                self._get_token = retriever.get_value
+        if self._get_token is None:
             raise ValueError("No credentials provided either via config file or arguments.")
 
-    def _get_token_account_based(self):
-        """Account based authentication via username and password."""
-        try:
-            req_headers = {
-                "Content-Type": "application/x-www-form-urlencoded",
-            }
-            req_body = {
-                "grant_type": "password",
-                "username": self._credentials_id,
-                "password": self._credentials_key,
-            }
-            token_response = requests.post(
-                url=host.endpoint("/oauth/token"),
-                data=req_body,
-                headers=req_headers,
-                timeout=120,
-            )
-            if token_response.status_code != 200:
-                raise ValueError(
-                    f"Authentication failed with status code {token_response.status_code}."
-                    "Check the provided credentials."
-                )
-        except requests.exceptions.RequestException as err:
-            raise ValueError(
-                "Authentication failed due to a network error. Check the provided credentials and network connectivity."
-            ) from err
-        self.token = token_response.json()["data"]["accessToken"]
-
-    def _get_token_project_based(self):
-        """Project specific authentication via project id and project api key."""
-        try:
-            client = BackendApplicationClient(client_id=self._credentials_id, client_secret=self._credentials_key)
-            auth = HTTPBasicAuth(self._credentials_id, self._credentials_key)
-            get_token_session = OAuth2Session(client=client)
-            token_response = get_token_session.fetch_token(token_url=host.endpoint("/oauth/token"), auth=auth)
-        except MissingTokenError as err:
-            raise ValueError("Authentication was not successful, check the provided project credentials.") from err
-
-        self.token = token_response["data"]["accessToken"]
+    def _refresh_token(self):
+        if self._get_token:
+            self.token = self._get_token()
 
     @property
     def env(self):
@@ -224,18 +182,17 @@ class Auth:
         }
         return headers
 
-    # pylint: disable=dangerous-default-value
     @retry(  # type: ignore
         retry=retry_if_429_rate_limit(),
         wait=wait_random_exponential(multiplier=0.5, max=180),
         reraise=True,
     )
     def _request_helper(
-        self,
-        request_type: str,
-        url: str,
-        data: dict = {},
-        querystring: dict = {},
+            self,
+            request_type: str,
+            url: str,
+            data: dict = {},
+            querystring: dict = {},
     ) -> requests.Response:
         """
         Helper function for the request, running the actual request with the correct headers.
@@ -273,12 +230,12 @@ class Auth:
         return response
 
     def _request(
-        self,
-        request_type: str,
-        url: str,
-        data: Union[dict, list] = {},
-        querystring: dict = {},
-        return_text: bool = True,
+            self,
+            request_type: str,
+            url: str,
+            data: Union[dict, list] = {},
+            querystring: dict = {},
+            return_text: bool = True,
     ):  # Union[str, dict, requests.Response]:
         """
         Handles retrying the request and automatically retries and gets a new token if
@@ -305,7 +262,7 @@ class Auth:
             stop=stop_after_attempt(2),  # Original attempt + one retry
             wait=wait_fixed(0.5),
             retry=(retry_if_401_invalid_token() | retry_if_exception_type(requests.exceptions.ConnectionError)),
-            after=lambda retry_state: self._get_token(),  # type:ignore
+            after=lambda retry_state: self._refresh_token(),  # type:ignore
             reraise=True,
             # after final failed attempt, raises last attempt's exception instead of RetryError.
         )
@@ -340,8 +297,8 @@ class Auth:
                     raise ValueError(response_text["error"])
                 return response_text
             except (
-                KeyError,
-                TypeError,
+                    KeyError,
+                    TypeError,
             ):  # Catalog search, JobTask logs etc. does not have the usual {"data":"",
                 # "error":""} format.
                 return response_text
