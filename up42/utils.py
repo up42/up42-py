@@ -40,9 +40,9 @@ def get_filename(signed_url: str, default_filename: str) -> str:
 
 
 def get_logger(
-    name: str,
-    level=logging.INFO,
-    verbose: bool = False,
+        name: str,
+        level=logging.INFO,
+        verbose: bool = False,
 ):
     """
     Use level=logging.CRITICAL to disable temporarily.
@@ -68,9 +68,9 @@ logger = get_logger(__name__)
 
 
 def deprecation(
-    replacement_name: str,
-    version: str,
-    extra_message: str = "",
+        replacement_name: str,
+        version: str,
+        extra_message: str = "",
 ):
     """
     Decorator for custom deprecation warnings.
@@ -97,8 +97,8 @@ def deprecation(
 
 
 def download_from_gcs_unpack(
-    download_url: str,
-    output_directory: Union[str, Path],
+        download_url: str,
+        output_directory: Union[str, Path],
 ) -> List[str]:
     """
     General download function for results of storage assets, job & jobtask from cloud storage
@@ -207,8 +207,8 @@ def format_time(date: Optional[Union[str, datetime]], set_end_of_day=False):
 
 
 def any_vector_to_fc(
-    vector: Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point],
-    as_dataframe: bool = False,
+        vector: Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point],
+        as_dataframe: bool = False,
 ) -> Union[dict, GeoDataFrame]:
     """
     Gets a uniform feature collection dictionary (with fc and f bboxes) from any input vector type.
@@ -219,17 +219,17 @@ def any_vector_to_fc(
         as_dataframe: GeoDataFrame output with as_dataframe=True.
     """
     if not isinstance(
-        vector,
-        (
-            FeatureCollection,
-            Feature,
-            dict,
-            list,
-            GeoDataFrame,
-            Polygon,
-            Point,
-            geojson_Polygon,
-        ),
+            vector,
+            (
+                    FeatureCollection,
+                    Feature,
+                    dict,
+                    list,
+                    GeoDataFrame,
+                    Polygon,
+                    Point,
+                    geojson_Polygon,
+            ),
     ):
         raise ValueError(
             "The provided geometry must be a FeatureCollection, Feature, dict (geojson geometry), geopandas "
@@ -421,4 +421,4 @@ def read_json(path_or_dict: Union[dict, str, Path, None]) -> Optional[dict]:
                     return json.load(file)
             except FileNotFoundError as ex:
                 raise ValueError(f"Selected file {path_or_dict} does not exist!") from ex
-    return cast(path_or_dict, Optional[dict])
+    return cast(Optional[dict], path_or_dict)
