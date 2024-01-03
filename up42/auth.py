@@ -148,7 +148,7 @@ class Auth:
                         "Project based authentication will be deprecated."
                         "Please follow authentication guidelines (/docs/authentication.md)."
                     )
-                retriever = token_classes[schema](**source)
+                retriever: token.Token = token_classes[schema](**source)
                 self._get_token = retriever.get_value
         if self._get_token is None:
             raise ValueError("No credentials provided either via config file or arguments.")

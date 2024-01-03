@@ -1,3 +1,5 @@
+from typing import Protocol
+
 import requests
 from oauthlib.oauth2 import BackendApplicationClient, MissingTokenError
 from requests.auth import HTTPBasicAuth
@@ -6,12 +8,17 @@ from requests_oauthlib import OAuth2Session
 from up42 import host
 
 
+class Token(Protocol):
+    def get_value(self) -> str:
+        ...
+
+
 class ProjectKeyToken:
     def __init__(self, project_id: str, project_api_key: str):
         self.project_id = project_id
         self.project_api_key = project_api_key
 
-    def get_value(self):
+    def get_value(self) -> str:
         try:
             client = BackendApplicationClient(client_id=self.project_id, client_secret=self.project_api_key)
             auth = HTTPBasicAuth(self.project_id, self.project_api_key)
@@ -27,7 +34,7 @@ class UserToken:
         self.username = username
         self.password = password
 
-    def get_value(self):
+    def get_value(self) -> str:
         try:
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
