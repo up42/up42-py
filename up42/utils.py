@@ -1,5 +1,6 @@
 import copy
 import importlib.metadata
+import json
 import logging
 import tarfile
 import tempfile
@@ -410,3 +411,14 @@ def replace_page_query(url: str, new_page: int) -> str:
 def get_up42_py_version():
     """Get the version of the up42-py package."""
     return importlib.metadata.version("up42-py")
+
+
+def read_json(path_or_dict: Union[dict, str, Path, None]) -> Optional[dict]:
+    if path_or_dict:
+        if isinstance(path_or_dict, (str, Path)):
+            try:
+                with open(path_or_dict) as file:
+                    return json.load(file)
+            except FileNotFoundError as ex:
+                raise ValueError(f"Selected file {path_or_dict} does not exist!") from ex
+    return path_or_dict
