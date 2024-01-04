@@ -3,7 +3,6 @@ Catalog search functionality
 """
 
 import warnings
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -111,21 +110,6 @@ class CatalogBase:
         collections = [c for c in json_response["data"] if c["type"] == self.type]
         return collections
 
-    def _track_multiple_orders(self, orders: List[Order], report_time: int) -> None:
-        """Allows tracking of multiple orders in parallel
-        Args:
-            orders (list[Order]): list of the orders to track
-            report_time (int): report time
-        """
-
-        def track_order_status(order, report_time):
-            order.track_status(report_time)
-
-        with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(track_order_status, order, report_time) for order in orders]
-            for future in futures:
-                future.result()
-
     def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> dict:
         """
         Estimate the cost of an order.
@@ -151,20 +135,24 @@ class CatalogBase:
             raise ValueError("Please provide the 'order_parameters' parameter!")
         return Order.estimate(self.auth, order_parameters)  # type: ignore
 
-    def create_order(
+    def place_order(
         self,
         order_parameters: Union[dict, None],
         track_status: bool = False,
         report_time: int = 120,
         **kwargs,
-    ) -> List[Order]:
+    ) -> Order:
         """
-        Create a new tasking or catalog order.
+        Place an order.
 
         Args:
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ... }, "featureCollection": ...}
-            track_status (bool): If set to True, will only return the Orders once they are `FULFILLED` or `FAILED`.
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
             report_time (int): The interval (in seconds) to query the order status if `track_status` is True.
+
+        Warning "Deprecated order parameters"
+            The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. Please use the new
+            order_parameters parameter as described above.
 
          Warning:
             When placing orders of items that are in archive or cold storage,
@@ -185,12 +173,11 @@ class CatalogBase:
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
 
-        orders = Order.place(self.auth, order_parameters)  # type: ignore
+        order = Order.place(self.auth, order_parameters)  # type: ignore
 
         if track_status:
-            self._track_multiple_orders(orders=orders, report_time=report_time)
-
-        return orders
+            order.track_status(report_time)
+        return order
 
 
 class Catalog(CatalogBase, VizTools):

@@ -9,6 +9,7 @@ import pytest
 
 from up42.host import endpoint
 
+from .context import Order
 from .fixtures import (
     DATA_PRODUCT_ID,
     ORDER_ID,
@@ -34,7 +35,7 @@ from .fixtures import (
 from .fixtures.fixtures_globals import API_HOST
 
 # pylint: disable=unused-import
-from .test_order import order_parameters
+from .test_order import order_parameters, order_parameters_v1
 
 with open(
     Path(__file__).resolve().parent / "mock_data/search_params_simple.json",
@@ -539,28 +540,29 @@ def test_estimate_order_from_catalog(
     assert estimation == expected_output
 
 
-def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests_mock):
+def test_order_from_catalog(
+    order_parameters_v1, order_mock, catalog_mock, requests_mock
+):
     requests_mock.post(
-        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
+        url=f"{API_HOST}/workspaces/{catalog_mock.auth.workspace_id}/orders",
         json={
-            "results": [{"index": 0, "id": ORDER_ID}],
-            "error": [],
+            "data": {"id": ORDER_ID},
+            "error": {},
         },
     )
-    order = catalog_mock.create_order(order_parameters=order_parameters)
-    assert isinstance(order, list)
-    assert order[0].order_id == ORDER_ID
-    assert order[0].order_parameters == order_parameters
+    order = catalog_mock.place_order(order_parameters=order_parameters_v1)
+    assert isinstance(order, Order)
+    assert order.order_id == ORDER_ID
 
 
 def test_order_from_catalog_track_status(
-    order_parameters, order_mock, catalog_mock, requests_mock
+    order_parameters_v1, order_mock, catalog_mock, requests_mock
 ):
     requests_mock.post(
-        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
+        url=f"{API_HOST}/workspaces/{catalog_mock.auth.workspace_id}/orders",
         json={
-            "results": [{"index": 0, "id": ORDER_ID}],
-            "error": [],
+            "data": {"id": ORDER_ID},
+            "error": {},
         },
     )
     url_order_info = f"{API_HOST}/v2/orders/{order_mock.order_id}"
@@ -572,13 +574,13 @@ def test_order_from_catalog_track_status(
             {"json": {"status": "FULFILLED"}},
         ],
     )
-    order = catalog_mock.create_order(
-        order_parameters=order_parameters,
+    order = catalog_mock.place_order(
+        order_parameters=order_parameters_v1,
         track_status=True,
         report_time=0.1,
     )
-    assert isinstance(order, list)
-    assert order[0].order_id == ORDER_ID
+    assert isinstance(order, Order)
+    assert order.order_id == ORDER_ID
 
 
 @pytest.mark.live

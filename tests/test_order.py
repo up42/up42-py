@@ -148,6 +148,31 @@ def test_get_assets_live(auth_live, order_parameters):
 
 
 @pytest.fixture
+def order_parameters_v1():
+    return {
+        "dataProduct": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
+        "params": {
+            "id": "aa1b5abf-8864-4092-9b65-35f8d0d413bb",
+            "aoi": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [13.357031, 52.52361],
+                        [13.350981, 52.524362],
+                        [13.351544, 52.526326],
+                        [13.355284, 52.526765],
+                        [13.356944, 52.525067],
+                        [13.357257, 52.524409],
+                        [13.357031, 52.52361],
+                    ]
+                ],
+            },
+        },
+        "tags": ["Test", "SDK"],
+    }
+
+
+@pytest.fixture
 def order_parameters():
     return {
         "dataProduct": "b1f8c48e-d16b-44c4-a1bb-5e8a24892e69",
@@ -187,30 +212,30 @@ def order_parameters():
     }
 
 
-def test_place_order(order_parameters, auth_mock, requests_mock, order_mock):
+def test_place_order(order_parameters_v1, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
+        url=f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders",
         json={
-            "results": [{"index": 0, "id": ORDER_ID}],
-            "error": [],
+            "data": {"id": ORDER_ID},
+            "error": {},
         },
     )
-    order = Order.place(auth_mock, order_parameters)
-    assert isinstance(order, list)
-    assert order[0].order_id == ORDER_ID
-    assert order[0].order_parameters == order_parameters
+    order = Order.place(auth_mock, order_parameters_v1)
+    assert isinstance(order, Order)
+    assert order.order_id == ORDER_ID
+    assert order.order_parameters == order_parameters_v1
 
 
-def test_place_order_no_id(order_parameters, auth_mock, order_mock, requests_mock):
+def test_place_order_no_id(order_parameters_v1, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
+        url=f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders",
         json={
-            "results": [{"index": 0, "xyz": 892}],
-            "error": [],
+            "data": {"xyz": 892},
+            "error": {},
         },
     )
     with pytest.raises(ValueError):
-        Order.place(auth_mock, order_parameters)
+        Order.place(auth_mock, order_parameters_v1)
 
 
 @pytest.mark.skip(reason="Placing orders costs credits.")

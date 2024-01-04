@@ -96,28 +96,26 @@ class Order:
         raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
-    def place(cls, auth: Auth, order_parameters: dict) -> List["Order"]:
+    def place(cls, auth: Auth, order_parameters: dict) -> "Order":
         """
-        Create a new tasking or catalog order.
+        Places an order.
 
         Args:
             auth: An authentication object.
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ...}, "featureCollection": ...}
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
 
         Returns:
-            Orders: Details of the created orders. If you have defined multiple geometries, \
-                each geometry will result in a separate order.
+            Order: The placed order.
         """
-        url = endpoint(f"/v2/orders?workspaceId={auth.workspace_id}")
+        url = endpoint(f"/workspaces/{auth.workspace_id}/orders")
         response_json = auth._request(request_type="POST", url=url, data=order_parameters)
         try:
-            order_ids = [order_id["id"] for order_id in response_json["results"]]  # type: ignore
+            order_id = response_json["data"]["id"]  # type: ignore
         except KeyError as e:
             raise ValueError(f"Order was not placed: {response_json}") from e
-        orders = [cls(auth=auth, order_id=order_id, order_parameters=order_parameters) for order_id in order_ids]
-        for order in orders:
-            logger.info(f"Order {order.order_id} is now {order.status}.")
-        return orders
+        order = cls(auth=auth, order_id=order_id, order_parameters=order_parameters)
+        logger.info(f"Order {order.order_id} is now {order.status}.")
+        return order
 
     @staticmethod
     def estimate(auth: Auth, order_parameters: dict) -> dict:
@@ -186,9 +184,13 @@ class Order:
         )
         time_asleep = 0
 
+        # check order details and react for tasking orders.
+
         while not self.is_fulfilled:
             status = self.status
-            substatus_message = substatus_messages(self.order_details.get("subStatus", ""))
+            substatus_message = (
+                substatus_messages(self.order_details.get("subStatus", "")) if self.info["type"] == "TASKING" else ""
+            )
             if status in ["PLACED", "BEING_FULFILLED"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info(f"Order is {status}! - {self.order_id}")
