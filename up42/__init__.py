@@ -21,8 +21,6 @@
 """
 
 
-from pathlib import Path
-
 from up42.asset import Asset
 from up42.auth import Auth
 from up42.catalog import Catalog

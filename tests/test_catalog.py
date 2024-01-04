@@ -11,9 +11,6 @@ from up42.order import Order
 
 from .fixtures.fixtures_globals import API_HOST, DATA_PRODUCT_ID, ORDER_ID
 
-# pylint: disable=unused-import
-# pylint: disable=unused-import
-
 with open(
     Path(__file__).resolve().parent / "mock_data/search_params_simple.json",
     encoding="utf-8",
@@ -50,9 +47,8 @@ def test_get_data_product_schema_live(catalog_live):
 def test_get_data_products_basic(catalog_mock):
     data_products_basic = catalog_mock.get_data_products()
     assert isinstance(data_products_basic, dict)
-    basic_keys = ["data_products", "host", "collection"]
-    assert all(k in data_products_basic[list(data_products_basic.keys())[0]] for k in basic_keys)
-
+    basic_keys = {"data_products", "host", "collection"}
+    assert basic_keys <= set(list(data_products_basic.values())[0].keys())
     assert "tasking_should_be_filtered_in_catalog_test" not in data_products_basic
     assert "test_not_integrated" not in data_products_basic
     assert len(data_products_basic) == 2
@@ -90,7 +86,11 @@ def test_construct_search_parameters(catalog_mock):
     )
     assert isinstance(search_parameters, dict)
     assert search_parameters["datetime"] == mock_search_parameters["datetime"]
-    assert json.dumps(search_parameters["intersects"]) == json.dumps(search_parameters["intersects"])
+    rounded_coords = [
+        [round(coord[0], 6), round(coord[1], 6)] for coord in mock_search_parameters["intersects"]["coordinates"][0]
+    ]
+    converted_list = tuple(tuple(coord) for coord in rounded_coords)
+    assert search_parameters["intersects"]["coordinates"] == (converted_list,)
     assert search_parameters["limit"] == mock_search_parameters["limit"]
     assert search_parameters["query"] == mock_search_parameters["query"]
 

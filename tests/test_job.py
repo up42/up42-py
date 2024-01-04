@@ -6,7 +6,6 @@ from pathlib import Path
 
 import pytest
 
-# pylint: disable=unused-import
 from up42.job import Job
 from up42.jobtask import JobTask
 

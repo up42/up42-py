@@ -5,8 +5,6 @@ from shapely.geometry import box
 
 from up42.job import Job
 from up42.jobcollection import JobCollection
-
-# pylint: disable=unused-import,wrong-import-order
 from up42.workflow import Workflow
 
 from .fixtures.fixtures_globals import (
@@ -115,15 +113,15 @@ def test_add_workflow_tasks_full(workflow_mock, requests_mock):
 def test_get_parameter_info(workflow_mock):
     parameter_info = workflow_mock.get_parameters_info()
     assert isinstance(parameter_info, dict)
-    assert all(x in list(parameter_info.keys()) for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"])
-    assert all(x in list(parameter_info["tiling:1"].keys()) for x in ["nodata", "tile_width"])
+    assert {"tiling:1", "esa-s2-l2a-gtiff-visual:1"} <= set(parameter_info.keys())
+    assert {"nodata", "tile_width"} <= set(parameter_info["tiling:1"].keys())
 
 
 def test_get_default_parameters(workflow_mock):
     default_parameters = workflow_mock._get_default_parameters()
 
     assert isinstance(default_parameters, dict)
-    assert all(x in list(default_parameters.keys()) for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"])
+    assert {"tiling:1", "esa-s2-l2a-gtiff-visual:1"} <= set(default_parameters.keys())
     assert default_parameters["tiling:1"] == {
         "nodata": None,
         "tile_width": 768,
@@ -315,7 +313,6 @@ def test_run_job(workflow_mock, job_mock, requests_mock):
 
 
 def test_helper_run_parallel_jobs_dry_run(workflow_mock, project_mock_max_concurrent_jobs):
-    # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2def"], "limit": 1}},
@@ -333,7 +330,6 @@ def test_helper_run_parallel_jobs_dry_run(workflow_mock, project_mock_max_concur
                 f"{API_HOST}/projects/{workflow_mock.project_id}/"
                 f"workflows/{workflow_mock.workflow_id}/jobs?name={job_name}"
             )
-            print(url_job)
             m.post(url=url_job, json={"data": {"id": job_name}})
             m.get(
                 url=f"{API_HOST}/projects/{workflow_mock.project_id}/" f"jobs/{job_name}",
@@ -348,7 +344,6 @@ def test_helper_run_parallel_jobs_dry_run(workflow_mock, project_mock_max_concur
 
 
 def test_helper_run_parallel_jobs_all_fails(workflow_mock, jobtask_mock, project_mock_max_concurrent_jobs):
-    # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2def"], "limit": 1}},
@@ -432,7 +427,6 @@ def test_helper_run_parallel_jobs_one_fails(workflow_mock, project_mock_max_conc
 
 @pytest.mark.skip(reason="Takes 100sec")
 def test_helper_run_parallel_jobs_default(workflow_mock, project_mock_max_concurrent_jobs):
-    # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2def"], "limit": 1}},
@@ -463,7 +457,6 @@ def test_helper_run_parallel_jobs_default(workflow_mock, project_mock_max_concur
 
 
 def test_helper_run_parallel_jobs_fail_concurrent_jobs(workflow_mock, project_mock_max_concurrent_jobs):
-    # pylint: disable=dangerous-default-value
     input_parameters_list = [
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2abc"], "limit": 1}},
         {"esa-s2-l2a-gtiff-visual:1": {"ids": ["S2def"], "limit": 1}},

@@ -138,14 +138,10 @@ def test_get_block_coverage_live(auth_live, monkeypatch):
 @pytest.mark.live
 def test_get_block_coverage_noresults_live(auth_live, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_live)
-    # pylint: disable=unused-variable
-    try:
+    with pytest.raises(requests.exceptions.RequestException):
         block_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
-        _ = get_block_coverage(block_id=block_id)
-    except requests.exceptions.RequestException:
-        assert True
-        return
-    assert False
+        # TODO: run this live test
+        get_block_coverage(block_id=block_id)
 
 
 def test_get_credits_balance(auth_mock, monkeypatch):

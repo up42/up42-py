@@ -3,8 +3,6 @@ import os
 import pytest
 
 from up42.asset import Asset
-
-# pylint: disable=unused-import
 from up42.order import Order
 
 from .fixtures.fixtures_globals import API_HOST, ASSET_ORDER_ID, ORDER_ID

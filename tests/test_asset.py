@@ -4,7 +4,6 @@ from unittest.mock import MagicMock
 import pystac
 import pytest
 
-# pylint: disable=unused-import
 from up42.asset import Asset
 from up42.host import endpoint
 

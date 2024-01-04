@@ -2,7 +2,6 @@ import shutil
 import tempfile
 from pathlib import Path
 
-# pylint: disable=unused-import
 from .fixtures.fixtures_globals import API_HOST, DOWNLOAD_URL
 
 

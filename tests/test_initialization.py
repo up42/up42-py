@@ -2,8 +2,6 @@ import pytest
 
 # pylint: disable=wrong-import-order
 import up42
-
-# pylint: disable=unused-import
 from up42.asset import Asset
 from up42.catalog import Catalog
 from up42.job import Job

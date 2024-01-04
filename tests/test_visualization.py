@@ -12,9 +12,6 @@ from shapely import wkt
 
 from up42.viztools import VizTools, folium_base_map
 
-# pylint: disable=unused-import,wrong-import-order
-# pylint: disable=unused-argument
-
 
 def test_folium_base_map():
     m = folium_base_map()

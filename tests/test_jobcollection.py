@@ -6,7 +6,6 @@ import pytest
 
 from up42.job import Job
 
-# pylint: disable=unused-import,wrong-import-order
 from .fixtures.fixtures_globals import API_HOST, JOB_ID, JOB_ID_2
 
 
@@ -18,11 +17,10 @@ def test_jobcollection_multiple(jobcollection_multiple_mock):
     assert len(jobcollection_multiple_mock.jobs) == 2
 
 
-def worker(job):
-    return 1
-
-
 def test_job_iterator(jobcollection_multiple_mock, jobcollection_empty_mock, requests_mock):
+    def worker(job):
+        return 1
+
     res = jobcollection_multiple_mock.apply(worker, only_succeeded=False)
     assert len(res) == 2
     assert res[JOB_ID] == 1

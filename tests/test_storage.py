@@ -8,8 +8,6 @@ import requests
 from up42.asset import Asset
 from up42.asset_searcher import query_paginated_endpoints
 from up42.order import Order
-
-# pylint: disable=unused-import
 from up42.storage import AllowedStatuses, Storage
 
 from .fixtures.fixtures_globals import (

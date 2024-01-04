@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 import requests
 
-# pylint: disable=unused-import
 from .fixtures.fixtures_globals import (
     DATA_PRODUCT_ID,
     QUOTATION_ID,
