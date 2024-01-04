@@ -83,7 +83,7 @@ jobs:
             poetry lock
             poetry install --no-ansi
       - run:
-          name: Runnning tests
+          name: Running tests
           command: poetry run pytest --runlive --durations=5
   deploy:
     docker:
