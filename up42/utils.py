@@ -1,5 +1,6 @@
 import copy
 import importlib.metadata
+import json
 import logging
 import tarfile
 import tempfile
@@ -9,7 +10,7 @@ from datetime import datetime
 from datetime import time as datetime_time
 from functools import wraps
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Union, cast
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 import requests
@@ -410,3 +411,13 @@ def replace_page_query(url: str, new_page: int) -> str:
 def get_up42_py_version():
     """Get the version of the up42-py package."""
     return importlib.metadata.version("up42-py")
+
+
+def read_json(path_or_dict: Union[dict, str, Path, None]) -> Optional[dict]:
+    if path_or_dict and isinstance(path_or_dict, (str, Path)):
+        try:
+            with open(path_or_dict) as file:
+                return json.load(file)
+        except FileNotFoundError as ex:
+            raise ValueError(f"File {path_or_dict} does not exist!") from ex
+    return cast(Optional[dict], path_or_dict)
