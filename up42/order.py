@@ -134,7 +134,6 @@ class Order:
         url = endpoint(f"/workspaces/{auth.workspace_id}/orders/estimate")
 
         response_json = auth._request(request_type="POST", url=url, data=order_parameters)
-
         estimated_credits: int = response_json["data"]["credits"]  # type: ignore
         logger.info(
             f"Order is estimated to cost {estimated_credits} UP42 credits (order_parameters: {order_parameters})"
