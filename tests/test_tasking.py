@@ -32,7 +32,6 @@ LIVE_TEST_WORKSPACE_ID = os.getenv("LIVE_TEST_WORKSPACE_ID")
 LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
 LIVE_OPTION_ID = os.getenv("LIVE_OPTION_ID")
 
-
 with open(
     Path(__file__).resolve().parent / "mock_data/search_params_simple.json"
 ) as json_file:
