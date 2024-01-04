@@ -34,7 +34,7 @@ from .fixtures import (
 from .fixtures.fixtures_globals import API_HOST
 
 # pylint: disable=unused-import
-from .test_order import order_parameters
+from .test_order import order_parameters, order_parameters_v1
 
 with open(
     Path(__file__).resolve().parent / "mock_data/search_params_simple.json",
@@ -516,27 +516,15 @@ def test_construct_order_parameters_live(catalog_live, product_id):
 
 # pylint: disable=unused-argument
 def test_estimate_order_from_catalog(
-    order_parameters, order_mock, catalog_mock, requests_mock
+    order_parameters_v1, order_mock, catalog_mock, requests_mock
 ):
     url_order_estimation = (
         f"{API_HOST}/workspaces/" f"{catalog_mock.auth.workspace_id}/orders/estimate"
     )
     requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
-    expected_payload = {
-        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
-        "results": [{"index": 0, "credits": 38, "unit": "SQ_KM", "size": 0.1}],
-        "errors": [],
-    }
-    expected_output = {
-        "errors": [],
-        "results": [{"credits": 38, "index": 0, "size": 0.1, "unit": "SQ_KM"}],
-        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
-    }
-    url_order_estimation = endpoint("/v2/orders/estimate")
-    requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = catalog_mock.estimate_order(order_parameters)
-    assert isinstance(estimation, dict)
-    assert estimation == expected_output
+    estimation = catalog_mock.estimate_order(order_parameters_v1)
+    assert isinstance(estimation, int)
+    assert estimation == 100
 
 
 def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests_mock):
@@ -582,15 +570,10 @@ def test_order_from_catalog_track_status(
 
 
 @pytest.mark.live
-def test_estimate_order_from_catalog_live(order_parameters, catalog_live):
-    expected_output = {
-        "errors": [],
-        "results": [{"credits": 38, "index": 0, "size": 0.1, "unit": "SQ_KM"}],
-        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
-    }
-    estimation = catalog_live.estimate_order(order_parameters)
-    assert isinstance(estimation, dict)
-    assert estimation == expected_output
+def test_estimate_order_from_catalog_live(order_parameters_v1, catalog_live):
+    estimation = catalog_live.estimate_order(order_parameters_v1)
+    assert isinstance(estimation, int)
+    assert estimation == 100
 
 
 @pytest.mark.skip(reason="Placing orders costs credits.")

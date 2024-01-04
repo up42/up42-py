@@ -126,31 +126,6 @@ class CatalogBase:
             for future in futures:
                 future.result()
 
-    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> dict:
-        """
-        Estimate the cost of an order.
-
-        Args:
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
-
-        Returns:
-            dict: representation of a JSON estimation response with summary, results, and errors..
-
-        Warning "Deprecated order parameters"
-            The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. Please use the new
-            order_parameters parameter as described above.
-        """
-        if "scene" in kwargs or "geometry" in kwargs:
-            # Deprecated, to be removed, use order_parameters.
-            message = (
-                "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
-                "Please use the new 'order_parameters' parameter."
-            )
-            warnings.warn(message, DeprecationWarning, stacklevel=2)
-        elif order_parameters is None:
-            raise ValueError("Please provide the 'order_parameters' parameter!")
-        return Order.estimate(self.auth, order_parameters)  # type: ignore
-
     def create_order(
         self,
         order_parameters: Union[dict, None],
@@ -213,6 +188,28 @@ class Catalog(CatalogBase, VizTools):
 
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
+
+    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
+        """
+        Estimate the cost of an order.
+        Args:
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+        Returns:
+            int: An estimated cost for the order in UP42 credits.
+        Warning "Deprecated order parameters"
+            The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. Please use the new
+            order_parameters parameter as described above.
+        """
+        if "scene" in kwargs or "geometry" in kwargs:
+            # Deprecated, to be removed, use order_parameters.
+            message = (
+                "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
+                "Please use the new 'order_parameters' parameter."
+            )
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
+        elif order_parameters is None:
+            raise ValueError("Please provide the 'order_parameters' parameter!")
+        return Order.estimate(self.auth, order_parameters)  # type: ignore
 
     @deprecation("construct_search_parameters", "0.25.0")
     def construct_parameters(self, **kwargs):  # pragma: no cover

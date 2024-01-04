@@ -120,33 +120,26 @@ class Order:
         return orders
 
     @staticmethod
-    def estimate(auth: Auth, order_parameters: dict) -> dict:
+    def estimate(auth: Auth, order_parameters: dict) -> int:
         """
         Returns an estimation of the cost of an order.
 
         Args:
             auth: An authentication object.
-            order_parameters: A dictionary  like {dataProduct: ..., "params": {"id": ...}, "featureCollection": ...}.
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
 
         Returns:
-            dict: representation of a JSON estimation response with summary, results, and errors.
+            int: The estimated cost of the order
         """
-        url = endpoint("/v2/orders/estimate")
+        url = endpoint(f"/workspaces/{auth.workspace_id}/orders/estimate")
 
         response_json = auth._request(request_type="POST", url=url, data=order_parameters)
 
-        summary_data = response_json.get("summary", {})
-        result_data = response_json.get("results", [])
-        errors_data = response_json.get("errors", [])
-
-        total_credits = summary_data.get("totalCredits", None)
-
-        if total_credits is None:
-            raise ValueError(f"Order estimation was not successful. {errors_data}")
-
-        logger.info(f"Orders are estimated to cost {total_credits} UP42 credits (order_parameters: {order_parameters})")
-
-        return {"summary": summary_data, "results": result_data, "errors": errors_data}
+        estimated_credits: int = response_json["data"]["credits"]  # type: ignore
+        logger.info(
+            f"Order is estimated to cost {estimated_credits} UP42 credits (order_parameters: {order_parameters})"
+        )
+        return estimated_credits
 
     def track_status(self, report_time: int = 120) -> str:
         """

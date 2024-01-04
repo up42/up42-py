@@ -2,8 +2,6 @@ import os
 
 import pytest
 
-from up42.host import endpoint
-
 # pylint: disable=unused-import
 from .context import Asset, Order
 from .fixtures import (
@@ -103,13 +101,12 @@ def test_order_parameters(order_mock):
 
 def test_get_assets_should_search_assets_by_order_id(auth_mock, requests_mock):
     order_response = {"id": ORDER_ID, "status": "FULFILLED"}
-
     url_order_info = f"{API_HOST}/v2/orders/{ORDER_ID}"
     requests_mock.get(url=url_order_info, json=order_response)
     url_asset_info = f"{API_HOST}/v2/assets?search={ORDER_ID}&size=50"
     requests_mock.get(url=url_asset_info, json=JSON_GET_ASSETS_RESPONSE)
     order = Order(auth=auth_mock, order_id=ORDER_ID)
-    (asset,) = order.get_assets()
+    asset = order.get_assets()[0]
     assert isinstance(asset, Asset)
     assert asset.asset_id == ASSET_ORDER_ID
 
@@ -145,6 +142,31 @@ def test_get_assets_live(auth_live, order_parameters):
     assets = order_instance.get_assets()
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ORDER_ID
+
+
+@pytest.fixture
+def order_parameters_v1():
+    return {
+        "dataProduct": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
+        "params": {
+            "id": "aa1b5abf-8864-4092-9b65-35f8d0d413bb",
+            "aoi": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [13.357031, 52.52361],
+                        [13.350981, 52.524362],
+                        [13.351544, 52.526326],
+                        [13.355284, 52.526765],
+                        [13.356944, 52.525067],
+                        [13.357257, 52.524409],
+                        [13.357031, 52.52361],
+                    ]
+                ],
+            },
+        },
+        "tags": ["Test", "SDK"],
+    }
 
 
 @pytest.fixture
@@ -279,62 +301,18 @@ def test_track_status_fail(order_mock, status, requests_mock):
         order_mock.track_status()
 
 
-def test_estimate_order(order_parameters, auth_mock, requests_mock):
-    url_order_estimation = f"{API_HOST}/v2/orders/estimate"
-    expected_payload = {
-        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
-        "results": [{"index": 0, "credits": 38, "unit": "SQ_KM", "size": 0.1}],
-        "errors": [],
-    }
-    expected_output = {
-        "errors": [],
-        "results": [{"credits": 38, "index": 0, "size": 0.1, "unit": "SQ_KM"}],
-        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
-    }
-    requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = Order.estimate(auth_mock, order_parameters)
-    assert isinstance(estimation, dict)
-    assert estimation == expected_output
-
-
-@pytest.mark.parametrize(
-    "expected_payload",
-    [
-        {
-            "data": None,
-            "error": {
-                "code": 400,
-                "message": "AOI area must be more than 0.1 km².",
-                "details": None,
-            },
-        },
-        {
-            "summary": {},
-            "results": [],
-            "errors": [],
-        },
-    ],
-    ids=[
-        "Sc1: Error log with http response",
-        "Sc2: Error log total_estimation None",
-    ],
-)
-def test_estimate_order_fail(
-    order_parameters, auth_mock, requests_mock, expected_payload
-):
-    url_order_estimation = endpoint("/v2/orders/estimate")
-    requests_mock.post(url=url_order_estimation, json=expected_payload)
-    with pytest.raises(ValueError):
-        Order.estimate(auth_mock, order_parameters)
+def test_estimate_order(order_parameters_v1, auth_mock, requests_mock):
+    url_order_estimation = (
+        f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders/estimate"
+    )
+    requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
+    estimation = Order.estimate(auth_mock, order_parameters_v1)
+    assert isinstance(estimation, int)
+    assert estimation == 100
 
 
 @pytest.mark.live
-def test_estimate_order_live(order_parameters, auth_live):
-    expected_output = {
-        "errors": [],
-        "results": [{"credits": 38, "index": 0, "size": 0.1, "unit": "SQ_KM"}],
-        "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
-    }
-    estimation = Order.estimate(auth_live, order_parameters=order_parameters)
-    assert isinstance(estimation, dict)
-    assert estimation == expected_output
+def test_estimate_order_live(order_parameters_v1, auth_live):
+    estimation = Order.estimate(auth_live, order_parameters=order_parameters_v1)
+    assert isinstance(estimation, int)
+    assert estimation == 100
