@@ -10,9 +10,7 @@ from dateutil.parser import parse
 from geopandas import GeoDataFrame
 from shapely.geometry import LinearRing, Polygon
 
-
 from up42.utils import (
-    read_json,
     any_vector_to_fc,
     autocomplete_order_parameters,
     download_from_gcs_unpack,
@@ -20,6 +18,7 @@ from up42.utils import (
     filter_jobs_on_mode,
     format_time,
     get_up42_py_version,
+    read_json,
 )
 
 POLY = Polygon([(0, 0), (1, 1), (1, 0)])
@@ -47,80 +46,80 @@ def test_format_time(date, set_end_of_day, result_time):
     [
         (1, POLY),
         (
-                1,
-                gpd.GeoDataFrame(
-                    pd.DataFrame([0], columns=["id"]),
-                    crs={"init": "epsg:4326"},
-                    geometry=[POLY],
-                ),
+            1,
+            gpd.GeoDataFrame(
+                pd.DataFrame([0], columns=["id"]),
+                crs={"init": "epsg:4326"},
+                geometry=[POLY],
+            ),
         ),
         (
-                2,
-                gpd.GeoDataFrame(
-                    pd.DataFrame([0, 1], columns=["id"]),
-                    crs={"init": "epsg:4326"},
-                    geometry=[POLY, POLY],
-                ),
+            2,
+            gpd.GeoDataFrame(
+                pd.DataFrame([0, 1], columns=["id"]),
+                crs={"init": "epsg:4326"},
+                geometry=[POLY, POLY],
+            ),
         ),
         (1, [0.0, 0.0, 1.0, 1.0]),
         (
-                1,
-                {
-                    "id": "0",
-                    "type": "Feature",
-                    "properties": {},
-                    "geometry": {
-                        "type": "Polygon",
-                        "coordinates": (
-                                (
-                                        (10.00001, 6.0),
-                                        (10.0, 5.99),
-                                        (10.1, 6.00),
-                                        (10.00001, 6.0),
-                                ),
-                        ),
-                    },
-                },
-        ),
-        (
-                1,
-                {
-                    "type": "FeatureCollection",
-                    "features": [
-                        {
-                            "id": "0",
-                            "type": "Feature",
-                            "properties": {},
-                            "geometry": {
-                                "type": "Polygon",
-                                "coordinates": (
-                                        (
-                                                (10.00001, 6.0),
-                                                (10.0, 5.999),
-                                                (10.00, 6.0),
-                                                (10.00001, 6.0),
-                                        ),
-                                ),
-                            },
-                        }
-                    ],
-                },
-        ),
-        (
-                1,
-                {
+            1,
+            {
+                "id": "0",
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
                     "type": "Polygon",
-                    "coordinates": [
-                        [
-                            [-97.324448, 37.72246],
-                            [-97.349682, 37.722732],
-                            [-97.349939, 37.708405],
-                            [-97.322989, 37.708202],
-                            [-97.320414, 37.708473],
-                            [-97.324448, 37.72246],
-                        ]
-                    ],
+                    "coordinates": (
+                        (
+                            (10.00001, 6.0),
+                            (10.0, 5.99),
+                            (10.1, 6.00),
+                            (10.00001, 6.0),
+                        ),
+                    ),
                 },
+            },
+        ),
+        (
+            1,
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "0",
+                        "type": "Feature",
+                        "properties": {},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": (
+                                (
+                                    (10.00001, 6.0),
+                                    (10.0, 5.999),
+                                    (10.00, 6.0),
+                                    (10.00001, 6.0),
+                                ),
+                            ),
+                        },
+                    }
+                ],
+            },
+        ),
+        (
+            1,
+            {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [-97.324448, 37.72246],
+                        [-97.349682, 37.722732],
+                        [-97.349939, 37.708405],
+                        [-97.322989, 37.708202],
+                        [-97.320414, 37.708473],
+                        [-97.324448, 37.72246],
+                    ]
+                ],
+            },
         ),
     ],
 )
