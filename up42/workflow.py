@@ -1,5 +1,4 @@
 import copy
-import json
 import logging
 from collections import Counter
 from datetime import datetime
@@ -19,7 +18,7 @@ from up42.estimation import Estimation
 from up42.host import endpoint
 from up42.job import Job
 from up42.jobcollection import JobCollection
-from up42.utils import any_vector_to_fc, fc_to_query_geometry, filter_jobs_on_mode, format_time, get_logger
+from up42.utils import any_vector_to_fc, fc_to_query_geometry, filter_jobs_on_mode, format_time, get_logger, read_json
 
 logger = get_logger(__name__)
 
@@ -528,7 +527,7 @@ class Workflow:
 
     def _helper_run_job(
         self,
-        input_parameters: Union[Dict, str, Path] = None,
+        input_parameters: Union[Dict, str, Path, None] = None,
         test_job=False,
         track_status: bool = False,
         name: str = None,
@@ -549,11 +548,7 @@ class Workflow:
         if input_parameters is None:
             raise ValueError("Select the job_parameters, use workflow.construct_parameters()!")
 
-        if isinstance(input_parameters, (str, Path)):
-            with open(input_parameters) as src:
-                input_parameters = json.load(src)
-            logger.info("Loading job parameters from JSON file.")
-
+        input_parameters = read_json(input_parameters)
         if test_job:
             input_parameters = input_parameters.copy()  # type: ignore
             input_parameters.update({"config": {"mode": "DRY_RUN"}})  # type: ignore

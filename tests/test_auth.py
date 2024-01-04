@@ -46,11 +46,11 @@ def test_no_credentials_raises():
         Auth()
 
 
-def test_cfg_file_not_found():
-    fp = Path(__file__).resolve().parent / "mock_data" / "test_config_fake.json"
+def test_should_fail_config_file_not_found(tmp_path):
+    config_path = tmp_path / "config_fake.json"
     with pytest.raises(ValueError) as e:
-        Auth(cfg_file=fp)
-    assert "Selected config file does not exist!" in str(e.value)
+        Auth(cfg_file=config_path)
+    assert str(config_path) in str(e.value)
 
 
 def test_should_not_authenticate_with_config_file_if_not_requested():
