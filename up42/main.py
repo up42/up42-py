@@ -10,7 +10,6 @@ __all__ = [
     "validate_manifest",
 ]
 
-import json
 import logging
 import warnings
 from functools import wraps
@@ -23,7 +22,7 @@ import requests.exceptions
 # pylint: disable=wrong-import-position
 from up42.auth import Auth
 from up42.host import endpoint
-from up42.utils import get_logger
+from up42.utils import get_logger, read_json
 from up42.webhooks import Webhook, Webhooks
 
 logger = get_logger(__name__, level=logging.INFO)
@@ -255,11 +254,7 @@ def validate_manifest(path_or_json: Union[str, Path, dict]) -> dict:
     Returns:
         A dictionary with the validation results and potential validation errors.
     """
-    if isinstance(path_or_json, (str, Path)):
-        with open(path_or_json) as src:
-            manifest_json = json.load(src)
-    else:
-        manifest_json = path_or_json
+    manifest_json = read_json(path_or_json)
     url = endpoint("/validate-schema/block")
     response_json = _auth._request(request_type="POST", url=url, data=manifest_json)
     logger.info("The manifest is valid.")

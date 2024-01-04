@@ -22,7 +22,7 @@ from tenacity import (
 )
 
 from up42 import host
-from up42.utils import get_logger, get_up42_py_version
+from up42.utils import get_logger, get_up42_py_version, read_json
 
 logger = get_logger(__name__)
 
@@ -121,17 +121,9 @@ class Auth:
             logger.info("Authentication with UP42 successful!")
 
     def _choose_credential_source(self, cfg_file: Union[str, Path, None], kwargs: dict) -> dict:
-        config = {}
-        if cfg_file:
-            try:
-                with open(cfg_file, encoding="utf-8") as src:
-                    config.update(json.load(src))
-                logger.info("Got credentials from config file.")
-            except FileNotFoundError as e:
-                raise ValueError("Selected config file does not exist!") from e
-
-            if set(config.keys()).intersection(set(kwargs.keys())):
-                raise ValueError("Credentials must be provided either via config file or arguments, but not both")
+        config = read_json(cfg_file) or {}
+        if set(config.keys()).intersection(set(kwargs.keys())):
+            raise ValueError("Credentials must be provided either via config file or arguments, but not both")
         return config if config else kwargs
 
     def _set_credentials(self, source: dict):
