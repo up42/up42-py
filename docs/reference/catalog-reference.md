@@ -133,6 +133,7 @@ construct_order_parameters(
     image_id,
     aoi,
     tags,
+    extra_params,
 )
 ```
 
@@ -146,6 +147,7 @@ The returned format is `dict`.
 | `image_id`        | **str / required**<br/>The scene ID.                                                        |
 | `aoi`             | **Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]**<br/>The order AOI. |
 | `tags`            | **list[str]**<br/>A list of tags that categorize the order.                                 |
+| `extra_params`    | **dict**<br/>Data product schema parameters.                                                |
 
 <h5> Example </h5>
 
@@ -166,7 +168,7 @@ The `estimate_order()` function returns the cost estimate for a catalog order.
 estimate_order(order_parameters)
 ```
 
-The returned format is `int`.
+The returned format is `dict`.
 
 <h5> Arguments </h5>
 
