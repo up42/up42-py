@@ -82,7 +82,7 @@ The CatalogBase class is inherited by the Tasking and Catalog classes.
     - `get_collections()`
     - `get_data_products()`
     - `get_data_product_schema()`
-    - `place_order()`
+    - `create_order()`
 
 ### Order
 

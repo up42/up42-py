@@ -170,9 +170,9 @@ The returned format is `int`.
 
 <h5> Arguments </h5>
 
-| Argument           | Overview                                                                      |
-| ------------------ | ----------------------------------------------------------------------------- |
-| `order_parameters` | **Union[dict, None] / required**<br/>Parameters with which to place an order. |
+| Argument           | Overview                                                                       |
+| ------------------ | ------------------------------------------------------------------------------ |
+| `order_parameters` | **Union[dict, None] / required**<br/>Parameters with which to create an order. |
 
 <h5> Example </h5>
 

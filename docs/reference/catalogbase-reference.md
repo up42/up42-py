@@ -58,7 +58,7 @@ catalog.get_data_products(basic=False)
 
 ### get_data_product_schema()
 
-The `get_data_product_schema()` function returns the parameters needed to place an order for a specific data product.
+The `get_data_product_schema()` function returns the parameters needed to create an order for a specific data product.
 
 ```python
 get_data_product_schema(data_product_id)
@@ -82,25 +82,25 @@ catalog.get_data_product_schema(data_product_id="647780db-5a06-4b61-b525-577a8b6
 
 ## Orders
 
-### place_order()
+### create_order()
 
-The `place_order()` function allows you to place a catalog or tasking order.
+The `create_order()` function allows you to create a catalog or tasking order.
 
 ```python
-place_order(
+create_order(
     order_parameters,
     track_status,
     report_time,
 )
 ```
 
-The returned format is `Order`.
+The returned format is `List[Order]`.
 
 <h5> Arguments </h5>
 
 | Argument           | Overview                                                                                                                                                                                                                                      |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `order_parameters` | **Union[dict, None]**<br/>Parameters with which to place an order.                                                                                                                                                                            |
+| `order_parameters` | **Union[dict, None]**<br/>Parameters with which to create an order.                                                                                                                                                                            |
 | `track_status`     | **bool**<br/>Determines when to return order data:</p><ul><li>`True`: return order data only when the order status changes to `FULFILLED` or `FAILED`.</li><li>`False`: return order data immediately.</li></ul>The default value is `False`. |
 | `report_time`      | **int**<br/>Use if `track_status=True`.<br/><br/>The time interval for querying whether the order status has changed to `FULFILLED` or `FAILED`, in seconds. The default value is `120`.                                                      |
 
@@ -122,7 +122,7 @@ geometry = {
     ),
 }
 
-# Place a tasking order
+# Create a tasking order
 
 tasking_order_parameters = tasking.construct_order_parameters(
     data_product_id="123eabab-0511-4f36-883a-80928716c3db",
@@ -133,13 +133,13 @@ tasking_order_parameters = tasking.construct_order_parameters(
     tags=["project-7", "optical"],
 )
 
-tasking.place_order(
+tasking.create_order(
     order_parameters=tasking_order_parameters,
     track_status=True,
     report_time=150,
 )
 
-# Place a catalog order
+# Create a catalog order
 
 catalog_order_parameters = catalog.construct_order_parameters(
     data_product_id="4f1b2f62-98df-4c74-81f4-5dce45deee99",
@@ -147,7 +147,7 @@ catalog_order_parameters = catalog.construct_order_parameters(
     aoi=geometry,
 )
 
-catalog.place_order(
+catalog.create_order(
     order_parameters=catalog_order_parameters,
     track_status=True,
     report_time=150,
