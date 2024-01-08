@@ -24,7 +24,7 @@ from up42.utils import get_logger, get_up42_py_version, read_json
 
 logger = get_logger(__name__)
 
-AUTHENTICATION_TIMEOUT = 120
+HTTP_TIMEOUT = 120
 
 
 class retry_if_401_invalid_token(retry_if_exception):
@@ -166,7 +166,7 @@ class Auth:
                 url=host.endpoint("/oauth/token"),
                 data=req_body,
                 headers=req_headers,
-                timeout=AUTHENTICATION_TIMEOUT,
+                timeout=HTTP_TIMEOUT,
             )
             token_response.raise_for_status()
             self.token = token_response.json()["access_token"]
@@ -181,7 +181,7 @@ class Auth:
                 url=host.endpoint("/oauth/token"),
                 auth=basic_auth,
                 data={"grant_type": "client_credentials"},
-                timeout=AUTHENTICATION_TIMEOUT,
+                timeout=HTTP_TIMEOUT,
             )
             token_response.raise_for_status()
             self.token = token_response.json()["access_token"]
@@ -245,7 +245,7 @@ class Auth:
                 url=url,
                 data=json.dumps(data),
                 headers=headers,
-                timeout=AUTHENTICATION_TIMEOUT,
+                timeout=HTTP_TIMEOUT,
             )
         else:
             response = requests.request(
@@ -254,7 +254,7 @@ class Auth:
                 data=json.dumps(data),
                 headers=headers,
                 params=querystring,
-                timeout=AUTHENTICATION_TIMEOUT,
+                timeout=HTTP_TIMEOUT,
             )
         logger.debug(response)
         logger.debug(data)
