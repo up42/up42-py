@@ -112,6 +112,7 @@ workflows:
       - deploy:
           context: pypi-python-package-publishing
           requires:
+            - sdk-e2e-tests
             - hold_before_deploy
           filters:
             branches:
