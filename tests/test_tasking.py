@@ -71,15 +71,12 @@ def test_construct_order_parameters_live(tasking_live, product_id):
 def test_get_quotations(tasking_mock):
     get_quotations = tasking_mock.get_quotations()
     assert len(get_quotations) == 23
-    get_quotations = tasking_mock.get_quotations(workspace_id=WORKSPACE_ID)
-    quotations_accepted = (quotation["workspaceId"] == WORKSPACE_ID for quotation in get_quotations)
-    assert all(quotations_accepted)
-    get_quotations = tasking_mock.get_quotations(decision=["ACCEPTED"])
-    quotations_accepted = (quotation["decision"] == "ACCEPTED" for quotation in get_quotations)
-    assert all(quotations_accepted)
-    get_quotations = tasking_mock.get_quotations(decision=["ACCEPTED", "REJECTED"])
-    quotations_accepted = (quotation["decision"] in ["ACCEPTED", "REJECTED"] for quotation in get_quotations)
-    assert all(quotations_accepted)
+    get_workspace_quotations = tasking_mock.get_quotations(workspace_id=WORKSPACE_ID)
+    assert all(quotation["workspaceId"] == WORKSPACE_ID for quotation in get_workspace_quotations)
+    get_accepted_quotations = tasking_mock.get_quotations(decision=["ACCEPTED"])
+    assert all(quotation["decision"] == "ACCEPTED" for quotation in get_accepted_quotations)
+    get_decided_quotations = tasking_mock.get_quotations(decision=["ACCEPTED", "REJECTED"])
+    assert all(quotation["decision"] in ["ACCEPTED", "REJECTED"] for quotation in get_decided_quotations)
 
 
 def test_decide_quotation(tasking_mock):

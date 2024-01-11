@@ -86,11 +86,13 @@ def test_construct_search_parameters(catalog_mock):
     )
     assert isinstance(search_parameters, dict)
     assert search_parameters["datetime"] == mock_search_parameters["datetime"]
-    rounded_coords = [
-        [round(coord[0], 6), round(coord[1], 6)] for coord in mock_search_parameters["intersects"]["coordinates"][0]
-    ]
-    converted_list = tuple(tuple(coord) for coord in rounded_coords)
-    assert search_parameters["intersects"]["coordinates"] == (converted_list,)
+    search_params_coords = {
+        "type": search_parameters["intersects"]["type"],
+        "coordinates": [
+            [[float(coord[0]), float(coord[1])] for coord in search_parameters["intersects"]["coordinates"][0]]
+        ],
+    }
+    assert search_params_coords == mock_search_parameters["intersects"]
     assert search_parameters["limit"] == mock_search_parameters["limit"]
     assert search_parameters["query"] == mock_search_parameters["query"]
 
