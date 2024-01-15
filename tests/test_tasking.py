@@ -328,7 +328,7 @@ def test_estimate_order_from_tasking(requests_mock, auth_mock):
     tasking_instance = Tasking(auth=auth_mock)
     url_order_estimation = endpoint("/v2/orders/estimate")
     requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = tasking_instance.estimate_order(ORDER_PARAMS_TASKING)
+    estimation = tasking_instance.estimate_order_batch(ORDER_PARAMS_TASKING)
     assert isinstance(estimation, dict)
     assert estimation == expected_output
 
@@ -345,6 +345,6 @@ def test_estimate_order_from_tasking_live(tasking_live):
     order_params_live["params"]["acquisitionEnd"] = future_date.strftime(
         "%Y-%m-%dT%H:%M:%S.000Z"
     )
-    estimation = tasking_live.estimate_order(order_params_live)
+    estimation = tasking_live.estimate_order_batch(order_params_live)
     assert isinstance(estimation, dict)
     assert estimation == expected_output

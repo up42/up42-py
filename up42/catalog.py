@@ -110,22 +110,17 @@ class CatalogBase:
         collections = [c for c in json_response["data"] if c["type"] == self.type]
         return collections
 
-    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> dict:
+    def estimate_order_batch(self, order_parameters: Union[dict, None], **kwargs) -> dict:
         """
         Estimate the cost of an order.
 
         Args:
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            order_parameters: A dictionary like {"dataProduct": ..., "params": {"id": ..., "aoi": ...}}
 
         Returns:
-            dict: representation of a JSON estimation response with summary, results, and errors..
-
-        Warning "Deprecated order parameters"
-            The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. Please use the new
-            order_parameters parameter as described above.
+            dict: Estimation response with summary, results, and errors..
         """
         if "scene" in kwargs or "geometry" in kwargs:
-            # Deprecated, to be removed, use order_parameters.
             message = (
                 "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
                 "Please use the new 'order_parameters' parameter."
@@ -133,7 +128,7 @@ class CatalogBase:
             warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
-        return Order.estimate(self.auth, order_parameters)  # type: ignore
+        return Order.estimate_batch(self.auth, order_parameters)
 
     def place_order(
         self,
@@ -200,6 +195,28 @@ class Catalog(CatalogBase, VizTools):
 
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
+
+    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
+        """
+        Estimate the cost of an order.
+        Args:
+            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+        Returns:
+            int: An estimated cost for the order in UP42 credits.
+        Warning "Deprecated order parameters"
+            The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. Please use the new
+            order_parameters parameter as described above.
+        """
+        if "scene" in kwargs or "geometry" in kwargs:
+            # Deprecated, to be removed, use order_parameters.
+            message = (
+                "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
+                "Please use the new 'order_parameters' parameter."
+            )
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
+        elif order_parameters is None:
+            raise ValueError("Please provide the 'order_parameters' parameter!")
+        return Order.estimate(self.auth, order_parameters)  # type: ignore
 
     @deprecation("construct_search_parameters", "0.25.0")
     def construct_parameters(self, **kwargs):  # pragma: no cover
@@ -365,7 +382,6 @@ class Catalog(CatalogBase, VizTools):
         self,
         data_product_id: str,
         image_id: str,
-        extra_params: Optional[dict] = {},
         aoi: Union[
             dict,
             Feature,
@@ -384,8 +400,6 @@ class Catalog(CatalogBase, VizTools):
         Args:
             data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
             image_id: The id of the desired image (from search results)
-            extra_params: user params for the data product schema, not provided params or\
-                empty will be autocompleted.
             aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
                 list, GeoDataFrame, Polygon. Optional for "full-image products".
             tags: A list of tags that categorize the order.
@@ -407,6 +421,54 @@ class Catalog(CatalogBase, VizTools):
         """
         order_parameters = {
             "dataProduct": data_product_id,
+            "params": {"id": image_id},
+        }
+        if tags is not None:
+            order_parameters["tags"] = tags
+        logger.info("See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options.")
+        schema = self.get_data_product_schema(data_product_id)
+        order_parameters = autocomplete_order_parameters(order_parameters, schema)
+
+        # Some catalog orders, e.g. Capella don't require AOI (full image order)
+        # Handled on API level, don't manipulate in SDK, providers might accept geometries in the future.
+        if aoi is not None:
+            aoi = any_vector_to_fc(vector=aoi)
+            aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
+            order_parameters["params"]["aoi"] = aoi  # type: ignore
+
+        return order_parameters
+
+    def construct_order_parameters_batch(
+        self,
+        data_product_id: str,
+        image_id: str,
+        extra_params: Optional[dict] = None,
+        aoi: Union[
+            dict,
+            Feature,
+            FeatureCollection,
+            list,
+            GeoDataFrame,
+            Polygon,
+        ] = None,
+        tags: Optional[List[str]] = None,
+    ):
+        """
+        Helps constructing the parameters dictionary required for the catalog order. Some collections have
+        additional parameters that are added to the output dictionary with value None. The potential values to
+        select from are given in the logs, for more detail on the parameter use `catalog.get_data_product_schema()`.
+
+        Args:
+            data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
+            image_id: The id of the desired image (from search results)
+            aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
+                list, GeoDataFrame, Polygon. Optional for "full-image products".
+            tags: A list of tags that categorize the order.
+        Returns:
+            The order parameters dictionary.
+        """
+        order_parameters = {
+            "dataProduct": data_product_id,
             "params": {"id": image_id, **extra_params},
         }
         if tags is not None:
@@ -419,7 +481,7 @@ class Catalog(CatalogBase, VizTools):
         # Handled on API level, don't manipulate in SDK, providers might accept geometries in the future.
         if aoi is not None:
             feature_collection = any_vector_to_fc(vector=aoi)
-            order_parameters["featureCollection"] = feature_collection  # type: ignore
+            order_parameters["featureCollection"] = feature_collection
 
         return order_parameters
 

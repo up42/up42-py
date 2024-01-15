@@ -444,6 +444,17 @@ def test_download_quicklook_live(catalog_live):
         assert Path(out_paths[0]).suffix == ".jpg"
 
 
+def test_construct_order_parameters(catalog_mock):
+    order_parameters = catalog_mock.construct_order_parameters(
+        data_product_id=DATA_PRODUCT_ID,
+        image_id="123",
+        aoi=mock_search_parameters["intersects"],
+    )
+    assert isinstance(order_parameters, dict)
+    assert list(order_parameters.keys()) == ["dataProduct", "params"]
+    assert order_parameters["params"]["acquisitionMode"] is None
+
+
 @pytest.mark.parametrize(
     "extra_params",
     [
@@ -461,8 +472,8 @@ def test_download_quicklook_live(catalog_live):
         "Sc2: With extraparams",
     ],
 )
-def test_construct_order_parameters(catalog_mock, extra_params):
-    order_parameters = catalog_mock.construct_order_parameters(
+def test_construct_order_parameters_batch(catalog_mock, extra_params):
+    order_parameters = catalog_mock.construct_order_parameters_batch(
         data_product_id=DATA_PRODUCT_ID,
         image_id="123",
         extra_params=extra_params,
@@ -523,6 +534,19 @@ def test_estimate_order_from_catalog(
         f"{API_HOST}/workspaces/" f"{catalog_mock.auth.workspace_id}/orders/estimate"
     )
     requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
+    estimation = catalog_mock.estimate_order(order_parameters)
+    assert isinstance(estimation, int)
+    assert estimation == 100
+
+
+# pylint: disable=unused-argument
+def test_estimate_order_from_catalog_batch(
+    order_parameters, order_mock, catalog_mock, requests_mock
+):
+    url_order_estimation = (
+        f"{API_HOST}/workspaces/" f"{catalog_mock.auth.workspace_id}/orders/estimate"
+    )
+    requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
     expected_payload = {
         "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
         "results": [{"index": 0, "credits": 38, "unit": "SQ_KM", "size": 0.1}],
@@ -535,7 +559,7 @@ def test_estimate_order_from_catalog(
     }
     url_order_estimation = endpoint("/v2/orders/estimate")
     requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = catalog_mock.estimate_order(order_parameters)
+    estimation = catalog_mock.estimate_order_batch(order_parameters)
     assert isinstance(estimation, dict)
     assert estimation == expected_output
 
@@ -584,13 +608,22 @@ def test_order_from_catalog_track_status(
 
 
 @pytest.mark.live
-def test_estimate_order_from_catalog_live(order_parameters, catalog_live):
+def test_estimate_order_from_catalog_live(order_parameters_v1, catalog_live):
+    estimation = catalog_live.estimate_order(
+        order_parameters_v1,
+    )
+    assert isinstance(estimation, int)
+    assert estimation == 100
+
+
+@pytest.mark.live
+def test_estimate_order_from_catalog_batch_live(order_parameters, catalog_live):
     expected_output = {
         "errors": [],
         "results": [{"credits": 38, "index": 0, "size": 0.1, "unit": "SQ_KM"}],
         "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
     }
-    estimation = catalog_live.estimate_order(order_parameters)
+    estimation = catalog_live.estimate_order_batch(order_parameters)
     assert isinstance(estimation, dict)
     assert estimation == expected_output
 

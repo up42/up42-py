@@ -304,7 +304,17 @@ def test_track_status_fail(order_mock, status, requests_mock):
         order_mock.track_status()
 
 
-def test_estimate_order(order_parameters, auth_mock, requests_mock):
+def test_estimate_order(order_parameters_v1, auth_mock, requests_mock):
+    url_order_estimation = (
+        f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders/estimate"
+    )
+    requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
+    estimation = Order.estimate(auth_mock, order_parameters_v1)
+    assert isinstance(estimation, int)
+    assert estimation == 100
+
+
+def test_estimate_order_batch(order_parameters, auth_mock, requests_mock):
     url_order_estimation = f"{API_HOST}/v2/orders/estimate"
     expected_payload = {
         "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
@@ -317,7 +327,7 @@ def test_estimate_order(order_parameters, auth_mock, requests_mock):
         "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
     }
     requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = Order.estimate(auth_mock, order_parameters)
+    estimation = Order.estimate_batch(auth_mock, order_parameters)
     assert isinstance(estimation, dict)
     assert estimation == expected_output
 
@@ -350,16 +360,23 @@ def test_estimate_order_fail(
     url_order_estimation = endpoint("/v2/orders/estimate")
     requests_mock.post(url=url_order_estimation, json=expected_payload)
     with pytest.raises(ValueError):
-        Order.estimate(auth_mock, order_parameters)
+        Order.estimate_batch(auth_mock, order_parameters)
 
 
 @pytest.mark.live
-def test_estimate_order_live(order_parameters, auth_live):
+def test_estimate_order_live(order_parameters_v1, auth_live):
+    estimation = Order.estimate(auth_live, order_parameters=order_parameters_v1)
+    assert isinstance(estimation, int)
+    assert estimation == 100
+
+
+@pytest.mark.live
+def test_estimate_order_batch_live(order_parameters, auth_live):
     expected_output = {
         "errors": [],
         "results": [{"credits": 38, "index": 0, "size": 0.1, "unit": "SQ_KM"}],
         "summary": {"totalCredits": 38, "totalSize": 0.1, "unit": "SQ_KM"},
     }
-    estimation = Order.estimate(auth_live, order_parameters=order_parameters)
+    estimation = Order.estimate_batch(auth_live, order_parameters=order_parameters)
     assert isinstance(estimation, dict)
     assert estimation == expected_output
