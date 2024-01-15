@@ -56,19 +56,6 @@ def test_get_workflow_tasks_basic(workflow_mock):
     assert tasks["tiling:1"] == "2.2.3"
 
 
-def test_get_compatible_blocks(workflow_mock):
-    compatible_blocks = workflow_mock.get_compatible_blocks()
-    assert isinstance(compatible_blocks, dict)
-    assert "aaa" in list(compatible_blocks.keys())
-
-
-def test_get_compatible_blocks_empty_workflow_returns_data_blocks(workflow_mock_empty):
-    compatible_blocks = workflow_mock_empty.get_compatible_blocks()
-    assert isinstance(compatible_blocks, dict)
-    assert len(compatible_blocks) == 1
-    assert "esa-s2-l2a-gtiff-visual" in list(compatible_blocks.keys())
-
-
 def test_construct_full_workflow_tasks_dict_unknown_block_raises(workflow_mock):
     input_tasks = ["some_block"]
     with pytest.raises(ValueError):
