@@ -1,6 +1,5 @@
 import logging
-from typing import Dict, List, Optional, Union
-from warnings import warn
+from typing import Dict, List, Union
 
 from up42.auth import Auth
 from up42.host import endpoint
@@ -45,53 +44,6 @@ class Project:
         response_json = self.auth._request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
-
-    def create_workflow(self, name: str, description: str = "", use_existing: bool = False) -> "Workflow":
-        """
-        Creates a new workflow and returns a workflow object.
-
-        Args:
-            name: Name of the new workflow.
-            description: Description of the new workflow.
-            use_existing: If True, instead of creating a new workflow, uses the
-                most recent workflow with the same name & description.
-
-        Returns:
-            The workflow object.
-        """
-        warn(
-            "Workflows are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        if use_existing:
-            logger.info("Getting existing workflows in project ...")
-            logging.getLogger("up42.workflow").setLevel(logging.CRITICAL)
-            existing_workflows: list = self.get_workflows(return_json=True)
-            logging.getLogger("up42.workflow").setLevel(logging.INFO)
-
-            matching_workflows: list = [
-                workflow
-                for workflow in existing_workflows
-                if workflow["name"] == name and workflow["description"] == description
-            ]
-            if matching_workflows:
-                existing_workflow = Workflow(
-                    self.auth,
-                    project_id=self.project_id,
-                    workflow_id=matching_workflows[0]["id"],
-                )
-                logger.info(f"Using existing workflow: {name} - {existing_workflow.workflow_id}")
-                return existing_workflow
-
-        url = endpoint(f"/projects/{self.project_id}/workflows/")
-        payload = {"name": name, "description": description}
-        response_json = self.auth._request(request_type="POST", url=url, data=payload)
-        workflow_id = response_json["data"]["id"]
-        logger.info(f"Created new workflow: {workflow_id}")
-        workflow = Workflow(self.auth, project_id=self.project_id, workflow_id=workflow_id)
-        return workflow
 
     def get_workflows(self, return_json: bool = False) -> Union[List["Workflow"], List[dict]]:
         """
@@ -212,44 +164,3 @@ class Project:
         project_settings = self.get_project_settings()
         project_settings_dict = {d["name"]: int(d["value"]) for d in project_settings}
         return project_settings_dict["MAX_CONCURRENT_JOBS"]
-
-    def update_project_settings(
-        self,
-        max_aoi_size: Optional[int] = None,
-        max_concurrent_jobs: Optional[int] = None,
-        number_of_images: Optional[int] = None,
-    ) -> None:
-        """
-        Updates a project's settings.
-
-        Args:
-            max_aoi_size: The maximum area of interest geometry size, from 1-1000 sqkm, default 10 sqkm.
-            max_concurrent_jobs: The maximum number of concurrent jobs, from 1-10, default 1.
-            number_of_images: The maximum number of images returned with each job, from 1-20, default 10.
-        """
-        # The ranges and default values of the project settings can potentially get
-        # increased, so need to be dynamically queried from the server.
-        warn(
-            "Workflows are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        current_settings = {d["name"]: d for d in self.get_project_settings()}
-
-        url = endpoint(f"/projects/{self.project_id}/settings")
-        payload: Dict = {"settings": {}}
-        desired_settings = {
-            "JOB_QUERY_MAX_AOI_SIZE": max_aoi_size,
-            "MAX_CONCURRENT_JOBS": max_concurrent_jobs,
-            "JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE": number_of_images,
-        }
-
-        for name, desired_setting in desired_settings.items():
-            if desired_setting is None:
-                payload["settings"][name] = str(current_settings[name]["value"])
-            else:
-                payload["settings"][name] = str(desired_setting)
-
-        self.auth._request(request_type="POST", url=url, data=payload)
-        logger.info(f"Updated project settings: {payload}")

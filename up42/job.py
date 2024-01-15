@@ -135,18 +135,6 @@ class Job(VizTools):
 
         return status
 
-    def cancel_job(self) -> None:
-        """Cancels a pending or running job."""
-        warn(
-            "Jobs are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/cancel/")
-        self.auth._request(request_type="POST", url=url)
-        logger.info(f"Job canceled: {self.job_id}")
-
     def download_quicklooks(self, output_directory: Union[str, Path, None] = None) -> List[str]:
         """
         Conveniance function that downloads the quicklooks of the data (dirst) jobtask.
