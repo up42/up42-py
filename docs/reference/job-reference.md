@@ -65,28 +65,6 @@ The returned format is `bool`.
 job.is_succeeded
 ```
 
-### track_status()
-
-The `track_status()` function allows you to track the job status until the job has finished or failed.
-
-```python
-track_status(report_time)
-```
-
-The returned format is `str`.
-
-<h5> Arguments </h5>
-
-| Argument      | Overview                                                                                                                                         |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `report_time` | **int**<br/>The time interval for querying whether the job status has changed to `SUCCEEDED` or `FAILED`, in seconds. The default value is `30`. |
-
-<h5> Example </h5>
-
-```python
-job.track_status(report_time=5)
-```
-
 ### get_credits()
 
 The `get_credits()` function returns the number of credits spent on the job.
@@ -210,20 +188,6 @@ job.upload_results_to_bucket(
     extension=".zip",
     version="v2",
 )
-```
-
-### cancel_job()
-
-The `cancel_job()` function allows you to cancel a pending or a running job.
-
-```python
-cancel_job()
-```
-
-<h5> Example </h5>
-
-```python
-job.cancel_job()
 ```
 
 ## Job tasks
