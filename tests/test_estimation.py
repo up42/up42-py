@@ -1,23 +1,8 @@
 import pytest
 
-# pylint: disable=unused-import,wrong-import-order
-from .context import Estimation
-from .fixtures import (
-    JSON_WORKFLOW_ESTIMATION,
-    PROJECT_ID,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    estimation_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    username_test_live,
-)
-from .fixtures.fixtures_globals import API_HOST
+from up42.estimation import Estimation
+
+from .fixtures.fixtures_globals import API_HOST, JSON_WORKFLOW_ESTIMATION, PROJECT_ID
 
 
 def test_estimate_price(requests_mock, auth_mock, estimation_mock):
@@ -36,9 +21,7 @@ def test_estimate_price(requests_mock, auth_mock, estimation_mock):
         },
     ]
 
-    url_workflow_estimation = (
-        f"{API_HOST}/projects/{PROJECT_ID}/estimate/job"
-    )
+    url_workflow_estimation = f"{API_HOST}/projects/{PROJECT_ID}/estimate/job"
     requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
     _ = estimation_mock.estimate()
     assert list(estimation_mock.payload.keys()) == ["tasks", "inputs"]

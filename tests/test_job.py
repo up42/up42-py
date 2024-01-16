@@ -1,32 +1,13 @@
-import json
 import os
 import tempfile
-import time
 from pathlib import Path
 
 import pytest
 
-# pylint: disable=unused-import
-from .context import Job, JobTask
-from .fixtures import (
-    DOWNLOAD_URL,
-    JOBTASK_ID,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    job_live,
-    job_mock,
-    jobtask_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    username_test_live,
-    workflow_live,
-)
-from .fixtures.fixtures_globals import API_HOST
+from up42.job import Job
+from up42.jobtask import JobTask
+
+from .fixtures.fixtures_globals import API_HOST, DOWNLOAD_URL, JOBTASK_ID
 
 
 def test_job_info(job_mock):
@@ -40,9 +21,7 @@ def test_job_info(job_mock):
 def test_job_status(job_mock, status, requests_mock):
     del job_mock._info
 
-    url_job_info = (
-        f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
-    )
+    url_job_info = f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
     assert job_mock.status == status
 
@@ -61,9 +40,7 @@ def test_job_status(job_mock, status, requests_mock):
 def test_is_succeeded(job_mock, status, expected, requests_mock):
     del job_mock._info
 
-    url_job_info = (
-        f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
-    )
+    url_job_info = f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
     assert job_mock.is_succeeded == expected
@@ -176,9 +153,7 @@ def test_job_download_result_dimap_live(auth_live, project_id_live):
 
 @pytest.mark.skip(reason="2gb download takes long")
 @pytest.mark.live
-def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(
-    auth_live, project_id_live
-):
+def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live, project_id_live):
     job = Job(
         auth=auth_live,
         project_id=project_id_live,

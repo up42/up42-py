@@ -1,38 +1,10 @@
-from pathlib import Path
-
 import pytest
-from shapely.geometry import box
 
-# pylint: disable=unused-import,wrong-import-order
-from .context import Job, JobCollection, Workflow
-from .fixtures import (
-    ASSET_ID,
-    JOB_ID,
-    JOB_NAME,
-    JOBTASK_ID,
-    JSON_WORKFLOW_ESTIMATION,
-    JSON_WORKFLOW_TASKS,
-    PROJECT_ID,
-    asset_mock,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    job_mock,
-    jobcollection_single_mock,
-    jobtask_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    project_mock,
-    project_mock_max_concurrent_jobs,
-    username_test_live,
-    workflow_mock,
-    workflow_mock_empty,
-)
-from .fixtures.fixtures_globals import API_HOST
+from up42.job import Job
+from up42.jobcollection import JobCollection
+from up42.workflow import Workflow
+
+from .fixtures.fixtures_globals import API_HOST, JOB_ID, JSON_WORKFLOW_TASKS
 
 
 def test_workflow_info(workflow_mock):
@@ -85,39 +57,27 @@ def test_construct_full_workflow_tasks_dict_unknown_block_raises(workflow_mock):
     ],
 )
 def test_construct_full_workflow_tasks_dict(workflow_mock, input_tasks):
-    full_workflow_tasks_dict = workflow_mock._construct_full_workflow_tasks_dict(
-        input_tasks=input_tasks
-    )
+    full_workflow_tasks_dict = workflow_mock._construct_full_workflow_tasks_dict(input_tasks=input_tasks)
     assert isinstance(full_workflow_tasks_dict, list)
     assert full_workflow_tasks_dict[0]["name"] == "esa-s2-l2a-gtiff-visual:1"
     assert full_workflow_tasks_dict[0]["parentName"] is None
     assert full_workflow_tasks_dict[1]["name"] == "tiling:1"
     assert full_workflow_tasks_dict[1]["parentName"] == "esa-s2-l2a-gtiff-visual:1"
-    assert (
-        full_workflow_tasks_dict[1]["blockId"] == "4ed70368-d4e1-4462-bef6-14e768049471"
-    )
+    assert full_workflow_tasks_dict[1]["blockId"] == "4ed70368-d4e1-4462-bef6-14e768049471"
 
 
 def test_get_parameter_info(workflow_mock):
     parameter_info = workflow_mock.get_parameters_info()
     assert isinstance(parameter_info, dict)
-    assert all(
-        x in list(parameter_info.keys())
-        for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"]
-    )
-    assert all(
-        x in list(parameter_info["tiling:1"].keys()) for x in ["nodata", "tile_width"]
-    )
+    assert {"tiling:1", "esa-s2-l2a-gtiff-visual:1"} <= set(parameter_info.keys())
+    assert {"nodata", "tile_width"} <= set(parameter_info["tiling:1"].keys())
 
 
 def test_get_default_parameters(workflow_mock):
     default_parameters = workflow_mock._get_default_parameters()
 
     assert isinstance(default_parameters, dict)
-    assert all(
-        x in list(default_parameters.keys())
-        for x in ["tiling:1", "esa-s2-l2a-gtiff-visual:1"]
-    )
+    assert {"tiling:1", "esa-s2-l2a-gtiff-visual:1"} <= set(default_parameters.keys())
     assert default_parameters["tiling:1"] == {
         "nodata": None,
         "tile_width": 768,
@@ -144,29 +104,20 @@ def test_get_jobs(workflow_mock, requests_mock):
     assert isinstance(jobcollection, JobCollection)
     assert isinstance(jobcollection.jobs[0], Job)
     assert jobcollection.jobs[0].job_id == JOB_ID
-    assert (
-        len(jobcollection.jobs) == 1
-    )  # Filters out the job that is not associated with the workflow object
+    assert len(jobcollection.jobs) == 1  # Filters out the job that is not associated with the workflow object
 
 
-@pytest.mark.skip(
-    reason="too many jobs in test project, triggers too many job info requests."
-)
+@pytest.mark.skip(reason="too many jobs in test project, triggers too many job info requests.")
 @pytest.mark.live
 def test_get_jobs_live(workflow_live):
     jobcollection = workflow_live.get_jobs()
     assert isinstance(jobcollection, list)
     assert isinstance(jobcollection.jobs[0], Job)
-    assert all(
-        j._info["workflowId"] == workflow_live.workflow_id for j in jobcollection.jobs
-    )
+    assert all(j._info["workflowId"] == workflow_live.workflow_id for j in jobcollection.jobs)
 
 
 def test_delete(workflow_mock, requests_mock):
-    delete_url = (
-        f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/"
-        f"{workflow_mock.workflow_id}"
-    )
+    delete_url = f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/" f"{workflow_mock.workflow_id}"
     requests_mock.delete(url=delete_url)
 
     workflow_mock.delete()

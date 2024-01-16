@@ -1,6 +1,7 @@
 import pytest
 
-from ..context import Storage
+from up42.storage import Storage
+
 from .fixtures_globals import (
     API_HOST,
     ASSET_ID,

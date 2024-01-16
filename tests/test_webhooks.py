@@ -1,25 +1,8 @@
 import pytest
 
-# pylint: disable=unused-import
-from .context import Webhook
-from .fixtures import (
-    WEBHOOK_ID,
-    WORKSPACE_ID,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    username_test_live,
-    webhook_live,
-    webhook_mock,
-    webhooks_live,
-    webhooks_mock,
-)
+from up42.webhooks import Webhook
+
+from .fixtures.fixtures_globals import WEBHOOK_ID, WORKSPACE_ID
 
 
 def test_webhook_initiate(webhook_mock):

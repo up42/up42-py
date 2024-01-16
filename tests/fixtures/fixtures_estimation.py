@@ -1,6 +1,7 @@
 import pytest
 
-from ..context import Estimation
+from up42.estimation import Estimation
+
 from .fixtures_globals import PROJECT_ID
 
 
