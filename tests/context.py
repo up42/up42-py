@@ -33,7 +33,6 @@ from up42.main import (
     get_credits_balance,
     get_webhook_events,
     get_webhooks,
-    validate_manifest,
 )
 from up42.order import Order
 from up42.project import Project
