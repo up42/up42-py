@@ -133,28 +133,6 @@ def test_get_default_parameters(workflow_mock):
     assert "intersects" not in default_parameters["esa-s2-l2a-gtiff-visual:1"]
 
 
-def test_estimate_jobs(workflow_mock, requests_mock):
-    input_parameters = {
-        "esa-s2-l2a-gtiff-visual:1": {
-            "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
-            "limit": 1,
-            "bbox": [13.33409, 52.474922, 13.38547, 52.500398],
-        },
-        "tiling:1": {"tile_width": 768},
-    }
-    # get_workflow_tasks
-    url_workflow_tasks = (
-        f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/"
-        f"{workflow_mock.workflow_id}/tasks"
-    )
-    url_workflow_estimation = f"{API_HOST}/projects/{PROJECT_ID}/estimate/job"
-    requests_mock.get(url=url_workflow_tasks, json=JSON_WORKFLOW_TASKS)
-    requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
-
-    estimation = workflow_mock.estimate_job(input_parameters)
-    assert estimation == JSON_WORKFLOW_ESTIMATION["data"]
-
-
 def test_get_jobs(workflow_mock, requests_mock):
     url_job_info = f"{API_HOST}/projects/" f"{workflow_mock.project_id}/jobs/{JOB_ID}"
     requests_mock.get(

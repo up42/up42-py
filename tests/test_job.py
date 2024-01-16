@@ -69,32 +69,6 @@ def test_is_succeeded(job_mock, status, expected, requests_mock):
     assert job_mock.is_succeeded == expected
 
 
-@pytest.mark.parametrize("status", ["SUCCEEDED"])
-def test_track_status_pass(job_mock, status, requests_mock):
-    del job_mock._info
-
-    url_job_info = (
-        f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
-    )
-    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
-
-    job_status = job_mock.track_status()
-    assert job_status == status
-
-
-@pytest.mark.parametrize("status", ["FAILED", "ERROR", "CANCELLED", "CANCELLING"])
-def test_track_status_fail(job_mock, status, requests_mock):
-    del job_mock._info
-
-    url_job_info = (
-        f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
-    )
-    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
-
-    with pytest.raises(ValueError):
-        job_mock.track_status()
-
-
 def test_download_quicklook(job_mock, requests_mock):
     url = (
         f"{API_HOST}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"

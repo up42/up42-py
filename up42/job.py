@@ -1,8 +1,6 @@
 import logging
 from pathlib import Path
-from time import sleep
 from typing import List, Optional, Union
-from warnings import warn
 
 import requests
 import requests.exceptions
@@ -89,51 +87,6 @@ class Job(VizTools):
         Also see [status attribute](job-reference.md#up42.job.Job.status).
         """
         return self.status == "SUCCEEDED"
-
-    def track_status(self, report_time: int = 30) -> str:
-        """`
-        Continuously gets the job status until job has finished or failed.
-
-        Internally checks every five seconds for the status, prints the log every
-        time interval given in report_time argument.
-
-        Args:
-            report_time: The intervall (in seconds) when to query the job status.
-        """
-        warn(
-            "Jobs are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        logger.info(
-            f"Tracking job status continuously, reporting every {report_time} seconds...",
-        )
-        status = "NOT STARTED"
-        time_asleep = 0
-
-        while status != "SUCCEEDED":
-            logger.setLevel(logging.CRITICAL)
-            status = self.status
-            logger.setLevel(logging.INFO)
-
-            if status in ["NOT STARTED", "PENDING", "RUNNING"]:
-                if time_asleep != 0 and time_asleep % report_time == 0:
-                    logger.info(f"Job is {status}! - {self.job_id}")
-            elif status in ["FAILED", "ERROR"]:
-                logger.info(f"Job is {status}! - {self.job_id} - Printing logs ...")
-                self.get_logs(as_print=True)
-                raise ValueError("Job has failed! See the above log.")
-            elif status in ["CANCELLED", "CANCELLING"]:
-                logger.info(f"Job is {status}! - {self.job_id}")
-                raise ValueError("Job has been cancelled!")
-            elif status == "SUCCEEDED":
-                logger.info(f"Job finished successfully! - {self.job_id}")
-
-            sleep(5)
-            time_asleep += 5
-
-        return status
 
     def download_quicklooks(self, output_directory: Union[str, Path, None] = None) -> List[str]:
         """

@@ -1,6 +1,5 @@
 import logging
 from collections import Counter
-from pathlib import Path
 from typing import Dict, List, Optional, Union
 from warnings import warn
 
@@ -8,7 +7,6 @@ from tqdm import tqdm
 
 import up42.main as main
 from up42.auth import Auth
-from up42.estimation import Estimation
 from up42.host import endpoint
 from up42.job import Job
 from up42.jobcollection import JobCollection
@@ -227,49 +225,6 @@ class Workflow:
             previous_task_name = next_task["name"]
         return full_input_tasks_definition
 
-    def estimate_job(self, input_parameters: Union[dict, str, Path] = None) -> dict:
-        """
-        Estimation of price and duration of the workflow for the provided input parameters.
-
-        Args:
-            input_parameters: Either JSON string of workflow parameters or filepath to JSON.
-
-        Returns:
-            A dictionary of estimation for each task in the workflow.
-        """
-        if input_parameters is None:
-            raise ValueError("Select the job_parameters, use workflow.construct_parameters()!")
-
-        workflow_tasks = self.workflow_tasks
-        block_names = [task_name.split(":")[0] for task_name in workflow_tasks.keys()]
-        input_tasks = self._construct_full_workflow_tasks_dict(block_names)
-        for task in input_tasks:
-            task["blockVersionTag"] = workflow_tasks[task["name"]]
-
-        estimation = Estimation(
-            auth=self.auth,
-            project_id=self.project_id,
-            input_parameters=input_parameters,
-            input_tasks=input_tasks,
-        ).estimate()
-
-        min_credits, max_credits, min_duration, max_duration = [], [], [], []
-        for e in estimation.values():
-            min_credits.append(e["blockConsumption"]["credit"]["min"])
-            max_credits.append(e["blockConsumption"]["credit"]["max"])
-            min_credits.append(e["machineConsumption"]["credit"]["min"])
-            max_credits.append(e["machineConsumption"]["credit"]["max"])
-
-            min_duration.append(e["machineConsumption"]["duration"]["min"])
-            max_duration.append(e["machineConsumption"]["duration"]["max"])
-
-        logger.info(
-            f"Estimated: {sum(min_credits)}-{sum(max_credits)} Credits, "
-            f"Duration: {int(sum(min_duration) / 60)}-{int(sum(max_duration) / 60)} min."
-        )
-
-        return estimation
-
     def get_jobs(
         self,
         return_json: bool = False,
@@ -311,14 +266,3 @@ class Workflow:
         self.auth._request(request_type="DELETE", url=url, return_text=False)
         logger.info(f"Successfully deleted workflow: {self.workflow_id}")
         del self
-
-    @property
-    def max_concurrent_jobs(self) -> int:
-        """
-        Gets the maximum number of concurrent jobs allowed by the project settings.
-        """
-        url = endpoint(f"/projects/{self.project_id}/settings")
-        response_json = self.auth._request(request_type="GET", url=url)
-        project_settings = response_json["data"]
-        project_settings_dict = {d["name"]: int(d["value"]) for d in project_settings}
-        return project_settings_dict["MAX_CONCURRENT_JOBS"]

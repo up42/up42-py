@@ -104,15 +104,3 @@ def test_get_project_settings_live(project_live):
         "MAX_CONCURRENT_JOBS",
         "'JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE'",
     ]
-
-
-def test_max_concurrent_jobs(project_mock, project_mock_max_concurrent_jobs):
-    with project_mock_max_concurrent_jobs(5):
-        max_concurrent_jobs = project_mock.max_concurrent_jobs
-    assert max_concurrent_jobs == 5
-
-
-@pytest.mark.live
-def test_max_concurrent_jobs_live(project_live):
-    max_concurrent_jobs = project_live.max_concurrent_jobs
-    assert max_concurrent_jobs == MAX_CONCURRENT_JOBS
