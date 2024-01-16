@@ -1,6 +1,6 @@
 import math
 from datetime import datetime
-from typing import Any, List, Optional, TypedDict, Union
+from typing import Any, Dict, List, Optional, TypedDict, Union
 from urllib.parse import urlencode, urljoin
 
 from up42.host import endpoint
@@ -81,7 +81,7 @@ def search_assets(
         A list of assets metadata as dictionaries.
     """
     sort = f"{sortby},{'desc' if descending else 'asc'}"
-    request_params: dict[str, Any] = {"sort": sort}
+    request_params: Dict[str, Any] = {"sort": sort}
     request_params.update({key: value for key, value in params.items() if value is not None})
     base_url = endpoint("/v2/assets")
     url = urljoin(base_url, "?" + urlencode(request_params, doseq=True, safe=""))

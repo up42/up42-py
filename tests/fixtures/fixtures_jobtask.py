@@ -2,7 +2,8 @@ import os
 
 import pytest
 
-from ..context import JobTask
+from up42.jobtask import JobTask
+
 from .fixtures_globals import API_HOST, DOWNLOAD_URL, JOB_ID, JOBTASK_ID, JOBTASK_NAME, PROJECT_ID
 
 

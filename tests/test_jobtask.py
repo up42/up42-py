@@ -2,23 +2,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
-# pylint: disable=unused-import
-from .context import JobTask
-from .fixtures import (
-    DOWNLOAD_URL,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    jobtask_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    username_test_live,
-)
-from .fixtures.fixtures_globals import API_HOST
+from .fixtures.fixtures_globals import API_HOST, DOWNLOAD_URL
 
 
 def test_info(jobtask_mock):
@@ -52,8 +36,7 @@ def test_jobtask_download_result(jobtask_mock, requests_mock):
 
     # With default outdir
     default_outdir = (
-        Path.cwd()
-        / f"project_{jobtask_mock.project_id}/job_{jobtask_mock.job_id}/jobtask_{jobtask_mock.jobtask_id}"
+        Path.cwd() / f"project_{jobtask_mock.project_id}/job_{jobtask_mock.job_id}/jobtask_{jobtask_mock.jobtask_id}"
     )
     if default_outdir.exists():
         shutil.rmtree(default_outdir)
@@ -74,9 +57,7 @@ def test_download_quicklook(jobtask_mock, requests_mock):
         f"/tasks/{jobtask_mock.jobtask_id}/outputs/quicklooks/a_quicklook.png"
     )
     quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    requests_mock.get(
-        url_download_quicklooks, content=open(quicklook_file, "rb").read()
-    )
+    requests_mock.get(url_download_quicklooks, content=open(quicklook_file, "rb").read())
 
     with tempfile.TemporaryDirectory() as tempdir:
         quick = jobtask_mock.download_quicklooks(tempdir)

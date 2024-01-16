@@ -1,33 +1,12 @@
 import os
-from copy import deepcopy
 
 import pytest
 
-# pylint: disable=unused-import
-from .context import Asset, Order
-from .fixtures import (
-    ASSET_ORDER_ID,
-    JSON_GET_ASSETS_RESPONSE,
-    JSON_ORDER_ASSET,
-    ORDER_ID,
-    asset_live,
-    asset_mock,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    catalog_mock,
-    order_live,
-    order_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    read_test_order_info,
-    username_test_live,
-)
-from .fixtures.fixtures_globals import API_HOST
+from up42.asset import Asset
+from up42.order import Order
+
+from .fixtures.fixtures_globals import API_HOST, ASSET_ORDER_ID, ORDER_ID
+from .fixtures.fixtures_order import JSON_GET_ASSETS_RESPONSE
 
 
 def test_init(order_mock):
@@ -108,7 +87,7 @@ def test_get_assets_should_search_assets_by_order_id(auth_mock, requests_mock):
     url_asset_info = f"{API_HOST}/v2/assets?search={ORDER_ID}&size=50"
     requests_mock.get(url=url_asset_info, json=JSON_GET_ASSETS_RESPONSE)
     order = Order(auth=auth_mock, order_id=ORDER_ID)
-    asset, = order.get_assets()
+    (asset,) = order.get_assets()
     assert isinstance(asset, Asset)
     assert asset.asset_id == ASSET_ORDER_ID
 
@@ -127,9 +106,7 @@ def test_get_assets_should_search_assets_by_order_id(auth_mock, requests_mock):
         "FAILED_PERMANENTLY",
     ],
 )
-def test_should_fail_to_get_assets_for_unfulfilled_order(
-        auth_mock, requests_mock, status
-):
+def test_should_fail_to_get_assets_for_unfulfilled_order(auth_mock, requests_mock, status):
     order_response = {"id": ORDER_ID, "status": status}
     url_order_info = f"{API_HOST}/v2/orders/{ORDER_ID}"
     requests_mock.get(url=url_order_info, json=order_response)
@@ -144,31 +121,6 @@ def test_get_assets_live(auth_live, order_parameters):
     assets = order_instance.get_assets()
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ORDER_ID
-
-
-@pytest.fixture
-def order_parameters():
-    return {
-        "dataProduct": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
-        "params": {
-            "id": "aa1b5abf-8864-4092-9b65-35f8d0d413bb",
-            "aoi": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [13.357031, 52.52361],
-                        [13.350981, 52.524362],
-                        [13.351544, 52.526326],
-                        [13.355284, 52.526765],
-                        [13.356944, 52.525067],
-                        [13.357257, 52.524409],
-                        [13.357031, 52.52361],
-                    ]
-                ],
-            },
-        },
-        "tags": ["Test", "SDK"],
-    }
 
 
 def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
@@ -264,9 +216,7 @@ def test_track_status_fail(order_mock, status, requests_mock):
 
 
 def test_estimate_order(order_parameters, auth_mock, requests_mock):
-    url_order_estimation = (
-        f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders/estimate"
-    )
+    url_order_estimation = f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders/estimate"
     requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
     estimation = Order.estimate(auth_mock, order_parameters)
     assert isinstance(estimation, int)

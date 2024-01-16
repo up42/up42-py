@@ -5,9 +5,13 @@ import pystac_client
 import pytest
 import requests
 
-# pylint: disable=unused-import
-from .context import AllowedStatuses, Asset, Order, Storage, query_paginated_endpoints
-from .fixtures import (
+from up42.asset import Asset
+from up42.asset_searcher import query_paginated_endpoints
+from up42.order import Order
+from up42.storage import AllowedStatuses, Storage
+
+from .fixtures.fixtures_globals import (
+    API_HOST,
     ASSET_ID,
     JSON_ASSET,
     JSON_ORDER,
@@ -16,20 +20,7 @@ from .fixtures import (
     ORDER_ID,
     USER_ID,
     WORKSPACE_ID,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    storage_live,
-    storage_mock,
-    username_test_live,
 )
-from .fixtures.fixtures_globals import API_HOST
 
 
 def test_init(storage_mock):
@@ -237,9 +228,7 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     }
 
     # assets pages
-    url_storage_assets_paginated = (
-        f"{API_HOST}/v2/assets?sort=createdAt,asc&size=50"
-    )
+    url_storage_assets_paginated = f"{API_HOST}/v2/assets?sort=createdAt,asc&size=50"
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
     storage = Storage(auth=auth_mock)
@@ -261,9 +250,7 @@ def test_get_assets_raise_error_live(storage_live):
 
 
 def test_get_orders(storage_mock):
-    orders = storage_mock.get_orders(
-        order_type="ARCHIVE", tags=["project-7", "optical"]
-    )
+    orders = storage_mock.get_orders(order_type="ARCHIVE", tags=["project-7", "optical"])
     assert len(orders) == 1
     assert isinstance(orders[0], Order)
     assert orders[0].order_id == ORDER_ID
@@ -376,13 +363,9 @@ def test_get_orders(storage_mock):
         "Sc 7: statuses None, workspace_orders False, Return JSON True, name None",
     ],
 )
-def test_get_orders_v2_endpoint_params(
-    auth_mock, requests_mock, params, expected_payload, expected_results
-):
+def test_get_orders_v2_endpoint_params(auth_mock, requests_mock, params, expected_payload, expected_results):
     allowed_statuses = {entry.value for entry in AllowedStatuses}
-    endpoint_statuses = (
-        set(params["statuses"]) & allowed_statuses if params["statuses"] else []
-    )
+    endpoint_statuses = set(params["statuses"]) & allowed_statuses if params["statuses"] else []
     url_params = "&".join(
         [
             "sort=createdAt%2Cdesc",
@@ -459,8 +442,7 @@ def test_get_orders_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_orders_paginated = (
-        f"{API_HOST}/v2/"
-        f"orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
+        f"{API_HOST}/v2/" f"orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)
 

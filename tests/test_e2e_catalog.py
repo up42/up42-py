@@ -14,7 +14,7 @@ def test_e2e_catalog():
 
     catalog = up42.Catalog(_auth)
 
-    ## Search scenes in aoi
+    # Search scenes in aoi
     aoi = up42.get_example_aoi(location="Berlin", as_dataframe=True)
     search_parameters = catalog.construct_search_parameters(
         geometry=aoi,

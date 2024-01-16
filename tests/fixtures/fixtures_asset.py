@@ -1,4 +1,3 @@
-import copy
 import datetime
 import os
 from pathlib import Path
@@ -8,7 +7,8 @@ from pystac import Item, ItemCollection
 from pystac.collection import Extent, SpatialExtent, TemporalExtent
 from pystac_client import CollectionClient
 
-from ..context import Asset
+from up42.asset import Asset
+
 from .fixtures_globals import (
     API_HOST,
     ASSET_ID,
@@ -85,11 +85,7 @@ def asset_mock(auth_mock, requests_mock):
                     ]
                 ]
             ),
-            temporal=TemporalExtent(
-                intervals=[
-                    [datetime.datetime(2021, 5, 31), datetime.datetime(2021, 5, 31)]
-                ]
-            ),
+            temporal=TemporalExtent(intervals=[[datetime.datetime(2021, 5, 31), datetime.datetime(2021, 5, 31)]]),
         ),
     )
     requests_mock.get(

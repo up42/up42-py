@@ -13,21 +13,9 @@ import pandas as pd
 import pytest
 import requests
 
-from .context import get_block_coverage, get_block_details, get_blocks, get_credits_balance, main, validate_manifest
+from up42 import main
+from up42.main import get_block_coverage, get_block_details, get_blocks, get_credits_balance, validate_manifest
 
-# pylint: disable=unused-import
-from .fixtures import (
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    username_test_live,
-)
 from .fixtures.fixtures_globals import API_HOST
 
 
@@ -110,15 +98,11 @@ def test_get_block_coverage(auth_mock, requests_mock, monkeypatch):
     requests_mock.get(
         url=url_get_blocks_coverage,
         json={
-            "data": {
-                "url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
-            },
+            "data": {"url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"},
             "error": {},
         },
     )
-    url_geojson_response = (
-        "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
-    )
+    url_geojson_response = "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
     requests_mock.get(
         url=url_geojson_response,
         json={
@@ -154,14 +138,9 @@ def test_get_block_coverage_live(auth_live, monkeypatch):
 @pytest.mark.live
 def test_get_block_coverage_noresults_live(auth_live, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_live)
-    # pylint: disable=unused-variable
-    try:
+    with pytest.raises(requests.exceptions.RequestException):
         block_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
-        coverage = get_block_coverage(block_id=block_id)
-    except requests.exceptions.RequestException as err:
-        assert True
-        return
-    assert False
+        get_block_coverage(block_id=block_id)
 
 
 def test_get_credits_balance(auth_mock, monkeypatch):
@@ -209,9 +188,7 @@ def test_validate_manifest_invalid_live(auth_live, monkeypatch):
         mainfest_json.update(
             {
                 "_up42_specification_version": 1,
-                "input_capabilities": {
-                    "invalidtype": {"up42_standard": {"format": "GTiff"}}
-                },
+                "input_capabilities": {"invalidtype": {"up42_standard": {"format": "GTiff"}}},
             }
         )
     with pytest.raises(requests.exceptions.RequestException):

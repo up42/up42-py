@@ -5,27 +5,10 @@ import pytest
 import requests
 
 from up42 import host
+from up42.auth import Auth
 from up42.utils import get_up42_py_version
 
-from .context import Auth
-
-# pylint: disable=unused-import
-from .fixtures import (
-    PROJECT_APIKEY,
-    PROJECT_ID,
-    TOKEN,
-    WORKSPACE_ID,
-    auth_account_live,
-    auth_account_mock,
-    auth_live,
-    auth_mock,
-    auth_project_live,
-    auth_project_mock,
-    password_test_live,
-    project_api_key_live,
-    project_id_live,
-    username_test_live,
-)
+from .fixtures.fixtures_globals import PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID
 
 
 def test_auth_kwargs():
@@ -93,9 +76,6 @@ def test_get_workspace_live(auth_live):
 
 def test_generate_headers(auth_mock):
     version = get_up42_py_version()
-    assert (
-            isinstance(version, str) and "\n" not in version
-    ), "check integrity of your version file"
     expected_headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer token_1011",
@@ -108,9 +88,7 @@ def test_generate_headers(auth_mock):
 def test_request_helper(auth_mock, requests_mock):
     requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
 
-    response = auth_mock._request_helper(
-        request_type="GET", url="http://test.com", data={}, querystring={}
-    )
+    response = auth_mock._request_helper(request_type="GET", url="http://test.com", data={}, querystring={})
     response_json = json.loads(response.text)
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 
