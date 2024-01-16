@@ -42,7 +42,6 @@ nav:
         - Order assets: notebooks/order-assets-example.ipynb
         - Storage assets: notebooks/storage-assets-example.ipynb
       - STAC: notebooks/stac-example.ipynb
-      - analytics.md
       - webhooks.md
     - Code reference:
         - structure.md
