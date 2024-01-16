@@ -16,6 +16,7 @@ The up42 class is the base library module imported to Python. It provides the el
     - `get_block_coverage()`
     - `get_block_details()`
     - `get_blocks()`
+    - `validate_manifest()`
     - `get_example_aoi()`
     - `read_vector_file()`
     - `raw_aoi()`
@@ -142,8 +143,11 @@ A project stores workflows and their corresponding job runs.
     See available attributes and functions on the [Project](project-reference.md) reference page:
 
     - `info`
+    - `max_concurrent_jobs`
     - `get_project_settings()`
+    - `update_project_settings()`
     - `get_workflows()`
+    - `create_workflow()`
     - `get_jobs()`
 
 ### Workflow
@@ -154,11 +158,23 @@ A workflow is a sequence of data blocks and processing blocks. It defines an ord
 
     See available attributes and functions on the [Workflow](workflow-reference.md) reference page:
 
+    - `max_concurrent_jobs`
     - `info`
+    - `update_name()`
     - `delete()`
     - `workflow_tasks`
     - `get_workflow_tasks()`
+    - `add_workflow_tasks()`
+    - `get_compatible_blocks()`
+    - `get_parameters_info()`
+    - `construct_parameters()`
+    - `construct_parameters_parallel()`
+    - `estimate_job()`
     - `get_jobs()`
+    - `test_job()`
+    - `test_jobs_parallel()`
+    - `run_job()`
+    - `run_jobs_parallel()`
 
 ### Job
 
@@ -171,11 +187,13 @@ A job is an instance of a workflow. It delivers geospatial outputs defined by jo
     - `info`
     - `status`
     - `is_succeeded`
+    - `track_status()`
     - `get_credits()`
     - `download_quicklooks()`
     - `get_results_json()`
     - `download_results()`
     - `upload_results_to_bucket()`
+    - `cancel_job()`
     - `get_jobtasks()`
     - `get_logs()`
     - `get_jobtasks_results_json()`

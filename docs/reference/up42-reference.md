@@ -164,6 +164,28 @@ up42.get_blocks(
 )
 ```
 
+### validate_manifest()
+
+The `validate_manifest()` function allows you to validate the [manifest of your custom block](https://docs.up42.com/processing-platform/custom-blocks/manifest).
+
+```python
+validate_manifest(path_or_json)
+```
+
+The returned format is `dict`.
+
+<h5> Arguments </h5>
+
+| Argument       | Overview                                                                                 |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| `path_or_json` | **Union[str, Path, dict] / required**<br/>The file path to the manifest to be validated. |
+
+<h5> Example </h5>
+
+```python
+up42.validate_manifest(path_or_json="/Users/max.mustermann/Desktop/UP42Manifest.json")
+```
+
 ## Geometries
 
 ### get_example_aoi()

@@ -16,6 +16,8 @@ jobcollection = up42.initialize_jobcollection(
 )
 ```
 
+You can also create a job collection by [running jobs in parallel](../../reference/workflow-reference/#up42.workflow.Workflow.run_jobs_parallel).
+
 ## Job collections
 
 ### info

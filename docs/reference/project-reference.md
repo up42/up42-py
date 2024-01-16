@@ -24,6 +24,18 @@ The returned format is `dict`.
 project.info
 ```
 
+### max_concurrent_jobs
+
+The `max_concurrent_jobs` attribute returns the maximum number of jobs that can run simultaneously.
+
+The returned format is `int`.
+
+<h5> Example </h5>
+
+```python
+project.max_concurrent_jobs
+```
+
 ### get_project_settings()
 
 The `get_project_settings()` function returns threshold limits applied to the project.
@@ -38,6 +50,38 @@ The returned format is `list[dict[str, str]]`.
 
 ```python
 project.get_project_settings()
+```
+
+### update_project_settings()
+
+The `update_project_settings()` function allows you to update threshold limits applied to the project. Threshold limits are maximum values that prevent jobs from consuming too many credits unintentionally.
+
+```python
+update_project_settings(
+    max_aoi_size,
+    max_concurrent_jobs,
+    number_of_images,
+)
+```
+
+The returned format is `dict`.
+
+<h5> Arguments </h5>
+
+| Argument              | Overview                                                                                                    |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `max_aoi_size`        | **int**<br/>The largest area of interest that can be specified. Use a value from 1 to 1,000 km<sup>2</sup>. |
+| `max_concurrent_jobs` | **int**<br/>The maximum number of jobs that can run simultaneously. Use a value from 1 to 10.               |
+| `number_of_images`    | **int**<br/>The maximum number of images that can be returned. Use a value from 1 to 20.                    |
+
+<h5> Example </h5>
+
+```python
+project.update_project_settings(
+    max_aoi_size=750,
+    max_concurrent_jobs=10,
+    number_of_images=20,
+)
 ```
 
 ## Workflows
@@ -62,6 +106,38 @@ The returned format is `Union[list[Workflow], list[dict]]`.
 
 ```python
 project.get_workflows(return_json=True)
+```
+
+### create_workflow()
+
+The `create_workflow()` function allows you to create a new workflow.
+
+```python
+create_workflow(
+    name,
+    description,
+    use_existing,
+)
+```
+
+The returned format is `Workflow`.
+
+<h5> Arguments </h5>
+
+| Argument       | Overview                                                                                                                                                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`         | **str / required**<br/>The name of the workflow.                                                                                                                                                                                     |
+| `description`  | **str**<br/>A description of the workflow.                                                                                                                                                                                           |
+| `use_existing` | **bool**<br/>Determines whether to reuse an existing workflow:<br/><ul><li>`True`: reuse the most recent workflow with the same name and description.</li><li>`False`: create a new workflow.</li></ul>The default value is `False`. |
+
+<h5> Example </h5>
+
+```python
+project.create_workflow(
+    name="SPOT imagery pansharpening",
+    description="A workflow for pansharpening images from SPOT.",
+    use_existing=True,
+)
 ```
 
 ## Jobs
