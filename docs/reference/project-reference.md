@@ -4,7 +4,7 @@
 
     The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new [advanced processing functionalities](https://docs.up42.com/processing-platform/advanced). This change will affect projects, workflows, jobs, data blocks, processing blocks, and custom blocks. For more information, see the [blog post.](https://up42.com/blog/pansharpening-an-initial-view-into-our-advanced-analytic-capabilities?utm_source=documentation)
 
-The Project class enables access to the UP42 [analytics functionality](analytics.md). A project stores workflows and their corresponding job runs.
+A project stores workflows and their corresponding job runs.
 
 ```python
 project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc78")
