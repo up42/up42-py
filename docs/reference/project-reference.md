@@ -28,10 +28,6 @@ project.info
 
 The `get_project_settings()` function returns threshold limits applied to the project.
 
-```python
-get_project_settings()
-```
-
 The returned format is `list[dict[str, str]]`.
 
 <h5> Example </h5>
@@ -45,10 +41,6 @@ project.get_project_settings()
 ### get_workflows()
 
 The `get_workflows()` function returns a list of workflows.
-
-```python
-get_workflows(return_json)
-```
 
 The returned format is `Union[list[Workflow], list[dict]]`.
 
@@ -69,17 +61,6 @@ project.get_workflows(return_json=True)
 ### get_jobs()
 
 The `get_jobs()` function returns a list of jobs.
-
-```python
-get_jobs(
-    return_json,
-    test_jobs,
-    real_jobs,
-    limit,
-    sortby,
-    descending,
-)
-```
 
 The returned format is `Union[JobCollection, list[dict]]`.
 

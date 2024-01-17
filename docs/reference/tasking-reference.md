@@ -14,17 +14,6 @@ This class also inherits functions from the [CatalogBase](catalogbase-reference.
 
 The `construct_order_parameters()` function allows you to fill out an order form for a new tasking order.
 
-```python
-construct_order_parameters(
-    data_product_id,
-    name,
-    acquisition_start,
-    acquisition_end,
-    geometry,
-    tags,
-)
-```
-
 The returned format is `dict`.
 
 <h5> Arguments </h5>
@@ -68,17 +57,6 @@ tasking.construct_order_parameters(
 
 The `get_feasibility()` function returns a list of feasibility studies for tasking orders.
 
-```python
-get_feasibility(
-    feasibility_id,
-    workspace_id,
-    order_id,
-    decision,
-    sortby,
-    descending,
-)
-```
-
 The returned format is `list`.
 
 <h5> Arguments </h5>
@@ -109,13 +87,6 @@ The `choose_feasibility()` function allows you to accept one of the proposed fea
 
 You can only perform actions with feasibility studies with the `NOT_DECIDED` status.
 
-```python
-choose_feasibility(
-    feasibility_id,
-    accepted_option_id,
-)
-```
-
 The returned format is `dict`.
 
 <h5> Arguments </h5>
@@ -139,17 +110,6 @@ tasking.choose_feasibility(
 ### get_quotations()
 
 The `get_quotations()` function returns a list of all quotations for tasking orders.
-
-```python
-get_quotations(
-    quotation_id,
-    workspace_id,
-    order_id,
-    decision,
-    sortby,
-    descending,
-)
-```
 
 The returned format is `list`.
 
@@ -180,13 +140,6 @@ tasking.get_quotations(
 The `decide_quotation()` function allows you to accept or reject a quotation for a tasking order.
 
 You can only perform actions with feasibility studies with the `NOT_DECIDED` status.
-
-```python
-decide_quotation(
-    quotation_id,
-    decision,
-)
-```
 
 The returned format is `dict`.
 

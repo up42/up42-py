@@ -8,14 +8,6 @@ The up42 class is the base library module imported to Python. It provides the el
 
 The `authenticate()` function allows you to access UP42 SDK requests. For more information, see [Authentication](authentication.md).
 
-```python
-authenticate(
-    cfg_file,
-    username,
-    password,
-)
-```
-
 <h5> Arguments </h5>
 
 | Argument   | Overview                                                                                      |
@@ -45,10 +37,6 @@ up42.authenticate(cfg_file="config.json")
 
 The `tools.settings()` function allows you to enable logging.
 
-```python
-tools.settings(log)
-```
-
 <h5> Arguments </h5>
 
 | Argument | Overview                                                                                                                                              |
@@ -67,10 +55,6 @@ up42.tools.settings(log=True)
 
 The `get_credits_balance()` function returns your account balance, in credits.
 
-```python
-get_credits_balance()
-```
-
 The returned format is `dict`.
 
 <h5> Example </h5>
@@ -84,10 +68,6 @@ up42.get_credits_balance()
 ### get_block_coverage()
 
 The `get_block_coverage()` function returns the spatial coverage of the block.
-
-```python
-get_block_coverage(block_id)
-```
 
 The returned format is `dict`.
 
@@ -106,13 +86,6 @@ up42.get_block_coverage(block_id="f73c60f6-3f3c-4120-96cf-62b8d3019346")
 ### get_block_details()
 
 The `get_block_details()` function returns information about a specific block.
-
-```python
-get_block_details(
-    block_id,
-    as_dataframe,
-)
-```
 
 The returned format is `dict`.
 
@@ -135,14 +108,6 @@ up42.get_block_details(
 ### get_blocks()
 
 The `get_blocks()` function returns a list of all blocks on the marketplace.
-
-```python
-get_blocks(
-    block_type,
-    basic,
-    as_dataframe,
-)
-```
 
 The returned format is `Union[List[Dict], dict]`.
 
@@ -170,13 +135,6 @@ up42.get_blocks(
 
 The `get_example_aoi()` function returns an example AOI.
 
-```python
-get_example_aoi(
-    location,
-    as_dataframe,
-)
-```
-
 The returned format is `Union[dict, GeoDataFrame]`.
 
 <h5> Arguments </h5>
@@ -198,13 +156,6 @@ up42.get_example_aoi(
 ### read_vector_file()
 
 The `read_vector_file()` function allows you to upload your geometry from a vector file.
-
-```python
-read_vector_file(
-    filename,
-    as_dataframe,
-)
-```
 
 The returned format is `Union[dict, GeoDataFrame]`.
 
@@ -228,10 +179,6 @@ up42.read_vector_file(
 
 The `draw_aoi()` function allows you to draw an AOI on an interactive map. To be able to use the function, [install plotting functionalities](installation.md) first.
 
-```python
-draw_aoi()
-```
-
 The returned format is `folium.Map`.
 
 <h5> Example </h5>
@@ -245,16 +192,6 @@ up42.draw_aoi()
 ### viztools.folium_base_map()
 
 The `viztools.folium_base_map()` function returns a Folium map with the UP42 logo. Use it to [visualize your assets](visualizations.md).
-
-```python
-viztools.folium_base_map(
-    lat,
-    lon,
-    zoom_start,
-    width_percent,
-    layer_control,
-)
-```
 
 The returned format is `folium.Map`.
 
@@ -285,10 +222,6 @@ up42.viztools.folium_base_map(
 
 The `get_webhook_events()` function returns all available webhook events. For more information, see [Webhooks](webhooks.md).
 
-```python
-get_webhook_events()
-```
-
 The returned format is `dict`.
 
 <h5> Example </h5>
@@ -300,16 +233,6 @@ up42.get_webhook_events()
 ### create_webhook()
 
 The `create_webhook()` function allows you to register a new webhook in the system.
-
-```python
-create_webhook(
-    name,
-    url,
-    events,
-    active,
-    secret,
-)
-```
 
 The returned format is `Webhook`.
 
@@ -338,10 +261,6 @@ up42.create_webhook(
 ### get_webhooks()
 
 The `get_webhooks()` function returns all registered webhooks for this workspace.
-
-```python
-get_webhooks(return_json)
-```
 
 The returned format is `list[Webhook]`.
 

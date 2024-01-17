@@ -31,10 +31,6 @@ workflow.info
 
 The `delete()` function allows you to delete a workflow.
 
-```python
-delete()
-```
-
 <h5> Example </h5>
 
 ```python
@@ -61,10 +57,6 @@ workflow.workflow_tasks
 
 The `get_workflow_tasks` function returns a list of workflow tasks in a workflow.
 
-```python
-get_workflow_tasks(basic)
-```
-
 The returned format is `Union[list, dict]`.
 
 <h5> Arguments </h5>
@@ -84,14 +76,6 @@ workflow.get_workflow_tasks(basic=True)
 ### get_jobs()
 
 The `get_jobs()` function returns all jobs associated with a workflow.
-
-```python
-get_jobs(
-    return_json,
-    test_jobs,
-    real_jobs,
-)
-```
 
 The returned format is `Union[JobCollection, list[dict]]`.
 

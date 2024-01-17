@@ -67,10 +67,6 @@ job.is_succeeded
 
 The `get_credits()` function returns the number of credits spent on the job.
 
-```python
-get_credits()
-```
-
 The returned format is `dict`.
 
 <h5> Example </h5>
@@ -82,10 +78,6 @@ job.get_credits()
 ### download_quicklooks()
 
 The `download_quicklooks()` function allows you to download low-resolution previews of available images.
-
-```python
-download_quicklooks(output_directory)
-```
 
 The returned format is `list[str]`.
 
@@ -105,10 +97,6 @@ job.download_quicklooks(output_directory="/Users/max.mustermann/Desktop/")
 
 The `get_results_json()` function returns job results.
 
-```python
-get_results_json(as_dataframe)
-```
-
 The returned format is `Union[dict, GeoDataFrame]`.
 
 <h5> Arguments </h5>
@@ -126,13 +114,6 @@ job.get_results_json(as_dataframe=True)
 ### download_results()
 
 The `download_results()` function allows you to download job results and returns a list of download paths.
-
-```python
-download_results(
-    output_directory,
-    unpacking,
-)
-```
 
 The returned format is `list[str]`.
 
@@ -155,16 +136,6 @@ job.download_results(
 ### upload_results_to_bucket()
 
 The `upload_results_to_bucket()` function allows you to upload the job results to a custom Google Cloud Storage bucket.
-
-```python
-upload_results_to_bucket(
-    gs_client,
-    bucket,
-    folder,
-    extension,
-    version,
-)
-```
 
 <h5> Arguments </h5>
 
@@ -196,10 +167,6 @@ Job tasks are unique configurations of workflow tasks in a job. You can access a
 
 The `get_jobtasks()` function returns a list of job tasks.
 
-```python
-get_jobtasks(return_json)
-```
-
 The returned format is `Union[list[JobTask], list[dict]]`.
 
 <h5> Arguments </h5>
@@ -217,13 +184,6 @@ job.get_jobtasks(return_json=True)
 ### get_logs()
 
 The `get_logs()` function returns the logs of job tasks.
-
-```python
-get_logs(
-    as_print,
-    as_return,
-)
-```
 
 The returned format is `dict`.
 
@@ -247,10 +207,6 @@ job.get_logs(
 
 The `get_jobtasks_results_json()` function returns job tasks results.
 
-```python
-get_jobtasks_results_json()
-```
-
 The returned format is `dict`.
 
 <h5> Example </h5>
@@ -266,17 +222,6 @@ To use the visualization functionalities, [install](../../installation/) the adv
 ### map_results()
 
 The `map_results()` function allows you to visualize job results on a Folium map. Use together with [`download_results()`](#download_results).
-
-```python
-map_results(
-    bands,
-    aoi,
-    show_images,
-    show_features,
-    name_column,
-    save_html,
-)
-```
 
 The returned format is `folium.Map`.
 
@@ -307,17 +252,6 @@ job.map_results(
 ### plot_results()
 
 The `plot_results()` function allows you to visualize job results. Use together with [`download_results()`](#download_results).
-
-```python
-plot_results(
-    figsize,
-    bands,
-    titles,
-    filepaths,
-    plot_file_format,
-    **kwargs,
-)
-```
 
 <h5> Arguments </h5>
 

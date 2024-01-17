@@ -46,14 +46,6 @@ jobcollection.status
 
 The `apply()` function allows you to apply `worker` on jobs in a job collection.
 
-```python
-apply(
-    worker,
-    only_succeeded,
-    **kwargs,
-)
-```
-
 The returned format is `dict[str, any]`.
 
 <h5> Arguments </h5>
@@ -78,14 +70,6 @@ jobcollection.apply(
 ### download_results()
 
 The `download_results()` function allows you to download job collection results and returns a dictionary with a list of download paths.
-
-```python
-download_results(
-    output_directory,
-    merge,
-    unpacking,
-)
-```
 
 The returned format is `dict[str, list[str]]`.
 
@@ -114,17 +98,6 @@ To use the visualization functions, [install](installation.md) the SDK's advance
 ### map_results()
 
 The `map_results()` function allows you to visualize downloaded job collection results on a Folium map. Use together with [`download_results()`](#download_results).
-
-```python
-map_results(
-    bands,
-    aoi,
-    show_images,
-    show_features,
-    name_column,
-    save_html,
-)
-```
 
 The returned format is `folium.Map`.
 
@@ -155,17 +128,6 @@ jobcollection.map_results(
 ### plot_results()
 
 The `plot_results()` function allows you to visualize downloaded job collection results. Use together with [`download_results()`](#download_results).
-
-```python
-plot_results(
-    figsize,
-    bands,
-    titles,
-    filepaths,
-    plot_file_format,
-    **kwargs,
-)
-```
 
 <h5> Arguments </h5>
 

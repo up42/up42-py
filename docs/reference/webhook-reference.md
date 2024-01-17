@@ -25,16 +25,6 @@ webhook.info
 
 The `update()` function allows you to modify a specific webhook.
 
-```python
-update(
-    name,
-    url,
-    events,
-    active,
-    secret,
-)
-```
-
 The returned format is `dict`.
 
 <h5> Arguments </h5>
@@ -63,10 +53,6 @@ webhook.update(
 
 The `delete()` function allows you to delete a registered webhook.
 
-```python
-delete()
-```
-
 <h5> Example </h5>
 
 ```python
@@ -78,10 +64,6 @@ webhook.delete()
 ### trigger_test_events()
 
 The `trigger_test_events()` allows you to trigger a webhook test event to test your receiving side. The UP42 server will send test messages for each subscribed event to the specified webhook URL.
-
-```python
-trigger_test_events()
-```
 
 The returned format is `dict`.
 

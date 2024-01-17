@@ -63,10 +63,6 @@ order.is_fulfilled
 
 The `track_status()` function allows you to track the order status until the order is fulfilled or failed.
 
-```python
-track_status(report_time)
-```
-
 The returned format is `str`.
 
 <h5> Arguments </h5>
@@ -86,10 +82,6 @@ order.track_status(report_time=150)
 ### get_assets()
 
 The `get_assets()` function returns a list of order assets.
-
-```python
-get_assets()
-```
 
 The returned format is `list[Asset]`.
 

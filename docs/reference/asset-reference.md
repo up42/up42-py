@@ -36,13 +36,6 @@ asset.info
 
 The `update_metadata()` function allows you to change the title and tags of an UP42 asset.
 
-```python
-update_metadata(
-    title,
-    tags,
-)
-```
-
 The returned format is `dict`.
 
 <h5> Arguments </h5>
@@ -64,13 +57,6 @@ asset.update_metadata(
 ### download()
 
 The `download()` function allows you to download UP42 assets from storage and returns a list of download paths.
-
-```python
-download(
-    output_directory,
-    unpacking,
-)
-```
 
 The returned format is `list[str]`.
 
@@ -120,13 +106,6 @@ asset.stac_items
 
 The `download_stac_asset()` function allows you to download a STAC asset from storage and returns the path to the downloaded file. A new directory for the file will be created.
 
-```python
-download_stac_asset(
-    stac_asset,
-    output_directory,
-)
-```
-
 The returned format is `pathlib.Path`.
 
 <h5> Arguments </h5>
@@ -149,10 +128,6 @@ asset.download_stac_asset(
 
 The `get_stac_asset_url()` function returns a signed download URL for a STAC asset.
 The generated URL can be used for up to 5 minutes to download the asset without authentication.
-
-```python
-get_stac_asset_url(stac_asset)
-```
 
 The returned format is `str`.
 

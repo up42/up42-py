@@ -32,10 +32,6 @@ jobtask.info
 
 The `download_quicklooks()` function allows you to download low-resolution preview images. Not all job tasks have quicklooks.
 
-```python
-download_quicklooks(output_directory)
-```
-
 The returned format is `list[str]`. If an empty list `[]` is returned, no quicklooks are available.
 
 <h5> Arguments </h5>
@@ -54,10 +50,6 @@ jobtask.download_quicklooks(output_directory="/Users/max.mustermann/Desktop/")
 
 The `get_results_json()` function allows you to get the `data.json` from a specific job task.
 
-```python
-get_results_json(as_dataframe)
-```
-
 The returned format is `Union[dict, GeoDataFrame]`.
 
 <h5> Arguments </h5>
@@ -75,10 +67,6 @@ jobtask.get_results_json(as_dataframe=True)
 ### download_results()
 
 The `download_results()` function allows you to download a specific job task's results and returns a list of download paths.
-
-```python
-download_results(output_directory)
-```
 
 The returned format is `list[str]`.
 
@@ -101,17 +89,6 @@ To use the visualization functions, [install](installation.md) the SDK's advance
 ### map_results()
 
 The `map_results()` function allows you to visualize a specific job task's results on a Folium map. Use together with [`download_results()`](#download_results).
-
-```python
-map_results(
-    bands,
-    aoi,
-    show_images,
-    show_features,
-    name_column,
-    save_html,
-)
-```
 
 The returned format is `folium.Map`.
 
@@ -143,17 +120,6 @@ jobtask.map_results(
 
 The `plot_results()` function allows you to visualize downloaded job task's results. Use together with [`download_results()`](#download_results).
 
-```python
-plot_results(
-    figsize,
-    bands,
-    titles,
-    filepaths,
-    plot_file_format,
-    **kwargs,
-)
-```
-
 <h5> Arguments </h5>
 
 | Argument           | Overview                                                                                                                                               |
@@ -180,14 +146,6 @@ jobtask.plot_results(
 ### plot_quicklooks()
 
 The `plot_quicklooks()` function allows you to visualize downloaded quicklooks. Use together with [`download_quicklooks()`](#download_quicklooks).
-
-```python
-plot_quicklooks(
-    figsize,
-    filepaths,
-    titles
-)
-```
 
 <h5> Arguments </h5>
 

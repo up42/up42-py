@@ -14,18 +14,6 @@ This class also inherits functions from the [CatalogBase](catalogbase-reference.
 
 The `construct_search_parameters()` function allows you to fill out search parameters when searching for catalog imagery.
 
-```python
-construct_search_parameters(
-    geometry,
-    collections,
-    start_date,
-    end_date,
-    usage_type,
-    limit,
-    max_cloud_cover,
-)
-```
-
 The returned format is `dict`.
 
 <h5> Arguments </h5>
@@ -55,13 +43,6 @@ catalog.construct_search_parameters(
 ### search()
 
 The `search()` function returns the scenes matching the search parameters.
-
-```python
-search(
-    search_parameters,
-    as_dataframe,
-)
-```
 
 The returned format is `Union[GeoDataFrame, dict]`.
 
@@ -93,14 +74,6 @@ catalog.search(
 The `download_quicklooks()` function allows you to download low-resolution previews of scenes returned in search results.
 Visualize quicklooks with [`map_quicklooks()`](#map_quicklooks) or [`plot_quicklooks()`](#plot_quicklooks).
 
-```python
-download_quicklooks(
-    image_ids,
-    collection,
-    output_directory,
-)
-```
-
 The returned format is `list[str]`.
 
 <h5> Arguments </h5>
@@ -127,15 +100,6 @@ catalog.download_quicklooks(
 
 The `construct_order_parameters()` function allows you to fill out an order form for a new catalog order.
 
-```python
-construct_order_parameters(
-    data_product_id,
-    image_id,
-    aoi,
-    tags,
-)
-```
-
 The returned format is `dict`.
 
 <h5> Arguments </h5>
@@ -161,10 +125,6 @@ catalog.construct_order_parameters(
 ### estimate_order()
 
 The `estimate_order()` function returns the cost estimate for a catalog order.
-
-```python
-estimate_order(order_parameters)
-```
 
 The returned format is `int`.
 
@@ -194,15 +154,6 @@ To use the visualization functionalities, [install](../../installation/) the adv
 
 The `plot_coverage()` function allows you to visualize the coverage of scenes matching the search parameters.
 Use together with [`search()`](#search).
-
-```python
-plot_coverage(
-    scenes,
-    aoi,
-    legend_column,
-    figsize,
-)
-```
 
 <h5> Arguments </h5>
 
@@ -241,18 +192,6 @@ catalog.plot_coverage(
 
 The `map_quicklooks()` function allows you to visualize downloaded quicklooks on a Folium map.
 Use together with [`search()`](#search) and [`download_quicklooks()`](#download_quicklooks).
-
-```python
-map_quicklooks(
-    scenes,
-    aoi,
-    show_images,
-    show_features,
-    filepaths,
-    name_column,
-    save_html,
-)
-```
 
 The returned format is `folium.Map`.
 
@@ -309,14 +248,6 @@ catalog.map_quicklooks(
 
 The `plot_quicklooks()` function allows you to visualize downloaded quicklooks.
 Use together with [`search()`](#search) and [`download_quicklooks()`](#download_quicklooks).
-
-```python
-plot_quicklooks(
-    figsize,
-    filepaths,
-    titles
-)
-```
 
 <h5> Arguments </h5>
 
