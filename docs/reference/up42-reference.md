@@ -55,7 +55,7 @@ up42.tools.settings(log=True)
 
 The `get_credits_balance()` function returns your account balance, in credits.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Example </h5>
 
@@ -69,7 +69,7 @@ up42.get_credits_balance()
 
 The `get_block_coverage()` function returns the spatial coverage of the block.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Arguments </h5>
 
@@ -87,7 +87,7 @@ up42.get_block_coverage(block_id="f73c60f6-3f3c-4120-96cf-62b8d3019346")
 
 The `get_block_details()` function returns information about a specific block.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Arguments </h5>
 
@@ -109,7 +109,7 @@ up42.get_block_details(
 
 The `get_blocks()` function returns a list of all blocks on the marketplace.
 
-The returned format is `Union[List[Dict], dict]`.
+The returned data type is `Union[List[Dict], dict]`.
 
 <h5> Arguments </h5>
 
@@ -135,7 +135,7 @@ up42.get_blocks(
 
 The `get_example_aoi()` function returns an example AOI.
 
-The returned format is `Union[dict, GeoDataFrame]`.
+The returned data type is `Union[dict, GeoDataFrame]`.
 
 <h5> Arguments </h5>
 
@@ -157,7 +157,7 @@ up42.get_example_aoi(
 
 The `read_vector_file()` function allows you to upload your geometry from a vector file.
 
-The returned format is `Union[dict, GeoDataFrame]`.
+The returned data type is `Union[dict, GeoDataFrame]`.
 
 <h5> Arguments </h5>
 
@@ -179,7 +179,7 @@ up42.read_vector_file(
 
 The `draw_aoi()` function allows you to draw an AOI on an interactive map. To be able to use the function, [install plotting functionalities](installation.md) first.
 
-The returned format is `folium.Map`.
+The returned data type is `folium.Map`.
 
 <h5> Example </h5>
 
@@ -193,7 +193,7 @@ up42.draw_aoi()
 
 The `viztools.folium_base_map()` function returns a Folium map with the UP42 logo. Use it to [visualize your assets](visualizations.md).
 
-The returned format is `folium.Map`.
+The returned data type is `folium.Map`.
 
 <h5> Arguments </h5>
 
@@ -222,7 +222,7 @@ up42.viztools.folium_base_map(
 
 The `get_webhook_events()` function returns all available webhook events. For more information, see [Webhooks](webhooks.md).
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Example </h5>
 
@@ -234,7 +234,7 @@ up42.get_webhook_events()
 
 The `create_webhook()` function allows you to register a new webhook in the system.
 
-The returned format is `Webhook`.
+The returned data type is `Webhook`.
 
 <h5> Arguments </h5>
 
@@ -262,7 +262,7 @@ up42.create_webhook(
 
 The `get_webhooks()` function returns all registered webhooks for this workspace.
 
-The returned format is `list[Webhook]`.
+The returned data type is `list[Webhook]`.
 
 <h5> Arguments </h5>
 

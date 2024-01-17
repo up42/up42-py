@@ -20,7 +20,7 @@ jobtask = up42.initialize_jobtask(
 
 The `info` attribute returns metadata of a specific job task.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Example </h5>
 
@@ -32,7 +32,7 @@ jobtask.info
 
 The `download_quicklooks()` function allows you to download low-resolution preview images. Not all job tasks have quicklooks.
 
-The returned format is `list[str]`. If an empty list `[]` is returned, no quicklooks are available.
+The returned data type is `list[str]`. If an empty list `[]` is returned, no quicklooks are available.
 
 <h5> Arguments </h5>
 
@@ -50,7 +50,7 @@ jobtask.download_quicklooks(output_directory="/Users/max.mustermann/Desktop/")
 
 The `get_results_json()` function allows you to get the `data.json` from a specific job task.
 
-The returned format is `Union[dict, GeoDataFrame]`.
+The returned data type is `Union[dict, GeoDataFrame]`.
 
 <h5> Arguments </h5>
 
@@ -68,7 +68,7 @@ jobtask.get_results_json(as_dataframe=True)
 
 The `download_results()` function allows you to download a specific job task's results and returns a list of download paths.
 
-The returned format is `list[str]`.
+The returned data type is `list[str]`.
 
 <h5> Arguments </h5>
 
@@ -90,7 +90,7 @@ To use the visualization functions, [install](installation.md) the SDK's advance
 
 The `map_results()` function allows you to visualize a specific job task's results on a Folium map. Use together with [`download_results()`](#download_results).
 
-The returned format is `folium.Map`.
+The returned data type is `folium.Map`.
 
 <h5> Arguments </h5>
 

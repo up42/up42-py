@@ -12,7 +12,7 @@ storage = up42.initialize_storage()
 
 The `get_assets()` function allows you to search for assets in storage.
 
-The returned format is `Union[list[Asset], dict]`.
+The returned data type is `Union[list[Asset], dict]`.
 
 <h5> Arguments </h5>
 
@@ -56,7 +56,7 @@ storage.get_assets(
 
 The `get_orders()` function allows you to search for tasking and catalog orders.
 
-The returned format is `Union[list[Order], dict]`.
+The returned data type is `Union[list[Order], dict]`.
 
 <h5> Arguments </h5>
 

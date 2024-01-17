@@ -24,7 +24,7 @@ Types of assets:
 
 The `info` attribute returns metadata of a specific UP42 asset.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Example </h5>
 
@@ -36,7 +36,7 @@ asset.info
 
 The `update_metadata()` function allows you to change the title and tags of an UP42 asset.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Arguments </h5>
 
@@ -58,7 +58,7 @@ asset.update_metadata(
 
 The `download()` function allows you to download UP42 assets from storage and returns a list of download paths.
 
-The returned format is `list[str]`.
+The returned data type is `list[str]`.
 
 <h5> Arguments </h5>
 
@@ -82,7 +82,7 @@ asset.download(
 
 The `stac_info` attribute returns the STAC collection associated with a specific UP42 asset.
 
-The returned format is `pystac.Collection`.
+The returned data type is `pystac.Collection`.
 
 <h5> Example </h5>
 
@@ -94,7 +94,7 @@ asset.stac_info
 
 The `stac_items` attribute returns STAC items from a specific UP42 asset.
 
-The returned format is `pystac.ItemCollection`.
+The returned data type is `pystac.ItemCollection`.
 
 <h5> Example </h5>
 
@@ -106,7 +106,7 @@ asset.stac_items
 
 The `download_stac_asset()` function allows you to download a STAC asset from storage and returns the path to the downloaded file. A new directory for the file will be created.
 
-The returned format is `pathlib.Path`.
+The returned data type is `pathlib.Path`.
 
 <h5> Arguments </h5>
 
@@ -129,7 +129,7 @@ asset.download_stac_asset(
 The `get_stac_asset_url()` function returns a signed download URL for a STAC asset.
 The generated URL can be used for up to 5 minutes to download the asset without authentication.
 
-The returned format is `str`.
+The returned data type is `str`.
 
 <h5> Arguments </h5>
 

@@ -13,7 +13,7 @@ To learn how to create a webhook, see the [up42 class](up42-reference.md).
 
 The `info` attribute returns metadata of a specific webhook.
 
-The returned format is `dict`
+The returned data type is `dict`
 
 <h5> Example </h5>
 
@@ -25,7 +25,7 @@ webhook.info
 
 The `update()` function allows you to modify a specific webhook.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Arguments </h5>
 
@@ -65,7 +65,7 @@ webhook.delete()
 
 The `trigger_test_events()` allows you to trigger a webhook test event to test your receiving side. The UP42 server will send test messages for each subscribed event to the specified webhook URL.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Example </h5>
 

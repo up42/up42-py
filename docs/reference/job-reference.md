@@ -19,7 +19,7 @@ job = up42.initialize_job(
 
 The `info` attribute returns metadata of a specific job.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Example </h5>
 
@@ -40,7 +40,7 @@ The `status` attribute returns the job status. It can be one of the following:
 - `FAILED`
 - `ERROR`
 
-The returned format is `str`.
+The returned data type is `str`.
 
 <h5> Example </h5>
 
@@ -55,7 +55,7 @@ The `is_succeeded` attribute returns the following:
 - `True`, if the job has the `SUCCEEDED` status.
 - `False`, if the job has any other status.
 
-The returned format is `bool`.
+The returned data type is `bool`.
 
 <h5> Example </h5>
 
@@ -67,7 +67,7 @@ job.is_succeeded
 
 The `get_credits()` function returns the number of credits spent on the job.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Example </h5>
 
@@ -79,7 +79,7 @@ job.get_credits()
 
 The `download_quicklooks()` function allows you to download low-resolution previews of available images.
 
-The returned format is `list[str]`.
+The returned data type is `list[str]`.
 
 <h5> Arguments </h5>
 
@@ -97,7 +97,7 @@ job.download_quicklooks(output_directory="/Users/max.mustermann/Desktop/")
 
 The `get_results_json()` function returns job results.
 
-The returned format is `Union[dict, GeoDataFrame]`.
+The returned data type is `Union[dict, GeoDataFrame]`.
 
 <h5> Arguments </h5>
 
@@ -115,7 +115,7 @@ job.get_results_json(as_dataframe=True)
 
 The `download_results()` function allows you to download job results and returns a list of download paths.
 
-The returned format is `list[str]`.
+The returned data type is `list[str]`.
 
 <h5> Arguments </h5>
 
@@ -167,7 +167,7 @@ Job tasks are unique configurations of workflow tasks in a job. You can access a
 
 The `get_jobtasks()` function returns a list of job tasks.
 
-The returned format is `Union[list[JobTask], list[dict]]`.
+The returned data type is `Union[list[JobTask], list[dict]]`.
 
 <h5> Arguments </h5>
 
@@ -185,7 +185,7 @@ job.get_jobtasks(return_json=True)
 
 The `get_logs()` function returns the logs of job tasks.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Arguments </h5>
 
@@ -207,7 +207,7 @@ job.get_logs(
 
 The `get_jobtasks_results_json()` function returns job tasks results.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Example </h5>
 
@@ -223,7 +223,7 @@ To use the visualization functionalities, [install](../../installation/) the adv
 
 The `map_results()` function allows you to visualize job results on a Folium map. Use together with [`download_results()`](#download_results).
 
-The returned format is `folium.Map`.
+The returned data type is `folium.Map`.
 
 <h5> Arguments </h5>
 

@@ -16,7 +16,7 @@ project = up42.initialize_project(project_id="68567134-27ad-7bd7-4b65-d61adb11fc
 
 The `info` attribute returns metadata of a specific UP42 project.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Example </h5>
 
@@ -28,7 +28,7 @@ project.info
 
 The `get_project_settings()` function returns threshold limits applied to the project.
 
-The returned format is `list[dict[str, str]]`.
+The returned data type is `list[dict[str, str]]`.
 
 <h5> Example </h5>
 
@@ -42,7 +42,7 @@ project.get_project_settings()
 
 The `get_workflows()` function returns a list of workflows.
 
-The returned format is `Union[list[Workflow], list[dict]]`.
+The returned data type is `Union[list[Workflow], list[dict]]`.
 
 <h5> Arguments </h5>
 
@@ -62,7 +62,7 @@ project.get_workflows(return_json=True)
 
 The `get_jobs()` function returns a list of jobs.
 
-The returned format is `Union[JobCollection, list[dict]]`.
+The returned data type is `Union[JobCollection, list[dict]]`.
 
 <h5> Arguments </h5>
 

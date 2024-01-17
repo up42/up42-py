@@ -14,7 +14,7 @@ This class also inherits functions from the [CatalogBase](catalogbase-reference.
 
 The `construct_order_parameters()` function allows you to fill out an order form for a new tasking order.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Arguments </h5>
 
@@ -57,7 +57,7 @@ tasking.construct_order_parameters(
 
 The `get_feasibility()` function returns a list of feasibility studies for tasking orders.
 
-The returned format is `list`.
+The returned data type is `list`.
 
 <h5> Arguments </h5>
 
@@ -87,7 +87,7 @@ The `choose_feasibility()` function allows you to accept one of the proposed fea
 
 You can only perform actions with feasibility studies with the `NOT_DECIDED` status.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Arguments </h5>
 
@@ -111,7 +111,7 @@ tasking.choose_feasibility(
 
 The `get_quotations()` function returns a list of all quotations for tasking orders.
 
-The returned format is `list`.
+The returned data type is `list`.
 
 <h5> Arguments </h5>
 
@@ -141,7 +141,7 @@ The `decide_quotation()` function allows you to accept or reject a quotation for
 
 You can only perform actions with feasibility studies with the `NOT_DECIDED` status.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Arguments </h5>
 

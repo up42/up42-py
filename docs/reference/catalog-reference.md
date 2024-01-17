@@ -14,7 +14,7 @@ This class also inherits functions from the [CatalogBase](catalogbase-reference.
 
 The `construct_search_parameters()` function allows you to fill out search parameters when searching for catalog imagery.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Arguments </h5>
 
@@ -44,7 +44,7 @@ catalog.construct_search_parameters(
 
 The `search()` function returns the scenes matching the search parameters.
 
-The returned format is `Union[GeoDataFrame, dict]`.
+The returned data type is `Union[GeoDataFrame, dict]`.
 
 <h5> Arguments </h5>
 
@@ -74,7 +74,7 @@ catalog.search(
 The `download_quicklooks()` function allows you to download low-resolution previews of scenes returned in search results.
 Visualize quicklooks with [`map_quicklooks()`](#map_quicklooks) or [`plot_quicklooks()`](#plot_quicklooks).
 
-The returned format is `list[str]`.
+The returned data type is `list[str]`.
 
 <h5> Arguments </h5>
 
@@ -100,7 +100,7 @@ catalog.download_quicklooks(
 
 The `construct_order_parameters()` function allows you to fill out an order form for a new catalog order.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Arguments </h5>
 
@@ -126,7 +126,7 @@ catalog.construct_order_parameters(
 
 The `estimate_order()` function returns the cost estimate for a catalog order.
 
-The returned format is `int`.
+The returned data type is `int`.
 
 <h5> Arguments </h5>
 
@@ -193,7 +193,7 @@ catalog.plot_coverage(
 The `map_quicklooks()` function allows you to visualize downloaded quicklooks on a Folium map.
 Use together with [`search()`](#search) and [`download_quicklooks()`](#download_quicklooks).
 
-The returned format is `folium.Map`.
+The returned data type is `folium.Map`.
 
 <h5> Arguments </h5>
 
