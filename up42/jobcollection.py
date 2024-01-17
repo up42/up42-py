@@ -99,8 +99,6 @@ class JobCollection(VizTools):
 
         return out_dict
 
-    # TODO: Add method to get logs of failed jobs
-
     def download_results(
         self,
         output_directory: Union[str, Path, None] = None,

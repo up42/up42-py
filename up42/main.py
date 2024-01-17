@@ -10,7 +10,7 @@ import requests.exceptions
 # pylint: disable=wrong-import-position
 from up42.auth import Auth
 from up42.host import endpoint
-from up42.utils import get_logger, read_json
+from up42.utils import get_logger
 from up42.webhooks import Webhook, Webhooks
 
 logger = get_logger(__name__, level=logging.INFO)
@@ -225,25 +225,3 @@ def get_credits_balance() -> dict:
     response_json = _auth._request(request_type="GET", url=endpoint_url)
     details_json = response_json["data"]
     return details_json
-
-
-@_check_auth
-def validate_manifest(path_or_json: Union[str, Path, dict]) -> dict:
-    """
-    Validates a block manifest JSON.
-
-    The [block manifest](https://docs.up42.com/processing-platform/custom-blocks/manifest)
-    is required to build a custom block on UP42 and contains
-    the metadata about the block as well as block input and output capabilities.
-
-    Args:
-        path_or_json: The input manifest, either a filepath or JSON string, see example.
-
-    Returns:
-        A dictionary with the validation results and potential validation errors.
-    """
-    manifest_json = read_json(path_or_json)
-    url = endpoint("/validate-schema/block")
-    response_json = _auth._request(request_type="POST", url=url, data=manifest_json)
-    logger.info("The manifest is valid.")
-    return response_json["data"]

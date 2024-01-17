@@ -6,15 +6,12 @@ e.g. `make test`, the auth module fixture is otherwise not properly attached to 
 or would need to be recreated for each test.
 """
 
-import json
-from pathlib import Path
-
 import pandas as pd
 import pytest
 import requests
 
 from up42 import main
-from up42.main import get_block_coverage, get_block_details, get_blocks, get_credits_balance, validate_manifest
+from up42.main import get_block_coverage, get_block_details, get_blocks, get_credits_balance
 
 from .fixtures.fixtures_globals import API_HOST
 
@@ -156,40 +153,3 @@ def test_get_credits_balance_live(auth_live, monkeypatch):
     balance = get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
-
-
-def test_validate_manifest(auth_mock, requests_mock, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_mock)
-    fp = Path(__file__).resolve().parent / "mock_data/manifest.json"
-    url_validate_mainfest = f"{API_HOST}/validate-schema/block"
-    requests_mock.post(
-        url=url_validate_mainfest,
-        json={"data": {"valid": True, "errors": []}, "error": {}},
-    )
-
-    result = validate_manifest(path_or_json=fp)
-    assert result == {"valid": True, "errors": []}
-
-
-@pytest.mark.live
-def test_validate_manifest_valid_live(auth_live, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_live)
-    fp = Path(__file__).resolve().parent / "mock_data/manifest.json"
-    result = validate_manifest(path_or_json=fp)
-    assert result == {"valid": True, "errors": []}
-
-
-@pytest.mark.live
-def test_validate_manifest_invalid_live(auth_live, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_live)
-    fp = Path(__file__).resolve().parent / "mock_data/manifest.json"
-    with open(fp) as src:
-        mainfest_json = json.load(src)
-        mainfest_json.update(
-            {
-                "_up42_specification_version": 1,
-                "input_capabilities": {"invalidtype": {"up42_standard": {"format": "GTiff"}}},
-            }
-        )
-    with pytest.raises(requests.exceptions.RequestException):
-        validate_manifest(path_or_json=mainfest_json)

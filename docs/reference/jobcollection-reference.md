@@ -4,7 +4,7 @@
 
     The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new [advanced processing functionalities](https://docs.up42.com/processing-platform/advanced). This change will affect projects, workflows, jobs, data blocks, processing blocks, and custom blocks. For more information, see the [blog post.](https://up42.com/blog/pansharpening-an-initial-view-into-our-advanced-analytic-capabilities?utm_source=documentation)
 
-The JobCollection class enables access to [results of multiple jobs](analytics.md). A job is an instance of a workflow. A job collection is the results of multiple jobs as one object.
+A job is an instance of a workflow. A job collection is the results of multiple jobs as one object.
 
 ```python
 jobcollection = up42.initialize_jobcollection(
@@ -15,8 +15,6 @@ jobcollection = up42.initialize_jobcollection(
     project_id="55434287-31bc-3ad7-1a63-d61aac11ac55",
 )
 ```
-
-You can also create a job collection by [running jobs in parallel](../../reference/workflow-reference/#up42.workflow.Workflow.run_jobs_parallel).
 
 ## Job collections
 

@@ -1,7 +1,5 @@
-import json
 import os
 import tempfile
-import time
 from pathlib import Path
 
 import pytest
@@ -46,34 +44,6 @@ def test_is_succeeded(job_mock, status, expected, requests_mock):
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
     assert job_mock.is_succeeded == expected
-
-
-@pytest.mark.parametrize("status", ["SUCCEEDED"])
-def test_track_status_pass(job_mock, status, requests_mock):
-    del job_mock._info
-
-    url_job_info = f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
-    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
-
-    job_status = job_mock.track_status()
-    assert job_status == status
-
-
-@pytest.mark.parametrize("status", ["FAILED", "ERROR", "CANCELLED", "CANCELLING"])
-def test_track_status_fail(job_mock, status, requests_mock):
-    del job_mock._info
-
-    url_job_info = f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
-    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
-
-    with pytest.raises(ValueError):
-        job_mock.track_status()
-
-
-def test_cancel_job(job_mock, requests_mock):
-    url = f"{API_HOST}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}/cancel/"
-    requests_mock.post(url, status_code=200)
-    job_mock.cancel_job()
 
 
 def test_download_quicklook(job_mock, requests_mock):
@@ -201,23 +171,3 @@ def test_job_get_credits(job_mock):
 
     assert isinstance(out_files, dict)
     assert out_files == {"creditsUsed": 100}
-
-
-@pytest.mark.skip(reason="Sometimes takes quite long to cancel the job on the server.")
-@pytest.mark.live
-def test_cancel_job_live(workflow_live):
-    input_parameters_json = Path(__file__).resolve().parent / "mock_data/input_params_simple.json"
-    jb = workflow_live.test_job(input_parameters=input_parameters_json, track_status=False)
-    # Can happen that the test job is finished before the cancellation kicks in server-side.
-    jb.cancel_job()
-
-    # Give service time to cancel job before assertions
-    time.sleep(3)
-    assert jb.status in ["CANCELLED", "CANCELLING"]
-
-    assert isinstance(jb, Job)
-    with open(input_parameters_json) as src:
-        job_info_params = json.load(src)
-        job_info_params.update({"config": {"mode": "DRY_RUN"}})
-        assert jb._info["inputs"] == job_info_params
-        assert jb._info["mode"] == "DRY_RUN"
