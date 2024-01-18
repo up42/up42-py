@@ -12,24 +12,7 @@ storage = up42.initialize_storage()
 
 The `get_assets()` function allows you to search for assets in storage.
 
-```python
-get_assets(
-    created_after,
-    created_before,
-    workspace_id,
-    collection_names,
-    producer_names,
-    tags,
-    sources,
-    search,
-    limit,
-    sortby,
-    descending,
-    return_json,
-)
-```
-
-The returned format is `Union[list[Asset], dict]`.
+The returned data type is `Union[list[Asset], dict]`.
 
 <h5> Arguments </h5>
 
@@ -73,21 +56,7 @@ storage.get_assets(
 
 The `get_orders()` function allows you to search for tasking and catalog orders.
 
-```python
-get_orders(
-    workspace_orders,
-    return_json,
-    limit,
-    sortby,
-    descending,
-    order_type,
-    statuses,
-    name,
-    tags,
-)
-```
-
-The returned format is `Union[list[Order], dict]`.
+The returned data type is `Union[list[Order], dict]`.
 
 <h5> Arguments </h5>
 

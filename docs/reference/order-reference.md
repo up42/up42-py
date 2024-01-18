@@ -12,7 +12,7 @@ order = up42.initialize_order(order_id="ea36dee9-fed6-457e-8400-2c20ebd30f44")
 
 The `info` attribute returns metadata of a specific order.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Example </h5>
 
@@ -24,7 +24,7 @@ order.info
 
 The `order_details` attribute returns details of a specific tasking order. It doesn't work with catalog orders.
 
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Example </h5>
 
@@ -36,7 +36,7 @@ order.order_details
 
 The `status` attribute returns the [order status](https://docs.up42.com/developers/api-tasking/tasking-monitor#order-statuses).
 
-The returned format is `str`.
+The returned data type is `str`.
 
 <h5> Example </h5>
 
@@ -51,7 +51,7 @@ The `is_fulfilled` attribute returns the following:
 - `True`, if the order has the `FULFILLED` status.
 - `False`, if the job has any other status.
 
-The returned format is `bool`.
+The returned data type is `bool`.
 
 <h5> Example </h5>
 
@@ -63,11 +63,7 @@ order.is_fulfilled
 
 The `track_status()` function allows you to track the order status until the order is fulfilled or failed.
 
-```python
-track_status(report_time)
-```
-
-The returned format is `str`.
+The returned data type is `str`.
 
 <h5> Arguments </h5>
 
@@ -87,11 +83,7 @@ order.track_status(report_time=150)
 
 The `get_assets()` function returns a list of order assets.
 
-```python
-get_assets()
-```
-
-The returned format is `list[Asset]`.
+The returned data type is `list[Asset]`.
 
 <h5> Example </h5>
 

@@ -16,11 +16,7 @@ catalog = up42.initialize_catalog()
 
 The `get_collections()` function returns a list of geospatial collections.
 
-```python
-get_collections()
-```
-
-The returned format is `Union[Dict, List]`.
+The returned data type is `Union[Dict, List]`.
 
 <h5> Example </h5>
 
@@ -36,11 +32,7 @@ catalog.get_collections()
 
 The `get_data_products()` function returns a list of data products.
 
-```python
-get_data_products(basic)
-```
-
-The returned format is `Union[dict, List[dict]]`.
+The returned data type is `Union[dict, List[dict]]`.
 
 <h5> Arguments </h5>
 
@@ -60,11 +52,7 @@ catalog.get_data_products(basic=False)
 
 The `get_data_product_schema()` function returns the parameters needed to place an order for a specific data product.
 
-```python
-get_data_product_schema(data_product_id)
-```
-
-The returned format is `dict`.
+The returned data type is `dict`.
 
 <h5> Arguments </h5>
 
@@ -86,15 +74,7 @@ catalog.get_data_product_schema(data_product_id="647780db-5a06-4b61-b525-577a8b6
 
 The `place_order()` function allows you to place a catalog or tasking order.
 
-```python
-place_order(
-    order_parameters,
-    track_status,
-    report_time,
-)
-```
-
-The returned format is `Order`.
+The returned data type is `Order`.
 
 <h5> Arguments </h5>
 
