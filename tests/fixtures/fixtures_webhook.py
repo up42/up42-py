@@ -2,7 +2,8 @@ import os
 
 import pytest
 
-from ..context import Webhook, Webhooks
+from up42.webhooks import Webhook, Webhooks
+
 from .fixtures_globals import API_HOST, JSON_WEBHOOK, WEBHOOK_ID
 
 

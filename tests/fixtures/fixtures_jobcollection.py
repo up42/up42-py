@@ -1,6 +1,7 @@
 import pytest
 
-from ..context import JobCollection
+from up42.jobcollection import JobCollection
+
 from .fixtures_globals import PROJECT_ID
 
 

@@ -4,7 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from ..context import Tasking
+from up42.tasking import Tasking
+
 from .fixtures_globals import API_HOST, DATA_PRODUCT_ID, QUOTATION_ID, WORKSPACE_ID, WRONG_FEASIBILITY_ID
 
 LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
@@ -57,9 +58,7 @@ def tasking_mock(auth_mock, requests_mock):
     ) as json_file:
         json_data_get_quotation = json.load(json_file)
         requests_mock.get(url=url_get_quotations_decision_filtered, json=json_data_get_quotation)
-        url_get_quotations_decision_filtered = (
-            f"{API_HOST}{QUOTATION_ENDPOINT}?{sorting}&decision=ACCEPTED"
-        )
+        url_get_quotations_decision_filtered = f"{API_HOST}{QUOTATION_ENDPOINT}?{sorting}&decision=ACCEPTED"
 
     decision_filter = "&decision=ACCEPTED&decision=REJECTED"
     url_get_quotations_decision_filtered = f"{API_HOST}{QUOTATION_ENDPOINT}?{sorting}{decision_filter}"

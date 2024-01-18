@@ -4,8 +4,6 @@
 
     The current analytics platform will be discontinued after January 31, 2024, and will be replaced by new [advanced processing functionalities](https://docs.up42.com/processing-platform/advanced). This change will affect projects, workflows, jobs, data blocks, processing blocks, and custom blocks. For more information, see the [blog post.](https://up42.com/blog/pansharpening-an-initial-view-into-our-advanced-analytic-capabilities?utm_source=documentation)
 
-The Job class enables access to the UP42 [analytics functionality](analytics.md).
-
 A job is an instance of a workflow. It delivers geospatial outputs defined by job JSON parameters.
 
 ```python
@@ -63,28 +61,6 @@ The returned format is `bool`.
 
 ```python
 job.is_succeeded
-```
-
-### track_status()
-
-The `track_status()` function allows you to track the job status until the job has finished or failed.
-
-```python
-track_status(report_time)
-```
-
-The returned format is `str`.
-
-<h5> Arguments </h5>
-
-| Argument      | Overview                                                                                                                                         |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `report_time` | **int**<br/>The time interval for querying whether the job status has changed to `SUCCEEDED` or `FAILED`, in seconds. The default value is `30`. |
-
-<h5> Example </h5>
-
-```python
-job.track_status(report_time=5)
 ```
 
 ### get_credits()
@@ -210,20 +186,6 @@ job.upload_results_to_bucket(
     extension=".zip",
     version="v2",
 )
-```
-
-### cancel_job()
-
-The `cancel_job()` function allows you to cancel a pending or a running job.
-
-```python
-cancel_job()
-```
-
-<h5> Example </h5>
-
-```python
-job.cancel_job()
 ```
 
 ## Job tasks
