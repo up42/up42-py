@@ -9,6 +9,7 @@ import warnings
 from functools import wraps
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
+from warnings import warn
 
 import geopandas as gpd
 import numpy as np
@@ -137,6 +138,12 @@ class VizTools:
                  e.g. matplotlib cmap etc.
         """
         warnings.filterwarnings("ignore", category=rasterio.errors.NotGeoreferencedWarning)
+        warn(
+            "Visualization methods are getting deprecated. The current feature will be discontinued "
+            "after March 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
         if filepaths is None:
             if self.results is None:
@@ -218,6 +225,12 @@ class VizTools:
                     downloaded results.
             titles: List of titles for the subplots, optional.
         """
+        warn(
+            "Visualization methods are getting deprecated. The current feature will be discontinued "
+            "after March 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if filepaths is None:
             if self.quicklooks is None:
                 raise ValueError("You first need to download the quicklooks!")
@@ -374,6 +387,12 @@ class VizTools:
             name_column: Name of the feature property that provides the Feature/Layer name.
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
+        warn(
+            "Visualization methods are getting deprecated. The current feature will be discontinued "
+            "after March 31, 2024, and will be replaced by new processing functionalities.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if self.results is None:
             raise ValueError("You first need to download the results via job.download_results()!")
 
