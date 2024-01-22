@@ -115,6 +115,9 @@ workflows:
             - automated-test/notify-slack:
                 test-name: 'SDK E2E tests for up42-py failed!'
                 channel: *slack-channel-id-qa-alert
+          filters:
+            branches:
+              only: master
       - hold_before_deploy:
           type: approval
           requires:
