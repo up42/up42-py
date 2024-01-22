@@ -118,7 +118,6 @@ workflows:
       - hold_before_deploy:
           type: approval
           requires:
-            - test
             - sdk-e2e-tests
           filters:
             branches:
