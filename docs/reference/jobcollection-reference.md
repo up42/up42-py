@@ -22,7 +22,7 @@ jobcollection = up42.initialize_jobcollection(
 
 The `info` attribute returns metadata of jobs in a job collection.
 
-The returned format is `dict[str, dict]`.
+The returned data type is `dict[str, dict]`.
 
 <h5> Example </h5>
 
@@ -34,7 +34,7 @@ jobcollection.info
 
 The `status` attribute returns the [status](../../reference/job-reference/#status) of jobs in a job collection.
 
-The returned format is `dict[str, dict]`.
+The returned data type is `dict[str, dict]`.
 
 <h5> Example </h5>
 
@@ -46,15 +46,7 @@ jobcollection.status
 
 The `apply()` function allows you to apply `worker` on jobs in a job collection.
 
-```python
-apply(
-    worker,
-    only_succeeded,
-    **kwargs,
-)
-```
-
-The returned format is `dict[str, any]`.
+The returned data type is `dict[str, any]`.
 
 <h5> Arguments </h5>
 
@@ -79,15 +71,7 @@ jobcollection.apply(
 
 The `download_results()` function allows you to download job collection results and returns a dictionary with a list of download paths.
 
-```python
-download_results(
-    output_directory,
-    merge,
-    unpacking,
-)
-```
-
-The returned format is `dict[str, list[str]]`.
+The returned data type is `dict[str, list[str]]`.
 
 <h5> Arguments </h5>
 
@@ -115,18 +99,7 @@ To use the visualization functions, [install](installation.md) the SDK's advance
 
 The `map_results()` function allows you to visualize downloaded job collection results on a Folium map. Use together with [`download_results()`](#download_results).
 
-```python
-map_results(
-    bands,
-    aoi,
-    show_images,
-    show_features,
-    name_column,
-    save_html,
-)
-```
-
-The returned format is `folium.Map`.
+The returned data type is `folium.Map`.
 
 <h5> Arguments </h5>
 
@@ -155,17 +128,6 @@ jobcollection.map_results(
 ### plot_results()
 
 The `plot_results()` function allows you to visualize downloaded job collection results. Use together with [`download_results()`](#download_results).
-
-```python
-plot_results(
-    figsize,
-    bands,
-    titles,
-    filepaths,
-    plot_file_format,
-    **kwargs,
-)
-```
 
 <h5> Arguments </h5>
 
