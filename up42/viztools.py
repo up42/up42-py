@@ -139,8 +139,7 @@ class VizTools:
         """
         warnings.filterwarnings("ignore", category=rasterio.errors.NotGeoreferencedWarning)
         warn(
-            "Visualization methods are getting deprecated. The current feature will be discontinued "
-            "after March 31, 2024.",
+            "Visualization methods are deprecated. The current feature will be discontinued " "after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -226,8 +225,7 @@ class VizTools:
             titles: List of titles for the subplots, optional.
         """
         warn(
-            "Visualization methods are getting deprecated. The current feature will be discontinued "
-            "after March 31, 2024.",
+            "Visualization methods are deprecated. The current feature will be discontinued " "after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -388,8 +386,7 @@ class VizTools:
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
         warn(
-            "Visualization methods are getting deprecated. The current feature will be discontinued "
-            "after March 31, 2024.",
+            "Visualization methods are deprecated. The current feature will be discontinued " "after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
