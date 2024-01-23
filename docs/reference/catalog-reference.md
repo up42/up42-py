@@ -152,6 +152,10 @@ To use the visualization functionalities, [install](../../installation/) the adv
 
 ### plot_coverage()
 
+!!! note ""
+
+    The function is deprecated.
+
 The `plot_coverage()` function allows you to visualize the coverage of scenes matching the search parameters.
 Use together with [`search()`](#search).
 
@@ -189,6 +193,10 @@ catalog.plot_coverage(
 ```
 
 ### map_quicklooks()
+
+!!! note ""
+
+    The function is deprecated.
 
 The `map_quicklooks()` function allows you to visualize downloaded quicklooks on a Folium map.
 Use together with [`search()`](#search) and [`download_quicklooks()`](#download_quicklooks).
@@ -245,6 +253,10 @@ catalog.map_quicklooks(
 ```
 
 ### plot_quicklooks()
+
+!!! note ""
+
+    The function is deprecated.
 
 The `plot_quicklooks()` function allows you to visualize downloaded quicklooks.
 Use together with [`search()`](#search) and [`download_quicklooks()`](#download_quicklooks).

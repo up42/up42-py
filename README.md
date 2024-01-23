@@ -21,9 +21,6 @@
 ## Highlights
 - Python package for easy access to [UP42's](http://www.up42.com) geospatial collections and analytics workflows
 - Use UP42 functionality together with your preferred Python libraries!
-- Interactive maps and visualizations of your UP42 assets
-
-![](docs/assets/vizualisations.jpg)
 
 <br>
 

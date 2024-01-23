@@ -221,6 +221,10 @@ To use the visualization functionalities, [install](../../installation/) the adv
 
 ### map_results()
 
+!!! note ""
+
+    The function is deprecated.
+
 The `map_results()` function allows you to visualize job results on a Folium map. Use together with [`download_results()`](#download_results).
 
 The returned data type is `folium.Map`.
@@ -250,6 +254,10 @@ job.map_results(
 ```
 
 ### plot_results()
+
+!!! note ""
+
+    The function is deprecated.
 
 The `plot_results()` function allows you to visualize job results. Use together with [`download_results()`](#download_results).
 
