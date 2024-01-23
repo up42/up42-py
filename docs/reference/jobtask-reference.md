@@ -88,6 +88,10 @@ To use the visualization functions, [install](installation.md) the SDK's advance
 
 ### map_results()
 
+!!! note ""
+
+    The function is deprecated.
+
 The `map_results()` function allows you to visualize a specific job task's results on a Folium map. Use together with [`download_results()`](#download_results).
 
 The returned data type is `folium.Map`.
@@ -118,6 +122,10 @@ jobtask.map_results(
 
 ### plot_results()
 
+!!! note ""
+
+    The function is deprecated.
+
 The `plot_results()` function allows you to visualize downloaded job task's results. Use together with [`download_results()`](#download_results).
 
 <h5> Arguments </h5>
@@ -144,6 +152,10 @@ jobtask.plot_results(
 ```
 
 ### plot_quicklooks()
+
+!!! note ""
+
+    The function is deprecated.
 
 The `plot_quicklooks()` function allows you to visualize downloaded quicklooks. Use together with [`download_quicklooks()`](#download_quicklooks).
 

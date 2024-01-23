@@ -97,6 +97,10 @@ To use the visualization functions, [install](installation.md) the SDK's advance
 
 ### map_results()
 
+!!! note ""
+
+    The function is deprecated.
+
 The `map_results()` function allows you to visualize downloaded job collection results on a Folium map. Use together with [`download_results()`](#download_results).
 
 The returned data type is `folium.Map`.
@@ -126,6 +130,10 @@ jobcollection.map_results(
 ```
 
 ### plot_results()
+
+!!! note ""
+
+    The function is deprecated.
 
 The `plot_results()` function allows you to visualize downloaded job collection results. Use together with [`download_results()`](#download_results).
 

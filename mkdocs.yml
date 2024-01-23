@@ -61,7 +61,6 @@ nav:
     - Changelog and FAQ:
         - CHANGELOG.md
         - support-faq.md
-        - visualizations.md
         - geometry_handling.md
         - Privacy policy: 'https://up42.com/legal/privacy'
 

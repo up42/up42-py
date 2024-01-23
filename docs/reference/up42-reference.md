@@ -191,6 +191,10 @@ up42.draw_aoi()
 
 ### viztools.folium_base_map()
 
+!!! note ""
+
+    The function is deprecated.
+
 The `viztools.folium_base_map()` function returns a Folium map with the UP42 logo. Use it to [visualize your assets](visualizations.md).
 
 The returned data type is `folium.Map`.
