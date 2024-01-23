@@ -140,7 +140,7 @@ class VizTools:
         warnings.filterwarnings("ignore", category=rasterio.errors.NotGeoreferencedWarning)
         warn(
             "Visualization methods are getting deprecated. The current feature will be discontinued "
-            "after March 31, 2024, and will be replaced by new processing functionalities.",
+            "after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -227,7 +227,7 @@ class VizTools:
         """
         warn(
             "Visualization methods are getting deprecated. The current feature will be discontinued "
-            "after March 31, 2024, and will be replaced by new processing functionalities.",
+            "after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -389,7 +389,7 @@ class VizTools:
         """
         warn(
             "Visualization methods are getting deprecated. The current feature will be discontinued "
-            "after March 31, 2024, and will be replaced by new processing functionalities.",
+            "after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
