@@ -30,6 +30,64 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.35.0
+
+**January 25, 2024**
+
+- Discontinued support for the following edit and create functions:
+
+    - up42:
+        - `validate_manifest()`
+
+    - Project:
+        - `max_concurrent_jobs`
+        - `update_project_settings()`
+        - `create_workflow()`
+
+    - Workflow:
+        - `max_concurrent_jobs`
+        - `update_name()`
+        - `add_workflow_tasks()`
+        - `get_compatible_blocks()`
+        - `get_parameters_info()`
+        - `construct_parameters()`
+        - `construct_parameters_parallel()`
+        - `estimate_job()`
+        - `test_job()`
+        - `test_jobs_parallel()`
+        - `run_job()`
+        - `run_jobs_parallel()`
+
+    - Job:
+        - `track_status()`
+        - `cancel_job()`
+
+- Marked the following visualization functions as deprecated:
+
+    - up42:
+        - `viztools.folium_base_map()`
+
+    - Catalog:
+        - `plot_coverage()`
+        - `map_quicklooks()`
+        - `plot_quicklooks()`
+
+    - Job:
+        - `map_results()`
+        - `plot_results()`
+
+    - JobCollection:
+        - `map_results()`
+        - `plot_results()`
+
+    - JobTask:
+        - `map_results()`
+        - `plot_results()`
+        - `plot_quicklooks()`
+
+    They will be discontinued after March 31, 2024.
+
+
 ## 0.34.1
 
 **December 15, 2023**
