@@ -30,6 +30,34 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.35.0
+**December 15, 2023**
+
+- Discontinued support for the edit/create methods for the `project`, `job`, and `workflow` classes:
+  - `main.validate_manifest`
+  - `job.tack_status`
+  - `job.cancel_job`
+  - `project.create_workflow`
+  - `project.max_concurrent_jobs`
+  - `project.update_project_settings`
+  - `workflow.get_compatible_blocks`
+  - `workflow.add_workflow_tasks`
+  - `workflow.construct_parameters`
+  - `workflow.construct_parameters_parallel`
+  - `workflow.estimate_job`
+  - `workflow.test_job`
+  - `workflow.test_jobs_parallel`
+  - `workflow.run_job`
+  - `workflow.run_jobs_parallel`
+  - `workflow.update_name`
+  - `workflow.max_concurrent_jobs`
+
+Marked the following Visualization methods from `job`, `job-task`, `job-collection`, and `catalog` as deprecated after March 31, 2024.
+- `map_results`
+- `plot_results`
+- `plot_quicklooks`
+
+
 ## 0.34.1
 
 **December 15, 2023**
