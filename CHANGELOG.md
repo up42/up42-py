@@ -217,7 +217,7 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 
 - Adds webhooks functionality to the SDK, see new [webhooks docs chapter](https://sdk.up42.com/webhooks/).
 - Introduces optional installation option for the visualization functionalities. The required dependencies are now
-  not installed by default. See the new [visualization docs chapter] (https://sdk.up42.com/visualizations/).
+  not installed by default.
 - Removes `order.metadata` property, as removed from UP42 API.
 - Fix: Using a MultiPolygon geometry in construct_parameters will now correctly raise an error as not accepted.
 - Documentation overhaul & various improvements
