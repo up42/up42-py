@@ -1,3 +1,4 @@
+from copy import deepcopy
 from time import sleep
 from typing import List, Optional
 
@@ -129,10 +130,26 @@ class Order:
         Returns:
             int: The estimated cost of the order
         """
-        url = endpoint(f"/workspaces/{auth.workspace_id}/orders/estimate")
 
-        response_json = auth._request(request_type="POST", url=url, data=order_parameters)
-        estimated_credits: int = response_json["data"]["credits"]  # type: ignore
+        def translate_construct_parameters(order_parameters):
+            feature_collection_template = {"type": "FeatureCollection", "features": []}
+            order_parameters_v2 = deepcopy(order_parameters)
+            params = order_parameters_v2.get("params", None)
+            order_parameters_v2["displayName"] = params.get("id", "Display Name")
+            feature = params.pop("aoi", None)
+            if feature:
+                feature_template = {
+                    "type": "Feature",
+                    "geometry": feature,
+                }
+                feature_collection_template["features"].append(feature_template)
+                order_parameters_v2["featureCollection"] = feature_collection_template
+            return order_parameters_v2
+
+        url = endpoint("/v2/orders/estimate")
+        order_parameters_v2 = translate_construct_parameters(order_parameters)
+        response_json = auth._request(request_type="POST", url=url, data=order_parameters_v2)
+        estimated_credits: int = response_json["summary"]["totalCredits"]  # type: ignore
         logger.info(
             f"Order is estimated to cost {estimated_credits} UP42 credits (order_parameters: {order_parameters})"
         )
