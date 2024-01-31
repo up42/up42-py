@@ -1,6 +1,6 @@
 from copy import deepcopy
 from time import sleep
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, TypedDict
 
 from up42.asset import Asset
 from up42.asset_searcher import AssetSearchParams, search_assets
@@ -12,6 +12,19 @@ logger = get_logger(__name__)
 
 MAX_ITEM = 200
 LIMIT = 200
+
+
+class OrderParams(TypedDict):
+    """
+    Represents the stucture data format for the order parameters.
+    dataProduct: The dataProduct id for the specific product configuration.
+    params: The are different from product to product depending on product schema.
+    tags: User tags to helping to identify the order.
+    """
+
+    dataProduct: str
+    params: Dict[str, Any]
+    tags: List[str]
 
 
 class Order:
@@ -119,7 +132,7 @@ class Order:
         return order
 
     @staticmethod
-    def estimate(auth: Auth, order_parameters: dict) -> int:
+    def estimate(auth: Auth, order_parameters: OrderParams) -> int:
         """
         Returns an estimation of the cost of an order.
 
