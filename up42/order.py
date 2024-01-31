@@ -147,8 +147,11 @@ class Order:
             return order_parameters_v2
 
         url = endpoint("/v2/orders/estimate")
-        order_parameters_v2 = translate_construct_parameters(order_parameters)
-        response_json = auth._request(request_type="POST", url=url, data=order_parameters_v2)
+        response_json = auth._request(
+            request_type="POST",
+            url=url,
+            data=translate_construct_parameters(order_parameters),
+        )
         estimated_credits: int = response_json["summary"]["totalCredits"]  # type: ignore
         logger.info(
             f"Order is estimated to cost {estimated_credits} UP42 credits (order_parameters: {order_parameters})"
