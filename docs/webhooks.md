@@ -4,10 +4,7 @@ A [webhook](https://docs.up42.com/getting-started/webhooks) is a method for send
 
 ## See notification events
 
-You can set up webhooks to receive notifications in the following cases:
-
-- **Job status updates.** Every time a job changes its status.
-- **Order status updates.** When a new order has been completed — successfully or not.
+You can set up webhooks to receive notifications when a new order has been completed — successfully or not.
 
 ```python
 events = up42.get_webhook_events()
