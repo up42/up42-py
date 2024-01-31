@@ -7,7 +7,6 @@ import geopandas as gpd
 import pandas as pd
 import pytest
 
-from up42.host import endpoint
 from up42.order import Order
 
 from .fixtures.fixtures_globals import API_HOST, DATA_PRODUCT_ID, ORDER_ID
@@ -454,7 +453,7 @@ def test_estimate_order_from_catalog(order_parameters, order_mock, catalog_mock,
         "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
         "errors": [],
     }
-    url_order_estimation = endpoint("/v2/orders/estimate")
+    url_order_estimation = f"{API_HOST}/v2/orders/estimate"
     requests_mock.post(url=url_order_estimation, json=expected_payload)
 
     estimation = catalog_mock.estimate_order(order_parameters)
