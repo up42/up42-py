@@ -152,7 +152,7 @@ class Order:
             url=url,
             data=translate_construct_parameters(order_parameters),
         )
-        estimated_credits: int = response_json["summary"]["totalCredits"]  # type: ignore
+        estimated_credits: int = response_json["summary"]["totalCredits"]
         logger.info(
             f"Order is estimated to cost {estimated_credits} UP42 credits (order_parameters: {order_parameters})"
         )
