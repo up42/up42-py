@@ -18,7 +18,8 @@ class OrderParams(TypedDict):
     """
     Represents the stucture data format for the order parameters.
     dataProduct: The dataProduct id for the specific product configuration.
-    params: The are different from product to product depending on product schema.
+    params: Order parameters for each product. \
+        They are different from product to product depending on product schema.
     tags: User tags to helping to identify the order.
     """
 
