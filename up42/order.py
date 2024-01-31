@@ -117,7 +117,8 @@ class Order:
 
         Args:
             auth: An authentication object.
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            order_parameters: A dictionary for the order configuration of the type\
+                OrderParams
 
         Returns:
             Order: The placed order.
@@ -139,7 +140,7 @@ class Order:
 
         Args:
             auth: An authentication object.
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            order_parameters: A dictionary for the order configuration of the type OrderParams
 
         Returns:
             int: The estimated cost of the order
