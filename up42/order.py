@@ -148,7 +148,7 @@ class Order:
         def translate_construct_parameters(order_parameters):
             feature_collection_template = {"type": "FeatureCollection", "features": []}
             order_parameters_v2 = deepcopy(order_parameters)
-            params = order_parameters_v2.get("params", None)
+            params = order_parameters_v2.get("params", {})
             order_parameters_v2["displayName"] = params.get("id", "Display Name")
             feature = params.pop("aoi", None)
             if feature:
