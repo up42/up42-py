@@ -33,7 +33,7 @@ The returned data type is `dict`.
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`   | **str**<br/>The name of the webhook.                                                                                                                                                      |
 | `url`    | **str**<br/>The URL of the webhook.                                                                                                                                                       |
-| `events` | **list[str]**<br/>A list of events that trigger the webhook. The allowed values are as follows:<br/><ul><li>`job.status`</li><li>`order.status`</li></ul>                                                |
+| `events` | **list[str]**<br/>A list of events that trigger the webhook. The allowed value is `order.status`.                                                                                         |
 | `active` | **bool**<br/>Whether this webhook should be active after the update:<br/><ul><li>`True`: webhook is active.</li><li>`False`: webhook isn't active.</li></ul>The default value is `False`. |
 | `secret` | **str**<br/>The secret used to generate webhook signatures.                                                                                                                               |
 
@@ -43,7 +43,7 @@ The returned data type is `dict`.
 webhook.update(
     name="new-name",
     url="https://new-receiving-url.com",
-    events=["job.status"],
+    events=["order.status"],
     active=True,
     secret="RFZTJnNAChqZKNmo",
 )
