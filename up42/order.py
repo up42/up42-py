@@ -146,19 +146,18 @@ class Order:
         """
 
         def translate_construct_parameters(order_parameters):
-            feature_collection_template = {"type": "FeatureCollection", "features": []}
+            feature_collection = {"type": "FeatureCollection", "features": []}
             order_parameters_v2 = deepcopy(order_parameters)
-            params = order_parameters_v2.get("params")
-            data_product_id = order_parameters_v2.get("dataProduct")
+            params = order_parameters_v2["params"]
+            data_product_id = order_parameters_v2["dataProduct"]
             order_parameters_v2["displayName"] = f"{data_product_id} order"
-            feature = params.pop("aoi", None)
-            if feature:
-                feature_template = {
-                    "type": "Feature",
-                    "geometry": feature,
-                }
-                feature_collection_template["features"].append(feature_template)
-                order_parameters_v2["featureCollection"] = feature_collection_template
+            aoi = params.pop("aoi", None)
+            feature = {
+                "type": "Feature",
+                "geometry": aoi,
+            }
+            feature_collection["features"].append(feature)
+            order_parameters_v2["featureCollection"] = feature_collection
             return order_parameters_v2
 
         url = endpoint("/v2/orders/estimate")
