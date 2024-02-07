@@ -139,7 +139,7 @@ class Order:
 
         Args:
             auth: An authentication object.
-            order_parameters: A dictionary for the order configuration of the type OrderParams.
+            order_parameters: A dictionary for the order configuration.
 
         Returns:
             int: The estimated cost of the order
@@ -148,7 +148,7 @@ class Order:
         def translate_construct_parameters(order_parameters):
             feature_collection_template = {"type": "FeatureCollection", "features": []}
             order_parameters_v2 = deepcopy(order_parameters)
-            params = order_parameters_v2.get("params", {})
+            params = order_parameters_v2.get("params")
             data_product_id = order_parameters_v2.get("dataProduct")
             order_parameters_v2["displayName"] = f"{data_product_id} order"
             feature = params.pop("aoi", None)
