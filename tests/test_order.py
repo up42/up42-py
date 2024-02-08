@@ -216,8 +216,13 @@ def test_track_status_fail(order_mock, status, requests_mock):
 
 
 def test_estimate_order(order_parameters, auth_mock, requests_mock):
-    url_order_estimation = f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders/estimate"
-    requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
+    expected_payload = {
+        "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
+        "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
+        "errors": [],
+    }
+    url_order_estimation = f"{API_HOST}/v2/orders/estimate"
+    requests_mock.post(url=url_order_estimation, json=expected_payload)
     estimation = Order.estimate(auth_mock, order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100

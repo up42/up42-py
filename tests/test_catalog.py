@@ -7,6 +7,7 @@ import geopandas as gpd
 import pandas as pd
 import pytest
 
+from up42.catalog import Catalog
 from up42.order import Order
 
 from .fixtures.fixtures_globals import API_HOST, DATA_PRODUCT_ID, ORDER_ID
@@ -447,10 +448,16 @@ def test_construct_order_parameters_live(catalog_live, product_id):
 
 
 # pylint: disable=unused-argument
-def test_estimate_order_from_catalog(order_parameters, order_mock, catalog_mock, requests_mock):
-    url_order_estimation = f"{API_HOST}/workspaces/" f"{catalog_mock.auth.workspace_id}/orders/estimate"
-    requests_mock.post(url=url_order_estimation, json={"data": {"credits": 100}})
-    estimation = catalog_mock.estimate_order(order_parameters)
+def test_estimate_order_from_catalog(order_parameters, requests_mock, auth_mock):
+    catalog_instance = Catalog(auth=auth_mock)
+    expected_payload = {
+        "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
+        "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
+        "errors": [],
+    }
+    url_order_estimation = f"{API_HOST}/v2/orders/estimate"
+    requests_mock.post(url=url_order_estimation, json=expected_payload)
+    estimation = catalog_instance.estimate_order(order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
 

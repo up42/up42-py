@@ -1,5 +1,6 @@
+from copy import deepcopy
 from time import sleep
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, TypedDict
 
 from up42.asset import Asset
 from up42.asset_searcher import AssetSearchParams, search_assets
@@ -11,6 +12,20 @@ logger = get_logger(__name__)
 
 MAX_ITEM = 200
 LIMIT = 200
+
+
+class OrderParams(TypedDict):
+    """
+    Represents the stucture data format for the order parameters.
+    dataProduct: The dataProduct id for the specific product configuration.
+    params: Order parameters for each product. \
+        They are different from product to product depending on product schema.
+    tags: User tags to helping to identify the order.
+    """
+
+    dataProduct: str
+    params: Dict[str, Any]
+    tags: List[str]
 
 
 class Order:
@@ -118,21 +133,43 @@ class Order:
         return order
 
     @staticmethod
-    def estimate(auth: Auth, order_parameters: dict) -> int:
+    def estimate(auth: Auth, order_parameters: OrderParams) -> int:
         """
         Returns an estimation of the cost of an order.
 
         Args:
             auth: An authentication object.
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            order_parameters: A dictionary for the order configuration.
 
         Returns:
             int: The estimated cost of the order
         """
-        url = endpoint(f"/workspaces/{auth.workspace_id}/orders/estimate")
 
-        response_json = auth._request(request_type="POST", url=url, data=order_parameters)
-        estimated_credits: int = response_json["data"]["credits"]  # type: ignore
+        def translate_construct_parameters(order_parameters):
+            order_parameters_v2 = deepcopy(order_parameters)
+            params = order_parameters_v2["params"]
+            data_product_id = order_parameters_v2["dataProduct"]
+            order_parameters_v2["displayName"] = f"{data_product_id} order"
+            aoi = params.pop("aoi", None)
+            feature_collection = {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": aoi,
+                    }
+                ],
+            }
+            order_parameters_v2["featureCollection"] = feature_collection
+            return order_parameters_v2
+
+        url = endpoint("/v2/orders/estimate")
+        response_json = auth._request(
+            request_type="POST",
+            url=url,
+            data=translate_construct_parameters(order_parameters),
+        )
+        estimated_credits: int = response_json["summary"]["totalCredits"]
         logger.info(
             f"Order is estimated to cost {estimated_credits} UP42 credits (order_parameters: {order_parameters})"
         )
