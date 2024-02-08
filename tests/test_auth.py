@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 import requests
 
-from up42 import host
 from up42.auth import Auth
 from up42.utils import get_up42_py_version
 
@@ -15,12 +14,9 @@ def test_auth_kwargs():
     auth = Auth(
         project_id=PROJECT_ID,
         project_api_key=PROJECT_APIKEY,
-        env="abc",
         authenticate=False,
         retry=False,
     )
-    assert auth.env == "abc"
-    assert host.DOMAIN == "abc"
     assert not auth.authenticate
 
 
@@ -39,11 +35,6 @@ def test_should_fail_config_file_not_found(tmp_path):
 def test_should_not_authenticate_with_config_file_if_not_requested():
     fp = Path(__file__).resolve().parent / "mock_data" / "test_config.json"
     Auth(cfg_file=fp, authenticate=False)
-
-
-def test_should_set_api_host_domain_with_environment(auth_mock):
-    auth_mock.env = "abc"
-    assert host.DOMAIN == "abc"
 
 
 def test_get_token(auth_mock):

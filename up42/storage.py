@@ -48,8 +48,7 @@ class Storage:
         self.workspace_id = auth.workspace_id
 
     def __repr__(self):
-        env = ", env: dev" if self.auth.env == "dev" else ""
-        return f"Storage(workspace_id: {self.workspace_id}{env})"
+        return f"Storage(workspace_id: {self.workspace_id})"
 
     @property
     def pystac_client(self):
