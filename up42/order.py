@@ -146,17 +146,20 @@ class Order:
         """
 
         def translate_construct_parameters(order_parameters):
-            feature_collection = {"type": "FeatureCollection", "features": []}
             order_parameters_v2 = deepcopy(order_parameters)
             params = order_parameters_v2["params"]
             data_product_id = order_parameters_v2["dataProduct"]
             order_parameters_v2["displayName"] = f"{data_product_id} order"
             aoi = params.pop("aoi", None)
-            feature = {
-                "type": "Feature",
-                "geometry": aoi,
+            feature_collection = {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": aoi,
+                    }
+                ],
             }
-            feature_collection["features"].append(feature)
             order_parameters_v2["featureCollection"] = feature_collection
             return order_parameters_v2
 

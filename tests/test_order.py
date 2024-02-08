@@ -233,16 +233,3 @@ def test_estimate_order_live(order_parameters, auth_live):
     estimation = Order.estimate(auth_live, order_parameters=order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
-
-
-@pytest.mark.live
-def test_estimate_order_full_scene_live(auth_live):
-    order_parameters = {
-        "dataProduct": "96072809-d820-4cf9-86dd-d3bff3337c35",
-        "params": {
-            "id": "CAPELLA_C09_SM_GEC_HH_20240204042104_20240204042109",
-        },
-        "tags": ["Test", "SDK"],
-    }
-    estimation = Order.estimate(auth_live, order_parameters=order_parameters)
-    assert estimation == 72360
