@@ -5,7 +5,7 @@ import pytest
 from up42.asset import Asset
 from up42.order import Order
 
-from .fixtures.fixtures_globals import API_HOST, ASSET_ORDER_ID, ORDER_ID
+from .fixtures.fixtures_globals import API_HOST, ASSET_ORDER_ID, ORDER_ID, WORKSPACE_ID
 from .fixtures.fixtures_order import JSON_GET_ASSETS_RESPONSE
 
 
@@ -125,9 +125,9 @@ def test_get_assets_live(auth_live, order_parameters):
 
 def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders",
+        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
-            "data": {"id": ORDER_ID},
+            "results": [{"index": 0, "id": ORDER_ID}],
             "error": {},
         },
     )
