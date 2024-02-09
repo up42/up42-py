@@ -139,9 +139,9 @@ def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
 
 def test_place_order_no_id(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders",
+        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
-            "data": {"xyz": 892},
+            "results": [{"xyz": 892}],
             "error": {},
         },
     )
