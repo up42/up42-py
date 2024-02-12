@@ -28,11 +28,13 @@ repos:
       - id: flake8
         args: ["--max-line-length=120"]
         exclude: tests/conftest.py # ignore pytest fixtures
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.1.1" # Use the sha / tag you want to point at
+  - repo: local
     hooks:
       - id: mypy
-        args: [--no-strict-optional, --ignore-missing-imports]
+        name: mypy
+        entry: mypy
+        language: python
+        args: ["--check-untyped-defs"]
         additional_dependencies:
           - "types-PyYAML"
           - "types-requests"
