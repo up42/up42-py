@@ -20,7 +20,7 @@
         "password": "<your-password>"
       }
       ```
-    3. Authenticate from the created `config.json` file.
+    3. Authenticate from the created `credentials.json` file.
       ```python
       import up42
       up42.authenticate(cfg_file="credentials.json")
