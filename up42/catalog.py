@@ -6,14 +6,14 @@ import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from geojson import Feature, FeatureCollection
-from geopandas import GeoDataFrame
-from shapely.geometry import Polygon
+from geojson import Feature, FeatureCollection  # type: ignore
+from geopandas import GeoDataFrame  # type: ignore
+from shapely.geometry import Polygon  # type: ignore
 from tqdm import tqdm
 
 from up42.auth import Auth
 from up42.host import endpoint
-from up42.order import Order
+from up42.order import Order, OrderParams
 from up42.utils import (
     any_vector_to_fc,
     autocomplete_order_parameters,
@@ -145,10 +145,10 @@ class CatalogBase:
                 "Please use the new 'order_parameters' parameter."
             )
             warnings.warn(message, DeprecationWarning, stacklevel=2)
-        elif order_parameters is None:
+        if order_parameters is not None:
+            order = Order.place(self.auth, order_parameters)
+        else:
             raise ValueError("Please provide the 'order_parameters' parameter!")
-
-        order = Order.place(self.auth, order_parameters)  # type: ignore
         if track_status:
             order.track_status(report_time)
         return order
@@ -170,12 +170,12 @@ class Catalog(CatalogBase, VizTools):
         self.auth = auth
         self.quicklooks = None
         self.type = "ARCHIVE"
-        self.data_products: Union[None, dict] = None
+        self.data_products: Union[None, dict, List[dict]] = None
 
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
 
-    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
+    def estimate_order(self, order_parameters: Union[OrderParams, None], **kwargs) -> int:
         """
         Estimate the cost of an order.
 
@@ -196,9 +196,10 @@ class Catalog(CatalogBase, VizTools):
                 "Please use the new 'order_parameters' parameter."
             )
             warnings.warn(message, DeprecationWarning, stacklevel=2)
-        elif order_parameters is None:
+        if order_parameters is not None:
+            return Order.estimate(self.auth, order_parameters)
+        else:
             raise ValueError("Please provide the 'order_parameters' parameter!")
-        return Order.estimate(self.auth, order_parameters)  # type: ignore
 
     @deprecation("construct_search_parameters", "0.25.0")
     def construct_parameters(self, **kwargs):  # pragma: no cover
@@ -211,11 +212,11 @@ class Catalog(CatalogBase, VizTools):
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
-        usage_type: List[str] = None,
+        usage_type: Optional[List[str]] = None,
         limit: int = 10,
         max_cloudcover: Optional[int] = None,
-        sortby: str = None,
-        ascending: bool = None,
+        sortby: Optional[str] = None,
+        ascending: Optional[bool] = None,
     ) -> dict:
         """
         Helps constructing the parameters dictionary required for the search.
@@ -253,7 +254,7 @@ class Catalog(CatalogBase, VizTools):
 
         query_filters: Dict[Any, Any] = {}
         if max_cloudcover is not None:
-            query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
+            query_filters["cloudCoverage"] = {"lte": max_cloudcover}
 
         if usage_type is not None:
             if usage_type == ["DATA"]:
@@ -317,12 +318,19 @@ class Catalog(CatalogBase, VizTools):
 
         # UP42 API can query multiple collections of the same host at once.
         if self.data_products is None:
-            self.data_products = self.get_data_products(basic=True)  # type: ignore
-        hosts = [
-            v["host"]
-            for v in self.data_products.values()  # type: ignore
-            if v["collection"] in search_parameters["collections"]
-        ]
+            self.data_products = self.get_data_products(basic=True)
+        if isinstance(self.data_products, dict):
+            hosts = [
+                v["host"] for v in self.data_products.values() if v["collection"] in search_parameters["collections"]
+            ]
+        elif isinstance(self.data_products, list):
+            hosts = []
+            for product in self.data_products:
+                hosts.append(
+                    product["productConfiguration"]["hostName"]
+                    if product["collectionName"] in search_parameters["collections"]
+                    else None
+                )
         if not hosts:
             raise ValueError(
                 f"Selected collections {search_parameters['collections']} are not valid. See "
@@ -416,7 +424,8 @@ class Catalog(CatalogBase, VizTools):
         if aoi is not None:
             aoi = any_vector_to_fc(vector=aoi)
             aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
-            order_parameters["params"]["aoi"] = aoi  # type: ignore
+            assert isinstance(order_parameters["params"], dict)
+            order_parameters["params"]["aoi"] = aoi
 
         return order_parameters
 
@@ -441,8 +450,15 @@ class Catalog(CatalogBase, VizTools):
             List of quicklook image output file paths.
         """
         if self.data_products is None:
-            self.data_products = self.get_data_products(basic=True)  # type: ignore
-        host = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
+            self.data_products = self.get_data_products(basic=True)
+        if isinstance(self.data_products, dict):
+            host = [v["host"] for v in self.data_products.values() if v["collection"] == collection]
+        elif isinstance(self.data_products, list):
+            host = []
+            for product in self.data_products:
+                host.append(
+                    product["productConfiguration"]["hostName"] if product["collectionName"] == collection else None
+                )
         if not host:
             raise ValueError(f"Selected collections {collection} is not valid. See catalog.get_collections.")
         host = host[0]
