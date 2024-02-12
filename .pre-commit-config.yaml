@@ -31,10 +31,11 @@ repos:
   - repo: local
     hooks:
       - id: mypy
+        files: \.py$
         name: mypy
         entry: mypy
         language: python
-        args: ["--check-untyped-defs"]
+        args: ["--config-file=mypy.ini"]
         additional_dependencies:
           - "types-PyYAML"
           - "types-requests"
