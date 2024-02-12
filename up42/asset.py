@@ -38,7 +38,7 @@ class Asset:
             raise ValueError("Either asset_id or asset_info should be provided in the constructor.")
 
         self.auth = auth
-        self.info = asset_info or self._get_info(asset_id)
+        self.info = self._get_info(asset_id) if asset_id is not None else asset_info
         self.results: Union[List[str], None] = None
 
     def __repr__(self):
@@ -93,7 +93,7 @@ class Asset:
         except Exception as exc:
             raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}") from exc
 
-    def update_metadata(self, title: str = None, tags: List[str] = None, **kwargs) -> dict:
+    def update_metadata(self, title: Optional[str] = None, tags: Optional[List[str]] = None, **kwargs) -> dict:
         """
         Update the metadata of the asset.
 
