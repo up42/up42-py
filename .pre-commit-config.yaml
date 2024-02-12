@@ -43,3 +43,4 @@ repos:
           - "types-attrs"
           - "types-python-dateutil"
           - "types-mock"
+          - "types-tqdm"
