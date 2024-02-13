@@ -10,7 +10,7 @@ import requests
 import requests.exceptions
 from oauthlib.oauth2 import BackendApplicationClient, MissingTokenError
 from requests.auth import HTTPBasicAuth
-from requests_oauthlib import OAuth2Session
+from requests_oauthlib import OAuth2Session  # type: ignore
 from tenacity import (
     Retrying,
     retry,
@@ -183,6 +183,8 @@ class Auth:
         """Project specific authentication via project id and project api key."""
         try:
             client = BackendApplicationClient(client_id=self._credentials_id, client_secret=self._credentials_key)
+            assert isinstance(self._credentials_id, str)
+            assert isinstance(self._credentials_key, str)
             auth = HTTPBasicAuth(self._credentials_id, self._credentials_key)
             get_token_session = OAuth2Session(client=client)
             token_response = get_token_session.fetch_token(token_url=host.endpoint("/oauth/token"), auth=auth)
@@ -203,7 +205,7 @@ class Auth:
         """Get user id belonging to authenticated account."""
         url = host.endpoint("/users/me")
         resp = self._request("GET", url)
-        self.workspace_id = resp["data"]["id"]  # type: ignore
+        self.workspace_id = resp["data"]["id"]
 
     @staticmethod
     def _generate_headers(token: str) -> Dict[str, str]:
@@ -217,7 +219,7 @@ class Auth:
         return headers
 
     # pylint: disable=dangerous-default-value
-    @retry(  # type: ignore
+    @retry(
         retry=retry_if_429_rate_limit(),
         wait=wait_random_exponential(multiplier=0.5, max=180),
         reraise=True,
@@ -241,7 +243,8 @@ class Auth:
         Returns:
             The request response.
         """
-        headers = self._generate_headers(self.token)  # type: ignore
+        assert isinstance(self.token, str)
+        headers = self._generate_headers(self.token)
         if querystring == {}:
             response: requests.Response = requests.request(
                 method=request_type,
