@@ -44,3 +44,4 @@ repos:
           - "types-python-dateutil"
           - "types-mock"
           - "types-tqdm"
+          - "pandas-stubs"
