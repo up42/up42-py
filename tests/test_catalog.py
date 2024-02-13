@@ -520,3 +520,19 @@ def test_search_when_data_products_are_returned_as_list(catalog_mock):
     search_results = catalog_mock.search(mock_search_parameters, data_products_bool=False)
     assert isinstance(search_results, gpd.GeoDataFrame)
     assert search_results.shape == (4, 15)
+
+
+def test_download_quicklook_something(catalog_mock, requests_mock):
+    sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
+    host = "oneatlas"
+    url_quicklooks = f"{API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
+    quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    requests_mock.get(url_quicklooks, content=open(quicklook_file, "rb").read())
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        out_paths = catalog_mock.download_quicklooks(
+            image_ids=[sel_id], collection="phr", output_directory=tempdir, data_products_bool=False
+        )
+        assert len(out_paths) == 1
+        assert Path(out_paths[0]).exists()
+        assert Path(out_paths[0]).suffix == ".jpg"

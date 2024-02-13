@@ -436,6 +436,7 @@ class Catalog(CatalogBase, VizTools):
         image_ids: List[str],
         collection: str,
         output_directory: Union[str, Path, None] = None,
+        data_products_bool: bool = True,
     ) -> List[str]:
         """
         Gets the quicklooks of scenes from a single sensor. After download, can
@@ -447,12 +448,14 @@ class Catalog(CatalogBase, VizTools):
             collection: The data collection corresponding to the image ids.
             output_directory: The file output directory, defaults to the current working
                 directory.
+            data_products_bool: If True, the data_products are retturned as dictionary.
+                                If False, it's returned as List.
 
         Returns:
             List of quicklook image output file paths.
         """
         if self.data_products is None:
-            self.data_products = self.get_data_products(basic=True)
+            self.data_products = self.get_data_products(basic=data_products_bool)
         if isinstance(self.data_products, dict):
             host = [v["host"] for v in self.data_products.values() if v["collection"] == collection]
         elif isinstance(self.data_products, list):
