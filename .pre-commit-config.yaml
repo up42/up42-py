@@ -45,3 +45,4 @@ repos:
           - "types-mock"
           - "types-tqdm"
           - "pandas-stubs"
+          - "types-oauthlib"
