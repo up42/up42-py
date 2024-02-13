@@ -276,7 +276,9 @@ class Catalog(CatalogBase, VizTools):
 
         return search_parameters
 
-    def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[GeoDataFrame, dict]:
+    def search(
+        self, search_parameters: dict, as_dataframe: bool = True, data_products_bool: bool = True
+    ) -> Union[GeoDataFrame, dict]:
         """
         Searches the catalog for the the search parameters and returns the metadata of
         the matching scenes.
@@ -284,6 +286,8 @@ class Catalog(CatalogBase, VizTools):
         Args:
             search_parameters: The catalog search parameters, see example.
             as_dataframe: return type, GeoDataFrame if True (default), FeatureCollection if False.
+            data_products_bool: If True, the data_products are retturned as dictionary.
+                                If False, it's returned as List.
 
         Returns:
             The search results as a GeoDataFrame, optionally as JSON dict.
@@ -318,7 +322,7 @@ class Catalog(CatalogBase, VizTools):
 
         # UP42 API can query multiple collections of the same host at once.
         if self.data_products is None:
-            self.data_products = self.get_data_products(basic=True)
+            self.data_products = self.get_data_products(basic=data_products_bool)
         if isinstance(self.data_products, dict):
             hosts = [
                 v["host"] for v in self.data_products.values() if v["collection"] in search_parameters["collections"]
@@ -326,11 +330,9 @@ class Catalog(CatalogBase, VizTools):
         elif isinstance(self.data_products, list):
             hosts = []
             for product in self.data_products:
-                hosts.append(
-                    product["productConfiguration"]["hostName"]
-                    if product["collectionName"] in search_parameters["collections"]
-                    else None
-                )
+                if product["collectionName"] in search_parameters["collections"]:
+                    hosts.append(product["productConfiguration"]["hostName"])
+
         if not hosts:
             raise ValueError(
                 f"Selected collections {search_parameters['collections']} are not valid. See "

@@ -514,3 +514,9 @@ def test_order_from_catalog_live(order_parameters, catalog_live):
     order = catalog_live.place_order(order_parameters)
     assert isinstance(order, Order)
     assert order.order_id
+
+
+def test_search_when_data_products_are_returned_as_list(catalog_mock):
+    search_results = catalog_mock.search(mock_search_parameters, data_products_bool=False)
+    assert isinstance(search_results, gpd.GeoDataFrame)
+    assert search_results.shape == (4, 15)
