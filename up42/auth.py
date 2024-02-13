@@ -37,17 +37,18 @@ class retry_if_401_invalid_token(retry_if_exception):
 
     def __init__(self):
         def is_http_401_error(exception):
-            return (
-                isinstance(
-                    exception,
-                    (
-                        requests.exceptions.HTTPError,
-                        requests.exceptions.RequestException,
-                    ),
+            if exception.response is not None:
+                return (
+                    isinstance(
+                        exception,
+                        (
+                            requests.exceptions.HTTPError,
+                            requests.exceptions.RequestException,
+                        ),
+                    )
+                    and hasattr(exception.response, "status_code")  # check if response has status_code
+                    and exception.response.status_code == 401
                 )
-                and hasattr(exception.response, "status_code")  # check if response has status_code
-                and exception.response.status_code == 401
-            )
 
         super().__init__(predicate=is_http_401_error)
 
@@ -62,7 +63,8 @@ class retry_if_429_rate_limit(retry_if_exception):
 
     def __init__(self):
         def is_http_429_error(exception):
-            return isinstance(exception, requests.exceptions.HTTPError) and exception.response.status_code == 429
+            if exception.response is not None:
+                return isinstance(exception, requests.exceptions.HTTPError) and exception.response.status_code == 429
 
         super().__init__(predicate=is_http_429_error)
 
@@ -318,6 +320,7 @@ class Auth:
 
         except requests.exceptions.RequestException as err:  # Base error class
             # Raising the original `err` error would not surface the relevant error message (contained in API response)
+            assert err.response is not None
             err_message = err.response.json()
             logger.error(f"Error {err_message}")
             raise requests.exceptions.RequestException(err_message) from err
