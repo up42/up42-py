@@ -480,7 +480,7 @@ def test_order_from_catalog_track_status(order_parameters, order_mock, catalog_m
         url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "id": ORDER_ID}],
-            "error": {},
+            "errors": [],
         },
     )
     url_order_info = f"{API_HOST}/v2/orders/{order_mock.order_id}"
