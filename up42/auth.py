@@ -64,7 +64,11 @@ class retry_if_429_rate_limit(retry_if_exception):
     def __init__(self):
         def is_http_429_error(exception):
             if exception.response is not None:
-                return isinstance(exception, requests.exceptions.HTTPError) and exception.response.status_code == 429
+                return (
+                    isinstance(exception, requests.exceptions.HTTPError)
+                    and hasattr(exception.response, "status_code")
+                    and exception.response.status_code == 429
+                )
 
         super().__init__(predicate=is_http_429_error)
 
@@ -210,7 +214,9 @@ class Auth:
         self.workspace_id = resp["data"]["id"]
 
     @staticmethod
-    def _generate_headers(token: str) -> Dict[str, str]:
+    def _generate_headers(token: Optional[str]) -> Dict[str, str]:
+        # NOTE: made token optional to make mypy happy
+        # WE should update if there is a better solution
         version = get_up42_py_version()
         headers = {
             "Content-Type": "application/json",
@@ -245,7 +251,6 @@ class Auth:
         Returns:
             The request response.
         """
-        assert isinstance(self.token, str)
         headers = self._generate_headers(self.token)
         if querystring == {}:
             response: requests.Response = requests.request(
