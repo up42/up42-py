@@ -136,7 +136,7 @@ class Order:
 
         Args:
             auth: An authentication object.
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            order_parameters: A dictionary for the order configuration.
 
         Returns:
             Order: The placed order.
@@ -147,11 +147,10 @@ class Order:
             url=url,
             data=_translate_construct_parameters(order_parameters),
         )
-        try:
-            order_id = [order_id["id"] for order_id in response_json["results"]][0]
-
-        except KeyError as e:
-            raise ValueError(f"Order was not placed: {response_json}") from e
+        if response_json["errors"]:
+            message = response_json["errors"][0]["message"]
+            raise ValueError(f"Order was not placed: {message}")
+        order_id = response_json["results"][0]["id"]
         order = cls(auth=auth, order_id=order_id, order_parameters=order_parameters)
         logger.info(f"Order {order.order_id} is now {order.status}.")
         return order

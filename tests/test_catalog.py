@@ -467,7 +467,7 @@ def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests
         url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "id": ORDER_ID}],
-            "error": {},
+            "errors": [],
         },
     )
     order = catalog_mock.place_order(order_parameters=order_parameters)
