@@ -3,7 +3,7 @@ import os
 import pytest
 
 from up42.asset import Asset
-from up42.order import Order
+from up42.order import Order, _translate_construct_parameters
 
 from .fixtures.fixtures_globals import API_HOST, ASSET_ORDER_ID, ORDER_ID, WORKSPACE_ID
 from .fixtures.fixtures_order import JSON_GET_ASSETS_RESPONSE
@@ -235,3 +235,8 @@ def test_estimate_order_live(order_parameters, auth_live):
     estimation = Order.estimate(auth_live, order_parameters=order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
+
+
+def test_order_translate_parameter(order_parameter_by_type):
+    new_parameters = _translate_construct_parameters(order_parameter_by_type)
+    assert new_parameters["featureCollection"]["features"][0]["geometry"] is not None

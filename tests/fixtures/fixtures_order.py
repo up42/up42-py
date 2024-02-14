@@ -93,3 +93,41 @@ def order_parameters():
         },
         "tags": ["Test", "SDK"],
     }
+
+
+@pytest.fixture
+def order_parameters_tasking():
+    return {
+        "dataProduct": "47dadb27-9532-4552-93a5-48f70a83eaef",
+        "params": {
+            "displayName": "my_tasking_order",
+            "acquisitionStart": "2022-11-01T00:00:00Z",
+            "acquisitionEnd": "2022-11-10T23:59:59Z",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": (
+                    (
+                        (13.152222, 52.638054),
+                        (13.152222, 52.387978),
+                        (13.588728, 52.387978),
+                        (13.588728, 52.638054),
+                        (13.152222, 52.638054),
+                    ),
+                ),
+            },
+            "acquisitionMode": None,
+            "cloudCoverage": None,
+            "incidenceAngle": None,
+            "geometricProcessing": None,
+            "spectralProcessing": None,
+            "pixelCoding": None,
+            "radiometricProcessing": None,
+            "deliveredAs": None,
+        },
+    }
+
+
+@pytest.fixture(params=["catalog", "tasking"])
+def order_parameter_by_type(request, order_parameters, order_parameters_tasking):
+    mocks = {"catalog": order_parameters, "tasking": order_parameters_tasking}
+    return mocks[request.param]
