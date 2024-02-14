@@ -5,7 +5,7 @@ import pytest
 from up42.asset import Asset
 from up42.order import Order
 
-from .fixtures.fixtures_globals import API_HOST, ASSET_ORDER_ID, ORDER_ID
+from .fixtures.fixtures_globals import API_HOST, ASSET_ORDER_ID, ORDER_ID, WORKSPACE_ID
 from .fixtures.fixtures_order import JSON_GET_ASSETS_RESPONSE
 
 
@@ -125,10 +125,10 @@ def test_get_assets_live(auth_live, order_parameters):
 
 def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
-        url=f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders",
+        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
-            "data": {"id": ORDER_ID},
-            "error": {},
+            "results": [{"index": 0, "id": ORDER_ID}],
+            "errors": [],
         },
     )
     order = Order.place(auth_mock, order_parameters)
@@ -137,16 +137,18 @@ def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
     assert order.order_parameters == order_parameters
 
 
-def test_place_order_no_id(order_parameters, auth_mock, order_mock, requests_mock):
+def test_place_order_fails_if_response_contains_error(order_parameters, auth_mock, order_mock, requests_mock):
+    error_content = "test error"
     requests_mock.post(
-        url=f"{API_HOST}/workspaces/{auth_mock.workspace_id}/orders",
+        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
-            "data": {"xyz": 892},
-            "error": {},
+            "results": [],
+            "errors": [{"message": error_content}],
         },
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err:
         Order.place(auth_mock, order_parameters)
+    assert error_content in str(err.value)
 
 
 @pytest.mark.skip(reason="Placing orders costs credits.")
