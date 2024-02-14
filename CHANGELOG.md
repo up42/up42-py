@@ -30,9 +30,16 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-## 0.35.0
+## 0.36.0
+
+**February 15, 2024**
+
+- Migration for Order endpoints to the latest version (No breaking changes).
+- Documentation updates
 
 **January 25, 2024**
+
+## 0.35.0
 
 - Discontinued support for the following edit and create functions:
 
