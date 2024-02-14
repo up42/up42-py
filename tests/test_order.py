@@ -137,7 +137,7 @@ def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
     assert order.order_parameters == order_parameters
 
 
-def test_place_order_error_raise(order_parameters, auth_mock, order_mock, requests_mock):
+def test_place_order_fails_if_response_contains_error(order_parameters, auth_mock, order_mock, requests_mock):
     error_content = "test error"
     requests_mock.post(
         url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
