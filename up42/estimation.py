@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Union
+from typing import Any, Dict, List, Union
 
 from up42.auth import Auth
 from up42.host import endpoint
@@ -14,7 +14,7 @@ class Estimation:
         auth: Auth,
         project_id: str,
         input_parameters: Union[dict, str, Path],
-        input_tasks: List[dict],
+        input_tasks: List[Dict[str, Any]],
     ):
         """
         The Estimation class provides facilities for getting estimation of a workflow.

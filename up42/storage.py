@@ -4,9 +4,9 @@ from typing import List, Optional, Union
 from urllib.parse import urlencode, urljoin
 from warnings import warn
 
-from geojson import Feature, FeatureCollection
-from geopandas import GeoDataFrame
-from shapely.geometry import Polygon
+from geojson import Feature, FeatureCollection  # type: ignore
+from geopandas import GeoDataFrame  # type: ignore
+from shapely.geometry import Polygon  # type: ignore
 
 from up42.asset import Asset
 from up42.asset_searcher import AssetSearchParams, query_paginated_endpoints, search_assets
@@ -92,12 +92,12 @@ class Storage:
         acquired_before: Optional[Union[str, datetime]] = None,
         geometry: Optional[Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]] = None,
         workspace_id: Optional[str] = None,
-        collection_names: List[str] = None,
-        producer_names: List[str] = None,
-        tags: List[str] = None,
-        sources: List[str] = None,
-        search: str = None,
-        custom_filter: dict = None,
+        collection_names: Optional[List[str]] = None,
+        producer_names: Optional[List[str]] = None,
+        tags: Optional[List[str]] = None,
+        sources: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        custom_filter: Optional[dict] = None,
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
@@ -221,6 +221,7 @@ class Storage:
         }
         params = {k: v for k, v in params.items() if v is not None}
 
+        assert params["status"] is not None
         if statuses is not None and len(statuses) > len(params["status"]):
             logger.info(
                 "statuses not included in allowed_statuses"

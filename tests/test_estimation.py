@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 import pytest
 
 from up42.estimation import Estimation
@@ -38,7 +40,7 @@ def test_estimate_price_live(auth_live, project_id_live):
         },
         "tiling:1": {"tile_width": 768, "tile_height": 768},
     }
-    input_tasks = [
+    input_tasks: List[Dict[str, Any]] = [
         {
             "name": "esa-s2-l2a-gtiff-visual:1",
             "parentName": None,
