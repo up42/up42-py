@@ -10,7 +10,7 @@ import pytest
 from up42.catalog import Catalog
 from up42.order import Order
 
-from .fixtures.fixtures_globals import API_HOST, DATA_PRODUCT_ID, ORDER_ID
+from .fixtures.fixtures_globals import API_HOST, DATA_PRODUCT_ID, ORDER_ID, WORKSPACE_ID
 
 with open(
     Path(__file__).resolve().parent / "mock_data/search_params_simple.json",
@@ -464,10 +464,10 @@ def test_estimate_order_from_catalog(order_parameters, requests_mock, auth_mock)
 
 def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests_mock):
     requests_mock.post(
-        url=f"{API_HOST}/workspaces/{catalog_mock.auth.workspace_id}/orders",
+        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
-            "data": {"id": ORDER_ID},
-            "error": {},
+            "results": [{"index": 0, "id": ORDER_ID}],
+            "errors": [],
         },
     )
     order = catalog_mock.place_order(order_parameters=order_parameters)
@@ -477,10 +477,10 @@ def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests
 
 def test_order_from_catalog_track_status(order_parameters, order_mock, catalog_mock, requests_mock):
     requests_mock.post(
-        url=f"{API_HOST}/workspaces/{catalog_mock.auth.workspace_id}/orders",
+        url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
-            "data": {"id": ORDER_ID},
-            "error": {},
+            "results": [{"index": 0, "id": ORDER_ID}],
+            "errors": [],
         },
     )
     url_order_info = f"{API_HOST}/v2/orders/{order_mock.order_id}"

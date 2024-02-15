@@ -14,6 +14,25 @@ MAX_ITEM = 200
 LIMIT = 200
 
 
+def _translate_construct_parameters(order_parameters):
+    order_parameters_v2 = deepcopy(order_parameters)
+    params = order_parameters_v2["params"]
+    data_product_id = order_parameters_v2["dataProduct"]
+    order_parameters_v2["displayName"] = f"{data_product_id} order"
+    aoi = params.pop("aoi", None)
+    feature_collection = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": aoi,
+            }
+        ],
+    }
+    order_parameters_v2["featureCollection"] = feature_collection
+    return order_parameters_v2
+
+
 class OrderParams(TypedDict):
     """
     Represents the stucture data format for the order parameters.
@@ -117,17 +136,21 @@ class Order:
 
         Args:
             auth: An authentication object.
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            order_parameters: A dictionary for the order configuration.
 
         Returns:
             Order: The placed order.
         """
-        url = endpoint(f"/workspaces/{auth.workspace_id}/orders")
-        response_json = auth._request(request_type="POST", url=url, data=order_parameters)
-        try:
-            order_id = response_json["data"]["id"]  # type: ignore
-        except KeyError as e:
-            raise ValueError(f"Order was not placed: {response_json}") from e
+        url = endpoint(f"/v2/orders?workspaceId={auth.workspace_id}")
+        response_json = auth._request(
+            request_type="POST",
+            url=url,
+            data=_translate_construct_parameters(order_parameters),
+        )
+        if response_json["errors"]:
+            message = response_json["errors"][0]["message"]
+            raise ValueError(f"Order was not placed: {message}")
+        order_id = response_json["results"][0]["id"]
         order = cls(auth=auth, order_id=order_id, order_parameters=order_parameters)
         logger.info(f"Order {order.order_id} is now {order.status}.")
         return order
@@ -145,29 +168,11 @@ class Order:
             int: The estimated cost of the order
         """
 
-        def translate_construct_parameters(order_parameters):
-            order_parameters_v2 = deepcopy(order_parameters)
-            params = order_parameters_v2["params"]
-            data_product_id = order_parameters_v2["dataProduct"]
-            order_parameters_v2["displayName"] = f"{data_product_id} order"
-            aoi = params.pop("aoi", None)
-            feature_collection = {
-                "type": "FeatureCollection",
-                "features": [
-                    {
-                        "type": "Feature",
-                        "geometry": aoi,
-                    }
-                ],
-            }
-            order_parameters_v2["featureCollection"] = feature_collection
-            return order_parameters_v2
-
         url = endpoint("/v2/orders/estimate")
         response_json = auth._request(
             request_type="POST",
             url=url,
-            data=translate_construct_parameters(order_parameters),
+            data=_translate_construct_parameters(order_parameters),
         )
         estimated_credits: int = response_json["summary"]["totalCredits"]
         logger.info(
