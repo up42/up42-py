@@ -18,7 +18,7 @@ jobs:
     working_directory: *workspace-dir
     docker:
       - image: cimg/python:3.11
-    resource_class: medium+
+    resource_class: medium
     steps:
       - attach_workspace:
           at: *workspace-dir
