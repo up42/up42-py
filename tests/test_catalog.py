@@ -448,7 +448,7 @@ def test_construct_order_parameters_live(catalog_live, product_id):
 
 
 # pylint: disable=unused-argument
-def test_estimate_order_from_catalog(order_parameters, requests_mock, auth_mock):
+def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, auth_mock):
     catalog_instance = Catalog(auth=auth_mock)
     expected_payload = {
         "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
@@ -457,12 +457,19 @@ def test_estimate_order_from_catalog(order_parameters, requests_mock, auth_mock)
     }
     url_order_estimation = f"{API_HOST}/v2/orders/estimate"
     requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = catalog_instance.estimate_order(order_parameters)
+    estimation = catalog_instance.estimate_order(catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
 
 
-def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests_mock):
+def test_order_from_catalog(
+    catalog_order_parameters,
+    tasking_order_parameters,
+    order_parameters_tasking_catalog,
+    order_mock,
+    catalog_mock,
+    requests_mock,
+):
     requests_mock.post(
         url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
@@ -470,12 +477,12 @@ def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests
             "errors": [],
         },
     )
-    order = catalog_mock.place_order(order_parameters=order_parameters)
+    order = catalog_mock.place_order(order_parameters=order_parameters_tasking_catalog)
     assert isinstance(order, Order)
     assert order.order_id == ORDER_ID
 
 
-def test_order_from_catalog_track_status(order_parameters, order_mock, catalog_mock, requests_mock):
+def test_order_from_catalog_track_status(catalog_order_parameters, order_mock, catalog_mock, requests_mock):
     requests_mock.post(
         url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
@@ -493,7 +500,7 @@ def test_order_from_catalog_track_status(order_parameters, order_mock, catalog_m
         ],
     )
     order = catalog_mock.place_order(
-        order_parameters=order_parameters,
+        order_parameters=catalog_order_parameters,
         track_status=True,
         report_time=0.1,
     )
@@ -502,15 +509,15 @@ def test_order_from_catalog_track_status(order_parameters, order_mock, catalog_m
 
 
 @pytest.mark.live
-def test_estimate_order_from_catalog_live(order_parameters, catalog_live):
-    estimation = catalog_live.estimate_order(order_parameters)
+def test_estimate_order_from_catalog_live(catalog_order_parameters, catalog_live):
+    estimation = catalog_live.estimate_order(catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
 
 
 @pytest.mark.skip(reason="Placing orders costs credits.")
 @pytest.mark.live
-def test_order_from_catalog_live(order_parameters, catalog_live):
-    order = catalog_live.place_order(order_parameters)
+def test_order_from_catalog_live(catalog_order_parameters, catalog_live):
+    order = catalog_live.place_order(catalog_order_parameters)
     assert isinstance(order, Order)
     assert order.order_id

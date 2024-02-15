@@ -3,7 +3,7 @@ import os
 import pytest
 
 from up42.asset import Asset
-from up42.order import Order, _translate_construct_parameters
+from up42.order import Order
 
 from .fixtures.fixtures_globals import API_HOST, ASSET_ORDER_ID, ORDER_ID, WORKSPACE_ID
 from .fixtures.fixtures_order import JSON_GET_ASSETS_RESPONSE
@@ -116,14 +116,14 @@ def test_should_fail_to_get_assets_for_unfulfilled_order(auth_mock, requests_moc
 
 
 @pytest.mark.live
-def test_get_assets_live(auth_live, order_parameters):
+def test_get_assets_live(auth_live, catalog_order_parameters):
     order_instance = Order(auth=auth_live, order_id=ORDER_ID)
     assets = order_instance.get_assets()
     assert isinstance(assets[0], Asset)
     assert assets[0].asset_id == ASSET_ORDER_ID
 
 
-def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
+def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
         url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
@@ -131,13 +131,13 @@ def test_place_order(order_parameters, auth_mock, order_mock, requests_mock):
             "errors": [],
         },
     )
-    order = Order.place(auth_mock, order_parameters)
+    order = Order.place(auth_mock, catalog_order_parameters)
     assert isinstance(order, Order)
     assert order.order_id == ORDER_ID
-    assert order.order_parameters == order_parameters
+    assert order.order_parameters == catalog_order_parameters
 
 
-def test_place_order_fails_if_response_contains_error(order_parameters, auth_mock, order_mock, requests_mock):
+def test_place_order_fails_if_response_contains_error(catalog_order_parameters, auth_mock, order_mock, requests_mock):
     error_content = "test error"
     requests_mock.post(
         url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
@@ -147,16 +147,16 @@ def test_place_order_fails_if_response_contains_error(order_parameters, auth_moc
         },
     )
     with pytest.raises(ValueError) as err:
-        Order.place(auth_mock, order_parameters)
+        Order.place(auth_mock, catalog_order_parameters)
     assert error_content in str(err.value)
 
 
 @pytest.mark.skip(reason="Placing orders costs credits.")
 @pytest.mark.live
-def test_place_order_live(auth_live, order_parameters):
-    order = Order.place(auth_live, order_parameters)
+def test_place_order_live(auth_live, catalog_order_parameters):
+    order = Order.place(auth_live, catalog_order_parameters)
     assert order.status == "PLACED"
-    assert order.order_parameters == order_parameters
+    assert order.order_parameters == catalog_order_parameters
 
 
 def test_track_status_running(order_mock, requests_mock):
@@ -217,7 +217,7 @@ def test_track_status_fail(order_mock, status, requests_mock):
         order_mock.track_status()
 
 
-def test_estimate_order(order_parameters, auth_mock, requests_mock):
+def test_estimate_order(catalog_order_parameters, auth_mock, requests_mock):
     expected_payload = {
         "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
         "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
@@ -225,18 +225,13 @@ def test_estimate_order(order_parameters, auth_mock, requests_mock):
     }
     url_order_estimation = f"{API_HOST}/v2/orders/estimate"
     requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = Order.estimate(auth_mock, order_parameters)
+    estimation = Order.estimate(auth_mock, catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
 
 
 @pytest.mark.live
-def test_estimate_order_live(order_parameters, auth_live):
-    estimation = Order.estimate(auth_live, order_parameters=order_parameters)
+def test_estimate_order_live(catalog_order_parameters, auth_live):
+    estimation = Order.estimate(auth_live, order_parameters=catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
-
-
-def test_order_translate_parameter(order_parameter_by_type):
-    new_parameters = _translate_construct_parameters(order_parameter_by_type)
-    assert new_parameters["featureCollection"]["features"][0]["geometry"] is not None

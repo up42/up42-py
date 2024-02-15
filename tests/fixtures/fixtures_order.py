@@ -71,7 +71,7 @@ def order_live(auth_live):
 
 
 @pytest.fixture
-def order_parameters():
+def catalog_order_parameters():
     return {
         "dataProduct": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
         "params": {
@@ -96,7 +96,7 @@ def order_parameters():
 
 
 @pytest.fixture
-def order_parameters_tasking():
+def tasking_order_parameters():
     return {
         "dataProduct": "47dadb27-9532-4552-93a5-48f70a83eaef",
         "params": {
@@ -128,6 +128,6 @@ def order_parameters_tasking():
 
 
 @pytest.fixture(params=["catalog", "tasking"])
-def order_parameter_by_type(request, order_parameters, order_parameters_tasking):
-    mocks = {"catalog": order_parameters, "tasking": order_parameters_tasking}
+def order_parameters_tasking_catalog(request, catalog_order_parameters, tasking_order_parameters):
+    mocks = {"catalog": catalog_order_parameters, "tasking": tasking_order_parameters}
     return mocks[request.param]
