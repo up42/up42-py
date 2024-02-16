@@ -463,9 +463,7 @@ def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, au
 
 
 def test_order_from_catalog(
-    catalog_order_parameters,
-    tasking_order_parameters,
-    order_parameters_tasking_catalog,
+    order_parameters,
     order_mock,
     catalog_mock,
     requests_mock,
@@ -477,7 +475,7 @@ def test_order_from_catalog(
             "errors": [],
         },
     )
-    order = catalog_mock.place_order(order_parameters=order_parameters_tasking_catalog)
+    order = catalog_mock.place_order(order_parameters=order_parameters)
     assert isinstance(order, Order)
     assert order.order_id == ORDER_ID
 

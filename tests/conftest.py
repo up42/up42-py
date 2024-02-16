@@ -29,7 +29,7 @@ from .fixtures.fixtures_order import (
     catalog_order_parameters,
     order_live,
     order_mock,
-    order_parameters_tasking_catalog,
+    order_parameters,
     tasking_order_parameters,
 )
 from .fixtures.fixtures_project import project_live, project_mock, project_mock_max_concurrent_jobs
