@@ -6,9 +6,9 @@ import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from geojson import Feature, FeatureCollection
-from geopandas import GeoDataFrame
-from shapely.geometry import Polygon
+from geojson import Feature, FeatureCollection  # type: ignore
+from geopandas import GeoDataFrame  # type: ignore
+from shapely.geometry import Polygon  # type: ignore
 from tqdm import tqdm
 
 from up42.auth import Auth
@@ -211,11 +211,11 @@ class Catalog(CatalogBase, VizTools):
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
-        usage_type: List[str] = None,
+        usage_type: Optional[List[str]] = None,
         limit: int = 10,
         max_cloudcover: Optional[int] = None,
-        sortby: str = None,
-        ascending: bool = None,
+        sortby: Optional[str] = None,
+        ascending: Optional[bool] = None,
     ) -> dict:
         """
         Helps constructing the parameters dictionary required for the search.

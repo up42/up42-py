@@ -3,7 +3,7 @@ import os
 import tempfile
 from pathlib import Path
 
-import geopandas as gpd
+import geopandas as gpd  # type: ignore
 import pandas as pd
 import pytest
 
