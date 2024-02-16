@@ -19,7 +19,7 @@ def _translate_construct_parameters(order_parameters):
     params = order_parameters_v2["params"]
     data_product_id = order_parameters_v2["dataProduct"]
     order_parameters_v2["displayName"] = f"{data_product_id} order"
-    aoi = params.pop("aoi", None)
+    aoi = params.pop("aoi", None) or params.pop("geometry", None)
     feature_collection = {
         "type": "FeatureCollection",
         "features": [

@@ -71,7 +71,7 @@ def order_live(auth_live):
 
 
 @pytest.fixture
-def order_parameters():
+def catalog_order_parameters():
     return {
         "dataProduct": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
         "params": {
@@ -93,3 +93,41 @@ def order_parameters():
         },
         "tags": ["Test", "SDK"],
     }
+
+
+@pytest.fixture
+def tasking_order_parameters():
+    return {
+        "dataProduct": "47dadb27-9532-4552-93a5-48f70a83eaef",
+        "params": {
+            "displayName": "my_tasking_order",
+            "acquisitionStart": "2022-11-01T00:00:00Z",
+            "acquisitionEnd": "2022-11-10T23:59:59Z",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": (
+                    (
+                        (13.152222, 52.638054),
+                        (13.152222, 52.387978),
+                        (13.588728, 52.387978),
+                        (13.588728, 52.638054),
+                        (13.152222, 52.638054),
+                    ),
+                ),
+            },
+            "acquisitionMode": None,
+            "cloudCoverage": None,
+            "incidenceAngle": None,
+            "geometricProcessing": None,
+            "spectralProcessing": None,
+            "pixelCoding": None,
+            "radiometricProcessing": None,
+            "deliveredAs": None,
+        },
+    }
+
+
+@pytest.fixture(params=["catalog", "tasking"])
+def order_parameters(request, catalog_order_parameters, tasking_order_parameters):
+    mocks = {"catalog": catalog_order_parameters, "tasking": tasking_order_parameters}
+    return mocks[request.param]
