@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 from up42.auth import Auth
 from up42.host import endpoint
-from up42.order import Order, OrderParams
+from up42.order import Order
 from up42.utils import (
     any_vector_to_fc,
     autocomplete_order_parameters,
@@ -145,10 +145,10 @@ class CatalogBase:
                 "Please use the new 'order_parameters' parameter."
             )
             warnings.warn(message, DeprecationWarning, stacklevel=2)
-        if order_parameters is not None:
-            order = Order.place(self.auth, order_parameters)
-        else:
+        elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
+
+        order = Order.place(self.auth, order_parameters)  # type: ignore
         if track_status:
             order.track_status(report_time)
         return order
@@ -170,12 +170,12 @@ class Catalog(CatalogBase, VizTools):
         self.auth = auth
         self.quicklooks = None
         self.type = "ARCHIVE"
-        self.data_products: Union[None, dict, List[dict]] = None
+        self.data_products: Union[None, dict] = None
 
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
 
-    def estimate_order(self, order_parameters: Union[OrderParams, None], **kwargs) -> int:
+    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
         """
         Estimate the cost of an order.
 
@@ -196,10 +196,9 @@ class Catalog(CatalogBase, VizTools):
                 "Please use the new 'order_parameters' parameter."
             )
             warnings.warn(message, DeprecationWarning, stacklevel=2)
-        if order_parameters is not None:
-            return Order.estimate(self.auth, order_parameters)
-        else:
+        elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
+        return Order.estimate(self.auth, order_parameters)  # type: ignore
 
     @deprecation("construct_search_parameters", "0.25.0")
     def construct_parameters(self, **kwargs):  # pragma: no cover
@@ -254,7 +253,7 @@ class Catalog(CatalogBase, VizTools):
 
         query_filters: Dict[Any, Any] = {}
         if max_cloudcover is not None:
-            query_filters["cloudCoverage"] = {"lte": max_cloudcover}
+            query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
 
         if usage_type is not None:
             if usage_type == ["DATA"]:
@@ -276,9 +275,7 @@ class Catalog(CatalogBase, VizTools):
 
         return search_parameters
 
-    def search(
-        self, search_parameters: dict, as_dataframe: bool = True, data_products_bool: bool = True
-    ) -> Union[GeoDataFrame, dict]:
+    def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[GeoDataFrame, dict]:
         """
         Searches the catalog for the the search parameters and returns the metadata of
         the matching scenes.
@@ -286,8 +283,6 @@ class Catalog(CatalogBase, VizTools):
         Args:
             search_parameters: The catalog search parameters, see example.
             as_dataframe: return type, GeoDataFrame if True (default), FeatureCollection if False.
-            data_products_bool: If True, the data_products are retturned as dictionary.
-                                If False, it's returned as List.
 
         Returns:
             The search results as a GeoDataFrame, optionally as JSON dict.
@@ -322,17 +317,12 @@ class Catalog(CatalogBase, VizTools):
 
         # UP42 API can query multiple collections of the same host at once.
         if self.data_products is None:
-            self.data_products = self.get_data_products(basic=data_products_bool)
-        if isinstance(self.data_products, dict):
-            hosts = [
-                v["host"] for v in self.data_products.values() if v["collection"] in search_parameters["collections"]
-            ]
-        elif isinstance(self.data_products, list):
-            hosts = []
-            for product in self.data_products:
-                if product["collectionName"] in search_parameters["collections"]:
-                    hosts.append(product["productConfiguration"]["hostName"])
-
+            self.data_products = self.get_data_products(basic=True)  # type: ignore
+        hosts = [
+            v["host"]
+            for v in self.data_products.values()  # type: ignore
+            if v["collection"] in search_parameters["collections"]
+        ]
         if not hosts:
             raise ValueError(
                 f"Selected collections {search_parameters['collections']} are not valid. See "
@@ -426,8 +416,7 @@ class Catalog(CatalogBase, VizTools):
         if aoi is not None:
             aoi = any_vector_to_fc(vector=aoi)
             aoi = fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
-            assert isinstance(order_parameters["params"], dict)
-            order_parameters["params"]["aoi"] = aoi
+            order_parameters["params"]["aoi"] = aoi  # type: ignore
 
         return order_parameters
 
@@ -436,7 +425,6 @@ class Catalog(CatalogBase, VizTools):
         image_ids: List[str],
         collection: str,
         output_directory: Union[str, Path, None] = None,
-        data_products_bool: bool = True,
     ) -> List[str]:
         """
         Gets the quicklooks of scenes from a single sensor. After download, can
@@ -448,22 +436,13 @@ class Catalog(CatalogBase, VizTools):
             collection: The data collection corresponding to the image ids.
             output_directory: The file output directory, defaults to the current working
                 directory.
-            data_products_bool: If True, the data_products are retturned as dictionary.
-                                If False, it's returned as List.
 
         Returns:
             List of quicklook image output file paths.
         """
         if self.data_products is None:
-            self.data_products = self.get_data_products(basic=data_products_bool)
-        if isinstance(self.data_products, dict):
-            host = [v["host"] for v in self.data_products.values() if v["collection"] == collection]
-        elif isinstance(self.data_products, list):
-            host = []
-            for product in self.data_products:
-                host.append(
-                    product["productConfiguration"]["hostName"] if product["collectionName"] == collection else None
-                )
+            self.data_products = self.get_data_products(basic=True)  # type: ignore
+        host = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
         if not host:
             raise ValueError(f"Selected collections {collection} is not valid. See catalog.get_collections.")
         host = host[0]

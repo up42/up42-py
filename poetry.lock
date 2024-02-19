@@ -2121,6 +2121,21 @@ xml = ["lxml (>=4.6.3)"]
 
 [[package]]
 name = "pandas-stubs"
+version = "2.0.2.230605"
+description = "Type annotations for pandas"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pandas_stubs-2.0.2.230605-py3-none-any.whl", hash = "sha256:39106b602f3cb6dc5f728b84e1b32bde6ecf41ee34ee714c66228009609fbada"},
+    {file = "pandas_stubs-2.0.2.230605.tar.gz", hash = "sha256:624c7bb06d38145a44b61be459ccd19b038e0bf20364a025ecaab78fea65e858"},
+]
+
+[package.dependencies]
+numpy = ">=1.24.3"
+types-pytz = ">=2022.1.1"
+
+[[package]]
+name = "pandas-stubs"
 version = "2.0.3.230814"
 description = "Type annotations for pandas"
 optional = false
@@ -2131,10 +2146,6 @@ files = [
 ]
 
 [package.dependencies]
-numpy = [
-    {version = "<=1.24.3", markers = "python_full_version <= \"3.8.0\""},
-    {version = ">=1.25.0", markers = "python_version >= \"3.9\""},
-]
 types-pytz = ">=2022.1.1"
 
 [[package]]
@@ -3559,4 +3570,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "8e2a17d197c065dbed14f8900fef5afcdda97a09d83938aa4407eaf98c162f82"
+content-hash = "a196f88357430518cbe353272f3ab65c9a97bb7dbc8d0a395be5aaab2ca79dba"
