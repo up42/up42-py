@@ -93,7 +93,7 @@ jobs:
       - checkout
       - run:
           name: Build and upload package
-          command: poetry publish --build
+          command: poetry publish --build -u __token__ -p $UP42_PY_PYPI_TOKEN
 
 workflows:
   test_and_deploy:
