@@ -18,6 +18,7 @@ jobs:
     working_directory: *workspace-dir
     docker:
       - image: cimg/python:3.11
+    resource_class: medium+
     steps:
       - attach_workspace:
           at: *workspace-dir
@@ -29,6 +30,7 @@ jobs:
       - run:
           name: Install requirements
           command: |
+            poetry lock
             poetry install --no-interaction --no-ansi
       - save_cache:
           name: Saving poetry cache

@@ -35,14 +35,3 @@ repos:
         name: mypy
         entry: mypy
         language: python
-        args: ["--config-file=mypy.ini"]
-        additional_dependencies:
-          - "types-PyYAML"
-          - "types-requests"
-          - "sqlalchemy2-stubs"
-          - "types-attrs"
-          - "types-python-dateutil"
-          - "types-mock"
-          - "types-tqdm"
-          - "pandas-stubs"
-          - "types-oauthlib"

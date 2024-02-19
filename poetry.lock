@@ -3298,13 +3298,13 @@ files = [
 
 [[package]]
 name = "types-oauthlib"
-version = "3.2.0.20240124"
+version = "3.2.0.20240217"
 description = "Typing stubs for oauthlib"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "types-oauthlib-3.2.0.20240124.tar.gz", hash = "sha256:4cd584b5c743d0e05a03f14652d740cc27a975e2cf216ee111ea1dd2f2432872"},
-    {file = "types_oauthlib-3.2.0.20240124-py3-none-any.whl", hash = "sha256:ad07377223a8ec65abb096ce6a783083bded9f27be6a56fedd6956867faf872d"},
+    {file = "types-oauthlib-3.2.0.20240217.tar.gz", hash = "sha256:2b58e68b549f37ea1fe725cd7e78661a58679c16d2e83d53f1e531588ad72223"},
+    {file = "types_oauthlib-3.2.0.20240217-py3-none-any.whl", hash = "sha256:aa8b50a6737a0c75ea2a19e4598cfabd767ca5fba8d5310dc736afaa179db14d"},
 ]
 
 [[package]]
@@ -3559,4 +3559,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "8e2a17d197c065dbed14f8900fef5afcdda97a09d83938aa4407eaf98c162f82"
+content-hash = "da986f5b47d94effa75f4b6076e0abba77e53bd665cf9525d9b13d1ac84eb6aa"

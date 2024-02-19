@@ -6,12 +6,15 @@ e.g. `make test`, the auth module fixture is otherwise not properly attached to 
 or would need to be recreated for each test.
 """
 
+from typing import Dict, List
+
 import pandas as pd
 import pytest
 import requests
 
 from up42 import main
 from up42.main import get_block_coverage, get_block_details, get_blocks, get_credits_balance
+from up42.webhooks import Webhook
 
 from .fixtures.fixtures_globals import API_HOST
 
@@ -153,3 +156,36 @@ def test_get_credits_balance_live(auth_live, monkeypatch):
     balance = get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
+
+
+def test_get_auth_safely_no_auth(monkeypatch):
+    monkeypatch.setattr(main, "_auth", None)
+    with pytest.raises(ValueError) as excinfo:
+        main.__get_auth_safely()
+    assert "User not authenticated. Call up42.authenticate() first" in str(excinfo.value)
+
+
+def test_get_webhook_events(auth_mock, requests_mock, monkeypatch):
+    monkeypatch.setattr(main, "_auth", auth_mock)
+    url_webhook_events = f"{API_HOST}/webhooks/events"
+    requests_mock.get(
+        url=url_webhook_events,
+        json={
+            "data": ["some event"],
+            "error": {},
+        },
+    )
+    events = main.get_webhook_events()
+    assert isinstance(events, List)
+    assert "some event" in events
+
+
+@pytest.mark.parametrize("return_json", [False, True])
+def test_get_webhooks(auth_mock, monkeypatch, webhooks_mock, return_json):
+    monkeypatch.setattr(main, "_auth", auth_mock)
+    webhooks = main.get_webhooks(return_json=return_json)
+    assert isinstance(webhooks, List)
+    if return_json:
+        assert isinstance(webhooks[0], Dict)
+    else:
+        assert isinstance(webhooks[0], Webhook)

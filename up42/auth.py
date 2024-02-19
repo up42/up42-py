@@ -46,7 +46,7 @@ class retry_if_401_invalid_token(retry_if_exception):
                             requests.exceptions.RequestException,
                         ),
                     )
-                    and hasattr(exception.response, "status_code")  # check if response has status_code
+                    and hasattr(exception.response, "status_code")
                     and exception.response.status_code == 401
                 )
 
@@ -215,8 +215,6 @@ class Auth:
 
     @staticmethod
     def _generate_headers(token: Optional[str]) -> Dict[str, str]:
-        # NOTE: made token optional to make mypy happy
-        # WE should update if there is a better solution
         version = get_up42_py_version()
         headers = {
             "Content-Type": "application/json",
