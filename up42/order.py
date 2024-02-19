@@ -18,8 +18,8 @@ def _translate_construct_parameters(order_parameters):
     order_parameters_v2 = deepcopy(order_parameters)
     params = order_parameters_v2["params"]
     data_product_id = order_parameters_v2["dataProduct"]
-    if not params.get("displayName", None):
-        order_parameters_v2["displayName"] = f"{data_product_id} order"
+    default_name = f"{data_product_id} order"
+    order_parameters_v2["displayName"] = params.get("displayName", default_name)
     aoi = params.pop("aoi", None) or params.pop("geometry", None)
     feature_collection = {
         "type": "FeatureCollection",
