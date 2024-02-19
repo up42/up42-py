@@ -4,9 +4,9 @@ Tasking functionality
 from datetime import datetime
 from typing import List, Optional, Union
 
-from geojson import Feature, FeatureCollection
-from geopandas import GeoDataFrame
-from shapely.geometry import Point, Polygon
+from geojson import Feature, FeatureCollection  # type: ignore
+from geopandas import GeoDataFrame  # type: ignore
+from shapely.geometry import Point, Polygon  # type: ignore
 
 from up42.auth import Auth
 from up42.catalog import CatalogBase
@@ -104,12 +104,13 @@ class Tasking(CatalogBase):
         order_parameters = autocomplete_order_parameters(order_parameters, schema)
 
         geometry = any_vector_to_fc(vector=geometry)
+        assert isinstance(order_parameters["params"], dict)
         if geometry["features"][0]["geometry"]["type"] == "Point":
             # Tasking (e.g. Blacksky) can require Point geometry.
-            order_parameters["params"]["geometry"] = geometry["features"][0]["geometry"]  # type: ignore
+            order_parameters["params"]["geometry"] = geometry["features"][0]["geometry"]
         else:
             geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
-            order_parameters["params"]["geometry"] = geometry  # type: ignore
+            order_parameters["params"]["geometry"] = geometry
 
         return order_parameters
 

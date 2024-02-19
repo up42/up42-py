@@ -7,9 +7,9 @@ import logging
 from pathlib import Path
 from typing import Union
 
-import geopandas as gpd
+import geopandas as gpd  # type: ignore
 import pandas as pd
-import shapely
+import shapely  # type: ignore
 from geopandas import GeoDataFrame
 
 from up42.utils import get_logger

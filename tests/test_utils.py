@@ -1,14 +1,15 @@
 import json
 import tempfile
 from pathlib import Path
+from typing import Dict
 from unittest.mock import Mock, patch
 
-import geopandas as gpd
+import geopandas as gpd  # type: ignore
 import pandas as pd
 import pytest
 from dateutil.parser import parse
 from geopandas import GeoDataFrame
-from shapely.geometry import LinearRing, Polygon
+from shapely.geometry import LinearRing, Polygon  # type: ignore
 
 from up42.utils import (
     any_vector_to_fc,
@@ -288,6 +289,7 @@ def test_autocomplete_order_parameters():
     order_parameters = autocomplete_order_parameters(order_parameters=order_parameters, schema=json_data_product_schema)
 
     assert "dataProduct" in order_parameters
+    assert isinstance(order_parameters["params"], Dict)
     assert order_parameters["params"]["existing_param1"] is not None
     assert order_parameters["params"]["geometry"] is None
     assert order_parameters["params"]["acquisitionMode"] is None

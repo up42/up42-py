@@ -14,11 +14,11 @@ from typing import List, Optional, Union, cast
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 import requests
-import shapely
-from geojson import Feature, FeatureCollection
+import shapely  # type: ignore
+from geojson import Feature, FeatureCollection  # type: ignore
 from geojson import Polygon as geojson_Polygon
-from geopandas import GeoDataFrame
-from shapely.geometry import Point, Polygon
+from geopandas import GeoDataFrame  # type: ignore
+from shapely.geometry import Point, Polygon  # type: ignore
 from tqdm import tqdm
 
 
@@ -151,8 +151,7 @@ def download_from_gcs_unpack(
         f"Download successful of {len(out_filepaths)} files to output_directory "
         f"'{output_directory}': {[p.name for p in out_filepaths]}"
     )
-    out_filepaths = [str(p) for p in out_filepaths]  # type: ignore
-    return out_filepaths  # type: ignore
+    return [str(p) for p in out_filepaths]
 
 
 def download_gcs_not_unpack(download_url: str, output_directory: Union[str, Path]) -> List[str]:
@@ -195,7 +194,7 @@ def format_time(date: Optional[Union[str, datetime]], set_end_of_day=False):
     """
     if isinstance(date, str):
         has_time_of_day = len(date) > 11
-        date = datetime.fromisoformat(date)  # type: ignore
+        date = datetime.fromisoformat(date)
         if not has_time_of_day and set_end_of_day:
             date = datetime.combine(date.date(), datetime_time(23, 59, 59, 999999))
     elif isinstance(date, datetime):
@@ -388,7 +387,7 @@ def replace_page_query(url: str, new_page: int) -> str:
     """
     parsed_url = urlparse(url)
     query_params = parse_qs(parsed_url.query)
-    query_params["page"] = str(new_page)  # type: ignore
+    query_params["page"] = [str(new_page)]
 
     # Update the query string with the modified parameters
     encoded_query = urlencode(query_params, doseq=True)
