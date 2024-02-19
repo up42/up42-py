@@ -258,12 +258,3 @@ def test_should_initialize_tasking(auth_mock):
     )
     result = up42.initialize_tasking()
     assert isinstance(result, Tasking)
-
-
-# def test_should_initialize_webhook(auth_mock):
-#     up42.authenticate(
-#         project_id=PROJECT_ID,
-#         authenticate=False,
-#     )
-#     result = up42.initialize_webhook(webhook_id="webhook_id")
-#     assert isinstance(result, Webhook)
