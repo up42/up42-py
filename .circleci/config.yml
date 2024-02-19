@@ -30,6 +30,7 @@ jobs:
       - run:
           name: Install requirements
           command: |
+            poetry lock
             poetry install --no-interaction --no-ansi
       - save_cache:
           name: Saving poetry cache
