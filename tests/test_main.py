@@ -160,3 +160,18 @@ def test_get_auth_safely_no_auth(monkeypatch):
     with pytest.raises(ValueError) as excinfo:
         main.__get_auth_safely()
     assert "User not authenticated. Call up42.authenticate() first" in str(excinfo.value)
+
+
+def test_get_webhook_events(auth_mock, requests_mock, monkeypatch):
+    monkeypatch.setattr(main, "_auth", auth_mock)
+    url_webhook_events = f"{API_HOST}/webhooks/events"
+    requests_mock.get(
+        url=url_webhook_events,
+        json={
+            "data": ["some event"],
+            "error": {},
+        },
+    )
+    events = main.get_webhook_events()
+    assert isinstance(events, list)
+    assert "some event" in events
