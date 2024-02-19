@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 0.36.0
 
-**February 15, 2024**
+**February 20, 2024**
 
 - Migration for Order endpoints to the latest version (No breaking changes).
 - Documentation updates
