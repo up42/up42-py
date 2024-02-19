@@ -153,3 +153,10 @@ def test_get_credits_balance_live(auth_live, monkeypatch):
     balance = get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
+
+
+def test_get_auth_safely_no_auth(monkeypatch):
+    monkeypatch.setattr(main, "_auth", None)
+    with pytest.raises(ValueError) as excinfo:
+        main.__get_auth_safely()
+    assert "User not authenticated. Call up42.authenticate() first" in str(excinfo.value)
