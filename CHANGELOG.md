@@ -34,8 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **February 20, 2024**
 
-- Migration for Order endpoints to the latest version (No breaking changes).
-- Documentation updates
+- Updated the `place_order()` function of the CatalogBase class to the latest version of the API.
 
 **January 25, 2024**
 
