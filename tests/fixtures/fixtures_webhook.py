@@ -37,7 +37,9 @@ def webhook_mock(auth_mock, requests_mock):
 
 @pytest.fixture()
 def webhook_live(auth_live):
-    return Webhook(auth=auth_live, webhook_id=os.getenv("TEST_UP42_WEBHOOK_ID"))
+    webhook_id = os.getenv("TEST_UP42_WEBHOOK_ID")
+    assert isinstance(webhook_id, str)
+    return Webhook(auth=auth_live, webhook_id=webhook_id)
 
 
 @pytest.fixture()

@@ -16,7 +16,7 @@ from .fixtures.fixtures_auth import (
     username_test_live,
 )
 from .fixtures.fixtures_catalog import catalog_live, catalog_mock, catalog_pagination_mock, catalog_usagetype_mock
-from .fixtures.fixtures_estimation import estimation_live, estimation_mock
+from .fixtures.fixtures_estimation import estimation_mock
 from .fixtures.fixtures_job import job_live, job_mock, jobs_live, jobs_mock
 from .fixtures.fixtures_jobcollection import (
     jobcollection_empty_mock,
