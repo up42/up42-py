@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **February 20, 2024**
 
-- Updated the `place_order()` function of the CatalogBase class to the latest version of the API.
+- Updated the `place_order()` and `estimate_order()` functions of the CatalogBase class to the latest version of the API.
 
 **January 25, 2024**
 
