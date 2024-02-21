@@ -7,12 +7,12 @@ import up42
 
 @pytest.mark.live()
 def test_e2e_30sec():
-    up42.authenticate(
+    up42.main.authenticate(
         project_id=os.getenv("TEST_UP42_PROJECT_ID"),
         project_api_key=os.getenv("TEST_UP42_PROJECT_API_KEY"),
     )
 
-    project = up42.initialize_project()
+    project = up42.initialization.initialize_project()
 
     # Construct workflow
     workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
@@ -20,7 +20,7 @@ def test_e2e_30sec():
     workflow.add_workflow_tasks(input_tasks)
 
     # Define the aoi and input parameters of the workflow to run it.
-    aoi = up42.get_example_aoi(as_dataframe=True)
+    aoi = up42.tools.get_example_aoi(as_dataframe=True)
     input_parameters = workflow.construct_parameters(
         geometry=aoi,
         geometry_operation="bbox",
