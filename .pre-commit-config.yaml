@@ -35,3 +35,11 @@ repos:
         name: mypy
         entry: mypy
         language: python
+  - repo: local
+    hooks:
+      - id: pylint
+        exclude: tests/
+        name: pylint
+        entry: pylint
+        language: system
+        types: [ python ]
