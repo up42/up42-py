@@ -210,7 +210,7 @@ class Auth:
     def _get_workspace(self) -> None:
         """Get user id belonging to authenticated account."""
         url = host.endpoint("/users/me")
-        resp = self._request("GET", url)
+        resp = self.request("GET", url)
         self.workspace_id = resp["data"]["id"]
 
     @staticmethod
@@ -272,7 +272,7 @@ class Auth:
         response.raise_for_status()
         return response
 
-    def _request(
+    def request(
         self,
         request_type: str,
         url: str,

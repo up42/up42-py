@@ -116,13 +116,13 @@ class Tasking(CatalogBase):
 
     def _query_paginated_output(self, url: str):
         page = 0
-        response = self.auth._request(request_type="GET", url=url)
+        response = self.auth.request(request_type="GET", url=url)
         json_results = response["content"]
         not_last_page = not response["last"]
         while not_last_page:
             page += 1
             url = replace_page_query(url, page)
-            response = self.auth._request(request_type="GET", url=url)
+            response = self.auth.request(request_type="GET", url=url)
             json_results.extend(response["content"])
             not_last_page = not response["last"]
         return json_results
@@ -189,7 +189,7 @@ class Tasking(CatalogBase):
 
         decision_payload = {"decision": decision}
 
-        response_json = self.auth._request(request_type="PATCH", url=url, data=decision_payload)
+        response_json = self.auth.request(request_type="PATCH", url=url, data=decision_payload)
 
         return response_json
 
@@ -251,7 +251,7 @@ class Tasking(CatalogBase):
         """
         url = endpoint(f"/v2/tasking/feasibility/{feasibility_id}")
         accepted_option_payload = {"acceptedOptionId": accepted_option_id}
-        response_json = self.auth._request(request_type="PATCH", url=url, data=accepted_option_payload)
+        response_json = self.auth.request(request_type="PATCH", url=url, data=accepted_option_payload)
         return response_json
 
     def __repr__(self):

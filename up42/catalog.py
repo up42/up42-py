@@ -46,7 +46,7 @@ class CatalogBase:
                 data product configurations, default True.
         """
         url = endpoint("/data-products")
-        json_response = self.auth._request("GET", url)
+        json_response = self.auth.request("GET", url)
         unfiltered_products: list = json_response["data"]
 
         products = []
@@ -98,7 +98,7 @@ class CatalogBase:
             data_product_id: The id of a catalog/tasking data product.
         """
         url = endpoint(f"/orders/schema/{data_product_id}")
-        json_response = self.auth._request("GET", url)
+        json_response = self.auth.request("GET", url)
         return json_response  # Does not contain APIv1 "data" key
 
     def get_collections(self) -> Union[Dict, List]:
@@ -106,7 +106,7 @@ class CatalogBase:
         Get the available data collections.
         """
         url = endpoint("/collections")
-        json_response = self.auth._request("GET", url)
+        json_response = self.auth.request("GET", url)
         collections = [c for c in json_response["data"] if c["type"] == self.type]
         return collections
 
@@ -336,7 +336,7 @@ class Catalog(CatalogBase, VizTools):
         host = hosts[0]
 
         url = endpoint(f"/catalog/hosts/{host}/stac/search")
-        response_json: dict = self.auth._request("POST", url, search_parameters)
+        response_json: dict = self.auth.request("POST", url, search_parameters)
         features = response_json["features"]
 
         # Search results with more than 500 items are given as 50-per-page additional pages.
@@ -345,7 +345,7 @@ class Catalog(CatalogBase, VizTools):
             if pagination_exhausted:
                 break
             next_page_url = response_json["links"][1]["href"]
-            response_json = self.auth._request("POST", next_page_url, search_parameters)
+            response_json = self.auth.request("POST", next_page_url, search_parameters)
             features += response_json["features"]
 
         features = features[:max_limit]
@@ -462,7 +462,7 @@ class Catalog(CatalogBase, VizTools):
         for image_id in tqdm(image_ids):
             try:
                 url = endpoint(f"/catalog/{host}/image/{image_id}/quicklook")
-                response = self.auth._request(request_type="GET", url=url, return_text=False)
+                response = self.auth.request(request_type="GET", url=url, return_text=False)
                 out_path = output_directory / f"quicklook_{image_id}.jpg"
                 out_paths.append(str(out_path))
                 with open(out_path, "wb") as dst:

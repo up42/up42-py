@@ -36,7 +36,7 @@ class Webhook:
         Gets and updates the webhook metadata information.
         """
         url = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
 
@@ -49,7 +49,7 @@ class Webhook:
             A dict with information about the test events.
         """
         url = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}/tests")
-        response_json = self.auth._request(
+        response_json = self.auth.request(
             request_type="POST",
             url=url,
         )
@@ -85,7 +85,7 @@ class Webhook:
             "active": active if active is not None else self._info["active"],
         }
         url_put = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
-        response_json = self.auth._request(request_type="PUT", url=url_put, data=input_parameters)
+        response_json = self.auth.request(request_type="PUT", url=url_put, data=input_parameters)
         self._info = response_json["data"]
         logger.info(f"Updated webhook {self}")
         return self
@@ -95,7 +95,7 @@ class Webhook:
         Deletes a registered webhook.
         """
         url = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
-        self.auth._request(request_type="DELETE", url=url)
+        self.auth.request(request_type="DELETE", url=url)
         logger.info(f"Successfully deleted Webhook: {self.webhook_id}")
 
 
@@ -132,7 +132,7 @@ class Webhooks:
             A dict of the available webhook events.
         """
         url = endpoint("/webhooks/events")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         return response_json["data"]
 
     def get_webhooks(self, return_json: bool = False) -> List[Webhook]:
@@ -146,7 +146,7 @@ class Webhooks:
             A list of the registered webhooks for this workspace.
         """
         url = endpoint(f"/workspaces/{self.workspace_id}/webhooks")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         logger.info(f"Queried {len(response_json['data'])} webhooks.")
 
         if return_json:
@@ -190,7 +190,7 @@ class Webhooks:
             "active": active,
         }
         url_post = endpoint(f"/workspaces/{self.workspace_id}/webhooks")
-        response_json = self.auth._request(request_type="POST", url=url_post, data=input_parameters)
+        response_json = self.auth.request(request_type="POST", url=url_post, data=input_parameters)
         webhook = Webhook(
             auth=self.auth,
             webhook_id=response_json["data"]["id"],

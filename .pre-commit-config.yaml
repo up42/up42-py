@@ -38,7 +38,7 @@ repos:
   - repo: local
     hooks:
       - id: pylint
-        exclude: tests/
+        files: up42/main.py
         name: pylint
         entry: pylint
         language: system

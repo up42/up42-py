@@ -66,7 +66,7 @@ class Job(VizTools):
         Gets and updates the job metadata information.
         """
         url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
 
@@ -116,7 +116,7 @@ class Job(VizTools):
             The job data.json.
         """
         url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/outputs/data-json/")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         logger.info(f"Retrieved {len(response_json['features'])} features.")
 
         if as_dataframe:
@@ -128,7 +128,7 @@ class Job(VizTools):
 
     def _get_download_url(self) -> str:
         url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/downloads/results/")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
         return download_url
 
@@ -216,7 +216,7 @@ class Job(VizTools):
 
         for idx, jobtask_id in enumerate(jobtasks_ids):
             url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/logs")
-            response_json = self.auth._request(request_type="GET", url=url)
+            response_json = self.auth.request(request_type="GET", url=url)
 
             job_logs[jobtask_id] = response_json
 
@@ -241,7 +241,7 @@ class Job(VizTools):
         """
         url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/")
         logger.info(f"Getting job tasks: {self.job_id}")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         jobtasks_json: List[dict] = response_json["data"]
 
         if return_json:
@@ -271,7 +271,7 @@ class Job(VizTools):
         jobtasks_results_json = {}
         for jobtask_id in jobtasks_ids:
             url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/outputs/data-json")
-            response_json = self.auth._request(request_type="GET", url=url)
+            response_json = self.auth.request(request_type="GET", url=url)
 
             jobtasks_results_json[jobtask_id] = response_json
         return jobtasks_results_json
@@ -284,7 +284,7 @@ class Job(VizTools):
             The consumed credits for the job.
         """
         url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/credits")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         credits_used = response_json["data"]["creditsUsed"]
         credits_used_dict = {"creditsUsed": credits_used}
 

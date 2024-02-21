@@ -1,19 +1,18 @@
+import functools
 import logging
+import pathlib
 import warnings
-from functools import wraps
-from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 import pandas as pd
 import requests.exceptions
 
+from up42 import constants, host, utils, webhooks
+
 # pylint: disable=wrong-import-position
 from up42.auth import Auth
-from up42.host import endpoint
-from up42.utils import get_logger
-from up42.webhooks import Webhook, Webhooks
 
-logger = get_logger(__name__, level=logging.INFO)
+logger = utils.get_logger(__name__, level=logging.INFO)
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
@@ -22,7 +21,7 @@ _auth: Optional[Auth] = None
 
 
 def authenticate(
-    cfg_file: Optional[Union[str, Path]] = None,
+    cfg_file: Optional[Union[str, pathlib.Path]] = None,
     project_id: Optional[str] = None,
     project_api_key: Optional[str] = None,
     username: Optional[str] = None,
@@ -31,12 +30,14 @@ def authenticate(
 ):
     """
     Authenticate with UP42, either using project api credentials or
-    account credentials or a config JSON file containing the corresponding credentials.
+    account credentials or a config JSON file
+    containing the corresponding credentials.
     Also see the documentation https://sdk.up42.com/authentication/
 
     Args:
         cfg_file: File path to the cfg.json with either
-        {project_id: "...", project_api_key: "..."} or {username: "...", password: "..."}.
+        {project_id: "...", project_api_key: "..."} or
+            {username: "...", password: "..."}.
         project_id: The unique identifier of the project.
         project_api_key: The project-specific API key.
         username: The username for the UP42 account (email UP42 console).
@@ -53,7 +54,7 @@ def authenticate(
     )
 
 
-def __get_auth_safely():
+def _get_auth_safely():
     if _auth:
         return _auth
     raise ValueError("User not authenticated. Call up42.authenticate() first")
@@ -66,7 +67,7 @@ def _check_auth(func, *args, **kwargs):
     """
 
     # pylint: disable=unused-argument
-    @wraps(func)  # required for mkdocstrings
+    @functools.wraps(func)  # required for mkdocstrings
     def inner(*args, **kwargs):
         if _auth is None:
             raise RuntimeError("Not authenticated, call up42.authenticate() first")
@@ -76,17 +77,18 @@ def _check_auth(func, *args, **kwargs):
 
 
 @_check_auth
-def get_webhooks(return_json: bool = False) -> List[Webhook]:
+def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
     """
     Gets all registered webhooks for this workspace.
 
     Args:
-        return_json: If true returns the webhooks information as JSON instead of webhook class objects.
+        return_json: If true returns the webhooks information
+            as JSON instead of webhook class objects.
     Returns:
         A list of the registered webhooks for this workspace.
     """
-    webhooks = Webhooks(auth=__get_auth_safely()).get_webhooks(return_json=return_json)
-    return webhooks
+    results = webhooks.Webhooks(auth=_get_auth_safely()).get_webhooks(return_json=return_json)
+    return results
 
 
 @_check_auth
@@ -109,10 +111,10 @@ def create_webhook(
     Returns:
         A dict with details of the registered webhook.
     """
-    webhook = Webhooks(auth=__get_auth_safely()).create_webhook(
+    results = webhooks.Webhooks(auth=_get_auth_safely()).create_webhook(
         name=name, url=url, events=events, active=active, secret=secret
     )
-    return webhook
+    return results
 
 
 @_check_auth
@@ -123,7 +125,7 @@ def get_webhook_events() -> dict:
     Returns:
         A dict of the available webhook events.
     """
-    webhook_events = Webhooks(auth=__get_auth_safely()).get_webhook_events()
+    webhook_events = webhooks.Webhooks(auth=_get_auth_safely()).get_webhook_events()
     return webhook_events
 
 
@@ -147,8 +149,8 @@ def get_blocks(
     """
     if isinstance(block_type, str):
         block_type = block_type.lower()
-    url = endpoint("/blocks")
-    response_json = __get_auth_safely()._request(request_type="GET", url=url)
+    url = host.endpoint("/blocks")
+    response_json = _get_auth_safely().request(request_type="GET", url=url)
     public_blocks_json = response_json["data"]
 
     if block_type == "data":
@@ -189,8 +191,8 @@ def get_block_details(block_id: str, as_dataframe: bool = False) -> Union[dict, 
     Returns:
         A dict of the block details metadata for the specific block.
     """
-    url = endpoint(f"/blocks/{block_id}")  # public blocks
-    response_json = __get_auth_safely()._request(request_type="GET", url=url)
+    url = host.endpoint(f"/blocks/{block_id}")  # public blocks
+    response_json = _get_auth_safely().request(request_type="GET", url=url)
     details_json = response_json["data"]
 
     if as_dataframe:
@@ -211,10 +213,10 @@ def get_block_coverage(block_id: str) -> dict:
     Returns:
         A dict of the spatial coverage for the specific block.
     """
-    url = endpoint(f"/blocks/{block_id}/coverage")
-    response_json = __get_auth_safely()._request(request_type="GET", url=url)
+    url = host.endpoint(f"/blocks/{block_id}/coverage")
+    response_json = _get_auth_safely().request(request_type="GET", url=url)
     details_json = response_json["data"]
-    response_coverage = requests.get(details_json["url"]).json()
+    response_coverage = requests.get(details_json["url"], timeout=constants.TIMEOUT).json()
     return response_coverage
 
 
@@ -226,7 +228,7 @@ def get_credits_balance() -> dict:
     Returns:
         A dict with the balance of credits available in your account.
     """
-    endpoint_url = endpoint("/accounts/me/credits/balance")
-    response_json = __get_auth_safely()._request(request_type="GET", url=endpoint_url)
+    endpoint_url = host.endpoint("/accounts/me/credits/balance")
+    response_json = _get_auth_safely().request(request_type="GET", url=endpoint_url)
     details_json = response_json["data"]
     return details_json

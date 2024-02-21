@@ -62,7 +62,7 @@ class Workflow:
         Gets and updates the workflow metadata information.
         """
         url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
 
@@ -94,7 +94,7 @@ class Workflow:
         )
         url = endpoint(f"/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks")
 
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         tasks = response_json["data"]
         logger.info(f"Got {len(tasks)} tasks/blocks in workflow {self.workflow_id}.")
 
@@ -243,7 +243,7 @@ class Workflow:
             A JobCollection, or alternatively the jobs info as JSON.
         """
         url = endpoint(f"/projects/{self.project_id}/jobs")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
 
         jobs_workflow_json = [j for j in jobs_json if j["workflowId"] == self.workflow_id]
@@ -263,6 +263,6 @@ class Workflow:
         Deletes the workflow and sets the Python object to None.
         """
         url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}")
-        self.auth._request(request_type="DELETE", url=url, return_text=False)
+        self.auth.request(request_type="DELETE", url=url, return_text=False)
         logger.info(f"Successfully deleted workflow: {self.workflow_id}")
         del self
