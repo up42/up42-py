@@ -159,7 +159,7 @@ def test_get_credits_balance_live(auth_live, monkeypatch):
 def test_get_auth_safely_no_auth(monkeypatch):
     monkeypatch.setattr(main, "_auth", None)
     with pytest.raises(ValueError) as excinfo:
-        main._get_auth_safely()
+        main._get_auth_safely()  # pylint: disable=protected-access
     assert "User not authenticated. Call up42.authenticate() first" in str(excinfo.value)
 
 
