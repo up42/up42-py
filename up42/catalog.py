@@ -2,17 +2,17 @@
 Catalog search functionality
 """
 
+import pathlib
 import warnings
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from geojson import Feature, FeatureCollection  # type: ignore
+import geojson  # type: ignore
 from geopandas import GeoDataFrame  # type: ignore
 from shapely.geometry import Polygon  # type: ignore
 from tqdm import tqdm
 
+from up42 import host
 from up42.auth import Auth
-from up42.host import endpoint
 from up42.order import Order
 from up42.utils import (
     any_vector_to_fc,
@@ -45,7 +45,7 @@ class CatalogBase:
             basic: A dictionary containing only the collection title, name, host and available
                 data product configurations, default True.
         """
-        url = endpoint("/data-products")
+        url = host.endpoint("/data-products")
         json_response = self.auth.request("GET", url)
         unfiltered_products: list = json_response["data"]
 
@@ -97,7 +97,7 @@ class CatalogBase:
         Args:
             data_product_id: The id of a catalog/tasking data product.
         """
-        url = endpoint(f"/orders/schema/{data_product_id}")
+        url = host.endpoint(f"/orders/schema/{data_product_id}")
         json_response = self.auth.request("GET", url)
         return json_response  # Does not contain APIv1 "data" key
 
@@ -105,7 +105,7 @@ class CatalogBase:
         """
         Get the available data collections.
         """
-        url = endpoint("/collections")
+        url = host.endpoint("/collections")
         json_response = self.auth.request("GET", url)
         collections = [c for c in json_response["data"] if c["type"] == self.type]
         return collections
@@ -207,7 +207,7 @@ class Catalog(CatalogBase, VizTools):
 
     @staticmethod
     def construct_search_parameters(
-        geometry: Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon],
+        geometry: Union[geojson.FeatureCollection, geojson.Feature, dict, list, GeoDataFrame, Polygon],
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
@@ -333,9 +333,9 @@ class Catalog(CatalogBase, VizTools):
                 "Only collections with the same host can be searched at the same time. Please adjust the "
                 "collections in the search_parameters!"
             )
-        host = hosts[0]
+        host_provider = hosts[0]
 
-        url = endpoint(f"/catalog/hosts/{host}/stac/search")
+        url = host.endpoint(f"/catalog/hosts/{host_provider}/stac/search")
         response_json: dict = self.auth.request("POST", url, search_parameters)
         features = response_json["features"]
 
@@ -352,7 +352,7 @@ class Catalog(CatalogBase, VizTools):
         if not features:
             df = GeoDataFrame(columns=["geometry"], geometry="geometry")
         else:
-            df = GeoDataFrame.from_features(FeatureCollection(features=features), crs="EPSG:4326")
+            df = GeoDataFrame.from_features(geojson.FeatureCollection(features=features), crs="EPSG:4326")
 
         logger.info(f"{df.shape[0]} results returned.")
         if as_dataframe:
@@ -366,8 +366,8 @@ class Catalog(CatalogBase, VizTools):
         image_id: str,
         aoi: Union[
             dict,
-            Feature,
-            FeatureCollection,
+            geojson.Feature,
+            geojson.FeatureCollection,
             list,
             GeoDataFrame,
             Polygon,
@@ -424,7 +424,7 @@ class Catalog(CatalogBase, VizTools):
         self,
         image_ids: List[str],
         collection: str,
-        output_directory: Union[str, Path, None] = None,
+        output_directory: Union[str, pathlib.Path, None] = None,
     ) -> List[str]:
         """
         Gets the quicklooks of scenes from a single sensor. After download, can
@@ -442,16 +442,16 @@ class Catalog(CatalogBase, VizTools):
         """
         if self.data_products is None:
             self.data_products = self.get_data_products(basic=True)  # type: ignore
-        host = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
-        if not host:
+        provider_host = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
+        if not provider_host:
             raise ValueError(f"Selected collections {collection} is not valid. See catalog.get_collections.")
-        host = host[0]
+        provider_host = provider_host[0]
         logger.info(f"Downloading quicklooks from provider {host}.")
 
         if output_directory is None:
-            output_directory = Path.cwd() / "catalog"
+            output_directory = pathlib.Path.cwd() / "catalog"
         else:
-            output_directory = Path(output_directory)
+            output_directory = pathlib.Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info(f"Download directory: {str(output_directory)}")
 
@@ -461,7 +461,7 @@ class Catalog(CatalogBase, VizTools):
         out_paths: List[str] = []
         for image_id in tqdm(image_ids):
             try:
-                url = endpoint(f"/catalog/{host}/image/{image_id}/quicklook")
+                url = host.endpoint(f"/catalog/{host}/image/{image_id}/quicklook")
                 response = self.auth.request(request_type="GET", url=url, return_text=False)
                 out_path = output_directory / f"quicklook_{image_id}.jpg"
                 out_paths.append(str(out_path))
