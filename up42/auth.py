@@ -2,32 +2,23 @@
 UP42 authentication mechanism and base requests functionality
 """
 import json
-from pathlib import Path
+import pathlib
+import warnings
 from typing import Dict, Optional, Union
-from warnings import warn
 
 import requests
 import requests.exceptions
-from oauthlib.oauth2 import BackendApplicationClient, MissingTokenError
-from requests.auth import HTTPBasicAuth
-from requests_oauthlib import OAuth2Session  # type: ignore
-from tenacity import (
-    Retrying,
-    retry,
-    retry_if_exception,
-    retry_if_exception_type,
-    stop_after_attempt,
-    wait_fixed,
-    wait_random_exponential,
-)
+import requests_oauthlib  # type: ignore
+import tenacity
+from oauthlib import oauth2
+from requests import auth
 
-from up42 import host
-from up42.utils import get_logger, get_up42_py_version, read_json
+from up42 import host, utils
 
-logger = get_logger(__name__)
+logger = utils.get_logger(__name__)
 
 
-class retry_if_401_invalid_token(retry_if_exception):
+class RetryIf401InvalidToken(tenacity.retry_if_exception):
     """
     Custom tenacity error response that enables separate retry strategy for
     401 error (unauthorized response, unable decode JWT) due to invalid/timed out UP42 token.
@@ -53,7 +44,7 @@ class retry_if_401_invalid_token(retry_if_exception):
         super().__init__(predicate=is_http_401_error)
 
 
-class retry_if_429_rate_limit(retry_if_exception):
+class RetryIf429RateLimit(tenacity.retry_if_exception):
     """
     Custom tenacity error response that enables separate retry strategy for
     429 HTTPError (too many requests) due to UP42 rate limitation.
@@ -76,11 +67,11 @@ class retry_if_429_rate_limit(retry_if_exception):
 class Auth:
     def __init__(
         self,
-        cfg_file: Union[str, Path, None] = None,
+        cfg_file: Union[str, pathlib.Path, None] = None,
         project_id: Optional[str] = None,
-        project_api_key: Optional[str] = None,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
+        project_api_key: Optional[str] = None,  # pylint: disable=unused-argument
+        username: Optional[str] = None,  # pylint: disable=unused-argument
+        password: Optional[str] = None,  # pylint: disable=unused-argument
         **kwargs,
     ):
         """
@@ -126,8 +117,8 @@ class Auth:
             self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
-    def _choose_credential_source(self, cfg_file: Union[str, Path, None], kwargs: dict) -> dict:
-        config = read_json(cfg_file) or {}
+    def _choose_credential_source(self, cfg_file: Union[str, pathlib.Path, None], kwargs: dict) -> dict:
+        config = utils.read_json(cfg_file) or {}
         if set(config.keys()).intersection(set(kwargs.keys())):
             raise ValueError("Credentials must be provided either via config file or arguments, but not both")
         return config if config else kwargs
@@ -147,7 +138,7 @@ class Auth:
         for schema, parameters in schemas.items():
             if set(parameters).issubset(source.keys()):
                 if schema == "project":
-                    warn(
+                    warnings.warn(
                         "Project based authentication will be deprecated."
                         "Please follow authentication guidelines (/docs/authentication.md)."
                     )
@@ -188,13 +179,17 @@ class Auth:
     def _get_token_project_based(self):
         """Project specific authentication via project id and project api key."""
         try:
-            client = BackendApplicationClient(client_id=self._credentials_id, client_secret=self._credentials_key)
+            client = oauth2.BackendApplicationClient(
+                client_id=self._credentials_id, client_secret=self._credentials_key
+            )
             assert isinstance(self._credentials_id, str)
             assert isinstance(self._credentials_key, str)
-            auth = HTTPBasicAuth(self._credentials_id, self._credentials_key)
-            get_token_session = OAuth2Session(client=client)
-            token_response = get_token_session.fetch_token(token_url=host.endpoint("/oauth/token"), auth=auth)
-        except MissingTokenError as err:
+            http_basic_auth = auth.HTTPBasicAuth(self._credentials_id, self._credentials_key)
+            get_token_session = requests_oauthlib.OAuth2Session(client=client)
+            token_response = get_token_session.fetch_token(
+                token_url=host.endpoint("/oauth/token"), auth=http_basic_auth
+            )
+        except oauth2.MissingTokenError as err:
             raise ValueError("Authentication was not successful, check the provided project credentials.") from err
 
         self.token = token_response["data"]["accessToken"]
@@ -215,7 +210,7 @@ class Auth:
 
     @staticmethod
     def _generate_headers(token: Optional[str]) -> Dict[str, str]:
-        version = get_up42_py_version()
+        version = utils.get_up42_py_version()
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
@@ -225,9 +220,9 @@ class Auth:
         return headers
 
     # pylint: disable=dangerous-default-value
-    @retry(
-        retry=retry_if_429_rate_limit(),
-        wait=wait_random_exponential(multiplier=0.5, max=180),
+    @tenacity.retry(
+        retry=RetryIf429RateLimit(),
+        wait=tenacity.wait_random_exponential(multiplier=0.5, max=180),
         reraise=True,
     )
     def _request_helper(
@@ -301,10 +296,10 @@ class Auth:
         Returns:
             The API response.
         """
-        retryer_token = Retrying(
-            stop=stop_after_attempt(2),  # Original attempt + one retry
-            wait=wait_fixed(0.5),
-            retry=(retry_if_401_invalid_token() | retry_if_exception_type(requests.exceptions.ConnectionError)),
+        retryer_token = tenacity.Retrying(
+            stop=tenacity.stop_after_attempt(2),  # Original attempt + one retry
+            wait=tenacity.wait_fixed(0.5),
+            retry=(RetryIf401InvalidToken() | tenacity.retry_if_exception_type(requests.exceptions.ConnectionError)),
             after=lambda retry_state: self._get_token(),  # type:ignore
             reraise=True,
             # after final failed attempt, raises last attempt's exception instead of RetryError.
@@ -325,7 +320,7 @@ class Auth:
             # Raising the original `err` error would not surface the relevant error message (contained in API response)
             assert err.response is not None
             err_message = err.response.json()
-            logger.error(f"Error {err_message}")
+            logger.error("Error %s", err_message)
             raise requests.exceptions.RequestException(err_message) from err
 
         # Handle response text.
