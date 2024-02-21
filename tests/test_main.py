@@ -12,16 +12,14 @@ import pandas as pd
 import pytest
 import requests
 
-from up42 import main
-from up42.main import get_block_coverage, get_block_details, get_blocks, get_credits_balance
-from up42.webhooks import Webhook
+from up42 import main, webhooks
 
-from .fixtures.fixtures_globals import API_HOST
+from .fixtures import fixtures_globals
 
 
 def test_get_blocks(auth_mock, requests_mock, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_mock)
-    url_get_blocks = f"{API_HOST}/blocks"
+    url_get_blocks = f"{fixtures_globals.API_HOST}/blocks"
     requests_mock.get(
         url=url_get_blocks,
         json={
@@ -32,7 +30,7 @@ def test_get_blocks(auth_mock, requests_mock, monkeypatch):
             "error": {},
         },
     )
-    blocks = get_blocks()
+    blocks = main.get_blocks()
     assert isinstance(blocks, dict)
     assert "tiling" in list(blocks.keys())
 
@@ -40,7 +38,7 @@ def test_get_blocks(auth_mock, requests_mock, monkeypatch):
 @pytest.mark.live
 def test_get_blocks_live(auth_live, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_live)
-    blocks = get_blocks(basic=False)
+    blocks = main.get_blocks(basic=False)
     assert isinstance(blocks, list)
     blocknames = [block["name"] for block in blocks]
     assert "tiling" in blocknames
@@ -48,7 +46,7 @@ def test_get_blocks_live(auth_live, monkeypatch):
 
 def test_get_blocks_not_basic_dataframe(auth_mock, requests_mock, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_mock)
-    url_get_blocks = f"{API_HOST}/blocks"
+    url_get_blocks = f"{fixtures_globals.API_HOST}/blocks"
     json_get_blocks = {
         "data": [
             {"id": "789-2736-212", "name": "tiling"},
@@ -58,7 +56,7 @@ def test_get_blocks_not_basic_dataframe(auth_mock, requests_mock, monkeypatch):
     }
     requests_mock.get(url=url_get_blocks, json=json_get_blocks)
 
-    blocks_df = get_blocks(basic=False, as_dataframe=True)
+    blocks_df = main.get_blocks(basic=False, as_dataframe=True)
     assert isinstance(blocks_df, pd.DataFrame)
     assert "tiling" in blocks_df["name"].to_list()
 
@@ -66,7 +64,7 @@ def test_get_blocks_not_basic_dataframe(auth_mock, requests_mock, monkeypatch):
 def test_get_block_details(auth_mock, requests_mock, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_mock)
     block_id = "273612-13"
-    url_get_blocks_details = f"{API_HOST}/blocks/{block_id}"
+    url_get_blocks_details = f"{fixtures_globals.API_HOST}/blocks/{block_id}"
     requests_mock.get(
         url=url_get_blocks_details,
         json={
@@ -74,7 +72,7 @@ def test_get_block_details(auth_mock, requests_mock, monkeypatch):
             "error": {},
         },
     )
-    details = get_block_details(block_id=block_id)
+    details = main.get_block_details(block_id=block_id)
     assert isinstance(details, dict)
     assert details["id"] == block_id
     assert "createdAt" in details
@@ -85,7 +83,7 @@ def test_get_block_details_live(auth_live, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_live)
     tiling_id = "3e146dd6-2b67-4d6e-a422-bb3d973e32ff"
 
-    details = get_block_details(block_id=tiling_id)
+    details = main.get_block_details(block_id=tiling_id)
     assert isinstance(details, dict)
     assert details["id"] == tiling_id
     assert "createdAt" in details
@@ -94,7 +92,7 @@ def test_get_block_details_live(auth_live, monkeypatch):
 def test_get_block_coverage(auth_mock, requests_mock, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_mock)
     block_id = "273612-13"
-    url_get_blocks_coverage = f"{API_HOST}/blocks/{block_id}/coverage"
+    url_get_blocks_coverage = f"{fixtures_globals.API_HOST}/blocks/{block_id}/coverage"
     requests_mock.get(
         url=url_get_blocks_coverage,
         json={
@@ -121,7 +119,7 @@ def test_get_block_coverage(auth_mock, requests_mock, monkeypatch):
             ],
         },
     )
-    coverage = get_block_coverage(block_id=block_id)
+    coverage = main.get_block_coverage(block_id=block_id)
     assert isinstance(coverage, dict)
     assert "features" in coverage
 
@@ -130,7 +128,7 @@ def test_get_block_coverage(auth_mock, requests_mock, monkeypatch):
 def test_get_block_coverage_live(auth_live, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_live)
     block_id = "625fd923-8ae6-4ac3-8e13-f51d3c977222"
-    coverage = get_block_coverage(block_id=block_id)
+    coverage = main.get_block_coverage(block_id=block_id)
     assert isinstance(coverage, dict)
     assert "features" in coverage
 
@@ -140,12 +138,12 @@ def test_get_block_coverage_noresults_live(auth_live, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_live)
     with pytest.raises(requests.exceptions.RequestException):
         block_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
-        get_block_coverage(block_id=block_id)
+        main.get_block_coverage(block_id=block_id)
 
 
 def test_get_credits_balance(auth_mock, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_mock)
-    balance = get_credits_balance()
+    balance = main.get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
 
@@ -153,7 +151,7 @@ def test_get_credits_balance(auth_mock, monkeypatch):
 @pytest.mark.live
 def test_get_credits_balance_live(auth_live, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_live)
-    balance = get_credits_balance()
+    balance = main.get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
 
@@ -167,7 +165,7 @@ def test_get_auth_safely_no_auth(monkeypatch):
 
 def test_get_webhook_events(auth_mock, requests_mock, monkeypatch):
     monkeypatch.setattr(main, "_auth", auth_mock)
-    url_webhook_events = f"{API_HOST}/webhooks/events"
+    url_webhook_events = f"{fixtures_globals.API_HOST}/webhooks/events"
     requests_mock.get(
         url=url_webhook_events,
         json={
@@ -180,12 +178,13 @@ def test_get_webhook_events(auth_mock, requests_mock, monkeypatch):
     assert "some event" in events
 
 
+# pylint: disable=unused-argument
 @pytest.mark.parametrize("return_json", [False, True])
 def test_get_webhooks(auth_mock, monkeypatch, webhooks_mock, return_json):
     monkeypatch.setattr(main, "_auth", auth_mock)
-    webhooks = main.get_webhooks(return_json=return_json)
-    assert isinstance(webhooks, List)
+    results = main.get_webhooks(return_json=return_json)
+    assert isinstance(results, List)
     if return_json:
-        assert isinstance(webhooks[0], Dict)
+        assert isinstance(results[0], Dict)
     else:
-        assert isinstance(webhooks[0], Webhook)
+        assert isinstance(results[0], webhooks.Webhook)
