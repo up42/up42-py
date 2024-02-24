@@ -53,10 +53,10 @@ def authenticate(
     )
 
 
-def __get_auth_safely():
+def __get_auth_safely() -> Auth:
     if _auth:
         return _auth
-    raise ValueError("User not authenticated. Call up42.authenticate() first")
+    raise ValueError("User not authenticated.")
 
 
 def _check_auth(func, *args, **kwargs):
@@ -145,7 +145,7 @@ def get_blocks(
         A list of the public blocks and their metadata. Optional a simpler version
         dict.
     """
-    if isinstance(block_type, str):
+    if block_type:
         block_type = block_type.lower()
     url = endpoint("/blocks")
     response_json = __get_auth_safely()._request(request_type="GET", url=url)
