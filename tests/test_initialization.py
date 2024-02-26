@@ -24,8 +24,6 @@ from .fixtures.fixtures_globals import (
     WORKFLOW_ID,
 )
 
-# from up42.webhooks import Webhook
-
 
 def test_initialize_object_without_auth_raises():
     up42.main._auth = None
