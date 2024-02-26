@@ -46,7 +46,6 @@ class retry_if_401_invalid_token(retry_if_exception):
                             requests.exceptions.RequestException,
                         ),
                     )
-                    and hasattr(exception.response, "status_code")
                     and exception.response.status_code == 401
                 )
 
@@ -62,9 +61,11 @@ class retry_if_429_rate_limit(retry_if_exception):
     """
 
     def __init__(self):
-        def is_http_429_error(exception):
+        def is_http_429_error(exception) -> bool:
             if exception.response is not None:
                 return isinstance(exception, requests.exceptions.HTTPError) and exception.response.status_code == 429
+            else:
+                return False
 
         super().__init__(predicate=is_http_429_error)
 

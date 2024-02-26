@@ -56,6 +56,12 @@ def auth_mock(request, auth_project_mock, auth_account_mock):
     return mocks[request.param]
 
 
+# @pytest.fixture(autouse=True)
+# def setup_auth_mock():
+#     main._auth = auth_mock
+#     yield
+
+
 @pytest.fixture(scope="module")
 def project_id_live():
     return os.getenv("TEST_UP42_PROJECT_ID")

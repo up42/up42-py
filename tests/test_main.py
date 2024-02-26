@@ -158,15 +158,15 @@ def test_get_credits_balance_live(auth_live, monkeypatch):
     assert "balance" in balance
 
 
-def test_get_auth_safely_no_auth(monkeypatch):
-    monkeypatch.setattr(main, "_auth", None)
+def test_fails_to_get_auth_safely_if_unauthenticated():
+    main._auth = None
     with pytest.raises(ValueError) as excinfo:
         main.__get_auth_safely()
     assert "User not authenticated." in str(excinfo.value)
 
 
-def test_get_webhook_events(auth_mock, requests_mock, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_mock)
+def test_get_webhook_events(auth_mock, requests_mock):
+    main._auth = auth_mock
     url_webhook_events = f"{API_HOST}/webhooks/events"
     requests_mock.get(
         url=url_webhook_events,
@@ -181,8 +181,8 @@ def test_get_webhook_events(auth_mock, requests_mock, monkeypatch):
 
 
 @pytest.mark.parametrize("return_json", [False, True])
-def test_get_webhooks(auth_mock, monkeypatch, webhooks_mock, return_json):
-    monkeypatch.setattr(main, "_auth", auth_mock)
+def test_get_webhooks(auth_mock, webhooks_mock, return_json):
+    main._auth = auth_mock
     webhooks = main.get_webhooks(return_json=return_json)
     assert isinstance(webhooks, List)
     if return_json:
