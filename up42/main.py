@@ -53,10 +53,10 @@ def authenticate(
     )
 
 
-def __get_auth_safely():
+def __get_auth_safely() -> Auth:
     if _auth:
         return _auth
-    raise ValueError("User not authenticated. Call up42.authenticate() first")
+    raise ValueError("User not authenticated.")
 
 
 def _check_auth(func, *args, **kwargs):
@@ -85,8 +85,7 @@ def get_webhooks(return_json: bool = False) -> List[Webhook]:
     Returns:
         A list of the registered webhooks for this workspace.
     """
-    webhooks = Webhooks(auth=__get_auth_safely()).get_webhooks(return_json=return_json)
-    return webhooks
+    return Webhooks(auth=__get_auth_safely()).get_webhooks(return_json=return_json)
 
 
 @_check_auth
@@ -109,10 +108,9 @@ def create_webhook(
     Returns:
         A dict with details of the registered webhook.
     """
-    webhook = Webhooks(auth=__get_auth_safely()).create_webhook(
+    return Webhooks(auth=__get_auth_safely()).create_webhook(
         name=name, url=url, events=events, active=active, secret=secret
     )
-    return webhook
 
 
 @_check_auth
@@ -123,8 +121,7 @@ def get_webhook_events() -> dict:
     Returns:
         A dict of the available webhook events.
     """
-    webhook_events = Webhooks(auth=__get_auth_safely()).get_webhook_events()
-    return webhook_events
+    return Webhooks(auth=__get_auth_safely()).get_webhook_events()
 
 
 @_check_auth
@@ -145,7 +142,7 @@ def get_blocks(
         A list of the public blocks and their metadata. Optional a simpler version
         dict.
     """
-    if isinstance(block_type, str):
+    if block_type:
         block_type = block_type.lower()
     url = endpoint("/blocks")
     response_json = __get_auth_safely()._request(request_type="GET", url=url)
@@ -214,8 +211,7 @@ def get_block_coverage(block_id: str) -> dict:
     url = endpoint(f"/blocks/{block_id}/coverage")
     response_json = __get_auth_safely()._request(request_type="GET", url=url)
     details_json = response_json["data"]
-    response_coverage = requests.get(details_json["url"]).json()
-    return response_coverage
+    return requests.get(details_json["url"]).json()
 
 
 @_check_auth
@@ -228,5 +224,4 @@ def get_credits_balance() -> dict:
     """
     endpoint_url = endpoint("/accounts/me/credits/balance")
     response_json = __get_auth_safely()._request(request_type="GET", url=endpoint_url)
-    details_json = response_json["data"]
-    return details_json
+    return response_json["data"]
