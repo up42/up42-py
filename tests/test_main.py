@@ -6,7 +6,6 @@ e.g. `make test`, the auth module fixture is otherwise not properly attached to 
 or would need to be recreated for each test.
 """
 
-from typing import Dict, List
 
 import pandas as pd
 import pytest
@@ -14,7 +13,6 @@ import requests
 
 from up42 import main
 from up42.main import get_block_coverage, get_block_details, get_blocks, get_credits_balance
-from up42.webhooks import Webhook
 
 from .fixtures.fixtures_globals import API_HOST
 
@@ -158,34 +156,33 @@ def test_get_credits_balance_live(auth_live, monkeypatch):
     assert "balance" in balance
 
 
-def test_get_auth_safely_no_auth(monkeypatch):
-    monkeypatch.setattr(main, "_auth", None)
+def test_fails_to_get_auth_safely_if_unauthenticated():
+    main._auth = None
     with pytest.raises(ValueError) as excinfo:
         main.__get_auth_safely()
-    assert "User not authenticated. Call up42.authenticate() first" in str(excinfo.value)
+    assert "User not authenticated." in str(excinfo.value)
 
 
-def test_get_webhook_events(auth_mock, requests_mock, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_mock)
+def test_get_webhook_events(setup_auth_mock, requests_mock):
     url_webhook_events = f"{API_HOST}/webhooks/events"
+    events = ["some-event"]
     requests_mock.get(
         url=url_webhook_events,
         json={
-            "data": ["some event"],
+            "data": events,
             "error": {},
         },
     )
-    events = main.get_webhook_events()
-    assert isinstance(events, List)
-    assert "some event" in events
+    assert main.get_webhook_events() == events
 
 
 @pytest.mark.parametrize("return_json", [False, True])
-def test_get_webhooks(auth_mock, monkeypatch, webhooks_mock, return_json):
-    monkeypatch.setattr(main, "_auth", auth_mock)
+def test_get_webhooks(setup_auth_mock, webhooks_mock, return_json):
     webhooks = main.get_webhooks(return_json=return_json)
-    assert isinstance(webhooks, List)
+    expected = webhooks_mock.get_webhooks(return_json=return_json)
     if return_json:
-        assert isinstance(webhooks[0], Dict)
+        assert webhooks == expected
     else:
-        assert isinstance(webhooks[0], Webhook)
+        for hook, expected_hook in zip(webhooks, expected):
+            assert hook.webhook_id == expected_hook.webhook_id
+            assert hook._info == expected_hook._info
