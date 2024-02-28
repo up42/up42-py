@@ -56,7 +56,7 @@ def auth_mock(request, auth_project_mock, auth_account_mock):
     return mocks[request.param]
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture()
 def setup_auth_mock(auth_mock):
     main._auth = auth_mock
     yield
