@@ -24,9 +24,7 @@ def define_env(env):
     """
 
     def indent(input_string: Optional[str]) -> Optional[str]:
-        if input_string:
-            return input_string.replace("\n", "\n\t")
-        return None
+        return input_string and input_string.replace("\n", "\n\t")
 
     def get_methods(
         c: Union[Callable, ModuleType],
