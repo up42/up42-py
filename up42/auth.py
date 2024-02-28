@@ -320,8 +320,7 @@ class Auth:
 
         except requests.exceptions.RequestException as err:  # Base error class
             # Raising the original `err` error would not surface the relevant error message (contained in API response)
-            assert err.response is not None
-            err_message = err.response.json()
+            err_message = err.response.json() if err.response is not None else None
             logger.error(f"Error {err_message}")
             raise requests.exceptions.RequestException(err_message) from err
 
