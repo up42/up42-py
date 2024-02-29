@@ -111,6 +111,8 @@ class Auth:
             "project": self._get_token_project_based,
         }
 
+        self._credentials_id = None
+
         for schema, parameters in schemas.items():
             if set(parameters).issubset(source.keys()):
                 if schema == "project":
