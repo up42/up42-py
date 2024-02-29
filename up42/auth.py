@@ -27,47 +27,19 @@ from up42.utils import get_logger, get_up42_py_version, read_json
 logger = get_logger(__name__)
 
 
-class retry_if_401_invalid_token(retry_if_exception):
-    """
-    Custom tenacity error response that enables separate retry strategy for
-    401 error (unauthorized response, unable decode JWT) due to invalid/timed out UP42 token.
-
-    Adapted from https://github.com/alexwlchan/handling-http-429-with-tenacity
-    """
-
-    def __init__(self):
-        def is_http_401_error(exception):
-            if exception.response is not None:
+def retry_for_error_status_code(code: int):
+    class retry_on_code(retry_if_exception):
+        def __init__(self):
+            def is_http_error(exception):
                 return (
-                    isinstance(
-                        exception,
-                        (
-                            requests.exceptions.HTTPError,
-                            requests.exceptions.RequestException,
-                        ),
-                    )
-                    and exception.response.status_code == 401
+                    isinstance(exception, requests.exceptions.HTTPError)
+                    and exception.response is not None
+                    and exception.response.status_code == code
                 )
 
-        super().__init__(predicate=is_http_401_error)
+            super().__init__(predicate=is_http_error)
 
-
-class retry_if_429_rate_limit(retry_if_exception):
-    """
-    Custom tenacity error response that enables separate retry strategy for
-    429 HTTPError (too many requests) due to UP42 rate limitation.
-
-    Adapted from https://github.com/alexwlchan/handling-http-429-with-tenacity
-    """
-
-    def __init__(self):
-        def is_http_429_error(exception) -> bool:
-            if exception.response is not None:
-                return isinstance(exception, requests.exceptions.HTTPError) and exception.response.status_code == 429
-            else:
-                return False
-
-        super().__init__(predicate=is_http_429_error)
+    return retry_on_code()
 
 
 class Auth:
@@ -116,6 +88,8 @@ class Auth:
             self.project_id = project_id
 
         config = self._choose_credential_source(cfg_file, credentials_dict)
+        self._credentials_id: Optional[str] = None
+        self._credentials_key: Optional[str] = None
 
         if self.authenticate:
             self._set_credentials(source=config)
@@ -138,8 +112,6 @@ class Auth:
             "user": self._get_token_account_based,
             "project": self._get_token_project_based,
         }
-
-        self._credentials_id = None
 
         for schema, parameters in schemas.items():
             if set(parameters).issubset(source.keys()):
@@ -185,10 +157,10 @@ class Auth:
     def _get_token_project_based(self):
         """Project specific authentication via project id and project api key."""
         try:
-            client = BackendApplicationClient(client_id=self._credentials_id, client_secret=self._credentials_key)
+            client = BackendApplicationClient(client_id=self._credentials_id or "", client_secret=self._credentials_key)
             assert isinstance(self._credentials_id, str)
             assert isinstance(self._credentials_key, str)
-            auth = HTTPBasicAuth(self._credentials_id, self._credentials_key)
+            auth = HTTPBasicAuth(self._credentials_id, self._credentials_key or "")
             get_token_session = OAuth2Session(client=client)
             token_response = get_token_session.fetch_token(token_url=host.endpoint("/oauth/token"), auth=auth)
         except MissingTokenError as err:
@@ -223,7 +195,7 @@ class Auth:
 
     # pylint: disable=dangerous-default-value
     @retry(
-        retry=retry_if_429_rate_limit(),
+        retry=retry_for_error_status_code(429),
         wait=wait_random_exponential(multiplier=0.5, max=180),
         reraise=True,
     )
@@ -301,7 +273,7 @@ class Auth:
         retryer_token = Retrying(
             stop=stop_after_attempt(2),  # Original attempt + one retry
             wait=wait_fixed(0.5),
-            retry=(retry_if_401_invalid_token() | retry_if_exception_type(requests.exceptions.ConnectionError)),
+            retry=(retry_for_error_status_code(401) | retry_if_exception_type(requests.exceptions.ConnectionError)),
             after=lambda retry_state: self._get_token(),  # type:ignore
             reraise=True,
             # after final failed attempt, raises last attempt's exception instead of RetryError.
@@ -320,7 +292,7 @@ class Auth:
 
         except requests.exceptions.HTTPError as err:  # Base error class
             # Raising the original `err` error would not surface the relevant error message (contained in API response)
-            err_message = err.response.json() if err.response is not None else None
+            err_message = err.response is not None and err.response.json()
             logger.error(f"Error {err_message}")
             raise requests.exceptions.HTTPError(err_message) from err
 
