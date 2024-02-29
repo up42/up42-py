@@ -18,7 +18,7 @@ class Webhook:
     ```
     """
 
-    def __init__(self, auth: Auth, webhook_id: str, webhook_info: dict = None):
+    def __init__(self, auth: Auth, webhook_id: str, webhook_info: Optional[dict] = None):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.webhook_id = webhook_id
