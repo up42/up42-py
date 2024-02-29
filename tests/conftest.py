@@ -13,7 +13,6 @@ from .fixtures.fixtures_auth import (
     password_test_live,
     project_api_key_live,
     project_id_live,
-    setup_auth_mock,
     username_test_live,
 )
 from .fixtures.fixtures_catalog import catalog_live, catalog_mock, catalog_pagination_mock, catalog_usagetype_mock

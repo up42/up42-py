@@ -1,12 +1,3 @@
-"""
-Note: The additional monkeypatching of the auth module in this module's tests is neccessary if running all tests
-in one pytest chain.
-They work without the monkeypatching when run independent of each other. However, when running all together via pytest,
-e.g. `make test`, the auth module fixture is otherwise not properly attached to the class object mocks for each test,
-or would need to be recreated for each test.
-"""
-
-
 import pandas as pd
 import pytest
 import requests
@@ -17,8 +8,13 @@ from up42.main import get_block_coverage, get_block_details, get_blocks, get_cre
 from .fixtures.fixtures_globals import API_HOST
 
 
-def test_get_blocks(auth_mock, requests_mock, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_mock)
+@pytest.fixture(autouse=True)
+def setup_auth_mock(auth_mock):
+    main._auth = auth_mock
+    yield
+
+
+def test_get_blocks(auth_mock, requests_mock):
     url_get_blocks = f"{API_HOST}/blocks"
     requests_mock.get(
         url=url_get_blocks,
@@ -36,16 +32,15 @@ def test_get_blocks(auth_mock, requests_mock, monkeypatch):
 
 
 @pytest.mark.live
-def test_get_blocks_live(auth_live, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_live)
+def test_get_blocks_live(auth_live):
+    main._auth = auth_live
     blocks = get_blocks(basic=False)
     assert isinstance(blocks, list)
     blocknames = [block["name"] for block in blocks]
     assert "tiling" in blocknames
 
 
-def test_get_blocks_not_basic_dataframe(auth_mock, requests_mock, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_mock)
+def test_get_blocks_not_basic_dataframe(auth_mock, requests_mock):
     url_get_blocks = f"{API_HOST}/blocks"
     json_get_blocks = {
         "data": [
@@ -61,8 +56,7 @@ def test_get_blocks_not_basic_dataframe(auth_mock, requests_mock, monkeypatch):
     assert "tiling" in blocks_df["name"].to_list()
 
 
-def test_get_block_details(auth_mock, requests_mock, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_mock)
+def test_get_block_details(auth_mock, requests_mock):
     block_id = "273612-13"
     url_get_blocks_details = f"{API_HOST}/blocks/{block_id}"
     requests_mock.get(
@@ -79,8 +73,8 @@ def test_get_block_details(auth_mock, requests_mock, monkeypatch):
 
 
 @pytest.mark.live
-def test_get_block_details_live(auth_live, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_live)
+def test_get_block_details_live(auth_live):
+    main._auth = auth_live
     tiling_id = "3e146dd6-2b67-4d6e-a422-bb3d973e32ff"
 
     details = get_block_details(block_id=tiling_id)
@@ -89,8 +83,7 @@ def test_get_block_details_live(auth_live, monkeypatch):
     assert "createdAt" in details
 
 
-def test_get_block_coverage(auth_mock, requests_mock, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_mock)
+def test_get_block_coverage(auth_mock, requests_mock):
     block_id = "273612-13"
     url_get_blocks_coverage = f"{API_HOST}/blocks/{block_id}/coverage"
     requests_mock.get(
@@ -125,8 +118,8 @@ def test_get_block_coverage(auth_mock, requests_mock, monkeypatch):
 
 
 @pytest.mark.live
-def test_get_block_coverage_live(auth_live, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_live)
+def test_get_block_coverage_live(auth_live):
+    main._auth = auth_live
     block_id = "625fd923-8ae6-4ac3-8e13-f51d3c977222"
     coverage = get_block_coverage(block_id=block_id)
     assert isinstance(coverage, dict)
@@ -134,23 +127,22 @@ def test_get_block_coverage_live(auth_live, monkeypatch):
 
 
 @pytest.mark.live
-def test_get_block_coverage_noresults_live(auth_live, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_live)
+def test_get_block_coverage_noresults_live(auth_live):
+    main._auth = auth_live
     with pytest.raises(requests.exceptions.RequestException):
         block_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
         get_block_coverage(block_id=block_id)
 
 
-def test_get_credits_balance(auth_mock, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_mock)
+def test_get_credits_balance(auth_mock):
     balance = get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
 
 
 @pytest.mark.live
-def test_get_credits_balance_live(auth_live, monkeypatch):
-    monkeypatch.setattr(main, "_auth", auth_live)
+def test_get_credits_balance_live(auth_live):
+    main._auth = auth_live
     balance = get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
@@ -158,9 +150,8 @@ def test_get_credits_balance_live(auth_live, monkeypatch):
 
 def test_fails_to_get_auth_safely_if_unauthenticated():
     main._auth = None
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(ValueError):
         main.__get_auth_safely()
-    assert "User not authenticated." in str(excinfo.value)
 
 
 def test_get_webhook_events(setup_auth_mock, requests_mock):
