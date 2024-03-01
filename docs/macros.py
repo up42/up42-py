@@ -12,7 +12,8 @@ Changes in macros.py code, for some operations, requires restart of `mkdocs serv
 Docs: https://mkdocs-macros-plugin.readthedocs.io/en/latest/macros/
 """
 
-from typing import Callable, List
+from types import ModuleType
+from typing import Callable, List, Optional, Union
 
 import up42
 
@@ -22,12 +23,12 @@ def define_env(env):
     This is the hook for defining variables, macros and filters.
     """
 
-    def indent(input_string: str):
-        return input_string.replace("\n", "\n\t")
+    def indent(input_string: Optional[str]) -> Optional[str]:
+        return input_string and input_string.replace("\n", "\n\t")
 
     def get_methods(
-        c: Callable,
-        exclude: List[str] = None,
+        c: Union[Callable, ModuleType],
+        exclude: Optional[List[str]] = None,
         exclude_viztools=False,
     ) -> List[str]:
         """

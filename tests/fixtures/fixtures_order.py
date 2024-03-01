@@ -67,7 +67,7 @@ def order_mock(auth_mock, requests_mock):
 
 @pytest.fixture()
 def order_live(auth_live):
-    return Order(auth=auth_live, order_id=os.getenv("TEST_UP42_ORDER_ID"))
+    return Order(auth=auth_live, order_id=os.environ["TEST_UP42_ORDER_ID"])
 
 
 @pytest.fixture
