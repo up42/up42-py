@@ -4,9 +4,7 @@ from urllib3.util import Retry
 from up42.http import config
 
 
-def create(
-        supply_settings=config.ResilienceSettings, include_post=False
-) -> adapters.HTTPAdapter:
+def create(supply_settings=config.ResilienceSettings, include_post=False) -> adapters.HTTPAdapter:
     settings = supply_settings()
     allowed_methods = set(Retry.DEFAULT_ALLOWED_METHODS)
     if include_post:

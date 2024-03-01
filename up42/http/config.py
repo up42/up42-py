@@ -1,4 +1,3 @@
-import os
 from dataclasses import dataclass
 
 
@@ -14,3 +13,9 @@ class TokenProviderSettings:
     token_url: str
     duration = 5 * 60
     timeout = 120
+
+
+@dataclass(eq=True, frozen=True)
+class ClientCredentialsSettings:
+    client_id: str
+    client_secret: str
