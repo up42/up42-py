@@ -220,13 +220,6 @@ class Storage:
             "status": set(statuses) & allowed_statuses if statuses else None,
         }
         params = {k: v for k, v in params.items() if v is not None}
-        if "status" in params and params["status"] is not None:
-            if statuses is not None and len(statuses) > len(params["status"]):
-                logger.info(
-                    "statuses not included in allowed_statuses"
-                    f"{set(statuses).difference(allowed_statuses)} were ignored."
-                )
-
         url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
 
         orders_json = query_paginated_endpoints(auth=self.auth, url=url, limit=limit)
