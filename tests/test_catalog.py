@@ -7,8 +7,7 @@ import geopandas as gpd  # type: ignore
 import pandas as pd
 import pytest
 
-from up42.catalog import Catalog
-from up42.order import Order
+from up42 import catalog, order
 
 from .fixtures import fixtures_globals
 
@@ -449,7 +448,7 @@ def test_construct_order_parameters_live(catalog_live, product_id):
 
 # pylint: disable=unused-argument
 def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, auth_mock):
-    catalog_instance = Catalog(auth=auth_mock)
+    catalog_instance = catalog.Catalog(auth_instance=auth_mock)
     expected_payload = {
         "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
         "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
@@ -475,9 +474,9 @@ def test_order_from_catalog(
             "errors": [],
         },
     )
-    order = catalog_mock.place_order(order_parameters=order_parameters)
-    assert isinstance(order, Order)
-    assert order.order_id == fixtures_globals.ORDER_ID
+    placed_order = catalog_mock.place_order(order_parameters=order_parameters)
+    assert isinstance(placed_order, order.Order)
+    assert placed_order.order_id == fixtures_globals.ORDER_ID
 
 
 def test_order_from_catalog_track_status(catalog_order_parameters, order_mock, catalog_mock, requests_mock):
@@ -497,13 +496,13 @@ def test_order_from_catalog_track_status(catalog_order_parameters, order_mock, c
             {"json": {"status": "FULFILLED"}},
         ],
     )
-    order = catalog_mock.place_order(
+    placed_order = catalog_mock.place_order(
         order_parameters=catalog_order_parameters,
         track_status=True,
         report_time=0.1,
     )
-    assert isinstance(order, Order)
-    assert order.order_id == fixtures_globals.ORDER_ID
+    assert isinstance(placed_order, order.Order)
+    assert placed_order.order_id == fixtures_globals.ORDER_ID
 
 
 @pytest.mark.live
@@ -516,6 +515,6 @@ def test_estimate_order_from_catalog_live(catalog_order_parameters, catalog_live
 @pytest.mark.skip(reason="Placing orders costs credits.")
 @pytest.mark.live
 def test_order_from_catalog_live(catalog_order_parameters, catalog_live):
-    order = catalog_live.place_order(catalog_order_parameters)
-    assert isinstance(order, Order)
-    assert order.order_id
+    placed_order = catalog_live.place_order(catalog_order_parameters)
+    assert isinstance(placed_order, order.Order)
+    assert placed_order.order_id

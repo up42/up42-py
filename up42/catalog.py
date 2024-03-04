@@ -11,10 +11,7 @@ import tqdm
 from geopandas import GeoDataFrame  # type: ignore
 from shapely.geometry import Polygon  # type: ignore
 
-from up42 import host, utils
-from up42.auth import Auth
-from up42.order import Order
-from up42.viztools import VizTools
+from up42 import auth, host, order, utils, viztools
 
 logger = utils.get_logger(__name__)
 
@@ -24,8 +21,8 @@ class CatalogBase:
     The base for Catalog and Tasking class, shared functionality.
     """
 
-    def __init__(self, auth: Auth):
-        self.auth = auth
+    def __init__(self, auth_instance: auth.Auth):
+        self.auth_instance = auth_instance
         self.type: Union[str, None] = None
 
     def get_data_products(self, basic: bool = True) -> Union[dict, List[dict]]:
@@ -38,7 +35,7 @@ class CatalogBase:
                 data product configurations, default True.
         """
         url = host.endpoint("/data-products")
-        json_response = self.auth.request("GET", url)
+        json_response = self.auth_instance.request("GET", url)
         unfiltered_products: list = json_response["data"]
 
         products = []
@@ -90,7 +87,7 @@ class CatalogBase:
             data_product_id: The id of a catalog/tasking data product.
         """
         url = host.endpoint(f"/orders/schema/{data_product_id}")
-        json_response = self.auth.request("GET", url)
+        json_response = self.auth_instance.request("GET", url)
         return json_response  # Does not contain APIv1 "data" key
 
     def get_collections(self) -> Union[Dict, List]:
@@ -98,7 +95,7 @@ class CatalogBase:
         Get the available data collections.
         """
         url = host.endpoint("/collections")
-        json_response = self.auth.request("GET", url)
+        json_response = self.auth_instance.request("GET", url)
         collections = [c for c in json_response["data"] if c["type"] == self.type]
         return collections
 
@@ -108,7 +105,7 @@ class CatalogBase:
         track_status: bool = False,
         report_time: int = 120,
         **kwargs,
-    ) -> Order:
+    ) -> order.Order:
         """
         Place an order.
 
@@ -140,13 +137,13 @@ class CatalogBase:
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
 
-        order = Order.place(self.auth, order_parameters)  # type: ignore
+        placed_order = order.Order.place(self.auth, order_parameters)  # type: ignore
         if track_status:
-            order.track_status(report_time)
-        return order
+            placed_order.track_status(report_time)
+        return placed_order
 
 
-class Catalog(CatalogBase, VizTools):
+class Catalog(CatalogBase, viztools.VizTools):
     """
     The Catalog class enables access to the UP42 catalog functionality (data archive search & ordering).
 
@@ -158,15 +155,15 @@ class Catalog(CatalogBase, VizTools):
     This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
     """
 
-    def __init__(self, auth: Auth):
-        super().__init__(auth)
-        self.auth = auth
+    def __init__(self, auth_instance: auth.Auth):
+        super().__init__(auth_instance)
+        self.auth_instance = auth_instance
         self.quicklooks = None
         self.type = "ARCHIVE"
         self.data_products: Union[None, dict] = None
 
     def __repr__(self):
-        return f"Catalog(auth={self.auth})"
+        return f"Catalog(auth={self.auth_instance})"
 
     def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
         """
@@ -191,7 +188,7 @@ class Catalog(CatalogBase, VizTools):
             warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
-        return Order.estimate(self.auth, order_parameters)  # type: ignore
+        return order.Order.estimate(self.auth, order_parameters)  # type: ignore
 
     @utils.deprecation("construct_search_parameters", "0.25.0")
     def construct_parameters(self, **kwargs):  # pragma: no cover
@@ -329,7 +326,7 @@ class Catalog(CatalogBase, VizTools):
         host_result = hosts[0]
 
         url = host.endpoint(f"/catalog/hosts/{host_result}/stac/search")
-        response_json: dict = self.auth.request("POST", url, search_parameters)
+        response_json: dict = self.auth_instance.request("POST", url, search_parameters)
         features = response_json["features"]
 
         # Search results with more than 500 items are given as 50-per-page additional pages.
@@ -338,7 +335,7 @@ class Catalog(CatalogBase, VizTools):
             if pagination_exhausted:
                 break
             next_page_url = response_json["links"][1]["href"]
-            response_json = self.auth.request("POST", next_page_url, search_parameters)
+            response_json = self.auth_instance.request("POST", next_page_url, search_parameters)
             features += response_json["features"]
 
         features = features[:max_limit]
@@ -455,7 +452,7 @@ class Catalog(CatalogBase, VizTools):
         for image_id in tqdm.tqdm(image_ids):
             try:
                 url = host.endpoint(f"/catalog/{host_result}/image/{image_id}/quicklook")
-                response = self.auth.request(request_type="GET", url=url, return_text=False)
+                response = self.auth_instance.request(request_type="GET", url=url, return_text=False)
                 out_path = output_directory / f"quicklook_{image_id}.jpg"
                 out_paths.append(str(out_path))
                 with open(out_path, "wb") as dst:

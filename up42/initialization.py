@@ -54,7 +54,7 @@ def initialize_catalog() -> "Catalog":
     """
     Returns a Catalog object for using the catalog search.
     """
-    return Catalog(auth=__get_auth_safely())
+    return Catalog(auth_instance=__get_auth_safely())
 
 
 @_check_auth
