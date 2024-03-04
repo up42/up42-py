@@ -23,8 +23,8 @@ def define_env(env):
     This is the hook for defining variables, macros and filters.
     """
 
-    def indent(input_string: str):
-        return input_string.replace("\n", "\n\t")
+    def indent(input_string: Optional[str]) -> Optional[str]:
+        return input_string and input_string.replace("\n", "\n\t")
 
     def get_methods(
         c: Union[Callable, ModuleType],

@@ -1,5 +1,5 @@
 import copy
-from typing import List
+from typing import List, cast
 
 import pystac
 import pystac_client
@@ -186,8 +186,7 @@ def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
     )
 
     json_storage_stac = copy.deepcopy(JSON_STORAGE_STAC)
-    assert isinstance(json_storage_stac["links"], List)
-    json_storage_stac["links"].pop(-1)
+    cast(List, json_storage_stac["links"]).pop(-1)
 
     requests_mock.post(
         url_storage_stac,

@@ -17,8 +17,7 @@ def estimation_mock(auth_mock):
         },
         "tiling:1": {"tile_width": 768},
     }
-    input_tasks: List[Dict[str, Any]]
-    input_tasks = [
+    input_tasks: List[Dict[str, Any]] = [
         {
             "name": "esa-s2-l2a-gtiff-visual:1",
             "parentName": None,
