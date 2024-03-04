@@ -77,19 +77,17 @@ def define_env(env):
     # (In code reference added automatically by mkdocstrings).
     # Every class requires a docstring, otherwise mkdocs fails!
     env.variables.docstring_up42 = indent(up42.__doc__)  # init module docstring
-    env.variables.docstring_project = indent(up42.project.Project.__doc__) if up42.project.Project.__doc__ else ""
-    env.variables.docstring_workflow = indent(up42.workflow.Workflow.__doc__) if up42.workflow.Workflow.__doc__ else ""
-    env.variables.docstring_job = indent(up42.job.Job.__doc__) if up42.job.Job.__doc__ else ""
-    env.variables.docstring_jobtask = indent(up42.jobtask.JobTask.__doc__) if up42.jobtask.JobTask.__doc__ else ""
-    env.variables.docstring_jobcollection = (
-        indent(up42.jobcollection.JobCollection.__doc__) if up42.jobcollection.JobCollection.__doc__ else ""
-    )
-    env.variables.docstring_catalog = indent(up42.catalog.Catalog.__doc__) if up42.catalog.Catalog.__doc__ else ""
-    env.variables.docstring_tasking = indent(up42.tasking.Tasking.__doc__) if up42.tasking.Tasking.__doc__ else ""
-    env.variables.docstring_order = indent(up42.order.Order.__doc__) if up42.order.Order.__doc__ else ""
-    env.variables.docstring_storage = indent(up42.storage.Storage.__doc__) if up42.storage.Storage.__doc__ else ""
-    env.variables.docstring_asset = indent(up42.asset.Asset.__doc__) if up42.asset.Asset.__doc__ else ""
-    env.variables.docstring_webhooks = indent(up42.webhooks.Webhooks.__doc__) if up42.webhooks.Webhooks.__doc__ else ""
+    env.variables.docstring_project = indent(up42.project.Project.__doc__)
+    env.variables.docstring_workflow = indent(up42.workflow.Workflow.__doc__)
+    env.variables.docstring_job = indent(up42.job.Job.__doc__)
+    env.variables.docstring_jobtask = indent(up42.jobtask.JobTask.__doc__)
+    env.variables.docstring_jobcollection = indent(up42.jobcollection.JobCollection.__doc__)
+    env.variables.docstring_catalog = indent(up42.catalog.Catalog.__doc__)
+    env.variables.docstring_tasking = indent(up42.tasking.Tasking.__doc__)
+    env.variables.docstring_order = indent(up42.order.Order.__doc__)
+    env.variables.docstring_storage = indent(up42.storage.Storage.__doc__)
+    env.variables.docstring_asset = indent(up42.asset.Asset.__doc__)
+    env.variables.docstring_webhooks = indent(up42.webhooks.Webhooks.__doc__)
 
     # Class functions for reference and structure chapter
     env.variables.funcs_up42 = get_methods(up42, exclude_viztools=True)
