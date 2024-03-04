@@ -88,7 +88,7 @@ class Order:
         Gets and updates the order information.
         """
         url = endpoint(f"/v2/orders/{self.order_id}")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         self._info = response_json
         return self._info
 
@@ -143,7 +143,7 @@ class Order:
             Order: The placed order.
         """
         url = endpoint(f"/v2/orders?workspaceId={auth.workspace_id}")
-        response_json = auth._request(
+        response_json = auth.request(
             request_type="POST",
             url=url,
             data=_translate_construct_parameters(order_parameters),
@@ -170,7 +170,7 @@ class Order:
         """
 
         url = endpoint("/v2/orders/estimate")
-        response_json = auth._request(
+        response_json = auth.request(
             request_type="POST",
             url=url,
             data=_translate_construct_parameters(order_parameters),

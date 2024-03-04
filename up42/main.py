@@ -145,7 +145,7 @@ def get_blocks(
     if block_type:
         block_type = block_type.lower()
     url = endpoint("/blocks")
-    response_json = __get_auth_safely()._request(request_type="GET", url=url)
+    response_json = __get_auth_safely().request(request_type="GET", url=url)
     public_blocks_json = response_json["data"]
 
     if block_type == "data":
@@ -187,7 +187,7 @@ def get_block_details(block_id: str, as_dataframe: bool = False) -> Union[dict, 
         A dict of the block details metadata for the specific block.
     """
     url = endpoint(f"/blocks/{block_id}")  # public blocks
-    response_json = __get_auth_safely()._request(request_type="GET", url=url)
+    response_json = __get_auth_safely().request(request_type="GET", url=url)
     details_json = response_json["data"]
 
     if as_dataframe:
@@ -209,7 +209,7 @@ def get_block_coverage(block_id: str) -> dict:
         A dict of the spatial coverage for the specific block.
     """
     url = endpoint(f"/blocks/{block_id}/coverage")
-    response_json = __get_auth_safely()._request(request_type="GET", url=url)
+    response_json = __get_auth_safely().request(request_type="GET", url=url)
     details_json = response_json["data"]
     return requests.get(details_json["url"]).json()
 
@@ -223,5 +223,5 @@ def get_credits_balance() -> dict:
         A dict with the balance of credits available in your account.
     """
     endpoint_url = endpoint("/accounts/me/credits/balance")
-    response_json = __get_auth_safely()._request(request_type="GET", url=endpoint_url)
+    response_json = __get_auth_safely().request(request_type="GET", url=endpoint_url)
     return response_json["data"]
