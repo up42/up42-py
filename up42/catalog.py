@@ -137,7 +137,7 @@ class CatalogBase:
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
 
-        placed_order = order.Order.place(self.auth, order_parameters)  # type: ignore
+        placed_order = order.Order.place(self.auth_instance, order_parameters)  # type: ignore
         if track_status:
             placed_order.track_status(report_time)
         return placed_order
@@ -188,7 +188,7 @@ class Catalog(CatalogBase, viztools.VizTools):
             warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
-        return order.Order.estimate(self.auth, order_parameters)  # type: ignore
+        return order.Order.estimate(self.auth_instance, order_parameters)  # type: ignore
 
     @utils.deprecation("construct_search_parameters", "0.25.0")
     def construct_parameters(self, **kwargs):  # pragma: no cover
