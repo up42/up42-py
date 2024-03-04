@@ -7,9 +7,9 @@ import warnings
 from typing import Any, Dict, List, Optional, Union
 
 import geojson  # type: ignore
+import geopandas  # type: ignore
 import tqdm
-from geopandas import GeoDataFrame  # type: ignore
-from shapely.geometry import Polygon  # type: ignore
+from shapely import geometry as geom  # type: ignore
 
 from up42 import auth, host, order, utils, viztools
 
@@ -197,7 +197,7 @@ class Catalog(CatalogBase, viztools.VizTools):
 
     @staticmethod
     def construct_search_parameters(
-        geometry: Union[geojson.FeatureCollection, geojson.Feature, dict, list, GeoDataFrame, Polygon],
+        geometry: Union[geojson.FeatureCollection, geojson.Feature, dict, list, geopandas.GeoDataFrame, geom.Polygon],
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
@@ -265,17 +265,17 @@ class Catalog(CatalogBase, viztools.VizTools):
 
         return search_parameters
 
-    def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[GeoDataFrame, dict]:
+    def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[geopandas.GeoDataFrame, dict]:
         """
         Searches the catalog for the the search parameters and returns the metadata of
         the matching scenes.
 
         Args:
             search_parameters: The catalog search parameters, see example.
-            as_dataframe: return type, GeoDataFrame if True (default), FeatureCollection if False.
+            as_dataframe: return type, geopandas.GeoDataFrame if True (default), FeatureCollection if False.
 
         Returns:
-            The search results as a GeoDataFrame, optionally as JSON dict.
+            The search results as a geopandas.GeoDataFrame, optionally as JSON dict.
 
         Example:
             ```python
@@ -340,9 +340,9 @@ class Catalog(CatalogBase, viztools.VizTools):
 
         features = features[:max_limit]
         if not features:
-            df = GeoDataFrame(columns=["geometry"], geometry="geometry")
+            df = geopandas.GeoDataFrame(columns=["geometry"], geometry="geometry")
         else:
-            df = GeoDataFrame.from_features(geojson.FeatureCollection(features=features), crs="EPSG:4326")
+            df = geopandas.GeoDataFrame.from_features(geojson.FeatureCollection(features=features), crs="EPSG:4326")
 
         logger.info("%s results returned.", df.shape[0])
         if as_dataframe:
@@ -359,8 +359,8 @@ class Catalog(CatalogBase, viztools.VizTools):
             geojson.Feature,
             geojson.FeatureCollection,
             list,
-            GeoDataFrame,
-            Polygon,
+            geopandas.GeoDataFrame,
+            geom.Polygon,
         ] = None,
         tags: Optional[List[str]] = None,
     ):
@@ -373,7 +373,7 @@ class Catalog(CatalogBase, viztools.VizTools):
             data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
             image_id: The id of the desired image (from search results)
             aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
-                list, GeoDataFrame, Polygon. Optional for "full-image products".
+                list, geopandas.GeoDataFrame, Polygon. Optional for "full-image products".
             tags: A list of tags that categorize the order.
         Returns:
             The order parameters dictionary.
