@@ -51,6 +51,7 @@ class TestProjectAuth:
         project_auth = create_project_auth()
         project_auth(fake_request)
         assert fake_request.headers["Authorization"] == f"Bearer {token_value}"
+        assert project_auth.token.access_token == token_value
         assert requests_mock.called_once
 
     def test_should_fetch_token_when_expired(self, requests_mock: Mocker):
@@ -59,5 +60,7 @@ class TestProjectAuth:
         project_auth = create_project_auth()
         time.sleep(token_settings.duration + 1)
         project_auth(fake_request)
-        assert fake_request.headers["Authorization"] == "Bearer token2"
+        expected_token_value = "token2"
+        assert fake_request.headers["Authorization"] == f"Bearer {expected_token_value}"
+        assert project_auth.token.access_token == expected_token_value
         assert requests_mock.call_count == 2
