@@ -30,6 +30,12 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.37.0a0
+
+**March 04, 2024**
+ - Refactored catalog.py and test_catalog.py as per pylint checks.
+ - Some minor refactoring in other classes due to auth's function name change
+
 ## 0.36.0
 
 **February 20, 2024**
