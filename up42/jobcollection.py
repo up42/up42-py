@@ -66,7 +66,9 @@ class JobCollection(VizTools):
         """
         return self.apply(lambda job: job.status, only_succeeded=False)
 
-    def apply(self, worker: Callable, only_succeeded: bool = True, **kwargs) -> Dict[str, Any]:
+    def apply(
+        self, worker: Callable, only_succeeded: bool = True, **kwargs
+    ) -> Dict[str, Any]:
         """
         Helper function to apply `worker` on all jobs in the collection.
         `worker` needs to accept `Job` as first argument. For example, a
@@ -84,7 +86,9 @@ class JobCollection(VizTools):
             of `worker`.
         """
         if not self.jobs:
-            raise ValueError("This is an empty JobCollection. Cannot apply over an empty job list.")
+            raise ValueError(
+                "This is an empty JobCollection. Cannot apply over an empty job list."
+            )
 
         out_dict = {}
         for job in self.jobs:
@@ -95,7 +99,9 @@ class JobCollection(VizTools):
                 out_dict[job.job_id] = worker(job, **kwargs)
 
         if not out_dict:
-            raise ValueError("All jobs have failed! Cannot apply over an empty succeeded job list.")
+            raise ValueError(
+                "All jobs have failed! Cannot apply over an empty succeeded job list."
+            )
 
         return out_dict
 
@@ -127,7 +133,9 @@ class JobCollection(VizTools):
 
         def download_results_worker(job, output_directory, unpacking):
             out_dir = output_directory / f"job_{job.job_id}"
-            out_filepaths_job = job.download_results(output_directory=out_dir, unpacking=unpacking)
+            out_filepaths_job = job.download_results(
+                output_directory=out_dir, unpacking=unpacking
+            )
             return out_filepaths_job
 
         out_filepaths = self.apply(
@@ -142,15 +150,21 @@ class JobCollection(VizTools):
                 out_features = []
                 for job_id in out_filepaths:
                     all_files = out_filepaths[job_id]
-                    data_json = [d for d in all_files if Path(d).name == "data.json"][0]
+                    data_json = [
+                        d for d in all_files if Path(d).name == "data.json"
+                    ][0]
                     with open(data_json) as src:
                         data_json_fc = geojson.load(src)
                         for feat in data_json_fc.features:
                             feat.properties["job_id"] = job_id
                             try:
-                                feat.properties["up42.data_path"] = f"job_{job_id}/{feat.properties['up42.data_path']}"
+                                feat.properties[
+                                    "up42.data_path"
+                                ] = f"job_{job_id}/{feat.properties['up42.data_path']}"
                             except KeyError:
-                                logger.warning("data.json does not contain up42.data_path, skipping...")
+                                logger.warning(
+                                    "data.json does not contain up42.data_path, skipping..."
+                                )
                             out_features.append(feat)
                 geojson.dump(FeatureCollection(out_features), dst)
 

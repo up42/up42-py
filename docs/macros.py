@@ -39,7 +39,11 @@ def define_env(env):
                 exclude: Exclude specific methods.
                 exclude_viztools: Exclude inherited functions from VizTools.
         """
-        property_methods = [name for name, value in vars(c).items() if isinstance(value, property)]
+        property_methods = [
+            name
+            for name, value in vars(c).items()
+            if isinstance(value, property)
+        ]
         function_methods = [
             name
             for name in dir(c)
@@ -53,9 +57,15 @@ def define_env(env):
         function_methods = function_methods + property_methods
 
         if exclude_viztools:
-            function_methods = [f for f in function_methods if f not in dir(up42.viztools.VizTools)]
+            function_methods = [
+                f
+                for f in function_methods
+                if f not in dir(up42.viztools.VizTools)
+            ]
         if exclude:
-            function_methods = [f for f in function_methods if f not in exclude]
+            function_methods = [
+                f for f in function_methods if f not in exclude
+            ]
 
         return function_methods
 
@@ -70,18 +80,24 @@ def define_env(env):
         # Requires Python linebreak and markdown linebreak (two spaces)!
         # "\n\t\t• `abc`  \n\t\t• `cde`  \n\t\t• `cde`
 
-        formatted = [f"\n\t\t&emsp; • `.{func}()`  " for func in function_methods]
+        formatted = [
+            f"\n\t\t&emsp; • `.{func}()`  " for func in function_methods
+        ]
         return "".join(formatted)
 
     # Class docstrings variables for use in the structure chapter.
     # (In code reference added automatically by mkdocstrings).
     # Every class requires a docstring, otherwise mkdocs fails!
-    env.variables.docstring_up42 = indent(up42.__doc__)  # init module docstring
+    env.variables.docstring_up42 = indent(
+        up42.__doc__
+    )  # init module docstring
     env.variables.docstring_project = indent(up42.project.Project.__doc__)
     env.variables.docstring_workflow = indent(up42.workflow.Workflow.__doc__)
     env.variables.docstring_job = indent(up42.job.Job.__doc__)
     env.variables.docstring_jobtask = indent(up42.jobtask.JobTask.__doc__)
-    env.variables.docstring_jobcollection = indent(up42.jobcollection.JobCollection.__doc__)
+    env.variables.docstring_jobcollection = indent(
+        up42.jobcollection.JobCollection.__doc__
+    )
     env.variables.docstring_catalog = indent(up42.catalog.Catalog.__doc__)
     env.variables.docstring_tasking = indent(up42.tasking.Tasking.__doc__)
     env.variables.docstring_order = indent(up42.order.Order.__doc__)
@@ -93,8 +109,12 @@ def define_env(env):
     env.variables.funcs_up42 = get_methods(up42, exclude_viztools=True)
     env.variables.funcs_project = get_methods(up42.project.Project)
     env.variables.funcs_workflow = get_methods(up42.workflow.Workflow)
-    env.variables.funcs_job = get_methods(up42.job.Job, exclude=["plot_coverage"])
-    env.variables.funcs_jobtask = get_methods(up42.jobtask.JobTask, exclude=["map_quicklooks", "plot_coverage"])
+    env.variables.funcs_job = get_methods(
+        up42.job.Job, exclude=["plot_coverage"]
+    )
+    env.variables.funcs_jobtask = get_methods(
+        up42.jobtask.JobTask, exclude=["map_quicklooks", "plot_coverage"]
+    )
     env.variables.funcs_jobcollection = get_methods(
         up42.jobcollection.JobCollection,
         exclude=[
@@ -103,7 +123,9 @@ def define_env(env):
             "plot_coverage",
         ],
     )
-    env.variables.funcs_catalog = get_methods(up42.catalog.Catalog, exclude=["plot_results", "map_results"])
+    env.variables.funcs_catalog = get_methods(
+        up42.catalog.Catalog, exclude=["plot_results", "map_results"]
+    )
     env.variables.funcs_tasking = get_methods(up42.tasking.Tasking)
     env.variables.funcs_order = get_methods(up42.order.Order)
     env.variables.funcs_storage = get_methods(up42.storage.Storage)

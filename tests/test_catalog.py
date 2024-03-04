@@ -40,7 +40,9 @@ def test_get_data_product_schema(catalog_mock):
 
 @pytest.mark.live
 def test_get_data_product_schema_live(catalog_live):
-    data_product_schema = catalog_live.get_data_product_schema(os.getenv("TEST_UP42_DATA_PRODUCT_ID"))
+    data_product_schema = catalog_live.get_data_product_schema(
+        os.getenv("TEST_UP42_DATA_PRODUCT_ID")
+    )
     assert isinstance(data_product_schema, dict)
     assert data_product_schema["properties"]
 
@@ -50,7 +52,9 @@ def test_get_data_products_basic(catalog_mock):
     assert isinstance(data_products_basic, dict)
     basic_keys = {"data_products", "host", "collection"}
     assert basic_keys <= set(list(data_products_basic.values())[0].keys())
-    assert "tasking_should_be_filtered_in_catalog_test" not in data_products_basic
+    assert (
+        "tasking_should_be_filtered_in_catalog_test" not in data_products_basic
+    )
     assert "test_not_integrated" not in data_products_basic
     assert len(data_products_basic) == 2
 
@@ -90,7 +94,10 @@ def test_construct_search_parameters(catalog_mock):
     search_params_coords = {
         "type": search_parameters["intersects"]["type"],
         "coordinates": [
-            [[float(coord[0]), float(coord[1])] for coord in search_parameters["intersects"]["coordinates"][0]]
+            [
+                [float(coord[0]), float(coord[1])]
+                for coord in search_parameters["intersects"]["coordinates"][0]
+            ]
         ],
     }
     assert search_params_coords == mock_search_parameters["intersects"]
@@ -100,7 +107,8 @@ def test_construct_search_parameters(catalog_mock):
 
 def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
     with open(
-        Path(__file__).resolve().parent / "mock_data/search_footprints.geojson",
+        Path(__file__).resolve().parent
+        / "mock_data/search_footprints.geojson",
         encoding="utf-8",
     ) as json_file:
         fc = json.load(json_file)
@@ -114,7 +122,10 @@ def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
             limit=10,
             max_cloudcover=15,
         )
-    assert str(e.value) == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
+    assert (
+        str(e.value)
+        == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
+    )
 
 
 def test_search(catalog_mock):
@@ -150,7 +161,9 @@ def test_search_live(catalog_live):
     assert list(search_results.index) == list(range(search_results.shape[0]))
 
     # As fc
-    search_results = catalog_live.search(mock_search_parameters, as_dataframe=False)
+    search_results = catalog_live.search(
+        mock_search_parameters, as_dataframe=False
+    )
     assert isinstance(search_results, dict)
     assert search_results["type"] == "FeatureCollection"
 
@@ -167,7 +180,11 @@ def test_search_usagetype(catalog_usagetype_mock):
     ["DATA", "ANALYTICS"], the result can be ["DATA"], ["ANALYTICS"] or ["DATA", "ANALYTICS"].
     """
     params1 = {"usage_type": ["DATA"], "result1": "DATA", "result2": ""}
-    params2 = {"usage_type": ["ANALYTICS"], "result1": "ANALYTICS", "result2": ""}
+    params2 = {
+        "usage_type": ["ANALYTICS"],
+        "result1": "ANALYTICS",
+        "result2": "",
+    }
     params3 = {
         "usage_type": ["DATA", "ANALYTICS"],
         "result1": "DATA",
@@ -195,8 +212,14 @@ def test_search_usagetype(catalog_usagetype_mock):
             },
         )
 
-    search_results = catalog_usagetype_mock.search(search_parameters, as_dataframe=True)
-    assert all(search_results["up42:usageType"].apply(lambda x: params["result1"] in x or params["result2"] in x))
+    search_results = catalog_usagetype_mock.search(
+        search_parameters, as_dataframe=True
+    )
+    assert all(
+        search_results["up42:usageType"].apply(
+            lambda x: params["result1"] in x or params["result2"] in x
+        )
+    )
 
 
 @pytest.mark.skip(reason="Flaky catalog return")
@@ -238,7 +261,11 @@ def test_search_usagetype_live(catalog_live, usage_type, result, result2):
     )
 
     search_results = catalog_live.search(search_parameters, as_dataframe=True)
-    assert all(search_results["up42:usageType"].apply(lambda x: result in x or result2 in x))
+    assert all(
+        search_results["up42:usageType"].apply(
+            lambda x: result in x or result2 in x
+        )
+    )
 
 
 def test_search_catalog_pagination(catalog_mock):
@@ -282,7 +309,9 @@ def test_search_catalog_pagination_live(catalog_live):
     assert search_results.shape == (720, 15)
     assert search_results.collection.nunique() == 2
     assert all(search_results.collection.isin(["phr", "spot"]))
-    period_column = pd.to_datetime(search_results.acquisitionDate, format="mixed")
+    period_column = pd.to_datetime(
+        search_results.acquisitionDate, format="mixed"
+    )
     assert all(
         (period_column > pd.to_datetime("2018-01-01T00:00:00Z"))
         & (period_column <= pd.to_datetime("2019-12-31T23:59:59Z"))
@@ -348,11 +377,17 @@ def test_download_quicklook(catalog_mock, requests_mock):
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
     host = "oneatlas"
     url_quicklooks = f"{API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
-    quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    requests_mock.get(url_quicklooks, content=open(quicklook_file, "rb").read())
+    quicklook_file = (
+        Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    )
+    requests_mock.get(
+        url_quicklooks, content=open(quicklook_file, "rb").read()
+    )
 
     with tempfile.TemporaryDirectory() as tempdir:
-        out_paths = catalog_mock.download_quicklooks(image_ids=[sel_id], collection="phr", output_directory=tempdir)
+        out_paths = catalog_mock.download_quicklooks(
+            image_ids=[sel_id], collection="phr", output_directory=tempdir
+        )
         assert len(out_paths) == 1
         assert Path(out_paths[0]).exists()
         assert Path(out_paths[0]).suffix == ".jpg"
@@ -365,7 +400,9 @@ def test_download_no_quicklook(catalog_mock, requests_mock):
     requests_mock.get(url_quicklook, status_code=404)
 
     with tempfile.TemporaryDirectory() as tempdir:
-        out_paths = catalog_mock.download_quicklooks(image_ids=[sel_id], collection="phr", output_directory=tempdir)
+        out_paths = catalog_mock.download_quicklooks(
+            image_ids=[sel_id], collection="phr", output_directory=tempdir
+        )
         assert len(out_paths) == 0
 
 
@@ -377,7 +414,9 @@ def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
     requests_mock.get(url_no_quicklook, status_code=404)
 
     url_quicklook = f"{API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
-    quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    quicklook_file = (
+        Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    )
     requests_mock.get(url_quicklook, content=open(quicklook_file, "rb").read())
 
     with tempfile.TemporaryDirectory() as tempdir:
@@ -448,11 +487,15 @@ def test_construct_order_parameters_live(catalog_live, product_id):
 
 
 # pylint: disable=unused-argument
-def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, auth_mock):
+def test_estimate_order_from_catalog(
+    catalog_order_parameters, requests_mock, auth_mock
+):
     catalog_instance = Catalog(auth=auth_mock)
     expected_payload = {
         "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
-        "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
+        "results": [
+            {"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}
+        ],
         "errors": [],
     }
     url_order_estimation = f"{API_HOST}/v2/orders/estimate"
@@ -480,7 +523,9 @@ def test_order_from_catalog(
     assert order.order_id == ORDER_ID
 
 
-def test_order_from_catalog_track_status(catalog_order_parameters, order_mock, catalog_mock, requests_mock):
+def test_order_from_catalog_track_status(
+    catalog_order_parameters, order_mock, catalog_mock, requests_mock
+):
     requests_mock.post(
         url=f"{API_HOST}/v2/orders?workspaceId={WORKSPACE_ID}",
         json={
@@ -507,7 +552,9 @@ def test_order_from_catalog_track_status(catalog_order_parameters, order_mock, c
 
 
 @pytest.mark.live
-def test_estimate_order_from_catalog_live(catalog_order_parameters, catalog_live):
+def test_estimate_order_from_catalog_live(
+    catalog_order_parameters, catalog_live
+):
     estimation = catalog_live.estimate_order(catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100

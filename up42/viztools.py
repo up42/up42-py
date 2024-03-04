@@ -137,9 +137,12 @@ class VizTools:
                 [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show),
                  e.g. matplotlib cmap etc.
         """
-        warnings.filterwarnings("ignore", category=rasterio.errors.NotGeoreferencedWarning)
+        warnings.filterwarnings(
+            "ignore", category=rasterio.errors.NotGeoreferencedWarning
+        )
         warn(
-            "Visualization methods are deprecated. The current feature will be discontinued " "after March 31, 2024.",
+            "Visualization methods are deprecated. The current feature will be discontinued "
+            "after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -151,7 +154,9 @@ class VizTools:
             # Unpack results path dict in case of jobcollection.
             if isinstance(filepaths, dict):
                 filepaths_lists = list(filepaths.values())
-                filepaths = [item for sublist in filepaths_lists for item in sublist]
+                filepaths = [
+                    item for sublist in filepaths_lists for item in sublist
+                ]
 
         if not isinstance(filepaths, list):
             filepaths = [filepaths]  # type: ignore
@@ -159,7 +164,9 @@ class VizTools:
 
         imagepaths = [path for path in filepaths if str(path.suffix) in plot_file_format]  # type: ignore
         if not imagepaths:
-            raise ValueError(f"This function only plots files of format {plot_file_format}.")
+            raise ValueError(
+                f"This function only plots files of format {plot_file_format}."
+            )
 
         if not titles:
             titles = [Path(fp).stem for fp in imagepaths]
@@ -187,7 +194,9 @@ class VizTools:
         if len(bands) == 1:
             kwargs["cmap"] = "gray"
         if len(bands) not in [1, 3]:
-            raise ValueError("Parameter bands can only contain one or three bands.")
+            raise ValueError(
+                "Parameter bands can only contain one or three bands."
+            )
 
         for idx, (fp, title) in enumerate(zip(imagepaths, titles)):
             with rasterio.open(fp) as src:
@@ -225,7 +234,8 @@ class VizTools:
             titles: List of titles for the subplots, optional.
         """
         warn(
-            "Visualization methods are deprecated. The current feature will be discontinued " "after March 31, 2024.",
+            "Visualization methods are deprecated. The current feature will be discontinued "
+            "after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -269,11 +279,16 @@ class VizTools:
             name_column: Name of the feature property that provides the Feature/Layer name.
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
-        warnings.filterwarnings("ignore", category=rasterio.errors.NotGeoreferencedWarning)
+        warnings.filterwarnings(
+            "ignore", category=rasterio.errors.NotGeoreferencedWarning
+        )
 
         if result_df.shape[0] > 100:
             result_df = result_df.iloc[:100]
-            logger.info("Only the first 100 results will be displayed to avoid memory " "issues.")
+            logger.info(
+                "Only the first 100 results will be displayed to avoid memory "
+                "issues."
+            )
 
         centroid = box(*result_df.total_bounds).centroid
         m = folium_base_map(
@@ -283,7 +298,9 @@ class VizTools:
 
         df_bounds = result_df.bounds
         list_bounds = df_bounds.values.tolist()
-        raster_filepaths = [path for path in filepaths if Path(path).suffix in plot_file_format]
+        raster_filepaths = [
+            path for path in filepaths if Path(path).suffix in plot_file_format
+        ]
 
         try:
             feature_names = result_df[name_column].to_list()
@@ -313,7 +330,9 @@ class VizTools:
                     style_function=lambda x: VECTOR_STYLE,
                     highlight_function=lambda x: HIGHLIGHT_STYLE,
                 )
-                folium.Popup(f"{layer_name}: {row.drop('geometry', axis=0).to_json()}").add_to(f)
+                folium.Popup(
+                    f"{layer_name}: {row.drop('geometry', axis=0).to_json()}"
+                ).add_to(f)
                 f.add_to(m)
 
         if show_images and raster_filepaths:
@@ -325,9 +344,13 @@ class VizTools:
                     else:
                         bands = [1, 2, 3]
                 if len(bands) not in [1, 3]:
-                    raise ValueError("Parameter bands can only contain one or three bands.")
+                    raise ValueError(
+                        "Parameter bands can only contain one or three bands."
+                    )
 
-            for idx, (raster_fp, feature_name) in enumerate(zip(raster_filepaths, feature_names)):
+            for idx, (raster_fp, feature_name) in enumerate(
+                zip(raster_filepaths, feature_names)
+            ):
                 with rasterio.open(raster_fp) as src:
                     if src.meta["crs"] is None:
                         dst_array = src.read(bands)
@@ -351,7 +374,9 @@ class VizTools:
 
         # Collapse layer control with too many features.
         collapsed = bool(result_df.shape[0] > 4)
-        folium.LayerControl(position="bottomleft", collapsed=collapsed).add_to(m)
+        folium.LayerControl(position="bottomleft", collapsed=collapsed).add_to(
+            m
+        )
 
         if save_html:
             save_html = Path(save_html)
@@ -386,12 +411,15 @@ class VizTools:
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
         warn(
-            "Visualization methods are deprecated. The current feature will be discontinued " "after March 31, 2024.",
+            "Visualization methods are deprecated. The current feature will be discontinued "
+            "after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
         if self.results is None:
-            raise ValueError("You first need to download the results via job.download_results()!")
+            raise ValueError(
+                "You first need to download the results via job.download_results()!"
+            )
 
         f_paths = []
         if isinstance(self.results, list):
@@ -403,7 +431,9 @@ class VizTools:
                 json_fp = json_fp[0]  # why only one element is selected?
             else:
                 # pylint: disable=not-an-iterable
-                json_fp = [fp for fp in self.results if fp.endswith(".json")][0]
+                json_fp = [fp for fp in self.results if fp.endswith(".json")][
+                    0
+                ]
             f_paths = self.results
 
         elif isinstance(self.results, dict):
@@ -499,7 +529,10 @@ class VizTools:
         """
         if legend_column not in scenes.columns:
             legend_column = None  # type: ignore
-            logger.info("Given legend_column name not in scene dataframe, " "plotting without legend.")
+            logger.info(
+                "Given legend_column name not in scene dataframe, "
+                "plotting without legend."
+            )
 
         try:
             ax = scenes.plot(
@@ -514,7 +547,9 @@ class VizTools:
             if aoi is not None:
                 aoi.plot(color="r", ax=ax, fc="None", edgecolor="r", lw=1)
         except AttributeError as e:
-            raise TypeError("'scenes' and 'aoi' (optional) have to be a GeoDataFrame.") from e
+            raise TypeError(
+                "'scenes' and 'aoi' (optional) have to be a GeoDataFrame."
+            ) from e
         ax.set_axis_off()
         plt.show()
 
@@ -532,15 +567,22 @@ if _viz_installed:
         Provides a folium map with basic features and UP42 logo.
         """
         mapfigure = folium.Figure(width=width_percent)
-        m = folium.Map(location=[lat, lon], zoom_start=zoom_start, crs="EPSG3857").add_to(mapfigure)
+        m = folium.Map(
+            location=[lat, lon], zoom_start=zoom_start, crs="EPSG3857"
+        ).add_to(mapfigure)
 
-        tiles = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery" "/MapServer/tile/{z}/{y}/{x}.png"
+        tiles = (
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery"
+            "/MapServer/tile/{z}/{y}/{x}.png"
+        )
         attr = (
             "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, "
             "AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the "
             "GIS User Community"
         )
-        folium.TileLayer(tiles=tiles, attr=attr, name="Satellite - ESRI").add_to(m)
+        folium.TileLayer(
+            tiles=tiles, attr=attr, name="Satellite - ESRI"
+        ).add_to(m)
 
         formatter = "function(num) {return L.Util.formatNum(num, 4) + ' ';};"
         folium.plugins.MousePosition(
@@ -567,7 +609,9 @@ if _viz_installed:
         ).add_to(m)
 
         if layer_control:
-            folium.LayerControl(position="bottomleft", collapsed=False, zindex=100).add_to(m)
+            folium.LayerControl(
+                position="bottomleft", collapsed=False, zindex=100
+            ).add_to(m)
             # If adding additional layers outside of the folium base map function, don't
             # use this one here. Causes an empty map.
         return m
@@ -580,13 +624,21 @@ if _viz_installed:
             super().render(**kwargs)
 
             figure = self.get_root()
-            assert isinstance(figure, Figure), "You cannot render this Element if it is not in a Figure."
+            assert isinstance(
+                figure, Figure
+            ), "You cannot render this Element if it is not in a Figure."
 
             figure.header.add_child(
-                JavascriptLink("https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/" "leaflet.draw.js")
+                JavascriptLink(
+                    "https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/"
+                    "leaflet.draw.js"
+                )
             )  # noqa
             figure.header.add_child(
-                CssLink("https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/" "leaflet.draw.css")
+                CssLink(
+                    "https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/"
+                    "leaflet.draw.css"
+                )
             )  # noqa
 
             export_style = """
@@ -612,7 +664,11 @@ if _viz_installed:
                     }
                 </style>
             """
-            export_button = """<a href='#' id='export'>Export as<br/>GeoJson</a>"""
+            export_button = (
+                """<a href='#' id='export'>Export as<br/>GeoJson</a>"""
+            )
             if self.export:
                 figure.header.add_child(Element(export_style), name="export")
-                figure.html.add_child(Element(export_button), name="export_button")
+                figure.html.add_child(
+                    Element(export_button), name="export_button"
+                )

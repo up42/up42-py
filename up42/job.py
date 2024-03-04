@@ -88,7 +88,9 @@ class Job(VizTools):
         """
         return self.status == "SUCCEEDED"
 
-    def download_quicklooks(self, output_directory: Union[str, Path, None] = None) -> List[str]:
+    def download_quicklooks(
+        self, output_directory: Union[str, Path, None] = None
+    ) -> List[str]:
         """
         Conveniance function that downloads the quicklooks of the data (dirst) jobtask.
 
@@ -102,10 +104,14 @@ class Job(VizTools):
         out_paths: List[str] = data_task.download_quicklooks(  # type: ignore
             output_directory=output_directory
         )  # type: ignore
-        self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
+        self.quicklooks = (
+            out_paths  # pylint: disable=attribute-defined-outside-init
+        )
         return out_paths
 
-    def get_results_json(self, as_dataframe: bool = False) -> Union[dict, GeoDataFrame]:
+    def get_results_json(
+        self, as_dataframe: bool = False
+    ) -> Union[dict, GeoDataFrame]:
         """
         Gets the Job results data.json.
 
@@ -115,7 +121,9 @@ class Job(VizTools):
         Returns:
             The job data.json.
         """
-        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/outputs/data-json/")
+        url = endpoint(
+            f"/projects/{self.project_id}/jobs/{self.job_id}/outputs/data-json/"
+        )
         response_json = self.auth.request(request_type="GET", url=url)
         logger.info(f"Retrieved {len(response_json['features'])} features.")
 
@@ -127,7 +135,9 @@ class Job(VizTools):
             return response_json
 
     def _get_download_url(self) -> str:
-        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/downloads/results/")
+        url = endpoint(
+            f"/projects/{self.project_id}/jobs/{self.job_id}/downloads/results/"
+        )
         response_json = self.auth.request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
         return download_url
@@ -151,7 +161,9 @@ class Job(VizTools):
         logger.info(f"Downloading results of job {self.job_id}")
 
         if output_directory is None:
-            output_directory = Path.cwd() / f"project_{self.project_id}/job_{self.job_id}"
+            output_directory = (
+                Path.cwd() / f"project_{self.project_id}/job_{self.job_id}"
+            )
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
@@ -185,7 +197,9 @@ class Job(VizTools):
         """
         download_url = self._get_download_url()
         r = requests.get(download_url)
-        blob = bucket.blob(str(Path(version) / Path(folder) / Path(self.job_id + extension)))
+        blob = bucket.blob(
+            str(Path(version) / Path(folder) / Path(self.job_id + extension))
+        )
         logger.info(f"Upload job {self.job_id} results to {blob.name} ...")
         blob.upload_from_string(
             data=r.content,
@@ -194,7 +208,9 @@ class Job(VizTools):
         )
         logger.info("Uploaded!")
 
-    def get_logs(self, as_print: bool = True, as_return: bool = False) -> Optional[dict]:
+    def get_logs(
+        self, as_print: bool = True, as_return: bool = False
+    ) -> Optional[dict]:
         """
         Convenience function to print or return the logs of all job tasks.
 
@@ -210,18 +226,27 @@ class Job(VizTools):
         jobtasks: List[dict] = self.get_jobtasks(return_json=True)  # type: ignore
         jobtasks_ids = [task["id"] for task in jobtasks]
 
-        logger.info(f"Getting logs for {len(jobtasks_ids)} job tasks: {jobtasks_ids}")
+        logger.info(
+            f"Getting logs for {len(jobtasks_ids)} job tasks: {jobtasks_ids}"
+        )
         if as_print:
-            print(f"Printing logs of {len(jobtasks_ids)} JobTasks in Job with job_id " f"{self.job_id}:\n")
+            print(
+                f"Printing logs of {len(jobtasks_ids)} JobTasks in Job with job_id "
+                f"{self.job_id}:\n"
+            )
 
         for idx, jobtask_id in enumerate(jobtasks_ids):
-            url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/logs")
+            url = endpoint(
+                f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/logs"
+            )
             response_json = self.auth.request(request_type="GET", url=url)
 
             job_logs[jobtask_id] = response_json
 
             if as_print:
-                print("----------------------------------------------------------")
+                print(
+                    "----------------------------------------------------------"
+                )
                 print(f"JobTask {idx + 1} with jobtask_id {jobtask_id}:\n")
                 print(response_json)
         if as_return:
@@ -229,7 +254,9 @@ class Job(VizTools):
         else:
             return None
 
-    def get_jobtasks(self, return_json: bool = False) -> Union[List["JobTask"], List[dict]]:
+    def get_jobtasks(
+        self, return_json: bool = False
+    ) -> Union[List["JobTask"], List[dict]]:
         """
         Get the individual items of the job as a list of JobTask objects or JSON.
 
@@ -239,7 +266,9 @@ class Job(VizTools):
         Returns:
             The job task objects in a list.
         """
-        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/")
+        url = endpoint(
+            f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/"
+        )
         logger.info(f"Getting job tasks: {self.job_id}")
         response_json = self.auth.request(request_type="GET", url=url)
         jobtasks_json: List[dict] = response_json["data"]
@@ -270,7 +299,9 @@ class Job(VizTools):
         jobtasks_ids = [task["id"] for task in jobtasks]
         jobtasks_results_json = {}
         for jobtask_id in jobtasks_ids:
-            url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/outputs/data-json")
+            url = endpoint(
+                f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/outputs/data-json"
+            )
             response_json = self.auth.request(request_type="GET", url=url)
 
             jobtasks_results_json[jobtask_id] = response_json
@@ -283,7 +314,9 @@ class Job(VizTools):
         Returns:
             The consumed credits for the job.
         """
-        url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/credits")
+        url = endpoint(
+            f"/projects/{self.project_id}/jobs/{self.job_id}/credits"
+        )
         response_json = self.auth.request(request_type="GET", url=url)
         credits_used = response_json["data"]["creditsUsed"]
         credits_used_dict = {"creditsUsed": credits_used}

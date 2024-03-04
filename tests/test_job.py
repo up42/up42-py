@@ -21,8 +21,12 @@ def test_job_info(job_mock):
 def test_job_status(job_mock, status, requests_mock):
     del job_mock._info
 
-    url_job_info = f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
-    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+    url_job_info = (
+        f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    )
+    requests_mock.get(
+        url=url_job_info, json={"data": {"status": status}, "error": {}}
+    )
     assert job_mock.status == status
 
 
@@ -40,8 +44,12 @@ def test_job_status(job_mock, status, requests_mock):
 def test_is_succeeded(job_mock, status, expected, requests_mock):
     del job_mock._info
 
-    url_job_info = f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
-    requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
+    url_job_info = (
+        f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    )
+    requests_mock.get(
+        url=url_job_info, json={"data": {"status": status}, "error": {}}
+    )
 
     assert job_mock.is_succeeded == expected
 
@@ -51,7 +59,9 @@ def test_download_quicklook(job_mock, requests_mock):
         f"{API_HOST}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
         f"/tasks/{JOBTASK_ID}/outputs/quicklooks/a_quicklook.png"
     )
-    quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    quicklook_file = (
+        Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    )
     requests_mock.get(url, content=open(quicklook_file, "rb").read())
 
     with tempfile.TemporaryDirectory() as tempdir:
@@ -153,7 +163,9 @@ def test_job_download_result_dimap_live(auth_live, project_id_live):
 
 @pytest.mark.skip(reason="2gb download takes long")
 @pytest.mark.live
-def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live, project_id_live):
+def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(
+    auth_live, project_id_live
+):
     job = Job(
         auth=auth_live,
         project_id=project_id_live,

@@ -56,7 +56,9 @@ class CatalogBase:
             try:
                 if not product["collection"]["isIntegrated"]:
                     continue
-            except KeyError:  # isIntegrated potentially removed from future public API
+            except (
+                KeyError
+            ):  # isIntegrated potentially removed from future public API
                 pass
             try:
                 if not product["productConfiguration"]["isIntegrated"]:
@@ -73,7 +75,9 @@ class CatalogBase:
                 collection_title = product["collection"]["title"]
                 collection_name = product["collectionName"]
                 host = product["collection"]["host"]["name"]
-                data_product = {product["productConfiguration"]["title"]: product["id"]}
+                data_product = {
+                    product["productConfiguration"]["title"]: product["id"]
+                }
 
                 if collection_title not in collection_overview:
                     collection_overview[collection_title] = {
@@ -107,7 +111,9 @@ class CatalogBase:
         """
         url = endpoint("/collections")
         json_response = self.auth.request("GET", url)
-        collections = [c for c in json_response["data"] if c["type"] == self.type]
+        collections = [
+            c for c in json_response["data"] if c["type"] == self.type
+        ]
         return collections
 
     def place_order(
@@ -146,7 +152,9 @@ class CatalogBase:
             )
             warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
-            raise ValueError("Please provide the 'order_parameters' parameter!")
+            raise ValueError(
+                "Please provide the 'order_parameters' parameter!"
+            )
 
         order = Order.place(self.auth, order_parameters)  # type: ignore
         if track_status:
@@ -175,7 +183,9 @@ class Catalog(CatalogBase, VizTools):
     def __repr__(self):
         return f"Catalog(auth={self.auth})"
 
-    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
+    def estimate_order(
+        self, order_parameters: Union[dict, None], **kwargs
+    ) -> int:
         """
         Estimate the cost of an order.
 
@@ -197,7 +207,9 @@ class Catalog(CatalogBase, VizTools):
             )
             warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
-            raise ValueError("Please provide the 'order_parameters' parameter!")
+            raise ValueError(
+                "Please provide the 'order_parameters' parameter!"
+            )
         return Order.estimate(self.auth, order_parameters)  # type: ignore
 
     @deprecation("construct_search_parameters", "0.25.0")
@@ -207,7 +219,9 @@ class Catalog(CatalogBase, VizTools):
 
     @staticmethod
     def construct_search_parameters(
-        geometry: Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon],
+        geometry: Union[
+            FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon
+        ],
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
@@ -243,13 +257,17 @@ class Catalog(CatalogBase, VizTools):
         """
 
         if sortby is not None or ascending is not None:
-            logger.info("sortby is deprecated, currently only sorting output by creation date.")
+            logger.info(
+                "sortby is deprecated, currently only sorting output by creation date."
+            )
 
         time_period = f"{format_time(start_date)}/{format_time(end_date, set_end_of_day=True)}"
         aoi_fc = any_vector_to_fc(
             vector=geometry,
         )
-        aoi_geometry = fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
+        aoi_geometry = fc_to_query_geometry(
+            fc=aoi_fc, geometry_operation="intersects"
+        )
 
         query_filters: Dict[Any, Any] = {}
         if max_cloudcover is not None:
@@ -275,7 +293,9 @@ class Catalog(CatalogBase, VizTools):
 
         return search_parameters
 
-    def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[GeoDataFrame, dict]:
+    def search(
+        self, search_parameters: dict, as_dataframe: bool = True
+    ) -> Union[GeoDataFrame, dict]:
         """
         Searches the catalog for the the search parameters and returns the metadata of
         the matching scenes.
@@ -302,14 +322,18 @@ class Catalog(CatalogBase, VizTools):
                     }
             ```
         """
-        logger.info(f"Searching catalog with search_parameters: {search_parameters}")
+        logger.info(
+            f"Searching catalog with search_parameters: {search_parameters}"
+        )
 
         # The API request would fail with a limit above 500, thus 500 is forced in the initial
         # request but additional results are handled below via pagination.
         try:
             max_limit = search_parameters["limit"]
         except KeyError:
-            logger.info("No `limit` parameter in search_parameters, using default 500.")
+            logger.info(
+                "No `limit` parameter in search_parameters, using default 500."
+            )
             max_limit = 500
 
         if max_limit > 500:
@@ -345,14 +369,18 @@ class Catalog(CatalogBase, VizTools):
             if pagination_exhausted:
                 break
             next_page_url = response_json["links"][1]["href"]
-            response_json = self.auth.request("POST", next_page_url, search_parameters)
+            response_json = self.auth.request(
+                "POST", next_page_url, search_parameters
+            )
             features += response_json["features"]
 
         features = features[:max_limit]
         if not features:
             df = GeoDataFrame(columns=["geometry"], geometry="geometry")
         else:
-            df = GeoDataFrame.from_features(FeatureCollection(features=features), crs="EPSG:4326")
+            df = GeoDataFrame.from_features(
+                FeatureCollection(features=features), crs="EPSG:4326"
+            )
 
         logger.info(f"{df.shape[0]} results returned.")
         if as_dataframe:
@@ -407,9 +435,13 @@ class Catalog(CatalogBase, VizTools):
         }
         if tags is not None:
             order_parameters["tags"] = tags
-        logger.info("See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options.")
+        logger.info(
+            "See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options."
+        )
         schema = self.get_data_product_schema(data_product_id)
-        order_parameters = autocomplete_order_parameters(order_parameters, schema)
+        order_parameters = autocomplete_order_parameters(
+            order_parameters, schema
+        )
 
         # Some catalog orders, e.g. Capella don't require AOI (full image order)
         # Handled on API level, don't manipulate in SDK, providers might accept geometries in the future.
@@ -444,7 +476,9 @@ class Catalog(CatalogBase, VizTools):
             self.data_products = self.get_data_products(basic=True)  # type: ignore
         host = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
         if not host:
-            raise ValueError(f"Selected collections {collection} is not valid. See catalog.get_collections.")
+            raise ValueError(
+                f"Selected collections {collection} is not valid. See catalog.get_collections."
+            )
         host = host[0]
         logger.info(f"Downloading quicklooks from provider {host}.")
 
@@ -462,14 +496,20 @@ class Catalog(CatalogBase, VizTools):
         for image_id in tqdm(image_ids):
             try:
                 url = endpoint(f"/catalog/{host}/image/{image_id}/quicklook")
-                response = self.auth.request(request_type="GET", url=url, return_text=False)
+                response = self.auth.request(
+                    request_type="GET", url=url, return_text=False
+                )
                 out_path = output_directory / f"quicklook_{image_id}.jpg"
                 out_paths.append(str(out_path))
                 with open(out_path, "wb") as dst:
                     for chunk in response:
                         dst.write(chunk)
             except ValueError:
-                logger.warning(f"Image with id {image_id} does not have quicklook available. Skipping ...")
+                logger.warning(
+                    f"Image with id {image_id} does not have quicklook available. Skipping ..."
+                )
 
-        self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
+        self.quicklooks = (
+            out_paths  # pylint: disable=attribute-defined-outside-init
+        )
         return out_paths

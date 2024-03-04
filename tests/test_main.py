@@ -9,7 +9,7 @@ from .fixtures import fixtures_globals
 
 @pytest.fixture(autouse=True)
 def setup_auth_mock(auth_mock):
-    main._auth = auth_mock
+    main.Main.set_auth(auth_mock)
     yield
 
 
@@ -25,6 +25,7 @@ def test_get_blocks(auth_mock, requests_mock):
             "error": {},
         },
     )
+    main.Main().set_auth(auth_mock)
     blocks = main.get_blocks()
     assert isinstance(blocks, dict)
     assert "tiling" in list(blocks.keys())
@@ -32,7 +33,7 @@ def test_get_blocks(auth_mock, requests_mock):
 
 @pytest.mark.live
 def test_get_blocks_live(auth_live):
-    main._auth = auth_live
+    main.Main.set_auth(auth_live)
     blocks = main.get_blocks(basic=False)
     assert isinstance(blocks, list)
     blocknames = [block["name"] for block in blocks]
@@ -73,7 +74,7 @@ def test_get_block_details(auth_mock, requests_mock):
 
 @pytest.mark.live
 def test_get_block_details_live(auth_live):
-    main._auth = auth_live
+    main.Main.set_auth(auth_live)
     tiling_id = "3e146dd6-2b67-4d6e-a422-bb3d973e32ff"
 
     details = main.get_block_details(block_id=tiling_id)
@@ -84,11 +85,15 @@ def test_get_block_details_live(auth_live):
 
 def test_get_block_coverage(auth_mock, requests_mock):
     block_id = "273612-13"
-    url_get_blocks_coverage = f"{fixtures_globals.API_HOST}/blocks/{block_id}/coverage"
+    url_get_blocks_coverage = (
+        f"{fixtures_globals.API_HOST}/blocks/{block_id}/coverage"
+    )
     requests_mock.get(
         url=url_get_blocks_coverage,
         json={
-            "data": {"url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"},
+            "data": {
+                "url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
+            },
             "error": {},
         },
     )
@@ -118,7 +123,7 @@ def test_get_block_coverage(auth_mock, requests_mock):
 
 @pytest.mark.live
 def test_get_block_coverage_live(auth_live):
-    main._auth = auth_live
+    main.Main.set_auth(auth_live)
     block_id = "625fd923-8ae6-4ac3-8e13-f51d3c977222"
     coverage = main.get_block_coverage(block_id=block_id)
     assert isinstance(coverage, dict)
@@ -127,7 +132,7 @@ def test_get_block_coverage_live(auth_live):
 
 @pytest.mark.live
 def test_get_block_coverage_noresults_live(auth_live):
-    main._auth = auth_live
+    main.Main.set_auth(auth_live)
     with pytest.raises(requests.exceptions.RequestException):
         block_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
         main.get_block_coverage(block_id=block_id)
@@ -141,16 +146,16 @@ def test_get_credits_balance(auth_mock):
 
 @pytest.mark.live
 def test_get_credits_balance_live(auth_live):
-    main._auth = auth_live
+    main.Main.set_auth(auth_live)
     balance = main.get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
 
 
 def test_fails_to_get_auth_safely_if_unauthenticated():
-    main._auth = None
+    main.Main().set_auth(None)
     with pytest.raises(ValueError):
-        main.__get_auth_safely()
+        main.Main().get_auth_safely()
 
 
 def test_get_webhook_events(setup_auth_mock, requests_mock):

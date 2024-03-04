@@ -28,7 +28,7 @@ from .fixtures.fixtures_globals import (
 
 
 def test_initialize_object_without_auth_raises():
-    up42.main._auth = None
+    up42.main.Main().auth = None
 
     with pytest.raises(RuntimeError):
         up42.initialize_project()
@@ -108,7 +108,9 @@ def test_should_initialize_project_with_project_id(auth_mock, requests_mock):
     assert project.project_id == project_id
 
 
-def test_should_initialize_project_with_implicit_project_id(auth_mock, project_mock):
+def test_should_initialize_project_with_implicit_project_id(
+    auth_mock, project_mock
+):
     up42.authenticate(
         project_id=PROJECT_ID,
         authenticate=False,
@@ -123,7 +125,9 @@ def test_should_initialize_workflow(auth_mock, requests_mock):
         authenticate=False,
     )
     project_id = "project_id"
-    url_workflow_info = f"{API_HOST}/projects/{project_id}/workflows/{WORKFLOW_ID}"
+    url_workflow_info = (
+        f"{API_HOST}/projects/{project_id}/workflows/{WORKFLOW_ID}"
+    )
     json_workflow_info = {
         "data": {
             "name": "name",
@@ -137,7 +141,9 @@ def test_should_initialize_workflow(auth_mock, requests_mock):
     assert workflow.project_id == project_id
 
 
-def test_should_initialize_workflow_with_implicit_project_id(auth_mock, workflow_mock):
+def test_should_initialize_workflow_with_implicit_project_id(
+    auth_mock, workflow_mock
+):
     up42.authenticate(
         project_id=PROJECT_ID,
         authenticate=False,
@@ -207,7 +213,9 @@ def test_should_initialize_jobtask(auth_mock, requests_mock, jobtask_mock):
     assert job.project_id == project_id
 
 
-def test_should_initialize_job_task_with_implicit_project_id(auth_mock, jobtask_mock):
+def test_should_initialize_job_task_with_implicit_project_id(
+    auth_mock, jobtask_mock
+):
     up42.authenticate(
         project_id=PROJECT_ID,
         authenticate=False,
@@ -241,7 +249,9 @@ def test_should_initialize_job_collection(auth_mock, requests_mock):
     assert collection.project_id == project_id
 
 
-def test_should_initialize_job_collection_with_implicit_project_id(auth_mock, job_mock):
+def test_should_initialize_job_collection_with_implicit_project_id(
+    auth_mock, job_mock
+):
     up42.authenticate(
         project_id=PROJECT_ID,
         authenticate=False,

@@ -28,10 +28,14 @@ def test_get_workflow_tasks_basic(workflow_mock):
     assert tasks["tiling:1"] == "2.2.3"
 
 
-def test_construct_full_workflow_tasks_dict_unknown_block_raises(workflow_mock):
+def test_construct_full_workflow_tasks_dict_unknown_block_raises(
+    workflow_mock,
+):
     input_tasks = ["some_block"]
     with pytest.raises(ValueError):
-        workflow_mock._construct_full_workflow_tasks_dict(input_tasks=input_tasks)
+        workflow_mock._construct_full_workflow_tasks_dict(
+            input_tasks=input_tasks
+        )
 
 
 @pytest.mark.parametrize(
@@ -57,19 +61,31 @@ def test_construct_full_workflow_tasks_dict_unknown_block_raises(workflow_mock):
     ],
 )
 def test_construct_full_workflow_tasks_dict(workflow_mock, input_tasks):
-    full_workflow_tasks_dict = workflow_mock._construct_full_workflow_tasks_dict(input_tasks=input_tasks)
+    full_workflow_tasks_dict = (
+        workflow_mock._construct_full_workflow_tasks_dict(
+            input_tasks=input_tasks
+        )
+    )
     assert isinstance(full_workflow_tasks_dict, list)
     assert full_workflow_tasks_dict[0]["name"] == "esa-s2-l2a-gtiff-visual:1"
     assert full_workflow_tasks_dict[0]["parentName"] is None
     assert full_workflow_tasks_dict[1]["name"] == "tiling:1"
-    assert full_workflow_tasks_dict[1]["parentName"] == "esa-s2-l2a-gtiff-visual:1"
-    assert full_workflow_tasks_dict[1]["blockId"] == "4ed70368-d4e1-4462-bef6-14e768049471"
+    assert (
+        full_workflow_tasks_dict[1]["parentName"]
+        == "esa-s2-l2a-gtiff-visual:1"
+    )
+    assert (
+        full_workflow_tasks_dict[1]["blockId"]
+        == "4ed70368-d4e1-4462-bef6-14e768049471"
+    )
 
 
 def test_get_parameter_info(workflow_mock):
     parameter_info = workflow_mock.get_parameters_info()
     assert isinstance(parameter_info, dict)
-    assert {"tiling:1", "esa-s2-l2a-gtiff-visual:1"} <= set(parameter_info.keys())
+    assert {"tiling:1", "esa-s2-l2a-gtiff-visual:1"} <= set(
+        parameter_info.keys()
+    )
     assert {"nodata", "tile_width"} <= set(parameter_info["tiling:1"].keys())
 
 
@@ -77,7 +93,9 @@ def test_get_default_parameters(workflow_mock):
     default_parameters = workflow_mock._get_default_parameters()
 
     assert isinstance(default_parameters, dict)
-    assert {"tiling:1", "esa-s2-l2a-gtiff-visual:1"} <= set(default_parameters.keys())
+    assert {"tiling:1", "esa-s2-l2a-gtiff-visual:1"} <= set(
+        default_parameters.keys()
+    )
     assert default_parameters["tiling:1"] == {
         "nodata": None,
         "tile_width": 768,
@@ -94,7 +112,9 @@ def test_get_default_parameters(workflow_mock):
 
 
 def test_get_jobs(workflow_mock, requests_mock):
-    url_job_info = f"{API_HOST}/projects/" f"{workflow_mock.project_id}/jobs/{JOB_ID}"
+    url_job_info = (
+        f"{API_HOST}/projects/" f"{workflow_mock.project_id}/jobs/{JOB_ID}"
+    )
     requests_mock.get(
         url=url_job_info,
         json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
@@ -104,20 +124,30 @@ def test_get_jobs(workflow_mock, requests_mock):
     assert isinstance(jobcollection, JobCollection)
     assert isinstance(jobcollection.jobs[0], Job)
     assert jobcollection.jobs[0].job_id == JOB_ID
-    assert len(jobcollection.jobs) == 1  # Filters out the job that is not associated with the workflow object
+    assert (
+        len(jobcollection.jobs) == 1
+    )  # Filters out the job that is not associated with the workflow object
 
 
-@pytest.mark.skip(reason="too many jobs in test project, triggers too many job info requests.")
+@pytest.mark.skip(
+    reason="too many jobs in test project, triggers too many job info requests."
+)
 @pytest.mark.live
 def test_get_jobs_live(workflow_live):
     jobcollection = workflow_live.get_jobs()
     assert isinstance(jobcollection, list)
     assert isinstance(jobcollection.jobs[0], Job)
-    assert all(j._info["workflowId"] == workflow_live.workflow_id for j in jobcollection.jobs)
+    assert all(
+        j._info["workflowId"] == workflow_live.workflow_id
+        for j in jobcollection.jobs
+    )
 
 
 def test_delete(workflow_mock, requests_mock):
-    delete_url = f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/" f"{workflow_mock.workflow_id}"
+    delete_url = (
+        f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/"
+        f"{workflow_mock.workflow_id}"
+    )
     requests_mock.delete(url=delete_url)
 
     workflow_mock.delete()

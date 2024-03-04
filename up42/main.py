@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Union
 import pandas as pd
 import requests.exceptions
 
-from up42 import constants, host, utils, webhooks
+from up42 import host, utils, webhooks
 
 # pylint: disable=wrong-import-position
 from up42.auth import Auth
@@ -17,7 +17,18 @@ logger = utils.get_logger(__name__, level=logging.INFO)
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 
-_auth: Optional[Auth] = None
+class Main:
+    def __init__(self):
+        self.auth = None
+
+    def set_auth(self, auth: Optional[Auth] = None):
+        self.auth = auth
+
+    # TODO: check if this can be annotated
+    def get_auth_safely(self) -> Auth:
+        if self.auth:
+            return self.auth
+        raise ValueError("User not authenticated.")
 
 
 def authenticate(
@@ -43,8 +54,7 @@ def authenticate(
         username: The username for the UP42 account (email UP42 console).
         password: Password for the UP42 console login.
     """
-    global _auth
-    _auth = Auth(
+    auth_instance = Auth(
         cfg_file=cfg_file,
         project_id=project_id,
         project_api_key=project_api_key,
@@ -52,12 +62,7 @@ def authenticate(
         password=password,
         **kwargs,
     )
-
-
-def __get_auth_safely() -> Auth:
-    if _auth:
-        return _auth
-    raise ValueError("User not authenticated.")
+    Main().set_auth(auth_instance)
 
 
 def _check_auth(func, *args, **kwargs):
@@ -69,8 +74,10 @@ def _check_auth(func, *args, **kwargs):
     # pylint: disable=unused-argument
     @functools.wraps(func)  # required for mkdocstrings
     def inner(*args, **kwargs):
-        if _auth is None:
-            raise RuntimeError("Not authenticated, call up42.authenticate() first")
+        if Main().auth is None:
+            raise RuntimeError(
+                "Not authenticated, call up42.authenticate() first"
+            )
         return func(*args, **kwargs)
 
     return inner
@@ -87,7 +94,9 @@ def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
     Returns:
         A list of the registered webhooks for this workspace.
     """
-    return webhooks.Webhooks(auth=__get_auth_safely()).get_webhooks(return_json=return_json)
+    return webhooks.Webhooks(auth=Main().get_auth_safely()).get_webhooks(
+        return_json=return_json
+    )
 
 
 @_check_auth
@@ -110,7 +119,7 @@ def create_webhook(
     Returns:
         A dict with details of the registered webhook.
     """
-    return webhooks.Webhooks(auth=__get_auth_safely()).create_webhook(
+    return webhooks.Webhooks(auth=Main().get_auth_safely()).create_webhook(
         name=name, url=url, events=events, active=active, secret=secret
     )
 
@@ -123,7 +132,9 @@ def get_webhook_events() -> dict:
     Returns:
         A dict of the available webhook events.
     """
-    return webhooks.Webhooks(auth=__get_auth_safely()).get_webhook_events()
+    return webhooks.Webhooks(
+        auth=Main().get_auth_safely()
+    ).get_webhook_events()
 
 
 @_check_auth
@@ -147,20 +158,30 @@ def get_blocks(
     if block_type:
         block_type = block_type.lower()
     url = host.endpoint("/blocks")
-    response_json = __get_auth_safely()._request(request_type="GET", url=url)
+    response_json = (
+        Main().get_auth_safely().request(request_type="GET", url=url)
+    )
     public_blocks_json = response_json["data"]
 
     if block_type == "data":
         logger.info("Getting only data blocks.")
-        blocks_json = [block for block in public_blocks_json if block["type"] == "DATA"]
+        blocks_json = [
+            block for block in public_blocks_json if block["type"] == "DATA"
+        ]
     elif block_type == "processing":
         logger.info("Getting only processing blocks.")
-        blocks_json = [block for block in public_blocks_json if block["type"] == "PROCESSING"]
+        blocks_json = [
+            block
+            for block in public_blocks_json
+            if block["type"] == "PROCESSING"
+        ]
     else:
         blocks_json = public_blocks_json
 
     if basic:
-        logger.info("Getting blocks name and id, use basic=False for all block details.")
+        logger.info(
+            "Getting blocks name and id, use basic=False for all block details."
+        )
         blocks_basic = {block["name"]: block["id"] for block in blocks_json}
         if as_dataframe:
             return pd.DataFrame.from_dict(blocks_basic, orient="index")
@@ -175,7 +196,9 @@ def get_blocks(
 
 
 @_check_auth
-def get_block_details(block_id: str, as_dataframe: bool = False) -> Union[dict, pd.DataFrame]:
+def get_block_details(
+    block_id: str, as_dataframe: bool = False
+) -> Union[dict, pd.DataFrame]:
     """
     Gets the detailed information about a specific public block from
     the server, includes all manifest.json and marketplace.json contents.
@@ -189,7 +212,9 @@ def get_block_details(block_id: str, as_dataframe: bool = False) -> Union[dict, 
         A dict of the block details metadata for the specific block.
     """
     url = host.endpoint(f"/blocks/{block_id}")  # public blocks
-    response_json = __get_auth_safely()._request(request_type="GET", url=url)
+    response_json = (
+        Main().get_auth_safely().request(request_type="GET", url=url)
+    )
     details_json = response_json["data"]
 
     if as_dataframe:
@@ -211,7 +236,9 @@ def get_block_coverage(block_id: str) -> dict:
         A dict of the spatial coverage for the specific block.
     """
     url = host.endpoint(f"/blocks/{block_id}/coverage")
-    response_json = __get_auth_safely()._request(request_type="GET", url=url)
+    response_json = (
+        Main().get_auth_safely().request(request_type="GET", url=url)
+    )
     details_json = response_json["data"]
     return requests.get(details_json["url"]).json()
 
@@ -225,5 +252,7 @@ def get_credits_balance() -> dict:
         A dict with the balance of credits available in your account.
     """
     endpoint_url = host.endpoint("/accounts/me/credits/balance")
-    response_json = __get_auth_safely()._request(request_type="GET", url=endpoint_url)
+    response_json = (
+        Main().get_auth_safely().request(request_type="GET", url=endpoint_url)
+    )
     return response_json["data"]

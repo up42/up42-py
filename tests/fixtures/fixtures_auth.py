@@ -20,8 +20,11 @@ def auth_project_mock(requests_mock):
         url="https://api.up42.com/users/me",
         json={"data": {"id": WORKSPACE_ID}},
     )
-    auth = Auth(project_id=PROJECT_ID, project_api_key=PROJECT_APIKEY, authenticate=True)
-
+    auth = Auth(
+        project_id=PROJECT_ID,
+        project_api_key=PROJECT_APIKEY,
+        authenticate=True,
+    )
     # get_blocks
     url_get_blocks = f"{API_HOST}/blocks"
     requests_mock.get(
@@ -46,13 +49,20 @@ def auth_account_mock(requests_mock):
         "token_type": "bearer",
     }
     requests_mock.post("https://api.up42.com/oauth/token", json=json_get_token)
-    requests_mock.get(url="https://api.up42.com/users/me", json={"data": {"id": WORKSPACE_ID}})
-    return Auth(username="user@up42.com", password="password", authenticate=True)
+    requests_mock.get(
+        url="https://api.up42.com/users/me",
+        json={"data": {"id": WORKSPACE_ID}},
+    )
+    auth = Auth(
+        username="user@up42.com", password="password", authenticate=True
+    )
+    return auth
 
 
 @pytest.fixture(params=["project", "account"])
 def auth_mock(request, auth_project_mock, auth_account_mock):
     mocks = {"project": auth_project_mock, "account": auth_account_mock}
+    # import ipdb; ipdb.set_trace()
     return mocks[request.param]
 
 
@@ -78,15 +88,17 @@ def password_test_live():
 
 @pytest.fixture(scope="module")
 def auth_project_live(project_id_live, project_api_key_live):
-    auth = Auth(project_id=project_id_live, project_api_key=project_api_key_live)
-    main._auth = auth  # instead of authenticate()
+    auth = Auth(
+        project_id=project_id_live, project_api_key=project_api_key_live
+    )
+    main.Main().set_auth(auth)  # instead of authenticate()
     return auth
 
 
 @pytest.fixture(scope="module")
 def auth_account_live(username_test_live, password_test_live):
     auth = Auth(username=username_test_live, password=password_test_live)
-    main._auth = auth  # instead of authenticate()
+    main.Main().set_auth(auth)  # instead of authenticate()
     return auth
 
 

@@ -15,7 +15,9 @@ def test_e2e_30sec():
     project = up42.initialize_project()
 
     # Construct workflow
-    workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
+    workflow = project.create_workflow(
+        name="30-seconds-workflow", use_existing=True
+    )
     input_tasks = ["Sentinel-2 L2A Visual (GeoTIFF)", "Sharpening Filter"]
     workflow.add_workflow_tasks(input_tasks)
 
@@ -28,7 +30,9 @@ def test_e2e_30sec():
         end_date="2022-12-31",
         limit=1,
     )
-    input_parameters["esa-s2-l2a-gtiff-visual:1"].update({"max_cloud_cover": 5})
+    input_parameters["esa-s2-l2a-gtiff-visual:1"].update(
+        {"max_cloud_cover": 5}
+    )
 
     # Price estimation
     workflow.estimate_job(input_parameters)
