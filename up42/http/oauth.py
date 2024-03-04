@@ -20,7 +20,7 @@ class Token:
 class ProjectAuth(requests.auth.AuthBase):
     def __init__(
         self,
-        supply_credentials_settings=config.ClientCredentialsSettings,
+        supply_credentials_settings=config.ProjectCredentialsSettings,
         supply_token_settings=config.TokenProviderSettings,
         create_adapter=http_adapter.create,
     ):

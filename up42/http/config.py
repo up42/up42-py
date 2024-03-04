@@ -11,11 +11,11 @@ class ResilienceSettings:
 @dataclass(eq=True, frozen=True)
 class TokenProviderSettings:
     token_url: str
-    duration = 5 * 60
-    timeout = 120
+    duration: int = 5 * 60
+    timeout: int = 120
 
 
 @dataclass(eq=True, frozen=True)
-class ClientCredentialsSettings:
+class ProjectCredentialsSettings:
     client_id: str
     client_secret: str
