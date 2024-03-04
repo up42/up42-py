@@ -2309,6 +2309,16 @@ spelling = ["pyenchant (>=3.2,<4.0)"]
 testutils = ["gitpython (>3)"]
 
 [[package]]
+name = "pylint-google-style-guide-imports-enforcing"
+version = "1.3.0"
+description = "Plugin for PyLint that checks if we import only modules or packages. Direct imports of classes, functions and constants are forbidden"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pylint_google_style_guide_imports_enforcing-1.3.0.tar.gz", hash = "sha256:0abea8199d656e189677560c429a463b139308105c4485d15cfd589c66484306"},
+]
+
+[[package]]
 name = "pymdown-extensions"
 version = "10.5"
 description = "Extension pack for Python Markdown."
@@ -3430,4 +3440,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "638c77d13a07c7ec0f3061a5f382be01c5beb070fc319d4cd59bd495c0a90d03"
+content-hash = "0992c15ba29e60124339de966b52214b38817aa8a25110b38180719ab49bab35"
