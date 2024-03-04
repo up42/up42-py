@@ -167,6 +167,7 @@ class Catalog(CatalogBase, VizTools):
     """
 
     def __init__(self, auth: Auth):
+        super().__init__(auth)
         self.auth = auth
         self.quicklooks = None
         self.type = "ARCHIVE"
@@ -302,7 +303,7 @@ class Catalog(CatalogBase, VizTools):
                     }
             ```
         """
-        logger.info(f"Searching catalog with search_parameters: {search_parameters}")
+        logger.info("Searching catalog with search_parameters: %s", search_parameters)
 
         # The API request would fail with a limit above 500, thus 500 is forced in the initial
         # request but additional results are handled below via pagination.
@@ -354,7 +355,7 @@ class Catalog(CatalogBase, VizTools):
         else:
             df = GeoDataFrame.from_features(FeatureCollection(features=features), crs="EPSG:4326")
 
-        logger.info(f"{df.shape[0]} results returned.")
+        logger.info("%s results returned.", df.shape[0])
         if as_dataframe:
             return df
         else:
@@ -446,14 +447,14 @@ class Catalog(CatalogBase, VizTools):
         if not host:
             raise ValueError(f"Selected collections {collection} is not valid. See catalog.get_collections.")
         host = host[0]
-        logger.info(f"Downloading quicklooks from provider {host}.")
+        logger.info("Downloading quicklooks from provider %s.", host)
 
         if output_directory is None:
             output_directory = Path.cwd() / "catalog"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info(f"Download directory: {str(output_directory)}")
+        logger.info("Download directory: %s", str(output_directory))
 
         if isinstance(image_ids, str):
             image_ids = [image_ids]
@@ -469,7 +470,7 @@ class Catalog(CatalogBase, VizTools):
                     for chunk in response:
                         dst.write(chunk)
             except ValueError:
-                logger.warning(f"Image with id {image_id} does not have quicklook available. Skipping ...")
+                logger.warning("Image with id %s does not have quicklook available. Skipping ...", image_id)
 
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths
