@@ -11,8 +11,8 @@ import geopandas  # type: ignore
 import tqdm
 from shapely import geometry as geom  # type: ignore
 
-from up42 import host, order, utils, viztools
 from up42 import auth as up42_auth
+from up42 import host, order, utils, viztools
 
 logger = utils.get_logger(__name__)
 
@@ -162,9 +162,6 @@ class Catalog(CatalogBase, viztools.VizTools):
         self.quicklooks = None
         self.type = "ARCHIVE"
         self.data_products: Union[None, dict] = None
-
-    def __repr__(self):
-        return f"Catalog(auth={self.auth})"
 
     def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
         """
@@ -324,9 +321,9 @@ class Catalog(CatalogBase, viztools.VizTools):
                 "Only collections with the same host can be searched at the same time. Please adjust the "
                 "collections in the search_parameters!"
             )
-        host_result = hosts[0]
+        product_host = hosts[0]
 
-        url = host.endpoint(f"/catalog/hosts/{host_result}/stac/search")
+        url = host.endpoint(f"/catalog/hosts/{product_host}/stac/search")
         response_json: dict = self.auth.request("POST", url, search_parameters)
         features = response_json["features"]
 
@@ -436,15 +433,15 @@ class Catalog(CatalogBase, viztools.VizTools):
         hosts = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
         if not host:
             raise ValueError(f"Selected collections {collection} is not valid. See catalog.get_collections.")
-        host_result = hosts[0]
-        logger.info("Downloading quicklooks from provider %s.", host)
+        product_host = hosts[0]
+        logger.info("Downloading quicklooks from provider %s.", product_host)
 
         if output_directory is None:
             output_directory = pathlib.Path.cwd() / "catalog"
         else:
             output_directory = pathlib.Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info("Download directory: %s", str(output_directory))
+        logger.info("Download directory: %s", output_directory)
 
         if isinstance(image_ids, str):
             image_ids = [image_ids]
@@ -452,7 +449,7 @@ class Catalog(CatalogBase, viztools.VizTools):
         out_paths: List[str] = []
         for image_id in tqdm.tqdm(image_ids):
             try:
-                url = host.endpoint(f"/catalog/{host_result}/image/{image_id}/quicklook")
+                url = host.endpoint(f"/catalog/{product_host}/image/{image_id}/quicklook")
                 response = self.auth.request(request_type="GET", url=url, return_text=False)
                 out_path = output_directory / f"quicklook_{image_id}.jpg"
                 out_paths.append(str(out_path))
