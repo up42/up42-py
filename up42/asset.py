@@ -7,7 +7,12 @@ from pystac_client import Client, ItemSearch
 from up42.auth import Auth
 from up42.host import endpoint
 from up42.stac_client import PySTACAuthClient
-from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_filename, get_logger
+from up42.utils import (
+    download_from_gcs_unpack,
+    download_gcs_not_unpack,
+    get_filename,
+    get_logger,
+)
 
 logger = get_logger(__name__)
 

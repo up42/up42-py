@@ -9,7 +9,11 @@ from geopandas import GeoDataFrame
 from up42.auth import Auth
 from up42.host import endpoint
 from up42.jobtask import JobTask
-from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_logger
+from up42.utils import (
+    download_from_gcs_unpack,
+    download_gcs_not_unpack,
+    get_logger,
+)
 from up42.viztools import VizTools
 
 logger = get_logger(__name__)

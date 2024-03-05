@@ -8,7 +8,12 @@ from up42 import host
 from up42.auth import Auth
 from up42.utils import get_up42_py_version
 
-from .fixtures.fixtures_globals import PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID
+from .fixtures.fixtures_globals import (
+    PROJECT_APIKEY,
+    PROJECT_ID,
+    TOKEN,
+    WORKSPACE_ID,
+)
 
 
 def test_auth_kwargs():

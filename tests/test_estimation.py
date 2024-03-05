@@ -4,7 +4,11 @@ import pytest
 
 from up42.estimation import Estimation
 
-from .fixtures.fixtures_globals import API_HOST, JSON_WORKFLOW_ESTIMATION, PROJECT_ID
+from .fixtures.fixtures_globals import (
+    API_HOST,
+    JSON_WORKFLOW_ESTIMATION,
+    PROJECT_ID,
+)
 
 
 def test_estimate_price(requests_mock, auth_mock, estimation_mock):

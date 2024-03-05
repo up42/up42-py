@@ -154,7 +154,7 @@ class CatalogBase:
             warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
-        placed_order = order.Order.place(  
+        placed_order = order.Order.place(
             self.auth, order_parameters  # type: ignore
         )
         if track_status:
@@ -389,7 +389,7 @@ class Catalog(CatalogBase, viztools.VizTools):
         response_json: dict = self.auth.request("POST", url, search_parameters)
         features = response_json["features"]
 
-        # Search results with more than 500 items 
+        # Search results with more than 500 items
         # are given as 50-per-page additional pages.
         while len(features) < max_limit:
             pagination_exhausted = len(response_json["links"]) == 1
@@ -432,20 +432,20 @@ class Catalog(CatalogBase, viztools.VizTools):
         tags: Optional[List[str]] = None,
     ):
         """
-        Helps constructing the parameters dictionary required 
+        Helps constructing the parameters dictionary required
         for the catalog order. Some collections have
-        additional parameters that are added to the output 
+        additional parameters that are added to the output
         dictionary with value None. The potential values to
-        select from are given in the logs, for more detail on 
+        select from are given in the logs, for more detail on
         the parameter use `catalog.get_data_product_schema()`.
 
         Args:
-            data_product_id: Id of the desired UP42 data product, 
+            data_product_id: Id of the desired UP42 data product,
                 see `catalog.get_data_products`
-            image_id: The id of the desired image 
+            image_id: The id of the desired image
                 (from search results)
-            aoi: The geometry of the order, one of dict, Feature, 
-                FeatureCollection, list, geopandas.GeoDataFrame, Polygon. 
+            aoi: The geometry of the order, one of dict, Feature,
+                FeatureCollection, list, geopandas.GeoDataFrame, Polygon.
                 Optional for "full-image products".
             tags: A list of tags that categorize the order.
         Returns:
@@ -480,7 +480,7 @@ class Catalog(CatalogBase, viztools.VizTools):
         )
 
         # Some catalog orders, e.g. Capella don't require AOI (full image order)
-        # Handled on API level, don't manipulate in SDK, 
+        # Handled on API level, don't manipulate in SDK,
         # providers might accept geometries in the future.
         if aoi is not None:
             aoi = utils.any_vector_to_fc(vector=aoi)
@@ -502,12 +502,12 @@ class Catalog(CatalogBase, viztools.VizTools):
         be plotted via catalog.map_quicklooks() or catalog.plot_quicklooks().
 
         Args:
-            image_ids: List of provider image_ids 
+            image_ids: List of provider image_ids
                 e.g. ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"].
-                Access the search results id column via 
+                Access the search results id column via
                 `list(search_results.id)`.
             collection: The data collection corresponding to the image ids.
-            output_directory: The file output directory, 
+            output_directory: The file output directory,
                 defaults to the current working directory.
 
         Returns:
@@ -518,10 +518,10 @@ class Catalog(CatalogBase, viztools.VizTools):
                 basic=True
             )  # type: ignore
         hosts = [
-            v["host"] 
-            for v in self.data_products.values() # type: ignore
+            v["host"]
+            for v in self.data_products.values()  # type: ignore
             if v["collection"] == collection
-        ]  
+        ]
         if not host:
             raise ValueError(
                 f"Selected collections {collection} is not valid. "

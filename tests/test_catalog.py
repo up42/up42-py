@@ -124,12 +124,9 @@ def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
             limit=10,
             max_cloudcover=15,
         )
-    assert (
-        str(e.value)
-        == (
-            "UP42 only accepts single geometries, the provided geometry "
-            "contains multiple geometries."
-        )
+    assert str(e.value) == (
+        "UP42 only accepts single geometries, the provided geometry "
+        "contains multiple geometries."
     )
 
 
@@ -175,16 +172,16 @@ def test_search_live(catalog_live):
 
 def test_search_usagetype(catalog_usagetype_mock):
     """
-    Result & Result2 are one of the combinations of 
+    Result & Result2 are one of the combinations of
     "DATA" and "ANALYTICS". Result2 can be None.
 
-    Test is not pytest-paramterized as the same 
+    Test is not pytest-paramterized as the same
     catalog_usagetype_mock needs be used for
     each iteration.
 
-    The result assertion needs to allow multiple combinations, 
-    e.g. when searching for ["DATA", "ANALYTICS"], 
-    the result can be ["DATA"], ["ANALYTICS"] 
+    The result assertion needs to allow multiple combinations,
+    e.g. when searching for ["DATA", "ANALYTICS"],
+    the result can be ["DATA"], ["ANALYTICS"]
     or ["DATA", "ANALYTICS"].
     """
     params1 = {"usage_type": ["DATA"], "result1": "DATA", "result2": ""}
@@ -242,12 +239,12 @@ def test_search_usagetype(catalog_usagetype_mock):
 )
 def test_search_usagetype_live(catalog_live, usage_type, result, result2):
     """
-    Result & Result2 are one of the combinations of 
+    Result & Result2 are one of the combinations of
     "DATA" and "ANALYTICS". Result2 can be None.
 
-    The result assertion needs to allow multiple combinations, 
-    e.g. when searching for ["DATA", "ANALYTICS"], 
-    the result can be ["DATA"], 
+    The result assertion needs to allow multiple combinations,
+    e.g. when searching for ["DATA", "ANALYTICS"],
+    the result can be ["DATA"],
     ["ANALYTICS"] or ["DATA", "ANALYTICS"].
     """
     search_parameters = catalog_live.construct_search_parameters(
@@ -358,7 +355,7 @@ def test_search_catalog_pagination_no_results(catalog_live):
 def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
     """
     Search results pagination is exhausted after 1 extra page (50 elements),
-    resulting in only 500+50 features even though 
+    resulting in only 500+50 features even though
     the limit parameter asked for 614.
     """
     search_params_limit_614 = {

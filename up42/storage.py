@@ -9,7 +9,11 @@ from geopandas import GeoDataFrame  # type: ignore
 from shapely.geometry import Polygon  # type: ignore
 
 from up42.asset import Asset
-from up42.asset_searcher import AssetSearchParams, query_paginated_endpoints, search_assets
+from up42.asset_searcher import (
+    AssetSearchParams,
+    query_paginated_endpoints,
+    search_assets,
+)
 from up42.auth import Auth
 from up42.host import endpoint
 from up42.order import Order

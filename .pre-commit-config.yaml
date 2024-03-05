@@ -16,12 +16,12 @@ repos:
     rev: 23.3.0
     hooks:
       - id: black
-        args: ['--line-length', '80']
+        args: ["--line-length", "80"]
   - repo: https://github.com/PyCQA/isort
     rev: 5.12.0
     hooks:
       - id: isort
-        args: ["--profile", "black",  "--line-length", "120",]
+        args: ["--profile", "black",  "--line-length", "80",]
   - repo: https://github.com/PyCQA/flake8
     rev: 6.0.0
     hooks:

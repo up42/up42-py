@@ -2,7 +2,12 @@ import pytest
 
 from up42 import host
 
-from .fixtures.fixtures_asset import asset_live, asset_mock, asset_mock2, assets_fixture
+from .fixtures.fixtures_asset import (
+    asset_live,
+    asset_mock,
+    asset_mock2,
+    assets_fixture,
+)
 from .fixtures.fixtures_auth import (
     auth_account_live,
     auth_account_mock,
@@ -15,7 +20,12 @@ from .fixtures.fixtures_auth import (
     project_id_live,
     username_test_live,
 )
-from .fixtures.fixtures_catalog import catalog_live, catalog_mock, catalog_pagination_mock, catalog_usagetype_mock
+from .fixtures.fixtures_catalog import (
+    catalog_live,
+    catalog_mock,
+    catalog_pagination_mock,
+    catalog_usagetype_mock,
+)
 from .fixtures.fixtures_estimation import estimation_mock
 from .fixtures.fixtures_job import job_live, job_mock, jobs_live, jobs_mock
 from .fixtures.fixtures_jobcollection import (
@@ -32,7 +42,11 @@ from .fixtures.fixtures_order import (
     order_parameters,
     tasking_order_parameters,
 )
-from .fixtures.fixtures_project import project_live, project_mock, project_mock_max_concurrent_jobs
+from .fixtures.fixtures_project import (
+    project_live,
+    project_mock,
+    project_mock_max_concurrent_jobs,
+)
 from .fixtures.fixtures_storage import storage_live, storage_mock
 from .fixtures.fixtures_tasking import (
     tasking_choose_feasibility_mock,
@@ -40,8 +54,17 @@ from .fixtures.fixtures_tasking import (
     tasking_live,
     tasking_mock,
 )
-from .fixtures.fixtures_webhook import webhook_live, webhook_mock, webhooks_live, webhooks_mock
-from .fixtures.fixtures_workflow import workflow_live, workflow_mock, workflow_mock_empty
+from .fixtures.fixtures_webhook import (
+    webhook_live,
+    webhook_mock,
+    webhooks_live,
+    webhooks_mock,
+)
+from .fixtures.fixtures_workflow import (
+    workflow_live,
+    workflow_mock,
+    workflow_mock_empty,
+)
 
 
 @pytest.fixture(autouse=True)

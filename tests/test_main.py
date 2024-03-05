@@ -3,7 +3,12 @@ import pytest
 import requests
 
 from up42 import main
-from up42.main import get_block_coverage, get_block_details, get_blocks, get_credits_balance
+from up42.main import (
+    get_block_coverage,
+    get_block_details,
+    get_blocks,
+    get_credits_balance,
+)
 
 from .fixtures.fixtures_globals import API_HOST
 

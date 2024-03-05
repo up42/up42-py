@@ -7,7 +7,12 @@ import pytest
 from up42.asset import Asset
 from up42.host import endpoint
 
-from .fixtures.fixtures_globals import ASSET_ID, DOWNLOAD_URL, JSON_ASSET, STAC_ASSET_HREF
+from .fixtures.fixtures_globals import (
+    ASSET_ID,
+    DOWNLOAD_URL,
+    JSON_ASSET,
+    STAC_ASSET_HREF,
+)
 
 
 def test_init(asset_mock):
