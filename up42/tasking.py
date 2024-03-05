@@ -94,23 +94,33 @@ class Tasking(CatalogBase):
             "params": {
                 "displayName": name,
                 "acquisitionStart": format_time(acquisition_start),
-                "acquisitionEnd": format_time(acquisition_end, set_end_of_day=True),
+                "acquisitionEnd": format_time(
+                    acquisition_end, set_end_of_day=True
+                ),
             },
         }
         if tags is not None:
             order_parameters["tags"] = tags
 
         schema = self.get_data_product_schema(data_product_id)
-        logger.info("See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options.")
-        order_parameters = autocomplete_order_parameters(order_parameters, schema)
+        logger.info(
+            "See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options."
+        )
+        order_parameters = autocomplete_order_parameters(
+            order_parameters, schema
+        )
 
         geometry = any_vector_to_fc(vector=geometry)
         assert isinstance(order_parameters["params"], dict)
         if geometry["features"][0]["geometry"]["type"] == "Point":
             # Tasking (e.g. Blacksky) can require Point geometry.
-            order_parameters["params"]["geometry"] = geometry["features"][0]["geometry"]
+            order_parameters["params"]["geometry"] = geometry["features"][0][
+                "geometry"
+            ]
         else:
-            geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
+            geometry = fc_to_query_geometry(
+                fc=geometry, geometry_operation="intersects"
+            )
             order_parameters["params"]["geometry"] = geometry
 
         return order_parameters
@@ -161,7 +171,8 @@ class Tasking(CatalogBase):
             url += f"&orderId={order_id}"
         if decision is not None:
             decisions_validation = (
-                single_decision in ["NOT_DECIDED", "ACCEPTED", "REJECTED"] for single_decision in decision
+                single_decision in ["NOT_DECIDED", "ACCEPTED", "REJECTED"]
+                for single_decision in decision
             )
             if all(decisions_validation):
                 for single_decision in decision:
@@ -184,13 +195,17 @@ class Tasking(CatalogBase):
             dict: The confirmation to the decided quotation plus metadata.
         """
         if decision not in ["ACCEPTED", "REJECTED"]:
-            raise ValueError("Possible desicions are only ACCEPTED or REJECTED.")
+            raise ValueError(
+                "Possible desicions are only ACCEPTED or REJECTED."
+            )
 
         url = endpoint(f"/v2/tasking/quotation/{quotation_id}")
 
         decision_payload = {"decision": decision}
 
-        response_json = self.auth.request(request_type="PATCH", url=url, data=decision_payload)
+        response_json = self.auth.request(
+            request_type="PATCH", url=url, data=decision_payload
+        )
 
         return response_json
 
@@ -228,7 +243,10 @@ class Tasking(CatalogBase):
         if order_id is not None:
             url += f"&orderId={order_id}"
         if decision is not None:
-            decisions_validation = (single_decision in ["NOT_DECIDED", "ACCEPTED"] for single_decision in decision)
+            decisions_validation = (
+                single_decision in ["NOT_DECIDED", "ACCEPTED"]
+                for single_decision in decision
+            )
             if all(decisions_validation):
                 for single_decision in decision:
                     url += f"&decision={single_decision}"
@@ -239,7 +257,9 @@ class Tasking(CatalogBase):
                 )
         return self._query_paginated_output(url)
 
-    def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
+    def choose_feasibility(
+        self, feasibility_id: str, accepted_option_id: str
+    ) -> dict:
         """Accept one of the proposed feasibility study options..
         This operation is only allowed on feasibility studies with the NOT_DECIDED status.
 
@@ -252,7 +272,9 @@ class Tasking(CatalogBase):
         """
         url = endpoint(f"/v2/tasking/feasibility/{feasibility_id}")
         accepted_option_payload = {"acceptedOptionId": accepted_option_id}
-        response_json = self.auth.request(request_type="PATCH", url=url, data=accepted_option_payload)
+        response_json = self.auth.request(
+            request_type="PATCH", url=url, data=accepted_option_payload
+        )
         return response_json
 
     def __repr__(self):

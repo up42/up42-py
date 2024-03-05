@@ -61,7 +61,9 @@ class Workflow:
         """
         Gets and updates the workflow metadata information.
         """
-        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}")
+        url = endpoint(
+            f"/projects/{self.project_id}/workflows/{self.workflow_id}"
+        )
         response_json = self.auth.request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
@@ -92,11 +94,16 @@ class Workflow:
             DeprecationWarning,
             stacklevel=2,
         )
-        url = endpoint(f"/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks")
+        url = endpoint(
+            f"/projects/{self.project_id}/workflows/"
+            f"{self.workflow_id}/tasks"
+        )
 
         response_json = self.auth.request(request_type="GET", url=url)
         tasks = response_json["data"]
-        logger.info(f"Got {len(tasks)} tasks/blocks in workflow {self.workflow_id}.")
+        logger.info(
+            f"Got {len(tasks)} tasks/blocks in workflow {self.workflow_id}."
+        )
 
         if basic:
             return {task["name"]: task["blockVersionTag"] for task in tasks}
@@ -137,8 +144,13 @@ class Workflow:
             # Add parameters if they have non-None default or are required (use default or otherwise None)
             for param_name, param_values in task_parameters.items():
                 if "default" in param_values:
-                    default_task_parameters[param_name] = param_values["default"]
-                if "required" in param_values and param_name not in default_task_parameters:
+                    default_task_parameters[param_name] = param_values[
+                        "default"
+                    ]
+                if (
+                    "required" in param_values
+                    and param_name not in default_task_parameters
+                ):
                     # required without default key, add as placeholder
                     if param_values["required"]:
                         default_task_parameters[param_name] = None
@@ -147,7 +159,9 @@ class Workflow:
         return default_workflow_parameters
 
     @staticmethod
-    def _construct_full_workflow_tasks_dict(input_tasks: Union[List[str], List[dict]]) -> List[dict]:
+    def _construct_full_workflow_tasks_dict(
+        input_tasks: Union[List[str], List[dict]]
+    ) -> List[dict]:
         """
         Constructs the full workflow task definition from a simplified version.
         Accepts blocks ids, block names, block display names & combinations of them.
@@ -184,7 +198,9 @@ class Workflow:
         # Get ids of the input tasks, regardless of the specified format.
         blocks_id_name = {block["id"]: block["name"] for block in blocks}
         blocks_name_id = {block["name"]: block["id"] for block in blocks}
-        blocks_displaynames_id = {block["displayName"]: block["id"] for block in blocks}
+        blocks_displaynames_id = {
+            block["displayName"]: block["id"] for block in blocks
+        }
 
         input_tasks_ids = []
         for task in input_tasks:
@@ -195,7 +211,10 @@ class Workflow:
             elif task in list(blocks_displaynames_id.keys()):
                 input_tasks_ids.append(blocks_displaynames_id[task])
             else:
-                raise ValueError(f"The specified input task {task} does not match any " f"available block.")
+                raise ValueError(
+                    f"The specified input task {task} does not match any "
+                    f"available block."
+                )
 
         # Add first task, the data block.
         data_task = {
@@ -210,7 +229,9 @@ class Workflow:
         for block_id in input_tasks_ids[1:]:
             # Check if multiple of the same block are in the input tasks definition,
             # so that is does not get skipped as it has the same id.
-            counts = Counter([x["blockId"] for x in full_input_tasks_definition])
+            counts = Counter(
+                [x["blockId"] for x in full_input_tasks_definition]
+            )
             try:
                 count_block = int(counts[block_id]) + 1
             except KeyError:
@@ -244,25 +265,37 @@ class Workflow:
         """
         url = endpoint(f"/projects/{self.project_id}/jobs")
         response_json = self.auth.request(request_type="GET", url=url)
-        jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
+        jobs_json = filter_jobs_on_mode(
+            response_json["data"], test_jobs, real_jobs
+        )
 
-        jobs_workflow_json = [j for j in jobs_json if j["workflowId"] == self.workflow_id]
+        jobs_workflow_json = [
+            j for j in jobs_json if j["workflowId"] == self.workflow_id
+        ]
 
         logger.info(
-            f"Got {len(jobs_workflow_json)} jobs for workflow " f"{self.workflow_id} in project {self.project_id}."
+            f"Got {len(jobs_workflow_json)} jobs for workflow "
+            f"{self.workflow_id} in project {self.project_id}."
         )
         if return_json:
             return jobs_workflow_json
         else:
-            jobs = [Job(self.auth, job_id=job["id"], project_id=self.project_id) for job in tqdm(jobs_workflow_json)]
-            jobcollection = JobCollection(auth=self.auth, project_id=self.project_id, jobs=jobs)
+            jobs = [
+                Job(self.auth, job_id=job["id"], project_id=self.project_id)
+                for job in tqdm(jobs_workflow_json)
+            ]
+            jobcollection = JobCollection(
+                auth=self.auth, project_id=self.project_id, jobs=jobs
+            )
             return jobcollection
 
     def delete(self) -> None:
         """
         Deletes the workflow and sets the Python object to None.
         """
-        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}")
+        url = endpoint(
+            f"/projects/{self.project_id}/workflows/{self.workflow_id}"
+        )
         self.auth.request(request_type="DELETE", url=url, return_text=False)
         logger.info(f"Successfully deleted workflow: {self.workflow_id}")
         del self

@@ -20,7 +20,9 @@ def auth_project_mock(requests_mock):
         url="https://api.up42.com/users/me",
         json={"data": {"id": WORKSPACE_ID}},
     )
-    auth = Auth(project_id=PROJECT_ID, project_api_key=PROJECT_APIKEY, authenticate=True)
+    auth = Auth(
+        project_id=PROJECT_ID, project_api_key=PROJECT_APIKEY, authenticate=True
+    )
 
     # get_blocks
     url_get_blocks = f"{API_HOST}/blocks"
@@ -46,8 +48,12 @@ def auth_account_mock(requests_mock):
         "token_type": "bearer",
     }
     requests_mock.post("https://api.up42.com/oauth/token", json=json_get_token)
-    requests_mock.get(url="https://api.up42.com/users/me", json={"data": {"id": WORKSPACE_ID}})
-    return Auth(username="user@up42.com", password="password", authenticate=True)
+    requests_mock.get(
+        url="https://api.up42.com/users/me", json={"data": {"id": WORKSPACE_ID}}
+    )
+    return Auth(
+        username="user@up42.com", password="password", authenticate=True
+    )
 
 
 @pytest.fixture(params=["project", "account"])
@@ -78,7 +84,9 @@ def password_test_live():
 
 @pytest.fixture(scope="module")
 def auth_project_live(project_id_live, project_api_key_live):
-    auth = Auth(project_id=project_id_live, project_api_key=project_api_key_live)
+    auth = Auth(
+        project_id=project_id_live, project_api_key=project_api_key_live
+    )
     main._auth = auth  # instead of authenticate()
     return auth
 

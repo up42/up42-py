@@ -109,7 +109,9 @@ class Order:
         if self.info["type"] == "TASKING":
             order_details = self.info["orderDetails"]
             return order_details
-        logger.info("Order is not TASKING type. Order details are not provided.")
+        logger.info(
+            "Order is not TASKING type. Order details are not provided."
+        )
         return {}
 
     @property
@@ -127,8 +129,13 @@ class Order:
         if self.is_fulfilled:
             params: AssetSearchParams = {"search": self.order_id}
             assets_response = search_assets(self.auth, params=params)
-            return [Asset(self.auth, asset_info=asset_info) for asset_info in assets_response]
-        raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
+            return [
+                Asset(self.auth, asset_info=asset_info)
+                for asset_info in assets_response
+            ]
+        raise ValueError(
+            f"Order {self.order_id} is not FULFILLED! Current status is {self.status}"
+        )
 
     @classmethod
     def place(cls, auth: Auth, order_parameters: dict) -> "Order":
@@ -152,7 +159,9 @@ class Order:
             message = response_json["errors"][0]["message"]
             raise ValueError(f"Order was not placed: {message}")
         order_id = response_json["results"][0]["id"]
-        order = cls(auth=auth, order_id=order_id, order_parameters=order_parameters)
+        order = cls(
+            auth=auth, order_id=order_id, order_parameters=order_parameters
+        )
         logger.info(f"Order {order.order_id} is now {order.status}.")
         return order
 
@@ -224,7 +233,9 @@ class Order:
         while not self.is_fulfilled:
             status = self.status
             substatus_message = (
-                substatus_messages(self.order_details.get("subStatus", "")) if self.info["type"] == "TASKING" else ""
+                substatus_messages(self.order_details.get("subStatus", ""))
+                if self.info["type"] == "TASKING"
+                else ""
             )
             if status in ["PLACED", "BEING_FULFILLED"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:

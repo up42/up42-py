@@ -28,12 +28,14 @@ class CatalogBase:
 
     def get_data_products(self, basic: bool = True) -> Union[dict, List[dict]]:
         """
-        Get the available data product information for each collection. A data product is the available
-        data configurations for each collection, e.g. Pleiades Display product.
+        Get the available data product information for each collection. A data
+        product is the available data configurations for each collection,
+        e.g. Pleiades Display product.
 
         Args:
-            basic: A dictionary containing only the collection title, name, host and available
-                data product configurations, default True.
+            basic: A dictionary containing only the collection title,
+                name, host and available data product configurations,
+                default True.
         """
         url = host.endpoint("/data-products")
         json_response = self.auth.request("GET", url)
@@ -46,7 +48,8 @@ class CatalogBase:
             try:
                 if not product["collection"]["isIntegrated"]:
                     continue
-            except KeyError:  # isIntegrated potentially removed from future public API
+            except KeyError:
+                # isIntegrated potentially removed from future public API
                 pass
             try:
                 if not product["productConfiguration"]["isIntegrated"]:
@@ -63,7 +66,9 @@ class CatalogBase:
                 collection_title = product["collection"]["title"]
                 collection_name = product["collectionName"]
                 product_host = product["collection"]["host"]["name"]
-                data_product = {product["productConfiguration"]["title"]: product["id"]}
+                data_product = {
+                    product["productConfiguration"]["title"]: product["id"]
+                }
 
                 if collection_title not in collection_overview:
                     collection_overview[collection_title] = {
@@ -81,7 +86,8 @@ class CatalogBase:
 
     def get_data_product_schema(self, data_product_id: str) -> dict:
         """
-        Gets the parameters schema of a data product to help with the construction of the catalog/tasking order
+        Gets the parameters schema of a data product to help
+        with the construction of the catalog/tasking order
         parameters.
 
         Args:
@@ -97,7 +103,9 @@ class CatalogBase:
         """
         url = host.endpoint("/collections")
         json_response = self.auth.request("GET", url)
-        collections = [c for c in json_response["data"] if c["type"] == self.type]
+        collections = [
+            c for c in json_response["data"] if c["type"] == self.type
+        ]
         return collections
 
     def place_order(
@@ -163,7 +171,9 @@ class Catalog(CatalogBase, viztools.VizTools):
         self.type = "ARCHIVE"
         self.data_products: Union[None, dict] = None
 
-    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
+    def estimate_order(
+        self, order_parameters: Union[dict, None], **kwargs
+    ) -> int:
         """
         Estimate the cost of an order.
 
@@ -195,7 +205,14 @@ class Catalog(CatalogBase, viztools.VizTools):
 
     @staticmethod
     def construct_search_parameters(
-        geometry: Union[geojson.FeatureCollection, geojson.Feature, dict, list, geopandas.GeoDataFrame, geom.Polygon],
+        geometry: Union[
+            geojson.FeatureCollection,
+            geojson.Feature,
+            dict,
+            list,
+            geopandas.GeoDataFrame,
+            geom.Polygon,
+        ],
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
@@ -231,13 +248,17 @@ class Catalog(CatalogBase, viztools.VizTools):
         """
 
         if sortby is not None or ascending is not None:
-            logger.info("sortby is deprecated, currently only sorting output by creation date.")
+            logger.info(
+                "sortby is deprecated, currently only sorting output by creation date."
+            )
 
         time_period = f"{utils.format_time(start_date)}/{utils.format_time(end_date, set_end_of_day=True)}"
         aoi_fc = utils.any_vector_to_fc(
             vector=geometry,
         )
-        aoi_geometry = utils.fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
+        aoi_geometry = utils.fc_to_query_geometry(
+            fc=aoi_fc, geometry_operation="intersects"
+        )
 
         query_filters: Dict[Any, Any] = {}
         if max_cloudcover is not None:
@@ -263,7 +284,9 @@ class Catalog(CatalogBase, viztools.VizTools):
 
         return search_parameters
 
-    def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[geopandas.GeoDataFrame, dict]:
+    def search(
+        self, search_parameters: dict, as_dataframe: bool = True
+    ) -> Union[geopandas.GeoDataFrame, dict]:
         """
         Searches the catalog for the the search parameters and returns the metadata of
         the matching scenes.
@@ -290,14 +313,18 @@ class Catalog(CatalogBase, viztools.VizTools):
                     }
             ```
         """
-        logger.info("Searching catalog with search_parameters: %s", search_parameters)
+        logger.info(
+            "Searching catalog with search_parameters: %s", search_parameters
+        )
 
         # The API request would fail with a limit above 500, thus 500 is forced in the initial
         # request but additional results are handled below via pagination.
         try:
             max_limit = search_parameters["limit"]
         except KeyError:
-            logger.info("No `limit` parameter in search_parameters, using default 500.")
+            logger.info(
+                "No `limit` parameter in search_parameters, using default 500."
+            )
             max_limit = 500
 
         if max_limit > 500:
@@ -333,14 +360,20 @@ class Catalog(CatalogBase, viztools.VizTools):
             if pagination_exhausted:
                 break
             next_page_url = response_json["links"][1]["href"]
-            response_json = self.auth.request("POST", next_page_url, search_parameters)
+            response_json = self.auth.request(
+                "POST", next_page_url, search_parameters
+            )
             features += response_json["features"]
 
         features = features[:max_limit]
         if not features:
-            df = geopandas.GeoDataFrame(columns=["geometry"], geometry="geometry")
+            df = geopandas.GeoDataFrame(
+                columns=["geometry"], geometry="geometry"
+            )
         else:
-            df = geopandas.GeoDataFrame.from_features(geojson.FeatureCollection(features=features), crs="EPSG:4326")
+            df = geopandas.GeoDataFrame.from_features(
+                geojson.FeatureCollection(features=features), crs="EPSG:4326"
+            )
 
         logger.info("%s results returned.", df.shape[0])
         if as_dataframe:
@@ -395,15 +428,21 @@ class Catalog(CatalogBase, viztools.VizTools):
         }
         if tags is not None:
             order_parameters["tags"] = tags
-        logger.info("See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options.")
+        logger.info(
+            "See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options."
+        )
         schema = self.get_data_product_schema(data_product_id)
-        order_parameters = utils.autocomplete_order_parameters(order_parameters, schema)
+        order_parameters = utils.autocomplete_order_parameters(
+            order_parameters, schema
+        )
 
         # Some catalog orders, e.g. Capella don't require AOI (full image order)
         # Handled on API level, don't manipulate in SDK, providers might accept geometries in the future.
         if aoi is not None:
             aoi = utils.any_vector_to_fc(vector=aoi)
-            aoi = utils.fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
+            aoi = utils.fc_to_query_geometry(
+                fc=aoi, geometry_operation="intersects"
+            )
             order_parameters["params"]["aoi"] = aoi  # type: ignore
 
         return order_parameters
@@ -432,7 +471,9 @@ class Catalog(CatalogBase, viztools.VizTools):
             self.data_products = self.get_data_products(basic=True)  # type: ignore
         hosts = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
         if not host:
-            raise ValueError(f"Selected collections {collection} is not valid. See catalog.get_collections.")
+            raise ValueError(
+                f"Selected collections {collection} is not valid. See catalog.get_collections."
+            )
         product_host = hosts[0]
         logger.info("Downloading quicklooks from provider %s.", product_host)
 
@@ -449,15 +490,24 @@ class Catalog(CatalogBase, viztools.VizTools):
         out_paths: List[str] = []
         for image_id in tqdm.tqdm(image_ids):
             try:
-                url = host.endpoint(f"/catalog/{product_host}/image/{image_id}/quicklook")
-                response = self.auth.request(request_type="GET", url=url, return_text=False)
+                url = host.endpoint(
+                    f"/catalog/{product_host}/image/{image_id}/quicklook"
+                )
+                response = self.auth.request(
+                    request_type="GET", url=url, return_text=False
+                )
                 out_path = output_directory / f"quicklook_{image_id}.jpg"
                 out_paths.append(str(out_path))
                 with open(out_path, "wb") as dst:
                     for chunk in response:
                         dst.write(chunk)
             except ValueError:
-                logger.warning("Image with id %s does not have quicklook available. Skipping ...", image_id)
+                logger.warning(
+                    "Image with id %s does not have quicklook available. Skipping ...",
+                    image_id,
+                )
 
-        self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
+        self.quicklooks = (
+            out_paths  # pylint: disable=attribute-defined-outside-init
+        )
         return out_paths

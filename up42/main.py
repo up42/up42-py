@@ -69,7 +69,9 @@ def _check_auth(func, *args, **kwargs):
     @wraps(func)  # required for mkdocstrings
     def inner(*args, **kwargs):
         if _auth is None:
-            raise RuntimeError("Not authenticated, call up42.authenticate() first")
+            raise RuntimeError(
+                "Not authenticated, call up42.authenticate() first"
+            )
         return func(*args, **kwargs)
 
     return inner
@@ -85,7 +87,9 @@ def get_webhooks(return_json: bool = False) -> List[Webhook]:
     Returns:
         A list of the registered webhooks for this workspace.
     """
-    return Webhooks(auth=__get_auth_safely()).get_webhooks(return_json=return_json)
+    return Webhooks(auth=__get_auth_safely()).get_webhooks(
+        return_json=return_json
+    )
 
 
 @_check_auth
@@ -150,15 +154,23 @@ def get_blocks(
 
     if block_type == "data":
         logger.info("Getting only data blocks.")
-        blocks_json = [block for block in public_blocks_json if block["type"] == "DATA"]
+        blocks_json = [
+            block for block in public_blocks_json if block["type"] == "DATA"
+        ]
     elif block_type == "processing":
         logger.info("Getting only processing blocks.")
-        blocks_json = [block for block in public_blocks_json if block["type"] == "PROCESSING"]
+        blocks_json = [
+            block
+            for block in public_blocks_json
+            if block["type"] == "PROCESSING"
+        ]
     else:
         blocks_json = public_blocks_json
 
     if basic:
-        logger.info("Getting blocks name and id, use basic=False for all block details.")
+        logger.info(
+            "Getting blocks name and id, use basic=False for all block details."
+        )
         blocks_basic = {block["name"]: block["id"] for block in blocks_json}
         if as_dataframe:
             return pd.DataFrame.from_dict(blocks_basic, orient="index")
@@ -173,7 +185,9 @@ def get_blocks(
 
 
 @_check_auth
-def get_block_details(block_id: str, as_dataframe: bool = False) -> Union[dict, pd.DataFrame]:
+def get_block_details(
+    block_id: str, as_dataframe: bool = False
+) -> Union[dict, pd.DataFrame]:
     """
     Gets the detailed information about a specific public block from
     the server, includes all manifest.json and marketplace.json contents.
@@ -223,5 +237,7 @@ def get_credits_balance() -> dict:
         A dict with the balance of credits available in your account.
     """
     endpoint_url = endpoint("/accounts/me/credits/balance")
-    response_json = __get_auth_safely().request(request_type="GET", url=endpoint_url)
+    response_json = __get_auth_safely().request(
+        request_type="GET", url=endpoint_url
+    )
     return response_json["data"]

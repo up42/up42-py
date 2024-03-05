@@ -53,7 +53,9 @@ def restore_default_domain():
 
 
 def pytest_addoption(parser):
-    parser.addoption("--runlive", action="store_true", default=False, help="run live tests")
+    parser.addoption(
+        "--runlive", action="store_true", default=False, help="run live tests"
+    )
 
 
 def pytest_collection_modifyitems(config, items):

@@ -45,7 +45,9 @@ class Project:
         self._info = response_json["data"]
         return self._info
 
-    def get_workflows(self, return_json: bool = False) -> Union[List["Workflow"], List[dict]]:
+    def get_workflows(
+        self, return_json: bool = False
+    ) -> Union[List["Workflow"], List[dict]]:
         """
         Gets all workflows in a project as workflow objects or JSON.
 
@@ -58,7 +60,9 @@ class Project:
         url = endpoint(f"/projects/{self.project_id}/workflows")
         response_json = self.auth.request(request_type="GET", url=url)
         workflows_json = response_json["data"]
-        logger.info(f"Got {len(workflows_json)} workflows for project {self.project_id}.")
+        logger.info(
+            f"Got {len(workflows_json)} workflows for project {self.project_id}."
+        )
 
         if return_json:
             return workflows_json
@@ -110,25 +114,39 @@ class Project:
             "finishedAt",
         ]
         if sortby not in allowed_sorting_criteria:
-            raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
+            raise ValueError(
+                f"sortby parameter must be one of {allowed_sorting_criteria}!"
+            )
         sort = f"{sortby},{'desc' if descending else 'asc'}"
 
         page = 0
-        url = endpoint(f"/projects/{self.project_id}/jobs?page={page}&sort={sort}")
+        url = endpoint(
+            f"/projects/{self.project_id}/jobs?page={page}&sort={sort}"
+        )
         response_json = self.auth.request(request_type="GET", url=url)
-        jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
+        jobs_json = filter_jobs_on_mode(
+            response_json["data"], test_jobs, real_jobs
+        )
 
         # API get jobs pagination exhaustion is indicated by empty next page (no last page flag)
         logging.getLogger("up42.utils").setLevel(logging.CRITICAL)
         while len(response_json["data"]) > 0 and len(jobs_json) < limit:
             page += 1
-            url = endpoint(f"/projects/{self.project_id}/jobs?page={page}&sort={sort}")
+            url = endpoint(
+                f"/projects/{self.project_id}/jobs?page={page}&sort={sort}"
+            )
             response_json = self.auth.request(request_type="GET", url=url)
             if len(response_json["data"]) > 0:
-                jobs_json.extend(filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs))
+                jobs_json.extend(
+                    filter_jobs_on_mode(
+                        response_json["data"], test_jobs, real_jobs
+                    )
+                )
         logging.getLogger("up42.utils").setLevel(logging.INFO)
         jobs_json = jobs_json[:limit]
-        logger.info(f"Got {len(jobs_json)} jobs (limit parameter {limit}) in project {self.project_id}.")
+        logger.info(
+            f"Got {len(jobs_json)} jobs (limit parameter {limit}) in project {self.project_id}."
+        )
         if return_json:
             return jobs_json
         else:
@@ -141,7 +159,9 @@ class Project:
                 )
                 for job_json in jobs_json
             ]
-            jobcollection = JobCollection(auth=self.auth, project_id=self.project_id, jobs=jobs)
+            jobcollection = JobCollection(
+                auth=self.auth, project_id=self.project_id, jobs=jobs
+            )
             return jobcollection
 
     def get_project_settings(self) -> List[Dict[str, str]]:

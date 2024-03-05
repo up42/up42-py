@@ -8,7 +8,10 @@ from up42.tools import get_example_aoi, read_vector_file
 
 @pytest.mark.parametrize("vector_format", ["geojson", "kml", "wkt"])
 def test_read_vector_file_different_formats(vector_format):
-    fp = Path(__file__).resolve().parent / f"mock_data/aoi_berlin.{vector_format}"
+    fp = (
+        Path(__file__).resolve().parent
+        / f"mock_data/aoi_berlin.{vector_format}"
+    )
     fc = read_vector_file(filename=str(fp))
     assert isinstance(fc, dict)
     assert fc["type"] == "FeatureCollection"

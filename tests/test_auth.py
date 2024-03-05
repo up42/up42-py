@@ -86,15 +86,21 @@ def test_generate_headers(auth_mock):
 
 
 def test_request_helper(auth_mock, requests_mock):
-    requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
+    requests_mock.get(
+        url="http://test.com", json={"data": {"xyz": 789}, "error": {}}
+    )
 
-    response = auth_mock._request_helper(request_type="GET", url="http://test.com", data={}, querystring={})
+    response = auth_mock._request_helper(
+        request_type="GET", url="http://test.com", data={}, querystring={}
+    )
     response_json = json.loads(response.text)
     assert response_json == {"data": {"xyz": 789}, "error": {}}
 
 
 def test_request(auth_mock, requests_mock):
-    requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
+    requests_mock.get(
+        url="http://test.com", json={"data": {"xyz": 789}, "error": {}}
+    )
 
     response_json = auth_mock.request(request_type="GET", url="http://test.com")
     assert response_json == {"data": {"xyz": 789}, "error": {}}
@@ -103,7 +109,10 @@ def test_request(auth_mock, requests_mock):
 def test_request_non200_raises(auth_mock, requests_mock):
     requests_mock.get(
         url="http://test.com",
-        json={"data": {}, "error": {"code": 403, "message": "some 403 error message"}},
+        json={
+            "data": {},
+            "error": {"code": 403, "message": "some 403 error message"},
+        },
         status_code=403,
     )
 
@@ -158,7 +167,9 @@ def test_request_200_raises_error_apiv2(auth_mock, requests_mock):
         assert "error" in str(e.value)
 
 
-def test_request_token_still_timed_out_after_retry_raises(auth_mock, requests_mock):
+def test_request_token_still_timed_out_after_retry_raises(
+    auth_mock, requests_mock
+):
     a = requests_mock.get(
         "http://test.com",
         [

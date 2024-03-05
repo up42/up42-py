@@ -89,7 +89,9 @@ def test_get_block_coverage(auth_mock, requests_mock):
     requests_mock.get(
         url=url_get_blocks_coverage,
         json={
-            "data": {"url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"},
+            "data": {
+                "url": "https://storage.googleapis.com/coverage-area-interstellar-prod/coverage.json"
+            },
             "error": {},
         },
     )

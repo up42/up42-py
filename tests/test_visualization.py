@@ -44,7 +44,9 @@ def test_plot_result_not_accepted_file_format_raises():
 
 @patch("matplotlib.pyplot.show")
 def test_plot_quicklooks(capture_canvas, job_mock):
-    fp_quicklooks = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    fp_quicklooks = (
+        Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    )
     job_mock.quicklooks = [fp_quicklooks]
     job_mock.plot_quicklooks()
 
@@ -52,13 +54,16 @@ def test_plot_quicklooks(capture_canvas, job_mock):
 @patch("matplotlib.pyplot.show")
 def test_plot_quicklooks_alternative_filepaths(capture_canvas):
     fp_quicklook = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    VizTools().plot_quicklooks(filepaths=[fp_quicklook, fp_quicklook, fp_quicklook])
+    VizTools().plot_quicklooks(
+        filepaths=[fp_quicklook, fp_quicklook, fp_quicklook]
+    )
 
 
 @patch("matplotlib.pyplot.show")
 def test_plot_coverage(capture_canvas):
     df = gpd.read_file(
-        Path(__file__).resolve().parent / "mock_data/search_results_limited_columns.geojson",
+        Path(__file__).resolve().parent
+        / "mock_data/search_results_limited_columns.geojson",
         as_dataframe=True,
     )
     VizTools().plot_coverage(df)
@@ -67,7 +72,8 @@ def test_plot_coverage(capture_canvas):
 @patch("matplotlib.pyplot.show")
 def test_plot_coverage_wrong_legend_column_ignores(capture_canvas):
     df = gpd.read_file(
-        Path(__file__).resolve().parent / "mock_data/search_results_limited_columns.geojson",
+        Path(__file__).resolve().parent
+        / "mock_data/search_results_limited_columns.geojson",
         as_dataframe=True,
     )
     VizTools().plot_coverage(df, legend_column="abcdefgh")
@@ -82,10 +88,12 @@ def test_map_images_2_scenes():
     gdf = gpd.GeoDataFrame(result_df, geometry="geometry")
 
     quicklook_1 = (
-        Path(__file__).resolve().parent / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
     )
     quicklook_2 = (
-        Path(__file__).resolve().parent / "mock_data/quicklooks/quicklook_f8c03432-cec1-41b7-a203-4d871a03290f.jpg"
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_f8c03432-cec1-41b7-a203-4d871a03290f.jpg"
     )
     filepaths = [quicklook_1, quicklook_2]
 
@@ -107,14 +115,18 @@ def test_map_images_2_scenes_no_column_name():
     gdf = gpd.GeoDataFrame(result_df, geometry="geometry")
 
     quicklook_1 = (
-        Path(__file__).resolve().parent / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
     )
     quicklook_2 = (
-        Path(__file__).resolve().parent / "mock_data/quicklooks/quicklook_f8c03432-cec1-41b7-a203-4d871a03290f.jpg"
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_f8c03432-cec1-41b7-a203-4d871a03290f.jpg"
     )
     filepaths = [quicklook_1, quicklook_2]
 
-    m = VizTools()._map_images(plot_file_format, gdf, filepaths, name_column="nikoo")
+    m = VizTools()._map_images(
+        plot_file_format, gdf, filepaths, name_column="nikoo"
+    )
     m._repr_html_()
     out = m._parent.render()  # pylint: disable=assignment-from-no-return
 
@@ -131,7 +143,8 @@ def test_map_images_1_scene():
     gdf = gpd.GeoDataFrame(result_df, geometry="geometry")
 
     quicklook = (
-        Path(__file__).resolve().parent / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
+        Path(__file__).resolve().parent
+        / "mock_data/quicklooks/quicklook_16e18e15-c941-4aae-97cd-d67b18dc9f6e.jpg"
     )
     filepaths = [quicklook]
 
@@ -146,7 +159,10 @@ def test_map_results(job_mock):
     fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with tarfile.open(fp_tgz) as tar:
         tar.extractall(fp_tgz.parent)
-    fp_tif = fp_tgz.parent / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    fp_tif = (
+        fp_tgz.parent
+        / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    )
     fp_data_json = fp_tgz.parent / "output/data.json"
 
     job_mock.results = [str(fp_tif), str(fp_data_json)]
@@ -156,10 +172,16 @@ def test_map_results(job_mock):
 
 def test_map_results_jobcollection(job_mock):
     fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-    fp_merged = Path(__file__).resolve().parent / "mock_data/job_collection_merged_result.json"
+    fp_merged = (
+        Path(__file__).resolve().parent
+        / "mock_data/job_collection_merged_result.json"
+    )
     with tarfile.open(fp_tgz) as tar:
         tar.extractall(fp_tgz.parent)
-    fp_tif = fp_tgz.parent / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    fp_tif = (
+        fp_tgz.parent
+        / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    )
 
     my_dict = {
         "job_id_123": [str(fp_tif), f"{str(fp_tgz.parent)}/output/data.json"],
@@ -176,7 +198,10 @@ def test_map_results_additional_geojson(job_mock):
     fp_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with tarfile.open(fp_tgz) as tar:
         tar.extractall(fp_tgz.parent)
-    fp_tif = fp_tgz.parent / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    fp_tif = (
+        fp_tgz.parent
+        / "output/7e17f023-a8e3-43bd-aaac-5bbef749c7f4/7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif"
+    )
     fp_data_json = fp_tgz.parent / "output/data.json"
     fp_data_geojson = fp_tgz.parent / "output/additional_vector_file.geojson"
     copyfile(fp_data_json, fp_data_geojson)

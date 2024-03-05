@@ -71,9 +71,16 @@ class Auth:
         self.token: Optional[str] = None
 
         local_vars = locals()
-        credentials_filter = ["project_id", "project_api_key", "username", "password"]
+        credentials_filter = [
+            "project_id",
+            "project_api_key",
+            "username",
+            "password",
+        ]
         credentials_dict = {
-            key: value for key, value in local_vars.items() if key in credentials_filter and value is not None
+            key: value
+            for key, value in local_vars.items()
+            if key in credentials_filter and value is not None
         }
 
         if "env" in kwargs:
@@ -95,10 +102,14 @@ class Auth:
             self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
-    def _choose_credential_source(self, cfg_file: Union[str, Path, None], kwargs: dict) -> dict:
+    def _choose_credential_source(
+        self, cfg_file: Union[str, Path, None], kwargs: dict
+    ) -> dict:
         config = read_json(cfg_file) or {}
         if set(config.keys()).intersection(set(kwargs.keys())):
-            raise ValueError("Credentials must be provided either via config file or arguments, but not both")
+            raise ValueError(
+                "Credentials must be provided either via config file or arguments, but not both"
+            )
         return config if config else kwargs
 
     def _set_credentials(self, source: dict):
@@ -124,7 +135,9 @@ class Auth:
                 self._credentials_key = source[parameters[1]]
                 self._get_token = token_retrievers[schema]
         if self._credentials_id is None:
-            raise ValueError("No credentials provided either via config file or arguments.")
+            raise ValueError(
+                "No credentials provided either via config file or arguments."
+            )
 
     def _get_token_account_based(self):
         """Account based authentication via username and password."""
@@ -159,12 +172,18 @@ class Auth:
         try:
             client_id = cast(str, self._credentials_id)
             client_secret = cast(str, self._credentials_key)
-            client = BackendApplicationClient(client_id=client_id, client_secret=client_secret)
+            client = BackendApplicationClient(
+                client_id=client_id, client_secret=client_secret
+            )
             auth = HTTPBasicAuth(client_id, client_secret)
             get_token_session = OAuth2Session(client=client)
-            token_response = get_token_session.fetch_token(token_url=host.endpoint("/oauth/token"), auth=auth)
+            token_response = get_token_session.fetch_token(
+                token_url=host.endpoint("/oauth/token"), auth=auth
+            )
         except MissingTokenError as err:
-            raise ValueError("Authentication was not successful, check the provided project credentials.") from err
+            raise ValueError(
+                "Authentication was not successful, check the provided project credentials."
+            ) from err
 
         self.token = token_response["data"]["accessToken"]
 
@@ -273,14 +292,19 @@ class Auth:
         retryer_token = Retrying(
             stop=stop_after_attempt(2),  # Original attempt + one retry
             wait=wait_fixed(0.5),
-            retry=(retry_for_error_status_code(401) | retry_if_exception_type(requests.exceptions.ConnectionError)),
+            retry=(
+                retry_for_error_status_code(401)
+                | retry_if_exception_type(requests.exceptions.ConnectionError)
+            ),
             after=lambda retry_state: self._get_token(),  # type:ignore
             reraise=True,
             # after final failed attempt, raises last attempt's exception instead of RetryError.
         )
 
         try:
-            response: requests.Response = retryer_token(self._request_helper, request_type, url, data, querystring)
+            response: requests.Response = retryer_token(
+                self._request_helper, request_type, url, data, querystring
+            )
 
         # There are two UP42 API versions:
         # v1 endpoints give response format {"data": ..., "error": ...}   data e.g. dict or list.  error str or dict
@@ -305,7 +329,10 @@ class Auth:
 
             # Handle api error messages here before handling it in every single function.
             try:
-                if response_text["error"] is not None and response_text["data"] is None:
+                if (
+                    response_text["error"] is not None
+                    and response_text["data"] is None
+                ):
                     raise ValueError(response_text["error"])
                 return response_text
             except (
