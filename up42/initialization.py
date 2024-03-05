@@ -54,7 +54,7 @@ def initialize_catalog() -> "Catalog":
     """
     Returns a Catalog object for using the catalog search.
     """
-    return Catalog(auth_instance=__get_auth_safely())
+    return Catalog(auth=__get_auth_safely())
 
 
 @_check_auth
@@ -62,7 +62,7 @@ def initialize_tasking() -> "Tasking":
     """
     Returns a Tasking object for creating satellite tasking orders.
     """
-    return Tasking(auth_instance=__get_auth_safely())
+    return Tasking(auth=__get_auth_safely())
 
 
 @_check_auth

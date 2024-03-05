@@ -88,7 +88,7 @@ def tasking_mock(auth_mock, requests_mock):
         json=accepted_id_response_json,
     )
 
-    return Tasking(auth_instance=auth_mock)
+    return Tasking(auth=auth_mock)
 
 
 @pytest.fixture()
@@ -123,7 +123,7 @@ def tasking_get_feasibility_mock(auth_mock, requests_mock):
         json_data = json.load(json_file)
         requests_mock.get(url=get_feasibility_decision_param, json=json_data)
 
-    return Tasking(auth_instance=auth_mock)
+    return Tasking(auth=auth_mock)
 
 
 @pytest.fixture()
@@ -147,10 +147,10 @@ def tasking_choose_feasibility_mock(auth_mock, requests_mock):
         }
     )
     requests_mock.patch(url=choose_feasibility_url, status_code=405, json=response)
-    return Tasking(auth_instance=auth_mock)
+    return Tasking(auth=auth_mock)
 
 
 @pytest.fixture()
 def tasking_live(auth_live):
-    tasking = Tasking(auth_instance=auth_live)
+    tasking = Tasking(auth=auth_live)
     return tasking

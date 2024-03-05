@@ -448,7 +448,7 @@ def test_construct_order_parameters_live(catalog_live, product_id):
 
 # pylint: disable=unused-argument
 def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, auth_mock):
-    catalog_instance = catalog.Catalog(auth_instance=auth_mock)
+    catalog_instance = catalog.Catalog(auth=auth_mock)
     expected_payload = {
         "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
         "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],

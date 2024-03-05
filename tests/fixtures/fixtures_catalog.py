@@ -36,12 +36,12 @@ def catalog_mock(auth_mock, requests_mock):
         json_data_product_schema = json.load(json_file)
         requests_mock.get(url=url_data_product_schema, json=json_data_product_schema)
 
-    return Catalog(auth_instance=auth_mock)
+    return Catalog(auth=auth_mock)
 
 
 @pytest.fixture()
 def catalog_live(auth_live):
-    return Catalog(auth_instance=auth_live)
+    return Catalog(auth=auth_live)
 
 
 @pytest.fixture()
@@ -72,7 +72,7 @@ def catalog_pagination_mock(auth_mock, requests_mock):
         [{"json": search_response_json}, {"json": pagination_response_json}],
     )
 
-    return Catalog(auth_instance=auth_mock)
+    return Catalog(auth=auth_mock)
 
 
 @pytest.fixture()
@@ -110,4 +110,4 @@ def catalog_usagetype_mock(auth_mock, requests_mock):
         ],
     )
 
-    return Catalog(auth_instance=auth_mock)
+    return Catalog(auth=auth_mock)

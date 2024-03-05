@@ -33,9 +33,9 @@ class Tasking(CatalogBase):
     ```
     """
 
-    def __init__(self, auth_instance: Auth):
-        super().__init__(auth_instance)
-        self.auth = auth_instance
+    def __init__(self, auth: Auth):
+        super().__init__(auth)
+        self.auth = auth
         self.type = "TASKING"
 
     def construct_order_parameters(
