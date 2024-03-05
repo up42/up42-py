@@ -119,19 +119,27 @@ class CatalogBase:
         Place an order.
 
         Args:
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
-            track_status (bool): If set to True, will only return the Order once it is `FULFILLED` or `FAILED`.
-            report_time (int): The interval (in seconds) to query the order status if `track_status` is True.
+            order_parameters: A dictionary like
+                {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            track_status (bool): If set to True, will only return
+                the Order once it is `FULFILLED` or `FAILED`.
+            report_time (int): The interval (in seconds) to query
+                the order status if `track_status` is True.
 
         Warning "Deprecated order parameters"
-            The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. Please use the new
+            The use of the 'scene' and 'geometry' parameters for
+            the data ordering is deprecated. Please use the new
             order_parameters parameter as described above.
 
          Warning:
-            When placing orders of items that are in archive or cold storage,
-            the order fulfillment can happen up to **24h after order placement**.
-            In such cases, please make sure to set an appropriate `report_time`.
-            You can also use `Order.track_status` on the returned object to track the status later.
+            When placing orders of items that are in
+            archive or cold storage,
+            the order fulfillment can happen up to
+            **24h after order placement**.
+            In such cases, please make sure to set
+            an appropriate `report_time`.
+            You can also use `Order.track_status` on the
+            returned object to track the status later.
 
         Returns:
             Order class object of the placed order.
@@ -139,14 +147,16 @@ class CatalogBase:
         if "scene" in kwargs or "geometry" in kwargs:
             # Deprecated, to be removed, use order_parameters.
             message = (
-                "The use of the 'scene' and 'geometry' parameters for the data ordering is deprecated. "
+                "The use of the 'scene' and 'geometry' parameters "
+                "for the data ordering is deprecated. "
                 "Please use the new 'order_parameters' parameter."
             )
             warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
-
-        placed_order = order.Order.place(self.auth, order_parameters)  # type: ignore
+        placed_order = order.Order.place(  
+            self.auth, order_parameters  # type: ignore
+        )
         if track_status:
             placed_order.track_status(report_time)
         return placed_order
@@ -154,14 +164,16 @@ class CatalogBase:
 
 class Catalog(CatalogBase, viztools.VizTools):
     """
-    The Catalog class enables access to the UP42 catalog functionality (data archive search & ordering).
+    The Catalog class enables access to the UP42 catalog
+    functionality (data archive search & ordering).
 
     Use catalog:
     ```python
     catalog = up42.initialize_catalog()
     ```
 
-    This class also inherits functions from the [CatalogBase](catalogbase-reference.md) class.
+    This class also inherits functions from the
+    [CatalogBase](catalogbase-reference.md) class.
     """
 
     def __init__(self, auth: up42_auth.Auth):
@@ -178,19 +190,22 @@ class Catalog(CatalogBase, viztools.VizTools):
         Estimate the cost of an order.
 
         Args:
-            order_parameters: A dictionary like {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+            order_parameters: A dictionary like
+            {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
 
         Returns:
             int: An estimated cost for the order in UP42 credits.
 
         Warning "Deprecated order parameters"
-            The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. Please use the new
+            The use of the 'scene' and 'geometry' parameters for
+            the data estimation is deprecated. Please use the new
             order_parameters parameter as described above.
         """
         if "scene" in kwargs or "geometry" in kwargs:
             # Deprecated, to be removed, use order_parameters.
             message = (
-                "The use of the 'scene' and 'geometry' parameters for the data estimation is deprecated. "
+                "The use of the 'scene' and 'geometry' parameters "
+                "for the data estimation is deprecated. "
                 "Please use the new 'order_parameters' parameter."
             )
             warnings.warn(message, DeprecationWarning, stacklevel=2)
@@ -226,20 +241,27 @@ class Catalog(CatalogBase, viztools.VizTools):
         Helps constructing the parameters dictionary required for the search.
 
         Args:
-            geometry: The search geometry, default a Polygon. One of FeatureCollection, Feature,
-                dict (geojson geometry), list (bounds coordinates), GeoDataFrame, shapely.Polygon, shapely.Point.
+            geometry: The search geometry, default a Polygon.
+                One of FeatureCollection, Feature, dict (geojson geometry),
+                list (bounds coordinates), GeoDataFrame,
+                shapely.Polygon, shapely.Point.
                 All assume EPSG 4326!
-            collections: The satellite sensor collections to search for, e.g. ["phr"] or ["phr", "spot"].
+            collections: The satellite sensor collections to search for,
+                e.g. ["phr"] or ["phr", "spot"].
                 Also see catalog.get_collections().
             start_date: Query period starting day, format "2020-01-01".
             end_date: Query period ending day, format "2020-01-01".
-            usage_type: Optional. Filter for imagery that can be purchased & downloaded or also
-                processed. ["DATA"] (can only be downloaded), ["ANALYTICS"] (can be downloaded
-                or used directly with a processing algorithm), ["DATA", "ANALYTICS"]
-                (can be any combination). The filter is inclusive, using ["DATA"] can
+            usage_type: Optional. Filter for imagery that can
+                be purchased & downloaded or also processed.
+                ["DATA"] (can only be downloaded),
+                ["ANALYTICS"] (can be downloaded
+                or used directly with a processing algorithm),
+                ["DATA", "ANALYTICS"] (can be any combination).
+                The filter is inclusive, using ["DATA"] can
                 also result in results with ["DATA", "ANALYTICS"].
             limit: The maximum number of search results to return (1-max.500).
-            max_cloudcover: Optional. Maximum cloud coverage percent - e.g. 100 will return all scenes,
+            max_cloudcover: Optional. Maximum cloud coverage percent.
+                e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloud coverage.
             sortby: (deprecated)
             ascending: (deprecated)
@@ -249,10 +271,13 @@ class Catalog(CatalogBase, viztools.VizTools):
 
         if sortby is not None or ascending is not None:
             logger.info(
-                "sortby is deprecated, currently only sorting output by creation date."
+                "sortby is deprecated, currently only sorting output by "
+                "creation date."
             )
+        start = utils.format_time(start_date)
+        end = utils.format_time(end_date, set_end_of_day=True)
+        time_period = f"{start}/{end}"
 
-        time_period = f"{utils.format_time(start_date)}/{utils.format_time(end_date, set_end_of_day=True)}"
         aoi_fc = utils.any_vector_to_fc(
             vector=geometry,
         )
@@ -262,7 +287,9 @@ class Catalog(CatalogBase, viztools.VizTools):
 
         query_filters: Dict[Any, Any] = {}
         if max_cloudcover is not None:
-            query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
+            query_filters["cloudCoverage"] = {
+                "lte": max_cloudcover
+            }  # type: ignore
 
         if usage_type is not None:
             if usage_type == ["DATA"]:
@@ -288,15 +315,17 @@ class Catalog(CatalogBase, viztools.VizTools):
         self, search_parameters: dict, as_dataframe: bool = True
     ) -> Union[geopandas.GeoDataFrame, dict]:
         """
-        Searches the catalog for the the search parameters and returns the metadata of
-        the matching scenes.
+        Searches the catalog for the the search parameters and
+        returns the metadata of the matching scenes.
 
         Args:
             search_parameters: The catalog search parameters, see example.
-            as_dataframe: return type, geopandas.GeoDataFrame if True (default), FeatureCollection if False.
+            as_dataframe: return type, geopandas.GeoDataFrame if True (default),
+                FeatureCollection if False.
 
         Returns:
-            The search results as a geopandas.GeoDataFrame, optionally as JSON dict.
+            The search results as a geopandas.GeoDataFrame,
+            optionally as JSON dict.
 
         Example:
             ```python
@@ -305,11 +334,13 @@ class Catalog(CatalogBase, viztools.VizTools):
                     "collections": ["phr"],
                     "intersects": {
                         "type": "Polygon",
-                        "coordinates": [[[13.32113746,52.73971768],[13.15981158,52.2092959],
-                        [13.62204483,52.15632025],[13.78859517,52.68655119],[13.32113746,
+                        "coordinates": [[[13.32113746,52.73971768],
+                        [13.15981158,52.2092959],[13.62204483,52.15632025],
+                        [13.78859517,52.68655119],[13.32113746,
                         52.73971768]]]},
                     "limit": 10,
-                    "sortby": [{"field" : "properties.acquisitionDate", "direction" : "asc"}]
+                    "sortby": [{"field" : "properties.acquisitionDate",
+                        "direction" : "asc"}]
                     }
             ```
         """
@@ -317,7 +348,8 @@ class Catalog(CatalogBase, viztools.VizTools):
             "Searching catalog with search_parameters: %s", search_parameters
         )
 
-        # The API request would fail with a limit above 500, thus 500 is forced in the initial
+        # The API request would fail with a limit above 500,
+        # thus 500 is forced in the initial
         # request but additional results are handled below via pagination.
         try:
             max_limit = search_parameters["limit"]
@@ -332,7 +364,9 @@ class Catalog(CatalogBase, viztools.VizTools):
 
         # UP42 API can query multiple collections of the same host at once.
         if self.data_products is None:
-            self.data_products = self.get_data_products(basic=True)  # type: ignore
+            self.data_products = self.get_data_products(
+                basic=True
+            )  # type: ignore
         hosts = [
             v["host"]
             for v in self.data_products.values()  # type: ignore
@@ -340,12 +374,13 @@ class Catalog(CatalogBase, viztools.VizTools):
         ]
         if not hosts:
             raise ValueError(
-                f"Selected collections {search_parameters['collections']} are not valid. See "
-                f"catalog.get_collections."
+                f"Selected collections {search_parameters['collections']} are "
+                "not valid. See catalog.get_collections."
             )
         if len(set(hosts)) > 1:
             raise ValueError(
-                "Only collections with the same host can be searched at the same time. Please adjust the "
+                "Only collections with the same host can be searched "
+                "at the same time. Please adjust the "
                 "collections in the search_parameters!"
             )
         product_host = hosts[0]
@@ -354,7 +389,8 @@ class Catalog(CatalogBase, viztools.VizTools):
         response_json: dict = self.auth.request("POST", url, search_parameters)
         features = response_json["features"]
 
-        # Search results with more than 500 items are given as 50-per-page additional pages.
+        # Search results with more than 500 items 
+        # are given as 50-per-page additional pages.
         while len(features) < max_limit:
             pagination_exhausted = len(response_json["links"]) == 1
             if pagination_exhausted:
@@ -396,15 +432,21 @@ class Catalog(CatalogBase, viztools.VizTools):
         tags: Optional[List[str]] = None,
     ):
         """
-        Helps constructing the parameters dictionary required for the catalog order. Some collections have
-        additional parameters that are added to the output dictionary with value None. The potential values to
-        select from are given in the logs, for more detail on the parameter use `catalog.get_data_product_schema()`.
+        Helps constructing the parameters dictionary required 
+        for the catalog order. Some collections have
+        additional parameters that are added to the output 
+        dictionary with value None. The potential values to
+        select from are given in the logs, for more detail on 
+        the parameter use `catalog.get_data_product_schema()`.
 
         Args:
-            data_product_id: Id of the desired UP42 data product, see `catalog.get_data_products`
-            image_id: The id of the desired image (from search results)
-            aoi: The geometry of the order, one of dict, Feature, FeatureCollection,
-                list, geopandas.GeoDataFrame, Polygon. Optional for "full-image products".
+            data_product_id: Id of the desired UP42 data product, 
+                see `catalog.get_data_products`
+            image_id: The id of the desired image 
+                (from search results)
+            aoi: The geometry of the order, one of dict, Feature, 
+                FeatureCollection, list, geopandas.GeoDataFrame, Polygon. 
+                Optional for "full-image products".
             tags: A list of tags that categorize the order.
         Returns:
             The order parameters dictionary.
@@ -429,7 +471,8 @@ class Catalog(CatalogBase, viztools.VizTools):
         if tags is not None:
             order_parameters["tags"] = tags
         logger.info(
-            "See `catalog.get_data_product_schema(data_product_id)` for more detail on the parameter options."
+            "See `catalog.get_data_product_schema(data_product_id)` for more "
+            "detail on the parameter options."
         )
         schema = self.get_data_product_schema(data_product_id)
         order_parameters = utils.autocomplete_order_parameters(
@@ -437,7 +480,8 @@ class Catalog(CatalogBase, viztools.VizTools):
         )
 
         # Some catalog orders, e.g. Capella don't require AOI (full image order)
-        # Handled on API level, don't manipulate in SDK, providers might accept geometries in the future.
+        # Handled on API level, don't manipulate in SDK, 
+        # providers might accept geometries in the future.
         if aoi is not None:
             aoi = utils.any_vector_to_fc(vector=aoi)
             aoi = utils.fc_to_query_geometry(
@@ -458,21 +502,30 @@ class Catalog(CatalogBase, viztools.VizTools):
         be plotted via catalog.map_quicklooks() or catalog.plot_quicklooks().
 
         Args:
-            image_ids: List of provider image_ids e.g. ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"].
-                Access the search results id column via `list(search_results.id)`.
+            image_ids: List of provider image_ids 
+                e.g. ["6dffb8be-c2ab-46e3-9c1c-6958a54e4527"].
+                Access the search results id column via 
+                `list(search_results.id)`.
             collection: The data collection corresponding to the image ids.
-            output_directory: The file output directory, defaults to the current working
-                directory.
+            output_directory: The file output directory, 
+                defaults to the current working directory.
 
         Returns:
             List of quicklook image output file paths.
         """
         if self.data_products is None:
-            self.data_products = self.get_data_products(basic=True)  # type: ignore
-        hosts = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
+            self.data_products = self.get_data_products(
+                basic=True
+            )  # type: ignore
+        hosts = [
+            v["host"] 
+            for v in self.data_products.values() 
+            if v["collection"] == collection
+        ]  # type: ignore
         if not host:
             raise ValueError(
-                f"Selected collections {collection} is not valid. See catalog.get_collections."
+                f"Selected collections {collection} is not valid. "
+                "See catalog.get_collections."
             )
         product_host = hosts[0]
         logger.info("Downloading quicklooks from provider %s.", product_host)
@@ -503,10 +556,10 @@ class Catalog(CatalogBase, viztools.VizTools):
                         dst.write(chunk)
             except ValueError:
                 logger.warning(
-                    "Image with id %s does not have quicklook available. Skipping ...",
+                    "Image with id %s does not have quicklook available. "
+                    "Skipping ...",
                     image_id,
                 )
-
         self.quicklooks = (
             out_paths  # pylint: disable=attribute-defined-outside-init
         )
