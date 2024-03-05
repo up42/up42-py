@@ -126,7 +126,10 @@ def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
         )
     assert (
         str(e.value)
-        == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
+        == (
+            "UP42 only accepts single geometries, the provided geometry "
+            "contains multiple geometries."
+        )
     )
 
 
@@ -172,14 +175,17 @@ def test_search_live(catalog_live):
 
 def test_search_usagetype(catalog_usagetype_mock):
     """
-    Result & Result2 are one of the combinations of "DATA" and "ANALYTICS". Result2 can
-    be None.
+    Result & Result2 are one of the combinations of 
+    "DATA" and "ANALYTICS". Result2 can be None.
 
-    Test is not pytest-paramterized as the same catalog_usagetype_mock needs be used for
+    Test is not pytest-paramterized as the same 
+    catalog_usagetype_mock needs be used for
     each iteration.
 
-    The result assertion needs to allow multiple combinations, e.g. when searching for
-    ["DATA", "ANALYTICS"], the result can be ["DATA"], ["ANALYTICS"] or ["DATA", "ANALYTICS"].
+    The result assertion needs to allow multiple combinations, 
+    e.g. when searching for ["DATA", "ANALYTICS"], 
+    the result can be ["DATA"], ["ANALYTICS"] 
+    or ["DATA", "ANALYTICS"].
     """
     params1 = {"usage_type": ["DATA"], "result1": "DATA", "result2": ""}
     params2 = {
@@ -236,11 +242,13 @@ def test_search_usagetype(catalog_usagetype_mock):
 )
 def test_search_usagetype_live(catalog_live, usage_type, result, result2):
     """
-    Result & Result2 are one of the combinations of "DATA" and "ANALYTICS". Result2 can
-    be None.
+    Result & Result2 are one of the combinations of 
+    "DATA" and "ANALYTICS". Result2 can be None.
 
-    The result assertion needs to allow multiple combinations, e.g. when searching for
-    ["DATA", "ANALYTICS"], the result can be ["DATA"], ["ANALYTICS"] or ["DATA", "ANALYTICS"].
+    The result assertion needs to allow multiple combinations, 
+    e.g. when searching for ["DATA", "ANALYTICS"], 
+    the result can be ["DATA"], 
+    ["ANALYTICS"] or ["DATA", "ANALYTICS"].
     """
     search_parameters = catalog_live.construct_search_parameters(
         start_date="2014-01-01T00:00:00",
@@ -350,7 +358,8 @@ def test_search_catalog_pagination_no_results(catalog_live):
 def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
     """
     Search results pagination is exhausted after 1 extra page (50 elements),
-    resulting in only 500+50 features even though the limit parameter asked for 614.
+    resulting in only 500+50 features even though 
+    the limit parameter asked for 614.
     """
     search_params_limit_614 = {
         "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
@@ -518,7 +527,10 @@ def test_order_from_catalog(
     requests_mock,
 ):
     requests_mock.post(
-        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
+        url=(
+            f"{constants.API_HOST}/v2/orders?"
+            f"workspaceId={constants.WORKSPACE_ID}"
+        ),
         json={
             "results": [{"index": 0, "id": constants.ORDER_ID}],
             "errors": [],
@@ -533,7 +545,10 @@ def test_order_from_catalog_track_status(
     catalog_order_parameters, order_mock, catalog_mock, requests_mock
 ):
     requests_mock.post(
-        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
+        url=(
+            f"{constants.API_HOST}/v2/orders?"
+            f"workspaceId={constants.WORKSPACE_ID}"
+        ),
         json={
             "results": [{"index": 0, "id": constants.ORDER_ID}],
             "errors": [],

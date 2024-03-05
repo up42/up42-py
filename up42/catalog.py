@@ -519,9 +519,9 @@ class Catalog(CatalogBase, viztools.VizTools):
             )  # type: ignore
         hosts = [
             v["host"] 
-            for v in self.data_products.values() 
+            for v in self.data_products.values() # type: ignore
             if v["collection"] == collection
-        ]  # type: ignore
+        ]  
         if not host:
             raise ValueError(
                 f"Selected collections {collection} is not valid. "
