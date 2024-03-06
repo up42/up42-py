@@ -30,11 +30,21 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-## 0.38.0a0
+
+## 0.37.0a1
 
 **March 06, 2024**
  - Refactored catalog.py and test_catalog.py as per pylint checks.
  - Some minor refactoring in other classes due to auth's function name change
+
+## 0.37.0a0
+
+**March 04, 2024**
+New components for http layer for future authentication and request improvements
+
+- Ported http adapter, providing configurable resilience.
+- Ported resilient project authentication, managing token expiration managing.
+
 
 ## 0.36.0
 
