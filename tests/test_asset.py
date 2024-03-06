@@ -7,12 +7,7 @@ import pytest
 from up42.asset import Asset
 from up42.host import endpoint
 
-from .fixtures.fixtures_globals import (
-    ASSET_ID,
-    DOWNLOAD_URL,
-    JSON_ASSET,
-    STAC_ASSET_HREF,
-)
+from .fixtures.fixtures_globals import ASSET_ID, DOWNLOAD_URL, JSON_ASSET, STAC_ASSET_HREF
 
 
 def test_init(asset_mock):
@@ -45,9 +40,7 @@ def test_should_delegate_repr_to_info():
         "Sc 2: Both asset_id and asset_info not provided",
     ],
 )
-def test_init_should_accept_only_asset_id_or_info(
-    asset_id, asset_info, expected_error
-):
+def test_init_should_accept_only_asset_id_or_info(asset_id, asset_info, expected_error):
     with pytest.raises(ValueError) as err:
         Asset(auth=MagicMock(), asset_id=asset_id, asset_info=asset_info)
     assert expected_error == str(err.value)
@@ -82,9 +75,7 @@ def test_asset_stac_info(asset_mock):
 
 
 def test_asset_update_metadata(asset_mock):
-    updated_info = asset_mock.update_metadata(
-        title="some_other_title", tags=["othertag1", "othertag2"]
-    )
+    updated_info = asset_mock.update_metadata(title="some_other_title", tags=["othertag1", "othertag2"])
     assert updated_info["title"] == "some_other_title"
     assert updated_info["tags"] == ["othertag1", "othertag2"]
 
@@ -97,9 +88,7 @@ def test_asset_get_download_url(assets_fixture):
 
 
 @pytest.mark.parametrize("with_output_directory", [True, False])
-def test_asset_download(
-    asset_mock, requests_mock, tmp_path, with_output_directory
-):
+def test_asset_download(asset_mock, requests_mock, tmp_path, with_output_directory):
     out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as src_tgz:
         out_tgz_file = src_tgz.read()
@@ -149,12 +138,8 @@ def test_asset_download_no_unpacking(assets_fixture, requests_mock, tmp_path):
 
 
 @pytest.mark.parametrize("with_output_directory", [True, False])
-def test_download_stac_asset(
-    asset_mock2, requests_mock, tmp_path, with_output_directory
-):
-    out_file_path = (
-        Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
-    )
+def test_download_stac_asset(asset_mock2, requests_mock, tmp_path, with_output_directory):
+    out_file_path = Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
     with open(out_file_path, "rb") as src_file:
         out_file = src_file.read()
     requests_mock.get(
@@ -166,8 +151,6 @@ def test_download_stac_asset(
     )
 
     output_directory = tmp_path if with_output_directory else None
-    out_path = asset_mock2.download_stac_asset(
-        pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]), output_directory
-    )
+    out_path = asset_mock2.download_stac_asset(pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]), output_directory)
     assert out_path.exists()
     assert out_path.name == "bsg-104-20230522-044750-90756881_ortho.tiff"

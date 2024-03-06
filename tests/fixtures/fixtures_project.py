@@ -43,9 +43,7 @@ def project_mock(auth_mock, requests_mock):
     requests_mock.post(url=url_create_workflow, json=json_create_workflow)
 
     # workflow.info (for create_workflow)
-    url_workflow_info = (
-        f"{API_HOST}/projects/" f"{project.project_id}/workflows/{WORKFLOW_ID}"
-    )
+    url_workflow_info = f"{API_HOST}/projects/" f"{project.project_id}/workflows/{WORKFLOW_ID}"
     json_workflow_info = {
         "data": {
             "name": WORKFLOW_NAME,

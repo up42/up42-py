@@ -9,11 +9,7 @@ from geopandas import GeoDataFrame  # type: ignore
 from shapely.geometry import Polygon  # type: ignore
 
 from up42.asset import Asset
-from up42.asset_searcher import (
-    AssetSearchParams,
-    query_paginated_endpoints,
-    search_assets,
-)
+from up42.asset_searcher import AssetSearchParams, query_paginated_endpoints, search_assets
 from up42.auth import Auth
 from up42.host import endpoint
 from up42.order import Order
@@ -79,15 +75,9 @@ class Storage:
         response_features: list = []
         response_features_limit = stac_search_parameters["limit"]
         while len(response_features) < response_features_limit:
-            stac_results = self.auth.request(
-                request_type="POST", url=url, data=stac_search_parameters
-            )
+            stac_results = self.auth.request(request_type="POST", url=url, data=stac_search_parameters)
             response_features.extend(stac_results["features"])
-            token_list = [
-                link["body"]["token"]
-                for link in stac_results["links"]
-                if link["rel"] == "next"
-            ]
+            token_list = [link["body"]["token"] for link in stac_results["links"] if link["rel"] == "next"]
             if token_list:
                 stac_search_parameters["token"] = token_list[0]
             else:
@@ -100,9 +90,7 @@ class Storage:
         created_before: Optional[Union[str, datetime]] = None,
         acquired_after: Optional[Union[str, datetime]] = None,
         acquired_before: Optional[Union[str, datetime]] = None,
-        geometry: Optional[
-            Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]
-        ] = None,
+        geometry: Optional[Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]] = None,
         workspace_id: Optional[str] = None,
         collection_names: Optional[List[str]] = None,
         producer_names: Optional[List[str]] = None,
@@ -178,10 +166,7 @@ class Storage:
         if return_json:
             return assets_json
         else:
-            return [
-                Asset(self.auth, asset_info=asset_json)
-                for asset_json in assets_json
-            ]
+            return [Asset(self.auth, asset_info=asset_json) for asset_json in assets_json]
 
     def get_orders(
         self,
@@ -222,9 +207,7 @@ class Storage:
             "status",
         }
         if sortby not in allowed_sorting_criteria:
-            raise ValueError(
-                f"sortby parameter must be one of {allowed_sorting_criteria}!"
-            )
+            raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
         sort = f"{sortby},{'desc' if descending else 'asc'}"
         base_url = endpoint("/v2/orders")
 
@@ -232,18 +215,14 @@ class Storage:
             "sort": sort,
             "workspaceId": self.workspace_id if workspace_orders else None,
             "displayName": name,
-            "type": order_type
-            if order_type in ["TASKING", "ARCHIVE"]
-            else None,
+            "type": order_type if order_type in ["TASKING", "ARCHIVE"] else None,
             "tags": tags,
             "status": set(statuses) & allowed_statuses if statuses else None,
         }
         params = {k: v for k, v in params.items() if v is not None}
         url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
 
-        orders_json = query_paginated_endpoints(
-            auth=self.auth, url=url, limit=limit
-        )
+        orders_json = query_paginated_endpoints(auth=self.auth, url=url, limit=limit)
         logger_message = f"Got {len(orders_json)} orders" + (
             f" for workspace {self.workspace_id}." if workspace_orders else ""
         )
@@ -252,9 +231,4 @@ class Storage:
         if return_json:
             return orders_json
         else:
-            return [
-                Order(
-                    self.auth, order_id=order_json["id"], order_info=order_json
-                )
-                for order_json in orders_json
-            ]
+            return [Order(self.auth, order_id=order_json["id"], order_info=order_json) for order_json in orders_json]

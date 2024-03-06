@@ -9,9 +9,7 @@ from up42.utils import get_logger
 logger = get_logger(__name__)
 
 
-def query_paginated_endpoints(
-    auth, url: str, limit: Optional[int] = None, size: int = 50
-) -> List[dict]:
+def query_paginated_endpoints(auth, url: str, limit: Optional[int] = None, size: int = 50) -> List[dict]:
     """
     Helper to fetch list of items in paginated endpoint, e.g. assets, orders.
 
@@ -27,9 +25,7 @@ def query_paginated_endpoints(
     url = url + f"&size={size}"
 
     first_page_response = auth.request(request_type="GET", url=url)
-    if (
-        "data" in first_page_response
-    ):  # UP42 API v2 convention without data key, but still in e.g. get order
+    if "data" in first_page_response:  # UP42 API v2 convention without data key, but still in e.g. get order
         # endpoint
         first_page_response = first_page_response["data"]
     num_pages = first_page_response["totalPages"]
@@ -46,9 +42,7 @@ def query_paginated_endpoints(
         num_pages_to_query = math.ceil(min(limit, num_elements) / size)
 
     for page in range(1, num_pages_to_query):
-        response_json = auth.request(
-            request_type="GET", url=url + f"&page={page}"
-        )
+        response_json = auth.request(request_type="GET", url=url + f"&page={page}")
         if "data" in response_json:
             response_json = response_json["data"]
         results_list += response_json["content"]
@@ -88,21 +82,13 @@ def search_assets(
     """
     sort = f"{sortby},{'desc' if descending else 'asc'}"
     request_params: Dict[str, Any] = {"sort": sort}
-    request_params.update(
-        {key: value for key, value in params.items() if value is not None}
-    )
+    request_params.update({key: value for key, value in params.items() if value is not None})
     base_url = endpoint("/v2/assets")
-    url = urljoin(
-        base_url, "?" + urlencode(request_params, doseq=True, safe="")
-    )
+    url = urljoin(base_url, "?" + urlencode(request_params, doseq=True, safe=""))
     assets_json = query_paginated_endpoints(auth, url=url, limit=limit)
 
     if "workspace_id" in request_params:
-        logger.info(
-            f"Queried {len(assets_json)} assets for workspace {auth.workspace_id}."
-        )
+        logger.info(f"Queried {len(assets_json)} assets for workspace {auth.workspace_id}.")
     else:
-        logger.info(
-            f"Queried {len(assets_json)} assets from all workspaces in account."
-        )
+        logger.info(f"Queried {len(assets_json)} assets from all workspaces in account.")
     return assets_json

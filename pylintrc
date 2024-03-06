@@ -11,7 +11,7 @@ disable = C0114,C0115 # there is no need for module and class doc strings yet
 [MAIN]
 
 # Files or directories to be skipped. They should be base names, not paths.
-ignore=third_party
+ignore=tests
 
 # Files or directories matching the regex patterns are skipped. The regex
 # matches against base names, not paths.
@@ -243,7 +243,7 @@ generated-members=
 [FORMAT]
 
 # Maximum number of characters on a single line.
-max-line-length=80
+max-line-length=120
 
 # TODO(https://github.com/pylint-dev/pylint/issues/3352): Direct pylint to exempt
 # lines made too long by directives to pytype.

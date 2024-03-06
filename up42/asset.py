@@ -7,12 +7,7 @@ from pystac_client import Client, ItemSearch
 from up42.auth import Auth
 from up42.host import endpoint
 from up42.stac_client import PySTACAuthClient
-from up42.utils import (
-    download_from_gcs_unpack,
-    download_gcs_not_unpack,
-    get_filename,
-    get_logger,
-)
+from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_filename, get_logger
 
 logger = get_logger(__name__)
 
@@ -38,18 +33,12 @@ class Asset:
         asset_info: Optional[dict] = None,
     ):
         if asset_id is not None and asset_info is not None:
-            raise ValueError(
-                "asset_id and asset_info cannot be provided simultaneously."
-            )
+            raise ValueError("asset_id and asset_info cannot be provided simultaneously.")
         if asset_id is None and asset_info is None:
-            raise ValueError(
-                "Either asset_id or asset_info should be provided in the constructor."
-            )
+            raise ValueError("Either asset_id or asset_info should be provided in the constructor.")
 
         self.auth = auth
-        self.info = (
-            self._get_info(asset_id) if asset_id is not None else asset_info
-        )
+        self.info = self._get_info(asset_id) if asset_id is not None else asset_info
         self.results: Union[List[str], None] = None
 
     def __repr__(self):
@@ -78,9 +67,7 @@ class Asset:
                 ],
             },
         }
-        pystac_asset_search = pystac_client_aux.search(
-            filter=stac_search_parameters
-        )
+        pystac_asset_search = pystac_client_aux.search(filter=stac_search_parameters)
         return (pystac_client_aux, pystac_asset_search)
 
     @property
@@ -92,9 +79,7 @@ class Asset:
         pystac_client_aux, pystac_asset_search = self._stac_search
         resulting_item = pystac_asset_search.item_collection()
         if resulting_item is None:
-            raise ValueError(
-                f"No STAC metadata information available for this asset {self.asset_id}"
-            )
+            raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}")
         collection_id = resulting_item[0].collection_id
         return pystac_client_aux.get_collection(collection_id)
 
@@ -106,9 +91,7 @@ class Asset:
             resulting_items = pystac_asset_search.item_collection()
             return resulting_items
         except Exception as exc:
-            raise ValueError(
-                f"No STAC metadata information available for this asset {self.asset_id}"
-            ) from exc
+            raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}") from exc
 
     def update_metadata(
         self,
@@ -128,15 +111,11 @@ class Asset:
         """
         url = endpoint(f"/v2/assets/{self.asset_id}/metadata")
         body_update = {"title": title, "tags": tags, **kwargs}
-        response_json = self.auth.request(
-            request_type="POST", url=url, data=body_update
-        )
+        response_json = self.auth.request(request_type="POST", url=url, data=body_update)
         self.info = response_json
         return self.info
 
-    def _get_download_url(
-        self, stac_asset_id: Optional[str] = None, request_type: str = "POST"
-    ) -> str:
+    def _get_download_url(self, stac_asset_id: Optional[str] = None, request_type: str = "POST") -> str:
         if stac_asset_id is None:
             url = endpoint(f"/v2/assets/{self.asset_id}/download-url")
         else:
@@ -220,9 +199,7 @@ class Asset:
         """
         logger.info(f"Downloading STAC asset {stac_asset.title}")
         if output_directory is None:
-            output_directory = (
-                Path.cwd() / f"asset_{self.asset_id}/{stac_asset.title}"
-            )
+            output_directory = Path.cwd() / f"asset_{self.asset_id}/{stac_asset.title}"
         else:
             output_directory = Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)

@@ -69,9 +69,7 @@ def initialize_tasking() -> "Tasking":
 
 
 @_check_auth
-def initialize_workflow(
-    workflow_id: str, project_id: Optional[str] = None
-) -> "Workflow":
+def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> "Workflow":
     """
     Returns a Workflow object (has to exist on UP42).
     Args:
@@ -115,9 +113,7 @@ def initialize_job(job_id: str, project_id: Optional[str] = None) -> "Job":
 
 
 @_check_auth
-def initialize_jobtask(
-    jobtask_id: str, job_id: str, project_id: Optional[str] = None
-) -> "JobTask":
+def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] = None) -> "JobTask":
     """
     Returns a JobTask object (has to exist on UP42).
     Args:
@@ -141,9 +137,7 @@ def initialize_jobtask(
 
 
 @_check_auth
-def initialize_jobcollection(
-    job_ids: List[str], project_id: Optional[str] = None
-) -> "JobCollection":
+def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = None) -> "JobCollection":
     """
     Returns a JobCollection object (the referenced jobs have to exist on UP42).
     Args:

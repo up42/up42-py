@@ -48,7 +48,5 @@ class Estimation:
             "inputs": self.input_parameters,
         }
 
-        response_json = self.auth.request(
-            request_type="POST", url=url, data=self.payload
-        )
+        response_json = self.auth.request(request_type="POST", url=url, data=self.payload)
         return response_json["data"]

@@ -26,9 +26,7 @@ STAC_ASSET_URL = (
     "vW%2FWw%2B2%2FWIzq9IFsx3AEPe%2F2ZeaU180lZDgEyBmsSdrCMQYA1J9IKAD0rIjYrg%2Bo90"
     "MsgdNhs3HuTDA%3D%3D"
 )
-STAC_ASSET_HREF = (
-    "https://api.up42.com/v2/assets/v3b3e203-346d-4f67-b79b-895c36983fb8"
-)
+STAC_ASSET_HREF = "https://api.up42.com/v2/assets/v3b3e203-346d-4f67-b79b-895c36983fb8"
 STAC_ASSET_ID = "v3b3e203-346d-4f67-b79b-895c36983fb8"
 PROJECT_ID = "f19e833d-e698-4d9e-a037-2e6dbd8791ef"
 PROJECT_APIKEY = "project_apikey_123"
@@ -249,11 +247,7 @@ JSON_STORAGE_STAC = {
     "type": "FeatureCollection",
     "features": [
         {
-            "assets": {
-                "data": {
-                    "href": "https://api.up42.com/v2/assets/01ad657e-12f7-4046-a94c-abc90d86106a"
-                }
-            },
+            "assets": {"data": {"href": "https://api.up42.com/v2/assets/01ad657e-12f7-4046-a94c-abc90d86106a"}},
             "links": [
                 {
                     "href": "https://api.up42.com/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6/"

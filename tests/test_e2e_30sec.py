@@ -15,9 +15,7 @@ def test_e2e_30sec():
     project = up42.initialize_project()
 
     # Construct workflow
-    workflow = project.create_workflow(
-        name="30-seconds-workflow", use_existing=True
-    )
+    workflow = project.create_workflow(name="30-seconds-workflow", use_existing=True)
     input_tasks = ["Sentinel-2 L2A Visual (GeoTIFF)", "Sharpening Filter"]
     workflow.add_workflow_tasks(input_tasks)
 

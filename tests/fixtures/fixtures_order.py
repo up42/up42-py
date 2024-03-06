@@ -51,8 +51,7 @@ JSON_GET_ASSETS_RESPONSE = {
 
 def read_test_order_info() -> dict:
     with open(
-        Path(__file__).resolve().parents[1]
-        / "mock_data/order_data/archive_order_info.json",
+        Path(__file__).resolve().parents[1] / "mock_data/order_data/archive_order_info.json",
         encoding="utf-8",
     ) as json_file:
         return json.load(json_file)
@@ -129,9 +128,7 @@ def tasking_order_parameters():
 
 
 @pytest.fixture(params=["catalog", "tasking"])
-def order_parameters(
-    request, catalog_order_parameters, tasking_order_parameters
-):
+def order_parameters(request, catalog_order_parameters, tasking_order_parameters):
     mocks = {
         "catalog": catalog_order_parameters,
         "tasking": tasking_order_parameters,

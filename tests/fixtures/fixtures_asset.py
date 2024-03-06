@@ -117,9 +117,7 @@ def asset_mock2(auth_mock, requests_mock):
         url=f"{API_HOST}/v2/assets/{STAC_ASSET_ID}/download-url",
         json={"url": STAC_ASSET_URL},
     )
-    mock_file = (
-        Path(__file__).resolve().parents[1] / "mock_data/aoi_berlin.geojson"
-    )
+    mock_file = Path(__file__).resolve().parents[1] / "mock_data/aoi_berlin.geojson"
     with open(mock_file, "rb") as src_file:
         out_file = src_file.read()
 

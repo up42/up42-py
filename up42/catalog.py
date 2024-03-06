@@ -66,9 +66,7 @@ class CatalogBase:
                 collection_title = product["collection"]["title"]
                 collection_name = product["collectionName"]
                 product_host = product["collection"]["host"]["name"]
-                data_product = {
-                    product["productConfiguration"]["title"]: product["id"]
-                }
+                data_product = {product["productConfiguration"]["title"]: product["id"]}
 
                 if collection_title not in collection_overview:
                     collection_overview[collection_title] = {
@@ -103,9 +101,7 @@ class CatalogBase:
         """
         url = host.endpoint("/collections")
         json_response = self.auth.request("GET", url)
-        collections = [
-            c for c in json_response["data"] if c["type"] == self.type
-        ]
+        collections = [c for c in json_response["data"] if c["type"] == self.type]
         return collections
 
     def place_order(
@@ -154,9 +150,7 @@ class CatalogBase:
             warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
-        placed_order = order.Order.place(
-            self.auth, order_parameters  # type: ignore
-        )
+        placed_order = order.Order.place(self.auth, order_parameters)  # type: ignore
         if track_status:
             placed_order.track_status(report_time)
         return placed_order
@@ -183,9 +177,7 @@ class Catalog(CatalogBase, viztools.VizTools):
         self.type = "ARCHIVE"
         self.data_products: Union[None, dict] = None
 
-    def estimate_order(
-        self, order_parameters: Union[dict, None], **kwargs
-    ) -> int:
+    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
         """
         Estimate the cost of an order.
 
@@ -270,10 +262,7 @@ class Catalog(CatalogBase, viztools.VizTools):
         """
 
         if sortby is not None or ascending is not None:
-            logger.info(
-                "sortby is deprecated, currently only sorting output by "
-                "creation date."
-            )
+            logger.info("sortby is deprecated, currently only sorting output by " "creation date.")
         start = utils.format_time(start_date)
         end = utils.format_time(end_date, set_end_of_day=True)
         time_period = f"{start}/{end}"
@@ -281,15 +270,11 @@ class Catalog(CatalogBase, viztools.VizTools):
         aoi_fc = utils.any_vector_to_fc(
             vector=geometry,
         )
-        aoi_geometry = utils.fc_to_query_geometry(
-            fc=aoi_fc, geometry_operation="intersects"
-        )
+        aoi_geometry = utils.fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
 
         query_filters: Dict[Any, Any] = {}
         if max_cloudcover is not None:
-            query_filters["cloudCoverage"] = {
-                "lte": max_cloudcover
-            }  # type: ignore
+            query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
 
         if usage_type is not None:
             if usage_type == ["DATA"]:
@@ -311,9 +296,7 @@ class Catalog(CatalogBase, viztools.VizTools):
 
         return search_parameters
 
-    def search(
-        self, search_parameters: dict, as_dataframe: bool = True
-    ) -> Union[geopandas.GeoDataFrame, dict]:
+    def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[geopandas.GeoDataFrame, dict]:
         """
         Searches the catalog for the the search parameters and
         returns the metadata of the matching scenes.
@@ -344,9 +327,7 @@ class Catalog(CatalogBase, viztools.VizTools):
                     }
             ```
         """
-        logger.info(
-            "Searching catalog with search_parameters: %s", search_parameters
-        )
+        logger.info("Searching catalog with search_parameters: %s", search_parameters)
 
         # The API request would fail with a limit above 500,
         # thus 500 is forced in the initial
@@ -354,9 +335,7 @@ class Catalog(CatalogBase, viztools.VizTools):
         try:
             max_limit = search_parameters["limit"]
         except KeyError:
-            logger.info(
-                "No `limit` parameter in search_parameters, using default 500."
-            )
+            logger.info("No `limit` parameter in search_parameters, using default 500.")
             max_limit = 500
 
         if max_limit > 500:
@@ -364,9 +343,7 @@ class Catalog(CatalogBase, viztools.VizTools):
 
         # UP42 API can query multiple collections of the same host at once.
         if self.data_products is None:
-            self.data_products = self.get_data_products(
-                basic=True
-            )  # type: ignore
+            self.data_products = self.get_data_products(basic=True)  # type: ignore
         hosts = [
             v["host"]
             for v in self.data_products.values()  # type: ignore
@@ -396,20 +373,14 @@ class Catalog(CatalogBase, viztools.VizTools):
             if pagination_exhausted:
                 break
             next_page_url = response_json["links"][1]["href"]
-            response_json = self.auth.request(
-                "POST", next_page_url, search_parameters
-            )
+            response_json = self.auth.request("POST", next_page_url, search_parameters)
             features += response_json["features"]
 
         features = features[:max_limit]
         if not features:
-            df = geopandas.GeoDataFrame(
-                columns=["geometry"], geometry="geometry"
-            )
+            df = geopandas.GeoDataFrame(columns=["geometry"], geometry="geometry")
         else:
-            df = geopandas.GeoDataFrame.from_features(
-                geojson.FeatureCollection(features=features), crs="EPSG:4326"
-            )
+            df = geopandas.GeoDataFrame.from_features(geojson.FeatureCollection(features=features), crs="EPSG:4326")
 
         logger.info("%s results returned.", df.shape[0])
         if as_dataframe:
@@ -471,22 +442,17 @@ class Catalog(CatalogBase, viztools.VizTools):
         if tags is not None:
             order_parameters["tags"] = tags
         logger.info(
-            "See `catalog.get_data_product_schema(data_product_id)` for more "
-            "detail on the parameter options."
+            "See `catalog.get_data_product_schema(data_product_id)` for more " "detail on the parameter options."
         )
         schema = self.get_data_product_schema(data_product_id)
-        order_parameters = utils.autocomplete_order_parameters(
-            order_parameters, schema
-        )
+        order_parameters = utils.autocomplete_order_parameters(order_parameters, schema)
 
         # Some catalog orders, e.g. Capella don't require AOI (full image order)
         # Handled on API level, don't manipulate in SDK,
         # providers might accept geometries in the future.
         if aoi is not None:
             aoi = utils.any_vector_to_fc(vector=aoi)
-            aoi = utils.fc_to_query_geometry(
-                fc=aoi, geometry_operation="intersects"
-            )
+            aoi = utils.fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
             order_parameters["params"]["aoi"] = aoi  # type: ignore
 
         return order_parameters
@@ -514,19 +480,10 @@ class Catalog(CatalogBase, viztools.VizTools):
             List of quicklook image output file paths.
         """
         if self.data_products is None:
-            self.data_products = self.get_data_products(
-                basic=True
-            )  # type: ignore
-        hosts = [
-            v["host"]
-            for v in self.data_products.values()  # type: ignore
-            if v["collection"] == collection
-        ]
+            self.data_products = self.get_data_products(basic=True)  # type: ignore
+        hosts = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
         if not host:
-            raise ValueError(
-                f"Selected collections {collection} is not valid. "
-                "See catalog.get_collections."
-            )
+            raise ValueError(f"Selected collections {collection} is not valid. " "See catalog.get_collections.")
         product_host = hosts[0]
         logger.info("Downloading quicklooks from provider %s.", product_host)
 
@@ -543,12 +500,8 @@ class Catalog(CatalogBase, viztools.VizTools):
         out_paths: List[str] = []
         for image_id in tqdm.tqdm(image_ids):
             try:
-                url = host.endpoint(
-                    f"/catalog/{product_host}/image/{image_id}/quicklook"
-                )
-                response = self.auth.request(
-                    request_type="GET", url=url, return_text=False
-                )
+                url = host.endpoint(f"/catalog/{product_host}/image/{image_id}/quicklook")
+                response = self.auth.request(request_type="GET", url=url, return_text=False)
                 out_path = output_directory / f"quicklook_{image_id}.jpg"
                 out_paths.append(str(out_path))
                 with open(out_path, "wb") as dst:
@@ -556,11 +509,8 @@ class Catalog(CatalogBase, viztools.VizTools):
                         dst.write(chunk)
             except ValueError:
                 logger.warning(
-                    "Image with id %s does not have quicklook available. "
-                    "Skipping ...",
+                    "Image with id %s does not have quicklook available. " "Skipping ...",
                     image_id,
                 )
-        self.quicklooks = (
-            out_paths  # pylint: disable=attribute-defined-outside-init
-        )
+        self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths

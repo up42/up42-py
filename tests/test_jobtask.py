@@ -36,8 +36,7 @@ def test_jobtask_download_result(jobtask_mock, requests_mock):
 
     # With default outdir
     default_outdir = (
-        Path.cwd()
-        / f"project_{jobtask_mock.project_id}/job_{jobtask_mock.job_id}/jobtask_{jobtask_mock.jobtask_id}"
+        Path.cwd() / f"project_{jobtask_mock.project_id}/job_{jobtask_mock.job_id}/jobtask_{jobtask_mock.jobtask_id}"
     )
     if default_outdir.exists():
         shutil.rmtree(default_outdir)
@@ -57,12 +56,8 @@ def test_download_quicklook(jobtask_mock, requests_mock):
         f"jobs/{jobtask_mock.job_id}"
         f"/tasks/{jobtask_mock.jobtask_id}/outputs/quicklooks/a_quicklook.png"
     )
-    quicklook_file = (
-        Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    )
-    requests_mock.get(
-        url_download_quicklooks, content=open(quicklook_file, "rb").read()
-    )
+    quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    requests_mock.get(url_download_quicklooks, content=open(quicklook_file, "rb").read())
 
     with tempfile.TemporaryDirectory() as tempdir:
         quick = jobtask_mock.download_quicklooks(tempdir)

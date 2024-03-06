@@ -18,9 +18,7 @@ class Webhook:
     ```
     """
 
-    def __init__(
-        self, auth: Auth, webhook_id: str, webhook_info: Optional[dict] = None
-    ):
+    def __init__(self, auth: Auth, webhook_id: str, webhook_info: Optional[dict] = None):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.webhook_id = webhook_id
@@ -37,9 +35,7 @@ class Webhook:
         """
         Gets and updates the webhook metadata information.
         """
-        url = endpoint(
-            f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
-        )
+        url = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
         response_json = self.auth.request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
@@ -52,9 +48,7 @@ class Webhook:
         Returns:
             A dict with information about the test events.
         """
-        url = endpoint(
-            f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}/tests"
-        )
+        url = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}/tests")
         response_json = self.auth.request(
             request_type="POST",
             url=url,
@@ -90,12 +84,8 @@ class Webhook:
             "secret": secret if secret is not None else self._info["secret"],
             "active": active if active is not None else self._info["active"],
         }
-        url_put = endpoint(
-            f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
-        )
-        response_json = self.auth.request(
-            request_type="PUT", url=url_put, data=input_parameters
-        )
+        url_put = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
+        response_json = self.auth.request(request_type="PUT", url=url_put, data=input_parameters)
         self._info = response_json["data"]
         logger.info(f"Updated webhook {self}")
         return self
@@ -104,9 +94,7 @@ class Webhook:
         """
         Deletes a registered webhook.
         """
-        url = endpoint(
-            f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
-        )
+        url = endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
         self.auth.request(request_type="DELETE", url=url)
         logger.info(f"Successfully deleted Webhook: {self.webhook_id}")
 
@@ -202,9 +190,7 @@ class Webhooks:
             "active": active,
         }
         url_post = endpoint(f"/workspaces/{self.workspace_id}/webhooks")
-        response_json = self.auth.request(
-            request_type="POST", url=url_post, data=input_parameters
-        )
+        response_json = self.auth.request(request_type="POST", url=url_post, data=input_parameters)
         webhook = Webhook(
             auth=self.auth,
             webhook_id=response_json["data"]["id"],

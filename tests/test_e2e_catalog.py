@@ -25,9 +25,7 @@ def test_e2e_catalog():
         limit=10,
     )
     search_results = catalog.search(search_parameters=search_parameters)
-    catalog.download_quicklooks(
-        image_ids=search_results.id.to_list(), collection="phr"
-    )
+    catalog.download_quicklooks(image_ids=search_results.id.to_list(), collection="phr")
 
 
 if __name__ == "__main__":

@@ -29,9 +29,7 @@ def get_filename(signed_url: str, default_filename: str) -> str:
     parsed_url = urlparse(signed_url)
     extension = Path(parsed_url.path).suffix
     try:
-        file_name = parse_qs(parsed_url.query)["response-content-disposition"][
-            0
-        ].split("filename=")[1]
+        file_name = parse_qs(parsed_url.query)["response-content-disposition"][0].split("filename=")[1]
         return f"{file_name}{extension}"
     except (IndexError, KeyError):
         warnings.warn(
@@ -136,22 +134,16 @@ def download_from_gcs_unpack(
                     if "output/" in tar_member.name:
                         tar_member.name = tar_member.name.split("output/")[1]
                     tar_file.extract(tar_member, output_directory)
-                    out_filepaths.append(
-                        Path(output_directory) / tar_member.name
-                    )
+                    out_filepaths.append(Path(output_directory) / tar_member.name)
     elif zipfile.is_zipfile(out_temp):
         with zipfile.ZipFile(out_temp) as zip_file:
             for zip_info in zip_file.infolist():
                 if not zip_info.filename.endswith("/"):
                     # Avoid up42 inherent output/ .. directory
                     if "output/" in zip_info.filename:
-                        zip_info.filename = zip_info.filename.split("output/")[
-                            1
-                        ]
+                        zip_info.filename = zip_info.filename.split("output/")[1]
                     zip_file.extract(zip_info, output_directory)
-                    out_filepaths.append(
-                        Path(output_directory) / zip_info.filename
-                    )
+                    out_filepaths.append(Path(output_directory) / zip_info.filename)
     else:
         raise ValueError("Downloaded file is not a TGZ/TAR or ZIP archive.")
 
@@ -162,9 +154,7 @@ def download_from_gcs_unpack(
     return [str(p) for p in out_filepaths]
 
 
-def download_gcs_not_unpack(
-    download_url: str, output_directory: Union[str, Path]
-) -> List[str]:
+def download_gcs_not_unpack(download_url: str, output_directory: Union[str, Path]) -> List[str]:
     """
     General download function for assets, job and jobtasks from cloud storage
     provider.
@@ -186,9 +176,7 @@ def download_gcs_not_unpack(
                     dst.write(chunk)
         except requests.exceptions.HTTPError as err:
             logger.debug(f"Connection error, please try again! {err}")
-            raise requests.exceptions.HTTPError(
-                f"Connection error, please try again! {err}"
-            )
+            raise requests.exceptions.HTTPError(f"Connection error, please try again! {err}")
 
     logger.info(f"Successfully downloaded the file at {out_fp}")
     out_filepaths = [str(out_fp)]
@@ -208,23 +196,17 @@ def format_time(date: Optional[Union[str, datetime]], set_end_of_day=False):
         has_time_of_day = len(date) > 11
         date = datetime.fromisoformat(date)
         if not has_time_of_day and set_end_of_day:
-            date = datetime.combine(
-                date.date(), datetime_time(23, 59, 59, 999999)
-            )
+            date = datetime.combine(date.date(), datetime_time(23, 59, 59, 999999))
     elif isinstance(date, datetime):
         pass
     else:
-        raise ValueError(
-            "date needs to be of type datetime or isoformat date string!"
-        )
+        raise ValueError("date needs to be of type datetime or isoformat date string!")
 
     return date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def any_vector_to_fc(
-    vector: Union[
-        FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point
-    ],
+    vector: Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point],
     as_dataframe: bool = False,
 ) -> Union[dict, GeoDataFrame]:
     """
@@ -259,17 +241,11 @@ def any_vector_to_fc(
             if vector["type"] == "FeatureCollection":
                 df = GeoDataFrame.from_features(vector, crs=4326)
             elif vector["type"] == "Feature":
-                df = GeoDataFrame.from_features(
-                    FeatureCollection([vector]), crs=4326
-                )
+                df = GeoDataFrame.from_features(FeatureCollection([vector]), crs=4326)
             else:  # Only geometry dict of Feature
-                df = GeoDataFrame.from_features(
-                    FeatureCollection([Feature(geometry=vector)]), crs=4326
-                )
+                df = GeoDataFrame.from_features(FeatureCollection([Feature(geometry=vector)]), crs=4326)
         except KeyError as e:
-            raise ValueError(
-                "Provided geometry dictionary has to include a FeatureCollection or Feature."
-            ) from e
+            raise ValueError("Provided geometry dictionary has to include a FeatureCollection or Feature.") from e
     else:
         if isinstance(vector, list):
             if len(vector) == 4:
@@ -298,9 +274,7 @@ def validate_fc_up42_requirements(fc: Union[dict, FeatureCollection]):
     """
     Validate the feature collection if it fits UP42 geometry requirements.
     """
-    geometry_error = (
-        "UP42 only accepts single geometries, the provided geometry {}."
-    )
+    geometry_error = "UP42 only accepts single geometries, the provided geometry {}."
     if len(fc["features"]) != 1:
         logger.info(geometry_error.format("contains multiple geometries"))
         raise ValueError(geometry_error.format("contains multiple geometries"))
@@ -311,9 +285,7 @@ def validate_fc_up42_requirements(fc: Union[dict, FeatureCollection]):
         raise ValueError(geometry_error.format(f"is a {fc_type}"))
 
 
-def fc_to_query_geometry(
-    fc: Union[dict, FeatureCollection], geometry_operation: str
-) -> Union[List, dict]:
+def fc_to_query_geometry(fc: Union[dict, FeatureCollection], geometry_operation: str) -> Union[List, dict]:
     """
     From a feature collection with a single feature, depending on the geometry_operation,
     returns the feature as a list of bounds coordinates or a GeoJSON Polygon (as dict).
@@ -332,9 +304,7 @@ def fc_to_query_geometry(
         try:
             query_geometry = list(feature["bbox"])
         except KeyError:
-            query_geometry = list(
-                shapely.geometry.shape(feature["geometry"]).bounds
-            )
+            query_geometry = list(shapely.geometry.shape(feature["geometry"]).bounds)
     elif geometry_operation in ["intersects", "contains"]:
         query_geometry = feature["geometry"]
     else:
@@ -345,9 +315,7 @@ def fc_to_query_geometry(
     return query_geometry
 
 
-def filter_jobs_on_mode(
-    jobs_json: List[dict], test_jobs: bool = True, real_jobs: bool = True
-) -> List[dict]:
+def filter_jobs_on_mode(jobs_json: List[dict], test_jobs: bool = True, real_jobs: bool = True) -> List[dict]:
     """
     Filter jobs according to selected mode.
 
@@ -368,9 +336,7 @@ def filter_jobs_on_mode(
     if real_jobs:
         selected_modes.append("DEFAULT")
     if not selected_modes:
-        raise ValueError(
-            "At least one of test_jobs and real_jobs must be True."
-        )
+        raise ValueError("At least one of test_jobs and real_jobs must be True.")
     jobs_json = [job for job in jobs_json if job["mode"] in selected_modes]
     logger.info(f"Returning {selected_modes} jobs.")
     return jobs_json
@@ -389,37 +355,23 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
     Returns:
         The order parameters with complete params
     """
-    additional_params = {
-        param: None
-        for param in schema["required"]
-        if param not in order_parameters["params"]
-    }
-    order_parameters["params"] = dict(
-        order_parameters["params"], **additional_params
-    )
+    additional_params = {param: None for param in schema["required"] if param not in order_parameters["params"]}
+    order_parameters["params"] = dict(order_parameters["params"], **additional_params)
 
     # Log message help for parameter selection
     try:
         for param in additional_params.keys():
             if param in ["aoi", "geometry"]:
                 continue
-            elif (
-                "allOf" in schema["properties"][param]
-            ):  # has further definitions key
-                potential_values = [
-                    x["const"] for x in schema["definitions"][param]["anyOf"]
-                ]
+            elif "allOf" in schema["properties"][param]:  # has further definitions key
+                potential_values = [x["const"] for x in schema["definitions"][param]["anyOf"]]
                 logger.info(f"As `{param}` select one of {potential_values}")
             else:
                 # Full information for simple parameters
                 del schema["properties"][param]["title"]
-                logger.info(
-                    f"As `{param}` select `{schema['properties'][param]}`"
-                )
+                logger.info(f"As `{param}` select `{schema['properties'][param]}`")
     except KeyError as exc:
-        raise KeyError(
-            "Please reach out to UP42 Support (support@up42.com)"
-        ) from exc
+        raise KeyError("Please reach out to UP42 Support (support@up42.com)") from exc
     return order_parameters
 
 

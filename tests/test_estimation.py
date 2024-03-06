@@ -4,11 +4,7 @@ import pytest
 
 from up42.estimation import Estimation
 
-from .fixtures.fixtures_globals import (
-    API_HOST,
-    JSON_WORKFLOW_ESTIMATION,
-    PROJECT_ID,
-)
+from .fixtures.fixtures_globals import API_HOST, JSON_WORKFLOW_ESTIMATION, PROJECT_ID
 
 
 def test_estimate_price(requests_mock, auth_mock, estimation_mock):
@@ -28,9 +24,7 @@ def test_estimate_price(requests_mock, auth_mock, estimation_mock):
     ]
 
     url_workflow_estimation = f"{API_HOST}/projects/{PROJECT_ID}/estimate/job"
-    requests_mock.post(
-        url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION
-    )
+    requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
     _ = estimation_mock.estimate()
     assert list(estimation_mock.payload.keys()) == ["tasks", "inputs"]
     assert estimation_mock.payload["tasks"] == input_tasks
