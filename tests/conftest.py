@@ -26,11 +26,11 @@ from .fixtures.fixtures_jobcollection import (
 )
 from .fixtures.fixtures_jobtask import jobtask_live, jobtask_mock
 from .fixtures.fixtures_order import (
-    catalog_order_parameters,
+    _catalog_order_parameters,
+    _tasking_order_parameters,
     order_live,
     order_mock,
     order_parameters,
-    tasking_order_parameters,
 )
 from .fixtures.fixtures_project import project_live, project_mock, project_mock_max_concurrent_jobs
 from .fixtures.fixtures_storage import storage_live, storage_mock
