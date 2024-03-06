@@ -19,3 +19,9 @@ class TokenProviderSettings:
 class ProjectCredentialsSettings:
     client_id: str
     client_secret: str
+
+
+@dataclass(eq=True, frozen=True)
+class AccountCredentialsSettings:
+    username: str
+    password: str
