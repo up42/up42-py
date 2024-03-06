@@ -92,7 +92,7 @@ class Workflow:
             DeprecationWarning,
             stacklevel=2,
         )
-        url = endpoint(f"/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks")
+        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}/tasks")
 
         response_json = self.auth.request(request_type="GET", url=url)
         tasks = response_json["data"]
@@ -195,7 +195,7 @@ class Workflow:
             elif task in list(blocks_displaynames_id.keys()):
                 input_tasks_ids.append(blocks_displaynames_id[task])
             else:
-                raise ValueError(f"The specified input task {task} does not match any " f"available block.")
+                raise ValueError(f"The specified input task {task} does not match any available block.")
 
         # Add first task, the data block.
         data_task = {
@@ -248,9 +248,7 @@ class Workflow:
 
         jobs_workflow_json = [j for j in jobs_json if j["workflowId"] == self.workflow_id]
 
-        logger.info(
-            f"Got {len(jobs_workflow_json)} jobs for workflow " f"{self.workflow_id} in project {self.project_id}."
-        )
+        logger.info(f"Got {len(jobs_workflow_json)} jobs for workflow {self.workflow_id} in project {self.project_id}.")
         if return_json:
             return jobs_workflow_json
         else:

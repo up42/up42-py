@@ -36,7 +36,7 @@ def test_job_iterator(jobcollection_multiple_mock, jobcollection_empty_mock, req
 
     status = ["FAILED", "SUCCEEDED"]
     for i, job in enumerate(jobcollection_multiple_mock):
-        url_job_info = f"{API_HOST}/projects/" f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
+        url_job_info = f"{API_HOST}/projects/{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
         requests_mock.get(url=url_job_info, json={"data": {"status": status[i]}, "error": {}})
 
     res = jobcollection_multiple_mock.apply(worker_with_add, add=5, only_succeeded=True)
@@ -50,7 +50,7 @@ def test_job_iterator(jobcollection_multiple_mock, jobcollection_empty_mock, req
 
 def test_jobcollection_info(jobcollection_single_mock, requests_mock):
     url_job_info = (
-        f"{API_HOST}/projects/" f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        f"{API_HOST}/projects/{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"xyz": 789}, "error": {}})
 
@@ -62,7 +62,7 @@ def test_jobcollection_info(jobcollection_single_mock, requests_mock):
 @pytest.mark.parametrize("status", ["NOT STARTED", "PENDING", "RUNNING"])
 def test_jobcollection_jobs_status(jobcollection_single_mock, status, requests_mock):
     url_job_info = (
-        f"{API_HOST}/projects/" f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        f"{API_HOST}/projects/{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
@@ -80,7 +80,7 @@ def test_jobcollection_download_results(jobcollection_single_mock, requests_mock
     requests_mock.get(url_download_result, json={"data": {"url": download_url}, "error": {}})
 
     url_job_info = (
-        f"{API_HOST}/projects/" f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        f"{API_HOST}/projects/{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"status": "SUCCEEDED"}, "error": {}})
 
@@ -101,7 +101,7 @@ def test_jobcollection_download_results(jobcollection_single_mock, requests_mock
 
 def test_jobcollection_download_results_failed(jobcollection_single_mock, requests_mock):
     url_job_info = (
-        f"{API_HOST}/projects/" f"{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
+        f"{API_HOST}/projects/{jobcollection_single_mock.project_id}/jobs/{jobcollection_single_mock[0].job_id}"
     )
     requests_mock.get(url=url_job_info, json={"data": {"status": "FAILED"}, "error": {}})
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -115,14 +115,14 @@ def test_jobcollection_download_results_merged(jobcollection_multiple_mock, requ
 
     for job in jobcollection_multiple_mock.jobs:
         url_download_result = (
-            f"{API_HOST}/projects/" f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}/downloads/results/"
+            f"{API_HOST}/projects/{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}/downloads/results/"
         )
         requests_mock.get(
             url_download_result,
             json={"data": {"url": download_url}, "error": {}},
         )
 
-        url_job_info = f"{API_HOST}/projects/" f"{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
+        url_job_info = f"{API_HOST}/projects/{jobcollection_multiple_mock.project_id}/jobs/{job.job_id}"
         requests_mock.get(
             url=url_job_info,
             json={"data": {"status": "SUCCEEDED"}, "error": {}},
