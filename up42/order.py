@@ -2,8 +2,9 @@ import copy
 import time
 from typing import Any, Dict, List, Optional, TypedDict
 
-from up42 import asset, asset_searcher, host, utils
-from up42.auth import Auth
+from up42 import asset, asset_searcher
+from up42 import auth as up42_auth
+from up42 import host, utils
 
 logger = utils.get_logger(__name__)
 
@@ -57,7 +58,7 @@ class Order:
 
     def __init__(
         self,
-        auth: Auth,
+        auth: up42_auth.Auth,
         order_id: str,
         order_parameters: Optional[dict] = None,
         order_info: Optional[dict] = None,
@@ -128,7 +129,7 @@ class Order:
         raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
-    def place(cls, auth: Auth, order_parameters: dict) -> "Order":
+    def place(cls, auth: up42_auth.Auth, order_parameters: dict) -> "Order":
         """
         Places an order.
 
@@ -154,7 +155,7 @@ class Order:
         return order
 
     @staticmethod
-    def estimate(auth: Auth, order_parameters: OrderParams) -> int:
+    def estimate(auth: up42_auth.Auth, order_parameters: OrderParams) -> int:
         """
         Returns an estimation of the cost of an order.
 
