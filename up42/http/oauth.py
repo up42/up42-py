@@ -13,7 +13,7 @@ class Token:
     expires_on: dt.datetime
 
     @property
-    def has_expired(self):
+    def has_expired(self) -> bool:
         return self.expires_on <= dt.datetime.now()
 
 
@@ -53,7 +53,7 @@ class ProjectAuth(requests.auth.AuthBase):
         return Token(access_token=access_token, expires_on=expires_on)
 
     @property
-    def token(self):
+    def token(self) -> Token:
         if self._token.has_expired:
             self._token = self._fetch_token()
         return self._token
