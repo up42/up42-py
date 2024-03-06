@@ -8,7 +8,7 @@ SCHEMAS = ["http", "https"]
 
 
 class StatusValidatingSession(requests.Session):
-    def request(self, *args, **kwargs):
+    def request(self, *args, **kwargs) -> requests.Response:
         raise_for_status = kwargs.pop("raise_for_status", True)
         response = super().request(*args, **kwargs)
         if raise_for_status:
