@@ -44,7 +44,10 @@ def initialize_project(project_id: Optional[str] = None) -> "Project":
         "after January 31, 2024, and will be replaced by new processing functionalities.",
         DeprecationWarning,
     )
-    project = Project(auth=__get_auth_safely(), project_id=_get_project_id(project_id=project_id))
+    project = Project(
+        auth=__get_auth_safely(),
+        project_id=_get_project_id(project_id=project_id),
+    )
     logger.info(f"Initialized {project}")
     return project
 

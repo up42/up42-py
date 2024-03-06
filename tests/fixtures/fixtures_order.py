@@ -129,5 +129,8 @@ def tasking_order_parameters():
 
 @pytest.fixture(params=["catalog", "tasking"])
 def order_parameters(request, catalog_order_parameters, tasking_order_parameters):
-    mocks = {"catalog": catalog_order_parameters, "tasking": tasking_order_parameters}
+    mocks = {
+        "catalog": catalog_order_parameters,
+        "tasking": tasking_order_parameters,
+    }
     return mocks[request.param]

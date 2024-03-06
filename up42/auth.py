@@ -71,7 +71,12 @@ class Auth:
         self.token: Optional[str] = None
 
         local_vars = locals()
-        credentials_filter = ["project_id", "project_api_key", "username", "password"]
+        credentials_filter = [
+            "project_id",
+            "project_api_key",
+            "username",
+            "password",
+        ]
         credentials_dict = {
             key: value for key, value in local_vars.items() if key in credentials_filter and value is not None
         }
@@ -179,7 +184,7 @@ class Auth:
     def _get_workspace(self) -> None:
         """Get user id belonging to authenticated account."""
         url = host.endpoint("/users/me")
-        resp = self._request("GET", url)
+        resp = self.request("GET", url)
         self.workspace_id = resp["data"]["id"]
 
     @staticmethod
@@ -241,7 +246,7 @@ class Auth:
         response.raise_for_status()
         return response
 
-    def _request(
+    def request(
         self,
         request_type: str,
         url: str,

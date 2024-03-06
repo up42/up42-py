@@ -10,7 +10,7 @@ from .fixtures_globals import API_HOST, DOWNLOAD_URL, JOB_ID, JOBTASK_ID, JOBTAS
 @pytest.fixture()
 def jobtask_mock(auth_mock, requests_mock):
     # info
-    url_jobtask_info = f"{API_HOST}/projects/{PROJECT_ID}/jobs/{JOB_ID}" f"/tasks/"
+    url_jobtask_info = f"{API_HOST}/projects/{PROJECT_ID}/jobs/{JOB_ID}/tasks/"
     requests_mock.get(
         url=url_jobtask_info,
         json={

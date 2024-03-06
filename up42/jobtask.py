@@ -54,7 +54,7 @@ class JobTask(VizTools):
         Gets and updates the jobtask metadata information.
         """
         url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         info_all_jobtasks = response_json["data"]
         self._info = next(item for item in info_all_jobtasks if item["id"] == self.jobtask_id)
         return self._info
@@ -70,7 +70,7 @@ class JobTask(VizTools):
             Json of the results, alternatively geodataframe.
         """
         url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/outputs/data-json/")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         logger.info(f"Retrieved {len(response_json['features'])} features.")
 
         if as_dataframe:
@@ -82,7 +82,7 @@ class JobTask(VizTools):
 
     def _get_download_url(self):
         url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/downloads/results/")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         download_url = response_json["data"]["url"]
         return download_url
 
@@ -141,7 +141,7 @@ class JobTask(VizTools):
         logger.info(f"Download directory: {str(output_directory)}")
 
         url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/outputs/quicklooks/")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         quicklooks_ids = response_json["data"]
 
         out_paths: List[str] = []
@@ -152,7 +152,7 @@ class JobTask(VizTools):
             url = endpoint(
                 f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{self.jobtask_id}/outputs/quicklooks/{ql_id}"
             )
-            response = self.auth._request(request_type="GET", url=url, return_text=False)
+            response = self.auth.request(request_type="GET", url=url, return_text=False)
 
             with open(out_path, "wb") as dst:
                 for chunk in response:
