@@ -262,7 +262,7 @@ class Catalog(CatalogBase, viztools.VizTools):
         """
 
         if sortby is not None or ascending is not None:
-            logger.info("sortby is deprecated, currently only sorting output by " "creation date.")
+            logger.info("sortby is deprecated, currently only sorting output by creation date.")
         start = utils.format_time(start_date)
         end = utils.format_time(end_date, set_end_of_day=True)
         time_period = f"{start}/{end}"
@@ -441,9 +441,6 @@ class Catalog(CatalogBase, viztools.VizTools):
         }
         if tags is not None:
             order_parameters["tags"] = tags
-        logger.info(
-            "See `catalog.get_data_product_schema(data_product_id)` for more " "detail on the parameter options."
-        )
         schema = self.get_data_product_schema(data_product_id)
         order_parameters = utils.autocomplete_order_parameters(order_parameters, schema)
 
@@ -483,7 +480,7 @@ class Catalog(CatalogBase, viztools.VizTools):
             self.data_products = self.get_data_products(basic=True)  # type: ignore
         hosts = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
         if not host:
-            raise ValueError(f"Selected collections {collection} is not valid. " "See catalog.get_collections.")
+            raise ValueError(f"Selected collections {collection} is not valid. See catalog.get_collections.")
         product_host = hosts[0]
         logger.info("Downloading quicklooks from provider %s.", product_host)
 
@@ -509,7 +506,7 @@ class Catalog(CatalogBase, viztools.VizTools):
                         dst.write(chunk)
             except ValueError:
                 logger.warning(
-                    "Image with id %s does not have quicklook available. " "Skipping ...",
+                    "Image with id %s does not have quicklook available. Skipping ...",
                     image_id,
                 )
         self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init

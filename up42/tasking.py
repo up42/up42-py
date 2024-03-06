@@ -34,7 +34,6 @@ class Tasking(CatalogBase):
     """
 
     def __init__(self, auth: Auth):
-        super().__init__(auth)
         self.auth = auth
         self.type = "TASKING"
 

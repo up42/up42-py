@@ -43,7 +43,7 @@ def project_mock(auth_mock, requests_mock):
     requests_mock.post(url=url_create_workflow, json=json_create_workflow)
 
     # workflow.info (for create_workflow)
-    url_workflow_info = f"{API_HOST}/projects/" f"{project.project_id}/workflows/{WORKFLOW_ID}"
+    url_workflow_info = f"{API_HOST}/projects/{project.project_id}/workflows/{WORKFLOW_ID}"
     json_workflow_info = {
         "data": {
             "name": WORKFLOW_NAME,
@@ -54,7 +54,7 @@ def project_mock(auth_mock, requests_mock):
     requests_mock.get(url=url_workflow_info, json=json_workflow_info)
 
     # get_workflows
-    url_get_workflows = f"{API_HOST}/projects/" f"{PROJECT_ID}/workflows"
+    url_get_workflows = f"{API_HOST}/projects/{PROJECT_ID}/workflows"
     json_get_workflows = {
         "data": [
             {
@@ -153,7 +153,7 @@ def project_mock_max_concurrent_jobs(project_mock):
         m = requests_mock.Mocker()
         url_project_info = f"{API_HOST}/projects/{PROJECT_ID}"
         m.get(url=url_project_info, json={"data": {"xyz": 789}, "error": {}})
-        url_project_settings = f"{API_HOST}/projects" f"/{PROJECT_ID}/settings"
+        url_project_settings = f"{API_HOST}/projects/{PROJECT_ID}/settings"
         m.get(
             url=url_project_settings,
             json={

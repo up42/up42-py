@@ -43,9 +43,7 @@ def tasking_mock(auth_mock, requests_mock):
         requests_mock.get(url=url_get_quotations_mp3, json=json_data_get_quotation)
 
     sorting = "page=0&sort=createdAt,desc"
-    url_get_quotations_workspace_filtered = (
-        f"{API_HOST}" f"{QUOTATION_ENDPOINT}?" f"{sorting}&" f"workspaceId={WORKSPACE_ID}"
-    )
+    url_get_quotations_workspace_filtered = f"{API_HOST}{QUOTATION_ENDPOINT}?{sorting}&workspaceId={WORKSPACE_ID}"
     with open(
         Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_quotations_workspace_id.json"
     ) as json_file:
@@ -128,7 +126,7 @@ def tasking_get_feasibility_mock(auth_mock, requests_mock):
         requests_mock.get(url=get_feasibility_page2_url, json=json_data)
 
     get_feasibility_decision_param = (
-        f"{API_HOST}/v2/tasking/feasibility?" "page=0&sort=createdAt,desc&decision=NOT_DECIDED"
+        f"{API_HOST}/v2/tasking/feasibility?page=0&sort=createdAt,desc&decision=NOT_DECIDED"
     )
     with open(
         Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_feasibility_NOT_DECIDED.json"
