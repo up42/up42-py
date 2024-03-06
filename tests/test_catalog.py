@@ -113,9 +113,7 @@ def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
             limit=10,
             max_cloudcover=15,
         )
-    assert str(e.value) == (
-        "UP42 only accepts single geometries, the provided geometry " "contains multiple geometries."
-    )
+    assert str(e.value) == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
 
 
 def test_search(catalog_mock):
@@ -480,7 +478,7 @@ def test_order_from_catalog(
     requests_mock,
 ):
     requests_mock.post(
-        url=(f"{constants.API_HOST}/v2/orders?" f"workspaceId={constants.WORKSPACE_ID}"),
+        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "id": constants.ORDER_ID}],
             "errors": [],
@@ -493,7 +491,7 @@ def test_order_from_catalog(
 
 def test_order_from_catalog_track_status(catalog_order_parameters, order_mock, catalog_mock, requests_mock):
     requests_mock.post(
-        url=(f"{constants.API_HOST}/v2/orders?" f"workspaceId={constants.WORKSPACE_ID}"),
+        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "id": constants.ORDER_ID}],
             "errors": [],

@@ -34,19 +34,21 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 0.37.0a3
 
 **March 07, 2024**
- - Refactored order related scripts to make pylint compatible
+
+- Adjusted `tasking.py`, `test_tasking.py`, and `fixtures_tasking.py` in accordance with Pylint checks.
 
 ## 0.37.0a2
-
-**March 07, 2024**
- - Refactored tasking related scripts to make pylint compatible
-
-
-## 0.37.0a1
 
 **March 06, 2024**
  - Refactored catalog.py and test_catalog.py as per pylint checks.
  - Some minor refactoring in other classes due to auth's function name change
+
+## 0.37.0a1
+
+**March 06, 2024**
+
+- Added a new component within the HTTP layer to facilitate future enhancements in authentication and request processes: ported a resilient and authenticated cached session.
+
 
 ## 0.37.0a0
 

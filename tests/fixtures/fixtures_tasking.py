@@ -49,7 +49,7 @@ def tasking_mock(auth_mock, requests_mock):
 
     sorting = "page=0&sort=createdAt,desc"
     url_get_quotations_workspace_filtered = (
-        f"{constants.API_HOST}" f"{QUOTATION_ENDPOINT}?" f"{sorting}&" f"workspaceId={constants.WORKSPACE_ID}"
+        f"{constants.API_HOST}{QUOTATION_ENDPOINT}?{sorting}&workspaceId={constants.WORKSPACE_ID}"
     )
     with open(
         pathlib.Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_quotations_workspace_id.json",
