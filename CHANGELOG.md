@@ -33,9 +33,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 0.37.0a2
 
+
 **March 06, 2024**
- - Refactored catalog.py and test_catalog.py as per pylint checks.
- - Some minor refactoring in other classes due to auth's function name change
+
+- Adjusted `catalog.py` and `test_catalog.py` in accordance with Pylint checks.
+- Conducted minor refactoring in other classes due to changes in function names within the authentication module.
 
 ## 0.37.0a1
 
