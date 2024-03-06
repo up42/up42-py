@@ -6,10 +6,10 @@ from typing import List, Optional, Union
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
-from shapely.geometry import Point, Polygon  # type: ignore
+from shapely import geometry as shp_geometry  # type: ignore
 
+from up42 import auth as up42_auth
 from up42 import catalog, host, utils
-from up42.auth import Auth
 
 logger = utils.get_logger(__name__)
 
@@ -24,7 +24,7 @@ class Tasking(catalog.CatalogBase):
     ```
     """
 
-    def __init__(self, auth: Auth):
+    def __init__(self, auth: up42_auth.Auth):
         super().__init__(auth)
         self.auth = auth
         self.type = "TASKING"
@@ -41,8 +41,8 @@ class Tasking(catalog.CatalogBase):
             dict,
             list,
             geopandas.GeoDataFrame,
-            Polygon,
-            Point,
+            shp_geometry.Polygon,
+            shp_geometry.Point,
         ],
         tags: Optional[List[str]] = None,
     ):
