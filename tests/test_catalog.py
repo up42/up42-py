@@ -113,9 +113,7 @@ def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
             limit=10,
             max_cloudcover=15,
         )
-    assert str(e.value) == (
-        "UP42 only accepts single geometries, the provided geometry " "contains multiple geometries."
-    )
+    assert str(e.value) == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
 
 
 def test_search(catalog_mock):
