@@ -62,7 +62,7 @@ class Workflow:
         Gets and updates the workflow metadata information.
         """
         url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
 
@@ -92,9 +92,9 @@ class Workflow:
             DeprecationWarning,
             stacklevel=2,
         )
-        url = endpoint(f"/projects/{self.project_id}/workflows/" f"{self.workflow_id}/tasks")
+        url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}/tasks")
 
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         tasks = response_json["data"]
         logger.info(f"Got {len(tasks)} tasks/blocks in workflow {self.workflow_id}.")
 
@@ -195,7 +195,7 @@ class Workflow:
             elif task in list(blocks_displaynames_id.keys()):
                 input_tasks_ids.append(blocks_displaynames_id[task])
             else:
-                raise ValueError(f"The specified input task {task} does not match any " f"available block.")
+                raise ValueError(f"The specified input task {task} does not match any available block.")
 
         # Add first task, the data block.
         data_task = {
@@ -243,14 +243,12 @@ class Workflow:
             A JobCollection, or alternatively the jobs info as JSON.
         """
         url = endpoint(f"/projects/{self.project_id}/jobs")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
 
         jobs_workflow_json = [j for j in jobs_json if j["workflowId"] == self.workflow_id]
 
-        logger.info(
-            f"Got {len(jobs_workflow_json)} jobs for workflow " f"{self.workflow_id} in project {self.project_id}."
-        )
+        logger.info(f"Got {len(jobs_workflow_json)} jobs for workflow {self.workflow_id} in project {self.project_id}.")
         if return_json:
             return jobs_workflow_json
         else:
@@ -263,6 +261,6 @@ class Workflow:
         Deletes the workflow and sets the Python object to None.
         """
         url = endpoint(f"/projects/{self.project_id}/workflows/{self.workflow_id}")
-        self.auth._request(request_type="DELETE", url=url, return_text=False)
+        self.auth.request(request_type="DELETE", url=url, return_text=False)
         logger.info(f"Successfully deleted workflow: {self.workflow_id}")
         del self

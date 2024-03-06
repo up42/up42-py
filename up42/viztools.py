@@ -139,7 +139,7 @@ class VizTools:
         """
         warnings.filterwarnings("ignore", category=rasterio.errors.NotGeoreferencedWarning)
         warn(
-            "Visualization methods are deprecated. The current feature will be discontinued " "after March 31, 2024.",
+            "Visualization methods are deprecated. The current feature will be discontinued after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -225,7 +225,7 @@ class VizTools:
             titles: List of titles for the subplots, optional.
         """
         warn(
-            "Visualization methods are deprecated. The current feature will be discontinued " "after March 31, 2024.",
+            "Visualization methods are deprecated. The current feature will be discontinued after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -273,7 +273,7 @@ class VizTools:
 
         if result_df.shape[0] > 100:
             result_df = result_df.iloc[:100]
-            logger.info("Only the first 100 results will be displayed to avoid memory " "issues.")
+            logger.info("Only the first 100 results will be displayed to avoid memory issues.")
 
         centroid = box(*result_df.total_bounds).centroid
         m = folium_base_map(
@@ -386,7 +386,7 @@ class VizTools:
             save_html: The path for saving folium map as html file. With default None, no file is saved.
         """
         warn(
-            "Visualization methods are deprecated. The current feature will be discontinued " "after March 31, 2024.",
+            "Visualization methods are deprecated. The current feature will be discontinued after March 31, 2024.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -499,7 +499,7 @@ class VizTools:
         """
         if legend_column not in scenes.columns:
             legend_column = None  # type: ignore
-            logger.info("Given legend_column name not in scene dataframe, " "plotting without legend.")
+            logger.info("Given legend_column name not in scene dataframe, plotting without legend.")
 
         try:
             ax = scenes.plot(
@@ -534,7 +534,7 @@ if _viz_installed:
         mapfigure = folium.Figure(width=width_percent)
         m = folium.Map(location=[lat, lon], zoom_start=zoom_start, crs="EPSG3857").add_to(mapfigure)
 
-        tiles = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery" "/MapServer/tile/{z}/{y}/{x}.png"
+        tiles = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png"
         attr = (
             "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, "
             "AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the "
@@ -583,10 +583,10 @@ if _viz_installed:
             assert isinstance(figure, Figure), "You cannot render this Element if it is not in a Figure."
 
             figure.header.add_child(
-                JavascriptLink("https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/" "leaflet.draw.js")
+                JavascriptLink("https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw.js")
             )  # noqa
             figure.header.add_child(
-                CssLink("https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/" "leaflet.draw.css")
+                CssLink("https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw.css")
             )  # noqa
 
             export_style = """

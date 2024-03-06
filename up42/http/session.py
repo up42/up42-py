@@ -1,4 +1,4 @@
-from functools import lru_cache
+import functools
 
 import requests
 
@@ -16,7 +16,7 @@ class StatusValidatingSession(requests.Session):
         return response
 
 
-@lru_cache
+@functools.lru_cache
 def create(
     create_adapter=http_adapter.create,
     create_auth=oauth.Up42Auth,

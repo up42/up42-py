@@ -21,7 +21,7 @@ def test_job_info(job_mock):
 def test_job_status(job_mock, status, requests_mock):
     del job_mock._info
 
-    url_job_info = f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    url_job_info = f"{API_HOST}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
     assert job_mock.status == status
 
@@ -40,7 +40,7 @@ def test_job_status(job_mock, status, requests_mock):
 def test_is_succeeded(job_mock, status, expected, requests_mock):
     del job_mock._info
 
-    url_job_info = f"{API_HOST}/projects/" f"{job_mock.project_id}/jobs/{job_mock.job_id}"
+    url_job_info = f"{API_HOST}/projects/{job_mock.project_id}/jobs/{job_mock.job_id}"
     requests_mock.get(url=url_job_info, json={"data": {"status": status}, "error": {}})
 
     assert job_mock.is_succeeded == expected

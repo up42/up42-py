@@ -75,7 +75,7 @@ class Storage:
         response_features: list = []
         response_features_limit = stac_search_parameters["limit"]
         while len(response_features) < response_features_limit:
-            stac_results = self.auth._request(request_type="POST", url=url, data=stac_search_parameters)
+            stac_results = self.auth.request(request_type="POST", url=url, data=stac_search_parameters)
             response_features.extend(stac_results["features"])
             token_list = [link["body"]["token"] for link in stac_results["links"] if link["rel"] == "next"]
             if token_list:

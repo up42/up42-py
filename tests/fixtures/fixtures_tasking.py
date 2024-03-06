@@ -43,21 +43,25 @@ def tasking_mock(auth_mock, requests_mock):
         requests_mock.get(url=url_get_quotations_mp3, json=json_data_get_quotation)
 
     sorting = "page=0&sort=createdAt,desc"
-    url_get_quotations_workspace_filtered = (
-        f"{API_HOST}" f"{QUOTATION_ENDPOINT}?" f"{sorting}&" f"workspaceId={WORKSPACE_ID}"
-    )
+    url_get_quotations_workspace_filtered = f"{API_HOST}{QUOTATION_ENDPOINT}?{sorting}&workspaceId={WORKSPACE_ID}"
     with open(
         Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_quotations_workspace_id.json"
     ) as json_file:
         json_data_get_quotation = json.load(json_file)
-        requests_mock.get(url=url_get_quotations_workspace_filtered, json=json_data_get_quotation)
+        requests_mock.get(
+            url=url_get_quotations_workspace_filtered,
+            json=json_data_get_quotation,
+        )
 
     url_get_quotations_decision_filtered = f"{API_HOST}{QUOTATION_ENDPOINT}?{sorting}&decision=ACCEPTED"
     with open(
         Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_quotations_decision_ACCEPTED.json"
     ) as json_file:
         json_data_get_quotation = json.load(json_file)
-        requests_mock.get(url=url_get_quotations_decision_filtered, json=json_data_get_quotation)
+        requests_mock.get(
+            url=url_get_quotations_decision_filtered,
+            json=json_data_get_quotation,
+        )
         url_get_quotations_decision_filtered = f"{API_HOST}{QUOTATION_ENDPOINT}?{sorting}&decision=ACCEPTED"
 
     decision_filter = "&decision=ACCEPTED&decision=REJECTED"
@@ -66,12 +70,19 @@ def tasking_mock(auth_mock, requests_mock):
         Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_quotations_decision_ACCEPTED.json"
     ) as json_file:
         json_data_get_quotation = json.load(json_file)
-        requests_mock.get(url=url_get_quotations_decision_filtered, json=json_data_get_quotation)
+        requests_mock.get(
+            url=url_get_quotations_decision_filtered,
+            json=json_data_get_quotation,
+        )
 
     wrong_id_response_json = json.dumps({"status": 404, "title": "Resource does not exist.", "detail": {}})
     decide_quotation_endpoint = f"/v2/tasking/quotation/{QUOTATION_ID}-01"
     url_decide_quotation_fail = f"{API_HOST}{decide_quotation_endpoint}"
-    requests_mock.patch(url=url_decide_quotation_fail, status_code=404, json=wrong_id_response_json)
+    requests_mock.patch(
+        url=url_decide_quotation_fail,
+        status_code=404,
+        json=wrong_id_response_json,
+    )
 
     decide_quotation_endpoint = f"/v2/tasking/quotation/{QUOTATION_ID}-02"
     url_decide_quotation_accepted = f"{API_HOST}{decide_quotation_endpoint}"
@@ -115,7 +126,7 @@ def tasking_get_feasibility_mock(auth_mock, requests_mock):
         requests_mock.get(url=get_feasibility_page2_url, json=json_data)
 
     get_feasibility_decision_param = (
-        f"{API_HOST}/v2/tasking/feasibility?" "page=0&sort=createdAt,desc&decision=NOT_DECIDED"
+        f"{API_HOST}/v2/tasking/feasibility?page=0&sort=createdAt,desc&decision=NOT_DECIDED"
     )
     with open(
         Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_feasibility_NOT_DECIDED.json"

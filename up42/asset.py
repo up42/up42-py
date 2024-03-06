@@ -50,7 +50,7 @@ class Asset:
 
     def _get_info(self, asset_id: str):
         url = endpoint(f"/v2/assets/{asset_id}/metadata")
-        return self.auth._request(request_type="GET", url=url)
+        return self.auth.request(request_type="GET", url=url)
 
     @property
     def _stac_search(self) -> Tuple[Client, ItemSearch]:
@@ -93,7 +93,12 @@ class Asset:
         except Exception as exc:
             raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}") from exc
 
-    def update_metadata(self, title: Optional[str] = None, tags: Optional[List[str]] = None, **kwargs) -> dict:
+    def update_metadata(
+        self,
+        title: Optional[str] = None,
+        tags: Optional[List[str]] = None,
+        **kwargs,
+    ) -> dict:
         """
         Update the metadata of the asset.
 
@@ -106,7 +111,7 @@ class Asset:
         """
         url = endpoint(f"/v2/assets/{self.asset_id}/metadata")
         body_update = {"title": title, "tags": tags, **kwargs}
-        response_json = self.auth._request(request_type="POST", url=url, data=body_update)
+        response_json = self.auth.request(request_type="POST", url=url, data=body_update)
         self.info = response_json
         return self.info
 
@@ -115,7 +120,7 @@ class Asset:
             url = endpoint(f"/v2/assets/{self.asset_id}/download-url")
         else:
             url = endpoint(f"/v2/assets/{stac_asset_id}/download-url")
-        response_json = self.auth._request(request_type=request_type, url=url)
+        response_json = self.auth.request(request_type=request_type, url=url)
         return response_json["url"]
 
     def get_stac_asset_url(self, stac_asset: pystac.Asset):

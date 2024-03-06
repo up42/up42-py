@@ -170,7 +170,11 @@ JSON_WORKFLOW_ESTIMATION = {
         "tiling:1": {
             "blockConsumption": {
                 "credit": {"max": 0, "min": 0},
-                "resources": {"max": 3.145728, "min": 3.145728, "unit": "MEGABYTE"},
+                "resources": {
+                    "max": 3.145728,
+                    "min": 3.145728,
+                    "unit": "MEGABYTE",
+                },
             },
             "machineConsumption": {
                 "credit": {"max": 9, "min": 2},
@@ -371,7 +375,10 @@ JSON_ORDER = {
         "createdAt": "2021-01-18T16:18:16.105851Z",
         "updatedAt": "2021-01-18T16:21:31.966805Z",
         "assets": [ASSET_ID],
-        "createdBy": {"id": "1094497b-11d8-4fb8-9d6a-5e24a88aa825", "type": "USER"},
+        "createdBy": {
+            "id": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
+            "type": "USER",
+        },
         "updatedBy": {"id": "system", "type": "INTERNAL"},
     },
     "error": None,

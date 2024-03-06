@@ -30,11 +30,21 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+
+## 0.37.0a2
+
+
+**March 06, 2024**
+
+- Adjusted `catalog.py` and `test_catalog.py` in accordance with Pylint checks.
+- Conducted minor refactoring in other classes due to changes in function names within the authentication module.
+
 ## 0.37.0a1
 
 **March 06, 2024**
 
 - Added a new component within the HTTP layer to facilitate future enhancements in authentication and request processes: ported a resilient and authenticated cached session.
+
 
 ## 0.37.0a0
 
