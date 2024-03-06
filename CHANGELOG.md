@@ -30,6 +30,15 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.37.0a0
+
+**March 04, 2024**
+New components for http layer for future authentication and request improvements
+
+- Ported http adapter, providing configurable resilience.
+- Ported resilient project authentication, managing token expiration managing.
+
+
 ## 0.36.0
 
 **February 20, 2024**
