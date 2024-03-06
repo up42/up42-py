@@ -30,6 +30,12 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.37.0a1
+
+**March 06, 2024**
+New components for http layer for future authentication and request improvements
+
+- Ported resilient and authenticated cached session
 ## 0.37.0a0
 
 **March 04, 2024**
