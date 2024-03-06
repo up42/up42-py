@@ -38,7 +38,6 @@ repos:
   - repo: local
     hooks:
       - id: pylint
-        files: up42/catalog.py|tests/test_catalog.py
         name: pylint
         entry: pylint
         language: system
