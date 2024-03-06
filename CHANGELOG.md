@@ -31,6 +31,12 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
 
+## 0.37.0a2
+
+**March 07, 2024**
+ - Refactored tasking related scripts to make pylint compatible
+
+
 ## 0.37.0a1
 
 **March 06, 2024**
