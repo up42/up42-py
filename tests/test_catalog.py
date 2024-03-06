@@ -478,7 +478,7 @@ def test_order_from_catalog(
     requests_mock,
 ):
     requests_mock.post(
-        url=(f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"),
+        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "id": constants.ORDER_ID}],
             "errors": [],
@@ -491,7 +491,7 @@ def test_order_from_catalog(
 
 def test_order_from_catalog_track_status(catalog_order_parameters, order_mock, catalog_mock, requests_mock):
     requests_mock.post(
-        url=(f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"),
+        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
         json={
             "results": [{"index": 0, "id": constants.ORDER_ID}],
             "errors": [],

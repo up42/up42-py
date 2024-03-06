@@ -172,7 +172,6 @@ class Catalog(CatalogBase, viztools.VizTools):
 
     def __init__(self, auth: up42_auth.Auth):
         super().__init__(auth)
-        self.auth = auth
         self.quicklooks = None
         self.type = "ARCHIVE"
         self.data_products: Union[None, dict] = None
