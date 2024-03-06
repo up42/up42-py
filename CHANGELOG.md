@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 0.37.0a1
 
 **March 06, 2024**
-New components for http layer for future authentication and request improvements
+New component for http layer for future authentication and request improvements
 
 - Ported resilient and authenticated cached session
 ## 0.37.0a0
