@@ -1,29 +1,25 @@
 import json
 import os
-from pathlib import Path
+import pathlib
 
 import pytest
 import requests
 
-from .fixtures.fixtures_globals import (
-    DATA_PRODUCT_ID,
-    QUOTATION_ID,
-    WORKSPACE_ID,
-    WRONG_FEASIBILITY_ID,
-    WRONG_OPTION_ID,
-)
+from .fixtures import fixtures_globals as constants
 
 LIVE_TEST_WORKSPACE_ID = os.getenv("LIVE_TEST_WORKSPACE_ID")
 LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
 LIVE_OPTION_ID = os.getenv("LIVE_OPTION_ID")
 
-with open(Path(__file__).resolve().parent / "mock_data/search_params_simple.json") as json_file:
+with open(
+    pathlib.Path(__file__).resolve().parent / "mock_data/search_params_simple.json", encoding="utf-8"
+) as json_file:
     mock_search_parameters = json.load(json_file)
 
 
 def test_construct_order_parameters(tasking_mock):
     order_parameters = tasking_mock.construct_order_parameters(
-        data_product_id=DATA_PRODUCT_ID,
+        data_product_id=constants.DATA_PRODUCT_ID,
         name="my_tasking_order",
         acquisition_start="2022-11-01",
         acquisition_end="2022-11-10",
@@ -71,8 +67,8 @@ def test_construct_order_parameters_live(tasking_live, product_id):
 def test_get_quotations(tasking_mock):
     get_quotations = tasking_mock.get_quotations()
     assert len(get_quotations) == 23
-    get_workspace_quotations = tasking_mock.get_quotations(workspace_id=WORKSPACE_ID)
-    assert all(quotation["workspaceId"] == WORKSPACE_ID for quotation in get_workspace_quotations)
+    get_workspace_quotations = tasking_mock.get_quotations(workspace_id=constants.WORKSPACE_ID)
+    assert all(quotation["workspaceId"] == constants.WORKSPACE_ID for quotation in get_workspace_quotations)
     get_accepted_quotations = tasking_mock.get_quotations(decision=["ACCEPTED"])
     assert all(quotation["decision"] == "ACCEPTED" for quotation in get_accepted_quotations)
     get_decided_quotations = tasking_mock.get_quotations(decision=["ACCEPTED", "REJECTED"])
@@ -81,13 +77,13 @@ def test_get_quotations(tasking_mock):
 
 def test_decide_quotation(tasking_mock):
     with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_mock.decide_quotation(QUOTATION_ID + "-01", "ACCEPTED")
+        tasking_mock.decide_quotation(constants.QUOTATION_ID + "-01", "ACCEPTED")
     response = json.loads(str(e.value))
     assert isinstance(e.value, requests.exceptions.RequestException)
     assert response["status"] == 404
 
     with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_mock.decide_quotation(QUOTATION_ID + "-02", "ACCEPTED")
+        tasking_mock.decide_quotation(constants.QUOTATION_ID + "-02", "ACCEPTED")
     response = json.loads(str(e.value))
     assert isinstance(e.value, requests.exceptions.RequestException)
     assert response["status"] == 405
@@ -171,13 +167,13 @@ def test_get_feasibility_live(tasking_live):
     accepted_studies = (feasibility["decision"] in ["ACCEPTED", "NOT_DECIDED"] for feasibility in feasibility_studies)
     assert len(list(accepted_studies)) > 10
     assert all(accepted_studies)
-    feasibility_studies = tasking_live.get_feasibility(feasibility_id=WRONG_FEASIBILITY_ID)
+    feasibility_studies = tasking_live.get_feasibility(feasibility_id=constants.WRONG_FEASIBILITY_ID)
     assert len(feasibility_studies) == 0
 
 
 def test_choose_feasibility(tasking_choose_feasibility_mock):
     with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_choose_feasibility_mock.choose_feasibility(WRONG_FEASIBILITY_ID, WRONG_OPTION_ID)
+        tasking_choose_feasibility_mock.choose_feasibility(constants.WRONG_FEASIBILITY_ID, constants.WRONG_OPTION_ID)
     response = json.loads(str(e.value))
     assert isinstance(e.value, requests.exceptions.RequestException)
     assert response["status"] == 404
@@ -193,7 +189,7 @@ def test_choose_feasibility(tasking_choose_feasibility_mock):
 @pytest.mark.live
 def test_choose_feasibility_live(tasking_live):
     with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_live.choose_feasibility(WRONG_FEASIBILITY_ID, WRONG_OPTION_ID)
+        tasking_live.choose_feasibility(constants.WRONG_FEASIBILITY_ID, constants.WRONG_OPTION_ID)
         assert isinstance(e.value, requests.exceptions.RequestException)
         assert "404" in str(e.value)
 
