@@ -34,18 +34,16 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **March 06, 2024**
 
-New component for http layer for future authentication and request improvements
+- Added a new component within the HTTP layer to facilitate future enhancements in authentication and request processes: ported a resilient and authenticated cached session.
 
-- Ported resilient and authenticated cached session
 ## 0.37.0a0
 
 **March 04, 2024**
 
-New components for http layer for future authentication and request improvements
+Added new components within the HTTP layer to facilitate future enhancements in authentication and request processes:
 
-- Ported http adapter, providing configurable resilience.
+- Ported the HTTP adapter, providing configurable resilience.
 - Ported resilient project authentication, managing token expiration.
-
 
 ## 0.36.0
 
@@ -53,9 +51,9 @@ New components for http layer for future authentication and request improvements
 
 - Updated the `place_order()` and `estimate_order()` functions of the CatalogBase class to the latest version of the API.
 
-**January 25, 2024**
-
 ## 0.35.0
+
+**January 25, 2024**
 
 - Discontinued support for the following edit and create functions:
 
