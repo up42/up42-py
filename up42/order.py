@@ -41,7 +41,7 @@ class OrderParams(TypedDict):
     tags: User tags to helping to identify the order.
     """
 
-    data_product: str
+    dataProduct: str  # pylint: disable=invalid-name
     params: Dict[str, Any]
     tags: List[str]
 
