@@ -212,7 +212,7 @@ class Order:
                 return f"{substatus}, {message}"
             return f"{substatus}"
 
-        logger.info("Tracking order status, reporting every %s seconds...", str(report_time))
+        logger.info("Tracking order status, reporting every %s seconds...", report_time)
         time_asleep = 0
 
         # check order details and react for tasking orders.

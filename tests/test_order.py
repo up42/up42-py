@@ -64,7 +64,6 @@ def test_order_details(order_mock, status, order_type, order_details, monkeypatc
     assert order_mock.order_details == order_details
 
 
-# pylint: disable=unused-argument
 @pytest.mark.parametrize(
     "status,expected",
     [("NOT STARTED", False), ("PLACED", False), ("FULFILLED", True)],
