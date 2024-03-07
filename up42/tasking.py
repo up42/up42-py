@@ -1,29 +1,20 @@
 """
 Tasking functionality
 """
-from datetime import datetime
+import datetime
 from typing import List, Optional, Union
 
-from geojson import Feature, FeatureCollection  # type: ignore
-from geopandas import GeoDataFrame  # type: ignore
-from shapely.geometry import Point, Polygon  # type: ignore
+import geojson  # type: ignore
+import geopandas  # type: ignore
+from shapely import geometry as shp_geometry  # type: ignore
 
-from up42.auth import Auth
-from up42.catalog import CatalogBase
-from up42.host import endpoint
-from up42.utils import (
-    any_vector_to_fc,
-    autocomplete_order_parameters,
-    fc_to_query_geometry,
-    format_time,
-    get_logger,
-    replace_page_query,
-)
+from up42 import auth as up42_auth
+from up42 import catalog, host, utils
 
-logger = get_logger(__name__)
+logger = utils.get_logger(__name__)
 
 
-class Tasking(CatalogBase):
+class Tasking(catalog.CatalogBase):
     """
     The Tasking class enables access to the UP42 tasking functionality.
 
@@ -33,24 +24,24 @@ class Tasking(CatalogBase):
     ```
     """
 
-    def __init__(self, auth: Auth):
-        self.auth = auth
+    def __init__(self, auth: up42_auth.Auth):
+        super().__init__(auth)
         self.type = "TASKING"
 
     def construct_order_parameters(
         self,
         data_product_id: str,
         name: str,
-        acquisition_start: Union[str, datetime],
-        acquisition_end: Union[str, datetime],
+        acquisition_start: Union[str, datetime.datetime],
+        acquisition_end: Union[str, datetime.datetime],
         geometry: Union[
-            FeatureCollection,
-            Feature,
+            geojson.FeatureCollection,
+            geojson.Feature,
             dict,
             list,
-            GeoDataFrame,
-            Polygon,
-            Point,
+            geopandas.GeoDataFrame,
+            shp_geometry.Polygon,
+            shp_geometry.Point,
         ],
         tags: Optional[List[str]] = None,
     ):
@@ -92,8 +83,8 @@ class Tasking(CatalogBase):
             "dataProduct": data_product_id,
             "params": {
                 "displayName": name,
-                "acquisitionStart": format_time(acquisition_start),
-                "acquisitionEnd": format_time(acquisition_end, set_end_of_day=True),
+                "acquisitionStart": utils.format_time(acquisition_start),
+                "acquisitionEnd": utils.format_time(acquisition_end, set_end_of_day=True),
             },
         }
         if tags is not None:
@@ -101,15 +92,15 @@ class Tasking(CatalogBase):
 
         schema = self.get_data_product_schema(data_product_id)
         logger.info("See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options.")
-        order_parameters = autocomplete_order_parameters(order_parameters, schema)
+        order_parameters = utils.autocomplete_order_parameters(order_parameters, schema)
 
-        geometry = any_vector_to_fc(vector=geometry)
+        geometry = utils.any_vector_to_fc(vector=geometry)
         assert isinstance(order_parameters["params"], dict)
         if geometry["features"][0]["geometry"]["type"] == "Point":
             # Tasking (e.g. Blacksky) can require Point geometry.
             order_parameters["params"]["geometry"] = geometry["features"][0]["geometry"]
         else:
-            geometry = fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
+            geometry = utils.fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
             order_parameters["params"]["geometry"] = geometry
 
         return order_parameters
@@ -121,7 +112,7 @@ class Tasking(CatalogBase):
         not_last_page = not response["last"]
         while not_last_page:
             page += 1
-            url = replace_page_query(url, page)
+            url = utils.replace_page_query(url, page)
             response = self.auth.request(request_type="GET", url=url)
             json_results.extend(response["content"])
             not_last_page = not response["last"]
@@ -151,7 +142,7 @@ class Tasking(CatalogBase):
             JSON: The json representation with the quotations resulted from the search.
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = endpoint(f"/v2/tasking/quotation?page=0&sort={sort}")
+        url = host.endpoint(f"/v2/tasking/quotation?page=0&sort={sort}")
         if quotation_id is not None:
             url += f"&id={quotation_id}"
         if workspace_id is not None:
@@ -185,7 +176,7 @@ class Tasking(CatalogBase):
         if decision not in ["ACCEPTED", "REJECTED"]:
             raise ValueError("Possible desicions are only ACCEPTED or REJECTED.")
 
-        url = endpoint(f"/v2/tasking/quotation/{quotation_id}")
+        url = host.endpoint(f"/v2/tasking/quotation/{quotation_id}")
 
         decision_payload = {"decision": decision}
 
@@ -219,7 +210,7 @@ class Tasking(CatalogBase):
             JSON: The json representation with the feasibility resulted from the search.
         """
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        url = endpoint(f"/v2/tasking/feasibility?page=0&sort={sort}")
+        url = host.endpoint(f"/v2/tasking/feasibility?page=0&sort={sort}")
         if feasibility_id is not None:
             url += f"&id={feasibility_id}"
         if workspace_id is not None:
@@ -249,7 +240,7 @@ class Tasking(CatalogBase):
         Returns:
             dict: The confirmation to the decided quotation plus metadata.
         """
-        url = endpoint(f"/v2/tasking/feasibility/{feasibility_id}")
+        url = host.endpoint(f"/v2/tasking/feasibility/{feasibility_id}")
         accepted_option_payload = {"acceptedOptionId": accepted_option_id}
         response_json = self.auth.request(request_type="PATCH", url=url, data=accepted_option_payload)
         return response_json
