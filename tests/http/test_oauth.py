@@ -1,19 +1,31 @@
 import base64
 import time
+from dataclasses import asdict
+from typing import Tuple
 
 import mock
+import pytest
 import requests
 from requests_mock import Mocker
 
 from up42.http.config import AccountCredentialsSettings, ProjectCredentialsSettings, TokenProviderSettings
-from up42.http.oauth import AccountTokenRetriever, ProjectTokenRetriever, Up42Auth
+from up42.http.oauth import (
+    AccountTokenRetriever,
+    IncompleteCredentials,
+    InvalidCredentials,
+    ProjectTokenRetriever,
+    UnsupportedSettings,
+    Up42Auth,
+    detect_retriever,
+    detect_settings,
+)
 
 HTTP_TIMEOUT = 10
 TOKEN_VALUE = "some-token"
 TOKEN_URL = "https://localhost/oauth/token"
 project_credentials = ProjectCredentialsSettings(
-    client_id="client_id",
-    client_secret="client_secret",
+    project_id="client_id",
+    project_api_key="client_secret",
 )
 account_credentials = AccountCredentialsSettings(username="some-user", password="some-pass")
 
@@ -23,7 +35,7 @@ def basic_auth(username, password):
     return f'Basic {token.decode("ascii")}'
 
 
-basic_client_auth = basic_auth(project_credentials.client_id, project_credentials.client_secret)
+basic_client_auth = basic_auth(project_credentials.project_id, project_credentials.project_api_key)
 basic_auth_headers = {"Authorization": basic_client_auth}
 
 
@@ -95,3 +107,44 @@ class TestUp42Auth:
         assert up42_auth.token.access_token == second_token
         assert TOKEN_URL, HTTP_TIMEOUT == retrieve.call_args.args[1:]
         assert retrieve.call_count == 2
+
+
+class TestDetectSettings:
+    def test_should_detect_project_credentials(self):
+        assert detect_settings(asdict(project_credentials)) == project_credentials
+
+    def test_should_detect_account_credentials(self):
+        assert detect_settings(asdict(account_credentials)) == account_credentials
+
+    @pytest.mark.parametrize("keys", [("project_id", "project_api_key"), ("username", "password")])
+    def test_should_accept_empty_credentials(self, keys: Tuple[str, str]):
+        credentials = dict(zip(keys, [None] * 2))
+        assert not detect_settings(credentials)
+
+    def test_fails_if_credentials_are_incomplete(self):
+        credentials = {"key1": "value1", "key2": None}
+        with pytest.raises(IncompleteCredentials) as exc_info:
+            detect_settings(credentials)
+
+        assert str(credentials) in str(exc_info.value)
+
+    def test_fails_if_credentials_are_invalid(self):
+        credentials = {"key1": "value1", "key2": "value2"}
+        with pytest.raises(InvalidCredentials) as exc_info:
+            detect_settings(credentials)
+
+        assert str(credentials) in str(exc_info.value)
+
+
+class TestDetectRetriever:
+    def test_should_detect_project_retriever(self):
+        assert isinstance(detect_retriever(project_credentials), ProjectTokenRetriever)
+
+    def test_should_detect_account_retriever(self):
+        assert isinstance(detect_retriever(account_credentials), AccountTokenRetriever)
+
+    def test_fails_if_settings_are_not_recognized(self):
+        credentials = mock.MagicMock()
+        with pytest.raises(UnsupportedSettings) as exc_info:
+            detect_retriever(credentials)
+        assert str(credentials) in str(exc_info.value)

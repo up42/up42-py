@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Union
 
 
 @dataclass(eq=True, frozen=True)
@@ -17,11 +18,14 @@ class TokenProviderSettings:
 
 @dataclass(eq=True, frozen=True)
 class ProjectCredentialsSettings:
-    client_id: str
-    client_secret: str
+    project_id: str
+    project_api_key: str
 
 
 @dataclass(eq=True, frozen=True)
 class AccountCredentialsSettings:
     username: str
     password: str
+
+
+CredentialsSettings = Union[AccountCredentialsSettings, ProjectCredentialsSettings]
