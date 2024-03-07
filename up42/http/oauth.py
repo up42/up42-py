@@ -64,10 +64,10 @@ class AccountTokenRetriever:
 
 class Up42Auth(requests.auth.AuthBase):
     def __init__(
-        self,
-        retrieve: TokenRetriever,
-        supply_token_settings=config.TokenProviderSettings,
-        create_adapter=http_adapter.create,
+            self,
+            retrieve: TokenRetriever,
+            supply_token_settings=config.TokenProviderSettings,
+            create_adapter=http_adapter.create,
     ):
         token_settings = supply_token_settings()
         self.token_url = token_settings.token_url
@@ -77,7 +77,7 @@ class Up42Auth(requests.auth.AuthBase):
         self.retrieve = retrieve
         self._token = self._fetch_token()
 
-    def __call__(self, request):
+    def __call__(self, request: requests.Request) -> requests.Request:
         request.headers["Authorization"] = f"Bearer {self.token.access_token}"
         return request
 
