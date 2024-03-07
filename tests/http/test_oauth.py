@@ -3,7 +3,7 @@ import time
 
 import mock
 import requests
-from requests_mock import Mocker
+import requests_mock as req_mock
 
 from up42.http import config, oauth
 
@@ -27,7 +27,7 @@ basic_auth_headers = {"Authorization": basic_client_auth}
 
 
 class TestProjectTokenRetriever:
-    def test_should_retrieve(self, requests_mock: Mocker):
+    def test_should_retrieve(self, requests_mock: req_mock.Mocker):
         def match_request_body(request):
             return request.text == "grant_type=client_credentials"
 
@@ -43,7 +43,7 @@ class TestProjectTokenRetriever:
 
 
 class TestAccountTokenRetriever:
-    def test_should_retrieve(self, requests_mock: Mocker):
+    def test_should_retrieve(self, requests_mock: req_mock.Mocker):
         def match_request_body(request):
             return request.text == (
                 "grant_type=password&"
