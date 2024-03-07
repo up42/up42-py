@@ -46,8 +46,13 @@ def test_should_set_api_host_domain_with_environment(auth_mock: up42_auth.Auth):
     assert host.DOMAIN == "abc"
 
 
-def test_get_token(auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
+def test_get_workspace(auth_mock: up42_auth.Auth):
+    assert auth_mock.workspace_id == constants.WORKSPACE_ID
+
+
+def test_should_set_headers(auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
     expected_code = 207
+    test_url = "http://test.com"
     version = utils.get_up42_py_version()
     expected_headers = {
         "Content-Type": "application/json",
@@ -55,8 +60,8 @@ def test_get_token(auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
         "cache-control": "no-cache",
         "User-Agent": f"up42-py/{version} (https://github.com/up42/up42-py)",
     }
-    requests_mock.get("http://test.com", request_headers=expected_headers, status_code=expected_code)
-    response = cast(requests.Response, auth_mock.request("GET", "http://test.com", return_text=False))
+    requests_mock.get(test_url, request_headers=expected_headers, status_code=expected_code)
+    response = cast(requests.Response, auth_mock.request("GET", test_url, return_text=False))
     assert response.status_code == expected_code
     assert requests_mock.called
 
