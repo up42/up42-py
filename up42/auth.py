@@ -2,33 +2,24 @@
 UP42 authentication mechanism and base requests functionality
 """
 import json
-from pathlib import Path
+import pathlib
+import warnings
 from typing import Dict, Optional, Union, cast
-from warnings import warn
 
 import requests
 import requests.exceptions
-from oauthlib.oauth2 import BackendApplicationClient, MissingTokenError
-from requests.auth import HTTPBasicAuth
-from requests_oauthlib import OAuth2Session  # type: ignore
-from tenacity import (
-    Retrying,
-    retry,
-    retry_if_exception,
-    retry_if_exception_type,
-    stop_after_attempt,
-    wait_fixed,
-    wait_random_exponential,
-)
+import requests_oauthlib as roauthlib  # type:ignore
+import tenacity as tnc
+from oauthlib import oauth2
+from requests import auth as rauth
 
-from up42 import host
-from up42.utils import get_logger, get_up42_py_version, read_json
+from up42 import host, utils
 
-logger = get_logger(__name__)
+logger = utils.get_logger(__name__)
 
 
 def retry_for_error_status_code(code: int):
-    class retry_on_code(retry_if_exception):
+    class StatusCodeRetry(tnc.retry_if_exception):
         def __init__(self):
             def is_http_error(exception):
                 return (
@@ -39,13 +30,13 @@ def retry_for_error_status_code(code: int):
 
             super().__init__(predicate=is_http_error)
 
-    return retry_on_code()
+    return StatusCodeRetry()
 
 
 class Auth:
     def __init__(
         self,
-        cfg_file: Union[str, Path, None] = None,
+        cfg_file: Union[str, pathlib.Path, None] = None,
         project_id: Optional[str] = None,
         project_api_key: Optional[str] = None,
         username: Optional[str] = None,
@@ -70,16 +61,13 @@ class Auth:
         self.workspace_id: Optional[str] = None
         self.token: Optional[str] = None
 
-        local_vars = locals()
-        credentials_filter = [
-            "project_id",
-            "project_api_key",
-            "username",
-            "password",
-        ]
         credentials_dict = {
-            key: value for key, value in local_vars.items() if key in credentials_filter and value is not None
+            "project_id": project_id,
+            "project_api_key": project_api_key,
+            "username": username,
+            "password": password,
         }
+        credentials_dict = {key: value for key, value in credentials_dict.items() if value}
 
         if "env" in kwargs:
             self.env = kwargs["env"]
@@ -100,8 +88,8 @@ class Auth:
             self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
-    def _choose_credential_source(self, cfg_file: Union[str, Path, None], kwargs: dict) -> dict:
-        config = read_json(cfg_file) or {}
+    def _choose_credential_source(self, cfg_file: Union[str, pathlib.Path, None], kwargs: dict) -> dict:
+        config = utils.read_json(cfg_file) or {}
         if set(config.keys()).intersection(set(kwargs.keys())):
             raise ValueError("Credentials must be provided either via config file or arguments, but not both")
         return config if config else kwargs
@@ -121,7 +109,7 @@ class Auth:
         for schema, parameters in schemas.items():
             if set(parameters).issubset(source.keys()):
                 if schema == "project":
-                    warn(
+                    warnings.warn(
                         "Project based authentication will be deprecated."
                         "Please follow authentication guidelines (/docs/authentication.md)."
                     )
@@ -164,11 +152,11 @@ class Auth:
         try:
             client_id = cast(str, self._credentials_id)
             client_secret = cast(str, self._credentials_key)
-            client = BackendApplicationClient(client_id=client_id, client_secret=client_secret)
-            auth = HTTPBasicAuth(client_id, client_secret)
-            get_token_session = OAuth2Session(client=client)
+            client = oauth2.BackendApplicationClient(client_id=client_id, client_secret=client_secret)
+            auth = rauth.HTTPBasicAuth(client_id, client_secret)
+            get_token_session = roauthlib.OAuth2Session(client=client)
             token_response = get_token_session.fetch_token(token_url=host.endpoint("/oauth/token"), auth=auth)
-        except MissingTokenError as err:
+        except oauth2.MissingTokenError as err:
             raise ValueError("Authentication was not successful, check the provided project credentials.") from err
 
         self.token = token_response["data"]["accessToken"]
@@ -189,7 +177,7 @@ class Auth:
 
     @staticmethod
     def _generate_headers(token: Optional[str]) -> Dict[str, str]:
-        version = get_up42_py_version()
+        version = utils.get_up42_py_version()
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
@@ -199,9 +187,9 @@ class Auth:
         return headers
 
     # pylint: disable=dangerous-default-value
-    @retry(
+    @tnc.retry(
         retry=retry_for_error_status_code(429),
-        wait=wait_random_exponential(multiplier=0.5, max=180),
+        wait=tnc.wait_random_exponential(multiplier=0.5, max=180),
         reraise=True,
     )
     def _request_helper(
@@ -253,7 +241,7 @@ class Auth:
         data: Union[dict, list] = {},
         querystring: dict = {},
         return_text: bool = True,
-    ):  # Union[str, dict, requests.Response]:
+    ):
         """
         Handles retrying the request and automatically retries and gets a new token if
         the old is invalid.
@@ -275,10 +263,10 @@ class Auth:
         Returns:
             The API response.
         """
-        retryer_token = Retrying(
-            stop=stop_after_attempt(2),  # Original attempt + one retry
-            wait=wait_fixed(0.5),
-            retry=(retry_for_error_status_code(401) | retry_if_exception_type(requests.exceptions.ConnectionError)),
+        retryer_token = tnc.Retrying(
+            stop=tnc.stop_after_attempt(2),  # Original attempt + one retry
+            wait=tnc.wait_fixed(0.5),
+            retry=(retry_for_error_status_code(401) | tnc.retry_if_exception_type(requests.exceptions.ConnectionError)),
             after=lambda retry_state: self._get_token(),  # type:ignore
             reraise=True,
             # after final failed attempt, raises last attempt's exception instead of RetryError.
@@ -298,7 +286,7 @@ class Auth:
         except requests.exceptions.HTTPError as err:  # Base error class
             # Raising the original `err` error would not surface the relevant error message (contained in API response)
             err_message = err.response is not None and err.response.json()
-            logger.error(f"Error {err_message}")
+            logger.error("Error %s", err_message)
             raise requests.exceptions.HTTPError(err_message) from err
 
         # Handle response text.

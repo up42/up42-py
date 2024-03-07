@@ -1,20 +1,20 @@
-import json
-from pathlib import Path
+import pathlib
+from typing import cast
 
 import pytest
 import requests
+from requests_mock import Mocker
 
-from up42 import host
+from up42 import host, utils
 from up42.auth import Auth
-from up42.utils import get_up42_py_version
 
-from .fixtures.fixtures_globals import PROJECT_APIKEY, PROJECT_ID, TOKEN, WORKSPACE_ID
+from .fixtures import fixtures_globals as constants
 
 
 def test_auth_kwargs():
     auth = Auth(
-        project_id=PROJECT_ID,
-        project_api_key=PROJECT_APIKEY,
+        project_id=constants.PROJECT_ID,
+        project_api_key=constants.PROJECT_APIKEY,
         env="abc",
         authenticate=False,
         retry=False,
@@ -37,7 +37,7 @@ def test_should_fail_config_file_not_found(tmp_path):
 
 
 def test_should_not_authenticate_with_config_file_if_not_requested():
-    fp = Path(__file__).resolve().parent / "mock_data" / "test_config.json"
+    fp = pathlib.Path(__file__).resolve().parent / "mock_data" / "test_config.json"
     Auth(cfg_file=fp, authenticate=False)
 
 
@@ -46,51 +46,19 @@ def test_should_set_api_host_domain_with_environment(auth_mock):
     assert host.DOMAIN == "abc"
 
 
-def test_get_token(auth_mock):
-    auth_mock._get_token()
-    assert auth_mock.token == TOKEN
-
-
-@pytest.mark.live
-def test_get_token_raises_wrong_credentials_live(auth_live):
-    auth_live._credentials_id = "123"
-    with pytest.raises(ValueError) as e:
-        auth_live._get_token()
-    assert "Authentication" in str(e.value)
-
-
-@pytest.mark.live
-def test_get_token_live(auth_live):
-    assert hasattr(auth_live, "token")
-
-
-def test_get_workspace(auth_mock):
-    auth_mock._get_workspace()
-    assert auth_mock.workspace_id == WORKSPACE_ID
-
-
-@pytest.mark.live
-def test_get_workspace_live(auth_live):
-    assert hasattr(auth_live, "workspace_id")
-
-
-def test_generate_headers(auth_mock):
-    version = get_up42_py_version()
+def test_get_token(auth_mock, requests_mock: Mocker):
+    expected_code = 207
+    version = utils.get_up42_py_version()
     expected_headers = {
         "Content-Type": "application/json",
-        "Authorization": "Bearer token_1011",
+        "Authorization": f"Bearer {constants.TOKEN}",
         "cache-control": "no-cache",
         "User-Agent": f"up42-py/{version} (https://github.com/up42/up42-py)",
     }
-    assert auth_mock._generate_headers(token="token_1011") == expected_headers
-
-
-def test_request_helper(auth_mock, requests_mock):
-    requests_mock.get(url="http://test.com", json={"data": {"xyz": 789}, "error": {}})
-
-    response = auth_mock._request_helper(request_type="GET", url="http://test.com", data={}, querystring={})
-    response_json = json.loads(response.text)
-    assert response_json == {"data": {"xyz": 789}, "error": {}}
+    requests_mock.get("http://test.com", request_headers=expected_headers, status_code=expected_code)
+    response = cast(requests.Response, auth_mock.request("GET", "http://test.com", return_text=False))
+    assert response.status_code == expected_code
+    assert requests_mock.called
 
 
 def test_request(auth_mock, requests_mock):

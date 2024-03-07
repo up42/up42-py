@@ -5,17 +5,16 @@ import mock
 import requests
 from requests_mock import Mocker
 
-from up42.http.config import AccountCredentialsSettings, ProjectCredentialsSettings, TokenProviderSettings
-from up42.http.oauth import AccountTokenRetriever, ProjectTokenRetriever, Up42Auth
+from up42.http import config, oauth
 
 HTTP_TIMEOUT = 10
 TOKEN_VALUE = "some-token"
 TOKEN_URL = "https://localhost/oauth/token"
-project_credentials = ProjectCredentialsSettings(
+project_credentials = config.ProjectCredentialsSettings(
     client_id="client_id",
     client_secret="client_secret",
 )
-account_credentials = AccountCredentialsSettings(username="some-user", password="some-pass")
+account_credentials = config.AccountCredentialsSettings(username="some-user", password="some-pass")
 
 
 def basic_auth(username, password):
@@ -32,7 +31,7 @@ class TestProjectTokenRetriever:
         def match_request_body(request):
             return request.text == "grant_type=client_credentials"
 
-        retrieve = ProjectTokenRetriever(lambda: project_credentials)
+        retrieve = oauth.ProjectTokenRetriever(lambda: project_credentials)
         requests_mock.post(
             TOKEN_URL,
             json={"access_token": TOKEN_VALUE},
@@ -52,7 +51,7 @@ class TestAccountTokenRetriever:
                 f"password={account_credentials.password}"
             )
 
-        retrieve = AccountTokenRetriever(lambda: account_credentials)
+        retrieve = oauth.AccountTokenRetriever(lambda: account_credentials)
         requests_mock.post(
             TOKEN_URL,
             json={"access_token": TOKEN_VALUE},
@@ -67,7 +66,7 @@ class TestAccountTokenRetriever:
 
 mock_request = mock.MagicMock()
 mock_request.headers = {}
-token_settings = TokenProviderSettings(
+token_settings = config.TokenProviderSettings(
     token_url=TOKEN_URL,
     duration=2,
     timeout=HTTP_TIMEOUT,
@@ -77,7 +76,7 @@ token_settings = TokenProviderSettings(
 class TestUp42Auth:
     def test_should_fetch_token_when_created(self):
         retrieve = mock.MagicMock(return_value=TOKEN_VALUE)
-        up42_auth = Up42Auth(retrieve=retrieve, supply_token_settings=lambda: token_settings)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, supply_token_settings=lambda: token_settings)
         up42_auth(mock_request)
         assert mock_request.headers["Authorization"] == f"Bearer {TOKEN_VALUE}"
         assert up42_auth.token.access_token == TOKEN_VALUE
@@ -87,7 +86,7 @@ class TestUp42Auth:
     def test_should_fetch_token_when_expired(self):
         second_token = "token2"
         retrieve = mock.MagicMock(side_effect=["token1", second_token])
-        up42_auth = Up42Auth(retrieve=retrieve, supply_token_settings=lambda: token_settings)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, supply_token_settings=lambda: token_settings)
         time.sleep(token_settings.duration + 1)
         up42_auth(mock_request)
 
