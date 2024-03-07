@@ -26,7 +26,7 @@
 
 <img align="right" href="https://sdk.up42.com/" src="docs/assets/docs.png" alt="" height="200"/>
 
-## Installation & Documentation
+## Installation & documentation
 
 See the [documentation](https://sdk.up42.com/) for getting started guides, examples and the code
 reference.
@@ -39,6 +39,11 @@ pip install up42-py
 ```bash
 conda install -c conda-forge up42-py
 ```
+
+## Changelog
+
+- [For the development team](/CHANGELOG-internal.md)
+- [For SDK users](https://sdk.up42.com/CHANGELOG)
 
 ## Use cloud-native geospatial data for your use cases in less than 25 lines of code!
 
