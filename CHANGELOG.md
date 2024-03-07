@@ -37,13 +37,19 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 - Generalized new authentication stack to cover account authentication case.
 
-## 0.37.0a2
+## 0.37.0a3
 
+**March 07, 2024**
+
+- Adjusted `tasking.py`, `test_tasking.py`, and `fixtures_tasking.py` in accordance with Pylint checks.
+
+## 0.37.0a2
 
 **March 06, 2024**
 
 - Adjusted `catalog.py` and `test_catalog.py` in accordance with Pylint checks.
 - Conducted minor refactoring in other classes due to changes in function names within the authentication module.
+
 
 ## 0.37.0a1
 
