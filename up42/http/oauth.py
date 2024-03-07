@@ -24,10 +24,9 @@ class TokenRetriever(Protocol):
 
 
 class ProjectTokenRetriever:
-    def __init__(self, supply_credentials_settings=config.ProjectCredentialsSettings):
-        credentials_settings = supply_credentials_settings()
-        self.client_id = credentials_settings.client_id
-        self.client_secret = credentials_settings.client_secret
+    def __init__(self, settings: config.ProjectCredentialsSettings):
+        self.client_id = settings.client_id
+        self.client_secret = settings.client_secret
 
     def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
         basic_auth = auth.HTTPBasicAuth(self.client_id, self.client_secret)
@@ -40,10 +39,9 @@ class ProjectTokenRetriever:
 
 
 class AccountTokenRetriever:
-    def __init__(self, supply_credentials_settings=config.AccountCredentialsSettings):
-        credentials_settings = supply_credentials_settings()
-        self.username = credentials_settings.username
-        self.password = credentials_settings.password
+    def __init__(self, settings: config.AccountCredentialsSettings):
+        self.username = settings.username
+        self.password = settings.password
 
     def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
         headers = {

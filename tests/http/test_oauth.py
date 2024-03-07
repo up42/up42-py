@@ -32,7 +32,7 @@ class TestProjectTokenRetriever:
         def match_request_body(request):
             return request.text == "grant_type=client_credentials"
 
-        retrieve = ProjectTokenRetriever(lambda: project_credentials)
+        retrieve = ProjectTokenRetriever(project_credentials)
         requests_mock.post(
             TOKEN_URL,
             json={"access_token": TOKEN_VALUE},
@@ -52,7 +52,7 @@ class TestAccountTokenRetriever:
                 f"password={account_credentials.password}"
             )
 
-        retrieve = AccountTokenRetriever(lambda: account_credentials)
+        retrieve = AccountTokenRetriever(account_credentials)
         requests_mock.post(
             TOKEN_URL,
             json={"access_token": TOKEN_VALUE},
