@@ -26,7 +26,6 @@ class Tasking(catalog.CatalogBase):
 
     def __init__(self, auth: up42_auth.Auth):
         super().__init__(auth)
-        self.auth = auth
         self.type = "TASKING"
 
     def construct_order_parameters(
