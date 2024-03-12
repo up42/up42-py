@@ -86,8 +86,7 @@ def test_asset_update_metadata(asset_mock):
 
 def test_asset_update_metadata_should_return_same_with_no_values(asset_mock):
     updated_info = asset_mock.update_metadata(title="some_other_title", tags=["othertag1", "othertag2"])
-    assert updated_info["title"] == asset_mock.info["title"]
-    assert updated_info["tags"] == asset_mock.info["tags"]
+    assert updated_info == asset_mock.info
 
 
 def test_asset_update_metadata_should_ignore_kwargs(asset_mock, caplog):
