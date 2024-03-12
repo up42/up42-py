@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -8,6 +9,9 @@ from up42.asset import Asset
 from up42.host import endpoint
 
 from .fixtures.fixtures_globals import ASSET_ID, DOWNLOAD_URL, JSON_ASSET, STAC_ASSET_HREF
+
+LOGGER = logging.getLogger("up42.asset")
+LOGGER.propagate = True
 
 
 def test_init(asset_mock):
@@ -78,6 +82,18 @@ def test_asset_update_metadata(asset_mock):
     updated_info = asset_mock.update_metadata(title="some_other_title", tags=["othertag1", "othertag2"])
     assert updated_info["title"] == "some_other_title"
     assert updated_info["tags"] == ["othertag1", "othertag2"]
+
+
+def test_asset_update_metadata_should_return_same_with_no_values(asset_mock):
+    updated_info = asset_mock.update_metadata(title="some_other_title", tags=["othertag1", "othertag2"])
+    assert updated_info["title"] == asset_mock.info["title"]
+    assert updated_info["tags"] == asset_mock.info["tags"]
+
+
+def test_asset_update_metadata_should_ignore_kwargs(asset_mock, caplog):
+    caplog.set_level(logging.INFO)
+    asset_mock.update_metadata(test="test", test2="test")
+    assert "test,test2 values are not allowed to update in asset metadata" in caplog.text
 
 
 def test_asset_get_download_url(assets_fixture):

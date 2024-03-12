@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import pystac
 from pystac_client import Client, ItemSearch
@@ -103,14 +103,24 @@ class Asset:
         Update the metadata of the asset.
 
         Args:
-            title: The title string to be assigned to the asset.
-            tags: A list of tag strings to be assigned to the asset.
+            title: The title string to be assigned to the asset. No value will keep the existing title.
+            tags: A list of tag strings to be assigned to the asset. No value will keep the existing tags.
 
         Returns:
             The updated asset metadata information
         """
         url = endpoint(f"/v2/assets/{self.asset_id}/metadata")
-        body_update = {"title": title, "tags": tags, **kwargs}
+        if kwargs:
+            logger.info(
+                f"{','.join([key for key in kwargs.keys()])} values are not allowed to update in asset metadata."
+            )
+        body_update: Dict[str, Union[str, list[str]]] = {"title": title} if title is not None else {}
+        if tags is not None:
+            body_update.update({"tags": tags})
+
+        if not body_update:
+            return self.info
+
         response_json = self.auth.request(request_type="POST", url=url, data=body_update)
         self.info = response_json
         return self.info
