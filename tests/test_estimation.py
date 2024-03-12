@@ -2,12 +2,12 @@ from typing import Any, Dict, List
 
 import pytest
 
-from up42.estimation import Estimation
+from up42 import estimation
 
-from .fixtures.fixtures_globals import API_HOST, JSON_WORKFLOW_ESTIMATION, PROJECT_ID
+from .fixtures import fixtures_globals as constants
 
 
-def test_estimate_price(requests_mock, auth_mock, estimation_mock):
+def test_estimate_price(requests_mock, estimation_mock):
     input_tasks = [
         {
             "name": "esa-s2-l2a-gtiff-visual:1",
@@ -23,8 +23,8 @@ def test_estimate_price(requests_mock, auth_mock, estimation_mock):
         },
     ]
 
-    url_workflow_estimation = f"{API_HOST}/projects/{PROJECT_ID}/estimate/job"
-    requests_mock.post(url=url_workflow_estimation, json=JSON_WORKFLOW_ESTIMATION)
+    url_workflow_estimation = f"{constants.API_HOST}/projects/{constants.PROJECT_ID}/estimate/job"
+    requests_mock.post(url=url_workflow_estimation, json=constants.JSON_WORKFLOW_ESTIMATION)
     _ = estimation_mock.estimate()
     assert list(estimation_mock.payload.keys()) == ["tasks", "inputs"]
     assert estimation_mock.payload["tasks"] == input_tasks
@@ -54,16 +54,16 @@ def test_estimate_price_live(auth_live, project_id_live):
             "blockVersionTag": "2.2.3",
         },
     ]
-    estimation = Estimation(
+    estimation_result = estimation.Estimation(
         auth=auth_live,
         project_id=project_id_live,
         input_parameters=input_parameters,
         input_tasks=input_tasks,
     ).estimate()
-    assert isinstance(estimation, dict)
-    assert len(estimation) == 2
-    assert list(estimation.keys()) == ["esa-s2-l2a-gtiff-visual:1", "tiling:1"]
-    assert list(estimation["esa-s2-l2a-gtiff-visual:1"].keys()) == [
+    assert isinstance(estimation_result, dict)
+    assert len(estimation_result) == 2
+    assert list(estimation_result.keys()) == ["esa-s2-l2a-gtiff-visual:1", "tiling:1"]
+    assert list(estimation_result["esa-s2-l2a-gtiff-visual:1"].keys()) == [
         "blockConsumption",
         "machineConsumption",
     ]

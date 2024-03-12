@@ -30,18 +30,26 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-## 0.37.0a4
 
+## 0.37.0a6
 
 **March 07, 2024**
 
-- Generalized new authentication stack to cover account authentication case.
+- Adjusted `estimate.py`, `test_estimate.py`, and `fixtures_estimate.py` in accordance with Pylint checks.
+
 
 ## 0.37.0a5
 
 **March 07, 2024**
 
 - Adjusted `order.py`, `test_order.py`, and `fixtures_order.py` in accordance with Pylint checks.
+
+
+## 0.37.0a4
+**March 07, 2024**
+
+- Generalized new authentication stack to cover account authentication case.
+
 
 ## 0.37.0a3
 

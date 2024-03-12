@@ -2,9 +2,9 @@ from typing import Any, Dict, List
 
 import pytest
 
-from up42.estimation import Estimation
+from up42 import estimation
 
-from .fixtures_globals import PROJECT_ID
+from . import fixtures_globals as constants
 
 
 @pytest.fixture()
@@ -32,9 +32,9 @@ def estimation_mock(auth_mock):
         },
     ]
 
-    return Estimation(
+    return estimation.Estimation(
         auth=auth_mock,
-        project_id=PROJECT_ID,
+        project_id=constants.PROJECT_ID,
         input_parameters=input_parameters,
         input_tasks=input_tasks,
     )
