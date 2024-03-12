@@ -1,4 +1,5 @@
 import logging
+from copy import deepcopy
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -85,8 +86,9 @@ def test_asset_update_metadata(asset_mock):
 
 
 def test_asset_update_metadata_should_return_same_with_no_values(asset_mock):
+    pre_update_info = deepcopy(asset_mock.info)
     updated_info = asset_mock.update_metadata()
-    assert updated_info == asset_mock.info
+    assert updated_info == pre_update_info
 
 
 def test_asset_update_metadata_should_ignore_kwargs(asset_mock, caplog):
