@@ -30,6 +30,13 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.37.0a5
+
+
+**March 12, 2024**
+
+- Fixing incorrect title and tags removal on Asset update metadata.
+
 ## 0.37.0a4
 
 
