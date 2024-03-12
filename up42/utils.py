@@ -1,35 +1,35 @@
 import copy
+import datetime
+import functools
 import importlib.metadata
 import json
 import logging
+import pathlib
 import tarfile
 import tempfile
 import warnings
 import zipfile
-from datetime import datetime
-from datetime import time as datetime_time
-from functools import wraps
-from pathlib import Path
 from typing import List, Optional, Union, cast
-from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
+from urllib import parse
 
+import geojson  # type: ignore
+import geopandas  # type: ignore
 import requests
 import shapely  # type: ignore
-from geojson import Feature, FeatureCollection  # type: ignore
-from geojson import Polygon as geojson_Polygon
-from geopandas import GeoDataFrame  # type: ignore
-from shapely.geometry import Point, Polygon  # type: ignore
-from tqdm import tqdm
+import tqdm
+from shapely import geometry  # type: ignore
+
+TIMEOUT = 120  # seconds
 
 
 def get_filename(signed_url: str, default_filename: str) -> str:
     """
     Returns the filename from the signed URL
     """
-    parsed_url = urlparse(signed_url)
-    extension = Path(parsed_url.path).suffix
+    parsed_url = parse.urlparse(signed_url)
+    extension = pathlib.Path(parsed_url.path).suffix
     try:
-        file_name = parse_qs(parsed_url.query)["response-content-disposition"][0].split("filename=")[1]
+        file_name = parse.parse_qs(parsed_url.query)["response-content-disposition"][0].split("filename=")[1]
         return f"{file_name}{extension}"
     except (IndexError, KeyError):
         warnings.warn(
@@ -47,8 +47,8 @@ def get_logger(
     """
     Use level=logging.CRITICAL to disable temporarily.
     """
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
+    inner_logger = logging.getLogger(name)
+    inner_logger.setLevel(level)
     # create console handler and set level to debug
     ch = logging.StreamHandler()
     ch.setLevel(level)
@@ -59,9 +59,9 @@ def get_logger(
         log_format = "%(asctime)s - %(message).2000s"
     formatter = logging.Formatter(log_format)
     ch.setFormatter(formatter)
-    logger.addHandler(ch)
-    logger.propagate = False
-    return logger
+    inner_logger.addHandler(ch)
+    inner_logger.propagate = False
+    return inner_logger
 
 
 logger = get_logger(__name__)
@@ -82,7 +82,7 @@ def deprecation(
     """
 
     def actual_decorator(func):
-        @wraps(func)
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):
             message = (
                 f"`{func.__name__}` will be deprecated in version {version}, "
@@ -98,7 +98,7 @@ def deprecation(
 
 def download_from_gcs_unpack(
     download_url: str,
-    output_directory: Union[str, Path],
+    output_directory: Union[str, pathlib.Path],
 ) -> List[str]:
     """
     General download function for results of storage assets, job & jobtask from cloud storage
@@ -113,9 +113,9 @@ def download_from_gcs_unpack(
     out_temp = tempfile.mkstemp()[1]
     with open(out_temp, "wb") as dst:
         try:
-            r = requests.get(download_url, stream=True)
+            r = requests.get(download_url, stream=True, timeout=TIMEOUT)
             r.raise_for_status()
-            for chunk in tqdm(r.iter_content(chunk_size=1024)):
+            for chunk in tqdm.tqdm(r.iter_content(chunk_size=1024)):
                 if chunk:  # filter out keep-alive new chunks
                     dst.write(chunk)
         except requests.exceptions.HTTPError as err:
@@ -125,7 +125,7 @@ def download_from_gcs_unpack(
 
     # Unpack
     # Order results are zip, job results are tgz(tar.gzipped)
-    out_filepaths: List[Path] = []
+    out_filepaths: List[pathlib.Path] = []
     if tarfile.is_tarfile(out_temp):
         with tarfile.open(out_temp) as tar_file:
             for tar_member in tar_file.getmembers():
@@ -134,7 +134,7 @@ def download_from_gcs_unpack(
                     if "output/" in tar_member.name:
                         tar_member.name = tar_member.name.split("output/")[1]
                     tar_file.extract(tar_member, output_directory)
-                    out_filepaths.append(Path(output_directory) / tar_member.name)
+                    out_filepaths.append(pathlib.Path(output_directory) / tar_member.name)
     elif zipfile.is_zipfile(out_temp):
         with zipfile.ZipFile(out_temp) as zip_file:
             for zip_info in zip_file.infolist():
@@ -143,18 +143,19 @@ def download_from_gcs_unpack(
                     if "output/" in zip_info.filename:
                         zip_info.filename = zip_info.filename.split("output/")[1]
                     zip_file.extract(zip_info, output_directory)
-                    out_filepaths.append(Path(output_directory) / zip_info.filename)
+                    out_filepaths.append(pathlib.Path(output_directory) / zip_info.filename)
     else:
         raise ValueError("Downloaded file is not a TGZ/TAR or ZIP archive.")
-
     logger.info(
-        f"Download successful of {len(out_filepaths)} files to output_directory "
-        f"'{output_directory}': {[p.name for p in out_filepaths]}"
+        "Download successful of %s files to output_directory '%s': %s",
+        len(out_filepaths),
+        output_directory,
+        [p.name for p in out_filepaths],
     )
     return [str(p) for p in out_filepaths]
 
 
-def download_gcs_not_unpack(download_url: str, output_directory: Union[str, Path]) -> List[str]:
+def download_gcs_not_unpack(download_url: str, output_directory: Union[str, pathlib.Path]) -> List[str]:
     """
     General download function for assets, job and jobtasks from cloud storage
     provider.
@@ -165,25 +166,25 @@ def download_gcs_not_unpack(download_url: str, output_directory: Union[str, Path
             directory.
     """
     file_name = get_filename(download_url, default_filename="output")
-    out_fp = Path().joinpath(output_directory, file_name)
+    out_fp = pathlib.Path().joinpath(output_directory, file_name)
     # Download
     with open(out_fp, "wb") as dst:
         try:
-            r = requests.get(download_url, stream=True)
+            r = requests.get(download_url, stream=True, timeout=TIMEOUT)
             r.raise_for_status()
-            for chunk in tqdm(r.iter_content(chunk_size=1024)):
+            for chunk in tqdm.tqdm(r.iter_content(chunk_size=1024)):
                 if chunk:  # filter out keep-alive new chunks
                     dst.write(chunk)
         except requests.exceptions.HTTPError as err:
-            logger.debug(f"Connection error, please try again! {err}")
+            logger.debug("Connection error, please try again! %s", err)
             raise requests.exceptions.HTTPError(f"Connection error, please try again! {err}")
 
-    logger.info(f"Successfully downloaded the file at {out_fp}")
+    logger.info("Successfully downloaded the file at %s", out_fp)
     out_filepaths = [str(out_fp)]
     return out_filepaths
 
 
-def format_time(date: Optional[Union[str, datetime]], set_end_of_day=False):
+def format_time(date: Optional[Union[str, datetime.datetime]], set_end_of_day=False):
     """
     Formats date isostring to datetime string format
 
@@ -194,10 +195,10 @@ def format_time(date: Optional[Union[str, datetime]], set_end_of_day=False):
     """
     if isinstance(date, str):
         has_time_of_day = len(date) > 11
-        date = datetime.fromisoformat(date)
+        date = datetime.datetime.fromisoformat(date)
         if not has_time_of_day and set_end_of_day:
-            date = datetime.combine(date.date(), datetime_time(23, 59, 59, 999999))
-    elif isinstance(date, datetime):
+            date = datetime.datetime.combine(date.date(), datetime.time(23, 59, 59, 999999))
+    elif isinstance(date, datetime.datetime):
         pass
     else:
         raise ValueError("date needs to be of type datetime or isoformat date string!")
@@ -206,9 +207,11 @@ def format_time(date: Optional[Union[str, datetime]], set_end_of_day=False):
 
 
 def any_vector_to_fc(
-    vector: Union[FeatureCollection, Feature, dict, list, GeoDataFrame, Polygon, Point],
+    vector: Union[
+        geojson.FeatureCollection, geojson.Feature, dict, list, geopandas.GeoDataFrame, geometry.Polygon, geometry.Point
+    ],
     as_dataframe: bool = False,
-) -> Union[dict, GeoDataFrame]:
+) -> Union[dict, geopandas.GeoDataFrame]:
     """
     Gets a uniform feature collection dictionary (with fc and f bboxes) from any input vector type.
 
@@ -220,14 +223,14 @@ def any_vector_to_fc(
     if not isinstance(
         vector,
         (
-            FeatureCollection,
-            Feature,
+            geojson.FeatureCollection,
+            geojson.Feature,
             dict,
             list,
-            GeoDataFrame,
-            Polygon,
-            Point,
-            geojson_Polygon,
+            geopandas.GeoDataFrame,
+            geometry.Polygon,
+            geometry.Point,
+            geojson.Polygon,
         ),
     ):
         raise ValueError(
@@ -236,26 +239,28 @@ def any_vector_to_fc(
         )
 
     vector = copy.deepcopy(vector)  # avoid altering input geometry
-    if isinstance(vector, (dict, FeatureCollection, Feature)):
+    if isinstance(vector, (dict, geojson.FeatureCollection, geojson.Feature)):
         try:
             if vector["type"] == "FeatureCollection":
-                df = GeoDataFrame.from_features(vector, crs=4326)
+                df = geopandas.GeoDataFrame.from_features(vector, crs=4326)
             elif vector["type"] == "Feature":
-                df = GeoDataFrame.from_features(FeatureCollection([vector]), crs=4326)
+                df = geopandas.GeoDataFrame.from_features(geojson.FeatureCollection([vector]), crs=4326)
             else:  # Only geometry dict of Feature
-                df = GeoDataFrame.from_features(FeatureCollection([Feature(geometry=vector)]), crs=4326)
+                df = geopandas.GeoDataFrame.from_features(
+                    geojson.FeatureCollection([geojson.Feature(geometry=vector)]), crs=4326
+                )
         except KeyError as e:
             raise ValueError("Provided geometry dictionary has to include a FeatureCollection or Feature.") from e
     else:
         if isinstance(vector, list):
             if len(vector) == 4:
                 box_poly = shapely.geometry.box(*vector)
-                df = GeoDataFrame({"geometry": [box_poly]}, crs=4326)
+                df = geopandas.GeoDataFrame({"geometry": [box_poly]}, crs=4326)
             else:
                 raise ValueError("The list requires 4 bounds coordinates.")
-        elif isinstance(vector, (Polygon, Point)):
-            df = GeoDataFrame({"geometry": [vector]}, crs=4326)
-        elif isinstance(vector, GeoDataFrame):
+        elif isinstance(vector, (geometry.Polygon, geometry.Point)):
+            df = geopandas.GeoDataFrame({"geometry": [vector]}, crs=4326)
+        elif isinstance(vector, geopandas.GeoDataFrame):
             df = vector
             try:
                 if df.crs.to_string() != "EPSG:4326":
@@ -270,22 +275,22 @@ def any_vector_to_fc(
         return fc
 
 
-def validate_fc_up42_requirements(fc: Union[dict, FeatureCollection]):
+def validate_fc_up42_requirements(fc: Union[dict, geojson.FeatureCollection]):
     """
     Validate the feature collection if it fits UP42 geometry requirements.
     """
     geometry_error = "UP42 only accepts single geometries, the provided geometry {}."
     if len(fc["features"]) != 1:
-        logger.info(geometry_error.format("contains multiple geometries"))
+        logger.info("%s contains multiple geometries", geometry_error)
         raise ValueError(geometry_error.format("contains multiple geometries"))
 
     fc_type = fc["features"][0]["geometry"]["type"]
     if fc_type != "Polygon":
-        logger.info(geometry_error.format(f"is a {fc_type}"))
+        logger.info("%s is a %s", geometry_error, fc_type)
         raise ValueError(geometry_error.format(f"is a {fc_type}"))
 
 
-def fc_to_query_geometry(fc: Union[dict, FeatureCollection], geometry_operation: str) -> Union[List, dict]:
+def fc_to_query_geometry(fc: Union[dict, geojson.FeatureCollection], geometry_operation: str) -> Union[List, dict]:
     """
     From a feature collection with a single feature, depending on the geometry_operation,
     returns the feature as a list of bounds coordinates or a GeoJSON Polygon (as dict).
@@ -338,7 +343,7 @@ def filter_jobs_on_mode(jobs_json: List[dict], test_jobs: bool = True, real_jobs
     if not selected_modes:
         raise ValueError("At least one of test_jobs and real_jobs must be True.")
     jobs_json = [job for job in jobs_json if job["mode"] in selected_modes]
-    logger.info(f"Returning {selected_modes} jobs.")
+    logger.info("Returning %s jobs.", selected_modes)
     return jobs_json
 
 
@@ -365,11 +370,11 @@ def autocomplete_order_parameters(order_parameters: dict, schema: dict):
                 continue
             elif "allOf" in schema["properties"][param]:  # has further definitions key
                 potential_values = [x["const"] for x in schema["definitions"][param]["anyOf"]]
-                logger.info(f"As `{param}` select one of {potential_values}")
+                logger.info("As `%s` select one of %s", param, potential_values)
             else:
                 # Full information for simple parameters
                 del schema["properties"][param]["title"]
-                logger.info(f"As `{param}` select `{schema['properties'][param]}`")
+                logger.info("As `%s` select `%s`", param, schema["properties"][param])
     except KeyError as exc:
         raise KeyError("Please reach out to UP42 Support (support@up42.com)") from exc
     return order_parameters
@@ -385,15 +390,15 @@ def replace_page_query(url: str, new_page: int) -> str:
     Returns:
         str: the url with the new page parameter.
     """
-    parsed_url = urlparse(url)
-    query_params = parse_qs(parsed_url.query)
+    parsed_url = parse.urlparse(url)
+    query_params = parse.parse_qs(parsed_url.query)
     query_params["page"] = [str(new_page)]
 
     # Update the query string with the modified parameters
-    encoded_query = urlencode(query_params, doseq=True)
+    encoded_query = parse.urlencode(query_params, doseq=True)
 
     # Reconstruct the modified URL
-    modified_url = urlunparse(
+    modified_url = parse.urlunparse(
         (
             parsed_url.scheme,
             parsed_url.netloc,
@@ -412,10 +417,10 @@ def get_up42_py_version():
     return importlib.metadata.version("up42-py")
 
 
-def read_json(path_or_dict: Union[dict, str, Path, None]) -> Optional[dict]:
-    if path_or_dict and isinstance(path_or_dict, (str, Path)):
+def read_json(path_or_dict: Union[dict, str, pathlib.Path, None]) -> Optional[dict]:
+    if path_or_dict and isinstance(path_or_dict, (str, pathlib.Path)):
         try:
-            with open(path_or_dict) as file:
+            with open(path_or_dict, encoding="utf-8") as file:
                 return json.load(file)
         except FileNotFoundError as ex:
             raise ValueError(f"File {path_or_dict} does not exist!") from ex

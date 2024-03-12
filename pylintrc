@@ -15,7 +15,7 @@ ignore=
 
 # Files or directories matching the regex patterns are skipped. The regex
 # matches against base names, not paths.
-ignore-patterns=.*init.*,.*conf.*,.*asset.*.py,.*auth.py,.*initialization.py,.*job.*.py,.*estimation.py,.*http_adapter.py,.*host.py,.*main.py,macros.py,.*order.py,.*project.py,.*stac_client.py,.*storage.py,.*tools.py,.*utils.py,.*vis.*.py,.*viz.*.py,.*webhook.*.py,.*workflow.py,.*e2e.*.py
+ignore-patterns=.*init.*,.*conf.*,.*asset.*.py,.*auth.py,.*initialization.py,.*job.*.py,.*estimation.py,.*http_adapter.py,.*host.py,.*main.py,.*order.py,.*project.py,.*stac_client.py,.*storage.py,.*tools.py,.*vis.*.py,.*viz.*.py,.*webhook.*.py,.*workflow.py,.*e2e.*.py
 
 
 # Pickle collected data for later comparisons.
