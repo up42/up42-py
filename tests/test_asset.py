@@ -85,7 +85,7 @@ def test_asset_update_metadata(asset_mock):
 
 
 def test_asset_update_metadata_should_return_same_with_no_values(asset_mock):
-    updated_info = asset_mock.update_metadata(title="some_other_title", tags=["othertag1", "othertag2"])
+    updated_info = asset_mock.update_metadata()
     assert updated_info == asset_mock.info
 
 
