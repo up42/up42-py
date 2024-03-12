@@ -46,6 +46,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 
 ## 0.37.0a4
+
 **March 07, 2024**
 
 - Generalized new authentication stack to cover account authentication case.
