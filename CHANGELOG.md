@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **March 07, 2024**
 
-- Adjusted `host.py`in accordance with Pylint checks.
+- Adjusted `host.py`, `tools.py`, `test_tools.py`, `storage.py`, `test_storage.py`, and `fixtures_storage.py` in accordance with Pylint checks.
 
 ## 0.37.0a4
 
