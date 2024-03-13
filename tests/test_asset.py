@@ -91,9 +91,11 @@ class TestMetadataUpdate:
         assert updated_info == pre_update_info
 
     def test_asset_update_metadata_should_ignore_kwargs(self, asset_mock, caplog):
+        pre_update_info = deepcopy(asset_mock.info)
         caplog.set_level(logging.INFO)
-        asset_mock.update_metadata(test="test", test2="test")
+        updated_info = asset_mock.update_metadata(test="test", test2="test")
         assert "test,test2 values are not allowed to update in asset metadata" in caplog.text
+        assert updated_info == pre_update_info
 
 
 def test_asset_get_download_url(assets_fixture):
