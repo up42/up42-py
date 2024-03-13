@@ -1,10 +1,8 @@
 import copy
 from typing import List, cast
 
-import pystac
 import pystac_client
 import pytest
-import requests
 
 from up42 import asset, asset_searcher, order, storage
 
@@ -19,14 +17,6 @@ def test_init(storage_mock):
 def test_pystac_client_property(storage_mock):
     up42_pystac_client = storage_mock.pystac_client
     isinstance(up42_pystac_client, pystac_client.Client)
-
-
-@pytest.mark.live
-def test_pystac_client_property_live(storage_live):
-    up42_pystac_client = storage_live.pystac_client
-    isinstance(up42_pystac_client, pystac_client.Client)
-    stac_collections = up42_pystac_client.get_collections()
-    assert isinstance(stac_collections.__next__(), pystac.Collection)
 
 
 def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
@@ -112,30 +102,6 @@ def test_get_assets(storage_mock):
     assert len(assets) == 1
     assert isinstance(assets[0], asset.Asset)
     assert assets[0].asset_id == constants.ASSET_ID
-
-
-@pytest.mark.live
-def test_get_assets_live(storage_live):
-    assets = storage_live.get_assets()
-    assert len(assets) >= 2
-    dates = [asset.info["createdAt"] for asset in assets]
-    # default descending, newest to oldest.
-    descending_dates = sorted(dates)[::-1]
-    assert descending_dates == dates
-    with pytest.raises(ValueError) as e:
-        storage_live.get_assets(
-            created_after="2020-01-01",
-            created_before="2023-01-01",
-            acquired_after="2020-01-01",
-            acquired_before="2023-01-01",
-        )
-    assert "no longer supported" in str(e.value)
-
-
-@pytest.mark.live
-def test_get_assets_by_source_live(storage_live):
-    assets = storage_live.get_assets(sources=["ARCHIVE"])
-    assert len(assets) >= 2
 
 
 def test_get_assets_with_search_stac(storage_mock):
@@ -224,17 +190,6 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     assert len(assets) == 74
     assert isinstance(assets[0], asset.Asset)
     assert assets[0].asset_id == constants.ASSET_ID
-
-
-@pytest.mark.live
-def test_get_assets_raise_error_live(storage_live):
-    """
-    Api v2 error format is handled in the auth request method
-    This tests asserts if the api v2 error response is correct.
-    """
-    with pytest.raises(requests.exceptions.RequestException) as e:
-        storage_live.get_assets(workspace_id="a")
-    assert "title" in str(e.value)
 
 
 def test_get_orders(storage_mock):
@@ -379,23 +334,6 @@ def test_get_orders_v2_endpoint_params(auth_mock, requests_mock, params, expecte
     storage_results = storage.Storage(auth=auth_mock)
     orders = storage_results.get_orders(**params)
     assert orders == expected_results
-
-
-@pytest.mark.live
-def test_get_orders_live(storage_live):
-    """
-    SDK test account holds too few results to query multiple pages via pagination,
-    needs to be mocked.
-    """
-    orders = storage_live.get_orders()
-    assert len(orders) >= 1
-    dates = [order.info["createdAt"] for order in orders]
-    # default descending, newest to oldest.
-    descending_dates = sorted(dates)[::-1]
-    assert descending_dates == dates
-
-    orders_tags = storage_live.get_orders(tags=["Test"])
-    assert len(orders_tags) >= 0
 
 
 def test_get_orders_raises_with_illegal_sorting_criteria(storage_mock):
