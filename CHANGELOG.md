@@ -30,13 +30,19 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-## 0.37.0a10
+## 0.37.0a11
 
-**March 13, 2024**
+**March 14, 2024**
 
 - Adjusted `initialization.py`, `test_initialization.py`, `__init__.py`, `main.py` and `test_main.py` in accordance with Pylint checks.
 
 
+## 0.37.0a10
+
+**March 13, 2024**
+
+- Adjusted `webhooks.py`, `test_webhooks.py` and `fixtures_webhook.py` in accordance with Pylint checks.
+- Dropped `test_e2e_30sec.py` since it covers functionality dropped earlier.
 
 ## 0.37.0a9
 
