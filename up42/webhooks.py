@@ -35,8 +35,7 @@ class Webhook:
         Gets and updates the webhook metadata information.
         """
         url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
-        response_json = self.auth.request(request_type="GET", url=url)
-        self._info = response_json["data"]
+        self._info = self.auth.request(request_type="GET", url=url)["data"]
         return self._info
 
     def trigger_test_events(self) -> dict:
@@ -48,19 +47,15 @@ class Webhook:
             A dict with information about the test events.
         """
         url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}/tests")
-        response_json = self.auth.request(
-            request_type="POST",
-            url=url,
-        )
-        return response_json["data"]
+        return self.auth.request(request_type="POST", url=url)["data"]
 
     def update(
-        self,
-        name: Optional[str] = None,
-        url: Optional[str] = None,
-        events: Optional[List[str]] = None,
-        active: Optional[bool] = None,
-        secret: Optional[str] = None,
+            self,
+            name: Optional[str] = None,
+            url: Optional[str] = None,
+            events: Optional[List[str]] = None,
+            active: Optional[bool] = None,
+            secret: Optional[str] = None,
     ) -> "Webhook":
         """
         Updates a registered webhook.
@@ -131,8 +126,7 @@ class Webhooks:
             A dict of the available webhook events.
         """
         url = host.endpoint("/webhooks/events")
-        response_json = self.auth.request(request_type="GET", url=url)
-        return response_json["data"]
+        return self.auth.request(request_type="GET", url=url)["data"]
 
     def get_webhooks(self, return_json: bool = False) -> List[Webhook]:
         """
@@ -161,12 +155,12 @@ class Webhooks:
         return webhooks
 
     def create_webhook(
-        self,
-        name: str,
-        url: str,
-        events: List[str],
-        active: bool = False,
-        secret: Optional[str] = None,
+            self,
+            name: str,
+            url: str,
+            events: List[str],
+            active: bool = False,
+            secret: Optional[str] = None,
     ) -> Webhook:
         """
         Registers a new webhook in the system.

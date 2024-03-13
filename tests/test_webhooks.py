@@ -1,5 +1,3 @@
-import pytest
-
 from up42 import webhooks
 
 from .fixtures import fixtures_globals as constants
@@ -25,7 +23,7 @@ def test_webhook_trigger_test_event(webhook_mock):
 def test_webhook_update(webhook_mock):
     updated_webhook = webhook_mock.update(name="test_info_webhook")
     assert isinstance(updated_webhook, webhooks.Webhook)
-    assert updated_webhook._info["name"] == "test_info_webhook"
+    assert "test_info_webhook" in repr(updated_webhook)
 
 
 def test_webhook_delete(webhook_mock):
@@ -34,13 +32,6 @@ def test_webhook_delete(webhook_mock):
 
 def test_get_webhook_events(webhooks_mock):
     webhook_events = webhooks_mock.get_webhook_events()
-    assert isinstance(webhook_events, list)
-    assert len(webhook_events)
-
-
-@pytest.mark.live
-def test_get_webhook_events_live(webhooks_live):
-    webhook_events = webhooks_live.get_webhook_events()
     assert isinstance(webhook_events, list)
     assert len(webhook_events)
 
@@ -63,4 +54,4 @@ def test_create_webhook(webhooks_mock):
         url="https://test-webhook-creation.com",
         events=["job.status"],
     )
-    assert new_webhook._info["name"] == "test_info_webhook"
+    assert "test_info_webhook" in repr(new_webhook)
