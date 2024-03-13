@@ -4,20 +4,19 @@ related to API calls.
 """
 
 import logging
-from pathlib import Path
-from typing import Union
+import pathlib
+from typing import Dict, Union
 
-import geopandas as gpd  # type: ignore
-import pandas as pd
+import geopandas  # type: ignore
+import pandas
 import shapely  # type: ignore
-from geopandas import GeoDataFrame
 
-from up42.utils import get_logger
+from up42 import utils
 
-logger = get_logger(__name__)
+logger = utils.get_logger(__name__)
 
 
-def read_vector_file(filename: str = "aoi.geojson", as_dataframe: bool = False) -> Union[dict, GeoDataFrame]:
+def read_vector_file(filename: str = "aoi.geojson", as_dataframe: bool = False) -> Union[Dict, geopandas.GeoDataFrame]:
     """
     Reads vector files (geojson, shapefile, kml, wkt) to a feature collection,
     for use as the AOI geometry in the workflow input parameters
@@ -32,20 +31,20 @@ def read_vector_file(filename: str = "aoi.geojson", as_dataframe: bool = False) 
     Returns:
         Feature Collection
     """
-    suffix = Path(filename).suffix
+    suffix = pathlib.Path(filename).suffix
 
     if suffix == ".kml":
         # pylint: disable=no-member
-        gpd.io.file.fiona.drvsupport.supported_drivers["KML"] = "rw"
-        df = gpd.read_file(filename, driver="KML")
+        geopandas.io.file.fiona.drvsupport.supported_drivers["KML"] = "rw"
+        df = geopandas.read_file(filename, driver="KML")
     elif suffix == ".wkt":
-        with open(filename) as wkt_file:
+        with open(filename, encoding="utf-8") as wkt_file:
             wkt = wkt_file.read()
-            df = pd.DataFrame({"geometry": [wkt]})
+            df = pandas.DataFrame({"geometry": [wkt]})
             df["geometry"] = df["geometry"].apply(shapely.wkt.loads)
-            df = GeoDataFrame(df, geometry="geometry", crs=4326)
+            df = geopandas.GeoDataFrame(df, geometry="geometry", crs=4326)
     else:
-        df = gpd.read_file(filename)
+        df = geopandas.read_file(filename)
 
     if df.crs.to_string() != "EPSG:4326":
         df = df.to_crs(epsg=4326)
@@ -55,7 +54,7 @@ def read_vector_file(filename: str = "aoi.geojson", as_dataframe: bool = False) 
         return df.__geo_interface__
 
 
-def get_example_aoi(location: str = "Berlin", as_dataframe: bool = False) -> Union[dict, GeoDataFrame]:
+def get_example_aoi(location: str = "Berlin", as_dataframe: bool = False) -> Union[Dict, geopandas.GeoDataFrame]:
     """
     Gets predefined, small, rectangular example AOI for the selected location.
 
@@ -67,16 +66,16 @@ def get_example_aoi(location: str = "Berlin", as_dataframe: bool = False) -> Uni
     Returns:
         Feature collection JSON with the selected AOI.
     """
-    logger.info(f"Getting small example AOI in location '{location}'.")
+    logger.info("Getting small example AOI in location '%s'.", location)
     if location == "Berlin":
-        example_aoi = read_vector_file(f"{str(Path(__file__).resolve().parent)}/data/aoi_berlin.geojson")
+        example_aoi = read_vector_file(f"{str(pathlib.Path(__file__).resolve().parent)}/data/aoi_berlin.geojson")
     elif location == "Washington":
-        example_aoi = read_vector_file(f"{str(Path(__file__).resolve().parent)}/data/aoi_washington.geojson")
+        example_aoi = read_vector_file(f"{str(pathlib.Path(__file__).resolve().parent)}/data/aoi_washington.geojson")
     else:
         raise ValueError("Please select one of 'Berlin' or 'Washington' as the location!")
 
     if as_dataframe:
-        df = GeoDataFrame.from_features(example_aoi, crs=4326)
+        df = geopandas.GeoDataFrame.from_features(example_aoi, crs=4326)
         return df
     else:
         return example_aoi

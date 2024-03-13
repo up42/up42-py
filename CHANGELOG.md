@@ -30,16 +30,42 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.37.0a10
+
+**March 13, 2024**
+
+- Adjusted `initialization.py`, `test_initialization.py`, `__init__.py`, `main.py` and `test_main.py` in accordance with Pylint checks.
+
+
+
+## 0.37.0a9
+
+**March 13, 2024**
+
+- Adjusted `macros.py`, `utils.py`, and `test_utils.py` in accordance with Pylint checks.
+
+
+## 0.37.0a8
+
+**March 13, 2024**
+
+- Adjusted `estimation.py`, `test_estimation.py` and `fixtures_estimation.py` in accordance with Pylint checks.
+
+
+## 0.37.0a7
+
+**March 13, 2024**
+
+- Adjusted `order.py`, `test_order.py` and `fixtures_order.py` in accordance with Pylint checks.
+
+
 ## 0.37.0a6
 
 **March 13, 2024**
 
-- Adjusted `initialization.py` and `test_initialization.py`in accordance with Pylint checks.
-
-
+- Adjusted `host.py`, `tools.py`, `test_tools.py`, `storage.py`, `test_storage.py` and `fixtures_storage.py` in accordance with Pylint checks.
 
 ## 0.37.0a5
-
 
 **March 11, 2024**
 

@@ -1,21 +1,20 @@
 import json
-import os
-from pathlib import Path
+import pathlib
 
 import pytest
 
-from up42.order import Order
+from up42 import order
 
-from .fixtures_globals import API_HOST, ASSET_ORDER_ID, ORDER_ID, WORKSPACE_ID
+from . import fixtures_globals as constants
 
 JSON_ORDER_ASSET = {
     "accountId": "69353acb-f942-423f-8f32-11d6d67caa77",
     "createdAt": "2022-12-07T14:25:34.968Z",
     "updatedAt": "2022-12-07T14:25:34.968Z",
-    "id": ASSET_ORDER_ID,
+    "id": constants.ASSET_ORDER_ID,
     "name": "string",
     "size": 256248634,
-    "workspaceId": WORKSPACE_ID,
+    "workspaceId": constants.WORKSPACE_ID,
     "order": {"id": "string", "status": "string", "hostId": "string"},
     "source": "ARCHIVE",
     "productId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -51,7 +50,7 @@ JSON_GET_ASSETS_RESPONSE = {
 
 def read_test_order_info() -> dict:
     with open(
-        Path(__file__).resolve().parents[1] / "mock_data/order_data/archive_order_info.json",
+        pathlib.Path(__file__).resolve().parents[1] / "mock_data/order_data/archive_order_info.json",
         encoding="utf-8",
     ) as json_file:
         return json.load(json_file)
@@ -59,19 +58,14 @@ def read_test_order_info() -> dict:
 
 @pytest.fixture
 def order_mock(auth_mock, requests_mock):
-    url_order_info = f"{API_HOST}/v2/orders/{ORDER_ID}"
+    url_order_info = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
     requests_mock.get(url=url_order_info, json=read_test_order_info())
 
-    return Order(auth=auth_mock, order_id=ORDER_ID)
+    return order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
 
 
-@pytest.fixture()
-def order_live(auth_live):
-    return Order(auth=auth_live, order_id=os.environ["TEST_UP42_ORDER_ID"])
-
-
-@pytest.fixture
-def catalog_order_parameters():
+@pytest.fixture(name="catalog_order_parameters")
+def _catalog_order_parameters():
     return {
         "dataProduct": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
         "params": {
@@ -95,8 +89,8 @@ def catalog_order_parameters():
     }
 
 
-@pytest.fixture
-def tasking_order_parameters():
+@pytest.fixture(name="tasking_order_parameters")
+def _tasking_order_parameters():
     return {
         "dataProduct": "47dadb27-9532-4552-93a5-48f70a83eaef",
         "params": {

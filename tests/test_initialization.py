@@ -7,7 +7,7 @@ from .fixtures import fixtures_globals as constants
 
 
 def test_initialize_object_without_auth_raises():
-    main._auth = None
+    main._auth = None  # pylint: disable=protected-access
 
     with pytest.raises(RuntimeError):
         up42.initialization.initialize_project()
