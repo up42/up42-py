@@ -35,7 +35,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **March 13, 2024**
 
 - Adjusted `webhooks.py`, `test_webhooks.py` and `fixtures_webhook.py` in accordance with Pylint checks.
-- Dropped `test_e2e_30sec.py` since it covers functionality dropped earlier. 
+- Dropped `test_e2e_30sec.py` since it covers functionality dropped earlier.
 
 ## 0.37.0a8
 
