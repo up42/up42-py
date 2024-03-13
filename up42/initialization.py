@@ -50,7 +50,7 @@ def initialize_project(project_id: Optional[str] = None) -> project.Project:
         auth=main.__get_auth_safely(),
         project_id=_get_project_id(project_id=project_id),
     )
-    logger.info(f"Initialized {up42_project}")
+    logger.info("Initialized %s", up42_project)
     return up42_project
 
 
@@ -88,7 +88,7 @@ def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> w
         workflow_id=workflow_id,
         project_id=_get_project_id(project_id=project_id),
     )
-    logger.info(f"Initialized {up42_workflow}")
+    logger.info("Initialized %s", up42_workflow)
     return up42_workflow
 
 
@@ -110,7 +110,7 @@ def initialize_job(job_id: str, project_id: Optional[str] = None) -> job.Job:
         job_id=job_id,
         project_id=_get_project_id(project_id=project_id),
     )
-    logger.info(f"Initialized {up42_job}")
+    logger.info("Initialized %s", up42_job)
     return up42_job
 
 
@@ -134,7 +134,7 @@ def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] =
         job_id=job_id,
         project_id=_get_project_id(project_id=project_id),
     )
-    logger.info(f"Initialized {job_task}")
+    logger.info("Initialized %s", job_task)
     return job_task
 
 
@@ -164,7 +164,7 @@ def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = Non
         project_id=_get_project_id(project_id=project_id),
         jobs=jobs,
     )
-    logger.info(f"Initialized {job_collection}")
+    logger.info("Initialized %s", job_collection)
     return job_collection
 
 
@@ -184,7 +184,7 @@ def initialize_order(order_id: str) -> order.Order:
         order_id: The UP42 order_id
     """
     up42_order = order.Order(auth=main.__get_auth_safely(), order_id=order_id)
-    logger.info(f"Initialized {up42_order}")
+    logger.info("Initialized %s", up42_order)
     return up42_order
 
 
@@ -196,7 +196,7 @@ def initialize_asset(asset_id: str) -> asset.Asset:
         asset_id: The UP42 asset_id
     """
     up42_asset = asset.Asset(auth=main.__get_auth_safely(), asset_id=asset_id)
-    logger.info(f"Initialized {up42_asset}")
+    logger.info("Initialized %s", up42_asset)
     return up42_asset
 
 
@@ -208,5 +208,5 @@ def initialize_webhook(webhook_id: str) -> webhooks.Webhook:
         webhook_id: The UP42 webhook_id
     """
     webhook = webhooks.Webhook(auth=main.__get_auth_safely(), webhook_id=webhook_id)
-    logger.info(f"Initialized {webhook}")
+    logger.info("Initialized %s", webhook)
     return webhook

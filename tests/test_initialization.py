@@ -83,8 +83,8 @@ def test_should_initialize_project_with_project_id(auth_mock, requests_mock):
         },
     }
     requests_mock.get(url=url_project_info, json=json_project_info)
-    project = up42.initialization.initialize_project(project_id=project_id)
-    assert project.project_id == project_id
+    up42_project = up42.initialization.initialize_project(project_id=project_id)
+    assert up42_project.project_id == project_id
 
 
 def test_should_initialize_project_with_implicit_project_id(auth_mock, project_mock):
@@ -92,8 +92,8 @@ def test_should_initialize_project_with_implicit_project_id(auth_mock, project_m
         project_id=constants.PROJECT_ID,
         authenticate=False,
     )
-    project = up42.initialization.initialize_project()
-    assert project.project_id == constants.PROJECT_ID
+    up42_project = up42.initialization.initialize_project()
+    assert up42_project.project_id == constants.PROJECT_ID
 
 
 def test_should_initialize_workflow(auth_mock, requests_mock):
@@ -112,8 +112,8 @@ def test_should_initialize_workflow(auth_mock, requests_mock):
         },
     }
     requests_mock.get(url=url_workflow_info, json=json_workflow_info)
-    workflow = up42.initialization.initialize_workflow(constants.WORKFLOW_ID, project_id)
-    assert workflow.project_id == project_id
+    up42_workflow = up42.initialization.initialize_workflow(constants.WORKFLOW_ID, project_id)
+    assert up42_workflow.project_id == project_id
 
 
 def test_should_initialize_workflow_with_implicit_project_id(auth_mock, workflow_mock):
@@ -121,8 +121,8 @@ def test_should_initialize_workflow_with_implicit_project_id(auth_mock, workflow
         project_id=constants.PROJECT_ID,
         authenticate=False,
     )
-    workflow = up42.initialization.initialize_workflow(constants.WORKFLOW_ID)
-    assert workflow.project_id == constants.PROJECT_ID
+    up42_workflow = up42.initialization.initialize_workflow(constants.WORKFLOW_ID)
+    assert up42_workflow.project_id == constants.PROJECT_ID
 
 
 def test_should_initialize_job(auth_mock, requests_mock):
@@ -145,8 +145,8 @@ def test_should_initialize_job(auth_mock, requests_mock):
         },
     }
     requests_mock.get(url=url_job_info, json=json_job_info)
-    job = up42.initialization.initialize_job(constants.JOB_ID, project_id)
-    assert job.project_id == project_id
+    up42_job = up42.initialization.initialize_job(constants.JOB_ID, project_id)
+    assert up42_job.project_id == project_id
 
 
 def test_should_initialize_job_with_implicit_project_id(auth_mock, job_mock):
@@ -154,8 +154,8 @@ def test_should_initialize_job_with_implicit_project_id(auth_mock, job_mock):
         project_id=constants.PROJECT_ID,
         authenticate=False,
     )
-    job = up42.initialization.initialize_job(constants.JOB_ID)
-    assert job.project_id == constants.PROJECT_ID
+    up42_job = up42.initialization.initialize_job(constants.JOB_ID)
+    assert up42_job.project_id == constants.PROJECT_ID
 
 
 def test_should_initialize_jobtask(auth_mock, requests_mock, jobtask_mock):
@@ -182,8 +182,8 @@ def test_should_initialize_jobtask(auth_mock, requests_mock, jobtask_mock):
             ]
         },
     )
-    job = up42.initialization.initialize_jobtask(constants.JOBTASK_ID, constants.JOB_ID, project_id)
-    assert job.project_id == project_id
+    up42_job = up42.initialization.initialize_jobtask(constants.JOBTASK_ID, constants.JOB_ID, project_id)
+    assert up42_job.project_id == project_id
 
 
 def test_should_initialize_job_task_with_implicit_project_id(auth_mock, jobtask_mock):
@@ -191,8 +191,8 @@ def test_should_initialize_job_task_with_implicit_project_id(auth_mock, jobtask_
         project_id=constants.PROJECT_ID,
         authenticate=False,
     )
-    job = up42.initialization.initialize_jobtask(constants.JOBTASK_ID, constants.JOB_ID)
-    assert job.project_id == constants.PROJECT_ID
+    up42_job = up42.initialization.initialize_jobtask(constants.JOBTASK_ID, constants.JOB_ID)
+    assert up42_job.project_id == constants.PROJECT_ID
 
 
 def test_should_initialize_job_collection(auth_mock, requests_mock):
