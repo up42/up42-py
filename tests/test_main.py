@@ -151,7 +151,7 @@ def test_get_credits_balance_live(auth_live):
 def test_fails_to_get_auth_safely_if_unauthenticated():
     main._auth = None
     with pytest.raises(ValueError):
-        main.__get_auth_safely()
+        main.get_auth_safely()
 
 
 def test_get_webhook_events(setup_auth_mock, requests_mock):

@@ -28,7 +28,7 @@ def _get_project_id(project_id: Optional[str]) -> str:
             DeprecationWarning,
             stacklevel=2,
         )
-    result = project_id or main.__get_auth_safely().project_id
+    result = project_id or main.get_auth_safely().project_id
     if not result:
         raise ValueError("Project ID can't be null")
     return result
@@ -47,7 +47,7 @@ def initialize_project(project_id: Optional[str] = None) -> project.Project:
         DeprecationWarning,
     )
     up42_project = project.Project(
-        auth=main.__get_auth_safely(),
+        auth=main.get_auth_safely(),
         project_id=_get_project_id(project_id=project_id),
     )
     logger.info("Initialized %s", up42_project)
@@ -59,7 +59,7 @@ def initialize_catalog() -> catalog.Catalog:
     """
     Returns a Catalog object for using the catalog search.
     """
-    return catalog.Catalog(auth=main.__get_auth_safely())
+    return catalog.Catalog(auth=main.get_auth_safely())
 
 
 @main.check_auth
@@ -67,7 +67,7 @@ def initialize_tasking() -> "tasking.Tasking":
     """
     Returns a Tasking object for creating satellite tasking orders.
     """
-    return tasking.Tasking(auth=main.__get_auth_safely())
+    return tasking.Tasking(auth=main.get_auth_safely())
 
 
 @main.check_auth
@@ -84,7 +84,7 @@ def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> w
         DeprecationWarning,
     )
     up42_workflow = workflow.Workflow(
-        auth=main.__get_auth_safely(),
+        auth=main.get_auth_safely(),
         workflow_id=workflow_id,
         project_id=_get_project_id(project_id=project_id),
     )
@@ -106,7 +106,7 @@ def initialize_job(job_id: str, project_id: Optional[str] = None) -> job.Job:
         DeprecationWarning,
     )
     up42_job = job.Job(
-        auth=main.__get_auth_safely(),
+        auth=main.get_auth_safely(),
         job_id=job_id,
         project_id=_get_project_id(project_id=project_id),
     )
@@ -129,7 +129,7 @@ def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] =
         DeprecationWarning,
     )
     job_task = jobtask.JobTask(
-        auth=main.__get_auth_safely(),
+        auth=main.get_auth_safely(),
         jobtask_id=jobtask_id,
         job_id=job_id,
         project_id=_get_project_id(project_id=project_id),
@@ -153,14 +153,14 @@ def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = Non
     )
     jobs = [
         job.Job(
-            auth=main.__get_auth_safely(),
+            auth=main.get_auth_safely(),
             job_id=job_id,
             project_id=_get_project_id(project_id=project_id),
         )
         for job_id in job_ids
     ]
     job_collection = jobcollection.JobCollection(
-        auth=main.__get_auth_safely(),
+        auth=main.get_auth_safely(),
         project_id=_get_project_id(project_id=project_id),
         jobs=jobs,
     )
@@ -173,7 +173,7 @@ def initialize_storage() -> storage.Storage:
     """
     Returns a Storage object to list orders and assets.
     """
-    return storage.Storage(auth=main.__get_auth_safely())
+    return storage.Storage(auth=main.get_auth_safely())
 
 
 @main.check_auth
@@ -183,7 +183,7 @@ def initialize_order(order_id: str) -> order.Order:
     Args:
         order_id: The UP42 order_id
     """
-    up42_order = order.Order(auth=main.__get_auth_safely(), order_id=order_id)
+    up42_order = order.Order(auth=main.get_auth_safely(), order_id=order_id)
     logger.info("Initialized %s", up42_order)
     return up42_order
 
@@ -195,7 +195,7 @@ def initialize_asset(asset_id: str) -> asset.Asset:
     Args:
         asset_id: The UP42 asset_id
     """
-    up42_asset = asset.Asset(auth=main.__get_auth_safely(), asset_id=asset_id)
+    up42_asset = asset.Asset(auth=main.get_auth_safely(), asset_id=asset_id)
     logger.info("Initialized %s", up42_asset)
     return up42_asset
 
@@ -207,6 +207,6 @@ def initialize_webhook(webhook_id: str) -> webhooks.Webhook:
     Args:
         webhook_id: The UP42 webhook_id
     """
-    webhook = webhooks.Webhook(auth=main.__get_auth_safely(), webhook_id=webhook_id)
+    webhook = webhooks.Webhook(auth=main.get_auth_safely(), webhook_id=webhook_id)
     logger.info("Initialized %s", webhook)
     return webhook

@@ -53,7 +53,7 @@ def authenticate(
     )
 
 
-def __get_auth_safely() -> Auth:
+def get_auth_safely() -> Auth:
     if _auth:
         return _auth
     raise ValueError("User not authenticated.")
@@ -85,7 +85,7 @@ def get_webhooks(return_json: bool = False) -> List[Webhook]:
     Returns:
         A list of the registered webhooks for this workspace.
     """
-    return Webhooks(auth=__get_auth_safely()).get_webhooks(return_json=return_json)
+    return Webhooks(auth=get_auth_safely()).get_webhooks(return_json=return_json)
 
 
 @check_auth
@@ -108,7 +108,7 @@ def create_webhook(
     Returns:
         A dict with details of the registered webhook.
     """
-    return Webhooks(auth=__get_auth_safely()).create_webhook(
+    return Webhooks(auth=get_auth_safely()).create_webhook(
         name=name, url=url, events=events, active=active, secret=secret
     )
 
@@ -121,7 +121,7 @@ def get_webhook_events() -> dict:
     Returns:
         A dict of the available webhook events.
     """
-    return Webhooks(auth=__get_auth_safely()).get_webhook_events()
+    return Webhooks(auth=get_auth_safely()).get_webhook_events()
 
 
 @check_auth
@@ -145,7 +145,7 @@ def get_blocks(
     if block_type:
         block_type = block_type.lower()
     url = endpoint("/blocks")
-    response_json = __get_auth_safely().request(request_type="GET", url=url)
+    response_json = get_auth_safely().request(request_type="GET", url=url)
     public_blocks_json = response_json["data"]
 
     if block_type == "data":
@@ -187,7 +187,7 @@ def get_block_details(block_id: str, as_dataframe: bool = False) -> Union[dict, 
         A dict of the block details metadata for the specific block.
     """
     url = endpoint(f"/blocks/{block_id}")  # public blocks
-    response_json = __get_auth_safely().request(request_type="GET", url=url)
+    response_json = get_auth_safely().request(request_type="GET", url=url)
     details_json = response_json["data"]
 
     if as_dataframe:
@@ -209,7 +209,7 @@ def get_block_coverage(block_id: str) -> dict:
         A dict of the spatial coverage for the specific block.
     """
     url = endpoint(f"/blocks/{block_id}/coverage")
-    response_json = __get_auth_safely().request(request_type="GET", url=url)
+    response_json = get_auth_safely().request(request_type="GET", url=url)
     details_json = response_json["data"]
     return requests.get(details_json["url"]).json()
 
@@ -223,5 +223,5 @@ def get_credits_balance() -> dict:
         A dict with the balance of credits available in your account.
     """
     endpoint_url = endpoint("/accounts/me/credits/balance")
-    response_json = __get_auth_safely().request(request_type="GET", url=endpoint_url)
+    response_json = get_auth_safely().request(request_type="GET", url=endpoint_url)
     return response_json["data"]
