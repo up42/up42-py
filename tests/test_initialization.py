@@ -46,24 +46,24 @@ def test_global_auth_initialize_objects(
         get_info=False,
         retry=False,
     )
-    up42_project = up42.initialization.initialize_project()
-    assert up42_project == project_mock
-    up42_catalog = up42.initialization.initialize_catalog()
-    assert isinstance(up42_catalog, catalog.Catalog)
-    up42_workflow = up42.initialization.initialize_workflow(workflow_id=constants.WORKFLOW_ID)
-    assert up42_workflow == workflow_mock
-    up42_job = up42.initialization.initialize_job(job_id=constants.JOB_ID)
-    assert up42_job == job_mock
-    up42_jobtask = up42.initialization.initialize_jobtask(job_id=constants.JOB_ID, jobtask_id=constants.JOBTASK_ID)
-    assert up42_jobtask == jobtask_mock
-    up42_jobcollection = up42.initialization.initialize_jobcollection(job_ids=[constants.JOB_ID, constants.JOB_ID])
-    assert up42_jobcollection == jobcollection_single_mock
-    up42_storage = up42.initialization.initialize_storage()
-    assert up42_storage == storage_mock
-    up42_order = up42.initialization.initialize_order(order_id=constants.ORDER_ID)
-    assert up42_order == order_mock
-    up42_asset = up42.initialization.initialize_asset(asset_id=constants.ASSET_ID)
-    assert up42_asset == asset_mock
+    project_obj = up42.initialization.initialize_project()
+    assert project_obj.info == project_mock.info
+    catalog_obj = up42.initialization.initialize_catalog()
+    assert isinstance(catalog_obj, catalog.Catalog)
+    workflow_obj = up42.initialization.initialize_workflow(workflow_id=constants.WORKFLOW_ID)
+    assert workflow_obj.info == workflow_mock.info
+    job_obj = up42.initialization.initialize_job(job_id=constants.JOB_ID)
+    assert job_obj.info == job_mock.info
+    jobtask_obj = up42.initialization.initialize_jobtask(job_id=constants.JOB_ID, jobtask_id=constants.JOBTASK_ID)
+    assert jobtask_obj.info == jobtask_mock.info
+    jobcollection_obj = up42.initialization.initialize_jobcollection(job_ids=[constants.JOB_ID, constants.JOB_ID])
+    assert jobcollection_obj.info == jobcollection_single_mock.info
+    storage_obj = up42.initialization.initialize_storage()
+    assert storage_obj.workspace_id == storage_mock.workspace_id
+    order_obj = up42.initialization.initialize_order(order_id=constants.ORDER_ID)
+    assert order_obj.info == order_mock.info
+    asset_obj = up42.initialization.initialize_asset(asset_id=constants.ASSET_ID)
+    assert asset_obj.info == asset_mock.info
 
 
 def test_should_initialize_project_with_project_id(requests_mock):
@@ -81,18 +81,18 @@ def test_should_initialize_project_with_project_id(requests_mock):
         },
     }
     requests_mock.get(url=url_project_info, json=json_project_info)
-    up42_project = up42.initialization.initialize_project(project_id=project_id)
-    assert up42_project.project_id == project_id
+    project_obj = up42.initialization.initialize_project(project_id=project_id)
+    assert project_obj.project_id == project_id
 
 
-# pylint: disable=unused-argument
 def test_should_initialize_project_with_implicit_project_id(project_mock):
     up42.main.authenticate(
         project_id=constants.PROJECT_ID,
         authenticate=False,
     )
-    up42_project = up42.initialization.initialize_project()
-    assert up42_project.project_id == constants.PROJECT_ID
+    project_obj = up42.initialization.initialize_project()
+    assert project_obj.info == project_mock.info
+    assert project_obj.project_id == constants.PROJECT_ID
 
 
 def test_should_initialize_workflow(requests_mock):
@@ -111,8 +111,8 @@ def test_should_initialize_workflow(requests_mock):
         },
     }
     requests_mock.get(url=url_workflow_info, json=json_workflow_info)
-    up42_workflow = up42.initialization.initialize_workflow(constants.WORKFLOW_ID, project_id)
-    assert up42_workflow.project_id == project_id
+    workflow_obj = up42.initialization.initialize_workflow(constants.WORKFLOW_ID, project_id)
+    assert workflow_obj.project_id == project_id
 
 
 def test_should_initialize_workflow_with_implicit_project_id(workflow_mock):
@@ -120,8 +120,9 @@ def test_should_initialize_workflow_with_implicit_project_id(workflow_mock):
         project_id=constants.PROJECT_ID,
         authenticate=False,
     )
-    up42_workflow = up42.initialization.initialize_workflow(constants.WORKFLOW_ID)
-    assert up42_workflow.project_id == constants.PROJECT_ID
+    workflow_obj = up42.initialization.initialize_workflow(constants.WORKFLOW_ID)
+    assert workflow_obj.info == workflow_mock.info
+    assert workflow_obj.project_id == constants.PROJECT_ID
 
 
 def test_should_initialize_job(requests_mock):
@@ -144,8 +145,8 @@ def test_should_initialize_job(requests_mock):
         },
     }
     requests_mock.get(url=url_job_info, json=json_job_info)
-    up42_job = up42.initialization.initialize_job(constants.JOB_ID, project_id)
-    assert up42_job.project_id == project_id
+    job_obj = up42.initialization.initialize_job(constants.JOB_ID, project_id)
+    assert job_obj.project_id == project_id
 
 
 def test_should_initialize_job_with_implicit_project_id(job_mock):
@@ -153,8 +154,9 @@ def test_should_initialize_job_with_implicit_project_id(job_mock):
         project_id=constants.PROJECT_ID,
         authenticate=False,
     )
-    up42_job = up42.initialization.initialize_job(constants.JOB_ID)
-    assert up42_job.project_id == constants.PROJECT_ID
+    job_obj = up42.initialization.initialize_job(constants.JOB_ID)
+    assert job_obj.info == job_mock.info
+    assert job_obj.project_id == constants.PROJECT_ID
 
 
 def test_should_initialize_jobtask(requests_mock):
@@ -181,8 +183,8 @@ def test_should_initialize_jobtask(requests_mock):
             ]
         },
     )
-    up42_job = up42.initialization.initialize_jobtask(constants.JOBTASK_ID, constants.JOB_ID, project_id)
-    assert up42_job.project_id == project_id
+    job_obj = up42.initialization.initialize_jobtask(constants.JOBTASK_ID, constants.JOB_ID, project_id)
+    assert job_obj.project_id == project_id
 
 
 def test_should_initialize_job_task_with_implicit_project_id(jobtask_mock):
@@ -190,8 +192,9 @@ def test_should_initialize_job_task_with_implicit_project_id(jobtask_mock):
         project_id=constants.PROJECT_ID,
         authenticate=False,
     )
-    up42_job = up42.initialization.initialize_jobtask(constants.JOBTASK_ID, constants.JOB_ID)
-    assert up42_job.project_id == constants.PROJECT_ID
+    jobtask_obj = up42.initialization.initialize_jobtask(constants.JOBTASK_ID, constants.JOB_ID)
+    assert jobtask_obj.info == jobtask_mock.info
+    assert jobtask_obj.project_id == constants.PROJECT_ID
 
 
 def test_should_initialize_job_collection(requests_mock):
