@@ -30,6 +30,90 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.37.0a10
+
+**March 13, 2024**
+
+- Adjusted `webhooks.py`, `test_webhooks.py` and `fixtures_webhook.py` in accordance with Pylint checks.
+- Dropped `test_e2e_30sec.py` since it covers functionality dropped earlier.
+
+## 0.37.0a9
+
+**March 13, 2024**
+
+- Adjusted `macros.py`, `utils.py`, and `test_utils.py` in accordance with Pylint checks.
+
+
+## 0.37.0a8
+
+**March 13, 2024**
+
+- Adjusted `estimation.py`, `test_estimation.py` and `fixtures_estimation.py` in accordance with Pylint checks.
+
+
+## 0.37.0a7
+
+**March 13, 2024**
+
+- Adjusted `order.py`, `test_order.py` and `fixtures_order.py` in accordance with Pylint checks.
+
+
+## 0.37.0a6
+
+**March 13, 2024**
+
+- Adjusted `host.py`, `tools.py`, `test_tools.py`, `storage.py`, `test_storage.py` and `fixtures_storage.py` in accordance with Pylint checks.
+
+## 0.37.0a5
+
+**March 11, 2024**
+
+- Adjusted `auth.py` and `oauth.py` with their coverage and fixtures in accordance with Pylint checks.
+- Adjusted `conftest.py` in accordance with Pylint checks.
+
+
+## 0.37.0a4
+
+**March 07, 2024**
+
+- Generalized new authentication stack to cover account authentication case.
+
+## 0.37.0a3
+
+**March 07, 2024**
+
+- Adjusted `tasking.py`, `test_tasking.py`, and `fixtures_tasking.py` in accordance with Pylint checks.
+
+## 0.37.0a2
+
+**March 06, 2024**
+
+- Adjusted `catalog.py` and `test_catalog.py` in accordance with Pylint checks.
+- Conducted minor refactoring in other classes due to changes in function names within the authentication module.
+
+
+## 0.37.0a1
+
+**March 06, 2024**
+
+- Added a new component within the HTTP layer to facilitate future enhancements in authentication and request processes: ported a resilient and authenticated cached session.
+
+
+## 0.37.0a0
+
+**March 04, 2024**
+
+Added new components within the HTTP layer to facilitate future enhancements in authentication and request processes:
+
+- Ported the HTTP adapter, providing configurable resilience.
+- Ported resilient project authentication, managing token expiration.
+
+## 0.36.0
+
+**February 20, 2024**
+
+- Updated the `place_order()` and `estimate_order()` functions of the CatalogBase class to the latest version of the API.
+
 ## 0.35.0
 
 **January 25, 2024**

@@ -39,7 +39,7 @@ class Project:
         Gets and updates the project metadata information.
         """
         url = endpoint(f"/projects/{self.project_id}")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         self._info = response_json["data"]
         return self._info
 
@@ -54,7 +54,7 @@ class Project:
             List of Workflow objects in the project or alternatively JSON info of the workflows.
         """
         url = endpoint(f"/projects/{self.project_id}/workflows")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         workflows_json = response_json["data"]
         logger.info(f"Got {len(workflows_json)} workflows for project {self.project_id}.")
 
@@ -113,7 +113,7 @@ class Project:
 
         page = 0
         url = endpoint(f"/projects/{self.project_id}/jobs?page={page}&sort={sort}")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
 
         # API get jobs pagination exhaustion is indicated by empty next page (no last page flag)
@@ -121,7 +121,7 @@ class Project:
         while len(response_json["data"]) > 0 and len(jobs_json) < limit:
             page += 1
             url = endpoint(f"/projects/{self.project_id}/jobs?page={page}&sort={sort}")
-            response_json = self.auth._request(request_type="GET", url=url)
+            response_json = self.auth.request(request_type="GET", url=url)
             if len(response_json["data"]) > 0:
                 jobs_json.extend(filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs))
         logging.getLogger("up42.utils").setLevel(logging.INFO)
@@ -150,6 +150,6 @@ class Project:
             The project settings.
         """
         url = endpoint(f"/projects/{self.project_id}/settings")
-        response_json = self.auth._request(request_type="GET", url=url)
+        response_json = self.auth.request(request_type="GET", url=url)
         project_settings = response_json["data"]
         return project_settings

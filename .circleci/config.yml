@@ -18,6 +18,7 @@ jobs:
     working_directory: *workspace-dir
     docker:
       - image: cimg/python:3.11
+    resource_class: medium+
     steps:
       - attach_workspace:
           at: *workspace-dir
@@ -92,7 +93,7 @@ jobs:
       - checkout
       - run:
           name: Build and upload package
-          command: poetry publish --build
+          command: poetry publish --build -u __token__ -p $UP42_PY_PYPI_TOKEN
 
 workflows:
   test_and_deploy:

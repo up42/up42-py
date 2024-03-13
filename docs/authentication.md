@@ -12,7 +12,7 @@
 
 === "In a configuration file"
 
-    1. Create a `config.json` file.
+    1. Create a `credentials.json` file.
     2. Paste the following code:
       ```json
       {
@@ -20,10 +20,10 @@
         "password": "<your-password>"
       }
       ```
-    3. Authenticate from the created `config.json` file.
+    3. Authenticate from the created `credentials.json` file.
       ```python
       import up42
-      up42.authenticate(cfg_file="config.json")
+      up42.authenticate(cfg_file="credentials.json")
       ```
 
 Retrieve the [email address and password](https://docs.up42.com/getting-started/account/management) used for logging into the [console](https://console.up42.com/?utm_source=documentation). Use them as values in the following arguments:

@@ -1,25 +1,21 @@
-from datetime import datetime
-from enum import Enum
+import datetime
+import enum
+import warnings
 from typing import List, Optional, Union
-from urllib.parse import urlencode, urljoin
-from warnings import warn
+from urllib import parse
 
-from geojson import Feature, FeatureCollection
-from geopandas import GeoDataFrame
-from shapely.geometry import Polygon
+import geojson  # type: ignore
+import geopandas  # type: ignore
+from shapely import geometry as shp_geometry  # type: ignore
 
-from up42.asset import Asset
-from up42.asset_searcher import AssetSearchParams, query_paginated_endpoints, search_assets
-from up42.auth import Auth
-from up42.host import endpoint
-from up42.order import Order
-from up42.stac_client import PySTACAuthClient
-from up42.utils import format_time, get_logger
+from up42 import asset, asset_searcher
+from up42 import auth as up42_auth
+from up42 import host, order, stac_client, utils
 
-logger = get_logger(__name__)
+logger = utils.get_logger(__name__)
 
 
-class AllowedStatuses(Enum):
+class AllowedStatuses(enum.Enum):
     CREATED = "CREATED"
     BEING_PLACED = "BEING_PLACED"
     PLACED = "PLACED"
@@ -43,7 +39,7 @@ class Storage:
     ```
     """
 
-    def __init__(self, auth: Auth):
+    def __init__(self, auth: up42_auth.Auth):
         self.auth = auth
         self.workspace_id = auth.workspace_id
 
@@ -52,56 +48,31 @@ class Storage:
 
     @property
     def pystac_client(self):
-        url = endpoint("/v2/assets/stac")
-        pystac_client_auth = PySTACAuthClient(auth=self.auth).open(url=url)
+        url = host.endpoint("/v2/assets/stac")
+        pystac_client_auth = stac_client.PySTACAuthClient(auth=self.auth).open(url=url)
         return pystac_client_auth
-
-    def _query_paginated_stac_search(
-        self,
-        url: str,
-        stac_search_parameters: dict,
-    ) -> list:
-        """
-        Helper to fetch list of items in paginated stac search endpoind, e.g. stac search assets.
-
-        Args:
-            url (str): The base url for paginated endpoint.
-            stac_search_parameters (dict): the parameters required for stac search
-
-        Returns:
-            List of storage STAC results features.
-        """
-        response_features: list = []
-        response_features_limit = stac_search_parameters["limit"]
-        while len(response_features) < response_features_limit:
-            stac_results = self.auth._request(request_type="POST", url=url, data=stac_search_parameters)
-            response_features.extend(stac_results["features"])
-            token_list = [link["body"]["token"] for link in stac_results["links"] if link["rel"] == "next"]
-            if token_list:
-                stac_search_parameters["token"] = token_list[0]
-            else:
-                break
-        return response_features
 
     def get_assets(
         self,
-        created_after: Optional[Union[str, datetime]] = None,
-        created_before: Optional[Union[str, datetime]] = None,
-        acquired_after: Optional[Union[str, datetime]] = None,
-        acquired_before: Optional[Union[str, datetime]] = None,
-        geometry: Optional[Union[dict, Feature, FeatureCollection, list, GeoDataFrame, Polygon]] = None,
+        created_after: Optional[Union[str, datetime.datetime]] = None,
+        created_before: Optional[Union[str, datetime.datetime]] = None,
+        acquired_after: Optional[Union[str, datetime.datetime]] = None,
+        acquired_before: Optional[Union[str, datetime.datetime]] = None,
+        geometry: Optional[
+            Union[dict, geojson.Feature, geojson.FeatureCollection, list, geopandas.GeoDataFrame, shp_geometry.Polygon]
+        ] = None,
         workspace_id: Optional[str] = None,
-        collection_names: List[str] = None,
-        producer_names: List[str] = None,
-        tags: List[str] = None,
-        sources: List[str] = None,
-        search: str = None,
-        custom_filter: dict = None,
+        collection_names: Optional[List[str]] = None,
+        producer_names: Optional[List[str]] = None,
+        tags: Optional[List[str]] = None,
+        sources: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        custom_filter: Optional[dict] = None,
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
         return_json: bool = False,
-    ) -> Union[List[Asset], List[dict]]:
+    ) -> Union[List[asset.Asset], List[dict]]:
         """
         Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#asset) objects or in JSON format.
 
@@ -128,9 +99,9 @@ class Storage:
         Returns:
             A list of Asset objects.
         """
-        params: AssetSearchParams = {
-            "createdAfter": created_after and format_time(created_after),
-            "createdBefore": created_before and format_time(created_before),
+        params: asset_searcher.AssetSearchParams = {
+            "createdAfter": created_after and utils.format_time(created_after),
+            "createdBefore": created_before and utils.format_time(created_before),
             "workspaceId": workspace_id,
             "collectionNames": collection_names,
             "producerNames": producer_names,
@@ -138,7 +109,7 @@ class Storage:
             "sources": sources,
             "search": search,
         }
-        assets_json = search_assets(
+        assets_json = asset_searcher.search_assets(
             self.auth,
             params=params,
             limit=limit,
@@ -152,7 +123,7 @@ class Storage:
             or geometry is not None
             or custom_filter is not None
         ):
-            warn(
+            warnings.warn(
                 "Search for geometry, acquired_before, acquired_after and custom_filter has been deprecated."
                 "Use the PySTAC client for STAC queries: https://sdk.up42.com/notebooks/stac-example/#pystac",
                 DeprecationWarning,
@@ -165,7 +136,7 @@ class Storage:
         if return_json:
             return assets_json
         else:
-            return [Asset(self.auth, asset_info=asset_json) for asset_json in assets_json]
+            return [asset.Asset(self.auth, asset_info=asset_json) for asset_json in assets_json]
 
     def get_orders(
         self,
@@ -178,7 +149,7 @@ class Storage:
         statuses: Optional[List[AllowedStatuses]] = None,
         name: Optional[str] = None,
         tags: Optional[List[str]] = None,
-    ) -> Union[List[Order], List[dict]]:
+    ) -> Union[List[order.Order], List[dict]]:
         """
         Gets all orders in the account/workspace as Order objects or JSON.
 
@@ -208,7 +179,7 @@ class Storage:
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
         sort = f"{sortby},{'desc' if descending else 'asc'}"
-        base_url = endpoint("/v2/orders")
+        base_url = host.endpoint("/v2/orders")
 
         params = {
             "sort": sort,
@@ -219,16 +190,9 @@ class Storage:
             "status": set(statuses) & allowed_statuses if statuses else None,
         }
         params = {k: v for k, v in params.items() if v is not None}
+        url = parse.urljoin(base_url, "?" + parse.urlencode(params, doseq=True, safe=""))
 
-        if statuses is not None and len(statuses) > len(params["status"]):
-            logger.info(
-                "statuses not included in allowed_statuses"
-                f"{set(statuses).difference(allowed_statuses)} were ignored."
-            )
-
-        url = urljoin(base_url, "?" + urlencode(params, doseq=True, safe=""))
-
-        orders_json = query_paginated_endpoints(auth=self.auth, url=url, limit=limit)
+        orders_json = asset_searcher.query_paginated_endpoints(auth=self.auth, url=url, limit=limit)
         logger_message = f"Got {len(orders_json)} orders" + (
             f" for workspace {self.workspace_id}." if workspace_orders else ""
         )
@@ -237,4 +201,6 @@ class Storage:
         if return_json:
             return orders_json
         else:
-            return [Order(self.auth, order_id=order_json["id"], order_info=order_json) for order_json in orders_json]
+            return [
+                order.Order(self.auth, order_id=order_json["id"], order_info=order_json) for order_json in orders_json
+            ]

@@ -1,19 +1,18 @@
 import json
 import os
+import pathlib
 import tempfile
-from pathlib import Path
 
-import geopandas as gpd
+import geopandas as gpd  # type: ignore
 import pandas as pd
 import pytest
 
-from up42.catalog import Catalog
-from up42.order import Order
+from up42 import catalog, order
 
-from .fixtures.fixtures_globals import API_HOST, DATA_PRODUCT_ID, ORDER_ID
+from .fixtures import fixtures_globals as constants
 
 with open(
-    Path(__file__).resolve().parent / "mock_data/search_params_simple.json",
+    pathlib.Path(__file__).resolve().parent / "mock_data/search_params_simple.json",
     encoding="utf-8",
 ) as json_file:
     mock_search_parameters = json.load(json_file)
@@ -33,7 +32,7 @@ def test_get_collections_live(catalog_live):
 
 
 def test_get_data_product_schema(catalog_mock):
-    data_product_schema = catalog_mock.get_data_product_schema(DATA_PRODUCT_ID)
+    data_product_schema = catalog_mock.get_data_product_schema(constants.DATA_PRODUCT_ID)
     assert isinstance(data_product_schema, dict)
     assert data_product_schema["properties"]
 
@@ -100,10 +99,10 @@ def test_construct_search_parameters(catalog_mock):
 
 def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
     with open(
-        Path(__file__).resolve().parent / "mock_data/search_footprints.geojson",
+        pathlib.Path(__file__).resolve().parent / "mock_data/search_footprints.geojson",
         encoding="utf-8",
-    ) as json_file:
-        fc = json.load(json_file)
+    ) as file:
+        fc = json.load(file)
 
     with pytest.raises(ValueError) as e:
         catalog_mock.construct_search_parameters(
@@ -157,17 +156,24 @@ def test_search_live(catalog_live):
 
 def test_search_usagetype(catalog_usagetype_mock):
     """
-    Result & Result2 are one of the combinations of "DATA" and "ANALYTICS". Result2 can
-    be None.
+    Result & Result2 are one of the combinations of
+    "DATA" and "ANALYTICS". Result2 can be None.
 
-    Test is not pytest-paramterized as the same catalog_usagetype_mock needs be used for
+    Test is not pytest-paramterized as the same
+    catalog_usagetype_mock needs be used for
     each iteration.
 
-    The result assertion needs to allow multiple combinations, e.g. when searching for
-    ["DATA", "ANALYTICS"], the result can be ["DATA"], ["ANALYTICS"] or ["DATA", "ANALYTICS"].
+    The result assertion needs to allow multiple combinations,
+    e.g. when searching for ["DATA", "ANALYTICS"],
+    the result can be ["DATA"], ["ANALYTICS"]
+    or ["DATA", "ANALYTICS"].
     """
     params1 = {"usage_type": ["DATA"], "result1": "DATA", "result2": ""}
-    params2 = {"usage_type": ["ANALYTICS"], "result1": "ANALYTICS", "result2": ""}
+    params2 = {
+        "usage_type": ["ANALYTICS"],
+        "result1": "ANALYTICS",
+        "result2": "",
+    }
     params3 = {
         "usage_type": ["DATA", "ANALYTICS"],
         "result1": "DATA",
@@ -211,11 +217,13 @@ def test_search_usagetype(catalog_usagetype_mock):
 )
 def test_search_usagetype_live(catalog_live, usage_type, result, result2):
     """
-    Result & Result2 are one of the combinations of "DATA" and "ANALYTICS". Result2 can
-    be None.
+    Result & Result2 are one of the combinations of
+    "DATA" and "ANALYTICS". Result2 can be None.
 
-    The result assertion needs to allow multiple combinations, e.g. when searching for
-    ["DATA", "ANALYTICS"], the result can be ["DATA"], ["ANALYTICS"] or ["DATA", "ANALYTICS"].
+    The result assertion needs to allow multiple combinations,
+    e.g. when searching for ["DATA", "ANALYTICS"],
+    the result can be ["DATA"],
+    ["ANALYTICS"] or ["DATA", "ANALYTICS"].
     """
     search_parameters = catalog_live.construct_search_parameters(
         start_date="2014-01-01T00:00:00",
@@ -319,7 +327,8 @@ def test_search_catalog_pagination_no_results(catalog_live):
 def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
     """
     Search results pagination is exhausted after 1 extra page (50 elements),
-    resulting in only 500+50 features even though the limit parameter asked for 614.
+    resulting in only 500+50 features even though
+    the limit parameter asked for 614.
     """
     search_params_limit_614 = {
         "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
@@ -347,21 +356,21 @@ def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
 def test_download_quicklook(catalog_mock, requests_mock):
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
     host = "oneatlas"
-    url_quicklooks = f"{API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
-    quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    url_quicklooks = f"{constants.API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
+    quicklook_file = pathlib.Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
     requests_mock.get(url_quicklooks, content=open(quicklook_file, "rb").read())
 
     with tempfile.TemporaryDirectory() as tempdir:
         out_paths = catalog_mock.download_quicklooks(image_ids=[sel_id], collection="phr", output_directory=tempdir)
         assert len(out_paths) == 1
-        assert Path(out_paths[0]).exists()
-        assert Path(out_paths[0]).suffix == ".jpg"
+        assert pathlib.Path(out_paths[0]).exists()
+        assert pathlib.Path(out_paths[0]).suffix == ".jpg"
 
 
 def test_download_no_quicklook(catalog_mock, requests_mock):
     sel_id = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
     host = "oneatlas"
-    url_quicklook = f"{API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
+    url_quicklook = f"{constants.API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
     requests_mock.get(url_quicklook, status_code=404)
 
     with tempfile.TemporaryDirectory() as tempdir:
@@ -373,11 +382,11 @@ def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
     sel_id_no = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
     sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
     host = "oneatlas"
-    url_no_quicklook = f"{API_HOST}/catalog/{host}/image/{sel_id_no}/quicklook"
+    url_no_quicklook = f"{constants.API_HOST}/catalog/{host}/image/{sel_id_no}/quicklook"
     requests_mock.get(url_no_quicklook, status_code=404)
 
-    url_quicklook = f"{API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
-    quicklook_file = Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+    url_quicklook = f"{constants.API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
+    quicklook_file = pathlib.Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
     requests_mock.get(url_quicklook, content=open(quicklook_file, "rb").read())
 
     with tempfile.TemporaryDirectory() as tempdir:
@@ -387,8 +396,8 @@ def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
             output_directory=tempdir,
         )
         assert len(out_paths) == 1
-        assert Path(out_paths[0]).exists()
-        assert Path(out_paths[0]).suffix == ".jpg"
+        assert pathlib.Path(out_paths[0]).exists()
+        assert pathlib.Path(out_paths[0]).suffix == ".jpg"
 
 
 @pytest.mark.live
@@ -400,13 +409,13 @@ def test_download_quicklook_live(catalog_live):
             output_directory=tempdir,
         )
         assert len(out_paths) == 1
-        assert Path(out_paths[0]).exists()
-        assert Path(out_paths[0]).suffix == ".jpg"
+        assert pathlib.Path(out_paths[0]).exists()
+        assert pathlib.Path(out_paths[0]).suffix == ".jpg"
 
 
 def test_construct_order_parameters(catalog_mock):
     order_parameters = catalog_mock.construct_order_parameters(
-        data_product_id=DATA_PRODUCT_ID,
+        data_product_id=constants.DATA_PRODUCT_ID,
         image_id="123",
         aoi=mock_search_parameters["intersects"],
     )
@@ -448,42 +457,47 @@ def test_construct_order_parameters_live(catalog_live, product_id):
 
 
 # pylint: disable=unused-argument
-def test_estimate_order_from_catalog(order_parameters, requests_mock, auth_mock):
-    catalog_instance = Catalog(auth=auth_mock)
+def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, auth_mock):
+    catalog_instance = catalog.Catalog(auth=auth_mock)
     expected_payload = {
         "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
         "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
         "errors": [],
     }
-    url_order_estimation = f"{API_HOST}/v2/orders/estimate"
+    url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
     requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = catalog_instance.estimate_order(order_parameters)
+    estimation = catalog_instance.estimate_order(catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
 
 
-def test_order_from_catalog(order_parameters, order_mock, catalog_mock, requests_mock):
+def test_order_from_catalog(
+    order_parameters,
+    order_mock,
+    catalog_mock,
+    requests_mock,
+):
     requests_mock.post(
-        url=f"{API_HOST}/workspaces/{catalog_mock.auth.workspace_id}/orders",
+        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
         json={
-            "data": {"id": ORDER_ID},
-            "error": {},
+            "results": [{"index": 0, "id": constants.ORDER_ID}],
+            "errors": [],
         },
     )
-    order = catalog_mock.place_order(order_parameters=order_parameters)
-    assert isinstance(order, Order)
-    assert order.order_id == ORDER_ID
+    placed_order = catalog_mock.place_order(order_parameters=order_parameters)
+    assert isinstance(placed_order, order.Order)
+    assert placed_order.order_id == constants.ORDER_ID
 
 
-def test_order_from_catalog_track_status(order_parameters, order_mock, catalog_mock, requests_mock):
+def test_order_from_catalog_track_status(catalog_order_parameters, order_mock, catalog_mock, requests_mock):
     requests_mock.post(
-        url=f"{API_HOST}/workspaces/{catalog_mock.auth.workspace_id}/orders",
+        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
         json={
-            "data": {"id": ORDER_ID},
-            "error": {},
+            "results": [{"index": 0, "id": constants.ORDER_ID}],
+            "errors": [],
         },
     )
-    url_order_info = f"{API_HOST}/v2/orders/{order_mock.order_id}"
+    url_order_info = f"{constants.API_HOST}/v2/orders/{order_mock.order_id}"
     requests_mock.get(
         url_order_info,
         [
@@ -492,25 +506,25 @@ def test_order_from_catalog_track_status(order_parameters, order_mock, catalog_m
             {"json": {"status": "FULFILLED"}},
         ],
     )
-    order = catalog_mock.place_order(
-        order_parameters=order_parameters,
+    placed_order = catalog_mock.place_order(
+        order_parameters=catalog_order_parameters,
         track_status=True,
         report_time=0.1,
     )
-    assert isinstance(order, Order)
-    assert order.order_id == ORDER_ID
+    assert isinstance(placed_order, order.Order)
+    assert placed_order.order_id == constants.ORDER_ID
 
 
 @pytest.mark.live
-def test_estimate_order_from_catalog_live(order_parameters, catalog_live):
-    estimation = catalog_live.estimate_order(order_parameters)
+def test_estimate_order_from_catalog_live(catalog_order_parameters, catalog_live):
+    estimation = catalog_live.estimate_order(catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
 
 
 @pytest.mark.skip(reason="Placing orders costs credits.")
 @pytest.mark.live
-def test_order_from_catalog_live(order_parameters, catalog_live):
-    order = catalog_live.place_order(order_parameters)
-    assert isinstance(order, Order)
-    assert order.order_id
+def test_order_from_catalog_live(catalog_order_parameters, catalog_live):
+    placed_order = catalog_live.place_order(catalog_order_parameters)
+    assert isinstance(placed_order, order.Order)
+    assert placed_order.order_id

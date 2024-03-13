@@ -33,7 +33,7 @@ def test_get_workflows_live(project_live):
 
 
 def test_get_jobs(project_mock, requests_mock):
-    url_job_info = f"{API_HOST}/projects/" f"{project_mock.project_id}/jobs/{JOB_ID}"
+    url_job_info = f"{API_HOST}/projects/{project_mock.project_id}/jobs/{JOB_ID}"
     json_job_info = {"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}}
     requests_mock.get(
         url=url_job_info,

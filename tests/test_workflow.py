@@ -94,7 +94,7 @@ def test_get_default_parameters(workflow_mock):
 
 
 def test_get_jobs(workflow_mock, requests_mock):
-    url_job_info = f"{API_HOST}/projects/" f"{workflow_mock.project_id}/jobs/{JOB_ID}"
+    url_job_info = f"{API_HOST}/projects/{workflow_mock.project_id}/jobs/{JOB_ID}"
     requests_mock.get(
         url=url_job_info,
         json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
@@ -117,7 +117,7 @@ def test_get_jobs_live(workflow_live):
 
 
 def test_delete(workflow_mock, requests_mock):
-    delete_url = f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/" f"{workflow_mock.workflow_id}"
+    delete_url = f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/{workflow_mock.workflow_id}"
     requests_mock.delete(url=delete_url)
 
     workflow_mock.delete()

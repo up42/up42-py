@@ -53,8 +53,7 @@ nav:
         - Storage: reference/storage-reference.md
         - Asset: reference/asset-reference.md
         - Webhook: reference/webhook-reference.md
-    - Changelog and FAQ:
-        - CHANGELOG.md
+    - FAQ:
         - support-faq.md
         - geometry_handling.md
         - Privacy policy: 'https://up42.com/legal/privacy'

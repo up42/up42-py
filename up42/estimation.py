@@ -1,20 +1,19 @@
-from pathlib import Path
-from typing import List, Union
+import pathlib
+from typing import Any, Dict, List, Union
 
-from up42.auth import Auth
-from up42.host import endpoint
-from up42.utils import get_logger
+from up42 import auth as up42_auth
+from up42 import host, utils
 
-logger = get_logger(__name__)
+logger = utils.get_logger(__name__)
 
 
 class Estimation:
     def __init__(
         self,
-        auth: Auth,
+        auth: up42_auth.Auth,
         project_id: str,
-        input_parameters: Union[dict, str, Path],
-        input_tasks: List[dict],
+        input_parameters: Union[dict, str, pathlib.Path],
+        input_tasks: List[Dict[str, Any]],
     ):
         """
         The Estimation class provides facilities for getting estimation of a workflow.
@@ -42,11 +41,11 @@ class Estimation:
         Returns:
             A dictionary with credit cost & duration estimate for each workflow task.
         """
-        url = endpoint(f"/projects/{self.project_id}/estimate/job")
+        url = host.endpoint(f"/projects/{self.project_id}/estimate/job")
         self.payload = {
             "tasks": self.input_tasks,
             "inputs": self.input_parameters,
         }
 
-        response_json = self.auth._request(request_type="POST", url=url, data=self.payload)
+        response_json = self.auth.request(request_type="POST", url=url, data=self.payload)
         return response_json["data"]

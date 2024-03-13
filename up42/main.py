@@ -18,12 +18,11 @@ logger = get_logger(__name__, level=logging.INFO)
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 
-# pylint: disable=global-statement
-_auth: Auth = None  # type: ignore
+_auth: Optional[Auth] = None
 
 
 def authenticate(
-    cfg_file: Union[str, Path] = None,
+    cfg_file: Optional[Union[str, Path]] = None,
     project_id: Optional[str] = None,
     project_api_key: Optional[str] = None,
     username: Optional[str] = None,
@@ -54,6 +53,12 @@ def authenticate(
     )
 
 
+def __get_auth_safely() -> Auth:
+    if _auth:
+        return _auth
+    raise ValueError("User not authenticated.")
+
+
 def _check_auth(func, *args, **kwargs):
     """
     Some functionality of the up42 import object can theoretically be used
@@ -80,8 +85,7 @@ def get_webhooks(return_json: bool = False) -> List[Webhook]:
     Returns:
         A list of the registered webhooks for this workspace.
     """
-    webhooks = Webhooks(auth=_auth).get_webhooks(return_json=return_json)
-    return webhooks
+    return Webhooks(auth=__get_auth_safely()).get_webhooks(return_json=return_json)
 
 
 @_check_auth
@@ -104,8 +108,9 @@ def create_webhook(
     Returns:
         A dict with details of the registered webhook.
     """
-    webhook = Webhooks(auth=_auth).create_webhook(name=name, url=url, events=events, active=active, secret=secret)
-    return webhook
+    return Webhooks(auth=__get_auth_safely()).create_webhook(
+        name=name, url=url, events=events, active=active, secret=secret
+    )
 
 
 @_check_auth
@@ -116,8 +121,7 @@ def get_webhook_events() -> dict:
     Returns:
         A dict of the available webhook events.
     """
-    webhook_events = Webhooks(auth=_auth).get_webhook_events()
-    return webhook_events
+    return Webhooks(auth=__get_auth_safely()).get_webhook_events()
 
 
 @_check_auth
@@ -125,7 +129,7 @@ def get_blocks(
     block_type: Optional[str] = None,
     basic: bool = True,
     as_dataframe: bool = False,
-) -> Union[List[Dict], dict]:
+) -> Union[List[Dict], dict, pd.DataFrame]:
     """
     Gets a list of all public blocks on the marketplace. Can not access custom blocks.
 
@@ -138,12 +142,10 @@ def get_blocks(
         A list of the public blocks and their metadata. Optional a simpler version
         dict.
     """
-    try:
-        block_type = block_type.lower()  # type: ignore
-    except AttributeError:
-        pass
+    if block_type:
+        block_type = block_type.lower()
     url = endpoint("/blocks")
-    response_json = _auth._request(request_type="GET", url=url)
+    response_json = __get_auth_safely().request(request_type="GET", url=url)
     public_blocks_json = response_json["data"]
 
     if block_type == "data":
@@ -171,7 +173,7 @@ def get_blocks(
 
 
 @_check_auth
-def get_block_details(block_id: str, as_dataframe: bool = False) -> dict:
+def get_block_details(block_id: str, as_dataframe: bool = False) -> Union[dict, pd.DataFrame]:
     """
     Gets the detailed information about a specific public block from
     the server, includes all manifest.json and marketplace.json contents.
@@ -185,7 +187,7 @@ def get_block_details(block_id: str, as_dataframe: bool = False) -> dict:
         A dict of the block details metadata for the specific block.
     """
     url = endpoint(f"/blocks/{block_id}")  # public blocks
-    response_json = _auth._request(request_type="GET", url=url)
+    response_json = __get_auth_safely().request(request_type="GET", url=url)
     details_json = response_json["data"]
 
     if as_dataframe:
@@ -207,10 +209,9 @@ def get_block_coverage(block_id: str) -> dict:
         A dict of the spatial coverage for the specific block.
     """
     url = endpoint(f"/blocks/{block_id}/coverage")
-    response_json = _auth._request(request_type="GET", url=url)
+    response_json = __get_auth_safely().request(request_type="GET", url=url)
     details_json = response_json["data"]
-    response_coverage = requests.get(details_json["url"]).json()
-    return response_coverage
+    return requests.get(details_json["url"]).json()
 
 
 @_check_auth
@@ -222,6 +223,5 @@ def get_credits_balance() -> dict:
         A dict with the balance of credits available in your account.
     """
     endpoint_url = endpoint("/accounts/me/credits/balance")
-    response_json = _auth._request(request_type="GET", url=endpoint_url)
-    details_json = response_json["data"]
-    return details_json
+    response_json = __get_auth_safely().request(request_type="GET", url=endpoint_url)
+    return response_json["data"]

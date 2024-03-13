@@ -10,6 +10,7 @@ from up42.jobtask import JobTask
 from up42.order import Order
 from up42.project import Project
 from up42.storage import Storage
+from up42.tasking import Tasking
 from up42.workflow import Workflow
 
 from .fixtures.fixtures_globals import (
@@ -246,3 +247,12 @@ def test_should_initialize_job_collection_with_implicit_project_id(auth_mock, jo
     collection = up42.initialize_jobcollection([JOB_ID])
     assert all(job.project_id == PROJECT_ID for job in collection.jobs)
     assert collection.project_id == PROJECT_ID
+
+
+def test_should_initialize_tasking(auth_mock):
+    up42.authenticate(
+        project_id=PROJECT_ID,
+        authenticate=False,
+    )
+    result = up42.initialize_tasking()
+    assert isinstance(result, Tasking)

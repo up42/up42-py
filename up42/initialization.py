@@ -2,13 +2,12 @@ import logging
 from typing import List, Optional
 from warnings import warn
 
-from up42 import main
 from up42.asset import Asset
 from up42.catalog import Catalog
 from up42.job import Job
 from up42.jobcollection import JobCollection
 from up42.jobtask import JobTask
-from up42.main import _check_auth
+from up42.main import __get_auth_safely, _check_auth
 from up42.order import Order
 from up42.project import Project
 from up42.storage import Storage
@@ -27,7 +26,7 @@ def _get_project_id(project_id: Optional[str]) -> str:
             DeprecationWarning,
             stacklevel=2,
         )
-    result = project_id or str(main._auth.project_id)
+    result = project_id or str(__get_auth_safely().project_id)
     if not result:
         raise ValueError("Project ID can't be null")
     return result
@@ -45,7 +44,10 @@ def initialize_project(project_id: Optional[str] = None) -> "Project":
         "after January 31, 2024, and will be replaced by new processing functionalities.",
         DeprecationWarning,
     )
-    project = Project(auth=main._auth, project_id=_get_project_id(project_id=project_id))
+    project = Project(
+        auth=__get_auth_safely(),
+        project_id=_get_project_id(project_id=project_id),
+    )
     logger.info(f"Initialized {project}")
     return project
 
@@ -55,7 +57,7 @@ def initialize_catalog() -> "Catalog":
     """
     Returns a Catalog object for using the catalog search.
     """
-    return Catalog(auth=main._auth)
+    return Catalog(auth=__get_auth_safely())
 
 
 @_check_auth
@@ -63,7 +65,7 @@ def initialize_tasking() -> "Tasking":
     """
     Returns a Tasking object for creating satellite tasking orders.
     """
-    return Tasking(auth=main._auth)
+    return Tasking(auth=__get_auth_safely())
 
 
 @_check_auth
@@ -80,7 +82,7 @@ def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> "
         DeprecationWarning,
     )
     workflow = Workflow(
-        auth=main._auth,
+        auth=__get_auth_safely(),
         workflow_id=workflow_id,
         project_id=_get_project_id(project_id=project_id),
     )
@@ -102,7 +104,7 @@ def initialize_job(job_id: str, project_id: Optional[str] = None) -> "Job":
         DeprecationWarning,
     )
     job = Job(
-        auth=main._auth,
+        auth=__get_auth_safely(),
         job_id=job_id,
         project_id=_get_project_id(project_id=project_id),
     )
@@ -125,7 +127,7 @@ def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] =
         DeprecationWarning,
     )
     jobtask = JobTask(
-        auth=main._auth,
+        auth=__get_auth_safely(),
         jobtask_id=jobtask_id,
         job_id=job_id,
         project_id=_get_project_id(project_id=project_id),
@@ -149,14 +151,14 @@ def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = Non
     )
     jobs = [
         Job(
-            auth=main._auth,
+            auth=__get_auth_safely(),
             job_id=job_id,
             project_id=_get_project_id(project_id=project_id),
         )
         for job_id in job_ids
     ]
     jobcollection = JobCollection(
-        auth=main._auth,
+        auth=__get_auth_safely(),
         project_id=_get_project_id(project_id=project_id),
         jobs=jobs,
     )
@@ -169,7 +171,7 @@ def initialize_storage() -> "Storage":
     """
     Returns a Storage object to list orders and assets.
     """
-    return Storage(auth=main._auth)
+    return Storage(auth=__get_auth_safely())
 
 
 @_check_auth
@@ -179,7 +181,7 @@ def initialize_order(order_id: str) -> "Order":
     Args:
         order_id: The UP42 order_id
     """
-    order = Order(auth=main._auth, order_id=order_id)
+    order = Order(auth=__get_auth_safely(), order_id=order_id)
     logger.info(f"Initialized {order}")
     return order
 
@@ -191,7 +193,7 @@ def initialize_asset(asset_id: str) -> "Asset":
     Args:
         asset_id: The UP42 asset_id
     """
-    asset = Asset(auth=main._auth, asset_id=asset_id)
+    asset = Asset(auth=__get_auth_safely(), asset_id=asset_id)
     logger.info(f"Initialized {asset}")
     return asset
 
@@ -203,6 +205,6 @@ def initialize_webhook(webhook_id: str) -> Webhook:
     Args:
         webhook_id: The UP42 webhook_id
     """
-    webhook = Webhook(auth=main._auth, webhook_id=webhook_id)
+    webhook = Webhook(auth=__get_auth_safely(), webhook_id=webhook_id)
     logger.info(f"Initialized {webhook}")
     return webhook
