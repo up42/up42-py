@@ -5,7 +5,7 @@ import pystac
 import pystac_client
 import pytest
 
-from up42.asset import Asset
+from up42 import asset
 
 from . import fixtures_globals as constants
 
@@ -85,9 +85,7 @@ def _asset_mock(auth_mock, requests_mock):
         json=mock_client.to_dict(),
     )
 
-    asset = Asset(auth=auth_mock, asset_id=constants.ASSET_ID)
-
-    return asset
+    return asset.Asset(auth=auth_mock, asset_id=constants.ASSET_ID)
 
 
 @pytest.fixture(name="asset_mock2")
@@ -110,8 +108,7 @@ def _asset_mock2(auth_mock, requests_mock):
         url=constants.STAC_ASSET_URL,
         content=out_file,
     )
-    asset = Asset(auth=auth_mock, asset_id=constants.ASSET_ID2)
-    return asset
+    return asset.Asset(auth=auth_mock, asset_id=constants.ASSET_ID2)
 
 
 @pytest.fixture(params=["asset_mock", "asset_mock2"])

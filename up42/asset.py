@@ -4,8 +4,8 @@ from typing import List, Optional, Tuple, Union
 import pystac
 import pystac_client
 
+from up42 import auth as up42_auth
 from up42 import host, stac_client, utils
-from up42.auth import Auth
 
 logger = utils.get_logger(__name__)
 
@@ -26,7 +26,7 @@ class Asset:
 
     def __init__(
         self,
-        auth: Auth,
+        auth: up42_auth.Auth,
         asset_id: Optional[str] = None,
         asset_info: Optional[dict] = None,
     ):
