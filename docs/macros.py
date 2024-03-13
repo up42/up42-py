@@ -12,7 +12,7 @@ Changes in macros.py code, for some operations, requires restart of `mkdocs serv
 Docs: https://mkdocs-macros-plugin.readthedocs.io/en/latest/macros/
 """
 
-from types import ModuleType
+import types
 from typing import Callable, List, Optional, Union
 
 import up42
@@ -27,7 +27,7 @@ def define_env(env):
         return input_string and input_string.replace("\n", "\n\t")
 
     def get_methods(
-        c: Union[Callable, ModuleType],
+        c: Union[Callable, types.ModuleType],
         exclude: Optional[List[str]] = None,
         exclude_viztools=False,
     ) -> List[str]:
