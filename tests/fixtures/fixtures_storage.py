@@ -42,8 +42,3 @@ def storage_mock(auth_mock, requests_mock):
     url_order_info = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
     requests_mock.get(url=url_order_info, json=constants.JSON_ORDER)
     return storage.Storage(auth=auth_mock)
-
-
-@pytest.fixture()
-def storage_live(auth_live):
-    return storage.Storage(auth=auth_live)
