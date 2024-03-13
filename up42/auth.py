@@ -7,11 +7,9 @@ import warnings
 from typing import Dict, Optional, Union, cast
 
 import requests
-import requests.exceptions
 import requests_oauthlib as roauthlib  # type:ignore
 import tenacity as tnc
 from oauthlib import oauth2
-from requests import auth as rauth
 
 from up42 import host, utils
 
@@ -153,7 +151,7 @@ class Auth:
             client_id = cast(str, self._credentials_id)
             client_secret = cast(str, self._credentials_key)
             client = oauth2.BackendApplicationClient(client_id=client_id, client_secret=client_secret)
-            auth = rauth.HTTPBasicAuth(client_id, client_secret)
+            auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
             get_token_session = roauthlib.OAuth2Session(client=client)
             token_response = get_token_session.fetch_token(token_url=host.endpoint("/oauth/token"), auth=auth)
         except oauth2.MissingTokenError as err:
