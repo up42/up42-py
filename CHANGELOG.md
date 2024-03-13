@@ -35,7 +35,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **March 12, 2024**
 
-- Fixing incorrect title and tags removal on Asset update metadata.
+- Fixed inadvertent titles and tags removals during asset metadata updates.
 
 ## 0.37.0a4
 
