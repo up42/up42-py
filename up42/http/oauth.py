@@ -1,5 +1,5 @@
+import dataclasses as dc
 import datetime as dt
-from dataclasses import dataclass
 from typing import Protocol
 
 import requests
@@ -8,7 +8,7 @@ from requests import auth
 from up42.http import config, http_adapter
 
 
-@dataclass(eq=True, frozen=True)
+@dc.dataclass(eq=True, frozen=True)
 class Token:
     access_token: str
     expires_on: dt.datetime
