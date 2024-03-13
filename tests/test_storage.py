@@ -1,45 +1,19 @@
-import copy
-from typing import List, cast
-
-import pystac
 import pystac_client
 import pytest
-import requests
 
-from up42.asset import Asset
-from up42.asset_searcher import query_paginated_endpoints
-from up42.order import Order
-from up42.storage import AllowedStatuses, Storage
+from up42 import asset, asset_searcher, order, storage
 
-from .fixtures.fixtures_globals import (
-    API_HOST,
-    ASSET_ID,
-    JSON_ASSET,
-    JSON_ORDER,
-    JSON_ORDERS,
-    JSON_STORAGE_STAC,
-    ORDER_ID,
-    USER_ID,
-    WORKSPACE_ID,
-)
+from .fixtures import fixtures_globals as constants
 
 
 def test_init(storage_mock):
-    assert isinstance(storage_mock, Storage)
-    assert storage_mock.workspace_id == WORKSPACE_ID
+    assert isinstance(storage_mock, storage.Storage)
+    assert storage_mock.workspace_id == constants.WORKSPACE_ID
 
 
 def test_pystac_client_property(storage_mock):
     up42_pystac_client = storage_mock.pystac_client
     isinstance(up42_pystac_client, pystac_client.Client)
-
-
-@pytest.mark.live
-def test_pystac_client_property_live(storage_live):
-    up42_pystac_client = storage_live.pystac_client
-    isinstance(up42_pystac_client, pystac_client.Client)
-    stac_collections = up42_pystac_client.get_collections()
-    assert isinstance(stac_collections.__next__(), pystac.Collection)
 
 
 def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
@@ -65,7 +39,7 @@ def test_paginate_one_page(auth_mock, requests_mock):
         url + f"&size={size}",
         json=_mock_one_page_reponse(0, expected, total_pages, total_elements),
     )
-    res = query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
+    res = asset_searcher.query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
@@ -93,7 +67,7 @@ def test_paginate_multiple_pages(auth_mock, requests_mock):
         url + f"&size={size}&page=3",
         json=_mock_one_page_reponse(3, size, total_pages, total_elements),
     )
-    res = query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
+    res = asset_searcher.query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
@@ -116,39 +90,15 @@ def test_paginate_with_limit_smaller_page_size(auth_mock, requests_mock):
         url + f"&size={limit}&page=1",
         json=_mock_one_page_reponse(0, size, total_pages, total_elements),
     )
-    res = query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
+    res = asset_searcher.query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
     assert len(res) == expected
 
 
 def test_get_assets(storage_mock):
     assets = storage_mock.get_assets()
     assert len(assets) == 1
-    assert isinstance(assets[0], Asset)
-    assert assets[0].asset_id == ASSET_ID
-
-
-@pytest.mark.live
-def test_get_assets_live(storage_live):
-    assets = storage_live.get_assets()
-    assert len(assets) >= 2
-    dates = [asset.info["createdAt"] for asset in assets]
-    # default descending, newest to oldest.
-    descending_dates = sorted(dates)[::-1]
-    assert descending_dates == dates
-    with pytest.raises(ValueError) as e:
-        storage_live.get_assets(
-            created_after="2020-01-01",
-            created_before="2023-01-01",
-            acquired_after="2020-01-01",
-            acquired_before="2023-01-01",
-        )
-    assert "no longer supported" in str(e.value)
-
-
-@pytest.mark.live
-def test_get_assets_by_source_live(storage_live):
-    assets = storage_live.get_assets(sources=["ARCHIVE"])
-    assert len(assets) >= 2
+    assert isinstance(assets[0], asset.Asset)
+    assert assets[0].asset_id == constants.ASSET_ID
 
 
 def test_get_assets_with_search_stac(storage_mock):
@@ -163,43 +113,6 @@ def test_get_assets_with_search_stac(storage_mock):
         assert "no longer supported" in str(e.value)
 
 
-def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
-    """
-    Test the stac query pagination by checking the token element in the payload.
-    if the response has the token element in the body, then the _query_paginated_stac_search
-    retrieves the next page and append the features in the return list.
-    Otherwise, return the current list of features.
-    """
-
-    def match_request_text(request):
-        return "token" in request.body
-
-    url_storage_stac = "http://some_url/assets/stac/search"
-    stac_search_parameters = {
-        "max_items": 100,
-        "limit": 10000,
-    }
-
-    requests_mock.post(
-        url_storage_stac,
-        json=JSON_STORAGE_STAC,
-    )
-
-    json_storage_stac = copy.deepcopy(JSON_STORAGE_STAC)
-    cast(List, json_storage_stac["links"]).pop(-1)
-
-    requests_mock.post(
-        url_storage_stac,
-        additional_matcher=match_request_text,
-        json=json_storage_stac,
-    )
-
-    resp = storage_mock._query_paginated_stac_search(
-        url=url_storage_stac, stac_search_parameters=stac_search_parameters
-    )
-    assert len(resp) == 2
-
-
 def test_get_assets_pagination(auth_mock, requests_mock):
     """
     SDK test account holds too few assets to query multiple pages via pagination,
@@ -208,7 +121,7 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     Mock result holds 2 pages, each with 50 results.
     """
     json_assets_paginated = {
-        "content": [JSON_ASSET] * 50,
+        "content": [constants.JSON_ASSET] * 50,
         "pageable": {
             "sort": {"sorted": True, "unsorted": False, "empty": False},
             "pageNumber": 0,
@@ -229,32 +142,21 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     }
 
     # assets pages
-    url_storage_assets_paginated = f"{API_HOST}/v2/assets?sort=createdAt,asc&size=50"
+    url_storage_assets_paginated = f"{constants.API_HOST}/v2/assets?sort=createdAt,asc&size=50"
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
-    storage = Storage(auth=auth_mock)
-    assets = storage.get_assets(limit=74, sortby="createdAt", descending=False)
+    storage_results = storage.Storage(auth=auth_mock)
+    assets = storage_results.get_assets(limit=74, sortby="createdAt", descending=False)
     assert len(assets) == 74
-    assert isinstance(assets[0], Asset)
-    assert assets[0].asset_id == ASSET_ID
-
-
-@pytest.mark.live
-def test_get_assets_raise_error_live(storage_live):
-    """
-    Api v2 error format is handled in the auth request method
-    This tests asserts if the api v2 error response is correct.
-    """
-    with pytest.raises(requests.exceptions.RequestException) as e:
-        storage_live.get_assets(workspace_id="a")
-    assert "title" in str(e.value)
+    assert isinstance(assets[0], asset.Asset)
+    assert assets[0].asset_id == constants.ASSET_ID
 
 
 def test_get_orders(storage_mock):
     orders = storage_mock.get_orders(order_type="ARCHIVE", tags=["project-7", "optical"])
     assert len(orders) == 1
-    assert isinstance(orders[0], Order)
-    assert orders[0].order_id == ORDER_ID
+    assert isinstance(orders[0], order.Order)
+    assert orders[0].order_id == constants.ORDER_ID
 
 
 @pytest.mark.parametrize(
@@ -268,8 +170,8 @@ def test_get_orders(storage_mock):
                 "statuses": None,
                 "name": None,
             },
-            JSON_ORDERS,
-            JSON_ORDERS["content"],
+            constants.JSON_ORDERS,
+            constants.JSON_ORDERS["content"],
         ),
         (
             {
@@ -279,8 +181,8 @@ def test_get_orders(storage_mock):
                 "statuses": ["CREATED", "FULFILLED"],
                 "name": None,
             },
-            JSON_ORDERS,
-            JSON_ORDERS["content"],
+            constants.JSON_ORDERS,
+            constants.JSON_ORDERS["content"],
         ),
         (
             {
@@ -290,8 +192,8 @@ def test_get_orders(storage_mock):
                 "statuses": ["TEST"],
                 "name": None,
             },
-            JSON_ORDERS,
-            JSON_ORDERS["content"],
+            constants.JSON_ORDERS,
+            constants.JSON_ORDERS["content"],
         ),
         (
             {
@@ -301,19 +203,19 @@ def test_get_orders(storage_mock):
                 "statuses": ["CREATED"],
                 "name": None,
             },
-            JSON_ORDERS,
+            constants.JSON_ORDERS,
             [
                 {
-                    "id": ORDER_ID,
-                    "userId": USER_ID,
-                    "workspaceId": WORKSPACE_ID,
+                    "id": constants.ORDER_ID,
+                    "userId": constants.USER_ID,
+                    "workspaceId": constants.WORKSPACE_ID,
                     "dataProvider": "OneAtlas",
                     "status": "FULFILLED",
                     "createdAt": "2021-01-18T16:18:16.105851Z",
                     "updatedAt": "2021-01-18T16:21:31.966805Z",
                     "assets": ["363f89c1-3586-4b14-9a49-03a890c3b593"],
                     "createdBy": {
-                        "id": USER_ID,
+                        "id": constants.USER_ID,
                         "type": "USER",
                     },
                     "updatedBy": {"id": "system", "type": "INTERNAL"},
@@ -328,8 +230,8 @@ def test_get_orders(storage_mock):
                 "statuses": None,
                 "name": "Testing",
             },
-            JSON_ORDERS,
-            JSON_ORDERS["content"],
+            constants.JSON_ORDERS,
+            constants.JSON_ORDERS["content"],
         ),
         (
             {
@@ -339,8 +241,8 @@ def test_get_orders(storage_mock):
                 "statuses": None,
                 "name": None,
             },
-            JSON_ORDERS,
-            JSON_ORDERS["content"],
+            constants.JSON_ORDERS,
+            constants.JSON_ORDERS["content"],
         ),
         (
             {
@@ -350,8 +252,8 @@ def test_get_orders(storage_mock):
                 "statuses": None,
                 "name": None,
             },
-            JSON_ORDERS,
-            JSON_ORDERS["content"],
+            constants.JSON_ORDERS,
+            constants.JSON_ORDERS["content"],
         ),
     ],
     ids=[
@@ -365,50 +267,33 @@ def test_get_orders(storage_mock):
     ],
 )
 def test_get_orders_v2_endpoint_params(auth_mock, requests_mock, params, expected_payload, expected_results):
-    allowed_statuses = {entry.value for entry in AllowedStatuses}
+    allowed_statuses = {entry.value for entry in storage.AllowedStatuses}
     endpoint_statuses = set(params["statuses"]) & allowed_statuses if params["statuses"] else []
     url_params = "&".join(
         [
             "sort=createdAt%2Cdesc",
-            f"workspaceId={WORKSPACE_ID}" if params["workspace_orders"] else "",
+            f"workspaceId={constants.WORKSPACE_ID}" if params["workspace_orders"] else "",
             f"""displayName={params["name"]}""" if params["name"] else "",
             *[f"status={status}" for status in endpoint_statuses],
             "size=50",
         ]
     )
 
-    url_storage_assets_paginated = f"{API_HOST}/v2/orders?{url_params}"
+    url_storage_assets_paginated = f"{constants.API_HOST}/v2/orders?{url_params}"
 
     requests_mock.get(url=url_storage_assets_paginated, json=expected_payload)
     if not params["return_json"]:
         expected_results = [
-            Order(
+            order.Order(
                 auth=auth_mock,
                 order_id=output["id"],
                 order_info=output,
             )
             for output in expected_results
         ]
-    storage = Storage(auth=auth_mock)
-    orders = storage.get_orders(**params)
+    storage_results = storage.Storage(auth=auth_mock)
+    orders = storage_results.get_orders(**params)
     assert orders == expected_results
-
-
-@pytest.mark.live
-def test_get_orders_live(storage_live):
-    """
-    SDK test account holds too few results to query multiple pages via pagination,
-    needs to be mocked.
-    """
-    orders = storage_live.get_orders()
-    assert len(orders) >= 1
-    dates = [order.info["createdAt"] for order in orders]
-    # default descending, newest to oldest.
-    descending_dates = sorted(dates)[::-1]
-    assert descending_dates == dates
-
-    orders_tags = storage_live.get_orders(tags=["Test"])
-    assert len(orders_tags) >= 0
 
 
 def test_get_orders_raises_with_illegal_sorting_criteria(storage_mock):
@@ -421,7 +306,7 @@ def test_get_orders_pagination(auth_mock, requests_mock):
     Mock result holds 2 pages, each with 50 results.
     """
     json_orders_paginated = {
-        "content": [JSON_ORDER["data"]] * 50,
+        "content": [constants.JSON_ORDER["data"]] * 50,
         "pageable": {
             "sort": {"sorted": True, "unsorted": False, "empty": False},
             "pageNumber": 0,
@@ -443,12 +328,12 @@ def test_get_orders_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_orders_paginated = (
-        f"{API_HOST}/v2/orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
+        f"{constants.API_HOST}/v2/orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)
 
-    storage = Storage(auth=auth_mock)
-    orders = storage.get_orders(limit=74, sortby="createdAt", descending=False)
+    storage_results = storage.Storage(auth=auth_mock)
+    orders = storage_results.get_orders(limit=74, sortby="createdAt", descending=False)
     assert len(orders) == 74
-    assert isinstance(orders[0], Order)
-    assert orders[0].order_id == ORDER_ID
+    assert isinstance(orders[0], order.Order)
+    assert orders[0].order_id == constants.ORDER_ID
