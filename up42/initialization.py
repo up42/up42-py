@@ -34,7 +34,7 @@ def _get_project_id(project_id: Optional[str]) -> str:
     return result
 
 
-@main._check_auth
+@main.check_auth
 def initialize_project(project_id: Optional[str] = None) -> project.Project:
     """
     Returns the correct Project object (has to exist on UP42).
@@ -54,7 +54,7 @@ def initialize_project(project_id: Optional[str] = None) -> project.Project:
     return up42_project
 
 
-@main._check_auth
+@main.check_auth
 def initialize_catalog() -> catalog.Catalog:
     """
     Returns a Catalog object for using the catalog search.
@@ -62,7 +62,7 @@ def initialize_catalog() -> catalog.Catalog:
     return catalog.Catalog(auth=main.__get_auth_safely())
 
 
-@main._check_auth
+@main.check_auth
 def initialize_tasking() -> "tasking.Tasking":
     """
     Returns a Tasking object for creating satellite tasking orders.
@@ -70,7 +70,7 @@ def initialize_tasking() -> "tasking.Tasking":
     return tasking.Tasking(auth=main.__get_auth_safely())
 
 
-@main._check_auth
+@main.check_auth
 def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> workflow.Workflow:
     """
     Returns a Workflow object (has to exist on UP42).
@@ -92,7 +92,7 @@ def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> w
     return up42_workflow
 
 
-@main._check_auth
+@main.check_auth
 def initialize_job(job_id: str, project_id: Optional[str] = None) -> job.Job:
     """
     Returns a Job object (has to exist on UP42).
@@ -114,7 +114,7 @@ def initialize_job(job_id: str, project_id: Optional[str] = None) -> job.Job:
     return up42_job
 
 
-@main._check_auth
+@main.check_auth
 def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] = None) -> jobtask.JobTask:
     """
     Returns a JobTask object (has to exist on UP42).
@@ -138,7 +138,7 @@ def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] =
     return job_task
 
 
-@main._check_auth
+@main.check_auth
 def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = None) -> jobcollection.JobCollection:
     """
     Returns a JobCollection object (the referenced jobs have to exist on UP42).
@@ -168,7 +168,7 @@ def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = Non
     return job_collection
 
 
-@main._check_auth
+@main.check_auth
 def initialize_storage() -> storage.Storage:
     """
     Returns a Storage object to list orders and assets.
@@ -176,7 +176,7 @@ def initialize_storage() -> storage.Storage:
     return storage.Storage(auth=main.__get_auth_safely())
 
 
-@main._check_auth
+@main.check_auth
 def initialize_order(order_id: str) -> order.Order:
     """
     Returns an Order object (has to exist on UP42).
@@ -188,7 +188,7 @@ def initialize_order(order_id: str) -> order.Order:
     return up42_order
 
 
-@main._check_auth
+@main.check_auth
 def initialize_asset(asset_id: str) -> asset.Asset:
     """
     Returns an Asset object (has to exist on UP42).
@@ -200,7 +200,7 @@ def initialize_asset(asset_id: str) -> asset.Asset:
     return up42_asset
 
 
-@main._check_auth
+@main.check_auth
 def initialize_webhook(webhook_id: str) -> webhooks.Webhook:
     """
     Returns a Webhook object (has to exist on UP42).

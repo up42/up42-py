@@ -59,7 +59,7 @@ def __get_auth_safely() -> Auth:
     raise ValueError("User not authenticated.")
 
 
-def _check_auth(func, *args, **kwargs):
+def check_auth(func, *args, **kwargs):
     """
     Some functionality of the up42 import object can theoretically be used
     before authentication with UP42, so the auth needs to be checked first.
@@ -75,7 +75,7 @@ def _check_auth(func, *args, **kwargs):
     return inner
 
 
-@_check_auth
+@check_auth
 def get_webhooks(return_json: bool = False) -> List[Webhook]:
     """
     Gets all registered webhooks for this workspace.
@@ -88,7 +88,7 @@ def get_webhooks(return_json: bool = False) -> List[Webhook]:
     return Webhooks(auth=__get_auth_safely()).get_webhooks(return_json=return_json)
 
 
-@_check_auth
+@check_auth
 def create_webhook(
     name: str,
     url: str,
@@ -113,7 +113,7 @@ def create_webhook(
     )
 
 
-@_check_auth
+@check_auth
 def get_webhook_events() -> dict:
     """
     Gets all available webhook events.
@@ -124,7 +124,7 @@ def get_webhook_events() -> dict:
     return Webhooks(auth=__get_auth_safely()).get_webhook_events()
 
 
-@_check_auth
+@check_auth
 def get_blocks(
     block_type: Optional[str] = None,
     basic: bool = True,
@@ -172,7 +172,7 @@ def get_blocks(
             return blocks_json
 
 
-@_check_auth
+@check_auth
 def get_block_details(block_id: str, as_dataframe: bool = False) -> Union[dict, pd.DataFrame]:
     """
     Gets the detailed information about a specific public block from
@@ -196,7 +196,7 @@ def get_block_details(block_id: str, as_dataframe: bool = False) -> Union[dict, 
         return details_json
 
 
-@_check_auth
+@check_auth
 def get_block_coverage(block_id: str) -> dict:
     """
     Gets the spatial coverage of a data/processing block as
@@ -214,7 +214,7 @@ def get_block_coverage(block_id: str) -> dict:
     return requests.get(details_json["url"]).json()
 
 
-@_check_auth
+@check_auth
 def get_credits_balance() -> dict:
     """
     Display the overall credits available in your account.
