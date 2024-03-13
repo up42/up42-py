@@ -19,7 +19,7 @@ class StatusValidatingSession(requests.Session):
 @functools.lru_cache
 def create(
     create_adapter=http_adapter.create,
-    create_auth=oauth.ProjectAuth,
+    create_auth=oauth.Up42Auth,
 ) -> requests.Session:
     session = StatusValidatingSession()
     adapter = create_adapter()
