@@ -34,14 +34,14 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **March 13, 2024**
 
-- Adjusted `order.py`, `test_order.py`, and `fixtures_order.py` in accordance with Pylint checks.
+- Adjusted `order.py`, `test_order.py` and `fixtures_order.py` in accordance with Pylint checks.
 
 
 ## 0.37.0a6
 
 **March 13, 2024**
 
-- Adjusted `host.py`, `tools.py`, `test_tools.py`, `storage.py`, `test_storage.py`, and `fixtures_storage.py` in accordance with Pylint checks.
+- Adjusted `host.py`, `tools.py`, `test_tools.py`, `storage.py`, `test_storage.py` and `fixtures_storage.py` in accordance with Pylint checks.
 
 ## 0.37.0a5
 
