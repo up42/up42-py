@@ -32,7 +32,6 @@ def test_repr(auth_mock):
     assert repr(order_placed) == expected_repr
 
 
-# pylint: disable=unused-argument
 @pytest.mark.parametrize("status", ["PLACED", "FULFILLED"])
 def test_order_status(order_mock, status, monkeypatch):
     monkeypatch.setattr(order.Order, "info", {"status": status})
@@ -104,6 +103,7 @@ def test_should_fail_to_get_assets_for_unfulfilled_order(auth_mock, requests_moc
         order_placed.get_assets()
 
 
+# pylint: disable=unused-argument
 def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
         url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
@@ -118,7 +118,7 @@ def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_m
     assert order_placed.order_parameters == catalog_order_parameters
 
 
-def test_place_order_fails_if_response_contains_error(catalog_order_parameters, auth_mock, order_mock, requests_mock):
+def test_place_order_fails_if_response_contains_error(catalog_order_parameters, auth_mock, requests_mock):
     error_content = "test error"
     requests_mock.post(
         url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
