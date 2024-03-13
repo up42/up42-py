@@ -1,11 +1,5 @@
 SRC := .
 
-e2e:
-	rm -rf project_20abe*/
-	poetry run python $(SRC)/tests/test_e2e_30sec.py
-	poetry run python $(SRC)/tests/test_e2e_catalog.py
-	rm -rf project_20abe*/
-
 # Preview of mkdocs
 serve:
 	ln -sfn $(PWD)/examples docs

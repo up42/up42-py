@@ -30,6 +30,13 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.37.0a11
+
+**March 13, 2024**
+
+- Adjusted `asset.py`, `asset_searcher.py`, `test_asset.py` and `fixtures_asset.py` in accordance with Pylint checks.
+- Dropped `test_e2e_catalog.py` since it is covered by SDK tests.
+
 ## 0.37.0a10
 
 **March 13, 2024**
