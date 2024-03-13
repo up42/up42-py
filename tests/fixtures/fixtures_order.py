@@ -1,5 +1,4 @@
 import json
-import os
 import pathlib
 
 import pytest
@@ -63,11 +62,6 @@ def order_mock(auth_mock, requests_mock):
     requests_mock.get(url=url_order_info, json=read_test_order_info())
 
     return order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
-
-
-@pytest.fixture()
-def order_live(auth_live):
-    return order.Order(auth=auth_live, order_id=os.environ["TEST_UP42_ORDER_ID"])
 
 
 @pytest.fixture(name="catalog_order_parameters")

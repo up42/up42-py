@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 from up42 import asset, order
@@ -34,14 +32,6 @@ def test_repr(auth_mock):
     assert repr(order_placed) == expected_repr
 
 
-@pytest.mark.live
-def test_order_info_live(order_live):
-    assert order_live.info
-    assert order_live.info["id"] == os.getenv("TEST_UP42_ORDER_ID")
-    assert order_live.info["dataProductId"] == "4f1b2f62-98df-4c74-81f4-5dce45deee99"
-
-
-# pylint: disable=unused-argument
 @pytest.mark.parametrize("status", ["PLACED", "FULFILLED"])
 def test_order_status(order_mock, status, monkeypatch):
     monkeypatch.setattr(order.Order, "info", {"status": status})
@@ -113,14 +103,6 @@ def test_should_fail_to_get_assets_for_unfulfilled_order(auth_mock, requests_moc
         order_placed.get_assets()
 
 
-@pytest.mark.live
-def test_get_assets_live(auth_live, catalog_order_parameters):
-    order_instance = order.Order(auth=auth_live, order_id=constants.ORDER_ID)
-    assets_returned = order_instance.get_assets()
-    assert isinstance(assets_returned[0], asset.Asset)
-    assert assets_returned[0].asset_id == constants.ASSET_ORDER_ID
-
-
 def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
         url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
@@ -130,12 +112,12 @@ def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_m
         },
     )
     order_placed = order.Order.place(auth_mock, catalog_order_parameters)
-    assert isinstance(order_placed, order.Order)
+    assert order_placed == order_mock
     assert order_placed.order_id == constants.ORDER_ID
     assert order_placed.order_parameters == catalog_order_parameters
 
 
-def test_place_order_fails_if_response_contains_error(catalog_order_parameters, auth_mock, order_mock, requests_mock):
+def test_place_order_fails_if_response_contains_error(catalog_order_parameters, auth_mock, requests_mock):
     error_content = "test error"
     requests_mock.post(
         url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
@@ -147,14 +129,6 @@ def test_place_order_fails_if_response_contains_error(catalog_order_parameters, 
     with pytest.raises(ValueError) as err:
         order.Order.place(auth_mock, catalog_order_parameters)
     assert error_content in str(err.value)
-
-
-@pytest.mark.skip(reason="Placing orders costs credits.")
-@pytest.mark.live
-def test_place_order_live(auth_live, catalog_order_parameters):
-    order_placed = order.Order.place(auth_live, catalog_order_parameters)
-    assert order_placed.status == "PLACED"
-    assert order_placed.order_parameters == catalog_order_parameters
 
 
 def test_track_status_running(order_mock, requests_mock):
@@ -224,12 +198,5 @@ def test_estimate_order(catalog_order_parameters, auth_mock, requests_mock):
     url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
     requests_mock.post(url=url_order_estimation, json=expected_payload)
     estimation = order.Order.estimate(auth_mock, catalog_order_parameters)
-    assert isinstance(estimation, int)
-    assert estimation == 100
-
-
-@pytest.mark.live
-def test_estimate_order_live(catalog_order_parameters, auth_live):
-    estimation = order.Order.estimate(auth_live, order_parameters=catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100

@@ -30,19 +30,32 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.37.0a8
+
+**March 13, 2024**
+
+- Adjusted `estimate.py`, `test_estimate.py` and `fixtures_estimate.py` in accordance with Pylint checks.
+
+
+## 0.37.0a7
+
+**March 13, 2024**
+
+- Adjusted `order.py`, `test_order.py` and `fixtures_order.py` in accordance with Pylint checks.
+
 
 ## 0.37.0a6
 
-**March 07, 2024**
+**March 13, 2024**
 
-- Adjusted `estimate.py`, `test_estimate.py`, and `fixtures_estimate.py` in accordance with Pylint checks.
-
+- Adjusted `host.py`, `tools.py`, `test_tools.py`, `storage.py`, `test_storage.py` and `fixtures_storage.py` in accordance with Pylint checks.
 
 ## 0.37.0a5
 
-**March 07, 2024**
+**March 11, 2024**
 
-- Adjusted `order.py`, `test_order.py`, and `fixtures_order.py` in accordance with Pylint checks.
+- Adjusted `auth.py` and `oauth.py` with their coverage and fixtures in accordance with Pylint checks.
+- Adjusted `conftest.py` in accordance with Pylint checks.
 
 
 ## 0.37.0a4
@@ -50,7 +63,6 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **March 07, 2024**
 
 - Generalized new authentication stack to cover account authentication case.
-
 
 ## 0.37.0a3
 
