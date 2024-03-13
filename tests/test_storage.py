@@ -1,6 +1,3 @@
-import copy
-from typing import List, cast
-
 import pystac_client
 import pytest
 
@@ -114,43 +111,6 @@ def test_get_assets_with_search_stac(storage_mock):
             tags=["project-7", "optical"],
         )
         assert "no longer supported" in str(e.value)
-
-
-def test_get_assets_with_stac_query_pagination(storage_mock, requests_mock):
-    """
-    Test the stac query pagination by checking the token element in the payload.
-    if the response has the token element in the body, then the _query_paginated_stac_search
-    retrieves the next page and append the features in the return list.
-    Otherwise, return the current list of features.
-    """
-
-    def match_request_text(request):
-        return "token" in request.body
-
-    url_storage_stac = "http://some_url/assets/stac/search"
-    stac_search_parameters = {
-        "max_items": 100,
-        "limit": 10000,
-    }
-
-    requests_mock.post(
-        url_storage_stac,
-        json=constants.JSON_STORAGE_STAC,
-    )
-
-    json_storage_stac = copy.deepcopy(constants.JSON_STORAGE_STAC)
-    cast(List, json_storage_stac["links"]).pop(-1)
-
-    requests_mock.post(
-        url_storage_stac,
-        additional_matcher=match_request_text,
-        json=json_storage_stac,
-    )
-
-    resp = storage_mock._query_paginated_stac_search(
-        url=url_storage_stac, stac_search_parameters=stac_search_parameters
-    )
-    assert len(resp) == 2
 
 
 def test_get_assets_pagination(auth_mock, requests_mock):
