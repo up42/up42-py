@@ -181,8 +181,7 @@ def download_gcs_not_unpack(download_url: str, output_directory: Union[str, path
             raise requests.exceptions.HTTPError(f"Connection error, please try again! {err}")
 
         logger.info("Successfully downloaded the file at %s", out_fp)
-        out_filepaths = [str(out_fp)]
-        return out_filepaths
+        return [str(out_fp)]
 
 
 def format_time(date: Optional[Union[str, datetime.datetime]], set_end_of_day=False):
@@ -396,7 +395,7 @@ def replace_page_query(url: str, new_page: int) -> str:
     encoded_query = parse.urlencode(query_params, doseq=True)
 
     # Reconstruct the modified URL
-    modified_url = parse.urlunparse(
+    return parse.urlunparse(
         (
             parsed_url.scheme,
             parsed_url.netloc,
@@ -406,8 +405,6 @@ def replace_page_query(url: str, new_page: int) -> str:
             parsed_url.fragment,
         )
     )
-
-    return modified_url
 
 
 def get_up42_py_version():
