@@ -228,6 +228,7 @@ def test_should_initialize_job_collection_with_implicit_project_id(job_mock):
         authenticate=False,
     )
     collection = up42.initialization.initialize_jobcollection([constants.JOB_ID])
+    assert collection.jobs[0].info == job_mock.info
     assert all(job.project_id == constants.PROJECT_ID for job in collection.jobs)
     assert collection.project_id == constants.PROJECT_ID
 
