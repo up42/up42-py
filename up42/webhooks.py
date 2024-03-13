@@ -1,7 +1,7 @@
 from typing import List, Optional
 
+from up42 import auth as up42_auth
 from up42 import host, utils
-from up42.auth import Auth
 
 logger = utils.get_logger(__name__)
 
@@ -17,7 +17,7 @@ class Webhook:
     ```
     """
 
-    def __init__(self, auth: Auth, webhook_id: str, webhook_info: Optional[dict] = None):
+    def __init__(self, auth: up42_auth.Auth, webhook_id: str, webhook_info: Optional[dict] = None):
         self.auth = auth
         self.workspace_id = auth.workspace_id
         self.webhook_id = webhook_id
@@ -50,12 +50,12 @@ class Webhook:
         return self.auth.request(request_type="POST", url=url)["data"]
 
     def update(
-            self,
-            name: Optional[str] = None,
-            url: Optional[str] = None,
-            events: Optional[List[str]] = None,
-            active: Optional[bool] = None,
-            secret: Optional[str] = None,
+        self,
+        name: Optional[str] = None,
+        url: Optional[str] = None,
+        events: Optional[List[str]] = None,
+        active: Optional[bool] = None,
+        secret: Optional[str] = None,
     ) -> "Webhook":
         """
         Updates a registered webhook.
@@ -114,7 +114,7 @@ class Webhooks:
     ```
     """
 
-    def __init__(self, auth: Auth):
+    def __init__(self, auth: up42_auth.Auth):
         self.auth = auth
         self.workspace_id = auth.workspace_id
 
@@ -155,12 +155,12 @@ class Webhooks:
         return webhooks
 
     def create_webhook(
-            self,
-            name: str,
-            url: str,
-            events: List[str],
-            active: bool = False,
-            secret: Optional[str] = None,
+        self,
+        name: str,
+        url: str,
+        events: List[str],
+        active: bool = False,
+        secret: Optional[str] = None,
     ) -> Webhook:
         """
         Registers a new webhook in the system.
