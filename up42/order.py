@@ -1,21 +1,19 @@
-from copy import deepcopy
-from time import sleep
+import copy
+import time
 from typing import Any, Dict, List, Optional, TypedDict
 
-from up42.asset import Asset
-from up42.asset_searcher import AssetSearchParams, search_assets
-from up42.auth import Auth
-from up42.host import endpoint
-from up42.utils import get_logger
+from up42 import asset, asset_searcher
+from up42 import auth as up42_auth
+from up42 import host, utils
 
-logger = get_logger(__name__)
+logger = utils.get_logger(__name__)
 
 MAX_ITEM = 200
 LIMIT = 200
 
 
 def _translate_construct_parameters(order_parameters):
-    order_parameters_v2 = deepcopy(order_parameters)
+    order_parameters_v2 = copy.deepcopy(order_parameters)
     params = order_parameters_v2["params"]
     data_product_id = order_parameters_v2["dataProduct"]
     default_name = f"{data_product_id} order"
@@ -43,7 +41,7 @@ class OrderParams(TypedDict):
     tags: User tags to helping to identify the order.
     """
 
-    dataProduct: str
+    dataProduct: str  # pylint: disable=invalid-name
     params: Dict[str, Any]
     tags: List[str]
 
@@ -60,7 +58,7 @@ class Order:
 
     def __init__(
         self,
-        auth: Auth,
+        auth: up42_auth.Auth,
         order_id: str,
         order_parameters: Optional[dict] = None,
         order_info: Optional[dict] = None,
@@ -87,7 +85,7 @@ class Order:
         """
         Gets and updates the order information.
         """
-        url = endpoint(f"/v2/orders/{self.order_id}")
+        url = host.endpoint(f"/v2/orders/{self.order_id}")
         response_json = self.auth.request(request_type="GET", url=url)
         self._info = response_json
         return self._info
@@ -98,7 +96,7 @@ class Order:
         Gets the Order status. One of `PLACED`, `FAILED`, `FULFILLED`, `BEING_FULFILLED`, `FAILED_PERMANENTLY`.
         """
         status = self.info["status"]
-        logger.info(f"Order is {status}")
+        logger.info("Order is %s", status)
         return status
 
     @property
@@ -120,18 +118,18 @@ class Order:
         """
         return self.status == "FULFILLED"
 
-    def get_assets(self) -> List[Asset]:
+    def get_assets(self) -> List[asset.Asset]:
         """
         Gets the Order assets or results.
         """
         if self.is_fulfilled:
-            params: AssetSearchParams = {"search": self.order_id}
-            assets_response = search_assets(self.auth, params=params)
-            return [Asset(self.auth, asset_info=asset_info) for asset_info in assets_response]
+            params: asset_searcher.AssetSearchParams = {"search": self.order_id}
+            assets_response = asset_searcher.search_assets(self.auth, params=params)
+            return [asset.Asset(self.auth, asset_info=asset_info) for asset_info in assets_response]
         raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
-    def place(cls, auth: Auth, order_parameters: dict) -> "Order":
+    def place(cls, auth: up42_auth.Auth, order_parameters: dict) -> "Order":
         """
         Places an order.
 
@@ -142,7 +140,7 @@ class Order:
         Returns:
             Order: The placed order.
         """
-        url = endpoint(f"/v2/orders?workspaceId={auth.workspace_id}")
+        url = host.endpoint(f"/v2/orders?workspaceId={auth.workspace_id}")
         response_json = auth.request(
             request_type="POST",
             url=url,
@@ -153,11 +151,11 @@ class Order:
             raise ValueError(f"Order was not placed: {message}")
         order_id = response_json["results"][0]["id"]
         order = cls(auth=auth, order_id=order_id, order_parameters=order_parameters)
-        logger.info(f"Order {order.order_id} is now {order.status}.")
+        logger.info("Order %s is now %s.", order.order_id, order.status)
         return order
 
     @staticmethod
-    def estimate(auth: Auth, order_parameters: OrderParams) -> int:
+    def estimate(auth: up42_auth.Auth, order_parameters: OrderParams) -> int:
         """
         Returns an estimation of the cost of an order.
 
@@ -169,7 +167,7 @@ class Order:
             int: The estimated cost of the order
         """
 
-        url = endpoint("/v2/orders/estimate")
+        url = host.endpoint("/v2/orders/estimate")
         response_json = auth.request(
             request_type="POST",
             url=url,
@@ -177,7 +175,7 @@ class Order:
         )
         estimated_credits: int = response_json["summary"]["totalCredits"]
         logger.info(
-            f"Order is estimated to cost {estimated_credits} UP42 credits (order_parameters: {order_parameters})"
+            "Order is estimated to cost %s UP42 credits (order_parameters: %s)", estimated_credits, order_parameters
         )
         return estimated_credits
 
@@ -214,9 +212,7 @@ class Order:
                 return f"{substatus}, {message}"
             return f"{substatus}"
 
-        logger.info(
-            f"Tracking order status, reporting every {str(report_time)} seconds...",
-        )
+        logger.info("Tracking order status, reporting every %s seconds...", report_time)
         time_asleep = 0
 
         # check order details and react for tasking orders.
@@ -228,15 +224,15 @@ class Order:
             )
             if status in ["PLACED", "BEING_FULFILLED"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
-                    logger.info(f"Order is {status}! - {self.order_id}")
+                    logger.info("Order is %s! - %s", status, self.order_id)
                     logger.info(substatus_message)
 
             elif status in ["FAILED", "FAILED_PERMANENTLY"]:
-                logger.info(f"Order is {status}! - {self.order_id}")
+                logger.info("Order is %s! - %s", status, self.order_id)
                 raise ValueError("Order has failed!")
 
-            sleep(report_time)
+            time.sleep(report_time)
             time_asleep += report_time
 
-        logger.info(f"Order is fulfilled successfully! - {self.order_id}")
+        logger.info("Order is fulfilled successfully! - %s", self.order_id)
         return self.status
