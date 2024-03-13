@@ -28,7 +28,7 @@ def _get_project_id(project_id: Optional[str]) -> str:
             DeprecationWarning,
             stacklevel=2,
         )
-    result = project_id or str(main.__get_auth_safely().project_id)
+    result = project_id or main.__get_auth_safely().project_id
     if not result:
         raise ValueError("Project ID can't be null")
     return result
