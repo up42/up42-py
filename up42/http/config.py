@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Union
 
+from up42 import host  # TODO: host to be moved to http package to avoid circular dependencies
+
 
 @dataclass(eq=True, frozen=True)
 class ResilienceSettings:
@@ -11,7 +13,7 @@ class ResilienceSettings:
 
 @dataclass(eq=True, frozen=True)
 class TokenProviderSettings:
-    token_url: str
+    token_url: str = host.endpoint("/oauth/token")
     duration: int = 5 * 60
     timeout: int = 120
 
