@@ -32,11 +32,12 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 0.37.0a11
 
-**March 13, 2024**
+**March 14, 2024**
 
 - Adjusted `asset.py`, `asset_searcher.py`, `test_asset.py` and `fixtures_asset.py` in accordance with Pylint checks.
 - Adjusted `test_http_adapter.py` in accordance with Pylint checks.
 - Dropped `test_e2e_catalog.py` since it is covered by SDK tests.
+- Fixed a flaky test in `test_session.py`
 
 ## 0.37.0a10
 
