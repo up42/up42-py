@@ -30,6 +30,13 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.37.0a8
+
+**March 13, 2024**
+
+- Adjusted `estimation.py`, `test_estimation.py` and `fixtures_estimation.py` in accordance with Pylint checks.
+
+
 ## 0.37.0a7
 
 **March 13, 2024**
