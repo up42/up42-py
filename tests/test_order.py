@@ -103,7 +103,6 @@ def test_should_fail_to_get_assets_for_unfulfilled_order(auth_mock, requests_moc
         order_placed.get_assets()
 
 
-# pylint: disable=unused-argument
 def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_mock):
     requests_mock.post(
         url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
@@ -113,7 +112,7 @@ def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_m
         },
     )
     order_placed = order.Order.place(auth_mock, catalog_order_parameters)
-    assert isinstance(order_placed, order.Order)
+    assert order_placed == order_mock
     assert order_placed.order_id == constants.ORDER_ID
     assert order_placed.order_parameters == catalog_order_parameters
 
