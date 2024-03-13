@@ -20,6 +20,7 @@ import tqdm
 from shapely import geometry  # type: ignore
 
 TIMEOUT = 120  # seconds
+CHUNK_SIZE = 1024
 
 
 def get_filename(signed_url: str, default_filename: str) -> str:
@@ -115,7 +116,7 @@ def download_from_gcs_unpack(
         try:
             r = requests.get(download_url, stream=True, timeout=TIMEOUT)
             r.raise_for_status()
-            for chunk in tqdm.tqdm(r.iter_content(chunk_size=1024)):
+            for chunk in tqdm.tqdm(r.iter_content(chunk_size=CHUNK_SIZE)):
                 if chunk:  # filter out keep-alive new chunks
                     dst.write(chunk)
         except requests.exceptions.HTTPError as err:
@@ -172,16 +173,16 @@ def download_gcs_not_unpack(download_url: str, output_directory: Union[str, path
         try:
             r = requests.get(download_url, stream=True, timeout=TIMEOUT)
             r.raise_for_status()
-            for chunk in tqdm.tqdm(r.iter_content(chunk_size=1024)):
+            for chunk in tqdm.tqdm(r.iter_content(chunk_size=CHUNK_SIZE)):
                 if chunk:  # filter out keep-alive new chunks
                     dst.write(chunk)
         except requests.exceptions.HTTPError as err:
             logger.debug("Connection error, please try again! %s", err)
             raise requests.exceptions.HTTPError(f"Connection error, please try again! {err}")
 
-    logger.info("Successfully downloaded the file at %s", out_fp)
-    out_filepaths = [str(out_fp)]
-    return out_filepaths
+        logger.info("Successfully downloaded the file at %s", out_fp)
+        out_filepaths = [str(out_fp)]
+        return out_filepaths
 
 
 def format_time(date: Optional[Union[str, datetime.datetime]], set_end_of_day=False):
@@ -281,12 +282,10 @@ def validate_fc_up42_requirements(fc: Union[dict, geojson.FeatureCollection]):
     """
     geometry_error = "UP42 only accepts single geometries, the provided geometry {}."
     if len(fc["features"]) != 1:
-        logger.info("%s contains multiple geometries", geometry_error)
         raise ValueError(geometry_error.format("contains multiple geometries"))
 
     fc_type = fc["features"][0]["geometry"]["type"]
     if fc_type != "Polygon":
-        logger.info("%s is a %s", geometry_error, fc_type)
         raise ValueError(geometry_error.format(f"is a {fc_type}"))
 
 
@@ -342,9 +341,8 @@ def filter_jobs_on_mode(jobs_json: List[dict], test_jobs: bool = True, real_jobs
         selected_modes.append("DEFAULT")
     if not selected_modes:
         raise ValueError("At least one of test_jobs and real_jobs must be True.")
-    jobs_json = [job for job in jobs_json if job["mode"] in selected_modes]
     logger.info("Returning %s jobs.", selected_modes)
-    return jobs_json
+    return [job for job in jobs_json if job["mode"] in selected_modes]
 
 
 def autocomplete_order_parameters(order_parameters: dict, schema: dict):
