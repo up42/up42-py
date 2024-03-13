@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **March 13, 2024**
 
-- Adjusted `estimate.py`, `test_estimate.py` and `fixtures_estimate.py` in accordance with Pylint checks.
+- Adjusted `estimation.py`, `test_estimation.py` and `fixtures_estimation.py` in accordance with Pylint checks.
 
 
 ## 0.37.0a7
