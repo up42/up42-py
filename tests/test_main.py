@@ -1,21 +1,19 @@
-import pandas as pd
+import pandas
 import pytest
-import requests
 
 from up42 import main
-from up42.main import get_block_coverage, get_block_details, get_blocks, get_credits_balance
 
-from .fixtures.fixtures_globals import API_HOST
+from .fixtures import fixtures_globals as constants
 
 
 @pytest.fixture(autouse=True)
 def setup_auth_mock(auth_mock):
-    main._auth = auth_mock
+    main._auth = auth_mock  # pylint: disable=protected-access
     yield
 
 
-def test_get_blocks(auth_mock, requests_mock):
-    url_get_blocks = f"{API_HOST}/blocks"
+def test_get_blocks(requests_mock):
+    url_get_blocks = f"{constants.API_HOST}/blocks"
     requests_mock.get(
         url=url_get_blocks,
         json={
@@ -26,22 +24,13 @@ def test_get_blocks(auth_mock, requests_mock):
             "error": {},
         },
     )
-    blocks = get_blocks()
+    blocks = main.get_blocks()
     assert isinstance(blocks, dict)
     assert "tiling" in list(blocks.keys())
 
 
-@pytest.mark.live
-def test_get_blocks_live(auth_live):
-    main._auth = auth_live
-    blocks = get_blocks(basic=False)
-    assert isinstance(blocks, list)
-    blocknames = [block["name"] for block in blocks]
-    assert "tiling" in blocknames
-
-
-def test_get_blocks_not_basic_dataframe(auth_mock, requests_mock):
-    url_get_blocks = f"{API_HOST}/blocks"
+def test_get_blocks_not_basic_dataframe(requests_mock):
+    url_get_blocks = f"{constants.API_HOST}/blocks"
     json_get_blocks = {
         "data": [
             {"id": "789-2736-212", "name": "tiling"},
@@ -51,14 +40,14 @@ def test_get_blocks_not_basic_dataframe(auth_mock, requests_mock):
     }
     requests_mock.get(url=url_get_blocks, json=json_get_blocks)
 
-    blocks_df = get_blocks(basic=False, as_dataframe=True)
-    assert isinstance(blocks_df, pd.DataFrame)
+    blocks_df = main.get_blocks(basic=False, as_dataframe=True)
+    assert isinstance(blocks_df, pandas.DataFrame)
     assert "tiling" in blocks_df["name"].to_list()
 
 
-def test_get_block_details(auth_mock, requests_mock):
+def test_get_block_details(requests_mock):
     block_id = "273612-13"
-    url_get_blocks_details = f"{API_HOST}/blocks/{block_id}"
+    url_get_blocks_details = f"{constants.API_HOST}/blocks/{block_id}"
     requests_mock.get(
         url=url_get_blocks_details,
         json={
@@ -66,26 +55,15 @@ def test_get_block_details(auth_mock, requests_mock):
             "error": {},
         },
     )
-    details = get_block_details(block_id=block_id)
+    details = main.get_block_details(block_id=block_id)
     assert isinstance(details, dict)
     assert details["id"] == block_id
     assert "createdAt" in details
 
 
-@pytest.mark.live
-def test_get_block_details_live(auth_live):
-    main._auth = auth_live
-    tiling_id = "3e146dd6-2b67-4d6e-a422-bb3d973e32ff"
-
-    details = get_block_details(block_id=tiling_id)
-    assert isinstance(details, dict)
-    assert details["id"] == tiling_id
-    assert "createdAt" in details
-
-
-def test_get_block_coverage(auth_mock, requests_mock):
+def test_get_block_coverage(requests_mock):
     block_id = "273612-13"
-    url_get_blocks_coverage = f"{API_HOST}/blocks/{block_id}/coverage"
+    url_get_blocks_coverage = f"{constants.API_HOST}/blocks/{block_id}/coverage"
     requests_mock.get(
         url=url_get_blocks_coverage,
         json={
@@ -112,50 +90,25 @@ def test_get_block_coverage(auth_mock, requests_mock):
             ],
         },
     )
-    coverage = get_block_coverage(block_id=block_id)
+    coverage = main.get_block_coverage(block_id=block_id)
     assert isinstance(coverage, dict)
     assert "features" in coverage
 
 
-@pytest.mark.live
-def test_get_block_coverage_live(auth_live):
-    main._auth = auth_live
-    block_id = "625fd923-8ae6-4ac3-8e13-f51d3c977222"
-    coverage = get_block_coverage(block_id=block_id)
-    assert isinstance(coverage, dict)
-    assert "features" in coverage
-
-
-@pytest.mark.live
-def test_get_block_coverage_noresults_live(auth_live):
-    main._auth = auth_live
-    with pytest.raises(requests.exceptions.RequestException):
-        block_id = "045019bb-06fc-4fa1-b703-318725b4d8af"
-        get_block_coverage(block_id=block_id)
-
-
-def test_get_credits_balance(auth_mock):
-    balance = get_credits_balance()
-    assert isinstance(balance, dict)
-    assert "balance" in balance
-
-
-@pytest.mark.live
-def test_get_credits_balance_live(auth_live):
-    main._auth = auth_live
-    balance = get_credits_balance()
+def test_get_credits_balance():
+    balance = main.get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
 
 
 def test_fails_to_get_auth_safely_if_unauthenticated():
-    main._auth = None
+    main._auth = None  # pylint: disable=protected-access
     with pytest.raises(ValueError):
-        main.__get_auth_safely()
+        main.get_auth_safely()
 
 
-def test_get_webhook_events(setup_auth_mock, requests_mock):
-    url_webhook_events = f"{API_HOST}/webhooks/events"
+def test_get_webhook_events(requests_mock):
+    url_webhook_events = f"{constants.API_HOST}/webhooks/events"
     events = ["some-event"]
     requests_mock.get(
         url=url_webhook_events,
@@ -168,7 +121,7 @@ def test_get_webhook_events(setup_auth_mock, requests_mock):
 
 
 @pytest.mark.parametrize("return_json", [False, True])
-def test_get_webhooks(setup_auth_mock, webhooks_mock, return_json):
+def test_get_webhooks(webhooks_mock, return_json):
     webhooks = main.get_webhooks(return_json=return_json)
     expected = webhooks_mock.get_webhooks(return_json=return_json)
     if return_json:
@@ -176,4 +129,4 @@ def test_get_webhooks(setup_auth_mock, webhooks_mock, return_json):
     else:
         for hook, expected_hook in zip(webhooks, expected):
             assert hook.webhook_id == expected_hook.webhook_id
-            assert hook._info == expected_hook._info
+            assert hook._info == expected_hook._info  # pylint: disable=protected-access

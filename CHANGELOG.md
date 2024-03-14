@@ -30,6 +30,13 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.37.0a12
+
+**March 14, 2024**
+
+- Adjusted `initialization.py`, `test_initialization.py`, `main.py` and `test_main.py` in accordance with Pylint checks.
+
+
 ## 0.37.0a11
 
 **March 14, 2024**
