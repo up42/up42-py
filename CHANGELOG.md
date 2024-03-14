@@ -39,6 +39,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Dropped `test_e2e_catalog.py` since it is covered by SDK tests.
 - Fixed a flaky test in `test_session.py`
 
+
 ## 0.37.0a10
 
 **March 13, 2024**
@@ -52,11 +53,13 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 - Adjusted `macros.py`, `utils.py`, and `test_utils.py` in accordance with Pylint checks.
 
+
 ## 0.37.0a8
 
 **March 13, 2024**
 
 - Adjusted `estimation.py`, `test_estimation.py` and `fixtures_estimation.py` in accordance with Pylint checks.
+
 
 ## 0.37.0a7
 
@@ -64,12 +67,12 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 - Adjusted `order.py`, `test_order.py` and `fixtures_order.py` in accordance with Pylint checks.
 
+
 ## 0.37.0a6
 
 **March 13, 2024**
 
-- Adjusted `host.py`, `tools.py`, `test_tools.py`, `storage.py`, `test_storage.py` and `fixtures_storage.py` in
-  accordance with Pylint checks.
+- Adjusted `host.py`, `tools.py`, `test_tools.py`, `storage.py`, `test_storage.py` and `fixtures_storage.py` in accordance with Pylint checks.
 
 ## 0.37.0a5
 
@@ -77,6 +80,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 - Adjusted `auth.py` and `oauth.py` with their coverage and fixtures in accordance with Pylint checks.
 - Adjusted `conftest.py` in accordance with Pylint checks.
+
 
 ## 0.37.0a4
 
@@ -97,12 +101,13 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Adjusted `catalog.py` and `test_catalog.py` in accordance with Pylint checks.
 - Conducted minor refactoring in other classes due to changes in function names within the authentication module.
 
+
 ## 0.37.0a1
 
 **March 06, 2024**
 
-- Added a new component within the HTTP layer to facilitate future enhancements in authentication and request processes:
-  ported a resilient and authenticated cached session.
+- Added a new component within the HTTP layer to facilitate future enhancements in authentication and request processes: ported a resilient and authenticated cached session.
+
 
 ## 0.37.0a0
 
@@ -117,8 +122,7 @@ Added new components within the HTTP layer to facilitate future enhancements in 
 
 **February 20, 2024**
 
-- Updated the `place_order()` and `estimate_order()` functions of the CatalogBase class to the latest version of the
-  API.
+- Updated the `place_order()` and `estimate_order()` functions of the CatalogBase class to the latest version of the API.
 
 ## 0.35.0
 
@@ -175,7 +179,8 @@ Added new components within the HTTP layer to facilitate future enhancements in 
         - `plot_results()`
         - `plot_quicklooks()`
 
-  They will be discontinued after March 31, 2024.
+    They will be discontinued after March 31, 2024.
+
 
 ## 0.34.1
 
@@ -195,8 +200,7 @@ Added new components within the HTTP layer to facilitate future enhancements in 
 
 **November 23, 2023**
 
-Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of
-the [PySTAC client](https://sdk.up42.com/notebooks/stac-example/#pystac) search.
+Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of the [PySTAC client](https://sdk.up42.com/notebooks/stac-example/#pystac) search.
 
 - `geometry`
 - `acquired_before`
@@ -208,8 +212,7 @@ the [PySTAC client](https://sdk.up42.com/notebooks/stac-example/#pystac) search.
 **November 14, 2023**
 
 - Updated [authentication](https://sdk.up42.com/authentication) by changing it from project-based to account-based.
-- Added a new function to the [Asset class](https://sdk.up42.com/reference/asset-reference): `get_stac_asset_url`
-  generates a signed URL that allows to download a STAC asset from storage without authentication.
+- Added a new function to the [Asset class](https://sdk.up42.com/reference/asset-reference): `get_stac_asset_url` generates a signed URL that allows to download a STAC asset from storage without authentication.
 
 ## 0.32.0
 
@@ -234,9 +237,7 @@ A new function added to the [Asset class](https://sdk.up42.com/reference/asset-r
 
 **July 14, 2023**
 
-Fixed the
-failing [construct_order_parameters](https://sdk.up42.com/reference/tasking-reference/#construct_order_parameters)
-function and updated tests.
+Fixed the failing [construct_order_parameters](https://sdk.up42.com/reference/tasking-reference/#construct_order_parameters) function and updated tests.
 
 ## 0.30.0
 
@@ -244,9 +245,7 @@ function and updated tests.
 
 Added a new `tags` argument to the following functions:
 
-- `construct_order_parameters`, to assign tags to
-  new [tasking](https://sdk.up42.com/reference/tasking-reference/#construct_order_parameters)
-  and [catalog](https://sdk.up42.com/reference/catalog-reference/) orders.
+- `construct_order_parameters`, to assign tags to new [tasking](https://sdk.up42.com/reference/tasking-reference/#construct_order_parameters) and [catalog](https://sdk.up42.com/reference/catalog-reference/) orders.
 - `get_order`, to filter [orders](https://sdk.up42.com/reference/storage-reference/) by tags.
 - `get_assets`, to filter [assets](https://sdk.up42.com/reference/storage-reference/) by tags.
 
@@ -304,10 +303,10 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 
 - Remove Python version upper bound, this will enable immediate but untested installation with any new Python version.
 - Changes to `workflow.construct_parameters`:
-    - Deprecates the `assets` parameter (list of asset objects), instead use `asset_ids` (list of asset_ids).
-    - Removes limitation of using only assets originating from blocks, now also supports assets from catalog &
-      tasking.
-    - In addition to required parameters, now adds all optional parameters that have default values.
+  - Deprecates the `assets` parameter (list of asset objects), instead use `asset_ids` (list of asset_ids).
+  - Removes limitation of using only assets originating from blocks, now also supports assets from catalog &
+    tasking.
+  - In addition to required parameters, now adds all optional parameters that have default values.
 - `tasking.construct_order_parameters` now accepts a Point feature (e.g. use with Blacksky).
 - Fix: `get_data_products` with `basic=False` now correctly returns only tasking OR catalog products.
 - The up42 object now correctly does not give access to third party imports anymore (restructured init module).
@@ -431,7 +430,7 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
   and `storage.get_assets`. Now also uses results pagination which avoids timeout issues
   when querying large asset/order collections.
 - Significant speed improvement for:
-  -`.get_jobs`, `.get_workflows`, `.get_assets`, `.get_orders` calls.
+    -`.get_jobs`, `.get_workflows`, `.get_assets`, `.get_orders` calls.
     - `workflow.create_workflow` when used with `existing=True`.
     - Printing objects representations, which now does not trigger additional object info API calls.
 - Removal: Removes deprecated handling of multiple features as input geometry in `.construct_parameters`
@@ -461,8 +460,7 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 
 - Limit memory usage for large file downloads (#237)
 - Remove deprecated job.get_status() (Replace by job.status) (#224)
-- Remove deprecated jobcollection.get_job_info() and jobcollection.get_status() (Replaced by jobcollection.info and
-  jobcollection.status)
+- Remove deprecated jobcollection.get_job_info() and jobcollection.get_status() (Replaced by jobcollection.info and jobcollection.status)
 - Remove order-id functionality (#228)
 - Limit installation to Python <=3.9.4
 - Internal code improvements (e.g. project settings, retry)
@@ -497,9 +495,7 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 
 - Add `workflow.estimate_job()` function for estimation of credit costs & job duration before running a job.
 - Add `bands=[3,2,1]` parameter in `.plot_results()` and `.map_results()` for band & band order selection.
-- `.plot_results()` now accepts kwargs
-  of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show) and
-  matplotlib.
+- `.plot_results()` now accepts kwargs of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show) and matplotlib.
 - Add `up42.initialize_jobcollection()`
 - Add `get_estimation=False` parameter to `workflow.test_job`.
 - Add ship-identification example.
@@ -519,12 +515,11 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 
 - New consistent use & documentation of the basic functionality:
     - All [basic functions](up42-reference.md) (e.g. `up42.get_blocks`) are accessible
-      from the `up42` import object. Now consistently documented in the `up42`
-      [object code reference](up42-reference.md).
+        from the `up42` import object. Now consistently documented in the `up42`
+        [object code reference](up42-reference.md).
     - The option to use this basic functionality from any lower level object will soon be
-      removed (e.g. `project.get_blocks`, `workflow.get_blocks`). Now triggers a deprecation warning.
-- The plotting functionality of each object is now documented directly in
-  that [object's code reference](job-reference.md).
+        removed (e.g. `project.get_blocks`, `workflow.get_blocks`). Now triggers a deprecation warning.
+- The plotting functionality of each object is now documented directly in that [object's code reference](job-reference.md).
 - Fix: Repair catalog search for sobloo.
 - *Various improvements to docs & code reference.*
 - *Overhaul & simplify test fixtures.*
@@ -564,8 +559,8 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 **August 7, 2020**
 
 - Add parallel jobs feature. Allows running jobs for multiple geometries, scene_ids or
-  timeperiods in parallel. Adds `workflow.construct_parameters_parallel`,
-  `workflow.test_job_parallel`, `workflow.run_job_parallel` and the new `JobCollection` object.
+ timeperiods in parallel. Adds `workflow.construct_parameters_parallel`,
+ `workflow.test_job_parallel`, `workflow.run_job_parallel` and the new `JobCollection` object.
 - Adjusts `workflow.get_jobs` and `project.get_jobs` to return JobCollections.
 - Adjusts airports-parallel example notebook to use the parallel jobs feature.
 - Adjusts flood mapping example notebook to use OSM block.
