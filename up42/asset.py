@@ -12,6 +12,8 @@ logger = utils.get_logger(__name__)
 MAX_ITEM = 50
 LIMIT = 50
 
+NOT_PROVIDED = object()
+
 
 class Asset:
     """
@@ -93,8 +95,8 @@ class Asset:
 
     def update_metadata(
         self,
-        title: Optional[str] = None,
-        tags: Optional[List[str]] = None,
+        title: Optional[Union[str, object]] = NOT_PROVIDED,
+        tags: Optional[Union[List[str], object]] = NOT_PROVIDED,
         **kwargs,  # pylint: disable=unused-argument
     ) -> dict:
         """
@@ -108,8 +110,8 @@ class Asset:
             The updated asset metadata information
         """
         url = host.endpoint(f"/v2/assets/{self.asset_id}/metadata")
-        body_update: Dict[str, Union[str, List[str]]] = {"title": title} if title is not None else {}
-        if tags is not None:
+        body_update: Dict[str, Union[str, List[str], object]] = {"title": title} if title is not NOT_PROVIDED else {}
+        if tags is not NOT_PROVIDED:
             body_update.update({"tags": tags})
 
         if not body_update:

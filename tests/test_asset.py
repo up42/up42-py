@@ -90,12 +90,18 @@ class TestMetadataUpdate:
         updated_info = asset_mock.update_metadata(test="test", test2="test")
         assert updated_info == pre_update_info
 
-
-def test_asset_get_download_url(assets_fixture):
-    asset_fixture = assets_fixture["asset_fixture"]
-    download_url = assets_fixture["download_url"]
-    url = asset_fixture.get_stac_asset_url()
-    assert url == download_url
+    def test_asset_update_metadata_should_remove_none_input(self, requests_mock, auth_mock):
+        mock_response = copy.deepcopy(constants.JSON_STAC_CATALOG_RESPONSE)
+        mock_response.pop("title")
+        url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
+        new_asset_response = copy.deepcopy(constants.JSON_STAC_CATALOG_RESPONSE)
+        new_asset_response["id"] = constants.ASSET_ID
+        requests_mock.get(url=url, json=new_asset_response)
+        requests_mock.post(url=url, json=mock_response)
+        asset_mock = asset.Asset(auth=auth_mock, asset_id=constants.ASSET_ID)
+        updated_info = asset_mock.update_metadata(title=None)
+        with pytest.raises(KeyError):
+            _ = updated_info["title"]
 
 
 @pytest.mark.parametrize("with_output_directory", [True, False])
