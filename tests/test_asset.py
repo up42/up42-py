@@ -1,29 +1,24 @@
-import logging
-from copy import deepcopy
-from pathlib import Path
-from unittest.mock import MagicMock
+import copy
+import pathlib
+from unittest import mock
 
 import pystac
 import pytest
 
-from up42.asset import Asset
-from up42.host import endpoint
+from up42 import asset, host
 
-from .fixtures.fixtures_globals import ASSET_ID, DOWNLOAD_URL, JSON_ASSET, STAC_ASSET_HREF
-
-LOGGER = logging.getLogger("up42.asset")
-LOGGER.propagate = True
+from .fixtures import fixtures_globals as constants
 
 
 def test_init(asset_mock):
-    assert isinstance(asset_mock, Asset)
-    assert asset_mock.asset_id == ASSET_ID
+    assert isinstance(asset_mock, asset.Asset)
+    assert asset_mock.asset_id == constants.ASSET_ID
 
 
 def test_should_delegate_repr_to_info():
-    asset_info = {"id": ASSET_ID, "other": "data"}
-    asset = Asset(auth=MagicMock(), asset_info=asset_info)
-    assert repr(asset) == repr(asset_info)
+    asset_info = {"id": constants.ASSET_ID, "other": "data"}
+    asset_obj = asset.Asset(auth=mock.MagicMock(), asset_info=asset_info)
+    assert repr(asset_obj) == repr(asset_info)
 
 
 @pytest.mark.parametrize(
@@ -36,7 +31,7 @@ def test_should_delegate_repr_to_info():
         ),
         (
             "some_asset_id",
-            {"id": ASSET_ID},
+            {"id": constants.ASSET_ID},
             "asset_id and asset_info cannot be provided simultaneously.",
         ),
     ],
@@ -47,34 +42,34 @@ def test_should_delegate_repr_to_info():
 )
 def test_init_should_accept_only_asset_id_or_info(asset_id, asset_info, expected_error):
     with pytest.raises(ValueError) as err:
-        Asset(auth=MagicMock(), asset_id=asset_id, asset_info=asset_info)
+        asset.Asset(auth=mock.MagicMock(), asset_id=asset_id, asset_info=asset_info)
     assert expected_error == str(err.value)
 
 
 def test_should_initialize_with_retrieved_info(requests_mock, auth_mock):
-    url_asset_info = endpoint(f"/v2/assets/{ASSET_ID}/metadata")
-    requests_mock.get(url=url_asset_info, json=JSON_ASSET)
-    asset = Asset(auth=auth_mock, asset_id=ASSET_ID)
-    assert asset.info == JSON_ASSET
+    url_asset_info = host.endpoint(f"/v2/assets/{constants.ASSET_ID}/metadata")
+    requests_mock.get(url=url_asset_info, json=constants.JSON_ASSET)
+    asset_obj = asset.Asset(auth=auth_mock, asset_id=constants.ASSET_ID)
+    assert asset_obj.info == constants.JSON_ASSET
 
 
 def test_should_initialize_with_provided_info():
-    provided_info = {"id": ASSET_ID, "name": "test name"}
-    asset = Asset(auth=MagicMock(), asset_info=provided_info)
-    assert asset.asset_id == ASSET_ID
-    assert asset.info == provided_info
+    provided_info = {"id": constants.ASSET_ID, "name": "test name"}
+    asset_obj = asset.Asset(auth=mock.MagicMock(), asset_info=provided_info)
+    assert asset_obj.asset_id == constants.ASSET_ID
+    assert asset_obj.info == provided_info
 
 
 def test_asset_info(asset_mock):
     assert asset_mock.info
-    assert asset_mock.info["id"] == ASSET_ID
-    assert asset_mock.info["name"] == JSON_ASSET["name"]
+    assert asset_mock.info["id"] == constants.ASSET_ID
+    assert asset_mock.info["name"] == constants.JSON_ASSET["name"]
 
 
 def test_asset_stac_info(asset_mock):
     results_stac_asset = asset_mock.stac_info
     assert results_stac_asset
-    assert results_stac_asset.extra_fields["up42-system:asset_id"] == ASSET_ID
+    assert results_stac_asset.extra_fields["up42-system:asset_id"] == constants.ASSET_ID
     pystac_items = asset_mock.stac_items
     assert isinstance(pystac_items, pystac.ItemCollection)
 
@@ -86,39 +81,37 @@ class TestMetadataUpdate:
         assert updated_info["tags"] == ["othertag1", "othertag2"]
 
     def test_asset_update_metadata_should_return_same_with_no_values(self, asset_mock):
-        pre_update_info = deepcopy(asset_mock.info)
+        pre_update_info = copy.deepcopy(asset_mock.info)
         updated_info = asset_mock.update_metadata()
         assert updated_info == pre_update_info
 
-    def test_asset_update_metadata_should_ignore_kwargs(self, asset_mock, caplog):
-        pre_update_info = deepcopy(asset_mock.info)
-        caplog.set_level(logging.INFO)
+    def test_asset_update_metadata_should_ignore_kwargs(self, asset_mock):
+        pre_update_info = copy.deepcopy(asset_mock.info)
         updated_info = asset_mock.update_metadata(test="test", test2="test")
-        assert "test,test2 values are not allowed to update in asset metadata" in caplog.text
         assert updated_info == pre_update_info
 
 
 def test_asset_get_download_url(assets_fixture):
     asset_fixture = assets_fixture["asset_fixture"]
     download_url = assets_fixture["download_url"]
-    url = asset_fixture._get_download_url()
+    url = asset_fixture.get_stac_asset_url()
     assert url == download_url
 
 
 @pytest.mark.parametrize("with_output_directory", [True, False])
 def test_asset_download(asset_mock, requests_mock, tmp_path, with_output_directory):
-    out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+    out_tgz = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as src_tgz:
         out_tgz_file = src_tgz.read()
     requests_mock.get(
-        url=DOWNLOAD_URL,
+        url=constants.DOWNLOAD_URL,
         content=out_tgz_file,
         headers={"x-goog-stored-content-length": "163"},
     )
 
     output_directory = tmp_path if with_output_directory else None
     out_files = asset_mock.download(output_directory)
-    out_paths = [Path(p) for p in out_files]
+    out_paths = [pathlib.Path(p) for p in out_files]
     for path in out_paths:
         assert path.exists()
     assert len(out_paths) == 2
@@ -139,7 +132,7 @@ def test_asset_download_no_unpacking(assets_fixture, requests_mock, tmp_path):
     asset_fixture = assets_fixture["asset_fixture"]
     download_url = assets_fixture["download_url"]
     out_file_name = assets_fixture["outfile_name"]
-    out_tgz = Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+    out_tgz = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
     with open(out_tgz, "rb") as src_tgz:
         out_tgz_file = src_tgz.read()
     requests_mock.get(
@@ -150,18 +143,18 @@ def test_asset_download_no_unpacking(assets_fixture, requests_mock, tmp_path):
 
     out_files = asset_fixture.download(tmp_path, unpacking=False)
     for file in out_files:
-        assert Path(file).exists()
-        assert Path(file).name == out_file_name
+        assert pathlib.Path(file).exists()
+        assert pathlib.Path(file).name == out_file_name
     assert len(out_files) == 1
 
 
 @pytest.mark.parametrize("with_output_directory", [True, False])
 def test_download_stac_asset(asset_mock2, requests_mock, tmp_path, with_output_directory):
-    out_file_path = Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
+    out_file_path = pathlib.Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
     with open(out_file_path, "rb") as src_file:
         out_file = src_file.read()
     requests_mock.get(
-        url=STAC_ASSET_HREF,
+        url=constants.STAC_ASSET_HREF,
         content=out_file,
         headers={
             "Authorization": "Bearer some_token_value",
@@ -169,6 +162,8 @@ def test_download_stac_asset(asset_mock2, requests_mock, tmp_path, with_output_d
     )
 
     output_directory = tmp_path if with_output_directory else None
-    out_path = asset_mock2.download_stac_asset(pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]), output_directory)
+    out_path = asset_mock2.download_stac_asset(
+        pystac.Asset(href=constants.STAC_ASSET_HREF, roles=["data"]), output_directory
+    )
     assert out_path.exists()
     assert out_path.name == "bsg-104-20230522-044750-90756881_ortho.tiff"

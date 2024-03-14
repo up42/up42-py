@@ -208,7 +208,13 @@ def format_time(date: Optional[Union[str, datetime.datetime]], set_end_of_day=Fa
 
 def any_vector_to_fc(
     vector: Union[
-        geojson.FeatureCollection, geojson.Feature, dict, list, geopandas.GeoDataFrame, geometry.Polygon, geometry.Point
+        geojson.FeatureCollection,
+        geojson.Feature,
+        dict,
+        list,
+        geopandas.GeoDataFrame,
+        geometry.Polygon,
+        geometry.Point,
     ],
     as_dataframe: bool = False,
 ) -> Union[dict, geopandas.GeoDataFrame]:
@@ -247,7 +253,8 @@ def any_vector_to_fc(
                 df = geopandas.GeoDataFrame.from_features(geojson.FeatureCollection([vector]), crs=4326)
             else:  # Only geometry dict of Feature
                 df = geopandas.GeoDataFrame.from_features(
-                    geojson.FeatureCollection([geojson.Feature(geometry=vector)]), crs=4326
+                    geojson.FeatureCollection([geojson.Feature(geometry=vector)]),
+                    crs=4326,
                 )
         except KeyError as e:
             raise ValueError("Provided geometry dictionary has to include a FeatureCollection or Feature.") from e

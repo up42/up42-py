@@ -1,12 +1,11 @@
+import datetime as dt
 import math
-from datetime import datetime
 from typing import Any, Dict, List, Optional, TypedDict, Union
-from urllib.parse import urlencode, urljoin
+from urllib import parse
 
-from up42.host import endpoint
-from up42.utils import get_logger
+from up42 import host, utils
 
-logger = get_logger(__name__)
+logger = utils.get_logger(__name__)
 
 
 def query_paginated_endpoints(auth, url: str, limit: Optional[int] = None, size: int = 50) -> List[dict]:
@@ -50,11 +49,11 @@ def query_paginated_endpoints(auth, url: str, limit: Optional[int] = None, size:
 
 
 class AssetSearchParams(TypedDict, total=False):
-    createdAfter: Optional[Union[str, datetime]]
-    createdBefore: Optional[Union[str, datetime]]
-    workspaceId: Optional[str]
-    collectionNames: Optional[List[str]]
-    producerNames: Optional[List[str]]
+    createdAfter: Optional[Union[str, dt.datetime]]  # pylint: disable=invalid-name
+    createdBefore: Optional[Union[str, dt.datetime]]  # pylint: disable=invalid-name
+    workspaceId: Optional[str]  # pylint: disable=invalid-name
+    collectionNames: Optional[List[str]]  # pylint: disable=invalid-name
+    producerNames: Optional[List[str]]  # pylint: disable=invalid-name
     tags: Optional[List[str]]
     sources: Optional[List[str]]
     search: Optional[str]
@@ -83,12 +82,12 @@ def search_assets(
     sort = f"{sortby},{'desc' if descending else 'asc'}"
     request_params: Dict[str, Any] = {"sort": sort}
     request_params.update({key: value for key, value in params.items() if value is not None})
-    base_url = endpoint("/v2/assets")
-    url = urljoin(base_url, "?" + urlencode(request_params, doseq=True, safe=""))
+    base_url = host.endpoint("/v2/assets")
+    url = parse.urljoin(base_url, "?" + parse.urlencode(request_params, doseq=True, safe=""))
     assets_json = query_paginated_endpoints(auth, url=url, limit=limit)
 
     if "workspace_id" in request_params:
-        logger.info(f"Queried {len(assets_json)} assets for workspace {auth.workspace_id}.")
+        logger.info("Queried %s assets for workspace %s.", len(assets_json), auth.workspace_id)
     else:
-        logger.info(f"Queried {len(assets_json)} assets from all workspaces in account.")
+        logger.info("Queried %s assets from all workspaces in account.", {len(assets_json)})
     return assets_json
