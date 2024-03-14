@@ -48,7 +48,7 @@ def test_should_respond_on_good_status(requests_mock: req_mock.Mocker, auth_sess
 
 @pytest.mark.parametrize("method, call", METHODS_WITH_CALLS)
 def test_fails_on_bad_status(requests_mock: req_mock.Mocker, auth_session, method, call):
-    status_code = random.randint(400, 600)
+    status_code = random.randint(400, 599)
     requests_mock.request(
         method, SOME_URL, request_headers={"Authorization": AUTHORIZATION_VALUE}, status_code=status_code
     )
