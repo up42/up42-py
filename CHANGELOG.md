@@ -30,6 +30,13 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.37.0a13
+
+**March 15, 2024**
+
+- Dropped unneeded `auth::env` property and the corresponding tests.
+
+
 ## 0.37.0a10
 
 **March 13, 2024**
