@@ -14,8 +14,6 @@ logger = utils.get_logger(__name__, level=logging.INFO)
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-TIMEOUT = 120  # seconds
-
 _auth: Optional[up42_auth.Auth] = None
 
 
@@ -57,8 +55,7 @@ def get_auth_safely() -> up42_auth.Auth:
     raise ValueError("User not authenticated.")
 
 
-# pylint: disable=unused-argument
-def check_auth(func, *args, **kwargs):
+def check_auth(func):
     """
     Some functionality of the up42 import object can theoretically be used
     before authentication with UP42, so the auth needs to be checked first.
@@ -209,7 +206,7 @@ def get_block_coverage(block_id: str) -> dict:
     url = host.endpoint(f"/blocks/{block_id}/coverage")
     response_json = get_auth_safely().request(request_type="GET", url=url)
     details_json = response_json["data"]
-    return requests.get(details_json["url"], timeout=TIMEOUT).json()
+    return requests.get(details_json["url"], timeout=utils.TIMEOUT).json()
 
 
 @check_auth

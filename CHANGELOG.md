@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **March 14, 2024**
 
-- Adjusted `initialization.py`, `test_initialization.py`, `__init__.py`, `main.py` and `test_main.py` in accordance with Pylint checks.
+- Adjusted `initialization.py`, `test_initialization.py`, `main.py` and `test_main.py` in accordance with Pylint checks.
 
 
 ## 0.37.0a10

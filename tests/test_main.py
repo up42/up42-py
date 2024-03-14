@@ -6,8 +6,8 @@ from up42 import main
 from .fixtures import fixtures_globals as constants
 
 
-@pytest.fixture(autouse=True, name="setup_auth_mock")
-def _setup_auth_mock(auth_mock):
+@pytest.fixture(autouse=True)
+def setup_auth_mock(auth_mock):
     main._auth = auth_mock  # pylint: disable=protected-access
     yield
 
