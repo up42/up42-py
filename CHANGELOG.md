@@ -29,12 +29,18 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 0.37.0a14
+
+**March 15, 2024**
+
+- Fixed inadvertent titles and tags removals during asset metadata updates.
 
 ## 0.37.0a13
 
-**March 14, 2024**
+**March 15, 2024**
 
-- Fixed inadvertent titles and tags removals during asset metadata updates.
+- Dropped unneeded `auth::env` property and the corresponding tests.
+
 
 ## 0.37.0a12
 

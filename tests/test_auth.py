@@ -6,7 +6,7 @@ import requests
 import requests_mock as req_mock
 
 from up42 import auth as up42_auth
-from up42 import host, utils
+from up42 import utils
 
 from .fixtures import fixtures_globals as constants
 
@@ -15,12 +15,9 @@ def test_auth_kwargs():
     auth = up42_auth.Auth(
         project_id=constants.PROJECT_ID,
         project_api_key=constants.PROJECT_APIKEY,
-        env="abc",
         authenticate=False,
         retry=False,
     )
-    assert auth.env == "abc"
-    assert host.DOMAIN == "abc"
     assert not auth.authenticate
 
 
@@ -39,11 +36,6 @@ def test_should_fail_config_file_not_found(tmp_path):
 def test_should_not_authenticate_with_config_file_if_not_requested():
     fp = pathlib.Path(__file__).resolve().parent / "mock_data" / "test_config.json"
     up42_auth.Auth(cfg_file=fp, authenticate=False)
-
-
-def test_should_set_api_host_domain_with_environment(auth_mock: up42_auth.Auth):
-    auth_mock.env = "abc"
-    assert host.DOMAIN == "abc"
 
 
 def test_get_workspace(auth_mock: up42_auth.Auth):
