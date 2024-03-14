@@ -28,11 +28,9 @@ class Project:
         self._info = self.info
 
     def __repr__(self):
-        env = ", env: dev" if self.auth.env == "dev" else ""
         return (
             f"Project(name: {self._info['name']}, project_id: {self.project_id}, "
-            f"description: {self._info['description']}, createdAt: {self._info['createdAt']}"
-            f"{env})"
+            f"description: {self._info['description']}, createdAt: {self._info['createdAt']})"
         )
 
     @property

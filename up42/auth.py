@@ -67,13 +67,7 @@ class Auth:
         }
         credentials_dict = {key: value for key, value in credentials_dict.items() if value}
 
-        if "env" in kwargs:
-            self.env = kwargs["env"]
-
-        try:
-            self.authenticate: bool = kwargs["authenticate"]
-        except KeyError:
-            self.authenticate = True
+        self.authenticate: bool = kwargs.get("authenticate", True)
 
         if project_id:
             self.project_id = project_id
@@ -158,14 +152,6 @@ class Auth:
             raise ValueError("Authentication was not successful, check the provided project credentials.") from err
 
         self.token = token_response["data"]["accessToken"]
-
-    @property
-    def env(self):
-        return host.DOMAIN
-
-    @env.setter
-    def env(self, value: str):
-        host.DOMAIN = value
 
     def _get_workspace(self) -> None:
         """Get user id belonging to authenticated account."""
