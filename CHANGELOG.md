@@ -37,6 +37,23 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Dropped unneeded `auth::env` property and the corresponding tests.
 
 
+## 0.37.0a12
+
+**March 14, 2024**
+
+- Adjusted `initialization.py`, `test_initialization.py`, `main.py` and `test_main.py` in accordance with Pylint checks.
+
+
+## 0.37.0a11
+
+**March 14, 2024**
+
+- Adjusted `asset.py`, `asset_searcher.py`, `test_asset.py` and `fixtures_asset.py` in accordance with Pylint checks.
+- Adjusted `test_http_adapter.py` in accordance with Pylint checks.
+- Dropped `test_e2e_catalog.py` since it is covered by SDK tests.
+- Fixed a flaky test in `test_session.py`
+
+
 ## 0.37.0a10
 
 **March 13, 2024**
