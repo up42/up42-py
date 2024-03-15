@@ -1,5 +1,4 @@
 import pathlib
-import warnings
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pystac
@@ -98,7 +97,6 @@ class Asset:
         self,
         title: Union[Optional[str], object] = NOT_PROVIDED,
         tags: Union[Optional[List[str]], object] = NOT_PROVIDED,
-        **kwargs,
     ) -> dict:
         """
         Update the metadata of the asset.
@@ -110,8 +108,6 @@ class Asset:
         Returns:
             The updated asset metadata information
         """
-        if kwargs:
-            warnings.warn("The use of keyword arguments is deprecated.", DeprecationWarning, stacklevel=2)
         url = host.endpoint(f"/v2/assets/{self.asset_id}/metadata")
         payload: Dict[str, Any] = {}
         if title != NOT_PROVIDED:

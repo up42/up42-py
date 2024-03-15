@@ -7,7 +7,9 @@ import pystac
 import pytest
 import requests_mock as req_mock
 
-from up42 import asset, auth, host
+from up42 import asset
+from up42 import auth as up42_auth
+from up42 import host
 
 from .fixtures import fixtures_globals as constants
 
@@ -90,7 +92,7 @@ class TestAssetUpdateMetadata:
     @pytest.mark.parametrize("title", [None, "new-title"])
     @pytest.mark.parametrize("tags", [None, [], ["tag1", "tag2"]])
     def test_should_update_metadata(
-        self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker, title: Optional[str], tags: Optional[List[str]]
+        self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker, title: Optional[str], tags: Optional[List[str]]
     ):
         asset_obj = asset.Asset(auth_mock, asset_info=self.asset_info)
         update_payload = {"title": title, "tags": tags}
@@ -100,7 +102,7 @@ class TestAssetUpdateMetadata:
         )
         assert asset_obj.update_metadata(title=title, tags=tags) == expected_info
 
-    def test_should_not_update_title_if_not_provided(self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker):
+    def test_should_not_update_title_if_not_provided(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
         asset_obj = asset.Asset(auth_mock, asset_info=self.asset_info)
         tags = ["tag1", "tag2"]
         update_payload = {"tags": tags}
@@ -110,7 +112,7 @@ class TestAssetUpdateMetadata:
         )
         assert asset_obj.update_metadata(tags=tags) == expected_info
 
-    def test_should_not_update_tags_if_not_provided(self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker):
+    def test_should_not_update_tags_if_not_provided(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
         asset_obj = asset.Asset(auth_mock, asset_info=self.asset_info)
         title = "new-title"
         update_payload = {"title": title}
