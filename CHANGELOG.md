@@ -34,11 +34,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **March 15, 2024**
 
-- Release that accommodates following changes:
- - Fixed inadvertent titles and tags removals during asset metadata updates.
- - Dropped unneeded `auth::env` property and the corresponding tests.
- - Generalized new authentication stack to cover account authentication case.
- - Added a new component within the HTTP layer to facilitate future enhancements in authentication and request processes.
+- Fixed inadvertent title and tags removals during asset metadata updates.
+- Dropped unneeded `auth::env` property and the corresponding tests.
+- Generalized new authentication stack to cover account authentication case.
+- Added new components within the HTTP layer to facilitate future enhancements in authentication and request processes.
+- Adjusted most of the code in accordance with pylint checks.
 
 
 ## 0.37.0a14
