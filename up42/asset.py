@@ -1,5 +1,5 @@
 import pathlib
-from typing import List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pystac
 import pystac_client
@@ -11,6 +11,8 @@ logger = utils.get_logger(__name__)
 
 MAX_ITEM = 50
 LIMIT = 50
+
+NOT_PROVIDED = object()
 
 
 class Asset:
@@ -93,24 +95,27 @@ class Asset:
 
     def update_metadata(
         self,
-        title: Optional[str] = None,
-        tags: Optional[List[str]] = None,
-        **kwargs,
+        title: Union[Optional[str], object] = NOT_PROVIDED,
+        tags: Union[Optional[List[str]], object] = NOT_PROVIDED,
     ) -> dict:
         """
         Update the metadata of the asset.
 
         Args:
-            title: The title string to be assigned to the asset.
-            tags: A list of tag strings to be assigned to the asset.
+            title: The title string to be assigned to the asset. No value will keep the existing title.
+            tags: A list of tag strings to be assigned to the asset. No value will keep the existing tags.
 
         Returns:
             The updated asset metadata information
         """
         url = host.endpoint(f"/v2/assets/{self.asset_id}/metadata")
-        body_update = {"title": title, "tags": tags, **kwargs}
-        response_json = self.auth.request(request_type="POST", url=url, data=body_update)
-        self.info = response_json
+        payload: Dict[str, Any] = {}
+        if title != NOT_PROVIDED:
+            payload.update(title=title)
+        if tags != NOT_PROVIDED:
+            payload.update(tags=tags)
+        if payload:
+            self.info = self.auth.request(request_type="POST", url=url, data=payload)
         return self.info
 
     def _get_download_url(self, stac_asset_id: Optional[str] = None, request_type: str = "POST") -> str:
