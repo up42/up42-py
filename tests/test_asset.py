@@ -1,11 +1,13 @@
-import copy
+import json
 import pathlib
+from typing import Dict, List, Optional
 from unittest import mock
 
 import pystac
 import pytest
+import requests_mock as req_mock
 
-from up42 import asset, host
+from up42 import asset, auth, host
 
 from .fixtures import fixtures_globals as constants
 
@@ -74,34 +76,49 @@ def test_asset_stac_info(asset_mock):
     assert isinstance(pystac_items, pystac.ItemCollection)
 
 
-class TestMetadataUpdate:
-    def test_asset_update_metadata(self, asset_mock):
-        updated_info = asset_mock.update_metadata(title="some_other_title", tags=["othertag1", "othertag2"])
-        assert updated_info["title"] == "some_other_title"
-        assert updated_info["tags"] == ["othertag1", "othertag2"]
+def match_request_body(data: Dict):
+    def matcher(request):
+        return request.text == json.dumps(data)
 
-    def test_asset_update_metadata_should_return_same_with_no_values(self, asset_mock):
-        pre_update_info = copy.deepcopy(asset_mock.info)
-        updated_info = asset_mock.update_metadata()
-        assert updated_info == pre_update_info
+    return matcher
 
-    def test_asset_update_metadata_should_ignore_kwargs(self, asset_mock):
-        pre_update_info = copy.deepcopy(asset_mock.info)
-        updated_info = asset_mock.update_metadata(test="test", test2="test")
-        assert updated_info == pre_update_info
 
-    def test_asset_update_metadata_should_remove_none_input(self, requests_mock, auth_mock):
-        mock_response = copy.deepcopy(constants.JSON_STAC_CATALOG_RESPONSE)
-        mock_response.pop("title")
-        url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
-        new_asset_response = copy.deepcopy(constants.JSON_STAC_CATALOG_RESPONSE)
-        new_asset_response["id"] = constants.ASSET_ID
-        requests_mock.get(url=url, json=new_asset_response)
-        requests_mock.post(url=url, json=mock_response)
-        asset_mock = asset.Asset(auth=auth_mock, asset_id=constants.ASSET_ID)
-        updated_info = asset_mock.update_metadata(title=None)
-        with pytest.raises(KeyError):
-            _ = updated_info["title"]
+class TestAssetUpdateMetadata:
+    asset_info = {"id": constants.ASSET_ID, "title": "title", "tags": ["tag1"]}
+    endpoint_url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
+
+    @pytest.mark.parametrize("title", [None, "new-title"])
+    @pytest.mark.parametrize("tags", [None, [], ["tag1", "tag2"]])
+    def test_should_update_metadata(
+        self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker, title: Optional[str], tags: Optional[List[str]]
+    ):
+        asset_obj = asset.Asset(auth_mock, asset_info=self.asset_info)
+        update_payload = {"title": title, "tags": tags}
+        expected_info = {**self.asset_info, **update_payload}
+        requests_mock.post(
+            url=self.endpoint_url, json=expected_info, additional_matcher=match_request_body(update_payload)
+        )
+        assert asset_obj.update_metadata(title=title, tags=tags) == expected_info
+
+    def test_should_not_update_title_if_not_provided(self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker):
+        asset_obj = asset.Asset(auth_mock, asset_info=self.asset_info)
+        tags = ["tag1", "tag2"]
+        update_payload = {"tags": tags}
+        expected_info = {**self.asset_info, **update_payload}
+        requests_mock.post(
+            url=self.endpoint_url, json=expected_info, additional_matcher=match_request_body(update_payload)
+        )
+        assert asset_obj.update_metadata(tags=tags) == expected_info
+
+    def test_should_not_update_tags_if_not_provided(self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker):
+        asset_obj = asset.Asset(auth_mock, asset_info=self.asset_info)
+        title = "new-title"
+        update_payload = {"title": title}
+        expected_info = {**self.asset_info, **update_payload}
+        requests_mock.post(
+            url=self.endpoint_url, json=expected_info, additional_matcher=match_request_body(update_payload)
+        )
+        assert asset_obj.update_metadata(title=title) == expected_info
 
 
 @pytest.mark.parametrize("with_output_directory", [True, False])

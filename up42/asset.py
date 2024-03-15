@@ -1,5 +1,6 @@
 import pathlib
-from typing import Dict, List, Optional, Tuple, Union
+import warnings
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pystac
 import pystac_client
@@ -95,9 +96,9 @@ class Asset:
 
     def update_metadata(
         self,
-        title: Optional[Union[str, object]] = NOT_PROVIDED,
-        tags: Optional[Union[List[str], object]] = NOT_PROVIDED,
-        **kwargs,  # pylint: disable=unused-argument
+        title: Union[Optional[str], object] = NOT_PROVIDED,
+        tags: Union[Optional[List[str]], object] = NOT_PROVIDED,
+        **kwargs,
     ) -> dict:
         """
         Update the metadata of the asset.
@@ -109,16 +110,16 @@ class Asset:
         Returns:
             The updated asset metadata information
         """
+        if kwargs:
+            warnings.warn("The use of keyword arguments is deprecated.", DeprecationWarning, stacklevel=2)
         url = host.endpoint(f"/v2/assets/{self.asset_id}/metadata")
-        body_update: Dict[str, Union[str, List[str], object]] = {"title": title} if title is not NOT_PROVIDED else {}
-        if tags is not NOT_PROVIDED:
-            body_update.update({"tags": tags})
-
-        if not body_update:
-            return self.info
-
-        response_json = self.auth.request(request_type="POST", url=url, data=body_update)
-        self.info = response_json
+        payload: Dict[str, Any] = {}
+        if title != NOT_PROVIDED:
+            payload.update(title=title)
+        if tags != NOT_PROVIDED:
+            payload.update(tags=tags)
+        if payload:
+            self.info = self.auth.request(request_type="POST", url=url, data=payload)
         return self.info
 
     def _get_download_url(self, stac_asset_id: Optional[str] = None, request_type: str = "POST") -> str:
