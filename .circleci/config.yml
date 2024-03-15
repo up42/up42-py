@@ -15,9 +15,13 @@ slack-channel-id-qa-alert: &slack-channel-id-qa-alert 'C04QXJP2RCZ'
 
 jobs:
   test:
+    parameters:
+      python-version:
+        type: string
+        default: "3.8"
     working_directory: *workspace-dir
     docker:
-      - image: cimg/python:3.11
+      - image: cimg/python:<< parameters.python-version >>
     resource_class: medium+
     steps:
       - attach_workspace:
@@ -63,6 +67,7 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
+
   sonar:
     working_directory: *workspace-dir
     docker:
@@ -98,7 +103,10 @@ jobs:
 workflows:
   test_and_deploy:
     jobs:
-      - test
+      - test:
+          matrix:
+            parameters:
+              python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
       - sonar:
           context: sonarcloud
           requires:
