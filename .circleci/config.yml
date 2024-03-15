@@ -18,7 +18,7 @@ jobs:
     parameters:
       python-version:
         type: string
-        default: "3.8"
+        default: "3.9"
     working_directory: *workspace-dir
     docker:
       - image: cimg/python:<< parameters.python-version >>
@@ -106,7 +106,7 @@ workflows:
       - test:
           matrix:
             parameters:
-              python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+              python-version: ["3.9", "3.10", "3.11", "3.12"]
       - sonar:
           context: sonarcloud
           requires:
