@@ -29,6 +29,18 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+
+## 0.37.0
+
+**March 15, 2024**
+
+- Release that accommodates following changes:
+ - Fixed inadvertent titles and tags removals during asset metadata updates.
+ - Dropped unneeded `auth::env` property and the corresponding tests.
+ - Generalized new authentication stack to cover account authentication case.
+ - Added a new component within the HTTP layer to facilitate future enhancements in authentication and request processes.
+
+
 ## 0.37.0a14
 
 **March 15, 2024**
