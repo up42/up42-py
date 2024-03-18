@@ -18,7 +18,7 @@ jobs:
     parameters:
       python-version:
         type: string
-        default: "3.12"
+        default: "3.11"
     working_directory: *workspace-dir
     docker:
       - image: cimg/python:<< parameters.python-version >>
