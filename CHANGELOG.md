@@ -30,6 +30,12 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.38.0a1
+
+**March 19, 2024**
+
+- Dropped all the live tests.
+
 ## 0.37.0
 
 **March 15, 2024**
