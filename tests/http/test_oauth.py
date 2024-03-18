@@ -18,7 +18,7 @@ account_credentials = config.AccountCredentialsSettings(username="some-user", pa
 
 
 def basic_auth(username, password):
-    token = base64.b64encode(f"{username}:{password}".encode("utf-8"))
+    token = base64.b64encode(f"{username}:{password}".encode("utf-8"))  # noqa: E231
     return f'Basic {token.decode("ascii")}'
 
 

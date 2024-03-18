@@ -142,7 +142,7 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     }
 
     # assets pages
-    url_storage_assets_paginated = f"{constants.API_HOST}/v2/assets?sort=createdAt,asc&size=50"
+    url_storage_assets_paginated = f"{constants.API_HOST}/v2/assets?sort=createdAt,asc&size=50"  # noqa: E231
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
     storage_results = storage.Storage(auth=auth_mock)
@@ -328,7 +328,7 @@ def test_get_orders_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_orders_paginated = (
-        f"{constants.API_HOST}/v2/orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
+        f"{constants.API_HOST}/v2/orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"  # noqa: E231
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)
 

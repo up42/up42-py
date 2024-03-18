@@ -73,7 +73,7 @@ class Order:
 
     def __repr__(self):
         return (
-            f"Order(order_id: {self.order_id}, status: {self._info['status']},"
+            f"Order(order_id: {self.order_id}, status: {self._info['status']},"  # noqa: E231
             f"createdAt: {self._info['createdAt']}, updatedAt: {self._info['updatedAt']})"
         )
 

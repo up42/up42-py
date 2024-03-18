@@ -82,7 +82,7 @@ def workflow_mock(auth_mock, requests_mock):
     # get_compatible_blocks
     url_compatible_blocks = (
         f"{API_HOST}/projects/{workflow.project_id}/"
-        f"workflows/{workflow.workflow_id}/compatible-blocks?parentTaskName=tiling:1"
+        f"workflows/{workflow.workflow_id}/compatible-blocks?parentTaskName=tiling:1"  # noqa: E231
     )
     json_compatible_blocks = {
         "data": {

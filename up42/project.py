@@ -109,7 +109,7 @@ class Project:
         ]
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
-        sort = f"{sortby},{'desc' if descending else 'asc'}"
+        sort = f"{sortby},{'desc' if descending else 'asc'}"  # noqa: E231
 
         page = 0
         url = endpoint(f"/projects/{self.project_id}/jobs?page={page}&sort={sort}")

@@ -141,7 +141,7 @@ class Tasking(catalog.CatalogBase):
         Returns:
             JSON: The json representation with the quotations resulted from the search.
         """
-        sort = f"{sortby},{'desc' if descending else 'asc'}"
+        sort = f"{sortby},{'desc' if descending else 'asc'}"  # noqa: E231
         url = host.endpoint(f"/v2/tasking/quotation?page=0&sort={sort}")
         if quotation_id is not None:
             url += f"&id={quotation_id}"
@@ -209,7 +209,7 @@ class Tasking(catalog.CatalogBase):
         Returns:
             JSON: The json representation with the feasibility resulted from the search.
         """
-        sort = f"{sortby},{'desc' if descending else 'asc'}"
+        sort = f"{sortby},{'desc' if descending else 'asc'}"  # noqa: E231
         url = host.endpoint(f"/v2/tasking/feasibility?page=0&sort={sort}")
         if feasibility_id is not None:
             url += f"&id={feasibility_id}"
