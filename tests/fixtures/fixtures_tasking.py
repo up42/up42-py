@@ -173,8 +173,3 @@ def tasking_choose_feasibility_mock(auth_mock, requests_mock):
     )
     requests_mock.patch(url=choose_feasibility_url, status_code=405, json=response)
     return tasking.Tasking(auth=auth_mock)
-
-
-@pytest.fixture()
-def tasking_live(auth_live):
-    return tasking.Tasking(auth=auth_live)
