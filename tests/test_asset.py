@@ -1,10 +1,15 @@
+import json
 import pathlib
+from typing import Dict, List, Optional
 from unittest import mock
 
 import pystac
 import pytest
+import requests_mock as req_mock
 
-from up42 import asset, host
+from up42 import asset
+from up42 import auth as up42_auth
+from up42 import host
 
 from .fixtures import fixtures_globals as constants
 
@@ -73,10 +78,49 @@ def test_asset_stac_info(asset_mock):
     assert isinstance(pystac_items, pystac.ItemCollection)
 
 
-def test_asset_update_metadata(asset_mock):
-    updated_info = asset_mock.update_metadata(title="some_other_title", tags=["othertag1", "othertag2"])
-    assert updated_info["title"] == "some_other_title"
-    assert updated_info["tags"] == ["othertag1", "othertag2"]
+def match_request_body(data: Dict):
+    def matcher(request):
+        return request.text == json.dumps(data)
+
+    return matcher
+
+
+class TestAssetUpdateMetadata:
+    asset_info = {"id": constants.ASSET_ID, "title": "title", "tags": ["tag1"]}
+    endpoint_url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
+
+    @pytest.mark.parametrize("title", [None, "new-title"])
+    @pytest.mark.parametrize("tags", [None, [], ["tag1", "tag2"]])
+    def test_should_update_metadata(
+        self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker, title: Optional[str], tags: Optional[List[str]]
+    ):
+        asset_obj = asset.Asset(auth_mock, asset_info=self.asset_info)
+        update_payload = {"title": title, "tags": tags}
+        expected_info = {**self.asset_info, **update_payload}
+        requests_mock.post(
+            url=self.endpoint_url, json=expected_info, additional_matcher=match_request_body(update_payload)
+        )
+        assert asset_obj.update_metadata(title=title, tags=tags) == expected_info
+
+    def test_should_not_update_title_if_not_provided(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
+        asset_obj = asset.Asset(auth_mock, asset_info=self.asset_info)
+        tags = ["tag1", "tag2"]
+        update_payload = {"tags": tags}
+        expected_info = {**self.asset_info, **update_payload}
+        requests_mock.post(
+            url=self.endpoint_url, json=expected_info, additional_matcher=match_request_body(update_payload)
+        )
+        assert asset_obj.update_metadata(tags=tags) == expected_info
+
+    def test_should_not_update_tags_if_not_provided(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
+        asset_obj = asset.Asset(auth_mock, asset_info=self.asset_info)
+        title = "new-title"
+        update_payload = {"title": title}
+        expected_info = {**self.asset_info, **update_payload}
+        requests_mock.post(
+            url=self.endpoint_url, json=expected_info, additional_matcher=match_request_body(update_payload)
+        )
+        assert asset_obj.update_metadata(title=title) == expected_info
 
 
 @pytest.mark.parametrize("with_output_directory", [True, False])

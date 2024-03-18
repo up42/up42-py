@@ -30,6 +30,31 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 0.38.0a1
+
+**March 18, 2024**
+
+- Run test pipeline on Python versions 3.9 to 3.12
+- Removed upper bound for Python 3.12
+- Dropped support for Python 3.8
+
+## 0.37.0
+
+**March 15, 2024**
+
+- Fixed inadvertent title and tags removals during asset metadata updates.
+- Dropped unneeded `auth::env` property and the corresponding tests.
+- Generalized new authentication stack to cover account authentication case.
+- Added new components within the HTTP layer to facilitate future enhancements in authentication and request processes.
+- Adjusted most of the code in accordance with pylint checks.
+
+
+## 0.37.0a14
+
+**March 15, 2024**
+
+- Fixed inadvertent titles and tags removals during asset metadata updates.
+
 ## 0.37.0a13
 
 **March 15, 2024**

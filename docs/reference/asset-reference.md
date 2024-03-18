@@ -40,10 +40,10 @@ The returned data type is `dict`.
 
 <h5> Arguments </h5>
 
-| Argument | Overview                                                            |
-| -------- | ------------------------------------------------------------------- |
-| `title`  | **str**<br/>An editable asset title.                                |
-| `tags`   | **list[str]**<br/>An editable list of tags to categorize the asset. |
+| Argument | Overview                                                                                                                                                                                                                              |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`  | **str**<br/>An editable asset title. If no value is provided, the current title will remain unchanged.                                                                                                                                |
+| `tags`   | **list[str]**<br/>An editable list of tags to categorize the asset. A tag can consist of letters, numbers, spaces, and special characters (`.`, `-`, `_`, `/`, `:`). If no value is provided, the current tags will remain unchanged. |
 
 <h5> Example </h5>
 
