@@ -135,6 +135,7 @@ disable=R,
         zip-builtin-not-iterating,
         C0330,
         bad-continuation,
+        inconsistent-quotes,
 
 
 [REPORTS]
