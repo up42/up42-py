@@ -1,7 +1,6 @@
 (insert scope and description here)
 
 Items:
-* [ ] Ran test & live-tests
 * [ ] Implemented (new) unit tests
 * [ ] Removed credentials
 * [ ] Removed argument pointing to staging

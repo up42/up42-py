@@ -57,8 +57,3 @@ In the main folder up42-py, run:
 ```bash
 make test
 ```
-
-or run all tests including the live tests:
-```bash
-make test[live]
-```

@@ -7,7 +7,6 @@ import requests
 
 from .fixtures import fixtures_globals as constants
 
-LIVE_TEST_WORKSPACE_ID = os.getenv("LIVE_TEST_WORKSPACE_ID")
 LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
 LIVE_OPTION_ID = os.getenv("LIVE_OPTION_ID")
 

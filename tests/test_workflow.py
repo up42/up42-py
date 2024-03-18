@@ -107,15 +107,6 @@ def test_get_jobs(workflow_mock, requests_mock):
     assert len(jobcollection.jobs) == 1  # Filters out the job that is not associated with the workflow object
 
 
-@pytest.mark.skip(reason="too many jobs in test project, triggers too many job info requests.")
-@pytest.mark.live
-def test_get_jobs_live(workflow_live):
-    jobcollection = workflow_live.get_jobs()
-    assert isinstance(jobcollection, list)
-    assert isinstance(jobcollection.jobs[0], Job)
-    assert all(j._info["workflowId"] == workflow_live.workflow_id for j in jobcollection.jobs)
-
-
 def test_delete(workflow_mock, requests_mock):
     delete_url = f"{API_HOST}/projects/{workflow_mock.project_id}/workflows/{workflow_mock.workflow_id}"
     requests_mock.delete(url=delete_url)

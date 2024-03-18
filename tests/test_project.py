@@ -1,5 +1,3 @@
-import pytest
-
 from up42.job import Job
 from up42.project import Project
 from up42.workflow import Workflow
@@ -23,13 +21,6 @@ def test_get_workflows(project_mock):
     workflows = project_mock.get_workflows()
     assert len(workflows) == 2
     assert isinstance(workflows[0], Workflow)
-
-
-@pytest.mark.live
-def test_get_workflows_live(project_live):
-    workflows = project_live.get_workflows()
-    assert isinstance(workflows[0], Workflow)
-    assert workflows[0].project_id == project_live.project_id
 
 
 def test_get_jobs(project_mock, requests_mock):
@@ -59,28 +50,8 @@ def test_get_jobs_pagination_limit(project_mock):
     assert len(jobcollection.jobs) == 110
 
 
-@pytest.mark.skip(reason="too many jobs in test project, triggers too many job info requests.")
-@pytest.mark.live
-def test_get_jobs_live(project_live):
-    jobcollection = project_live.get_jobs()
-    assert isinstance(jobcollection.jobs, list)
-    assert isinstance(jobcollection.jobs[0], Job)
-
-
 def test_get_project_settings(project_mock):
     project_settings = project_mock.get_project_settings()
     assert isinstance(project_settings, list)
     assert len(project_settings) == 3
     assert project_settings[0]["name"] == "MAX_CONCURRENT_JOBS"
-
-
-@pytest.mark.live
-def test_get_project_settings_live(project_live):
-    project_settings = project_live.get_project_settings()
-    assert isinstance(project_settings, list)
-    assert len(project_settings) == 3
-    assert project_settings[0]["name"] in [
-        "JOB_QUERY_MAX_AOI_SIZE",
-        "MAX_CONCURRENT_JOBS",
-        "'JOB_QUERY_LIMIT_PARAMETER_MAX_VALUE'",
-    ]
