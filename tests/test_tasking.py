@@ -1,14 +1,10 @@
 import json
-import os
 import pathlib
 
 import pytest
 import requests
 
 from .fixtures import fixtures_globals as constants
-
-LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
-LIVE_OPTION_ID = os.getenv("LIVE_OPTION_ID")
 
 with open(
     pathlib.Path(__file__).resolve().parent / "mock_data/search_params_simple.json", encoding="utf-8"
@@ -86,7 +82,7 @@ def test_choose_feasibility(tasking_choose_feasibility_mock):
     assert response["status"] == 404
 
     with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_choose_feasibility_mock.choose_feasibility(LIVE_FEASIBILITY_ID, LIVE_OPTION_ID)
+        tasking_choose_feasibility_mock.choose_feasibility(constants.TEST_FEASIBILITY_ID, constants.TEST_OPTION_ID)
     response = json.loads(str(e.value))
     assert isinstance(e.value, requests.exceptions.RequestException)
     assert response["status"] == 405
