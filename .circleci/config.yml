@@ -22,7 +22,7 @@ jobs:
     working_directory: *workspace-dir
     docker:
       - image: cimg/python:<< parameters.python-version >>
-    resource_class: medium+
+    resource_class: large
     steps:
       - attach_workspace:
           at: *workspace-dir
