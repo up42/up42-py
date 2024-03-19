@@ -67,6 +67,8 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
+      - sonarcloud/scan:
+          sonar_token_variable_name: SONAR_TOKEN
 
   sonar:
     working_directory: *workspace-dir
