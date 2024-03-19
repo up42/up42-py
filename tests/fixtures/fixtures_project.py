@@ -142,12 +142,6 @@ def project_mock(auth_mock, requests_mock):
 
 
 @pytest.fixture()
-def project_live(auth_live, project_id_live):
-    project = Project(auth=auth_live, project_id=project_id_live)
-    return project
-
-
-@pytest.fixture()
 def project_mock_max_concurrent_jobs(project_mock):
     def _project_mock_max_concurrent_jobs(maximum=5):
         m = requests_mock.Mocker()

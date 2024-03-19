@@ -46,11 +46,6 @@ def catalog_mock(auth_mock, requests_mock):
 
 
 @pytest.fixture()
-def catalog_live(auth_live):
-    return catalog.Catalog(auth=auth_live)
-
-
-@pytest.fixture()
 def catalog_pagination_mock(auth_mock, requests_mock):
     url_collections = f"{constants.API_HOST}/collections"
     collections_response = {"data": [{"name": "phr", "hostName": "oneatlas", "type": "ARCHIVE"}]}

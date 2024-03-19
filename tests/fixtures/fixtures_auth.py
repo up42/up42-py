@@ -1,5 +1,3 @@
-import os
-
 import pytest
 import requests_mock as req_mock
 
@@ -53,40 +51,4 @@ def _auth_account_mock(requests_mock: req_mock.Mocker) -> up42_auth.Auth:
 @pytest.fixture(name="auth_mock", params=["project", "account"])
 def _auth_mock(request, auth_project_mock, auth_account_mock) -> up42_auth.Auth:
     mocks = {"project": auth_project_mock, "account": auth_account_mock}
-    return mocks[request.param]
-
-
-@pytest.fixture(name="project_id_live", scope="module")
-def _project_id_live():
-    return os.getenv("TEST_UP42_PROJECT_ID")
-
-
-@pytest.fixture(name="project_api_key_live", scope="module")
-def _project_api_key_live():
-    return os.getenv("TEST_UP42_PROJECT_API_KEY")
-
-
-@pytest.fixture(name="username_test_live", scope="module")
-def _username_test_live():
-    return os.getenv("TEST_USERNAME")
-
-
-@pytest.fixture(name="password_test_live", scope="module")
-def _password_test_live():
-    return os.getenv("TEST_PASSWORD")
-
-
-@pytest.fixture(name="auth_project_live", scope="module")
-def _auth_project_live(project_id_live, project_api_key_live):
-    return up42_auth.Auth(project_id=project_id_live, project_api_key=project_api_key_live)
-
-
-@pytest.fixture(name="auth_account_live", scope="module")
-def _auth_account_live(username_test_live, password_test_live):
-    return up42_auth.Auth(username=username_test_live, password=password_test_live)
-
-
-@pytest.fixture(name="auth_live", params=["project", "account"])
-def _auth_live(request, auth_project_live, auth_account_live):
-    mocks = {"project": auth_project_live, "account": auth_account_live}
     return mocks[request.param]

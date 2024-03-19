@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 from up42.job import Job
@@ -73,16 +71,6 @@ def job_mock(auth_mock, requests_mock):
 
 
 @pytest.fixture()
-def job_live(auth_live, project_id_live):
-    job = Job(
-        auth=auth_live,
-        project_id=project_id_live,
-        job_id=os.getenv("TEST_UP42_JOB_ID"),
-    )
-    return job
-
-
-@pytest.fixture()
 def jobs_mock(auth_mock, requests_mock):
     url_job_info = f"{API_HOST}/projects/{PROJECT_ID}/jobs/{JOB_ID}"
     requests_mock.get(
@@ -97,20 +85,3 @@ def jobs_mock(auth_mock, requests_mock):
 
     job2 = Job(auth=auth_mock, project_id=PROJECT_ID, job_id=JOB_ID_2)
     return [job1, job2]
-
-
-@pytest.fixture
-def jobs_live(auth_live, project_id_live):
-    job_1 = Job(
-        auth=auth_live,
-        project_id=project_id_live,
-        job_id=os.getenv("TEST_UP42_JOB_ID"),
-    )
-
-    job_2 = Job(
-        auth=auth_live,
-        project_id=project_id_live,
-        job_id=os.getenv("TEST_UP42_JOB_ID_2"),
-    )
-
-    return [job_1, job_2]

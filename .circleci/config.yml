@@ -78,19 +78,6 @@ jobs:
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
 
-  test_live:
-    docker:
-      - image: cimg/python:3.11
-    steps:
-      - checkout
-      - run:
-          name: Install requirements
-          command: |
-            poetry lock
-            poetry install --no-ansi
-      - run:
-          name: Running tests
-          command: poetry run pytest --runlive --durations=5
   deploy:
     docker:
       - image: cimg/python:3.11
@@ -141,15 +128,3 @@ workflows:
           filters:
             branches:
               only: master
-
-  test_live:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - test_live:
-          context: up42-py-live-testing
