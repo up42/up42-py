@@ -57,9 +57,10 @@ jobs:
           name: Running tests
           command: poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
       - store_artifacts:
-          path: out/coverage-reports/coverage.xml
+          path: .coverage-reports/coverage.xml
       - store_artifacts:
-          path: out/coverage
+          path: .coverage
+      - sonarcloud/scan
       - persist_to_workspace:
           root: ./
           paths:
@@ -67,10 +68,6 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
-      - store_artifacts:
-          path: out/coverage
-      - sonarcloud/scan:
-          sonar_token_variable_name: SONAR_TOKEN
 
   sonar:
     working_directory: *workspace-dir
@@ -98,10 +95,10 @@ workflows:
           matrix:
             parameters:
               python-version: ["3.9", "3.10", "3.11", "3.12"]
-      # - sonar:
-      #     context: sonarcloud
-      #     requires:
-      #       - test
+      - sonar:
+          context: sonarcloud
+          requires:
+            - test
       - automated-test/run-sdk-tests:
           requires:
             - test
