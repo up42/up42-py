@@ -60,19 +60,13 @@ jobs:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
           path: .coverage
-      - persist_to_workspace:
-          root: ./
-          paths:
-            - up42
-            - .coverage-reports
-            - .circleci
-            - sonar-project.properties
-      # - attach_workspace:
-      #     at: *workspace-dir
-      - restore_cache:
-          name: Restoring pre-commit cache
-          keys:
-            - *pre-commit-cache
+      # - persist_to_workspace:
+      #     root: ./
+      #     paths:
+      #       - up42
+      #       - .coverage-reports
+      #       - .circleci
+      #       - sonar-project.properties
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
 
@@ -102,10 +96,10 @@ workflows:
           matrix:
             parameters:
               python-version: ["3.9", "3.10", "3.11", "3.12"]
-      - sonar:
-          context: sonarcloud
-          requires:
-            - test
+      # - sonar:
+      #     context: sonarcloud
+      #     requires:
+      #       - test
       - automated-test/run-sdk-tests:
           requires:
             - test
