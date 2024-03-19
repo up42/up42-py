@@ -67,8 +67,12 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
-      - attach_workspace:
-          at: *workspace-dir
+      # - attach_workspace:
+      #     at: *workspace-dir
+      - restore_cache:
+          name: Restoring pre-commit cache
+          keys:
+            - *pre-commit-cache
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
 
