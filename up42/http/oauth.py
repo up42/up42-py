@@ -65,10 +65,10 @@ class AccountTokenRetriever:
 
 class Up42Auth(requests.auth.AuthBase):
     def __init__(
-        self,
-        retrieve: TokenRetriever,
-        supply_token_settings=config.TokenProviderSettings,
-        create_adapter=http_adapter.create,
+            self,
+            retrieve: TokenRetriever,
+            supply_token_settings=config.TokenProviderSettings,
+            create_adapter=http_adapter.create,
     ):
         token_settings = supply_token_settings()
         self.token_url = token_settings.token_url
@@ -107,9 +107,9 @@ def detect_settings(credentials: dict) -> Optional[config.CredentialsSettings]:
             return config.ProjectCredentialsSettings(**credentials)
         if keys == {"username", "password"}:
             return config.AccountCredentialsSettings(**credentials)
-        raise InvalidCredentials(f"Credentials {credentials} are not supported")
+        raise InvalidCredentials
     elif any(credentials.values()):
-        raise IncompleteCredentials(f"Credentials {credentials} are incomplete")
+        raise IncompleteCredentials
     return None
 
 

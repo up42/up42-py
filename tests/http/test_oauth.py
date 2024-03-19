@@ -113,14 +113,10 @@ class TestDetectSettings:
 
     def test_fails_if_credentials_are_incomplete(self):
         credentials = {"key1": "value1", "key2": None}
-        with pytest.raises(oauth.IncompleteCredentials) as exc_info:
+        with pytest.raises(oauth.IncompleteCredentials):
             oauth.detect_settings(credentials)
-
-        assert str(credentials) in str(exc_info.value)
 
     def test_fails_if_credentials_are_invalid(self):
         credentials = {"key1": "value1", "key2": "value2"}
-        with pytest.raises(oauth.InvalidCredentials) as exc_info:
+        with pytest.raises(oauth.InvalidCredentials):
             oauth.detect_settings(credentials)
-
-        assert str(credentials) in str(exc_info.value)
