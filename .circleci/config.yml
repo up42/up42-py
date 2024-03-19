@@ -57,9 +57,9 @@ jobs:
           name: Running tests
           command: poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
       - run:
-          name: Conditionally run steps for Python 3.11
+          name: Conditionally run steps for Python 3.12 to avoid duplicate coverage reports
           command: |
-            if ! python --version 2>&1 | grep -q "Python 3.11"; then
+            if ! python --version 2>&1 | grep -q "Python 3.12"; then
               circleci-agent step halt
             fi
       - store_artifacts:
@@ -73,14 +73,6 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
-      - run:
-          name: Print working directory and list files
-          command: |
-            echo "Current working directory:"
-            pwd
-            echo "Listing all files:"
-            ls -la
-      # - sonarcloud/scan
 
   sonar:
     working_directory: *workspace-dir
@@ -89,13 +81,6 @@ jobs:
     steps:
       - attach_workspace:
           at: *workspace-dir
-      - run:
-          name: Print working directory and list files
-          command: |
-            echo "Current working directory:"
-            pwd
-            echo "Listing all files:"
-            ls -la
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
 
@@ -114,7 +99,7 @@ workflows:
       - test:
           matrix:
             parameters:
-              python-version: ["3.9", "3.10", "3.11"]
+              python-version: ["3.9", "3.10", "3.11", "3.12"]
       - sonar:
           context: sonarcloud
           requires:
