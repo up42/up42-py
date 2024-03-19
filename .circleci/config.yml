@@ -59,7 +59,7 @@ jobs:
       - run:
           name: Conditionally run steps for Python 3.11
           command: |
-            if python --version 2>&1 | grep -q "Python 3.11"; then
+            if ! python --version 2>&1 | grep -q "Python 3.11"; then
               circleci-agent step halt
             fi
       - store_artifacts:
