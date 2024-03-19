@@ -34,7 +34,7 @@ jobs:
       - run:
           name: Install requirements
           command: |
-            poetry lock
+            # poetry lock
             poetry install --no-interaction --no-ansi
       - save_cache:
           name: Saving poetry cache
@@ -60,7 +60,6 @@ jobs:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
           path: .coverage
-      - sonarcloud/scan
       - persist_to_workspace:
           root: ./
           paths:
@@ -68,6 +67,14 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
+      - run:
+          name: Print working directory and list files
+          command: |
+            echo "Current working directory:"
+            pwd
+            echo "Listing all files:"
+            ls -la
+      - sonarcloud/scan
 
   sonar:
     working_directory: *workspace-dir
