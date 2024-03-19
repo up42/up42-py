@@ -74,7 +74,7 @@ jobs:
             pwd
             echo "Listing all files:"
             ls -la
-      - sonarcloud/scan
+      # - sonarcloud/scan
 
   sonar:
     working_directory: *workspace-dir
@@ -83,6 +83,13 @@ jobs:
     steps:
       - attach_workspace:
           at: *workspace-dir
+      - run:
+          name: Print working directory and list files
+          command: |
+            echo "Current working directory:"
+            pwd
+            echo "Listing all files:"
+            ls -la
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
 
