@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 from up42.workflow import Workflow
@@ -126,14 +124,4 @@ def workflow_mock(auth_mock, requests_mock):
     }
     requests_mock.get(url=url_get_jobs, json=json_get_jobs)
 
-    return workflow
-
-
-@pytest.fixture()
-def workflow_live(auth_live, project_id_live):
-    workflow = Workflow(
-        auth=auth_live,
-        project_id=project_id_live,
-        workflow_id=os.getenv("TEST_UP42_WORKFLOW_ID"),
-    )
     return workflow

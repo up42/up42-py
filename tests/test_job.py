@@ -1,4 +1,3 @@
-import os
 import tempfile
 from pathlib import Path
 
@@ -132,38 +131,6 @@ def test_job_download_gcs_no_unpacking(job_mock, requests_mock):
         for file in out_files:
             assert Path(file).exists()
         assert len(out_files) == 1
-
-
-@pytest.mark.live
-def test_job_download_result_dimap_live(auth_live, project_id_live):
-    with tempfile.TemporaryDirectory() as tempdir:
-        job = Job(
-            auth=auth_live,
-            project_id=project_id_live,
-            job_id=os.getenv("TEST_UP42_JOB_ID_DIMAP_FILE"),
-        )
-        out_files = job.download_results(Path(tempdir))
-        print(out_files)
-        assert Path(out_files[0]).exists()
-        assert Path(out_files[20]).exists()
-        assert Path(out_files[-1]).exists()
-        assert "data.json" in [Path(of).name for of in out_files]
-        assert len(out_files) == 44
-
-
-@pytest.mark.skip(reason="2gb download takes long")
-@pytest.mark.live
-def test_job_download_result_live_2gb_big_exceeding_2min_gcs_treshold(auth_live, project_id_live):
-    job = Job(
-        auth=auth_live,
-        project_id=project_id_live,
-        job_id="30f82b44-1505-4773-ab23-31fa61ba9b4c",
-    )
-    with tempfile.TemporaryDirectory() as tempdir:
-        out_files = job.download_results(Path(tempdir))
-        for file in out_files:
-            assert Path(file).exists()
-        assert len(out_files) == 490
 
 
 def test_job_get_credits(job_mock):

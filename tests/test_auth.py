@@ -95,8 +95,6 @@ def test_request_non200_raises_error_not_dict(auth_mock: up42_auth.Auth, request
 def test_request_non200_raises_error_apiv2(auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
     """
     Errors that are raised in the http response with the api v2 format
-    Live tests are included in the specific tests classes.
-    e.g. test_storage (test_get_assets_raise_error_live)
     """
     requests_mock.get(
         url="http://test.com",
