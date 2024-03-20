@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **March 20, 2024**
 
-- Detection of token retrieved based on supplied settings.
+- Detection of token retriever based on supplied settings.
 
 
 ## 0.37.1a2
