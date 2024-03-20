@@ -156,9 +156,13 @@ class Auth:
             if return_text:
                 try:
                     # TODO: try to be replaced with "json" in content type
-                    response_text: dict = json.loads(response.text)
+                    response_text = json.loads(response.text)
                     # Handle api error messages here before handling it in every single function.
-                    if response_text.get("error", None) is not None and response_text.get("data", None) is None:
+                    if (
+                        isinstance(response_text, dict)
+                        and response_text.get("error")
+                        and response_text.get("data") is None
+                    ):
                         raise ValueError(response_text["error"])
                     # Catalog search, JobTask logs etc. does not have the usual {"data": {}, "error": {}} format.
                     return response_text
