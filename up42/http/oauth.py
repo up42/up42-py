@@ -105,18 +105,10 @@ def detect_settings(credentials: dict) -> Optional[config.CredentialsSettings]:
             return config.ProjectCredentialsSettings(**credentials)
         if keys == {"username", "password"}:
             return config.AccountCredentialsSettings(**credentials)
-        raise InvalidCredentials(f"Credentials {credentials} are not supported")
+        raise InvalidCredentials
     elif any(credentials.values()):
-        raise IncompleteCredentials(f"Credentials {credentials} are incomplete")
+        raise IncompleteCredentials
     return None
-
-
-class InvalidCredentials(ValueError):
-    pass
-
-
-class IncompleteCredentials(ValueError):
-    pass
 
 
 def detect_retriever(settings: config.CredentialsSettings):
@@ -125,6 +117,14 @@ def detect_retriever(settings: config.CredentialsSettings):
     if isinstance(settings, config.AccountCredentialsSettings):
         return AccountTokenRetriever(settings)
     raise UnsupportedSettings(f"Settings {settings} are not supported")
+
+
+class InvalidCredentials(ValueError):
+    pass
+
+
+class IncompleteCredentials(ValueError):
+    pass
 
 
 class UnsupportedSettings(ValueError):
