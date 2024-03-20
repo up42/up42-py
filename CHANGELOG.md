@@ -29,9 +29,109 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 0.37.1a3
+
+**March 20, 2024**
+
+- Detection of token retriever based on supplied settings.
+
+
+## 0.37.1a2
+
+**March 19, 2024**
+
+- Detection of credentials settings based on supplied credentials.
+
+## 0.37.1a1
+
+**March 19, 2024**
+
+- Dropped all the live tests.
+
+## 0.37.0
+
+**March 15, 2024**
+
+- Fixed inadvertent title and tags removals during asset metadata updates.
+- Dropped unneeded `auth::env` property and the corresponding tests.
+- Generalized new authentication stack to cover account authentication case.
+- Added new components within the HTTP layer to facilitate future enhancements in authentication and request processes.
+- Adjusted most of the code in accordance with pylint checks.
+
+
+## 0.37.0a14
+
+**March 15, 2024**
+
+- Fixed inadvertent titles and tags removals during asset metadata updates.
+
+## 0.37.0a13
+
+**March 15, 2024**
+
+- Dropped unneeded `auth::env` property and the corresponding tests.
+
+
+## 0.37.0a12
+
+**March 14, 2024**
+
+- Adjusted `initialization.py`, `test_initialization.py`, `main.py` and `test_main.py` in accordance with Pylint checks.
+
+
+## 0.37.0a11
+
+**March 14, 2024**
+
+- Adjusted `asset.py`, `asset_searcher.py`, `test_asset.py` and `fixtures_asset.py` in accordance with Pylint checks.
+- Adjusted `test_http_adapter.py` in accordance with Pylint checks.
+- Dropped `test_e2e_catalog.py` since it is covered by SDK tests.
+- Fixed a flaky test in `test_session.py`
+
+
+## 0.37.0a10
+
+**March 13, 2024**
+
+- Adjusted `webhooks.py`, `test_webhooks.py` and `fixtures_webhook.py` in accordance with Pylint checks.
+- Dropped `test_e2e_30sec.py` since it covers functionality dropped earlier.
+
+## 0.37.0a9
+
+**March 13, 2024**
+
+- Adjusted `macros.py`, `utils.py`, and `test_utils.py` in accordance with Pylint checks.
+
+
+## 0.37.0a8
+
+**March 13, 2024**
+
+- Adjusted `estimation.py`, `test_estimation.py` and `fixtures_estimation.py` in accordance with Pylint checks.
+
+
+## 0.37.0a7
+
+**March 13, 2024**
+
+- Adjusted `order.py`, `test_order.py` and `fixtures_order.py` in accordance with Pylint checks.
+
+
+## 0.37.0a6
+
+**March 13, 2024**
+
+- Adjusted `host.py`, `tools.py`, `test_tools.py`, `storage.py`, `test_storage.py` and `fixtures_storage.py` in accordance with Pylint checks.
+
+## 0.37.0a5
+
+**March 11, 2024**
+
+- Adjusted `auth.py` and `oauth.py` with their coverage and fixtures in accordance with Pylint checks.
+- Adjusted `conftest.py` in accordance with Pylint checks.
+
 
 ## 0.37.0a4
-
 
 **March 07, 2024**
 

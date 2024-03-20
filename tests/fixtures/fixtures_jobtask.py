@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 from up42.jobtask import JobTask
@@ -61,15 +59,4 @@ def jobtask_mock(auth_mock, requests_mock):
     )
     requests_mock.get(url_quicklook, json={"data": ["a_quicklook.png"]})
 
-    return jobtask
-
-
-@pytest.fixture()
-def jobtask_live(auth_live, project_id_live):
-    jobtask = JobTask(
-        auth=auth_live,
-        project_id=project_id_live,
-        job_id=os.getenv("TEST_UP42_JOB_ID"),
-        jobtask_id=os.getenv("TEST_UP42_JOBTASK_ID"),
-    )
     return jobtask

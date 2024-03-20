@@ -1,5 +1,4 @@
 import json
-import os
 import pathlib
 
 import pytest
@@ -7,9 +6,6 @@ import pytest
 from up42 import tasking
 
 from . import fixtures_globals as constants
-
-LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
-
 
 QUOTATION_ENDPOINT = "/v2/tasking/quotation"
 
@@ -163,7 +159,7 @@ def tasking_choose_feasibility_mock(auth_mock, requests_mock):
     )
     requests_mock.patch(url=wrong_feasibility_url, status_code=404, json=response)
 
-    choose_feasibility_url = f"{constants.API_HOST}/v2/tasking/feasibility/{LIVE_FEASIBILITY_ID}"
+    choose_feasibility_url = f"{constants.API_HOST}/v2/tasking/feasibility/{constants.TEST_FEASIBILITY_ID}"
     response = json.dumps(
         {
             "status": 405,
@@ -173,8 +169,3 @@ def tasking_choose_feasibility_mock(auth_mock, requests_mock):
     )
     requests_mock.patch(url=choose_feasibility_url, status_code=405, json=response)
     return tasking.Tasking(auth=auth_mock)
-
-
-@pytest.fixture()
-def tasking_live(auth_live):
-    return tasking.Tasking(auth=auth_live)

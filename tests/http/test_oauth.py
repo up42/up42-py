@@ -1,33 +1,23 @@
 import base64
+import dataclasses
 import time
-from dataclasses import asdict
 from typing import Tuple
 
 import mock
 import pytest
 import requests
-from requests_mock import Mocker
+import requests_mock as req_mock
 
-from up42.http.config import AccountCredentialsSettings, ProjectCredentialsSettings, TokenProviderSettings
-from up42.http.oauth import (
-    AccountTokenRetriever,
-    IncompleteCredentials,
-    InvalidCredentials,
-    ProjectTokenRetriever,
-    UnsupportedSettings,
-    Up42Auth,
-    detect_retriever,
-    detect_settings,
-)
+from up42.http import config, oauth
 
 HTTP_TIMEOUT = 10
 TOKEN_VALUE = "some-token"
 TOKEN_URL = "https://localhost/oauth/token"
-project_credentials = ProjectCredentialsSettings(
-    project_id="client_id",
-    project_api_key="client_secret",
+project_credentials = config.ProjectCredentialsSettings(
+    project_id="some-id",
+    project_api_key="some-key",
 )
-account_credentials = AccountCredentialsSettings(username="some-user", password="some-pass")
+account_credentials = config.AccountCredentialsSettings(username="some-user", password="some-pass")
 
 
 def basic_auth(username, password):
@@ -40,11 +30,11 @@ basic_auth_headers = {"Authorization": basic_client_auth}
 
 
 class TestProjectTokenRetriever:
-    def test_should_retrieve(self, requests_mock: Mocker):
+    def test_should_retrieve(self, requests_mock: req_mock.Mocker):
         def match_request_body(request):
             return request.text == "grant_type=client_credentials"
 
-        retrieve = ProjectTokenRetriever(project_credentials)
+        retrieve = oauth.ProjectTokenRetriever(project_credentials)
         requests_mock.post(
             TOKEN_URL,
             json={"access_token": TOKEN_VALUE},
@@ -56,7 +46,7 @@ class TestProjectTokenRetriever:
 
 
 class TestAccountTokenRetriever:
-    def test_should_retrieve(self, requests_mock: Mocker):
+    def test_should_retrieve(self, requests_mock: req_mock.Mocker):
         def match_request_body(request):
             return request.text == (
                 "grant_type=password&"
@@ -64,7 +54,7 @@ class TestAccountTokenRetriever:
                 f"password={account_credentials.password}"
             )
 
-        retrieve = AccountTokenRetriever(account_credentials)
+        retrieve = oauth.AccountTokenRetriever(account_credentials)
         requests_mock.post(
             TOKEN_URL,
             json={"access_token": TOKEN_VALUE},
@@ -79,7 +69,7 @@ class TestAccountTokenRetriever:
 
 mock_request = mock.MagicMock()
 mock_request.headers = {}
-token_settings = TokenProviderSettings(
+token_settings = config.TokenProviderSettings(
     token_url=TOKEN_URL,
     duration=2,
     timeout=HTTP_TIMEOUT,
@@ -89,7 +79,7 @@ token_settings = TokenProviderSettings(
 class TestUp42Auth:
     def test_should_fetch_token_when_created(self):
         retrieve = mock.MagicMock(return_value=TOKEN_VALUE)
-        up42_auth = Up42Auth(retrieve=retrieve, settings=token_settings)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, supply_token_settings=lambda: token_settings)
         up42_auth(mock_request)
         assert mock_request.headers["Authorization"] == f"Bearer {TOKEN_VALUE}"
         assert up42_auth.token.access_token == TOKEN_VALUE
@@ -99,7 +89,7 @@ class TestUp42Auth:
     def test_should_fetch_token_when_expired(self):
         second_token = "token2"
         retrieve = mock.MagicMock(side_effect=["token1", second_token])
-        up42_auth = Up42Auth(retrieve=retrieve, settings=token_settings)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, supply_token_settings=lambda: token_settings)
         time.sleep(token_settings.duration + 1)
         up42_auth(mock_request)
 
@@ -111,40 +101,36 @@ class TestUp42Auth:
 
 class TestDetectSettings:
     def test_should_detect_project_credentials(self):
-        assert detect_settings(asdict(project_credentials)) == project_credentials
+        assert oauth.detect_settings(dataclasses.asdict(project_credentials)) == project_credentials
 
     def test_should_detect_account_credentials(self):
-        assert detect_settings(asdict(account_credentials)) == account_credentials
+        assert oauth.detect_settings(dataclasses.asdict(account_credentials)) == account_credentials
 
     @pytest.mark.parametrize("keys", [("project_id", "project_api_key"), ("username", "password")])
     def test_should_accept_empty_credentials(self, keys: Tuple[str, str]):
         credentials = dict(zip(keys, [None] * 2))
-        assert not detect_settings(credentials)
+        assert not oauth.detect_settings(credentials)
 
     def test_fails_if_credentials_are_incomplete(self):
         credentials = {"key1": "value1", "key2": None}
-        with pytest.raises(IncompleteCredentials) as exc_info:
-            detect_settings(credentials)
-
-        assert str(credentials) in str(exc_info.value)
+        with pytest.raises(oauth.IncompleteCredentials):
+            oauth.detect_settings(credentials)
 
     def test_fails_if_credentials_are_invalid(self):
         credentials = {"key1": "value1", "key2": "value2"}
-        with pytest.raises(InvalidCredentials) as exc_info:
-            detect_settings(credentials)
-
-        assert str(credentials) in str(exc_info.value)
+        with pytest.raises(oauth.InvalidCredentials):
+            oauth.detect_settings(credentials)
 
 
 class TestDetectRetriever:
     def test_should_detect_project_retriever(self):
-        assert isinstance(detect_retriever(project_credentials), ProjectTokenRetriever)
+        assert isinstance(oauth.detect_retriever(project_credentials), oauth.ProjectTokenRetriever)
 
     def test_should_detect_account_retriever(self):
-        assert isinstance(detect_retriever(account_credentials), AccountTokenRetriever)
+        assert isinstance(oauth.detect_retriever(account_credentials), oauth.AccountTokenRetriever)
 
     def test_fails_if_settings_are_not_recognized(self):
         credentials = mock.MagicMock()
-        with pytest.raises(UnsupportedSettings) as exc_info:
-            detect_retriever(credentials)
+        with pytest.raises(oauth.UnsupportedSettings) as exc_info:
+            oauth.detect_retriever(credentials)
         assert str(credentials) in str(exc_info.value)

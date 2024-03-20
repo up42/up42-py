@@ -1,18 +1,18 @@
-from pathlib import Path
-from typing import List, Optional, Tuple, Union
+import pathlib
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pystac
-from pystac_client import Client, ItemSearch
+import pystac_client
 
-from up42.auth import Auth
-from up42.host import endpoint
-from up42.stac_client import PySTACAuthClient
-from up42.utils import download_from_gcs_unpack, download_gcs_not_unpack, get_filename, get_logger
+from up42 import auth as up42_auth
+from up42 import host, stac_client, utils
 
-logger = get_logger(__name__)
+logger = utils.get_logger(__name__)
 
 MAX_ITEM = 50
 LIMIT = 50
+
+NOT_PROVIDED = object()
 
 
 class Asset:
@@ -28,7 +28,7 @@ class Asset:
 
     def __init__(
         self,
-        auth: Auth,
+        auth: up42_auth.Auth,
         asset_id: Optional[str] = None,
         asset_info: Optional[dict] = None,
     ):
@@ -49,13 +49,13 @@ class Asset:
         return self.info.get("id")
 
     def _get_info(self, asset_id: str):
-        url = endpoint(f"/v2/assets/{asset_id}/metadata")
+        url = host.endpoint(f"/v2/assets/{asset_id}/metadata")
         return self.auth.request(request_type="GET", url=url)
 
     @property
-    def _stac_search(self) -> Tuple[Client, ItemSearch]:
-        url = endpoint("/v2/assets/stac")
-        pystac_client_aux = PySTACAuthClient(auth=self.auth).open(url=url)
+    def _stac_search(self) -> Tuple[pystac_client.Client, pystac_client.ItemSearch]:
+        url = host.endpoint("/v2/assets/stac")
+        pystac_client_aux = stac_client.PySTACAuthClient(auth=self.auth).open(url=url)
         stac_search_parameters = {
             "max_items": MAX_ITEM,
             "limit": LIMIT,
@@ -95,31 +95,34 @@ class Asset:
 
     def update_metadata(
         self,
-        title: Optional[str] = None,
-        tags: Optional[List[str]] = None,
-        **kwargs,
+        title: Union[Optional[str], object] = NOT_PROVIDED,
+        tags: Union[Optional[List[str]], object] = NOT_PROVIDED,
     ) -> dict:
         """
         Update the metadata of the asset.
 
         Args:
-            title: The title string to be assigned to the asset.
-            tags: A list of tag strings to be assigned to the asset.
+            title: The title string to be assigned to the asset. No value will keep the existing title.
+            tags: A list of tag strings to be assigned to the asset. No value will keep the existing tags.
 
         Returns:
             The updated asset metadata information
         """
-        url = endpoint(f"/v2/assets/{self.asset_id}/metadata")
-        body_update = {"title": title, "tags": tags, **kwargs}
-        response_json = self.auth.request(request_type="POST", url=url, data=body_update)
-        self.info = response_json
+        url = host.endpoint(f"/v2/assets/{self.asset_id}/metadata")
+        payload: Dict[str, Any] = {}
+        if title != NOT_PROVIDED:
+            payload.update(title=title)
+        if tags != NOT_PROVIDED:
+            payload.update(tags=tags)
+        if payload:
+            self.info = self.auth.request(request_type="POST", url=url, data=payload)
         return self.info
 
     def _get_download_url(self, stac_asset_id: Optional[str] = None, request_type: str = "POST") -> str:
         if stac_asset_id is None:
-            url = endpoint(f"/v2/assets/{self.asset_id}/download-url")
+            url = host.endpoint(f"/v2/assets/{self.asset_id}/download-url")
         else:
-            url = endpoint(f"/v2/assets/{stac_asset_id}/download-url")
+            url = host.endpoint(f"/v2/assets/{stac_asset_id}/download-url")
         response_json = self.auth.request(request_type=request_type, url=url)
         return response_json["url"]
 
@@ -138,7 +141,7 @@ class Asset:
 
     def download(
         self,
-        output_directory: Union[str, Path, None] = None,
+        output_directory: Union[str, pathlib.Path, None] = None,
         unpacking: bool = True,
     ) -> List[str]:
         """
@@ -152,23 +155,23 @@ class Asset:
         Returns:
             List of the downloaded asset filepaths.
         """
-        logger.info(f"Downloading asset {self.asset_id}")
+        logger.info("Downloading asset %s", self.asset_id)
 
         if output_directory is None:
-            output_directory = Path.cwd() / f"asset_{self.asset_id}"
+            output_directory = pathlib.Path.cwd() / f"asset_{self.asset_id}"
         else:
-            output_directory = Path(output_directory)
+            output_directory = pathlib.Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info(f"Download directory: {str(output_directory)}")
+        logger.info("Download directory: %s", output_directory)
 
         download_url = self._get_download_url()
         if unpacking:
-            out_filepaths = download_from_gcs_unpack(
+            out_filepaths = utils.download_from_gcs_unpack(
                 download_url=download_url,
                 output_directory=output_directory,
             )
         else:
-            out_filepaths = download_gcs_not_unpack(
+            out_filepaths = utils.download_gcs_not_unpack(
                 download_url=download_url,
                 output_directory=output_directory,
             )
@@ -179,8 +182,8 @@ class Asset:
     def download_stac_asset(
         self,
         stac_asset: pystac.Asset,
-        output_directory: Union[str, Path, None] = None,
-    ) -> Path:
+        output_directory: Union[str, pathlib.Path, None] = None,
+    ) -> pathlib.Path:
         """
         Downloads a STAC asset to a specified output directory.
 
@@ -197,15 +200,15 @@ class Asset:
             requests.exceptions.HTTPError: If there is an HTTP error during the download.
 
         """
-        logger.info(f"Downloading STAC asset {stac_asset.title}")
+        logger.info("Downloading STAC asset %s", stac_asset.title)
         if output_directory is None:
-            output_directory = Path.cwd() / f"asset_{self.asset_id}/{stac_asset.title}"
+            output_directory = pathlib.Path.cwd() / f"asset_{self.asset_id}/{stac_asset.title}"
         else:
-            output_directory = Path(output_directory)
+            output_directory = pathlib.Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
-        logger.info(f"Download directory: {str(output_directory)}")
+        logger.info("Download directory: %s", output_directory)
         download_url = self.get_stac_asset_url(stac_asset=stac_asset)
-        file_name = get_filename(download_url, default_filename="stac_asset")
+        file_name = utils.get_filename(download_url, default_filename="stac_asset")
         out_file_path = output_directory / file_name
-        download_gcs_not_unpack(download_url, output_directory)
+        utils.download_gcs_not_unpack(download_url, output_directory)
         return out_file_path

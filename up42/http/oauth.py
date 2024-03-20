@@ -1,7 +1,7 @@
+import dataclasses as dc
 import datetime as dt
-from dataclasses import dataclass
+import warnings
 from typing import Optional, Protocol
-from warnings import warn
 
 import requests
 from requests import auth
@@ -9,7 +9,7 @@ from requests import auth
 from up42.http import config, http_adapter
 
 
-@dataclass(eq=True, frozen=True)
+@dc.dataclass(eq=True, frozen=True)
 class Token:
     access_token: str
     expires_on: dt.datetime
@@ -65,12 +65,13 @@ class Up42Auth(requests.auth.AuthBase):
     def __init__(
         self,
         retrieve: TokenRetriever,
-        settings=config.TokenProviderSettings(),
+        supply_token_settings=config.TokenProviderSettings,
         create_adapter=http_adapter.create,
     ):
-        self.token_url = settings.token_url
-        self.duration = settings.duration
-        self.timeout = settings.timeout
+        token_settings = supply_token_settings()
+        self.token_url = token_settings.token_url
+        self.duration = token_settings.duration
+        self.timeout = token_settings.timeout
         self.adapter = create_adapter(include_post=True)
         self.retrieve = retrieve
         self._token = self._fetch_token()
@@ -97,16 +98,16 @@ def detect_settings(credentials: dict) -> Optional[config.CredentialsSettings]:
     if all(credentials.values()):
         keys = credentials.keys()
         if keys == {"project_id", "project_api_key"}:
-            warn(
+            warnings.warn(
                 "Project based authentication will be deprecated."
                 "Please follow authentication guidelines (/docs/authentication.md)."
             )
             return config.ProjectCredentialsSettings(**credentials)
         if keys == {"username", "password"}:
             return config.AccountCredentialsSettings(**credentials)
-        raise InvalidCredentials(f"Credentials {credentials} are not supported")
+        raise InvalidCredentials
     elif any(credentials.values()):
-        raise IncompleteCredentials(f"Credentials {credentials} are incomplete")
+        raise IncompleteCredentials
     return None
 
 
