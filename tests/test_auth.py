@@ -16,9 +16,8 @@ def test_auth_kwargs():
         project_id=constants.PROJECT_ID,
         project_api_key=constants.PROJECT_APIKEY,
         authenticate=False,
-        retry=False,
     )
-    assert not auth.authenticate
+    assert not auth.token
 
 
 def test_no_credentials_raises():

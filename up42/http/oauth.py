@@ -63,10 +63,10 @@ class AccountTokenRetriever:
 
 class Up42Auth(requests.auth.AuthBase):
     def __init__(
-            self,
-            retrieve: TokenRetriever,
-            token_settings: config.TokenProviderSettings,
-            create_adapter=http_adapter.create,
+        self,
+        retrieve: TokenRetriever,
+        token_settings: config.TokenProviderSettings,
+        create_adapter=http_adapter.create,
     ):
         self.token_url = token_settings.token_url
         self.duration = token_settings.duration

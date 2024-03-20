@@ -9,7 +9,7 @@ class Client:
         self.auth = auth
 
     @property
-    def token(self):
+    def token(self) -> str:
         return self.auth.token.access_token
 
 
