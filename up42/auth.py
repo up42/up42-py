@@ -94,7 +94,6 @@ class Auth:
         request_type: str,
         url: str,
         data: dict,
-        querystring: dict,
     ) -> requests.Response:
         """
         Helper function for the request, running the actual request with the correct headers.
@@ -103,29 +102,17 @@ class Auth:
             request_type: 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'
             url: The requests url.
             data: The payload, e.g. dictionary with job parameters etc.
-            querystring: The querystring.
-
         Returns:
             The request response.
         """
         headers = self._generate_headers()
-        if querystring == {}:
-            response: requests.Response = requests.request(
-                method=request_type,
-                url=url,
-                data=json.dumps(data),
-                headers=headers,
-                timeout=120,
-            )
-        else:
-            response = requests.request(
-                method=request_type,
-                url=url,
-                data=json.dumps(data),
-                headers=headers,
-                params=querystring,
-                timeout=120,
-            )
+        response: requests.Response = requests.request(
+            method=request_type,
+            url=url,
+            data=json.dumps(data),
+            headers=headers,
+            timeout=utils.TIMEOUT,
+        )
         logger.debug(response)
         logger.debug(data)
         response.raise_for_status()
@@ -136,7 +123,6 @@ class Auth:
         request_type: str,
         url: str,
         data: dict = {},
-        querystring: dict = {},
         return_text: bool = True,
     ):
         """
@@ -152,17 +138,13 @@ class Auth:
             request_type: 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'
             url: The url to request.
             data: The payload, e.g. dictionary with job parameters etc.
-            querystring: The querystring.
             return_text: If true returns response text/json, false returns response.
-            retry: If False, after 5 minutes and invalid token will return 401
-                errors.
-
         Returns:
             The API response.
         """
 
         try:
-            response: requests.Response = self._request_helper(request_type, url, data, querystring)
+            response: requests.Response = self._request_helper(request_type, url, data)
             # There are two UP42 API versions:
             # v1 endpoints give response format {"data": ..., "error": ...}   data e.g. dict or list.  error str or dict
             # or None (if no error).
@@ -173,6 +155,7 @@ class Auth:
             # Handle response text.
             if return_text:
                 try:
+                    # TODO: try to be replaced with "json" in content type
                     response_text: dict = json.loads(response.text)
                     # Handle api error messages here before handling it in every single function.
                     if response_text.get("error", None) is not None and response_text.get("data", None) is None:
