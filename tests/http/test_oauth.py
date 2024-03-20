@@ -34,7 +34,7 @@ class TestProjectTokenRetriever:
         def match_request_body(request):
             return request.text == "grant_type=client_credentials"
 
-        retrieve = oauth.ProjectTokenRetriever(lambda: project_credentials)
+        retrieve = oauth.ProjectTokenRetriever(project_credentials)
         requests_mock.post(
             TOKEN_URL,
             json={"access_token": TOKEN_VALUE},
@@ -54,7 +54,7 @@ class TestAccountTokenRetriever:
                 f"password={account_credentials.password}"
             )
 
-        retrieve = oauth.AccountTokenRetriever(lambda: account_credentials)
+        retrieve = oauth.AccountTokenRetriever(account_credentials)
         requests_mock.post(
             TOKEN_URL,
             json={"access_token": TOKEN_VALUE},
@@ -120,3 +120,17 @@ class TestDetectSettings:
         credentials = {"key1": "value1", "key2": "value2"}
         with pytest.raises(oauth.InvalidCredentials):
             oauth.detect_settings(credentials)
+
+
+class TestDetectRetriever:
+    def test_should_detect_project_retriever(self):
+        assert isinstance(oauth.detect_retriever(project_credentials), oauth.ProjectTokenRetriever)
+
+    def test_should_detect_account_retriever(self):
+        assert isinstance(oauth.detect_retriever(account_credentials), oauth.AccountTokenRetriever)
+
+    def test_fails_if_settings_are_not_recognized(self):
+        credentials = mock.MagicMock()
+        with pytest.raises(oauth.UnsupportedSettings) as exc_info:
+            oauth.detect_retriever(credentials)
+        assert str(credentials) in str(exc_info.value)
