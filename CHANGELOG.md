@@ -30,13 +30,26 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-## 0.37.0a2
+## 0.37.0a4
 
-**March 18, 2024**
+**March 20, 2024**
 
 - Run test pipeline on Python versions 3.9 to 3.12
 - Removed upper bound for Python 3.12
 - Dropped support for Python 3.8
+
+## 0.37.1a3
+
+**March 20, 2024**
+
+- Detection of token retriever based on supplied settings.
+
+
+## 0.37.1a2
+
+**March 19, 2024**
+
+- Detection of credentials settings based on supplied credentials.
 
 
 ## 0.37.1a1

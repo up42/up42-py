@@ -1,4 +1,5 @@
 import dataclasses as dc
+from typing import Union
 
 
 @dc.dataclass(eq=True, frozen=True)
@@ -17,11 +18,14 @@ class TokenProviderSettings:
 
 @dc.dataclass(eq=True, frozen=True)
 class ProjectCredentialsSettings:
-    client_id: str
-    client_secret: str
+    project_id: str
+    project_api_key: str
 
 
 @dc.dataclass(eq=True, frozen=True)
 class AccountCredentialsSettings:
     username: str
     password: str
+
+
+CredentialsSettings = Union[AccountCredentialsSettings, ProjectCredentialsSettings]

@@ -1,6 +1,7 @@
 import dataclasses as dc
 import datetime as dt
-from typing import Protocol
+import warnings
+from typing import Optional, Protocol
 
 import requests
 from requests import auth
@@ -24,10 +25,9 @@ class TokenRetriever(Protocol):
 
 
 class ProjectTokenRetriever:
-    def __init__(self, supply_credentials_settings=config.ProjectCredentialsSettings):
-        credentials_settings = supply_credentials_settings()
-        self.client_id = credentials_settings.client_id
-        self.client_secret = credentials_settings.client_secret
+    def __init__(self, settings: config.ProjectCredentialsSettings):
+        self.client_id = settings.project_id
+        self.client_secret = settings.project_api_key
 
     def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
         basic_auth = auth.HTTPBasicAuth(self.client_id, self.client_secret)
@@ -40,10 +40,9 @@ class ProjectTokenRetriever:
 
 
 class AccountTokenRetriever:
-    def __init__(self, supply_credentials_settings=config.AccountCredentialsSettings):
-        credentials_settings = supply_credentials_settings()
-        self.username = credentials_settings.username
-        self.password = credentials_settings.password
+    def __init__(self, settings: config.AccountCredentialsSettings):
+        self.username = settings.username
+        self.password = settings.password
 
     def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
         headers = {
@@ -93,3 +92,40 @@ class Up42Auth(requests.auth.AuthBase):
         if self._token.has_expired:
             self._token = self._fetch_token()
         return self._token
+
+
+def detect_settings(credentials: dict) -> Optional[config.CredentialsSettings]:
+    if all(credentials.values()):
+        keys = credentials.keys()
+        if keys == {"project_id", "project_api_key"}:
+            warnings.warn(
+                "Project based authentication will be deprecated."
+                "Please follow authentication guidelines (/docs/authentication.md)."
+            )
+            return config.ProjectCredentialsSettings(**credentials)
+        if keys == {"username", "password"}:
+            return config.AccountCredentialsSettings(**credentials)
+        raise InvalidCredentials
+    elif any(credentials.values()):
+        raise IncompleteCredentials
+    return None
+
+
+def detect_retriever(settings: config.CredentialsSettings):
+    if isinstance(settings, config.ProjectCredentialsSettings):
+        return ProjectTokenRetriever(settings)
+    if isinstance(settings, config.AccountCredentialsSettings):
+        return AccountTokenRetriever(settings)
+    raise UnsupportedSettings(f"Settings {settings} are not supported")
+
+
+class InvalidCredentials(ValueError):
+    pass
+
+
+class IncompleteCredentials(ValueError):
+    pass
+
+
+class UnsupportedSettings(ValueError):
+    pass
