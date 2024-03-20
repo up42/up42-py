@@ -33,7 +33,6 @@ jobs:
             - *venv-cache
       - run:
           name: Install requirements
-          no_output_timeout: 30m
           command: |
             poetry lock
             poetry install --no-interaction --no-ansi
