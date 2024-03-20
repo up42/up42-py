@@ -3,13 +3,14 @@ from unittest import mock
 
 import pytest
 
-from up42.http import client
+from up42.http import client, config
 
 SETTINGS = {"some": "settings"}
 PROJECT_CREDENTIALS = {"project_id": "some-id", "project_api_key": "some-key"}
 ACCOUNT_CREDENTIALS = {"username": "some-user", "password": "some-pass"}
 EMPTY_PROJECT_CREDENTIALS = {"project_id": None, "project_api_key": None}
 EMPTY_ACCOUNT_CREDENTIALS = {"username": None, "password": None}
+TOKEN_URL = "some-token-url"
 
 
 class TestCreate:
@@ -35,7 +36,8 @@ class TestCreate:
         auth.token.access_token = access_token
         create_auth = mock.MagicMock(return_value=auth)
         result = client.create(
-            sources,
+            credential_sources=sources,
+            token_url=TOKEN_URL,
             detect_settings=detect_settings,
             detect_retriever=detect_retriever,
             create_auth=create_auth,
@@ -43,7 +45,7 @@ class TestCreate:
         assert result.token == access_token
         detect_settings.assert_has_calls([mock.call(source) for source in sources])
         detect_retriever.assert_called_with(SETTINGS)
-        create_auth.assert_called_with(retrieve)
+        create_auth.assert_called_with(retrieve, config.TokenProviderSettings(token_url=TOKEN_URL))
 
     @pytest.mark.parametrize(
         "sources, settings, error",
@@ -59,6 +61,7 @@ class TestCreate:
         with pytest.raises(error):
             client.create(
                 credential_sources=sources,
+                token_url=TOKEN_URL,
                 detect_settings=detect_settings,
                 detect_retriever=self.unreachable,
                 create_auth=self.unreachable,

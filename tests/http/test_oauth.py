@@ -79,7 +79,7 @@ token_settings = config.TokenProviderSettings(
 class TestUp42Auth:
     def test_should_fetch_token_when_created(self):
         retrieve = mock.MagicMock(return_value=TOKEN_VALUE)
-        up42_auth = oauth.Up42Auth(retrieve=retrieve, supply_token_settings=lambda: token_settings)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
         up42_auth(mock_request)
         assert mock_request.headers["Authorization"] == f"Bearer {TOKEN_VALUE}"
         assert up42_auth.token.access_token == TOKEN_VALUE
@@ -89,7 +89,7 @@ class TestUp42Auth:
     def test_should_fetch_token_when_expired(self):
         second_token = "token2"
         retrieve = mock.MagicMock(side_effect=["token1", second_token])
-        up42_auth = oauth.Up42Auth(retrieve=retrieve, supply_token_settings=lambda: token_settings)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
         time.sleep(token_settings.duration + 1)
         up42_auth(mock_request)
 
