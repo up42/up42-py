@@ -109,7 +109,7 @@ class Auth:
         response: requests.Response = requests.request(
             method=request_type,
             url=url,
-            data=json.dumps(data),
+            json=data,
             headers=headers,
             timeout=utils.TIMEOUT,
         )
@@ -126,13 +126,9 @@ class Auth:
         return_text: bool = True,
     ):
         """
+        TODO: to be updated
         Handles retrying the request and automatically retries and gets a new token if
         the old is invalid.
-
-        Retry is enabled by default, can be set to False as kwargs of Auth.
-
-        In addition to this retry mechanic, 429-errors (too many requests) are retried
-        more extensively in _request_helper.
 
         Args:
             request_type: 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'
@@ -140,7 +136,7 @@ class Auth:
             data: The payload, e.g. dictionary with job parameters etc.
             return_text: If true returns response text/json, false returns response.
         Returns:
-            The API response.
+            The response object or payload.
         """
 
         try:
@@ -156,19 +152,18 @@ class Auth:
             if return_text:
                 try:
                     # TODO: try to be replaced with "json" in content type
-                    response_text = json.loads(response.text)
+                    response_json = response.json()
                     # Handle api error messages here before handling it in every single function.
                     if (
-                        isinstance(response_text, dict)
-                        and response_text.get("error")
-                        and response_text.get("data") is None
+                        isinstance(response_json, dict)
+                        and response_json.get("error")
+                        and response_json.get("data") is None
                     ):
-                        raise ValueError(response_text["error"])
+                        raise ValueError(response_json["error"])
                     # Catalog search, JobTask logs etc. does not have the usual {"data": {}, "error": {}} format.
-                    return response_text
+                    return response_json
                 except json.JSONDecodeError:  # e.g. JobTask logs are str format.
                     return response.text
-
             else:  # E.g. for DELETE
                 return response
 
