@@ -35,7 +35,7 @@ jobs:
           name: Install requirements
           no_output_timeout: 30m
           command: |
-            # poetry lock
+            poetry lock
             poetry install --no-interaction --no-ansi
       - save_cache:
           name: Saving poetry cache
