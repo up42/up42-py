@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 0.37.1a4
+
+**March 21, 2024**
+
+- New http stack client to provide resilient token and requests compliant authentication.
+
 ## 0.37.1a3
 
 **March 20, 2024**
