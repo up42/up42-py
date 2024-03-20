@@ -19,7 +19,7 @@ def _merge(left: Optional[config.CredentialsSettings], right: Optional[config.Cr
     return left or right
 
 
-SettingsDetector = Callable[[Dict], Optional[config.CredentialsSettings]]
+SettingsDetector = Callable[[Optional[Dict]], Optional[config.CredentialsSettings]]
 RetrieverDetector = Callable[[config.CredentialsSettings], oauth.TokenRetriever]
 AuthFactory = Callable[[oauth.TokenRetriever, config.TokenProviderSettings], oauth.Up42Auth]
 
