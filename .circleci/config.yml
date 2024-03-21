@@ -17,8 +17,8 @@ jobs:
   test:
     working_directory: *workspace-dir
     docker:
-      - image: cimg/python:3.11
-    resource_class: medium+
+      - image: cimg/python:3.12
+    resource_class: large
     steps:
       - attach_workspace:
           at: *workspace-dir
@@ -63,6 +63,50 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
+
+  test-python:
+    parameters:
+      python-version:
+        type: string
+        default: "3.11"
+    working_directory: *workspace-dir
+    docker:
+      - image: cimg/python:<< parameters.python-version >>
+    resource_class: large
+    steps:
+      - attach_workspace:
+          at: *workspace-dir
+      - checkout
+      - restore_cache:
+          name: Restoring poetry cache
+          keys:
+            - *venv-cache
+      - run:
+          name: Install requirements
+          command: |
+            poetry lock
+            poetry install --no-interaction --no-ansi
+      - save_cache:
+          name: Saving poetry cache
+          key: *venv-cache
+          paths:
+            - .venv
+      - restore_cache:
+          name: Restoring pre-commit cache
+          keys:
+            - *pre-commit-cache
+      - run:
+          name: Running pre-commit
+          command: poetry run pre-commit run --all
+      - save_cache:
+          name: Saving pre-commit cache
+          key: *pre-commit-cache
+          paths:
+            - ~/.cache/pre-commit
+      - run:
+          name: Running tests
+          command: poetry run pytest
+
   sonar:
     working_directory: *workspace-dir
     docker:
@@ -90,6 +134,10 @@ workflows:
           context: sonarcloud
           requires:
             - test
+      - test-python:
+          matrix:
+            parameters:
+              python-version: ["3.9", "3.10", "3.11"]
       - automated-test/run-sdk-tests:
           requires:
             - test

@@ -73,8 +73,8 @@ class Order:
 
     def __repr__(self):
         return (
-            f"Order(order_id: {self.order_id}, status: {self._info['status']},"
-            f"createdAt: {self._info['createdAt']}, updatedAt: {self._info['updatedAt']})"
+            f"""Order(order_id: {self.order_id}, status: {self._info["status"]},"""
+            f"""createdAt: {self._info["createdAt"]}, updatedAt: {self._info["updatedAt"]})"""
         )
 
     def __eq__(self, other: Optional[object]):

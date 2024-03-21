@@ -1,7 +1,7 @@
 # Installation
 
 !!! Warning "Python version"
-    The package requires Python ≥ 3.8
+    The package requires Python ≥ 3.9
 
 === "For macOS and Ubuntu (pip)"
 
