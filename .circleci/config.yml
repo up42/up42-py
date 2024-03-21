@@ -15,10 +15,59 @@ slack-channel-id-qa-alert: &slack-channel-id-qa-alert 'C04QXJP2RCZ'
 
 jobs:
   test:
+    working_directory: *workspace-dir
+    docker:
+      - image: cimg/python:3.12
+    resource_class: large
+    steps:
+      - attach_workspace:
+          at: *workspace-dir
+      - checkout
+      - restore_cache:
+          name: Restoring poetry cache
+          keys:
+            - *venv-cache
+      - run:
+          name: Install requirements
+          command: |
+            poetry lock
+            poetry install --no-interaction --no-ansi
+      - save_cache:
+          name: Saving poetry cache
+          key: *venv-cache
+          paths:
+            - .venv
+      - restore_cache:
+          name: Restoring pre-commit cache
+          keys:
+            - *pre-commit-cache
+      - run:
+          name: Running pre-commit
+          command: poetry run pre-commit run --all
+      - save_cache:
+          name: Saving pre-commit cache
+          key: *pre-commit-cache
+          paths:
+            - ~/.cache/pre-commit
+      - run:
+          name: Running tests
+          command: poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
+      - store_artifacts:
+          path: .coverage-reports/coverage.xml
+      - store_artifacts:
+          path: .coverage
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - up42
+            - .coverage-reports
+            - .circleci
+            - sonar-project.properties
+  test-on-different-python-versions:
     parameters:
       python-version:
         type: string
-        default: "3.12"
+        default: "3.11"
     working_directory: *workspace-dir
     docker:
       - image: cimg/python:<< parameters.python-version >>
@@ -55,24 +104,7 @@ jobs:
             - ~/.cache/pre-commit
       - run:
           name: Running tests
-          command: poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
-      - run:
-          name: Conditionally run steps for Python 3.12 to avoid duplicate coverage reports
-          command: |
-            if ! python --version 2>&1 | grep -q "Python 3.12"; then
-              circleci-agent step halt
-            fi
-      - store_artifacts:
-          path: .coverage-reports/coverage.xml
-      - store_artifacts:
-          path: .coverage
-      - persist_to_workspace:
-          root: ./
-          paths:
-            - up42
-            - .coverage-reports
-            - .circleci
-            - sonar-project.properties
+          command: poetry run pytest
 
   sonar:
     working_directory: *workspace-dir
@@ -96,14 +128,15 @@ jobs:
 workflows:
   test_and_deploy:
     jobs:
-      - test:
-          matrix:
-            parameters:
-              python-version: ["3.9", "3.10", "3.11", "3.12"]
+      - test
       - sonar:
           context: sonarcloud
           requires:
             - test
+      - test-on-different-python-versions:
+          matrix:
+            parameters:
+              python-version: ["3.9", "3.10", "3.11"]
       - automated-test/run-sdk-tests:
           requires:
             - test
