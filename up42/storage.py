@@ -178,7 +178,7 @@ class Storage:
         }
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
-        sort = f"{sortby},{'desc' if descending else 'asc'}"  # noqa: E231
+        sort = f"{sortby},{'desc' if descending else 'asc'}"
         base_url = host.endpoint("/v2/orders")
 
         params = {

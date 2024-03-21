@@ -79,7 +79,7 @@ def search_assets(
     Returns:
         A list of assets metadata as dictionaries.
     """
-    sort = f"{sortby},{'desc' if descending else 'asc'}"  # noqa: E231
+    sort = f"{sortby},{'desc' if descending else 'asc'}"
     request_params: Dict[str, Any] = {"sort": sort}
     request_params.update({key: value for key, value in params.items() if value is not None})
     base_url = host.endpoint("/v2/assets")

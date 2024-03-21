@@ -199,7 +199,7 @@ class Workflow:
 
         # Add first task, the data block.
         data_task = {
-            "name": f"{blocks_id_name[input_tasks_ids[0]]}:1",  # noqa: E231
+            "name": f"{blocks_id_name[input_tasks_ids[0]]}:1",
             "parentName": None,
             "blockId": input_tasks_ids[0],
         }
@@ -217,7 +217,7 @@ class Workflow:
                 count_block = 1
 
             next_task = {
-                "name": f"{blocks_id_name[block_id]}:{count_block}",  # noqa: E231
+                "name": f"{blocks_id_name[block_id]}:{count_block}",
                 "parentName": previous_task_name,
                 "blockId": block_id,
             }

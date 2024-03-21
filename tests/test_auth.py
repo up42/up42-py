@@ -50,7 +50,7 @@ def test_should_set_headers(auth_mock: up42_auth.Auth, requests_mock: req_mock.M
         "Content-Type": "application/json",
         "Authorization": f"Bearer {constants.TOKEN}",
         "cache-control": "no-cache",
-        "User-Agent": f"up42-py/{version} (https://github.com/up42/up42-py)",  # noqa: E231
+        "User-Agent": f"up42-py/{version} (https://github.com/up42/up42-py)",
     }
     requests_mock.get(test_url, request_headers=expected_headers, status_code=expected_code)
     response = cast(requests.Response, auth_mock.request("GET", test_url, return_text=False))

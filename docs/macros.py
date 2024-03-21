@@ -70,7 +70,7 @@ def define_env(env):
         # Requires Python linebreak and markdown linebreak (two spaces)!
         # "\n\t\t• `abc`  \n\t\t• `cde`  \n\t\t• `cde`
 
-        formatted = [f"\n\t\t&emsp; • `.{func}()`  " for func in function_methods]  # noqa: E702
+        formatted = [f"\n\t\t&emsp; • `.{func}()`  " for func in function_methods]
         return "".join(formatted)
 
     # Class docstrings variables for use in the structure chapter.

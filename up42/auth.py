@@ -166,7 +166,7 @@ class Auth:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
             "cache-control": "no-cache",
-            "User-Agent": f"up42-py/{version} (https://github.com/up42/up42-py)",  # noqa: E231
+            "User-Agent": f"up42-py/{version} (https://github.com/up42/up42-py)",
         }
         return headers
 

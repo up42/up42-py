@@ -212,7 +212,7 @@ class Job(VizTools):
 
         logger.info(f"Getting logs for {len(jobtasks_ids)} job tasks: {jobtasks_ids}")
         if as_print:
-            print(f"Printing logs of {len(jobtasks_ids)} JobTasks in Job with job_id {self.job_id}:\n")  # noqa: E231
+            print(f"Printing logs of {len(jobtasks_ids)} JobTasks in Job with job_id {self.job_id}:\n")
 
         for idx, jobtask_id in enumerate(jobtasks_ids):
             url = endpoint(f"/projects/{self.project_id}/jobs/{self.job_id}/tasks/{jobtask_id}/logs")
@@ -222,7 +222,7 @@ class Job(VizTools):
 
             if as_print:
                 print("----------------------------------------------------------")
-                print(f"JobTask {idx + 1} with jobtask_id {jobtask_id}:\n")  # noqa: E231
+                print(f"JobTask {idx + 1} with jobtask_id {jobtask_id}:\n")
                 print(response_json)
         if as_return:
             return job_logs
