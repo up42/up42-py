@@ -38,7 +38,7 @@ def create_session():
 
 @pytest.mark.parametrize("method, call", METHODS_WITH_CALLS)
 def test_should_respond_on_good_status(requests_mock: req_mock.Mocker, auth_session, method, call):
-    status_code = random.randint(200, 400)
+    status_code = random.randint(200, 399)
     requests_mock.request(
         method, SOME_URL, request_headers={"Authorization": AUTHORIZATION_VALUE}, status_code=status_code
     )
