@@ -350,7 +350,7 @@ class Catalog(CatalogBase, viztools.VizTools):
         ]
         if not hosts:
             raise ValueError(
-                f"Selected collections {search_parameters['collections']} are "
+                f"""Selected collections {search_parameters["collections"]} are """
                 "not valid. See catalog.get_collections."
             )
         if len(set(hosts)) > 1:
