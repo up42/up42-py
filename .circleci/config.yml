@@ -133,7 +133,7 @@ workflows:
       - sonar:
           context: sonarcloud
           requires:
-            - test
+            - test-python-3_12
       - test:
           matrix:
             parameters:
