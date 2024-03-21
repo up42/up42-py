@@ -14,7 +14,7 @@ workspace: &workspace-dir /tmp/workspace
 slack-channel-id-qa-alert: &slack-channel-id-qa-alert 'C04QXJP2RCZ'
 
 jobs:
-  test:
+  test-python-3_12:
     working_directory: *workspace-dir
     docker:
       - image: cimg/python:3.12
@@ -63,7 +63,8 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
-  test-on-different-python-versions:
+
+  test:
     parameters:
       python-version:
         type: string
@@ -128,18 +129,18 @@ jobs:
 workflows:
   test_and_deploy:
     jobs:
-      - test
+      - test-python-3_12
       - sonar:
           context: sonarcloud
           requires:
             - test
-      - test-on-different-python-versions:
+      - test:
           matrix:
             parameters:
               python-version: ["3.9", "3.10", "3.11"]
       - automated-test/run-sdk-tests:
           requires:
-            - test
+            - test-python-3_12
           machine-size: medium+
           name: sdk-e2e-tests
           fingerprint: 'c5:5a:28:b3:5e:21:8d:9c:6c:b1:9b:a7:7b:f3:41:0c'
