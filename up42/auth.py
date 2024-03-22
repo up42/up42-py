@@ -19,7 +19,7 @@ def collect_credentials(
     project_api_key: Optional[str],
     username: Optional[str],
     password: Optional[str],
-) -> List[Dict]:
+) -> List[Optional[Dict]]:
     config_source = utils.read_json(cfg_file)
     project_credentials_source = {
         "project_id": project_id,
