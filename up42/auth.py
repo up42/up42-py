@@ -3,7 +3,7 @@ UP42 authentication mechanism and base requests functionality
 """
 import json
 import pathlib
-from typing import Dict, Optional, Union, List
+from typing import Dict, List, Optional, Union
 
 import requests
 
@@ -64,12 +64,8 @@ class Auth:
         self._client: Optional[client.Client] = None
 
         if authenticate:
-            credential_sources = collect_credentials(
-                cfg_file, project_id, project_api_key, username, password
-            )
-            self._client = create_client(
-                credential_sources, host.endpoint("/oauth/token")
-            )
+            credential_sources = collect_credentials(cfg_file, project_id, project_api_key, username, password)
+            self._client = create_client(credential_sources, host.endpoint("/oauth/token"))
             self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
