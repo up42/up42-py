@@ -3,7 +3,7 @@ UP42 authentication mechanism and base requests functionality
 """
 import json
 import pathlib
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, List
 
 import requests
 
@@ -14,28 +14,31 @@ logger = utils.get_logger(__name__)
 
 
 def collect_credentials(
-        cfg_file: Union[str, pathlib.Path, None],
-        project_id: Optional[str],
-        project_api_key: Optional[str],
-        username: Optional[str],
-        password: Optional[str],
-):
+    cfg_file: Union[str, pathlib.Path, None],
+    project_id: Optional[str],
+    project_api_key: Optional[str],
+    username: Optional[str],
+    password: Optional[str],
+) -> List[Dict]:
     config_source = utils.read_json(cfg_file)
-    project_credentials_source = {"project_id": project_id, "project_api_key": project_api_key}
+    project_credentials_source = {
+        "project_id": project_id,
+        "project_api_key": project_api_key,
+    }
     account_credentials_source = {"username": username, "password": password}
     return [config_source, project_credentials_source, account_credentials_source]
 
 
 class Auth:
     def __init__(
-            self,
-            cfg_file: Union[str, pathlib.Path, None] = None,
-            project_id: Optional[str] = None,
-            project_api_key: Optional[str] = None,
-            username: Optional[str] = None,
-            password: Optional[str] = None,
-            create_client=client.create,
-            **kwargs,
+        self,
+        cfg_file: Union[str, pathlib.Path, None] = None,
+        project_id: Optional[str] = None,
+        project_api_key: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        create_client=client.create,
+        **kwargs,
     ):
         """
         The Auth class handles the authentication with UP42.
@@ -61,8 +64,12 @@ class Auth:
         self._client: Optional[client.Client] = None
 
         if authenticate:
-            credential_sources = collect_credentials(cfg_file, project_id, project_api_key, username, password)
-            self._client = create_client(credential_sources, host.endpoint("/oauth/token"))
+            credential_sources = collect_credentials(
+                cfg_file, project_id, project_api_key, username, password
+            )
+            self._client = create_client(
+                credential_sources, host.endpoint("/oauth/token")
+            )
             self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
@@ -89,10 +96,10 @@ class Auth:
 
     # pylint: disable=dangerous-default-value
     def _request_helper(
-            self,
-            request_type: str,
-            url: str,
-            data: dict,
+        self,
+        request_type: str,
+        url: str,
+        data: dict,
     ) -> requests.Response:
         """
         Helper function for the request, running the actual request with the correct headers.
@@ -118,11 +125,11 @@ class Auth:
         return response
 
     def request(
-            self,
-            request_type: str,
-            url: str,
-            data: dict = {},
-            return_text: bool = True,
+        self,
+        request_type: str,
+        url: str,
+        data: dict = {},
+        return_text: bool = True,
     ):
         """
         TODO: to be updated
@@ -154,9 +161,9 @@ class Auth:
                     response_json = response.json()
                     # Handle api error messages here before handling it in every single function.
                     if (
-                            isinstance(response_json, dict)
-                            and response_json.get("error")
-                            and response_json.get("data") is None
+                        isinstance(response_json, dict)
+                        and response_json.get("error")
+                        and response_json.get("data") is None
                     ):
                         raise ValueError(response_json["error"])
                     # Catalog search, JobTask logs etc. does not have the usual {"data": {}, "error": {}} format.
