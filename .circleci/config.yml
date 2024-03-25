@@ -135,8 +135,6 @@ workflows:
           requires:
             - test
       - test-python:
-          requires:
-            - test
           matrix:
             parameters:
               python-version: [ "3.9", "3.10", "3.11" ]
