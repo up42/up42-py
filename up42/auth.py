@@ -108,12 +108,11 @@ class Auth:
         Returns:
             The request response.
         """
-        headers = self._generate_headers()
         response: requests.Response = requests.request(
             method=request_type,
             url=url,
             json=data,
-            headers=headers,
+            headers=self._generate_headers(),
             timeout=utils.TIMEOUT,
         )
         logger.debug(response)
