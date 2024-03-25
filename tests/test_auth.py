@@ -1,6 +1,7 @@
 import pathlib
 from typing import cast
 
+import mock
 import pytest
 import requests
 import requests_mock as req_mock
@@ -9,6 +10,34 @@ from up42 import auth as up42_auth
 from up42 import utils
 
 from .fixtures import fixtures_globals as constants
+
+
+class TestCollectCredentials:
+    def test_should_collect_credentials(self):
+        cfg_file = "some-config-file"
+        config_credentials = {"some": "data"}
+        username = "some-username"
+        password = "some-password"
+        read_config = mock.MagicMock(return_value=config_credentials)
+        expected_sources = [
+            config_credentials,
+            {
+                "project_id": constants.PROJECT_ID,
+                "project_api_key": constants.PROJECT_APIKEY,
+            },
+            {"username": username, "password": password},
+        ]
+        assert (
+            up42_auth.collect_credentials(
+                cfg_file,
+                constants.PROJECT_ID,
+                constants.PROJECT_APIKEY,
+                username,
+                password,
+                read_config,
+            )
+            == expected_sources
+        )
 
 
 def test_auth_kwargs():

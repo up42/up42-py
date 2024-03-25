@@ -25,7 +25,7 @@ class TestCreate:
     )
     def test_should_create_if_only_one_source_is_given(
         self,
-        sources: List[Dict],
+        sources: List[Optional[Dict]],
         detected_settings: List[Optional[Dict]],
     ):
         detect_settings = mock.MagicMock(side_effect=detected_settings)
@@ -50,12 +50,20 @@ class TestCreate:
     @pytest.mark.parametrize(
         "sources, settings, error",
         [
-            [[PROJECT_CREDENTIALS, ACCOUNT_CREDENTIALS], SETTINGS, client.MultipleCredentialsSources],
-            [[EMPTY_PROJECT_CREDENTIALS, EMPTY_ACCOUNT_CREDENTIALS], None, client.MissingCredentials],
+            [
+                [PROJECT_CREDENTIALS, ACCOUNT_CREDENTIALS],
+                SETTINGS,
+                client.MultipleCredentialsSources,
+            ],
+            [
+                [EMPTY_PROJECT_CREDENTIALS, EMPTY_ACCOUNT_CREDENTIALS],
+                None,
+                client.MissingCredentials,
+            ],
         ],
     )
     def test_fails_to_create_if_multiple_or_no_sources_are_given(
-        self, sources: List[Dict], settings, error: Type[ValueError]
+        self, sources: List[Optional[Dict]], settings, error: Type[ValueError]
     ):
         detect_settings = mock.MagicMock(return_value=settings)
         with pytest.raises(error):

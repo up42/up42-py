@@ -13,7 +13,10 @@ class Client:
         return self.auth.token.access_token
 
 
-def _merge(left: Optional[config.CredentialsSettings], right: Optional[config.CredentialsSettings]):
+def _merge(
+    left: Optional[config.CredentialsSettings],
+    right: Optional[config.CredentialsSettings],
+):
     if all([left, right]):
         raise MultipleCredentialsSources("Multiple sources of credentials provided")
     return left or right
@@ -25,7 +28,7 @@ AuthFactory = Callable[[oauth.TokenRetriever, config.TokenProviderSettings], oau
 
 
 def create(
-    credential_sources: List[Dict],
+    credential_sources: List[Optional[Dict]],
     token_url: str,
     detect_settings: SettingsDetector = oauth.detect_settings,
     detect_retriever: RetrieverDetector = oauth.detect_retriever,

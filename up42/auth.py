@@ -19,8 +19,9 @@ def collect_credentials(
     project_api_key: Optional[str],
     username: Optional[str],
     password: Optional[str],
+    read_config=utils.read_json,
 ) -> List[Optional[Dict]]:
-    config_source = utils.read_json(cfg_file)
+    config_source = read_config(cfg_file)
     project_credentials_source = {
         "project_id": project_id,
         "project_api_key": project_api_key,
@@ -30,6 +31,7 @@ def collect_credentials(
 
 
 class Auth:
+    # TODO: the dependencies to be injected
     def __init__(
         self,
         cfg_file: Union[str, pathlib.Path, None] = None,
@@ -37,7 +39,6 @@ class Auth:
         project_api_key: Optional[str] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
-        create_client=client.create,
         **kwargs,
     ):
         """
@@ -65,7 +66,7 @@ class Auth:
 
         if authenticate:
             credential_sources = collect_credentials(cfg_file, project_id, project_api_key, username, password)
-            self._client = create_client(credential_sources, host.endpoint("/oauth/token"))
+            self._client = client.create(credential_sources, host.endpoint("/oauth/token"))
             self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
@@ -128,9 +129,7 @@ class Auth:
         return_text: bool = True,
     ):
         """
-        TODO: to be updated
-        Handles retrying the request and automatically retries and gets a new token if
-        the old is invalid.
+        Makes a request to the API, handles authentication and SDK headers
 
         Args:
             request_type: 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'
@@ -143,19 +142,11 @@ class Auth:
 
         try:
             response: requests.Response = self._request_helper(request_type, url, data)
-            # There are two UP42 API versions:
-            # v1 endpoints give response format {"data": ..., "error": ...}   data e.g. dict or list.  error str or dict
-            # or None (if no error).
-            # v1 always gives response, the error is indicated by the error key.
-            # v2 endpoints follows RFC 7807: {"title":..., "status": 404} Optional "detail" and "type" keys.
-            # v2 either gives above positive response, or fails with httperror (then check error.json() for the above
-            # fields)
-            # Handle response text.
             if return_text:
                 try:
                     # TODO: try to be replaced with "json" in content type
                     response_json = response.json()
-                    # Handle api error messages here before handling it in every single function.
+                    # v1 endpoints give response format {"data": ..., "error": ...}
                     if (
                         isinstance(response_json, dict)
                         and response_json.get("error")
@@ -169,8 +160,9 @@ class Auth:
             else:  # E.g. for DELETE
                 return response
 
-        except requests.exceptions.HTTPError as err:  # Base error class
-            # Raising the original `err` error would not surface the relevant error message (contained in API response)
+        except requests.exceptions.HTTPError as err:
+            # v2 endpoints follow RFC 7807 for errors and will fail with http error
+            # The corresponding errors to be handled in caller
             err_message = err.response is not None and err.response.json()
             logger.error("Error %s", err_message)
             raise requests.exceptions.HTTPError(err_message) from err
