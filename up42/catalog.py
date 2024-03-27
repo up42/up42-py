@@ -503,7 +503,7 @@ class Catalog(CatalogBase, viztools.VizTools):
                 with open(out_path, "wb") as dst:
                     for chunk in response:
                         dst.write(chunk)
-            except ValueError:
+            except IOError:
                 logger.warning(
                     "Image with id %s does not have quicklook available. Skipping ...",
                     image_id,
