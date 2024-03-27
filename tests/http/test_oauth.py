@@ -111,6 +111,9 @@ class TestDetectSettings:
         credentials = dict(zip(keys, [None] * 2))
         assert not oauth.detect_settings(credentials)
 
+    def test_should_accept_missing_credentials(self):
+        assert not oauth.detect_settings(None)
+
     def test_fails_if_credentials_are_incomplete(self):
         credentials = {"key1": "value1", "key2": None}
         with pytest.raises(oauth.IncompleteCredentials):

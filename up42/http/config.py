@@ -4,9 +4,9 @@ from typing import Union
 
 @dc.dataclass(eq=True, frozen=True)
 class ResilienceSettings:
-    total: int = 10
-    backoff_factor: float = 0.001
-    statuses: tuple = tuple(range(500, 600)) + (429,)
+    total: int = 3
+    backoff_factor: float = 0.5
+    statuses: tuple = tuple(range(500, 600))
 
 
 @dc.dataclass(eq=True, frozen=True)

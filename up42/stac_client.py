@@ -19,7 +19,6 @@ class PySTACAuthClient(Client):
 
     def _auth_modifier(self, request):
         """Callable for the pystac client request_modifier to authenticate catalog calls."""
-        self.auth._get_token()
         request.headers["Authorization"] = f"Bearer {self.auth.token}"
 
     def open(self, *args, **kwargs) -> Client:  # type: ignore # pylint: disable=arguments-differ

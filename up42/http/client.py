@@ -9,23 +9,26 @@ class Client:
         self.auth = auth
 
     @property
-    def token(self):
+    def token(self) -> str:
         return self.auth.token.access_token
 
 
-def _merge(left: Optional[config.CredentialsSettings], right: Optional[config.CredentialsSettings]):
+def _merge(
+    left: Optional[config.CredentialsSettings],
+    right: Optional[config.CredentialsSettings],
+):
     if all([left, right]):
         raise MultipleCredentialsSources("Multiple sources of credentials provided")
     return left or right
 
 
-SettingsDetector = Callable[[Dict], Optional[config.CredentialsSettings]]
+SettingsDetector = Callable[[Optional[Dict]], Optional[config.CredentialsSettings]]
 RetrieverDetector = Callable[[config.CredentialsSettings], oauth.TokenRetriever]
 AuthFactory = Callable[[oauth.TokenRetriever, config.TokenProviderSettings], oauth.Up42Auth]
 
 
 def create(
-    credential_sources: List[Dict],
+    credential_sources: List[Optional[Dict]],
     token_url: str,
     detect_settings: SettingsDetector = oauth.detect_settings,
     detect_retriever: RetrieverDetector = oauth.detect_retriever,

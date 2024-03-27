@@ -2,6 +2,7 @@ import pytest
 import requests_mock as req_mock
 
 from up42 import auth as up42_auth
+from up42 import main
 
 from . import fixtures_globals as constants
 
@@ -51,4 +52,6 @@ def _auth_account_mock(requests_mock: req_mock.Mocker) -> up42_auth.Auth:
 @pytest.fixture(name="auth_mock", params=["project", "account"])
 def _auth_mock(request, auth_project_mock, auth_account_mock) -> up42_auth.Auth:
     mocks = {"project": auth_project_mock, "account": auth_account_mock}
-    return mocks[request.param]
+    auth_mock = mocks[request.param]
+    main._auth = auth_mock  # pylint: disable=protected-access
+    return auth_mock

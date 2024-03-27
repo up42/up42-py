@@ -93,20 +93,21 @@ class Up42Auth(requests.auth.AuthBase):
         return self._token
 
 
-def detect_settings(credentials: dict) -> Optional[config.CredentialsSettings]:
-    if all(credentials.values()):
-        keys = credentials.keys()
-        if keys == {"project_id", "project_api_key"}:
-            warnings.warn(
-                "Project based authentication will be deprecated."
-                "Please follow authentication guidelines (/docs/authentication.md)."
-            )
-            return config.ProjectCredentialsSettings(**credentials)
-        if keys == {"username", "password"}:
-            return config.AccountCredentialsSettings(**credentials)
-        raise InvalidCredentials
-    elif any(credentials.values()):
-        raise IncompleteCredentials
+def detect_settings(credentials: Optional[dict]) -> Optional[config.CredentialsSettings]:
+    if credentials:
+        if all(credentials.values()):
+            keys = credentials.keys()
+            if keys == {"project_id", "project_api_key"}:
+                warnings.warn(
+                    "Project based authentication will be deprecated."
+                    "Please follow authentication guidelines (/docs/authentication.md)."
+                )
+                return config.ProjectCredentialsSettings(**credentials)
+            if keys == {"username", "password"}:
+                return config.AccountCredentialsSettings(**credentials)
+            raise InvalidCredentials
+        elif any(credentials.values()):
+            raise IncompleteCredentials
     return None
 
 

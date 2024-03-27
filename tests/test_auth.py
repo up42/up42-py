@@ -1,6 +1,7 @@
 import pathlib
 from typing import cast
 
+import mock
 import pytest
 import requests
 import requests_mock as req_mock
@@ -11,14 +12,41 @@ from up42 import utils
 from .fixtures import fixtures_globals as constants
 
 
+class TestCollectCredentials:
+    def test_should_collect_credentials(self):
+        cfg_file = "some-config-file"
+        config_credentials = {"some": "data"}
+        username = "some-username"
+        password = "some-password"
+        read_config = mock.MagicMock(return_value=config_credentials)
+        expected_sources = [
+            config_credentials,
+            {
+                "project_id": constants.PROJECT_ID,
+                "project_api_key": constants.PROJECT_APIKEY,
+            },
+            {"username": username, "password": password},
+        ]
+        assert (
+            up42_auth.collect_credentials(
+                cfg_file,
+                constants.PROJECT_ID,
+                constants.PROJECT_APIKEY,
+                username,
+                password,
+                read_config,
+            )
+            == expected_sources
+        )
+
+
 def test_auth_kwargs():
     auth = up42_auth.Auth(
         project_id=constants.PROJECT_ID,
         project_api_key=constants.PROJECT_APIKEY,
         authenticate=False,
-        retry=False,
     )
-    assert not auth.authenticate
+    assert not auth.token
 
 
 def test_no_credentials_raises():
@@ -122,104 +150,3 @@ def test_request_200_raises_error_apiv2(auth_mock: up42_auth.Auth, requests_mock
     with pytest.raises(ValueError) as e:
         auth_mock.request(request_type="GET", url="http://test.com")
         assert "error" in str(e.value)
-
-
-def test_request_token_still_timed_out_after_retry_raises(auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
-    a = requests_mock.get(
-        "http://test.com",
-        [
-            {
-                "status_code": 401,
-                "json": {
-                    "data": {},
-                    "error": {"code": 401, "message": "token timeout"},
-                },
-            },
-            {
-                "status_code": 401,
-                "json": {
-                    "data": {},
-                    "error": {"code": 401, "message": "token timeout"},
-                },
-            },
-            {"json": {"data": {"xyz": 789}, "error": {}}},
-        ],
-    )
-
-    with pytest.raises(requests.exceptions.RequestException):
-        auth_mock.request(request_type="GET", url="http://test.com")
-    assert a.call_count == 2
-
-
-def test_request_token_timed_out_retry(auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
-    a = requests_mock.get(
-        "http://test.com",
-        [
-            {
-                "status_code": 401,
-                "json": {
-                    "data": {},
-                    "error": {"code": 401, "message": "token timeout"},
-                },
-            },
-            {"json": {"data": {"xyz": 789}, "error": {}}},
-        ],
-    )
-
-    response_json = auth_mock.request(request_type="GET", url="http://test.com")
-    assert response_json == {"data": {"xyz": 789}, "error": {}}
-    assert a.call_count == 2
-
-
-def test_request_rate_limited_retry(auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
-    a = requests_mock.get(
-        "http://test.com",
-        [
-            {
-                "status_code": 429,
-                "json": {
-                    "data": {},
-                    "error": {"code": 429, "message": "rate limited"},
-                },
-            },
-            {"json": {"data": {"xyz": 789}, "error": {}}},
-        ],
-    )
-
-    response_json = auth_mock.request(request_type="GET", url="http://test.com")
-    assert response_json == {"data": {"xyz": 789}, "error": {}}
-    assert a.call_count == 2
-
-
-def test_request_token_timeout_during_rate_limitation(auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
-    a = requests_mock.get(
-        "http://test.com",
-        [
-            {
-                "status_code": 429,
-                "json": {
-                    "data": {},
-                    "error": {"code": 429, "message": "rate limited"},
-                },
-            },
-            {
-                "status_code": 401,
-                "json": {
-                    "data": {},
-                    "error": {"code": 401, "message": "token timeout"},
-                },
-            },
-            {
-                "status_code": 429,
-                "json": {
-                    "data": {},
-                    "error": {"code": 429, "message": "rate limited"},
-                },
-            },
-            {"json": {"data": {"xyz": 789}, "error": {}}},
-        ],
-    )
-
-    response_json = auth_mock.request(request_type="GET", url="http://test.com")
-    assert response_json == {"data": {"xyz": 789}, "error": {}}
-    assert a.call_count == 4
