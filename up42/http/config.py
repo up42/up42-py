@@ -12,7 +12,7 @@ class ResilienceSettings:
 @dc.dataclass(eq=True, frozen=True)
 class TokenProviderSettings:
     token_url: str
-    duration: int = 5 * 60
+    duration: int = 5 * 60 - 1
     timeout: int = 120
 
 

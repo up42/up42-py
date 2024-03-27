@@ -31,12 +31,15 @@ class ProjectTokenRetriever:
 
     def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
         basic_auth = auth.HTTPBasicAuth(self.client_id, self.client_secret)
-        return session.post(
+        response = session.post(
             url=token_url,
             auth=basic_auth,
             data={"grant_type": "client_credentials"},
             timeout=timeout,
-        ).json()["access_token"]
+        )
+        if response.ok:
+            return response.json()["access_token"]
+        raise WrongCredentials
 
 
 class AccountTokenRetriever:
@@ -53,12 +56,15 @@ class AccountTokenRetriever:
             "username": self.username,
             "password": self.password,
         }
-        return session.post(
+        response = session.post(
             url=token_url,
             data=body,
             headers=headers,
             timeout=timeout,
-        ).json()["access_token"]
+        )
+        if response.ok:
+            return response.json()["access_token"]
+        raise WrongCredentials
 
 
 class Up42Auth(requests.auth.AuthBase):
@@ -93,7 +99,9 @@ class Up42Auth(requests.auth.AuthBase):
         return self._token
 
 
-def detect_settings(credentials: Optional[dict]) -> Optional[config.CredentialsSettings]:
+def detect_settings(
+    credentials: Optional[dict],
+) -> Optional[config.CredentialsSettings]:
     if credentials:
         if all(credentials.values()):
             keys = credentials.keys()
@@ -128,4 +136,8 @@ class IncompleteCredentials(ValueError):
 
 
 class UnsupportedSettings(ValueError):
+    pass
+
+
+class WrongCredentials(ValueError):
     pass
