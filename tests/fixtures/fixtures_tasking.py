@@ -4,6 +4,7 @@ import pathlib
 import pytest
 
 from up42 import tasking
+
 from . import fixtures_globals as constants
 
 QUOTATION_ENDPOINT = "/v2/tasking/quotation"
