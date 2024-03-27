@@ -10,9 +10,16 @@ import requests
 from up42 import host, utils
 from up42.http import client
 
+REPOSITORY_URL = "https://github.com/up42/up42-py"
+
 logger = utils.get_logger(__name__)
 ConfigurationSource = Optional[Union[str, pathlib.Path]]
 ConfigurationReader = Callable[[ConfigurationSource], Optional[Dict]]
+CredentialsMerger = Callable[
+    [ConfigurationSource, Optional[str], Optional[str], Optional[str], Optional[str]],
+    List[Optional[Dict]],
+]
+ClientFactory = Callable[[List[Optional[Dict]], str], client.Client]
 
 
 def collect_credentials(
@@ -41,6 +48,9 @@ class Auth:
         project_api_key: Optional[str] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
+        version: str = utils.get_up42_py_version(),
+        get_credential_sources: CredentialsMerger = collect_credentials,
+        create_client: ClientFactory = client.create,
         **kwargs,
     ):
         """
@@ -57,18 +67,14 @@ class Auth:
             username: The username for the UP42 account (email UP42 console).
             password: Password for the UP42 console login.
         """
-        self.cfg_file = cfg_file
         self.workspace_id: Optional[str] = None
-        authenticate: bool = kwargs.get("authenticate", True)
-
-        if project_id:
-            self.project_id = project_id
-
+        self._version = version
         self._client: Optional[client.Client] = None
-
+        self.project_id = project_id
+        authenticate: bool = kwargs.get("authenticate", True)
         if authenticate:
-            credential_sources = collect_credentials(cfg_file, project_id, project_api_key, username, password)
-            self._client = client.create(credential_sources, host.endpoint("/oauth/token"))
+            credential_sources = get_credential_sources(cfg_file, project_id, project_api_key, username, password)
+            self._client = create_client(credential_sources, host.endpoint("/oauth/token"))
             self._get_workspace()
             logger.info("Authentication with UP42 successful!")
 
@@ -85,12 +91,11 @@ class Auth:
         self.workspace_id = resp["data"]["id"]
 
     def _generate_headers(self) -> Dict[str, str]:
-        version = utils.get_up42_py_version()
         return {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.token}",
             "cache-control": "no-cache",
-            "User-Agent": f"up42-py/{version} (https://github.com/up42/up42-py)",
+            "User-Agent": f"up42-py/{self._version} ({REPOSITORY_URL})",
         }
 
     # pylint: disable=dangerous-default-value
@@ -164,6 +169,5 @@ class Auth:
         except requests.exceptions.HTTPError as err:
             # v2 endpoints follow RFC 7807 for errors and will fail with http error
             # The corresponding errors to be handled in caller
-            err_message = err.response is not None and err.response.json()
-            logger.error("Error %s", err_message)
+            err_message = err.response is not None and err.response.text
             raise requests.exceptions.HTTPError(err_message) from err
