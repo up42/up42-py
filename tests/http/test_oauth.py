@@ -30,11 +30,11 @@ basic_client_auth = basic_auth(project_credentials.project_id, project_credentia
 basic_auth_headers = {"Authorization": basic_client_auth}
 
 
-def match_project_authentication_request_body(request: req_mock.Request):
+def match_project_authentication_request_body(request):
     return request.text == "grant_type=client_credentials"
 
 
-def match_account_authentication_request_body(request: req_mock.Request):
+def match_account_authentication_request_body(request):
     return request.text == (
         "grant_type=password&" f"username={account_credentials.username}&" f"password={account_credentials.password}"
     )
