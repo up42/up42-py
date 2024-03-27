@@ -8,7 +8,6 @@ import requests
 import requests_mock as req_mock
 
 from up42 import auth as up42_auth
-
 from .fixtures import fixtures_globals as constants
 
 SDK_VERSION = "some-version"
@@ -92,7 +91,7 @@ class TestAuth:
         unreachable = mock.MagicMock()
         auth = up42_auth.Auth(
             cfg_file=CONFIG_FILE,
-            project=constants.PROJECT_ID,
+            project_id=constants.PROJECT_ID,
             project_api_key=constants.PROJECT_APIKEY,
             username=USER_NAME,
             password=PASSWORD,
