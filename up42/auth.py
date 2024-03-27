@@ -40,7 +40,6 @@ def collect_credentials(
 
 
 class Auth:
-    # TODO: the dependencies to be injected
     def __init__(
         self,
         cfg_file: Union[str, pathlib.Path, None] = None,
@@ -150,7 +149,6 @@ class Auth:
             response: requests.Response = self._request_helper(request_type, url, data)
             if return_text:
                 try:
-                    # TODO: try to be replaced with "json" in content type
                     response_json = response.json()
                     # v1 endpoints give response format {"data": ..., "error": ...}
                     if (

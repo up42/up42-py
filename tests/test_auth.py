@@ -38,6 +38,14 @@ def _request_data(request):
     return request.param
 
 
+# TODO: drop duplication in asset and oauth tests
+def match_request_body(data: Dict):
+    def matcher(request):
+        return request.text == json.dumps(data)
+
+    return matcher
+
+
 class TestCollectCredentials:
     def test_should_collect_credentials(self):
         config_credentials = {"some": "data"}
@@ -140,6 +148,7 @@ class TestAuth:
             URL,
             request_headers=REQUEST_HEADERS,
             json=expected,
+            additional_matcher=match_request_body(request_data),
         )
         assert auth.request(http_method, URL, request_data) == expected
 
@@ -147,12 +156,24 @@ class TestAuth:
         self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker
     ):
         auth = create_auth(requests_mock)
-        requests_mock.request(http_method, URL, request_headers=REQUEST_HEADERS, text=RESPONSE_TEXT)
+        requests_mock.request(
+            http_method,
+            URL,
+            request_headers=REQUEST_HEADERS,
+            text=RESPONSE_TEXT,
+            additional_matcher=match_request_body(request_data),
+        )
         assert auth.request(http_method, URL, request_data) == RESPONSE_TEXT
 
     def test_should_pass_response(self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker):
         auth = create_auth(requests_mock)
-        requests_mock.request(http_method, URL, request_headers=REQUEST_HEADERS, text=RESPONSE_TEXT)
+        requests_mock.request(
+            http_method,
+            URL,
+            request_headers=REQUEST_HEADERS,
+            text=RESPONSE_TEXT,
+            additional_matcher=match_request_body(request_data),
+        )
         response = auth.request(http_method, URL, request_data, return_text=False)
         assert isinstance(response, requests.Response)
         assert response.text == RESPONSE_TEXT
@@ -167,6 +188,7 @@ class TestAuth:
             URL,
             request_headers=REQUEST_HEADERS,
             json={"error": ERROR},
+            additional_matcher=match_request_body(request_data),
         )
         with pytest.raises(ValueError) as exc_info:
             auth.request(http_method, URL, request_data)
@@ -190,6 +212,7 @@ class TestAuth:
             request_headers=REQUEST_HEADERS,
             status_code=random.randint(400, 599),
             json=error,
+            additional_matcher=match_request_body(request_data),
         )
         with pytest.raises(requests.HTTPError) as exc_info:
             auth.request(http_method, URL, request_data, return_text=return_text)
