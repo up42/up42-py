@@ -135,7 +135,7 @@ class TestAuth:
             {"api-v2": "response"},
         ],
     )
-    def test_should_respond_with_dict_for_json_response(
+    def test_should_pass_dict_for_json_response(
         self,
         http_method: str,
         request_data: dict,
@@ -152,7 +152,7 @@ class TestAuth:
         )
         assert auth.request(http_method, URL, request_data) == expected
 
-    def test_should_respond_with_text_for_text_response(
+    def test_should_pass_text_for_text_response(
         self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker
     ):
         auth = create_auth(requests_mock)
@@ -178,9 +178,7 @@ class TestAuth:
         assert isinstance(response, requests.Response)
         assert response.text == RESPONSE_TEXT
 
-    def test_should_fail_if_v1_api_request_fails(
-        self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker
-    ):
+    def test_fails_if_v1_api_request_fails(self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker):
         auth = create_auth(requests_mock)
 
         requests_mock.request(
@@ -197,7 +195,7 @@ class TestAuth:
 
     @pytest.mark.parametrize("return_text", [True, False])
     @pytest.mark.parametrize("error", [None, ERROR])
-    def test_should_fail_for_bad_status_code(
+    def test_fails_if_status_code_is_bad(
         self,
         http_method: str,
         request_data: dict,
