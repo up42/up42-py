@@ -3,7 +3,7 @@ UP42 authentication mechanism and base requests functionality
 """
 import json
 import pathlib
-from typing import Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Union
 
 import requests
 
@@ -11,15 +11,17 @@ from up42 import host, utils
 from up42.http import client
 
 logger = utils.get_logger(__name__)
+ConfigurationSource = Optional[Union[str, pathlib.Path]]
+ConfigurationReader = Callable[[ConfigurationSource], Optional[Dict]]
 
 
 def collect_credentials(
-    cfg_file: Union[str, pathlib.Path, None],
+    cfg_file: ConfigurationSource,
     project_id: Optional[str],
     project_api_key: Optional[str],
     username: Optional[str],
     password: Optional[str],
-    read_config=utils.read_json,
+    read_config: ConfigurationReader = utils.read_json,
 ) -> List[Optional[Dict]]:
     config_source = read_config(cfg_file)
     project_credentials_source = {

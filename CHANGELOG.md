@@ -31,7 +31,7 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 ## 0.37.1a6
 
-**March 25, 2024**
+**March 26, 2024**
 
 - Switched to using `http.client.Client` in `auth.py` for authentication and token management
 - Dropped unneeded resiliency code
