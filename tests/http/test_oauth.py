@@ -1,5 +1,6 @@
 import base64
 import dataclasses
+import random
 import time
 from typing import Tuple
 
@@ -29,31 +30,43 @@ basic_client_auth = basic_auth(project_credentials.project_id, project_credentia
 basic_auth_headers = {"Authorization": basic_client_auth}
 
 
+def match_project_authentication_request_body(request: req_mock.Request):
+    return request.text == "grant_type=client_credentials"
+
+
+def match_account_authentication_request_body(request: req_mock.Request):
+    return request.text == (
+        "grant_type=password&" f"username={account_credentials.username}&" f"password={account_credentials.password}"
+    )
+
+
 class TestProjectTokenRetriever:
     def test_should_retrieve(self, requests_mock: req_mock.Mocker):
-        def match_request_body(request):
-            return request.text == "grant_type=client_credentials"
-
         retrieve = oauth.ProjectTokenRetriever(project_credentials)
         requests_mock.post(
             TOKEN_URL,
             json={"access_token": TOKEN_VALUE},
             request_headers=basic_auth_headers,
-            additional_matcher=match_request_body,
+            additional_matcher=match_project_authentication_request_body,
         )
         assert retrieve(requests.Session(), TOKEN_URL, HTTP_TIMEOUT) == TOKEN_VALUE
+        assert requests_mock.called_once
+
+    def test_fails_to_retrieve_for_bad_response(self, requests_mock: req_mock.Mocker):
+        retrieve = oauth.ProjectTokenRetriever(project_credentials)
+        requests_mock.post(
+            TOKEN_URL,
+            status_code=random.randint(400, 599),
+            request_headers=basic_auth_headers,
+            additional_matcher=match_project_authentication_request_body,
+        )
+        with pytest.raises(oauth.WrongCredentials):
+            retrieve(requests.Session(), TOKEN_URL, HTTP_TIMEOUT)
         assert requests_mock.called_once
 
 
 class TestAccountTokenRetriever:
     def test_should_retrieve(self, requests_mock: req_mock.Mocker):
-        def match_request_body(request):
-            return request.text == (
-                "grant_type=password&"
-                f"username={account_credentials.username}&"
-                f"password={account_credentials.password}"
-            )
-
         retrieve = oauth.AccountTokenRetriever(account_credentials)
         requests_mock.post(
             TOKEN_URL,
@@ -61,9 +74,23 @@ class TestAccountTokenRetriever:
             request_headers={
                 "Content-Type": "application/x-www-form-urlencoded",
             },
-            additional_matcher=match_request_body,
+            additional_matcher=match_account_authentication_request_body,
         )
         assert retrieve(requests.Session(), TOKEN_URL, HTTP_TIMEOUT) == TOKEN_VALUE
+        assert requests_mock.called_once
+
+    def test_fails_to_retrieve_for_bad_response(self, requests_mock: req_mock.Mocker):
+        retrieve = oauth.AccountTokenRetriever(account_credentials)
+        requests_mock.post(
+            TOKEN_URL,
+            status_code=random.randint(400, 599),
+            request_headers={
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            additional_matcher=match_account_authentication_request_body,
+        )
+        with pytest.raises(oauth.WrongCredentials):
+            retrieve(requests.Session(), TOKEN_URL, HTTP_TIMEOUT)
         assert requests_mock.called_once
 
 
