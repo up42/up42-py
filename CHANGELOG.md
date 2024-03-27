@@ -29,15 +29,21 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
-## 0.37.1a7
+## 0.37.1a8
 
 **March 28, 2024**
 
 - Dependency injection and test coverage improvement in `auth.py`
 
-## 0.37.1a6
+## 0.37.1a7
 
 **March 27, 2024**
+
+- Raise typed error if token retrieval fails due to wrong credentials.
+
+## 0.37.1a6
+
+**March 26, 2024**
 
 - Switched to using `http.client.Client` in `auth.py` for authentication and token management
 - Dropped unneeded resiliency code
