@@ -8,6 +8,7 @@ import requests
 import requests_mock as req_mock
 
 from up42 import auth as up42_auth
+
 from .fixtures import fixtures_globals as constants
 
 SDK_VERSION = "some-version"
@@ -17,17 +18,24 @@ CONFIG_FILE = "some-config-file"
 TOKEN_ENDPOINT = constants.API_HOST + "/oauth/token"
 WORKSPACE_ENDPOINT = constants.API_HOST + "/users/me"
 URL = constants.API_HOST + "/some-url"
-HTTP_METHODS = ["GET", "POST", "PUT", "DELETE", "HEAD"]
-REQUEST_DATA_SAMPLES = [{}, {"some": "data"}]
 RESPONSE_TEXT = "some-response-text"
 ERROR = {"some": "error"}
-
 REQUEST_HEADERS = {
     "Content-Type": "application/json",
     "Authorization": f"Bearer {constants.TOKEN}",
     "cache-control": "no-cache",
     "User-Agent": f"up42-py/{SDK_VERSION} ({up42_auth.REPOSITORY_URL})",
 }
+
+
+@pytest.fixture(name="http_method", params=["GET", "POST", "PUT", "DELETE", "HEAD"])
+def _http_method(request):
+    return request.param
+
+
+@pytest.fixture(name="request_data", params=[{}, {"some": "data"}])
+def _request_data(request):
+    return request.param
 
 
 class TestCollectCredentials:
@@ -111,8 +119,6 @@ class TestAuth:
         assert auth.workspace_id == constants.WORKSPACE_ID
         assert auth.token == constants.TOKEN
 
-    @pytest.mark.parametrize("method", HTTP_METHODS)
-    @pytest.mark.parametrize("data", REQUEST_DATA_SAMPLES)
     @pytest.mark.parametrize(
         "expected",
         [
@@ -122,69 +128,69 @@ class TestAuth:
         ],
     )
     def test_should_respond_with_dict_for_json_response(
-        self, method: str, data: dict, expected: dict, requests_mock: req_mock.Mocker
+        self,
+        http_method: str,
+        request_data: dict,
+        expected: dict,
+        requests_mock: req_mock.Mocker,
     ):
         auth = create_auth(requests_mock)
         requests_mock.request(
-            method,
+            http_method,
             URL,
             request_headers=REQUEST_HEADERS,
             json=expected,
         )
-        assert auth.request(method, URL, data) == expected
+        assert auth.request(http_method, URL, request_data) == expected
 
-    @pytest.mark.parametrize("method", HTTP_METHODS)
-    @pytest.mark.parametrize("data", REQUEST_DATA_SAMPLES)
-    def test_should_respond_with_text_for_text_response(self, method: str, data: dict, requests_mock: req_mock.Mocker):
+    def test_should_respond_with_text_for_text_response(
+        self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker
+    ):
         auth = create_auth(requests_mock)
-        requests_mock.request(method, URL, request_headers=REQUEST_HEADERS, text=RESPONSE_TEXT)
-        assert auth.request(method, URL, data) == RESPONSE_TEXT
+        requests_mock.request(http_method, URL, request_headers=REQUEST_HEADERS, text=RESPONSE_TEXT)
+        assert auth.request(http_method, URL, request_data) == RESPONSE_TEXT
 
-    @pytest.mark.parametrize("method", HTTP_METHODS)
-    @pytest.mark.parametrize("data", REQUEST_DATA_SAMPLES)
-    def test_should_pass_response(self, method: str, data: dict, requests_mock: req_mock.Mocker):
+    def test_should_pass_response(self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker):
         auth = create_auth(requests_mock)
-        requests_mock.request(method, URL, request_headers=REQUEST_HEADERS, text=RESPONSE_TEXT)
-        response = auth.request(method, URL, data, return_text=False)
+        requests_mock.request(http_method, URL, request_headers=REQUEST_HEADERS, text=RESPONSE_TEXT)
+        response = auth.request(http_method, URL, request_data, return_text=False)
         assert isinstance(response, requests.Response)
         assert response.text == RESPONSE_TEXT
 
-    @pytest.mark.parametrize("method", HTTP_METHODS)
-    @pytest.mark.parametrize("data", REQUEST_DATA_SAMPLES)
-    def test_should_fail_if_v1_api_request_fails(self, method: str, data: dict, requests_mock: req_mock.Mocker):
+    def test_should_fail_if_v1_api_request_fails(
+        self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker
+    ):
         auth = create_auth(requests_mock)
 
         requests_mock.request(
-            method,
+            http_method,
             URL,
             request_headers=REQUEST_HEADERS,
             json={"error": ERROR},
         )
         with pytest.raises(ValueError) as exc_info:
-            auth.request(method, URL, data)
+            auth.request(http_method, URL, request_data)
 
         assert str(exc_info.value) == str(ERROR)
 
-    @pytest.mark.parametrize("method", HTTP_METHODS)
-    @pytest.mark.parametrize("data", REQUEST_DATA_SAMPLES)
     @pytest.mark.parametrize("return_text", [True, False])
     @pytest.mark.parametrize("error", [None, ERROR])
     def test_should_fail_for_bad_status_code(
         self,
-        method: str,
-        data: dict,
+        http_method: str,
+        request_data: dict,
         return_text: bool,
         error: Optional[Dict],
         requests_mock: req_mock.Mocker,
     ):
         auth = create_auth(requests_mock)
         requests_mock.request(
-            method,
+            http_method,
             URL,
             request_headers=REQUEST_HEADERS,
             status_code=random.randint(400, 599),
             json=error,
         )
         with pytest.raises(requests.HTTPError) as exc_info:
-            auth.request(method, URL, data, return_text=return_text)
+            auth.request(http_method, URL, request_data, return_text=return_text)
         assert str(exc_info.value) == (json.dumps(error) if error else "")
