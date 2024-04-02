@@ -1,8 +1,6 @@
-import functools
-
 import requests
 
-from up42.http import http_adapter, oauth
+from up42.http import http_adapter
 
 SCHEMAS = ["http", "https"]
 
@@ -16,14 +14,13 @@ class StatusValidatingSession(requests.Session):
         return response
 
 
-@functools.lru_cache
 def create(
+    auth: requests.auth.AuthBase,
     create_adapter=http_adapter.create,
-    create_auth=oauth.Up42Auth,
 ) -> requests.Session:
     session = StatusValidatingSession()
     adapter = create_adapter()
     for schema in SCHEMAS:
         session.mount(schema + "://", adapter)
-    session.auth = create_auth(create_adapter=create_adapter)
+    session.auth = auth
     return session
