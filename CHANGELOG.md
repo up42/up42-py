@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 0.37.1a9
+
+**Apr 2, 2024**
+
+- Dropped legacy `estimation.py`, `test_estimation.py` and `fixtures_estimation.py`
+
 ## 0.37.1a8
 
 **March 28, 2024**
