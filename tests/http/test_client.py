@@ -35,17 +35,23 @@ class TestCreate:
         auth = mock.MagicMock()
         auth.token.access_token = access_token
         create_auth = mock.MagicMock(return_value=auth)
+        session = mock.MagicMock()
+        create_session = mock.MagicMock(return_value=session)
         result = client.create(
             credential_sources=sources,
             token_url=TOKEN_URL,
             detect_settings=detect_settings,
             detect_retriever=detect_retriever,
             create_auth=create_auth,
+            create_session=create_session,
         )
         assert result.token == access_token
+        assert result.auth == auth
+        assert result.session == session
         detect_settings.assert_has_calls([mock.call(source) for source in sources])
         detect_retriever.assert_called_with(SETTINGS)
         create_auth.assert_called_with(retrieve, config.TokenProviderSettings(token_url=TOKEN_URL))
+        create_session.assert_called_with(auth)
 
     @pytest.mark.parametrize(
         "sources, settings, error",
@@ -73,6 +79,7 @@ class TestCreate:
                 detect_settings=detect_settings,
                 detect_retriever=self.unreachable,
                 create_auth=self.unreachable,
+                create_session=self.unreachable,
             )
         detect_settings.assert_has_calls([mock.call(source) for source in sources])
         self.unreachable.assert_not_called()
