@@ -10,8 +10,6 @@ import requests
 from up42 import host, utils
 from up42.http import client
 
-REPOSITORY_URL = "https://github.com/up42/up42-py"
-
 logger = utils.get_logger(__name__)
 ConfigurationSource = Optional[Union[str, pathlib.Path]]
 ConfigurationReader = Callable[[ConfigurationSource], Optional[Dict]]
@@ -47,7 +45,6 @@ class Auth:
         project_api_key: Optional[str] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
-        version: str = utils.get_up42_py_version(),
         get_credential_sources: CredentialsMerger = collect_credentials,
         create_client: ClientFactory = client.create,
         **kwargs,
@@ -67,7 +64,6 @@ class Auth:
             password: Password for the UP42 console login.
         """
         self.workspace_id: Optional[str] = None
-        self._version = version
         self._client: Optional[client.Client] = None
         self.project_id = project_id
         authenticate: bool = kwargs.get("authenticate", True)
@@ -81,21 +77,20 @@ class Auth:
     def token(self) -> Optional[str]:
         if self._client:
             return self._client.token
+        # TODO: Unify with session behaviour and drop authenticate=False
         return None
+
+    @property
+    def session(self) -> requests.Session:
+        if self._client:
+            return self._client.session
+        raise Unauthenticated("User is not authenticated")
 
     def _get_workspace(self) -> None:
         """Get user id belonging to authenticated account."""
         url = host.endpoint("/users/me")
         resp = self.request("GET", url)
         self.workspace_id = resp["data"]["id"]
-
-    def _generate_headers(self) -> Dict[str, str]:
-        return {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.token}",
-            "cache-control": "no-cache",
-            "User-Agent": f"up42-py/{self._version} ({REPOSITORY_URL})",
-        }
 
     # pylint: disable=dangerous-default-value
     def _request_helper(
@@ -114,11 +109,10 @@ class Auth:
         Returns:
             The request response.
         """
-        response: requests.Response = requests.request(
+        response: requests.Response = self.session.request(
             method=request_type,
             url=url,
             json=data,
-            headers=self._generate_headers(),
             timeout=utils.TIMEOUT,
         )
         logger.debug(response)
@@ -169,3 +163,7 @@ class Auth:
             # The corresponding errors to be handled in caller
             err_message = err.response is not None and err.response.text
             raise requests.exceptions.HTTPError(err_message) from err
+
+
+class Unauthenticated(ValueError):
+    pass
