@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 0.37.1a10
+
+**Apr 3, 2024**
+
+- Updating the deprecation date for `Jobs`, `Workflow`, and `Projects` related features.
+
 ## 0.37.1a9
 
 **Apr 2, 2024**

@@ -20,6 +20,8 @@ from up42 import (
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
+deprecation_date = "after April 30, 2024, and will be replaced by new processing functionalities."
+
 
 def _get_project_id(project_id: Optional[str]) -> str:
     if not project_id:
@@ -42,8 +44,7 @@ def initialize_project(project_id: Optional[str] = None) -> project.Project:
         project_id: The UP42 project id
     """
     warnings.warn(
-        "Projects are getting deprecated. The current analytics platform will be discontinued "
-        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        "Projects are getting deprecated. The current analytics platform will be discontinued " f"{deprecation_date}",
         DeprecationWarning,
     )
     up42_project = project.Project(
@@ -79,8 +80,7 @@ def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> w
         project_id: The id of the UP42 project, containing the workflow
     """
     warnings.warn(
-        "Workflows are getting deprecated. The current analytics platform will be discontinued "
-        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        "Workflows are getting deprecated. The current analytics platform will be discontinued " f"{deprecation_date}",
         DeprecationWarning,
     )
     up42_workflow = workflow.Workflow(
@@ -101,8 +101,7 @@ def initialize_job(job_id: str, project_id: Optional[str] = None) -> job.Job:
         project_id: The id of the UP42 project, containing the job
     """
     warnings.warn(
-        "Jobs are getting deprecated. The current analytics platform will be discontinued "
-        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        "Jobs are getting deprecated. The current analytics platform will be discontinued " f"{deprecation_date}",
         DeprecationWarning,
     )
     up42_job = job.Job(
@@ -124,8 +123,7 @@ def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] =
         project_id: The id of the UP42 project, containing the job
     """
     warnings.warn(
-        "Job tasks are getting deprecated. The current analytics platform will be discontinued "
-        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        "Job tasks are getting deprecated. The current analytics platform will be discontinued " f"{deprecation_date}",
         DeprecationWarning,
     )
     job_task = jobtask.JobTask(
@@ -148,7 +146,7 @@ def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = Non
     """
     warnings.warn(
         "Job Collections are getting deprecated. The current analytics platform will be discontinued "
-        "after January 31, 2024, and will be replaced by new processing functionalities.",
+        f"{deprecation_date}",
         DeprecationWarning,
     )
     jobs = [
