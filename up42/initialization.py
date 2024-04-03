@@ -20,7 +20,7 @@ from up42 import (
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
-deprecation_date = "after April 30, 2024, and will be replaced by new processing functionalities."
+deprecation_date = "after May 15th, 2024, and will be replaced by new processing functionalities."
 
 
 def _get_project_id(project_id: Optional[str]) -> str:
