@@ -88,7 +88,7 @@ class Workflow:
         """
         warn(
             "Workflows are getting deprecated. The current analytics platform will be discontinued "
-            "after January 31, 2024, and will be replaced by new processing functionalities.",
+            "after May 15th, 2024, and will be replaced by new processing functionalities.",
             DeprecationWarning,
             stacklevel=2,
         )
