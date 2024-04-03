@@ -19,7 +19,7 @@ def _auth_project_mock(requests_mock: req_mock.Mocker) -> up42_auth.Auth:
         url="https://api.up42.com/users/me",
         json={"data": {"id": constants.WORKSPACE_ID}},
     )
-    auth = up42_auth.Auth(project_id=constants.PROJECT_ID, project_api_key=constants.PROJECT_APIKEY, authenticate=True)
+    auth = up42_auth.Auth(project_id=constants.PROJECT_ID, project_api_key=constants.PROJECT_APIKEY)
 
     # get_blocks
     url_get_blocks = f"{constants.API_HOST}/blocks"
@@ -46,7 +46,7 @@ def _auth_account_mock(requests_mock: req_mock.Mocker) -> up42_auth.Auth:
     }
     requests_mock.post("https://api.up42.com/oauth/token", json=json_get_token)
     requests_mock.get(url="https://api.up42.com/users/me", json={"data": {"id": constants.WORKSPACE_ID}})
-    return up42_auth.Auth(username="user@up42.com", password="password", authenticate=True)
+    return up42_auth.Auth(username="user@up42.com", password="password")
 
 
 @pytest.fixture(name="auth_mock", params=["project", "account"])

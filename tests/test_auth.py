@@ -106,25 +106,6 @@ def create_auth(requests_mock: req_mock.Mocker):
 
 
 class TestAuth:
-    def test_should_not_authenticate_if_requested(self):
-        unreachable = mock.MagicMock()
-        auth = up42_auth.Auth(
-            cfg_file=CONFIG_FILE,
-            project_id=constants.PROJECT_ID,
-            project_api_key=constants.PROJECT_APIKEY,
-            username=USER_NAME,
-            password=PASSWORD,
-            authenticate=False,
-            get_sources=unreachable,
-            create_client=unreachable,
-        )
-        assert auth.project_id == constants.PROJECT_ID
-        assert not auth.workspace_id
-        assert not auth.token
-        with pytest.raises(up42_auth.Unauthenticated):
-            _ = auth.session
-        unreachable.assert_not_called()
-
     def test_should_authenticate_when_created(self, requests_mock: req_mock.Mocker):
         auth = create_auth(requests_mock)
         assert auth.project_id == constants.PROJECT_ID

@@ -47,7 +47,6 @@ class Auth:
         password: Optional[str] = None,
         get_credential_sources: CredentialsMerger = collect_credentials,
         create_client: ClientFactory = client.create,
-        **kwargs,
     ):
         """
         The Auth class handles the authentication with UP42.
@@ -64,27 +63,19 @@ class Auth:
             password: Password for the UP42 console login.
         """
         self.workspace_id: Optional[str] = None
-        self._client: Optional[client.Client] = None
         self.project_id = project_id
-        authenticate: bool = kwargs.get("authenticate", True)
-        if authenticate:
-            credential_sources = get_credential_sources(cfg_file, project_id, project_api_key, username, password)
-            self._client = create_client(credential_sources, host.endpoint("/oauth/token"))
-            self._get_workspace()
-            logger.info("Authentication with UP42 successful!")
+        credential_sources = get_credential_sources(cfg_file, project_id, project_api_key, username, password)
+        self._client = create_client(credential_sources, host.endpoint("/oauth/token"))
+        self._get_workspace()
+        logger.info("Authentication with UP42 successful!")
 
     @property
-    def token(self) -> Optional[str]:
-        if self._client:
-            return self._client.token
-        # TODO: Unify with session behaviour and drop authenticate=False
-        return None
+    def token(self) -> str:
+        return self._client.token
 
     @property
     def session(self) -> requests.Session:
-        if self._client:
-            return self._client.session
-        raise Unauthenticated("User is not authenticated")
+        return self._client.session
 
     def _get_workspace(self) -> None:
         """Get user id belonging to authenticated account."""
@@ -163,7 +154,3 @@ class Auth:
             # The corresponding errors to be handled in caller
             err_message = err.response is not None and err.response.text
             raise requests.exceptions.HTTPError(err_message) from err
-
-
-class Unauthenticated(ValueError):
-    pass

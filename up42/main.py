@@ -23,7 +23,6 @@ def authenticate(
     project_api_key: Optional[str] = None,
     username: Optional[str] = None,
     password: Optional[str] = None,
-    **kwargs,
 ):
     """
     Authenticate with UP42, either using project api credentials or
@@ -45,7 +44,6 @@ def authenticate(
         project_api_key=project_api_key,
         username=username,
         password=password,
-        **kwargs,
     )
 
 

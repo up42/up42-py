@@ -2,7 +2,6 @@ import pytest
 
 import up42
 from up42 import catalog, main, tasking
-
 from .fixtures import fixtures_globals as constants
 
 
@@ -42,9 +41,6 @@ def test_global_auth_initialize_objects(
     up42.authenticate(
         project_id=constants.PROJECT_ID,
         project_api_key=constants.PROJECT_APIKEY,
-        authenticate=True,
-        get_info=False,
-        retry=False,
     )
     project_obj = up42.initialize_project()
     assert project_obj.info == project_mock.info
@@ -66,11 +62,17 @@ def test_global_auth_initialize_objects(
     assert asset_obj.info == asset_mock.info
 
 
-def test_should_initialize_project_with_project_id(requests_mock):
-    up42.authenticate(
-        project_id=constants.PROJECT_ID,
-        authenticate=False,
+@pytest.fixture(autouse=True)
+def setup_workspace(requests_mock):
+    requests_mock.post("https://api.up42.com/oauth/token", json={"access_token": constants.TOKEN})
+    requests_mock.get(
+        url="https://api.up42.com/users/me",
+        json={"data": {"id": constants.WORKSPACE_ID}},
     )
+
+
+def test_should_initialize_project_with_project_id(requests_mock):
+    up42.authenticate(project_id=constants.PROJECT_ID, project_api_key=constants.PROJECT_APIKEY)
     project_id = "project_id"
     url_project_info = f"{constants.API_HOST}/projects/{project_id}"
     json_project_info = {
@@ -88,7 +90,7 @@ def test_should_initialize_project_with_project_id(requests_mock):
 def test_should_initialize_project_with_implicit_project_id(project_mock):
     up42.authenticate(
         project_id=constants.PROJECT_ID,
-        authenticate=False,
+        project_api_key=constants.PROJECT_APIKEY,
     )
     project_obj = up42.initialize_project()
     assert project_obj.info == project_mock.info
@@ -98,7 +100,7 @@ def test_should_initialize_project_with_implicit_project_id(project_mock):
 def test_should_initialize_workflow(requests_mock):
     up42.authenticate(
         project_id=constants.PROJECT_ID,
-        authenticate=False,
+        project_api_key=constants.PROJECT_APIKEY,
     )
     project_id = "project_id"
     url_workflow_info = f"{constants.API_HOST}/projects/{project_id}/workflows/{constants.WORKFLOW_ID}"
@@ -118,7 +120,7 @@ def test_should_initialize_workflow(requests_mock):
 def test_should_initialize_workflow_with_implicit_project_id(workflow_mock):
     up42.authenticate(
         project_id=constants.PROJECT_ID,
-        authenticate=False,
+        project_api_key=constants.PROJECT_APIKEY,
     )
     workflow_obj = up42.initialize_workflow(constants.WORKFLOW_ID)
     assert workflow_obj.info == workflow_mock.info
@@ -128,7 +130,7 @@ def test_should_initialize_workflow_with_implicit_project_id(workflow_mock):
 def test_should_initialize_job(requests_mock):
     up42.authenticate(
         project_id=constants.PROJECT_ID,
-        authenticate=False,
+        project_api_key=constants.PROJECT_APIKEY,
     )
     project_id = "project_id"
     url_job_info = f"{constants.API_HOST}/projects/{project_id}/jobs/{constants.JOB_ID}"
@@ -152,7 +154,7 @@ def test_should_initialize_job(requests_mock):
 def test_should_initialize_job_with_implicit_project_id(job_mock):
     up42.authenticate(
         project_id=constants.PROJECT_ID,
-        authenticate=False,
+        project_api_key=constants.PROJECT_APIKEY,
     )
     job_obj = up42.initialize_job(constants.JOB_ID)
     assert job_obj.info == job_mock.info
@@ -162,7 +164,7 @@ def test_should_initialize_job_with_implicit_project_id(job_mock):
 def test_should_initialize_jobtask(requests_mock):
     up42.authenticate(
         project_id=constants.PROJECT_ID,
-        authenticate=False,
+        project_api_key=constants.PROJECT_APIKEY,
     )
     project_id = "project_id"
     url_jobtask_info = f"{constants.API_HOST}/projects/{project_id}/jobs/{constants.JOB_ID}/tasks/"
@@ -190,7 +192,7 @@ def test_should_initialize_jobtask(requests_mock):
 def test_should_initialize_job_task_with_implicit_project_id(jobtask_mock):
     up42.authenticate(
         project_id=constants.PROJECT_ID,
-        authenticate=False,
+        project_api_key=constants.PROJECT_APIKEY,
     )
     jobtask_obj = up42.initialize_jobtask(constants.JOBTASK_ID, constants.JOB_ID)
     assert jobtask_obj.info == jobtask_mock.info
@@ -200,7 +202,7 @@ def test_should_initialize_job_task_with_implicit_project_id(jobtask_mock):
 def test_should_initialize_job_collection(requests_mock):
     up42.authenticate(
         project_id=constants.PROJECT_ID,
-        authenticate=False,
+        project_api_key=constants.PROJECT_APIKEY,
     )
     project_id = "project_id"
     url_job_info = f"{constants.API_HOST}/projects/{project_id}/jobs/{constants.JOB_ID}"
@@ -225,7 +227,7 @@ def test_should_initialize_job_collection(requests_mock):
 def test_should_initialize_job_collection_with_implicit_project_id(job_mock):
     up42.authenticate(
         project_id=constants.PROJECT_ID,
-        authenticate=False,
+        project_api_key=constants.PROJECT_APIKEY,
     )
     collection = up42.initialize_jobcollection([constants.JOB_ID])
     assert collection.jobs[0].info == job_mock.info
@@ -236,7 +238,7 @@ def test_should_initialize_job_collection_with_implicit_project_id(job_mock):
 def test_should_initialize_tasking():
     up42.authenticate(
         project_id=constants.PROJECT_ID,
-        authenticate=False,
+        project_api_key=constants.PROJECT_APIKEY,
     )
     result = up42.initialize_tasking()
     assert isinstance(result, tasking.Tasking)
