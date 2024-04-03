@@ -2,6 +2,7 @@ import pytest
 
 import up42
 from up42 import catalog, main, tasking
+
 from .fixtures import fixtures_globals as constants
 
 
