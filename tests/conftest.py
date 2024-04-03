@@ -6,7 +6,6 @@ pytest_plugins = [
     "tests.fixtures.fixtures_auth",
     "tests.fixtures.fixtures_asset",
     "tests.fixtures.fixtures_catalog",
-    "tests.fixtures.fixtures_estimation",
     "tests.fixtures.fixtures_job",
     "tests.fixtures.fixtures_jobcollection",
     "tests.fixtures.fixtures_jobtask",
