@@ -172,8 +172,8 @@ class Catalog(CatalogBase, viztools.VizTools):
 
     def __init__(self, auth: up42_auth.Auth):
         super().__init__(auth)
-        self.quicklooks = None
-        self.type = "ARCHIVE"
+        self.quicklooks: Optional[List[str]] = None
+        self.type: str = "ARCHIVE"
         self.data_products: Optional[Dict] = None
 
     def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
