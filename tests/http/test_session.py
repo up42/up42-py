@@ -20,6 +20,13 @@ METHODS_WITH_CALLS = [
 ]
 
 AUTHORIZATION_VALUE = "Bearer some-token"
+SDK_VERSION = "some-version"
+REQUEST_HEADERS = {
+    "Content-Type": "application/json",
+    "Authorization": AUTHORIZATION_VALUE,
+    "cache-control": "no-cache",
+    "User-Agent": f"up42-py/{SDK_VERSION} ({up42_session.REPOSITORY_URL})",
+}
 
 
 def set_token(request: requests.Request):
@@ -29,18 +36,19 @@ def set_token(request: requests.Request):
 
 @pytest.fixture(name="auth_session")
 def create_session():
-    create_auth = mock.MagicMock(return_value=mock.MagicMock(side_effect=set_token))
+    auth = mock.MagicMock(side_effect=set_token)
     create_adapter = mock.MagicMock(return_value=requests.adapters.HTTPAdapter())
-    session = up42_session.create(create_adapter=create_adapter, create_auth=create_auth)
-    yield session
-    create_auth.assert_called_with(create_adapter=create_adapter)
+    return up42_session.create(auth=auth, create_adapter=create_adapter, version=SDK_VERSION)
 
 
 @pytest.mark.parametrize("method, call", METHODS_WITH_CALLS)
 def test_should_respond_on_good_status(requests_mock: req_mock.Mocker, auth_session, method, call):
     status_code = random.randint(200, 399)
     requests_mock.request(
-        method, SOME_URL, request_headers={"Authorization": AUTHORIZATION_VALUE}, status_code=status_code
+        method,
+        SOME_URL,
+        request_headers=REQUEST_HEADERS,
+        status_code=status_code,
     )
     assert call(auth_session, SOME_URL).status_code == status_code
     assert requests_mock.called_once
@@ -50,7 +58,10 @@ def test_should_respond_on_good_status(requests_mock: req_mock.Mocker, auth_sess
 def test_fails_on_bad_status(requests_mock: req_mock.Mocker, auth_session, method, call):
     status_code = random.randint(400, 599)
     requests_mock.request(
-        method, SOME_URL, request_headers={"Authorization": AUTHORIZATION_VALUE}, status_code=status_code
+        method,
+        SOME_URL,
+        request_headers=REQUEST_HEADERS,
+        status_code=status_code,
     )
     with pytest.raises(requests.exceptions.HTTPError) as exc_info:
         call(auth_session, SOME_URL)

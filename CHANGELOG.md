@@ -29,6 +29,15 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 0.37.1a11
+
+**Apr 4, 2024**
+
+- Added standard headers to `http/session.py`
+- Added session provisioning to `auth.py` and `http/client.py`
+- Dropped undocumented `authenticate` flag in `auth.py`
+- Dropped undocumented kwargs in `auth.py` and `main.py`
+
 ## 0.37.1a10
 
 **Apr 3, 2024**

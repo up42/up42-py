@@ -1,12 +1,18 @@
 import functools
 from typing import Callable, Dict, List, Optional
 
+import requests
+
 from up42.http import config, oauth
+from up42.http import session as http_session
+
+SessionFactory = Callable[[oauth.Up42Auth], requests.Session]
 
 
 class Client:
-    def __init__(self, auth: oauth.Up42Auth):
+    def __init__(self, auth: oauth.Up42Auth, create_session: SessionFactory):
         self.auth = auth
+        self.session = create_session(auth)
 
     @property
     def token(self) -> str:
@@ -33,12 +39,13 @@ def create(
     detect_settings: SettingsDetector = oauth.detect_settings,
     detect_retriever: RetrieverDetector = oauth.detect_retriever,
     create_auth: AuthFactory = oauth.Up42Auth,
+    create_session: SessionFactory = http_session.create,
 ):
     possible_settings = [detect_settings(credentials) for credentials in credential_sources]
     settings = functools.reduce(_merge, possible_settings)
     if settings:
         token_settings = config.TokenProviderSettings(token_url=token_url)
-        return Client(create_auth(detect_retriever(settings), token_settings))
+        return Client(create_auth(detect_retriever(settings), token_settings), create_session)
     raise MissingCredentials
 
 

@@ -1,6 +1,6 @@
 import json
 import random
-from typing import Dict, Optional
+from typing import Dict, MutableMapping, Optional, Union, cast
 
 import mock
 import pytest
@@ -11,7 +11,6 @@ from up42 import auth as up42_auth
 
 from .fixtures import fixtures_globals as constants
 
-SDK_VERSION = "some-version"
 USER_NAME = "some-username"
 PASSWORD = "some-password"
 CONFIG_FILE = "some-config-file"
@@ -23,8 +22,7 @@ ERROR = {"some": "error"}
 REQUEST_HEADERS = {
     "Content-Type": "application/json",
     "Authorization": f"Bearer {constants.TOKEN}",
-    "cache-control": "no-cache",
-    "User-Agent": f"up42-py/{SDK_VERSION} ({up42_auth.REPOSITORY_URL})",
+    "custom": "header",
 }
 
 
@@ -71,11 +69,17 @@ class TestCollectCredentials:
         )
 
 
+session = requests.Session()
+session.headers = cast(MutableMapping[str, Union[str, bytes]], REQUEST_HEADERS)
+
+
 def create_auth(requests_mock: req_mock.Mocker):
     credential_sources = [{"some": "credentials"}]
     get_sources = mock.MagicMock(return_value=credential_sources)
     create_client = mock.MagicMock()
     create_client.return_value.token = constants.TOKEN
+    create_client.return_value.session = session
+
     requests_mock.get(
         WORKSPACE_ENDPOINT,
         json={"data": {"id": constants.WORKSPACE_ID}},
@@ -88,7 +92,6 @@ def create_auth(requests_mock: req_mock.Mocker):
         password=PASSWORD,
         get_credential_sources=get_sources,
         create_client=create_client,
-        version=SDK_VERSION,
     )
 
     get_sources.assert_called_once_with(
@@ -103,29 +106,12 @@ def create_auth(requests_mock: req_mock.Mocker):
 
 
 class TestAuth:
-    def test_should_not_authenticate_if_requested(self):
-        unreachable = mock.MagicMock()
-        auth = up42_auth.Auth(
-            cfg_file=CONFIG_FILE,
-            project_id=constants.PROJECT_ID,
-            project_api_key=constants.PROJECT_APIKEY,
-            username=USER_NAME,
-            password=PASSWORD,
-            authenticate=False,
-            get_sources=unreachable,
-            create_client=unreachable,
-            version=SDK_VERSION,
-        )
-        assert auth.project_id == constants.PROJECT_ID
-        assert not auth.workspace_id
-        assert not auth.token
-        unreachable.assert_not_called()
-
     def test_should_authenticate_when_created(self, requests_mock: req_mock.Mocker):
         auth = create_auth(requests_mock)
         assert auth.project_id == constants.PROJECT_ID
         assert auth.workspace_id == constants.WORKSPACE_ID
         assert auth.token == constants.TOKEN
+        assert auth.session == session
 
     @pytest.mark.parametrize(
         "expected",
