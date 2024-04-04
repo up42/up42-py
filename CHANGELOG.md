@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 0.37.1a12
+
+**Apr 5, 2024**
+
+- Dropped deprecated code: viztools.folium_base_map(), plot_quicklooks(), plot_coverage(), , draw_aoi()
+
 ## 0.37.1a11
 
 **Apr 4, 2024**
