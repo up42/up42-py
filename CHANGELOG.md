@@ -29,6 +29,17 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 0.37.1
+
+**Apr 5, 2024**
+
+- Removed upper bound for Python 3.12.
+- Dropped support for Python 3.8.
+- New authentication token are retrieved upon expiration instead of every request.
+- Dropped tenacity, requests-oauthlib and types-oauthlib as dependencies.
+- Updated the deprecation date for `Jobs`, `Workflow`, and `Projects` related features.
+- Multiple refactoring improvements.
+
 ## 0.37.1a11
 
 **Apr 4, 2024**
