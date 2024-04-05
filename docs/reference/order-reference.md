@@ -1,6 +1,6 @@
 # Order
 
-The Order class enables access to [catalog](../../notebooks/catalog-example) and [tasking](../../notebooks/tasking-example) orders tracking.
+The Order class enables access to catalog and tasking orders tracking.
 
 ```python
 order = up42.initialize_order(order_id="ea36dee9-fed6-457e-8400-2c20ebd30f44")

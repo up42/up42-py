@@ -125,7 +125,7 @@ class Storage:
         ):
             warnings.warn(
                 "Search for geometry, acquired_before, acquired_after and custom_filter has been deprecated."
-                "Use the PySTAC client for STAC queries: https://sdk.up42.com/notebooks/stac-example/#pystac",
+                "Use the PySTAC client for STAC queries.",
                 DeprecationWarning,
                 stacklevel=2,
             )

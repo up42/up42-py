@@ -1,6 +1,6 @@
 # Storage
 
-The Storage class enables access to UP42 [storage](../../notebooks/order-assets-example/).
+The Storage class enables access to UP42 storage.
 
 ```python
 storage = up42.initialize_storage()
