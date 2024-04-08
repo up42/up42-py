@@ -320,7 +320,7 @@ Added new components within the HTTP layer to facilitate future enhancements in 
 
 **November 23, 2023**
 
-Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of the [PySTAC client](https://sdk.up42.com/notebooks/stac-example/#pystac) search.
+Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of the PySTAC client search.
 
 - `geometry`
 - `acquired_before`
