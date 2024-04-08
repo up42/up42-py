@@ -36,12 +36,12 @@ nav:
     - Tutorials:
       - installation.md
       - authentication.md
-      - Tasking: notebooks/tasking-example.ipynb
-      - Catalog: notebooks/catalog-example.ipynb
+      - Tasking: https://github.com/up42/documentation-notebooks/blob/main/tasking/sdk-tasking.ipynb
+      - Catalog: https://github.com/up42/documentation-notebooks/blob/main/catalog/sdk-catalog.ipynb
       - Storage:
-        - Order assets: notebooks/order-assets-example.ipynb
-        - Storage assets: notebooks/storage-assets-example.ipynb
-      - STAC: notebooks/stac-example.ipynb
+        - Order assets: https://github.com/up42/documentation-notebooks/blob/main/storage/sdk-order-assets.ipynb
+        - Storage assets: https://github.com/up42/documentation-notebooks/blob/main/storage/sdk-storage-assets.ipynb
+      - STAC: https://github.com/up42/documentation-notebooks/blob/main/storage/sdk-stac.ipynb
       - webhooks.md
     - Code reference:
         - structure.md
@@ -91,11 +91,6 @@ plugins:
   - mkdocs-jupyter:
       include_source: False
       ignore_h1_titles: True
-      include: ["notebooks/tasking-example.ipynb",
-                "notebooks/catalog-example.ipynb",
-                "notebooks/stac-example.ipynb",
-                "notebooks/storage-assets-example.ipynb",
-                "notebooks/order-assets-example.ipynb"]
   - macros:
       module_name: docs/macros
   - exclude:

@@ -35,6 +35,17 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 - Dropped deprecated viztools functions: folium_base_map(), plot_quicklooks(), plot_coverage(), draw_aoi(), _map_images() (internal function), map_quicklooks(), plot_coverage(), plot_results(), requires_viz() (internal function), map_results(), render() (internal function)
 
+## 0.37.1
+
+**Apr 5, 2024**
+
+- Removed upper bound for Python 3.12.
+- Dropped support for Python 3.8.
+- New authentication token are retrieved upon expiration instead of every request.
+- Dropped tenacity, requests-oauthlib and types-oauthlib as dependencies.
+- Updated the deprecation date for `Jobs`, `Workflow`, and `Projects` related features.
+- Multiple refactoring improvements.
+
 ## 0.37.1a11
 
 **Apr 4, 2024**
@@ -315,7 +326,7 @@ Added new components within the HTTP layer to facilitate future enhancements in 
 
 **November 23, 2023**
 
-Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of the [PySTAC client](https://sdk.up42.com/notebooks/stac-example/#pystac) search.
+Marked the following parameters of `storage.get_assets` as deprecated to enforce the use of the PySTAC client search.
 
 - `geometry`
 - `acquired_before`
