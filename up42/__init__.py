@@ -28,17 +28,14 @@ from up42.initialization import (
     initialize_asset,
     initialize_catalog,
     initialize_job,
-    initialize_jobcollection,
     initialize_jobtask,
     initialize_order,
-    initialize_project,
     initialize_storage,
     initialize_tasking,
     initialize_webhook,
     initialize_workflow,
 )
 from up42.job import Job
-from up42.jobcollection import JobCollection
 from up42.jobtask import JobTask
 from up42.main import (
     authenticate,
@@ -51,7 +48,6 @@ from up42.main import (
     get_webhooks,
 )
 from up42.order import Order
-from up42.project import Project
 from up42.storage import Storage
 from up42.tasking import Tasking
 from up42.tools import get_example_aoi, read_vector_file
@@ -68,23 +64,19 @@ __all__ = [
         Auth,
         Catalog,
         Job,
-        JobCollection,
         JobTask,
         Order,
-        Project,
         Storage,
         Tasking,
         Webhook,
         Workflow,
         get_example_aoi,
         read_vector_file,
-        initialize_project,
         initialize_catalog,
         initialize_tasking,
         initialize_workflow,
         initialize_job,
         initialize_jobtask,
-        initialize_jobcollection,
         initialize_storage,
         initialize_order,
         initialize_asset,

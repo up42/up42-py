@@ -1,22 +1,8 @@
 import logging
 import warnings
-from typing import List, Optional
+from typing import Optional
 
-from up42 import (
-    asset,
-    catalog,
-    job,
-    jobcollection,
-    jobtask,
-    main,
-    order,
-    project,
-    storage,
-    tasking,
-    utils,
-    webhooks,
-    workflow,
-)
+from up42 import asset, catalog, job, jobtask, main, order, storage, tasking, utils, webhooks, workflow
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
@@ -34,26 +20,6 @@ def _get_project_id(project_id: Optional[str]) -> str:
     if not result:
         raise ValueError("Project ID can't be null")
     return result
-
-
-@main.check_auth
-def initialize_project(project_id: Optional[str] = None) -> project.Project:
-    """
-    Returns the correct Project object (has to exist on UP42).
-    Args:
-        project_id: The UP42 project id
-    """
-    warnings.warn(
-        "Projects are getting deprecated. The current analytics platform will be discontinued "
-        f"{DEPRECATION_MESSAGE}",
-        DeprecationWarning,
-    )
-    up42_project = project.Project(
-        auth=main.get_auth_safely(),
-        project_id=_get_project_id(project_id=project_id),
-    )
-    logger.info("Initialized %s", up42_project)
-    return up42_project
 
 
 @main.check_auth
@@ -137,36 +103,6 @@ def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] =
     )
     logger.info("Initialized %s", job_task)
     return job_task
-
-
-@main.check_auth
-def initialize_jobcollection(job_ids: List[str], project_id: Optional[str] = None) -> jobcollection.JobCollection:
-    """
-    Returns a JobCollection object (the referenced jobs have to exist on UP42).
-    Args:
-        job_ids: List of UP42 job_ids
-        project_id: The id of the UP42 project, containing the jobs
-    """
-    warnings.warn(
-        "Job Collections are getting deprecated. The current analytics platform will be discontinued "
-        f"{DEPRECATION_MESSAGE}",
-        DeprecationWarning,
-    )
-    jobs = [
-        job.Job(
-            auth=main.get_auth_safely(),
-            job_id=job_id,
-            project_id=_get_project_id(project_id=project_id),
-        )
-        for job_id in job_ids
-    ]
-    job_collection = jobcollection.JobCollection(
-        auth=main.get_auth_safely(),
-        project_id=_get_project_id(project_id=project_id),
-        jobs=jobs,
-    )
-    logger.info("Initialized %s", job_collection)
-    return job_collection
 
 
 @main.check_auth
