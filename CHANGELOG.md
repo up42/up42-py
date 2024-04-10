@@ -35,6 +35,9 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 - Dropped deprecated JobCollection functions - info, status, apply, download_results
 - Dropped deprecated Project functions - info, get_workflows, get_project_settings, get_jobs
+- Dropped Project's fixtures and tests
+- Dropped JobCollection's fixtures and tests
+- Dropped Workflow's get_jobs function
 
 ## 1.0.0a1
 

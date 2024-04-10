@@ -1,10 +1,8 @@
 import pytest
 
-from up42.job import Job
-from up42.jobcollection import JobCollection
 from up42.workflow import Workflow
 
-from .fixtures.fixtures_globals import API_HOST, JOB_ID, JSON_WORKFLOW_TASKS
+from .fixtures.fixtures_globals import API_HOST, JSON_WORKFLOW_TASKS
 
 
 def test_workflow_info(workflow_mock):
@@ -91,20 +89,6 @@ def test_get_default_parameters(workflow_mock):
         "time": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
     }
     assert "intersects" not in default_parameters["esa-s2-l2a-gtiff-visual:1"]
-
-
-def test_get_jobs(workflow_mock, requests_mock):
-    url_job_info = f"{API_HOST}/projects/{workflow_mock.project_id}/jobs/{JOB_ID}"
-    requests_mock.get(
-        url=url_job_info,
-        json={"data": {"xyz": 789, "mode": "DEFAULT"}, "error": {}},
-    )
-
-    jobcollection = workflow_mock.get_jobs()
-    assert isinstance(jobcollection, JobCollection)
-    assert isinstance(jobcollection.jobs[0], Job)
-    assert jobcollection.jobs[0].job_id == JOB_ID
-    assert len(jobcollection.jobs) == 1  # Filters out the job that is not associated with the workflow object
 
 
 def test_delete(workflow_mock, requests_mock):
