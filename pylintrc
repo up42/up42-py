@@ -15,7 +15,7 @@ ignore=
 
 # Files or directories matching the regex patterns are skipped. The regex
 # matches against base names, not paths.
-ignore-patterns=.*job.*.py,.*project.py,.*stac_client.py,.*workflow.py
+ignore-patterns=.*job.*.py,.*stac_client.py,.*workflow.py
 
 
 # Pickle collected data for later comparisons.
