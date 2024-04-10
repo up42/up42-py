@@ -29,7 +29,14 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
-## 1.0.0a2
+## 1.0.0a4
+
+**Apr 12, 2024**
+
+- Dropped deprecated Jobtask functions - info, get_results_json, download_results, download_quicklooks
+- Dropped Jobtask tests and fixtures
+
+## 1.0.0a3
 
 **Apr 12, 2024**
 
