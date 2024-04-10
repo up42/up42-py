@@ -10,7 +10,6 @@ pytest_plugins = [
     "tests.fixtures.fixtures_storage",
     "tests.fixtures.fixtures_tasking",
     "tests.fixtures.fixtures_webhook",
-    "tests.fixtures.fixtures_workflow",
 ]
 
 
