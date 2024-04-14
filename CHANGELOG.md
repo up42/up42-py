@@ -35,6 +35,14 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 - Dropped deprecated viztools functions: folium_base_map(), plot_quicklooks(), plot_coverage(), draw_aoi(), _map_images() (internal function), map_quicklooks(), plot_coverage(), plot_results(), requires_viz() (internal function), map_results(), render() (internal function)
 
+## 0.37.2
+
+**Apr 8, 2024**
+
+Dependabot security updates:
+ - Bump black from 22.12.0 to 24.3.0
+ - Bump pillow from 10.2.0 to 10.3.0
+
 ## 0.37.1
 
 **Apr 5, 2024**
