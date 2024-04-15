@@ -2,7 +2,7 @@ import logging
 import warnings
 from typing import Optional
 
-from up42 import asset, catalog, jobtask, main, order, storage, tasking, utils, webhooks, workflow
+from up42 import asset, catalog, main, order, storage, tasking, utils, webhooks, workflow
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
@@ -59,30 +59,6 @@ def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> w
     )
     logger.info(INITIALIZED_MSG, up42_workflow)
     return up42_workflow
-
-
-@main.check_auth
-def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] = None) -> jobtask.JobTask:
-    """
-    Returns a JobTask object (has to exist on UP42).
-    Args:
-        jobtask_id: The UP42 jobtask_id
-        job_id: The UP42 job_id
-        project_id: The id of the UP42 project, containing the job
-    """
-    warnings.warn(
-        "Job tasks are getting deprecated. The current analytics platform will be discontinued "
-        f"{DEPRECATION_MESSAGE}",
-        DeprecationWarning,
-    )
-    job_task = jobtask.JobTask(
-        auth=main.get_auth_safely(),
-        jobtask_id=jobtask_id,
-        job_id=job_id,
-        project_id=_get_project_id(project_id=project_id),
-    )
-    logger.info(INITIALIZED_MSG, job_task)
-    return job_task
 
 
 @main.check_auth
