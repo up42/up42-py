@@ -27,7 +27,6 @@ from up42.catalog import Catalog
 from up42.initialization import (
     initialize_asset,
     initialize_catalog,
-    initialize_job,
     initialize_jobtask,
     initialize_order,
     initialize_storage,
@@ -35,7 +34,6 @@ from up42.initialization import (
     initialize_webhook,
     initialize_workflow,
 )
-from up42.job import Job
 from up42.jobtask import JobTask
 from up42.main import (
     authenticate,
@@ -63,7 +61,6 @@ __all__ = [
         Asset,
         Auth,
         Catalog,
-        Job,
         JobTask,
         Order,
         Storage,
@@ -75,7 +72,6 @@ __all__ = [
         initialize_catalog,
         initialize_tasking,
         initialize_workflow,
-        initialize_job,
         initialize_jobtask,
         initialize_storage,
         initialize_order,
