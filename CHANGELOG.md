@@ -31,7 +31,7 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 ## 1.0.0a3
 
-**Apr 12, 2024**
+**Apr 15, 2024**
 
 - Dropped deprecated Job functions - info, status, is_succeeded, download_quicklooks, get_results_json, download_results,
 get_logs, upload_results_to_bucket, get_jobtasks, get_jobtasks_results_json, get_credits
@@ -39,7 +39,7 @@ get_logs, upload_results_to_bucket, get_jobtasks, get_jobtasks_results_json, get
 
 ## 1.0.0a2
 
-**Apr 10, 2024**
+**Apr 15, 2024**
 
 - Dropped deprecated JobCollection functions - info, status, apply, download_results
 - Dropped deprecated Project functions - info, get_workflows, get_project_settings, get_jobs
@@ -49,7 +49,7 @@ get_logs, upload_results_to_bucket, get_jobtasks, get_jobtasks_results_json, get
 
 ## 1.0.0a1
 
-**Apr 9, 2024**
+**Apr 15, 2024**
 
 - Dropped deprecated viztools functions: folium_base_map(), plot_quicklooks(), plot_coverage(), draw_aoi(), _map_images() (internal function), map_quicklooks(), plot_coverage(), plot_results(), requires_viz() (internal function), map_results(), render() (internal function)
 
