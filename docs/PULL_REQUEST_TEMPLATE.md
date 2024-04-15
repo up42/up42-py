@@ -7,4 +7,4 @@ Items:
 For release:
 * [ ] Bumped version
 * [ ] Added changelog
-* [ ] Updated announcement banner
+
