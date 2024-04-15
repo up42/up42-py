@@ -257,18 +257,6 @@ def test_download_gcs_not_unpack(requests_mock):
             )
 
 
-def test_filter_jobs_on_mode():
-    job_json = [{"mode": "DEFAULT"}, {"mode": "DRY_RUN"}]
-    r = utils.filter_jobs_on_mode(job_json)
-    assert len(r) == 2
-    r = utils.filter_jobs_on_mode(job_json, test_jobs=False, real_jobs=True)
-    assert len(r) == 1
-    r = utils.filter_jobs_on_mode(job_json, test_jobs=True, real_jobs=False)
-    assert len(r) == 1
-    with pytest.raises(ValueError):
-        utils.filter_jobs_on_mode(job_json, test_jobs=False, real_jobs=False)
-
-
 def test_autocomplete_order_parameters():
     with open(
         pathlib.Path(__file__).resolve().parent / "mock_data/data_product_spot_schema.json", encoding="utf-8"

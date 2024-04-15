@@ -3,14 +3,10 @@ from collections import Counter
 from typing import Dict, List, Optional, Union
 from warnings import warn
 
-from tqdm import tqdm
-
 import up42.main as main
 from up42.auth import Auth
 from up42.host import endpoint
-from up42.job import Job
-from up42.jobcollection import JobCollection
-from up42.utils import filter_jobs_on_mode, get_logger
+from up42.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -224,37 +220,6 @@ class Workflow:
             full_input_tasks_definition.append(next_task)
             previous_task_name = next_task["name"]
         return full_input_tasks_definition
-
-    def get_jobs(
-        self,
-        return_json: bool = False,
-        test_jobs: bool = True,
-        real_jobs: bool = True,
-    ) -> Union[JobCollection, List[Dict]]:
-        """
-        Get all jobs associated with the workflow as a JobCollection or JSON.
-
-        Args:
-            return_json: If true, returns the job info JSONs instead of a JobCollection.
-            test_jobs: Return test jobs or test queries.
-            real_jobs: Return real jobs.
-
-        Returns:
-            A JobCollection, or alternatively the jobs info as JSON.
-        """
-        url = endpoint(f"/projects/{self.project_id}/jobs")
-        response_json = self.auth.request(request_type="GET", url=url)
-        jobs_json = filter_jobs_on_mode(response_json["data"], test_jobs, real_jobs)
-
-        jobs_workflow_json = [j for j in jobs_json if j["workflowId"] == self.workflow_id]
-
-        logger.info(f"Got {len(jobs_workflow_json)} jobs for workflow {self.workflow_id} in project {self.project_id}.")
-        if return_json:
-            return jobs_workflow_json
-        else:
-            jobs = [Job(self.auth, job_id=job["id"], project_id=self.project_id) for job in tqdm(jobs_workflow_json)]
-            jobcollection = JobCollection(auth=self.auth, project_id=self.project_id, jobs=jobs)
-            return jobcollection
 
     def delete(self) -> None:
         """
