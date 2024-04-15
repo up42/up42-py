@@ -57,6 +57,7 @@ mkdocs-exclude = ">=1.0.2"
 mkdocs-jupyter = ">=0.24.6"
 mkdocs-autolinks-plugin = ">=0.6.0"
 mkdocs-macros-plugin = ">=1.0.0"
+mkdocs-redirects = ">=1.2.1"
 
 
 [tool.poetry.group.viz.dependencies]
