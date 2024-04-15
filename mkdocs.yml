@@ -33,30 +33,6 @@ extra:
 ## Page tree
 nav:
     - Home: index.md
-    - Tutorials:
-      - installation.md
-      - authentication.md
-      - Tasking: https://github.com/up42/documentation-notebooks/blob/main/tasking/sdk-tasking.ipynb
-      - Catalog: https://github.com/up42/documentation-notebooks/blob/main/catalog/sdk-catalog.ipynb
-      - Storage:
-        - Order assets: https://github.com/up42/documentation-notebooks/blob/main/storage/sdk-order-assets.ipynb
-        - Storage assets: https://github.com/up42/documentation-notebooks/blob/main/storage/sdk-storage-assets.ipynb
-      - STAC: https://github.com/up42/documentation-notebooks/blob/main/storage/sdk-stac.ipynb
-      - webhooks.md
-    - Code reference:
-        - structure.md
-        - up42: reference/up42-reference.md
-        - Tasking: reference/tasking-reference.md
-        - Catalog: reference/catalog-reference.md
-        - CatalogBase: reference/catalogbase-reference.md
-        - Order: reference/order-reference.md
-        - Storage: reference/storage-reference.md
-        - Asset: reference/asset-reference.md
-        - Webhook: reference/webhook-reference.md
-    - FAQ:
-        - support-faq.md
-        - geometry_handling.md
-        - Privacy policy: 'https://up42.com/legal/privacy'
 
 ## Configuration
 theme:
@@ -86,6 +62,23 @@ theme:
 
 ## Plugins
 plugins:
+  - redirects:
+      redirect_maps:
+        'index.md': 'https://docs.up42.com/sdk'
+        'webhooks.md': 'https://docs.up42.com/sdk'
+        'support-faq.md': 'https://docs.up42.com/sdk'
+        'installation.md': 'https://docs.up42.com/sdk/installation'
+        'authentication.md': 'https://docs.up42.com/sdk/authentication'
+        'structure.md': 'https://docs.up42.com/sdk/reference'
+        'geometry_handling.md': 'https://docs.up42.com/sdk/geometry'
+        'reference/up42-reference.md': 'https://docs.up42.com/sdk/reference/up42-class'
+        'reference/tasking-reference.md': 'https://docs.up42.com/sdk/reference/tasking-class'
+        'reference/catalog-reference.md': 'https://docs.up42.com/sdk/reference/catalog-class'
+        'reference/catalogbase-reference.md': 'https://docs.up42.com/sdk/reference/catalogbase-class'
+        'reference/order-reference.md': 'https://docs.up42.com/sdk/reference/order-class'
+        'reference/storage-reference.md': 'https://docs.up42.com/sdk/reference/storage-class'
+        'reference/asset-reference.md': 'https://docs.up42.com/sdk/reference/asset-class'
+        'reference/webhook-reference.md': 'https://docs.up42.com/sdk/reference/webhook-class'
   - search
   - autolinks
   - mkdocs-jupyter:
