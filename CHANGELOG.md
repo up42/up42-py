@@ -31,14 +31,14 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 ## 1.0.0a4
 
-**Apr 12, 2024**
+**Apr 15, 2024**
 
 - Dropped deprecated Jobtask functions - info, get_results_json, download_results, download_quicklooks
 - Dropped Jobtask tests and fixtures
 
 ## 1.0.0a3
 
-**Apr 12, 2024**
+**Apr 15, 2024**
 
 - Dropped deprecated Job functions - info, status, is_succeeded, download_quicklooks, get_results_json, download_results,
 get_logs, upload_results_to_bucket, get_jobtasks, get_jobtasks_results_json, get_credits
@@ -46,7 +46,7 @@ get_logs, upload_results_to_bucket, get_jobtasks, get_jobtasks_results_json, get
 
 ## 1.0.0a2
 
-**Apr 10, 2024**
+**Apr 15, 2024**
 
 - Dropped deprecated JobCollection functions - info, status, apply, download_results
 - Dropped deprecated Project functions - info, get_workflows, get_project_settings, get_jobs
@@ -56,9 +56,17 @@ get_logs, upload_results_to_bucket, get_jobtasks, get_jobtasks_results_json, get
 
 ## 1.0.0a1
 
-**Apr 9, 2024**
+**Apr 15, 2024**
 
 - Dropped deprecated viztools functions: folium_base_map(), plot_quicklooks(), plot_coverage(), draw_aoi(), _map_images() (internal function), map_quicklooks(), plot_coverage(), plot_results(), requires_viz() (internal function), map_results(), render() (internal function)
+
+## 0.37.2
+
+**Apr 8, 2024**
+
+Dependabot security updates:
+ - Bump black from 22.12.0 to 24.3.0
+ - Bump pillow from 10.2.0 to 10.3.0
 
 ## 0.37.1
 
@@ -362,14 +370,14 @@ Marked the following parameters of `storage.get_assets` as deprecated to enforce
 
 **November 14, 2023**
 
-- Updated [authentication](https://sdk.up42.com/authentication) by changing it from project-based to account-based.
-- Added a new function to the [Asset class](https://sdk.up42.com/reference/asset-reference): `get_stac_asset_url` generates a signed URL that allows to download a STAC asset from storage without authentication.
+- Updated authentication by changing it from project-based to account-based.
+- Added a new function to the Asset class: `get_stac_asset_url` generates a signed URL that allows to download a STAC asset from storage without authentication.
 
 ## 0.32.0
 
 **September 7, 2023**
 
-A new function added to the [Asset class](https://sdk.up42.com/reference/asset-reference):
+A new function added to the Asset class:
 
 - `download_stac_asset` allows you to download STAC assets from storage.
 
@@ -388,7 +396,7 @@ A new function added to the [Asset class](https://sdk.up42.com/reference/asset-r
 
 **July 14, 2023**
 
-Fixed the failing [construct_order_parameters](https://sdk.up42.com/reference/tasking-reference/#construct_order_parameters) function and updated tests.
+Fixed the failing construct_order_parameters function and updated tests.
 
 ## 0.30.0
 
@@ -396,15 +404,15 @@ Fixed the failing [construct_order_parameters](https://sdk.up42.com/reference/ta
 
 Added a new `tags` argument to the following functions:
 
-- `construct_order_parameters`, to assign tags to new [tasking](https://sdk.up42.com/reference/tasking-reference/#construct_order_parameters) and [catalog](https://sdk.up42.com/reference/catalog-reference/) orders.
-- `get_order`, to filter [orders](https://sdk.up42.com/reference/storage-reference/) by tags.
-- `get_assets`, to filter [assets](https://sdk.up42.com/reference/storage-reference/) by tags.
+- `construct_order_parameters`, to assign tags to new tasking and catalog orders.
+- `get_order`, to filter orders by tags.
+- `get_assets`, to filter assets by tags.
 
 ## 0.29.0
 
 **June 20, 2023**
 
-Integrated new functions into the [Tasking class](https://sdk.up42.com/reference/tasking-reference):
+Integrated new functions into the Tasking class:
 
 - `get_feasibility` — Returns a list of feasibility studies for tasking orders.
 - `choose_feasibility` — Allows accepting one of the proposed feasibility study options.
@@ -421,13 +429,12 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 
 **February 17, 2023**
 
-- Added STAC search functionality to
-  [storage.get_assets](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.get_assets).
+- Added STAC search functionality to storage.get_assets.
   Now you can filter assets by new parameters: `geometry`, `acquired_after`, `acquired_before`,
   `collection_names`, `producer_names`, `tags`, `search`, `sources`.
-- Added [storage.pystac_client](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.pystac_client).
+- Added storage.pystac_client.
   Use it to authenticate PySTAC client to access your UP42 storage assets using its library.
-- Added [asset.stac_info](https://sdk.up42.com/reference/asset-reference/#up42.asset.Asset.stac_info).
+- Added asset.stac_info.
   Use it to access STAC metadata, such as acquisition, sensor, and collection information.
 
 ## 0.27.1
@@ -444,8 +451,7 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 
 - Add `asset.update_metadata()` for adjusting title & tags of an asset.
 - `storage.get_assets()` has new parameters `created_after`, `created_before`, `workspace_id`  to better filter the
-  desired assets. It now queries the assets of all accessible workspaces by default. Also see
-  [docs reference](https://sdk.up42.com/reference/storage-reference/#up42.storage.Storage.get_assets).
+  desired assets. It now queries the assets of all accessible workspaces by default.
 - Adopt new UP42 API 2.0 endpoints for user storage & assets.
 
 ## 0.26.0
@@ -491,11 +497,8 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 
 **September 20, 2022**
 
-- Integrates the UP42 [data products](https://docs.up42.com/developers/api#tag/data-products),
-  e.g. the selection "Display" and "Reflectance" configuration in the ordering process. The new ordering process
-  requires the selection of a specific data product.
-- The `order_parameters` argument for `catalog.estimate_order` and `catalog.place_order` now has a
-  [different structure](https://sdk.up42.com/reference/catalog-reference/#up42.catalog.Catalog.place_order).
+- Integrates the UP42 data productsm e.g. the selection "Display" and "Reflectance" configuration in the ordering process. The new ordering process requires the selection of a specific data product.
+- The `order_parameters` argument for `catalog.estimate_order` and `catalog.place_order` now has a different structure.
   **The previous option to just specify the collection name will soon be deactivated in the UP42 API!**
 - New function `catalog.get_data_products`
 - New function `catalog.construct_order_parameters`
@@ -518,7 +521,7 @@ Integrated new functions into the [Tasking class](https://sdk.up42.com/reference
 
 **July 5, 2022**
 
-- Adds webhooks functionality to the SDK, see new [webhooks docs chapter](https://sdk.up42.com/webhooks/).
+- Adds webhooks functionality to the SDK, see new webhooks docs chapter.
 - Introduces optional installation option for the visualization functionalities. The required dependencies are now
   not installed by default.
 - Removes `order.metadata` property, as removed from UP42 API.
