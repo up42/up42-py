@@ -53,6 +53,30 @@ get_logs, upload_results_to_bucket, get_jobtasks, get_jobtasks_results_json, get
 
 - Dropped deprecated viztools functions: folium_base_map(), plot_quicklooks(), plot_coverage(), draw_aoi(), _map_images() (internal function), map_quicklooks(), plot_coverage(), plot_results(), requires_viz() (internal function), map_results(), render() (internal function)
 
+## 1.0.0a2
+
+**Apr 15, 2024**
+
+- Dropped deprecated JobCollection functions - info, status, apply, download_results
+- Dropped deprecated Project functions - info, get_workflows, get_project_settings, get_jobs
+- Dropped Project's fixtures and tests
+- Dropped JobCollection's fixtures and tests
+- Dropped Workflow's get_jobs function
+
+## 1.0.0a1
+
+**Apr 9, 2024**
+
+- Dropped deprecated viztools functions: folium_base_map(), plot_quicklooks(), plot_coverage(), draw_aoi(), _map_images() (internal function), map_quicklooks(), plot_coverage(), plot_results(), requires_viz() (internal function), map_results(), render() (internal function)
+
+## 0.37.2
+
+**Apr 8, 2024**
+
+Dependabot security updates:
+ - Bump black from 22.12.0 to 24.3.0
+ - Bump pillow from 10.2.0 to 10.3.0
+
 ## 0.37.1
 
 **Apr 5, 2024**
