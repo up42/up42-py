@@ -30,7 +30,6 @@ STAC_ASSET_HREF = "https://api.up42.com/v2/assets/v3b3e203-346d-4f67-b79b-895c36
 STAC_ASSET_ID = "v3b3e203-346d-4f67-b79b-895c36983fb8"
 PROJECT_ID = "f19e833d-e698-4d9e-a037-2e6dbd8791ef"
 PROJECT_APIKEY = "project_apikey_123"
-PROJECT_NAME = "project_name_123"
 PROJECT_DESCRIPTION = "project_description_123"
 
 # tasking constants
@@ -42,7 +41,6 @@ TEST_OPTION_ID = "cc3c869d-9215-4dcd-b535-b49aa28228fa"
 
 WORKFLOW_ID = "c74d73c0-6929-4549-a5c9-5a3f517f6d63"
 WORKFLOW_NAME = "workflow_name_123"
-WORKFLOW_DESCRIPTION = "workflow_description_123"
 WORKSPACE_ID = "workspace_id_123"
 USER_ID = "1094497b-11d8-4fb8-9d6a-5e24a88aa825"
 JOB_ID = "13ba070a-55b7-4b3f-95f1-7b11ac8f1175"

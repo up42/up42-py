@@ -45,12 +45,6 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 - Dropped deprecated viztools functions: folium_base_map(), plot_quicklooks(), plot_coverage(), draw_aoi(), _map_images() (internal function), map_quicklooks(), plot_coverage(), plot_results(), requires_viz() (internal function), map_results(), render() (internal function)
 
-## 1.0.0a1
-
-**Apr 9, 2024**
-
-- Dropped deprecated viztools functions: folium_base_map(), plot_quicklooks(), plot_coverage(), draw_aoi(), _map_images() (internal function), map_quicklooks(), plot_coverage(), plot_results(), requires_viz() (internal function), map_results(), render() (internal function)
-
 ## 0.37.2
 
 **Apr 8, 2024**
