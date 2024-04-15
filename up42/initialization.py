@@ -7,6 +7,7 @@ from up42 import asset, catalog, job, jobtask, main, order, storage, tasking, ut
 logger = utils.get_logger(__name__, level=logging.INFO)
 
 DEPRECATION_MESSAGE = "after May 15th, 2024, and will be replaced by new processing functionalities."
+INITIALIZED_MSG = "Initialized %s"
 
 
 def _get_project_id(project_id: Optional[str]) -> str:
@@ -56,7 +57,7 @@ def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> w
         workflow_id=workflow_id,
         project_id=_get_project_id(project_id=project_id),
     )
-    logger.info("Initialized %s", up42_workflow)
+    logger.info(INITIALIZED_MSG, up42_workflow)
     return up42_workflow
 
 
@@ -77,7 +78,7 @@ def initialize_job(job_id: str, project_id: Optional[str] = None) -> job.Job:
         job_id=job_id,
         project_id=_get_project_id(project_id=project_id),
     )
-    logger.info("Initialized %s", up42_job)
+    logger.info(INITIALIZED_MSG, up42_job)
     return up42_job
 
 
@@ -101,7 +102,7 @@ def initialize_jobtask(jobtask_id: str, job_id: str, project_id: Optional[str] =
         job_id=job_id,
         project_id=_get_project_id(project_id=project_id),
     )
-    logger.info("Initialized %s", job_task)
+    logger.info(INITIALIZED_MSG, job_task)
     return job_task
 
 
@@ -121,7 +122,7 @@ def initialize_order(order_id: str) -> order.Order:
         order_id: The UP42 order_id
     """
     up42_order = order.Order(auth=main.get_auth_safely(), order_id=order_id)
-    logger.info("Initialized %s", up42_order)
+    logger.info(INITIALIZED_MSG, up42_order)
     return up42_order
 
 
@@ -133,7 +134,7 @@ def initialize_asset(asset_id: str) -> asset.Asset:
         asset_id: The UP42 asset_id
     """
     up42_asset = asset.Asset(auth=main.get_auth_safely(), asset_id=asset_id)
-    logger.info("Initialized %s", up42_asset)
+    logger.info(INITIALIZED_MSG, up42_asset)
     return up42_asset
 
 
@@ -145,5 +146,5 @@ def initialize_webhook(webhook_id: str) -> webhooks.Webhook:
         webhook_id: The UP42 webhook_id
     """
     webhook = webhooks.Webhook(auth=main.get_auth_safely(), webhook_id=webhook_id)
-    logger.info("Initialized %s", webhook)
+    logger.info(INITIALIZED_MSG, webhook)
     return webhook
