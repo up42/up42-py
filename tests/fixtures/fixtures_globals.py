@@ -44,7 +44,6 @@ WORKFLOW_NAME = "workflow_name_123"
 WORKSPACE_ID = "workspace_id_123"
 USER_ID = "1094497b-11d8-4fb8-9d6a-5e24a88aa825"
 JOB_ID = "13ba070a-55b7-4b3f-95f1-7b11ac8f1175"
-JOB_ID_2 = "ce6286e2-aebb-49ce-8a09-272d6466f3c5"
 JOB_NAME = "job_name_123"
 
 JOBTASK_ID = "a16615e2-6944-4143-879e-416f2fe52de8"
@@ -419,17 +418,6 @@ JSON_WEBHOOK = {
 }
 
 JSON_BALANCE = {"data": {"balance": 10693}}
-
-MOCK_CREDITS = {
-    "data": {
-        "projectId": "20adecb9-97f6-42c0-8ba8-f1e2fa0bff39",
-        "projectDisplayId": "20adecb9",
-        "jobId": "feace0bb-ea26-4161-9026-852f26e46bc5",
-        "jobDisplayId": "feace0bb",
-        "creditsUsed": 100,
-    },
-    "error": None,
-}
 
 
 URL_STAC_CATALOG = "https://api.up42.com/v2/assets/stac"
