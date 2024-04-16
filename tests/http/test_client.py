@@ -6,9 +6,7 @@ import pytest
 from up42.http import client, config
 
 SETTINGS = {"some": "settings"}
-PROJECT_CREDENTIALS = {"project_id": "some-id", "project_api_key": "some-key"}
 ACCOUNT_CREDENTIALS = {"username": "some-user", "password": "some-pass"}
-EMPTY_PROJECT_CREDENTIALS = {"project_id": None, "project_api_key": None}
 EMPTY_ACCOUNT_CREDENTIALS = {"username": None, "password": None}
 TOKEN_URL = "some-token-url"
 
@@ -19,8 +17,8 @@ class TestCreate:
     @pytest.mark.parametrize(
         "sources, detected_settings",
         [
-            [[EMPTY_PROJECT_CREDENTIALS, ACCOUNT_CREDENTIALS], [None, SETTINGS]],
-            [[PROJECT_CREDENTIALS, EMPTY_ACCOUNT_CREDENTIALS], [SETTINGS, None]],
+            [[EMPTY_ACCOUNT_CREDENTIALS, ACCOUNT_CREDENTIALS], [None, SETTINGS]],
+            [[ACCOUNT_CREDENTIALS, EMPTY_ACCOUNT_CREDENTIALS], [SETTINGS, None]],
         ],
     )
     def test_should_create_if_only_one_source_is_given(
@@ -57,12 +55,12 @@ class TestCreate:
         "sources, settings, error",
         [
             [
-                [PROJECT_CREDENTIALS, ACCOUNT_CREDENTIALS],
+                [ACCOUNT_CREDENTIALS, ACCOUNT_CREDENTIALS],
                 SETTINGS,
                 client.MultipleCredentialsSources,
             ],
             [
-                [EMPTY_PROJECT_CREDENTIALS, EMPTY_ACCOUNT_CREDENTIALS],
+                [EMPTY_ACCOUNT_CREDENTIALS, EMPTY_ACCOUNT_CREDENTIALS],
                 None,
                 client.MissingCredentials,
             ],

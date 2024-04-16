@@ -23,8 +23,8 @@ def authenticate(
     password: Optional[str] = None,
 ):
     """
-    Authenticate with UP42, either using project api credentials or
-    account credentials or a config JSON file containing the corresponding credentials.
+    Authenticate with UP42, either using account credentials or a config JSON file
+    containing the corresponding credentials.
     Also see the documentation https://sdk.up42.com/authentication/
 
     Args:

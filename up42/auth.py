@@ -47,10 +47,7 @@ class Auth:
             https://sdk.up42.com/authentication/.
 
         Args:
-            cfg_file: File path to the cfg.json with either
-            {project_id: "...", project_api_key: "..."} or {username: "...", password: "..."}.
-            project_id: The unique identifier of the project.
-            project_api_key: The project-specific API key.
+            cfg_file: File path to the cfg.json with {username: "...", password: "..."}.
             username: The username for the UP42 account (email UP42 console).
             password: Password for the UP42 console login.
         """

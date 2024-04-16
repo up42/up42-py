@@ -15,9 +15,6 @@
     ```python
     catalog = up42.initialize_catalog()
     ```
-    ```python
-    project = up42.initialize_project(project_id="your-project-ID")
-    ```
 """
 
 # pylint: disable=only-importing-modules-is-allowed

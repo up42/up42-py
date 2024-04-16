@@ -15,10 +15,6 @@ TOKEN_URL = "https://localhost/oauth/token"
 account_credentials = config.AccountCredentialsSettings(username="some-user", password="some-pass")
 
 
-def match_project_authentication_request_body(request):
-    return request.text == "grant_type=client_credentials"
-
-
 def match_account_authentication_request_body(request):
     return request.text == (
         "grant_type=password&" f"username={account_credentials.username}&" f"password={account_credentials.password}"
