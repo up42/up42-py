@@ -31,7 +31,6 @@ from up42.initialization import (
     initialize_storage,
     initialize_tasking,
     initialize_webhook,
-    initialize_workflow,
 )
 from up42.main import (
     authenticate,
@@ -49,7 +48,6 @@ from up42.tasking import Tasking
 from up42.tools import get_example_aoi, read_vector_file
 from up42.utils import get_up42_py_version
 from up42.webhooks import Webhook
-from up42.workflow import Workflow
 
 __version__ = get_up42_py_version()
 
@@ -63,12 +61,10 @@ __all__ = [
         Storage,
         Tasking,
         Webhook,
-        Workflow,
         get_example_aoi,
         read_vector_file,
         initialize_catalog,
         initialize_tasking,
-        initialize_workflow,
         initialize_storage,
         initialize_order,
         initialize_asset,

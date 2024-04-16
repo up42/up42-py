@@ -12,8 +12,6 @@ def test_initialize_object_without_auth_raises():
     with pytest.raises(RuntimeError):
         up42.initialize_catalog()
     with pytest.raises(RuntimeError):
-        up42.initialize_workflow(workflow_id=constants.WORKFLOW_ID)
-    with pytest.raises(RuntimeError):
         up42.initialize_storage()
     with pytest.raises(RuntimeError):
         up42.initialize_order(order_id=constants.ORDER_ID)
@@ -22,7 +20,6 @@ def test_initialize_object_without_auth_raises():
 
 
 def test_global_auth_initialize_objects(
-    workflow_mock,
     storage_mock,
     order_mock,
     asset_mock,
@@ -33,8 +30,6 @@ def test_global_auth_initialize_objects(
     )
     catalog_obj = up42.initialize_catalog()
     assert isinstance(catalog_obj, catalog.Catalog)
-    workflow_obj = up42.initialize_workflow(workflow_id=constants.WORKFLOW_ID)
-    assert workflow_obj.info == workflow_mock.info
     storage_obj = up42.initialize_storage()
     assert storage_obj.workspace_id == storage_mock.workspace_id
     order_obj = up42.initialize_order(order_id=constants.ORDER_ID)
@@ -50,36 +45,6 @@ def setup_workspace(requests_mock):
         url="https://api.up42.com/users/me",
         json={"data": {"id": constants.WORKSPACE_ID}},
     )
-
-
-def test_should_initialize_workflow(requests_mock):
-    up42.authenticate(
-        project_id=constants.PROJECT_ID,
-        project_api_key=constants.PROJECT_APIKEY,
-    )
-    project_id = "project_id"
-    url_workflow_info = f"{constants.API_HOST}/projects/{project_id}/workflows/{constants.WORKFLOW_ID}"
-    json_workflow_info = {
-        "data": {
-            "name": "name",
-            "id": constants.WORKFLOW_ID,
-            "description": "description",
-            "createdAt": "date",
-        },
-    }
-    requests_mock.get(url=url_workflow_info, json=json_workflow_info)
-    workflow_obj = up42.initialize_workflow(constants.WORKFLOW_ID, project_id)
-    assert workflow_obj.project_id == project_id
-
-
-def test_should_initialize_workflow_with_implicit_project_id(workflow_mock):
-    up42.authenticate(
-        project_id=constants.PROJECT_ID,
-        project_api_key=constants.PROJECT_APIKEY,
-    )
-    workflow_obj = up42.initialize_workflow(constants.WORKFLOW_ID)
-    assert workflow_obj.info == workflow_mock.info
-    assert workflow_obj.project_id == constants.PROJECT_ID
 
 
 def test_should_initialize_tasking():

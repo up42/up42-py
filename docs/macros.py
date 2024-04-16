@@ -77,7 +77,6 @@ def define_env(env):
     # (In code reference added automatically by mkdocstrings).
     # Every class requires a docstring, otherwise mkdocs fails!
     env.variables.docstring_up42 = indent(up42.__doc__)  # init module docstring
-    env.variables.docstring_workflow = indent(up42.workflow.Workflow.__doc__)
     env.variables.docstring_catalog = indent(up42.catalog.Catalog.__doc__)
     env.variables.docstring_tasking = indent(up42.tasking.Tasking.__doc__)
     env.variables.docstring_order = indent(up42.order.Order.__doc__)
@@ -87,7 +86,6 @@ def define_env(env):
 
     # Class functions for reference and structure chapter
     env.variables.funcs_up42 = get_methods(up42, exclude_viztools=True)
-    env.variables.funcs_workflow = get_methods(up42.workflow.Workflow)
     env.variables.funcs_catalog = get_methods(up42.catalog.Catalog, exclude=["plot_results", "map_results"])
     env.variables.funcs_tasking = get_methods(up42.tasking.Tasking)
     env.variables.funcs_order = get_methods(up42.order.Order)

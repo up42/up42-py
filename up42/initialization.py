@@ -2,7 +2,7 @@ import logging
 import warnings
 from typing import Optional
 
-from up42 import asset, catalog, main, order, storage, tasking, utils, webhooks, workflow
+from up42 import asset, catalog, main, order, storage, tasking, utils, webhooks
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
@@ -37,28 +37,6 @@ def initialize_tasking() -> "tasking.Tasking":
     Returns a Tasking object for creating satellite tasking orders.
     """
     return tasking.Tasking(auth=main.get_auth_safely())
-
-
-@main.check_auth
-def initialize_workflow(workflow_id: str, project_id: Optional[str] = None) -> workflow.Workflow:
-    """
-    Returns a Workflow object (has to exist on UP42).
-    Args:
-        workflow_id: The UP42 workflow_id
-        project_id: The id of the UP42 project, containing the workflow
-    """
-    warnings.warn(
-        "Workflows are getting deprecated. The current analytics platform will be discontinued "
-        f"{DEPRECATION_MESSAGE}",
-        DeprecationWarning,
-    )
-    up42_workflow = workflow.Workflow(
-        auth=main.get_auth_safely(),
-        workflow_id=workflow_id,
-        project_id=_get_project_id(project_id=project_id),
-    )
-    logger.info(INITIALIZED_MSG, up42_workflow)
-    return up42_workflow
 
 
 @main.check_auth

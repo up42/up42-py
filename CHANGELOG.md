@@ -29,6 +29,15 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.0.0a5
+
+**Apr 16, 2024**
+
+- Dropped deprecated Workflow functions - info, workflow_tasks, get_workflow_tasks, get_parameters_info,
+ _get_default_parameters (internal function), _construct_full_workflow_tasks_dict (internal function),
+ get_jobs, delete
+- Dropped Workflow tests and fixtures
+
 ## 1.0.0a4
 
 **Apr 15, 2024**
