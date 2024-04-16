@@ -2,7 +2,6 @@ import base64
 import dataclasses
 import random
 import time
-from typing import Tuple
 
 import mock
 import pytest
@@ -127,15 +126,11 @@ class TestUp42Auth:
 
 
 class TestDetectSettings:
-    def test_should_detect_project_credentials(self):
-        assert oauth.detect_settings(dataclasses.asdict(project_credentials)) == project_credentials
-
     def test_should_detect_account_credentials(self):
         assert oauth.detect_settings(dataclasses.asdict(account_credentials)) == account_credentials
 
-    @pytest.mark.parametrize("keys", [("project_id", "project_api_key"), ("username", "password")])
-    def test_should_accept_empty_credentials(self, keys: Tuple[str, str]):
-        credentials = dict(zip(keys, [None] * 2))
+    def test_should_accept_empty_credentials(self):
+        credentials = {"username": None, "password": None}
         assert not oauth.detect_settings(credentials)
 
     def test_should_accept_missing_credentials(self):

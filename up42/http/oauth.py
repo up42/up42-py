@@ -1,6 +1,5 @@
 import dataclasses as dc
 import datetime as dt
-import warnings
 from typing import Optional, Protocol
 
 import requests
@@ -104,14 +103,7 @@ def detect_settings(
 ) -> Optional[config.CredentialsSettings]:
     if credentials:
         if all(credentials.values()):
-            keys = credentials.keys()
-            if keys == {"project_id", "project_api_key"}:
-                warnings.warn(
-                    "Project based authentication will be deprecated."
-                    "Please follow authentication guidelines (/docs/authentication.md)."
-                )
-                return config.ProjectCredentialsSettings(**credentials)
-            if keys == {"username", "password"}:
+            if credentials.keys() == {"username", "password"}:
                 return config.AccountCredentialsSettings(**credentials)
             raise InvalidCredentials
         elif any(credentials.values()):
