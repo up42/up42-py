@@ -29,7 +29,6 @@ def define_env(env):
     def get_methods(
         c: Union[Callable, types.ModuleType],
         exclude: Optional[List[str]] = None,
-        exclude_viztools=False,
     ) -> List[str]:
         """
         Gets all class methods and properties, excluding specifically excluded ones.
@@ -37,7 +36,6 @@ def define_env(env):
         Args:
                 c: The class object.
                 exclude: Exclude specific methods.
-                exclude_viztools: Exclude inherited functions from VizTools.
         """
         property_methods = [name for name, value in vars(c).items() if isinstance(value, property)]
         function_methods = [
@@ -49,11 +47,8 @@ def define_env(env):
             and not name[0].isupper()
         ]
 
-        # TODO: Could also return separatly for separated formatting.
         function_methods = function_methods + property_methods
 
-        if exclude_viztools:
-            function_methods = [f for f in function_methods if f not in dir(up42.viztools.VizTools)]
         if exclude:
             function_methods = [f for f in function_methods if f not in exclude]
 
@@ -85,8 +80,8 @@ def define_env(env):
     env.variables.docstring_webhooks = indent(up42.webhooks.Webhooks.__doc__)
 
     # Class functions for reference and structure chapter
-    env.variables.funcs_up42 = get_methods(up42, exclude_viztools=True)
-    env.variables.funcs_catalog = get_methods(up42.catalog.Catalog, exclude=["plot_results", "map_results"])
+    env.variables.funcs_up42 = get_methods(up42)
+    env.variables.funcs_catalog = get_methods(up42.catalog.Catalog)
     env.variables.funcs_tasking = get_methods(up42.tasking.Tasking)
     env.variables.funcs_order = get_methods(up42.order.Order)
     env.variables.funcs_storage = get_methods(up42.storage.Storage)

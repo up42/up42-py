@@ -14,7 +14,7 @@ logger = utils.get_logger(__name__)
 ConfigurationSource = Optional[Union[str, pathlib.Path]]
 ConfigurationReader = Callable[[ConfigurationSource], Optional[Dict]]
 CredentialsMerger = Callable[
-    [ConfigurationSource, Optional[str], Optional[str], Optional[str], Optional[str]],
+    [ConfigurationSource, Optional[str], Optional[str]],
     List[Optional[Dict]],
 ]
 ClientFactory = Callable[[List[Optional[Dict]], str], client.Client]
@@ -22,27 +22,19 @@ ClientFactory = Callable[[List[Optional[Dict]], str], client.Client]
 
 def collect_credentials(
     cfg_file: ConfigurationSource,
-    project_id: Optional[str],
-    project_api_key: Optional[str],
     username: Optional[str],
     password: Optional[str],
     read_config: ConfigurationReader = utils.read_json,
 ) -> List[Optional[Dict]]:
     config_source = read_config(cfg_file)
-    project_credentials_source = {
-        "project_id": project_id,
-        "project_api_key": project_api_key,
-    }
     account_credentials_source = {"username": username, "password": password}
-    return [config_source, project_credentials_source, account_credentials_source]
+    return [config_source, account_credentials_source]
 
 
 class Auth:
     def __init__(
         self,
         cfg_file: Union[str, pathlib.Path, None] = None,
-        project_id: Optional[str] = None,
-        project_api_key: Optional[str] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
         get_credential_sources: CredentialsMerger = collect_credentials,
@@ -63,8 +55,7 @@ class Auth:
             password: Password for the UP42 console login.
         """
         self.workspace_id: Optional[str] = None
-        self.project_id = project_id
-        credential_sources = get_credential_sources(cfg_file, project_id, project_api_key, username, password)
+        credential_sources = get_credential_sources(cfg_file, username, password)
         self._client = create_client(credential_sources, host.endpoint("/oauth/token"))
         self._get_workspace()
         logger.info("Authentication with UP42 successful!")
