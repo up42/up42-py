@@ -1,10 +1,8 @@
 import dataclasses as dc
 import datetime as dt
-import warnings
 from typing import Optional, Protocol
 
 import requests
-from requests import auth
 
 from up42.http import config, http_adapter
 
@@ -22,24 +20,6 @@ class Token:
 class TokenRetriever(Protocol):
     def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
         ...
-
-
-class ProjectTokenRetriever:
-    def __init__(self, settings: config.ProjectCredentialsSettings):
-        self.client_id = settings.project_id
-        self.client_secret = settings.project_api_key
-
-    def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
-        basic_auth = auth.HTTPBasicAuth(self.client_id, self.client_secret)
-        response = session.post(
-            url=token_url,
-            auth=basic_auth,
-            data={"grant_type": "client_credentials"},
-            timeout=timeout,
-        )
-        if response.ok:
-            return response.json()["access_token"]
-        raise WrongCredentials
 
 
 class AccountTokenRetriever:
@@ -104,14 +84,7 @@ def detect_settings(
 ) -> Optional[config.CredentialsSettings]:
     if credentials:
         if all(credentials.values()):
-            keys = credentials.keys()
-            if keys == {"project_id", "project_api_key"}:
-                warnings.warn(
-                    "Project based authentication will be deprecated."
-                    "Please follow authentication guidelines (/docs/authentication.md)."
-                )
-                return config.ProjectCredentialsSettings(**credentials)
-            if keys == {"username", "password"}:
+            if credentials.keys() == {"username", "password"}:
                 return config.AccountCredentialsSettings(**credentials)
             raise InvalidCredentials
         elif any(credentials.values()):
@@ -120,8 +93,6 @@ def detect_settings(
 
 
 def detect_retriever(settings: config.CredentialsSettings):
-    if isinstance(settings, config.ProjectCredentialsSettings):
-        return ProjectTokenRetriever(settings)
     if isinstance(settings, config.AccountCredentialsSettings):
         return AccountTokenRetriever(settings)
     raise UnsupportedSettings(f"Settings {settings} are not supported")

@@ -24,10 +24,7 @@ def test_global_auth_initialize_objects(
     order_mock,
     asset_mock,
 ):
-    up42.authenticate(
-        project_id=constants.PROJECT_ID,
-        project_api_key=constants.PROJECT_APIKEY,
-    )
+    up42.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
     catalog_obj = up42.initialize_catalog()
     assert isinstance(catalog_obj, catalog.Catalog)
     storage_obj = up42.initialize_storage()
@@ -48,9 +45,6 @@ def setup_workspace(requests_mock):
 
 
 def test_should_initialize_tasking():
-    up42.authenticate(
-        project_id=constants.PROJECT_ID,
-        project_api_key=constants.PROJECT_APIKEY,
-    )
+    up42.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
     result = up42.initialize_tasking()
     assert isinstance(result, tasking.Tasking)

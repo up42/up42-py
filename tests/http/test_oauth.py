@@ -1,8 +1,6 @@
-import base64
 import dataclasses
 import random
 import time
-from typing import Tuple
 
 import mock
 import pytest
@@ -14,55 +12,13 @@ from up42.http import config, oauth
 HTTP_TIMEOUT = 10
 TOKEN_VALUE = "some-token"
 TOKEN_URL = "https://localhost/oauth/token"
-project_credentials = config.ProjectCredentialsSettings(
-    project_id="some-id",
-    project_api_key="some-key",
-)
 account_credentials = config.AccountCredentialsSettings(username="some-user", password="some-pass")
-
-
-def basic_auth(username, password):
-    token = base64.b64encode(f"{username}:{password}".encode("utf-8"))
-    return f'Basic {token.decode("ascii")}'
-
-
-basic_client_auth = basic_auth(project_credentials.project_id, project_credentials.project_api_key)
-basic_auth_headers = {"Authorization": basic_client_auth}
-
-
-def match_project_authentication_request_body(request):
-    return request.text == "grant_type=client_credentials"
 
 
 def match_account_authentication_request_body(request):
     return request.text == (
         "grant_type=password&" f"username={account_credentials.username}&" f"password={account_credentials.password}"
     )
-
-
-class TestProjectTokenRetriever:
-    def test_should_retrieve(self, requests_mock: req_mock.Mocker):
-        retrieve = oauth.ProjectTokenRetriever(project_credentials)
-        requests_mock.post(
-            TOKEN_URL,
-            json={"access_token": TOKEN_VALUE},
-            request_headers=basic_auth_headers,
-            additional_matcher=match_project_authentication_request_body,
-        )
-        assert retrieve(requests.Session(), TOKEN_URL, HTTP_TIMEOUT) == TOKEN_VALUE
-        assert requests_mock.called_once
-
-    def test_fails_to_retrieve_for_bad_response(self, requests_mock: req_mock.Mocker):
-        retrieve = oauth.ProjectTokenRetriever(project_credentials)
-        requests_mock.post(
-            TOKEN_URL,
-            status_code=random.randint(400, 599),
-            request_headers=basic_auth_headers,
-            additional_matcher=match_project_authentication_request_body,
-        )
-        with pytest.raises(oauth.WrongCredentials):
-            retrieve(requests.Session(), TOKEN_URL, HTTP_TIMEOUT)
-        assert requests_mock.called_once
 
 
 class TestAccountTokenRetriever:
@@ -127,15 +83,11 @@ class TestUp42Auth:
 
 
 class TestDetectSettings:
-    def test_should_detect_project_credentials(self):
-        assert oauth.detect_settings(dataclasses.asdict(project_credentials)) == project_credentials
-
     def test_should_detect_account_credentials(self):
         assert oauth.detect_settings(dataclasses.asdict(account_credentials)) == account_credentials
 
-    @pytest.mark.parametrize("keys", [("project_id", "project_api_key"), ("username", "password")])
-    def test_should_accept_empty_credentials(self, keys: Tuple[str, str]):
-        credentials = dict(zip(keys, [None] * 2))
+    def test_should_accept_empty_credentials(self):
+        credentials = {"username": None, "password": None}
         assert not oauth.detect_settings(credentials)
 
     def test_should_accept_missing_credentials(self):
@@ -153,9 +105,6 @@ class TestDetectSettings:
 
 
 class TestDetectRetriever:
-    def test_should_detect_project_retriever(self):
-        assert isinstance(oauth.detect_retriever(project_credentials), oauth.ProjectTokenRetriever)
-
     def test_should_detect_account_retriever(self):
         assert isinstance(oauth.detect_retriever(account_credentials), oauth.AccountTokenRetriever)
 

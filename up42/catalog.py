@@ -12,7 +12,7 @@ import tqdm
 from shapely import geometry as geom  # type: ignore
 
 from up42 import auth as up42_auth
-from up42 import host, order, utils, viztools
+from up42 import host, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -156,7 +156,7 @@ class CatalogBase:
         return placed_order
 
 
-class Catalog(CatalogBase, viztools.VizTools):
+class Catalog(CatalogBase):
     """
     The Catalog class enables access to the UP42 catalog
     functionality (data archive search & ordering).

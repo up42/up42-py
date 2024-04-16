@@ -11,8 +11,6 @@ from up42 import auth as up42_auth
 
 from .fixtures import fixtures_globals as constants
 
-USER_NAME = "some-username"
-PASSWORD = "some-password"
 CONFIG_FILE = "some-config-file"
 TOKEN_ENDPOINT = constants.API_HOST + "/oauth/token"
 WORKSPACE_ENDPOINT = constants.API_HOST + "/users/me"
@@ -50,19 +48,13 @@ class TestCollectCredentials:
         read_config = mock.MagicMock(return_value=config_credentials)
         expected_sources = [
             config_credentials,
-            {
-                "project_id": constants.PROJECT_ID,
-                "project_api_key": constants.PROJECT_APIKEY,
-            },
-            {"username": USER_NAME, "password": PASSWORD},
+            {"username": constants.USER_EMAIL, "password": constants.PASSWORD},
         ]
         assert (
             up42_auth.collect_credentials(
                 CONFIG_FILE,
-                constants.PROJECT_ID,
-                constants.PROJECT_APIKEY,
-                USER_NAME,
-                PASSWORD,
+                constants.USER_EMAIL,
+                constants.PASSWORD,
                 read_config,
             )
             == expected_sources
@@ -86,20 +78,16 @@ def create_auth(requests_mock: req_mock.Mocker):
     )
     auth = up42_auth.Auth(
         cfg_file=CONFIG_FILE,
-        project_id=constants.PROJECT_ID,
-        project_api_key=constants.PROJECT_APIKEY,
-        username=USER_NAME,
-        password=PASSWORD,
+        username=constants.USER_EMAIL,
+        password=constants.PASSWORD,
         get_credential_sources=get_sources,
         create_client=create_client,
     )
 
     get_sources.assert_called_once_with(
         CONFIG_FILE,
-        constants.PROJECT_ID,
-        constants.PROJECT_APIKEY,
-        USER_NAME,
-        PASSWORD,
+        constants.USER_EMAIL,
+        constants.PASSWORD,
     )
     create_client.assert_called_once_with(credential_sources, TOKEN_ENDPOINT)
     return auth
@@ -108,7 +96,6 @@ def create_auth(requests_mock: req_mock.Mocker):
 class TestAuth:
     def test_should_authenticate_when_created(self, requests_mock: req_mock.Mocker):
         auth = create_auth(requests_mock)
-        assert auth.project_id == constants.PROJECT_ID
         assert auth.workspace_id == constants.WORKSPACE_ID
         assert auth.token == constants.TOKEN
         assert auth.session == session

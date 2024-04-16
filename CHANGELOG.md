@@ -29,6 +29,13 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.0.0a6
+
+**Apr 16, 2024**
+- Dropped project id and api key based authentication in `main.py`, `auth.py`, `http/oauth.py` and `http/client.py`
+- Adapted tests and fixtures
+- Dropped viztools.py
+
 ## 1.0.0a5
 
 **Apr 16, 2024**

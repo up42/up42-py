@@ -1,6 +1,4 @@
 import logging
-import warnings
-from typing import Optional
 
 from up42 import asset, catalog, main, order, storage, tasking, utils, webhooks
 
@@ -8,19 +6,6 @@ logger = utils.get_logger(__name__, level=logging.INFO)
 
 DEPRECATION_MESSAGE = "after May 15th, 2024, and will be replaced by new processing functionalities."
 INITIALIZED_MSG = "Initialized %s"
-
-
-def _get_project_id(project_id: Optional[str]) -> str:
-    if not project_id:
-        warnings.warn(
-            "Provide the project ID as the value of the `project_id` argument.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-    result = project_id or main.get_auth_safely().project_id
-    if not result:
-        raise ValueError("Project ID can't be null")
-    return result
 
 
 @main.check_auth
