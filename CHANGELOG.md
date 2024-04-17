@@ -29,6 +29,13 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.0.0
+
+**Apr 17, 2024**
+- Dropped deprecated functionalities: Jobs, Projects, Workflows, Viztools
+- Dropped deprecated code related to blocks
+
+
 ## 1.0.0a7
 
 **Apr 16, 2024**
