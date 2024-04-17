@@ -51,61 +51,6 @@ STAC_COLLECTION_ID = "e459db4c-3b9d-4aa1-8931-5df2517b49ba"
 
 WEBHOOK_ID = "123"
 
-
-JSON_BLOCKS = {
-    "data": [
-        {
-            "id": "4ed70368-d4e1-4462-bef6-14e768049471",
-            "name": "tiling",
-            "displayName": "Raster Tiling",
-            "type": "PROCESSING",
-        },
-        {
-            "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
-            "name": "sharpening",
-            "displayName": "Sharpening Filter",
-            "type": "PROCESSING",
-        },
-        {
-            "id": "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
-            "name": "esa-s2-l2a-gtiff-visual",
-            "displayName": "Sentinel-2 L2A Visual (GeoTIFF)",
-            "type": "DATA",
-        },
-    ],
-    "error": {},
-}
-
-JSON_WORKFLOW_ESTIMATION = {
-    "data": {
-        "esa-s2-l2a-gtiff-visual:1": {
-            "blockConsumption": {
-                "credit": {"max": 0, "min": 0},
-                "resources": {"max": 0, "min": 0, "unit": "SQUARE_KM"},
-            },
-            "machineConsumption": {
-                "credit": {"max": 1, "min": 1},
-                "duration": {"max": 0, "min": 0},
-            },
-        },
-        "tiling:1": {
-            "blockConsumption": {
-                "credit": {"max": 0, "min": 0},
-                "resources": {
-                    "max": 3.145728,
-                    "min": 3.145728,
-                    "unit": "MEGABYTE",
-                },
-            },
-            "machineConsumption": {
-                "credit": {"max": 9, "min": 2},
-                "duration": {"max": 428927, "min": 80930},
-            },
-        },
-    },
-    "error": {},
-}
-
 JSON_ASSET = {
     "accountId": "69353acb-f942-423f-8f32-11d6d67caa77",
     "createdAt": "2022-12-07T14:25:34.968Z",
