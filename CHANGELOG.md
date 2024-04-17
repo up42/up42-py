@@ -29,6 +29,13 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.0.0
+
+**Apr 17, 2024**
+- Dropped deprecated functionalities: Jobs, Projects, Workflows
+- Dropped depreacted code related to blocks
+- Dropped viztools functionalities. See [this notebook](https://github.com/up42/documentation-notebooks/blob/main/catalog/sdk-catalog.ipynb) to see how to download and georeference quicklooks.
+
 ## 1.0.0a7
 
 **Apr 16, 2024**
