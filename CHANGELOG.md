@@ -32,9 +32,9 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.0.0
 
 **Apr 17, 2024**
-- Dropped deprecated functionalities: Jobs, Projects, Workflows
-- Dropped depreacted code related to blocks
-- Dropped viztools functionalities. See [this notebook](https://github.com/up42/documentation-notebooks/blob/main/catalog/sdk-catalog.ipynb) to see how to download and georeference quicklooks.
+- Dropped deprecated functionalities: Jobs, Projects, Workflows, Viztools
+- Dropped deprecated code related to blocks
+
 
 ## 1.0.0a7
 
