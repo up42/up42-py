@@ -7,7 +7,7 @@ from .fixtures import fixtures_globals as constants
 
 @pytest.fixture(autouse=True)
 def setup_auth_mock(auth_mock):
-    main.workspace._auth = auth_mock  # pylint: disable=protected-access
+    main.workspace.auth = auth_mock
     yield
 
 
@@ -18,7 +18,7 @@ def test_get_credits_balance():
 
 
 def test_fails_to_get_auth_safely_if_unauthenticated():
-    main.workspace.auth = None  # pylint: disable=protected-access
+    main.workspace.auth = None
     with pytest.raises(ValueError):
         main.get_auth_safely()
 
