@@ -11,7 +11,52 @@ logger = utils.get_logger(__name__, level=logging.INFO)
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-_auth: Optional[up42_auth.Auth] = None
+# _auth: Optional[up42_auth.Auth] = None
+
+
+class __Workspace:  # pylint: disable=invalid-name
+    _auth: Optional[up42_auth.Auth] = None
+
+    @property
+    def auth(self):
+        if self._auth:
+            return self._auth
+        raise ValueError("User not authenticated.")
+
+    @auth.setter
+    def auth(self, value):
+        self._auth = value
+
+    @property
+    def workspace_id(self):
+        """Get user id belonging to authenticated account."""
+        url = host.endpoint("/users/me")
+        resp = self.auth.request("GET", url)
+        return resp["data"]["id"]
+
+    def authenticate(
+        self,
+        cfg_file: Optional[Union[str, pathlib.Path]] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+    ):
+        """
+        Authenticate with UP42, either using account credentials or a config JSON file
+        containing the corresponding credentials.
+
+        Args:
+            cfg_file: File path to the cfg.json with {username: "...", password: "..."}.
+            username: The username for the UP42 account (email UP42 console).
+            password: Password for the UP42 console login.
+        """
+        self._auth = up42_auth.Auth(
+            cfg_file=cfg_file,
+            username=username,
+            password=password,
+        )
+
+
+workspace = __Workspace()
 
 
 def authenticate(
@@ -29,18 +74,11 @@ def authenticate(
         username: The username for the UP42 account (email UP42 console).
         password: Password for the UP42 console login.
     """
-    global _auth
-    _auth = up42_auth.Auth(
-        cfg_file=cfg_file,
-        username=username,
-        password=password,
-    )
+    workspace.authenticate(cfg_file=cfg_file, username=username, password=password)
 
 
 def get_auth_safely() -> up42_auth.Auth:
-    if _auth:
-        return _auth
-    raise ValueError("User not authenticated.")
+    return workspace.auth
 
 
 def check_auth(func):
@@ -51,7 +89,7 @@ def check_auth(func):
 
     @functools.wraps(func)  # required for mkdocstrings
     def inner(*args, **kwargs):
-        if _auth is None:
+        if workspace.auth is None:
             raise RuntimeError("Not authenticated, call up42.authenticate() first")
         return func(*args, **kwargs)
 
