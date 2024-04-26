@@ -29,16 +29,7 @@ from up42.initialization import (
     initialize_tasking,
     initialize_webhook,
 )
-from up42.main import (
-    authenticate,
-    create_webhook,
-    get_block_coverage,
-    get_block_details,
-    get_blocks,
-    get_credits_balance,
-    get_webhook_events,
-    get_webhooks,
-)
+from up42.main import authenticate, create_webhook, get_credits_balance, get_webhook_events, get_webhooks
 from up42.order import Order
 from up42.storage import Storage
 from up42.tasking import Tasking
@@ -70,9 +61,6 @@ __all__ = [
         get_webhooks,
         create_webhook,
         get_webhook_events,
-        get_blocks,
-        get_block_details,
-        get_block_coverage,
         get_credits_balance,
     ]
 ]

@@ -2,10 +2,7 @@ import functools
 import logging
 import pathlib
 import warnings
-from typing import Dict, List, Optional, Union
-
-import pandas
-import requests
+from typing import List, Optional, Union
 
 from up42 import auth as up42_auth
 from up42 import host, utils, webhooks
@@ -108,96 +105,6 @@ def get_webhook_events() -> dict:
         A dict of the available webhook events.
     """
     return webhooks.Webhooks(auth=get_auth_safely()).get_webhook_events()
-
-
-@check_auth
-def get_blocks(
-    block_type: Optional[str] = None,
-    basic: bool = True,
-    as_dataframe: bool = False,
-) -> Union[List[Dict], dict, pandas.DataFrame]:
-    """
-    Gets a list of all public blocks on the marketplace. Can not access custom blocks.
-
-    Args:
-        block_type: Optionally filters to "data" or "processing" blocks, default None.
-        basic: Optionally returns simple version {block_id : block_name}
-        as_dataframe: Returns a dataframe instead of JSON (default).
-
-    Returns:
-        A list of the public blocks and their metadata. Optional a simpler version
-        dict.
-    """
-    if block_type:
-        block_type = block_type.lower()
-    url = host.endpoint("/blocks")
-    response_json = get_auth_safely().request(request_type="GET", url=url)
-    public_blocks_json = response_json["data"]
-
-    if block_type == "data":
-        logger.info("Getting only data blocks.")
-        blocks_json = [block for block in public_blocks_json if block["type"] == "DATA"]
-    elif block_type == "processing":
-        logger.info("Getting only processing blocks.")
-        blocks_json = [block for block in public_blocks_json if block["type"] == "PROCESSING"]
-    else:
-        blocks_json = public_blocks_json
-
-    if basic:
-        logger.info("Getting blocks name and id, use basic=False for all block details.")
-        blocks_basic = {block["name"]: block["id"] for block in blocks_json}
-        if as_dataframe:
-            return pandas.DataFrame.from_dict(blocks_basic, orient="index")
-        else:
-            return blocks_basic
-
-    else:
-        if as_dataframe:
-            return pandas.DataFrame(blocks_json)
-        else:
-            return blocks_json
-
-
-@check_auth
-def get_block_details(block_id: str, as_dataframe: bool = False) -> Union[dict, pandas.DataFrame]:
-    """
-    Gets the detailed information about a specific public block from
-    the server, includes all manifest.json and marketplace.json contents.
-    Can not access custom blocks.
-
-    Args:
-        block_id: The block id.
-        as_dataframe: Returns a dataframe instead of JSON (default).
-
-    Returns:
-        A dict of the block details metadata for the specific block.
-    """
-    url = host.endpoint(f"/blocks/{block_id}")  # public blocks
-    response_json = get_auth_safely().request(request_type="GET", url=url)
-    details_json = response_json["data"]
-
-    if as_dataframe:
-        return pandas.DataFrame.from_dict(details_json, orient="index").transpose()
-    else:
-        return details_json
-
-
-@check_auth
-def get_block_coverage(block_id: str) -> dict:
-    """
-    Gets the spatial coverage of a data/processing block as
-    url or GeoJson Feature Collection.
-
-    Args:
-        block_id: The block id.
-
-    Returns:
-        A dict of the spatial coverage for the specific block.
-    """
-    url = host.endpoint(f"/blocks/{block_id}/coverage")
-    response_json = get_auth_safely().request(request_type="GET", url=url)
-    details_json = response_json["data"]
-    return requests.get(details_json["url"], timeout=utils.TIMEOUT).json()
 
 
 @check_auth
