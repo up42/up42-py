@@ -2,6 +2,7 @@ import copy
 import time
 from typing import Any, Dict, List, Optional, TypedDict
 
+import up42.main
 from up42 import asset, asset_searcher
 from up42 import auth as up42_auth
 from up42 import host, utils
@@ -140,7 +141,7 @@ class Order:
         Returns:
             Order: The placed order.
         """
-        url = host.endpoint(f"/v2/orders?workspaceId={auth.workspace_id}")
+        url = host.endpoint(f"/v2/orders?workspaceId={up42.main.workspace.workspace_id}")
         response_json = auth.request(
             request_type="POST",
             url=url,
@@ -175,7 +176,9 @@ class Order:
         )
         estimated_credits: int = response_json["summary"]["totalCredits"]
         logger.info(
-            "Order is estimated to cost %s UP42 credits (order_parameters: %s)", estimated_credits, order_parameters
+            "Order is estimated to cost %s UP42 credits (order_parameters: %s)",
+            estimated_credits,
+            order_parameters,
         )
         return estimated_credits
 

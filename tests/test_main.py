@@ -20,7 +20,7 @@ def test_get_credits_balance():
 def test_fails_to_get_auth_safely_if_unauthenticated():
     main.workspace.auth = None
     with pytest.raises(ValueError):
-        main.get_auth_safely()
+        _ = main.workspace.auth
 
 
 def test_get_webhook_events(requests_mock):
