@@ -11,6 +11,10 @@ logger = utils.get_logger(__name__, level=logging.INFO)
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 
+class UserNotAuthenticated(ValueError):
+    pass
+
+
 class __Workspace:  # pylint: disable=invalid-name
     _auth: Optional[up42_auth.Auth] = None
     workspace_id: Optional[str] = None
@@ -19,7 +23,7 @@ class __Workspace:  # pylint: disable=invalid-name
     def auth(self):
         if self._auth:
             return self._auth
-        raise ValueError("User not authenticated.")
+        raise UserNotAuthenticated("User not authenticated.")
 
     @auth.setter
     def auth(self, value):
