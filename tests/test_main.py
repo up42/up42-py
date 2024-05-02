@@ -5,13 +5,7 @@ from up42 import main
 from .fixtures import fixtures_globals as constants
 
 
-@pytest.fixture(autouse=True)
-def setup_auth_mock(auth_mock):
-    main.workspace.auth = auth_mock
-    yield
-
-
-def test_get_credits_balance():
+def test_get_credits_balance(auth_mock):  # pylint: disable=unused-argument
     balance = main.get_credits_balance()
     assert isinstance(balance, dict)
     assert "balance" in balance
@@ -23,7 +17,7 @@ def test_fails_to_get_auth_safely_if_unauthenticated():
         _ = main.workspace.auth
 
 
-def test_get_webhook_events(requests_mock):
+def test_get_webhook_events(requests_mock, auth_mock):  # pylint: disable=unused-argument
     url_webhook_events = f"{constants.API_HOST}/webhooks/events"
     events = ["some-event"]
     requests_mock.get(
