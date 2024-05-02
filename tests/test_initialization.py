@@ -7,15 +7,15 @@ from .fixtures import fixtures_globals as constants
 
 
 def test_initialize_object_without_auth_raises():
-    main._auth = None  # pylint: disable=protected-access
+    main.workspace.auth = None  # pylint: disable=protected-access
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(main.UserNotAuthenticated):
         up42.initialize_catalog()
-    with pytest.raises(RuntimeError):
+    with pytest.raises(main.UserNotAuthenticated):
         up42.initialize_storage()
-    with pytest.raises(RuntimeError):
+    with pytest.raises(main.UserNotAuthenticated):
         up42.initialize_order(order_id=constants.ORDER_ID)
-    with pytest.raises(RuntimeError):
+    with pytest.raises(main.UserNotAuthenticated):
         up42.initialize_asset(asset_id=constants.ASSET_ID)
 
 
@@ -24,7 +24,7 @@ def test_global_auth_initialize_objects(
     order_mock,
     asset_mock,
 ):
-    up42.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
+    up42.main.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
     catalog_obj = up42.initialize_catalog()
     assert isinstance(catalog_obj, catalog.Catalog)
     storage_obj = up42.initialize_storage()

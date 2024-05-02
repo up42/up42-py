@@ -111,7 +111,7 @@ def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_m
             "errors": [],
         },
     )
-    order_placed = order.Order.place(auth_mock, catalog_order_parameters)
+    order_placed = order.Order.place(auth_mock, catalog_order_parameters, constants.WORKSPACE_ID)
     assert order_placed == order_mock
     assert order_placed.order_id == constants.ORDER_ID
     assert order_placed.order_parameters == catalog_order_parameters
@@ -127,7 +127,7 @@ def test_place_order_fails_if_response_contains_error(catalog_order_parameters, 
         },
     )
     with pytest.raises(ValueError) as err:
-        order.Order.place(auth_mock, catalog_order_parameters)
+        order.Order.place(auth_mock, catalog_order_parameters, constants.WORKSPACE_ID)
     assert error_content in str(err.value)
 
 

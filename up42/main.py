@@ -44,21 +44,19 @@ class __Workspace:  # pylint: disable=invalid-name
             username: The username for the UP42 account (email UP42 console).
             password: Password for the UP42 console login.
         """
-        self._set_workspace_id()
         self._auth = up42_auth.Auth(
             cfg_file=cfg_file,
             username=username,
             password=password,
         )
-
-    def _set_workspace_id(self):
-        """Get user id belonging to authenticated account."""
         url = host.endpoint("/users/me")
         resp = self.auth.request("GET", url)
         self.workspace_id = resp["data"]["id"]
 
 
 workspace = __Workspace()
+
+authenticate = workspace.authenticate
 
 
 def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:

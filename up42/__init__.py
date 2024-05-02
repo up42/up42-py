@@ -29,7 +29,7 @@ from up42.initialization import (
     initialize_tasking,
     initialize_webhook,
 )
-from up42.main import create_webhook, get_credits_balance, get_webhook_events, get_webhooks
+from up42.main import authenticate, create_webhook, get_credits_balance, get_webhook_events, get_webhooks
 from up42.order import Order
 from up42.storage import Storage
 from up42.tasking import Tasking
@@ -61,6 +61,7 @@ __all__ = [
         create_webhook,
         get_webhook_events,
         get_credits_balance,
+        authenticate,
     ]
     if hasattr(obj, "__name__")
 ]

@@ -272,7 +272,7 @@ def test_get_orders_v2_endpoint_params(auth_mock, requests_mock, params, expecte
     url_params = "&".join(
         [
             "sort=createdAt%2Cdesc",
-            f"workspaceId={constants.WORKSPACE_ID}" if params["workspace_orders"] else "",
+            (f"workspaceId={constants.WORKSPACE_ID}" if params["workspace_orders"] else ""),
             f"""displayName={params["name"]}""" if params["name"] else "",
             *[f"status={status}" for status in endpoint_statuses],
             "size=50",
@@ -328,7 +328,7 @@ def test_get_orders_pagination(auth_mock, requests_mock):
 
     # assets pages
     url_storage_orders_paginated = (
-        f"{constants.API_HOST}/v2/orders?sort=createdAt,asc&workspaceId={auth_mock.workspace_id}&size=50"
+        f"{constants.API_HOST}/v2/orders?sort=createdAt,asc&workspaceId={constants.WORKSPACE_ID}&size=50"
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)
 

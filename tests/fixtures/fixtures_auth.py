@@ -1,6 +1,7 @@
 import pytest
 import requests_mock as req_mock
 
+import up42.main
 from up42 import auth as up42_auth
 
 from . import fixtures_globals as constants
@@ -24,4 +25,5 @@ def auth_mock(requests_mock: req_mock.Mocker) -> up42_auth.Auth:
         url=url_get_credits_balance,
         json=constants.JSON_BALANCE,
     )
-    return up42_auth.Auth(username=constants.USER_EMAIL, password=constants.PASSWORD)
+    up42.main.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
+    return up42.main.workspace.auth
