@@ -24,7 +24,7 @@ def test_global_auth_initialize_objects(
     order_mock,
     asset_mock,
 ):
-    up42.main.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
+    up42.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
     catalog_obj = up42.initialize_catalog()
     assert isinstance(catalog_obj, catalog.Catalog)
     storage_obj = up42.initialize_storage()

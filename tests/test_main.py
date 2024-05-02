@@ -19,7 +19,7 @@ def test_get_credits_balance():
 
 def test_fails_to_get_auth_safely_if_unauthenticated():
     main.workspace.auth = None
-    with pytest.raises(ValueError):
+    with pytest.raises(main.UserNotAuthenticated):
         _ = main.workspace.auth
 
 
