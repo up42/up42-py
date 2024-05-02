@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "up42-py"
+  title: up42-py
+  namespace: up42
+  annotations:
+    circleci.com/project-slug: "github/up42/up42-py"
+    github.com/project-slug: "up42/up42-py"
+    sonarqube.org/project-key: "up42_up42-py"
+spec:
+  type: library
+  owner: group:up42/sdk-team
+  lifecycle: production
+  system: up42/sdk
