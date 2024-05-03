@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.0.1a1
 
 **May 6, 2024**
-- Fixed `download_from_gcs_unpack` tempdir set to `output_dir` from default path.
+- Fixed `download_from_gcs_unpack` tempdir set to `output_dir` previously set to default path.
 
 ## 1.0.0
 
