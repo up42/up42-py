@@ -112,8 +112,7 @@ def download_from_gcs_unpack(
             directory.
     """
     # Download
-    out_temp = tempfile.mkstemp(dir=output_directory)[1]
-    with open(out_temp, "wb") as dst:
+    with tempfile.NamedTemporaryFile(dir=output_directory, delete=False) as dst:
         try:
             r = requests.get(download_url, stream=True, timeout=TIMEOUT)
             r.raise_for_status()
@@ -128,8 +127,8 @@ def download_from_gcs_unpack(
     # Unpack
     # Order results are zip, job results are tgz(tar.gzipped)
     out_filepaths: List[pathlib.Path] = []
-    if tarfile.is_tarfile(out_temp):
-        with tarfile.open(out_temp) as tar_file:
+    if tarfile.is_tarfile(dst.name):
+        with tarfile.open(dst.name) as tar_file:
             for tar_member in tar_file.getmembers():
                 if tar_member.isfile():
                     # Avoid up42 inherent output/ .. directory
@@ -137,8 +136,8 @@ def download_from_gcs_unpack(
                         tar_member.name = tar_member.name.split("output/")[1]
                     tar_file.extract(tar_member, output_directory)
                     out_filepaths.append(pathlib.Path(output_directory) / tar_member.name)
-    elif zipfile.is_zipfile(out_temp):
-        with zipfile.ZipFile(out_temp) as zip_file:
+    elif zipfile.is_zipfile(dst.name):
+        with zipfile.ZipFile(dst.name) as zip_file:
             for zip_info in zip_file.infolist():
                 if not zip_info.filename.endswith("/"):
                     # Avoid up42 inherent output/ .. directory
@@ -154,7 +153,7 @@ def download_from_gcs_unpack(
         output_directory,
         [p.name for p in out_filepaths],
     )
-    os.remove(out_temp)
+    os.remove(dst.name)
     return [str(p) for p in out_filepaths]
 
 
