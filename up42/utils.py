@@ -4,6 +4,7 @@ import functools
 import importlib.metadata
 import json
 import logging
+import os
 import pathlib
 import tarfile
 import tempfile
@@ -111,7 +112,7 @@ def download_from_gcs_unpack(
             directory.
     """
     # Download
-    out_temp = tempfile.mkstemp()[1]
+    out_temp = tempfile.mkstemp(dir=output_directory)[1]
     with open(out_temp, "wb") as dst:
         try:
             r = requests.get(download_url, stream=True, timeout=TIMEOUT)
@@ -153,6 +154,7 @@ def download_from_gcs_unpack(
         output_directory,
         [p.name for p in out_filepaths],
     )
+    os.remove(out_temp)
     return [str(p) for p in out_filepaths]
 
 
