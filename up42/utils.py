@@ -23,10 +23,6 @@ TIMEOUT = 120  # seconds
 CHUNK_SIZE = 1024
 
 
-class CompressScanError(ValueError):
-    pass
-
-
 def get_filename(signed_url: str, default_filename: str) -> str:
     """
     Returns the filename from the signed URL
