@@ -4,7 +4,6 @@ import functools
 import importlib.metadata
 import json
 import logging
-import os
 import pathlib
 import tarfile
 import tempfile
@@ -102,10 +101,33 @@ def deprecation(
     return actual_decorator
 
 
+def unpack_tgz_files(file_path, output_directory) -> List[pathlib.Path]:
+    out_filepaths: List[pathlib.Path] = []
+    with tarfile.open(file_path) as tar_file:
+        for tar_member in tar_file.getmembers():
+            if tar_member.isfile():
+                if "output/" in tar_member.name:
+                    tar_member.name = tar_member.name.split("output/")[1]
+                tar_file.extract(tar_member, output_directory)
+                out_filepaths.append(pathlib.Path(output_directory) / tar_member.name)
+    return out_filepaths
+
+
+def unpack_zip_files(file_path, output_directory) -> List[pathlib.Path]:
+    out_filepaths: List[pathlib.Path] = []
+    with zipfile.ZipFile(file_path) as zip_file:
+        for zip_info in zip_file.infolist():
+            if not zip_info.filename.endswith("/"):
+                if "output/" in zip_info.filename:
+                    zip_info.filename = zip_info.filename.split("output/")[1]
+                zip_file.extract(zip_info, output_directory)
+                out_filepaths.append(pathlib.Path(output_directory) / zip_info.filename)
+    return out_filepaths
+
+
 def download_from_gcs_unpack(
     download_url: str,
     output_directory: Union[str, pathlib.Path],
-    delete_compressed_file: bool = True,
 ) -> List[str]:
     """
     General download function for results of storage assets, job & jobtask from cloud storage
@@ -118,49 +140,32 @@ def download_from_gcs_unpack(
         delete_compressed_file: Sets if the compressed file should be removed after unpack.
     """
     # Download
-    with tempfile.NamedTemporaryFile(dir=output_directory, delete=False) as dst:
+    with tempfile.NamedTemporaryFile(dir=output_directory) as dst:
         try:
             r = requests.get(download_url, stream=True, timeout=TIMEOUT)
             r.raise_for_status()
             for chunk in tqdm.tqdm(r.iter_content(chunk_size=CHUNK_SIZE)):
                 if chunk:  # filter out keep-alive new chunks
                     dst.write(chunk)
+            dst.flush()
         except requests.exceptions.HTTPError as err:
             error_message = f"Connection error, please try again! {err}"
             logger.debug(error_message)
             raise requests.exceptions.HTTPError(error_message)
-
-    # Unpack
-    # Order results are zip, job results are tgz(tar.gzipped)
-    out_filepaths: List[pathlib.Path] = []
-    if tarfile.is_tarfile(dst.name):
-        with tarfile.open(dst.name) as tar_file:
-            for tar_member in tar_file.getmembers():
-                if tar_member.isfile():
-                    # Avoid up42 inherent output/ .. directory
-                    if "output/" in tar_member.name:
-                        tar_member.name = tar_member.name.split("output/")[1]
-                    tar_file.extract(tar_member, output_directory)
-                    out_filepaths.append(pathlib.Path(output_directory) / tar_member.name)
-    elif zipfile.is_zipfile(dst.name):
-        with zipfile.ZipFile(dst.name) as zip_file:
-            for zip_info in zip_file.infolist():
-                if not zip_info.filename.endswith("/"):
-                    # Avoid up42 inherent output/ .. directory
-                    if "output/" in zip_info.filename:
-                        zip_info.filename = zip_info.filename.split("output/")[1]
-                    zip_file.extract(zip_info, output_directory)
-                    out_filepaths.append(pathlib.Path(output_directory) / zip_info.filename)
-    else:
-        raise ValueError("Downloaded file is not a TGZ/TAR or ZIP archive.")
-    logger.info(
-        "Download successful of %s files to output_directory '%s': %s",
-        len(out_filepaths),
-        output_directory,
-        [p.name for p in out_filepaths],
-    )
-    if delete_compressed_file:
-        os.remove(dst.name)
+        # Order results are zip, job results are tgz(tar.gzipped)
+        out_filepaths: List[pathlib.Path] = []
+        if tarfile.is_tarfile(dst.name):
+            out_filepaths = unpack_tgz_files(dst.name, output_directory)
+        elif zipfile.is_zipfile(dst.name):
+            out_filepaths = unpack_zip_files(dst.name, output_directory)
+        else:
+            raise ValueError("Downloaded file is not a TGZ/TAR or ZIP archive.")
+        logger.info(
+            "Download successful of %s files to output_directory '%s': %s",
+            len(out_filepaths),
+            output_directory,
+            [p.name for p in out_filepaths],
+        )
     return [str(p) for p in out_filepaths]
 
 

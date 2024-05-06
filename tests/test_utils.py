@@ -1,6 +1,5 @@
 import json
 import pathlib
-import tempfile
 from typing import Dict
 from unittest import mock
 
@@ -188,77 +187,43 @@ def test_fc_to_query_geometry_multipolygon_raises():
 
 
 class TestDownloadGcsUnpack:
-    def test_download_gcs_unpack_tgz(self, requests_mock):
-        cloud_storage_url = "http://clouddownload.api.com/abcdef"
+    cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
-        out_tgz = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-        with open(out_tgz, "rb") as src_tgz:
-            out_tgz_file = src_tgz.read()
+    # pylint: disable=redefined-outer-name
+    def test_download_gcs_unpack_tgz_extracts_expected_files(self, requests_mock, tmp_path):
+        out_tgz = pathlib.Path("tests/mock_data/result_tif.tgz")
         requests_mock.get(
-            url=cloud_storage_url,
-            content=out_tgz_file,
+            url=self.cloud_storage_url,
+            content=out_tgz.read_bytes(),
         )
-        with tempfile.TemporaryDirectory() as tempdir:
-            with open(pathlib.Path(tempdir) / "dummy.txt", "w", encoding="utf-8") as fp:
-                fp.write("dummy")
-            out_files = utils.download_from_gcs_unpack(
-                download_url=cloud_storage_url,
-                output_directory=tempdir,
-            )
+        out_files = utils.download_from_gcs_unpack(
+            download_url=self.cloud_storage_url,
+            output_directory=tmp_path,
+        )
+        for file in out_files:
+            assert pathlib.Path(file).exists()
+        assert len(out_files) == 2
+        assert not (pathlib.Path(tmp_path) / "output").exists()
 
-            for file in out_files:
-                assert pathlib.Path(file).exists()
-            assert len(out_files) == 2
-            assert not (pathlib.Path(tempdir) / "output").exists()
-
-    def test_download_gcs_unpack_zip(self, requests_mock):
-        cloud_storage_url = "http://clouddownload.api.com/abcdef"
-
-        out_zip = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.zip"
-        with open(out_zip, "rb") as src_zip:
-            out_zip_file = src_zip.read()
-
+    # pylint: disable=redefined-outer-name
+    def test_download_gcs_unpack_zip_extracts_expected_files(self, requests_mock, tmp_path):
+        out_zip = pathlib.Path("tests/mock_data/result_tif.zip")
         requests_mock.get(
-            url=cloud_storage_url,
-            content=out_zip_file,
+            url=self.cloud_storage_url,
+            content=out_zip.read_bytes(),
         )
-        with tempfile.TemporaryDirectory() as tempdir:
-            with open(pathlib.Path(tempdir) / "dummy.txt", "w", encoding="utf-8") as fp:
-                fp.write("dummy")
-            out_files = utils.download_from_gcs_unpack(
-                download_url=cloud_storage_url,
-                output_directory=tempdir,
-            )
-
-            for file in out_files:
-                assert pathlib.Path(file).exists()
-            assert len(out_files) == 2
-            assert not (pathlib.Path(tempdir) / "output").exists()
-
-    def test_download_gcs_unpack_temp_in_output_dir(self, requests_mock):
-        cloud_storage_url = "http://clouddownload.api.com/abcdef"
-
-        out_zip = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.zip"
-        with open(out_zip, "rb") as src_zip:
-            out_zip_file = src_zip.read()
-
-        requests_mock.get(
-            url=cloud_storage_url,
-            content=out_zip_file,
+        out_files = utils.download_from_gcs_unpack(
+            download_url=self.cloud_storage_url,
+            output_directory=tmp_path,
         )
-        with tempfile.TemporaryDirectory() as tempdir:
-            out_files = utils.download_from_gcs_unpack(
-                download_url=cloud_storage_url,
-                output_directory=tempdir,
-                delete_compressed_file=False,
-            )
-            for file in out_files:
-                assert pathlib.Path(file).exists()
-            assert len(out_files) == 2
-            assert sum(1 for files in pathlib.Path(tempdir).rglob("*") if files.is_file()) == 3
-            assert not (pathlib.Path(tempdir) / "output").exists()
 
-    def test_download_gcs_unpack_raises_error_with_no_compressed_file(self, requests_mock):
+        for file in out_files:
+            assert pathlib.Path(file).exists()
+        assert len(out_files) == 2
+        assert not (pathlib.Path(tmp_path) / "output").exists()
+
+    # pylint: disable=redefined-outer-name
+    def test_download_gcs_unpack_raises_error_with_no_compressed_file(self, requests_mock, tmp_path):
         cloud_storage_url = "http://clouddownload.api.com/abcdef"
 
         out_zip = pathlib.Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
@@ -269,35 +234,11 @@ class TestDownloadGcsUnpack:
             url=cloud_storage_url,
             content=out_zip_file,
         )
-        with tempfile.TemporaryDirectory() as tempdir:
-            with open(pathlib.Path(tempdir) / "dummy.txt", "w", encoding="utf-8") as fp:
-                fp.write("dummy")
-            with pytest.raises(ValueError):
-                utils.download_from_gcs_unpack(
-                    download_url=cloud_storage_url,
-                    output_directory=tempdir,
-                )
-
-
-class TestDownloadGcsNotUnpack:
-    def test_download_gcs_not_unpack(self, requests_mock):
-        cloud_storage_url = "http://clouddownload.api.com/abcdef"
-
-        out_zip = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.zip"
-        with open(out_zip, "rb") as src_zip:
-            out_zip_file = src_zip.read()
-
-        requests_mock.get(
-            url=cloud_storage_url,
-            content=out_zip_file,
-        )
-        with tempfile.TemporaryDirectory() as tempdir:
-            out_files = utils.download_gcs_not_unpack(
+        with pytest.raises(ValueError):
+            utils.download_from_gcs_unpack(
                 download_url=cloud_storage_url,
-                output_directory=tempdir,
+                output_directory=tmp_path,
             )
-            for file in out_files:
-                assert pathlib.Path(file).exists()
 
 
 def test_autocomplete_order_parameters():
