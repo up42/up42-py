@@ -224,19 +224,17 @@ class TestDownloadGcsUnpack:
 
     # pylint: disable=redefined-outer-name
     def test_download_gcs_unpack_raises_error_with_no_compressed_file(self, requests_mock, tmp_path):
-        cloud_storage_url = "http://clouddownload.api.com/abcdef"
-
         out_zip = pathlib.Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
         with open(out_zip, "rb") as src_zip:
             out_zip_file = src_zip.read()
 
         requests_mock.get(
-            url=cloud_storage_url,
+            url=self.cloud_storage_url,
             content=out_zip_file,
         )
         with pytest.raises(ValueError):
             utils.download_from_gcs_unpack(
-                download_url=cloud_storage_url,
+                download_url=self.cloud_storage_url,
                 output_directory=tmp_path,
             )
 
