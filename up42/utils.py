@@ -117,11 +117,6 @@ def download_from_gcs_unpack(
             directory.
         delete_compressed_file: Sets if the compressed file should be removed after unpack.
     """
-    total_size = 0
-    total_entry_count = 0
-    threshold_entries = 1000
-    threshold_ratio = 3
-    threshold_size = 10 * 1024 * 1024
     # Download
     with tempfile.NamedTemporaryFile(dir=output_directory, delete=False) as dst:
         try:
@@ -145,21 +140,8 @@ def download_from_gcs_unpack(
                     # Avoid up42 inherent output/ .. directory
                     if "output/" in tar_member.name:
                         tar_member.name = tar_member.name.split("output/")[1]
-                    if tar_member.size is None or tar_member.size == 0:
-                        continue
-                    extracted_data: bytes = tar_file.extractfile(tar_member).read()  # type:ignore [union-attr]
-                    ratio = len(extracted_data) / tar_member.size
-                    if ratio > threshold_ratio:
-                        raise CompressScanError("Suspicious compression ratio")
-
-                    total_size += len(extracted_data)
-                    if total_size > threshold_size:
-                        raise CompressScanError("Archive size exceeds resource capacity")
                     tar_file.extract(tar_member, output_directory)
                     out_filepaths.append(pathlib.Path(output_directory) / tar_member.name)
-                    total_entry_count += 1
-                if total_entry_count > threshold_entries:
-                    raise CompressScanError("Too many entries in archive")
     elif zipfile.is_zipfile(dst.name):
         with zipfile.ZipFile(dst.name) as zip_file:
             for zip_info in zip_file.infolist():
