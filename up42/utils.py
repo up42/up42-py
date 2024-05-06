@@ -111,6 +111,7 @@ def download_from_gcs_unpack(
         download_url: The signed gcs url to download.
         output_directory: The file output directory, defaults to the current working
             directory.
+        delete_compressed_file: Sets if the compressed file should be removed after unpack.
     """
     # Download
     with tempfile.NamedTemporaryFile(dir=output_directory, delete=False) as dst:
