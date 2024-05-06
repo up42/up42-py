@@ -101,6 +101,7 @@ def deprecation(
 def download_from_gcs_unpack(
     download_url: str,
     output_directory: Union[str, pathlib.Path],
+    delete_compressed_file: bool = True,
 ) -> List[str]:
     """
     General download function for results of storage assets, job & jobtask from cloud storage
@@ -153,7 +154,8 @@ def download_from_gcs_unpack(
         output_directory,
         [p.name for p in out_filepaths],
     )
-    os.remove(dst.name)
+    if delete_compressed_file:
+        os.remove(dst.name)
     return [str(p) for p in out_filepaths]
 
 
