@@ -2,6 +2,7 @@ import copy
 import datetime
 import functools
 import importlib.metadata
+import io
 import json
 import logging
 import os
@@ -22,6 +23,10 @@ from shapely import geometry  # type: ignore
 
 TIMEOUT = 120  # seconds
 CHUNK_SIZE = 1024
+
+
+class CompressScanError(ValueError):
+    pass
 
 
 def get_filename(signed_url: str, default_filename: str) -> str:
@@ -98,6 +103,48 @@ def deprecation(
     return actual_decorator
 
 
+def scan_compressed_archive(
+    file_path,
+    threshold_entries=1000,
+    threshold_ratio=3,
+    threshold_size=10 * 1024 * 1024,
+):
+    """
+    Scans an archive at the given path for suspicious characteristics.
+
+    Args:
+        file_path: The path to the archive file.
+        threshold_entries: Maximum number of entries allowed (default: 1000).
+        threshold_ratio: Maximum compression ratio (default: 3).
+        threshold_size: Maximum uncompressed archive size (default: 10MB).
+
+    Raises:
+        CompressScanError: If suspicious characteristics are found in the archive.
+    """
+    total_size = 0
+    total_entry_count = 0
+    with open(file_path, "rb") as archive_file:
+        archive_data = archive_file.read()
+
+    with tarfile.open(fileobj=io.BytesIO(archive_data), mode="r:gz") as tfile:
+        for entry in tfile.getmembers():
+            if entry.size is None or entry.size == 0:
+                continue
+
+            extracted_data: bytes = tfile.extractfile(entry).read()  # type:ignore [union-attr]
+            ratio = len(extracted_data) / entry.size
+            if ratio > threshold_ratio:
+                raise CompressScanError("Suspicious compression ratio")
+
+            total_size += len(extracted_data)
+            if total_size > threshold_size:
+                raise CompressScanError("Archive size exceeds resource capacity")
+
+            total_entry_count += 1
+            if total_entry_count > threshold_entries:
+                raise CompressScanError("Too many entries in archive")
+
+
 def download_from_gcs_unpack(
     download_url: str,
     output_directory: Union[str, pathlib.Path],
@@ -130,6 +177,7 @@ def download_from_gcs_unpack(
     # Order results are zip, job results are tgz(tar.gzipped)
     out_filepaths: List[pathlib.Path] = []
     if tarfile.is_tarfile(dst.name):
+        scan_compressed_archive(dst.name)
         with tarfile.open(dst.name) as tar_file:
             for tar_member in tar_file.getmembers():
                 if tar_member.isfile():
