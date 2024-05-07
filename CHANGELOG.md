@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.0.1a2
 
 **May 7, 2024**
-- Setting session http_adapter configuration to `retries = 5` and `backoff factor = 1`
+- Setting http_adapter default configuration to `retries = 5` and `backoff factor = 1`
 
 ## 1.0.0
 
