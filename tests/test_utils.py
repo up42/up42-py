@@ -6,6 +6,7 @@ from unittest import mock
 import geopandas  # type: ignore
 import pandas
 import pytest
+import requests_mock as req_mock
 from dateutil import parser
 from shapely import geometry  # type: ignore
 
@@ -186,55 +187,34 @@ def test_fc_to_query_geometry_multipolygon_raises():
     assert str(e.value) == "UP42 only accepts single geometries, the provided geometry is a MultiPolygon."
 
 
-class TestDownloadGcsUnpack:
-    cloud_storage_url = "http://clouddownload.api.com/abcdef"
+class TestDownloadArchive:
+    archive_url = "https://clouddownload.api.com/abcdef"
 
-    # pylint: disable=redefined-outer-name
-    def test_download_gcs_unpack_tgz_extracts_expected_files(self, requests_mock, tmp_path):
-        out_tgz = pathlib.Path("tests/mock_data/result_tif.tgz")
+    @pytest.mark.parametrize("source", ["tests/mock_data/result_tif.tgz", "tests/mock_data/result_tif.zip"])
+    def test_should_download_archive(self, requests_mock: req_mock.Mocker, tmp_path, source: str):
         requests_mock.get(
-            url=self.cloud_storage_url,
-            content=out_tgz.read_bytes(),
+            url=self.archive_url,
+            content=pathlib.Path(source).read_bytes(),
         )
-        out_files = utils.download_from_gcs_unpack(
-            download_url=self.cloud_storage_url,
+        out_files = utils.download_archive(
+            download_url=self.archive_url,
             output_directory=tmp_path,
         )
         for file in out_files:
             assert pathlib.Path(file).exists()
+            assert pathlib.Path(file).suffix in [".tif", ".json"]
         assert len(out_files) == 2
-        assert not (pathlib.Path(tmp_path) / "output").exists()
 
-    # pylint: disable=redefined-outer-name
-    def test_download_gcs_unpack_zip_extracts_expected_files(self, requests_mock, tmp_path):
-        out_zip = pathlib.Path("tests/mock_data/result_tif.zip")
-        requests_mock.get(
-            url=self.cloud_storage_url,
-            content=out_zip.read_bytes(),
-        )
-        out_files = utils.download_from_gcs_unpack(
-            download_url=self.cloud_storage_url,
-            output_directory=tmp_path,
-        )
-
-        for file in out_files:
-            assert pathlib.Path(file).exists()
-        assert len(out_files) == 2
-        assert not (pathlib.Path(tmp_path) / "output").exists()
-
-    # pylint: disable=redefined-outer-name
-    def test_download_gcs_unpack_raises_error_with_no_compressed_file(self, requests_mock, tmp_path):
-        out_zip = pathlib.Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
-        with open(out_zip, "rb") as src_zip:
-            out_zip_file = src_zip.read()
+    def test_fail_to_download_non_archive_file(self, requests_mock, tmp_path):
+        source = pathlib.Path("tests/mock_data/aoi_berlin.geojson")
 
         requests_mock.get(
-            url=self.cloud_storage_url,
-            content=out_zip_file,
+            url=self.archive_url,
+            content=source.read_bytes(),
         )
-        with pytest.raises(ValueError):
-            utils.download_from_gcs_unpack(
-                download_url=self.cloud_storage_url,
+        with pytest.raises(utils.UnsupportedArchive):
+            utils.download_archive(
+                download_url=self.archive_url,
                 output_directory=tmp_path,
             )
 
