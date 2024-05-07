@@ -34,8 +34,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.0.1a1
 
 **May 7, 2024**
-- Bump jinja2 dependency from 3.1.3 to 3.1.4.
-- Bump tqdm dependency from 4.66.2 to 4.66.3
+- jinja2 dependency bumped from 3.1.3 to 3.1.4.
+- tqdm dependency bumped from 4.66.2 to 4.66.3
 
 
 ## 1.0.0
