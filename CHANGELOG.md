@@ -31,6 +31,15 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
 
+## 1.0.1a2
+
+**May 7, 2024**
+- Renamed `download_from_gcs_unpack` to `download_archive`
+- Renamed `download_gcs_not_unpack` to `download_file`
+- Improved test coverage for `download_archive`
+- Bug fix in `download_archive`: use output directory provided for temporary archive storage instead of default temp folder
+
+
 ## 1.0.1a1
 
 **May 7, 2024**
