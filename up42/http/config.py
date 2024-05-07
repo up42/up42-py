@@ -3,8 +3,8 @@ import dataclasses as dc
 
 @dc.dataclass(eq=True, frozen=True)
 class ResilienceSettings:
-    total: int = 3
-    backoff_factor: float = 0.5
+    total: int = 5
+    backoff_factor: float = 1
     statuses: tuple = tuple(range(500, 600))
 
 
