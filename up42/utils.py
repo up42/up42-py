@@ -97,31 +97,33 @@ def deprecation(
     return actual_decorator
 
 
-def unpack_tgz_files(file_path, output_directory) -> List[pathlib.Path]:
+def _unpack_tar_files(file_path: str, output_directory: Union[str, pathlib.Path]) -> List[pathlib.Path]:
     out_filepaths: List[pathlib.Path] = []
-    with tarfile.open(file_path) as tar_file:
-        for tar_member in tar_file.getmembers():
-            if tar_member.isfile():
-                if "output/" in tar_member.name:
-                    tar_member.name = tar_member.name.split("output/")[1]
-                tar_file.extract(tar_member, output_directory)
-                out_filepaths.append(pathlib.Path(output_directory) / tar_member.name)
+    if tarfile.is_tarfile(file_path):
+        with tarfile.open(file_path) as tar_file:
+            for tar_member in tar_file.getmembers():
+                if tar_member.isfile():
+                    if "output/" in tar_member.name:
+                        tar_member.name = tar_member.name.split("output/")[1]
+                    tar_file.extract(tar_member, output_directory)
+                    out_filepaths.append(pathlib.Path(output_directory) / tar_member.name)
     return out_filepaths
 
 
-def unpack_zip_files(file_path, output_directory) -> List[pathlib.Path]:
+def _unpack_zip_files(file_path: str, output_directory: Union[str, pathlib.Path]) -> List[pathlib.Path]:
     out_filepaths: List[pathlib.Path] = []
-    with zipfile.ZipFile(file_path) as zip_file:
-        for zip_info in zip_file.infolist():
-            if not zip_info.filename.endswith("/"):
-                if "output/" in zip_info.filename:
-                    zip_info.filename = zip_info.filename.split("output/")[1]
-                zip_file.extract(zip_info, output_directory)
-                out_filepaths.append(pathlib.Path(output_directory) / zip_info.filename)
+    if zipfile.is_zipfile(file_path):
+        with zipfile.ZipFile(file_path) as zip_file:
+            for zip_info in zip_file.infolist():
+                if not zip_info.filename.endswith("/"):
+                    if "output/" in zip_info.filename:
+                        zip_info.filename = zip_info.filename.split("output/")[1]
+                    zip_file.extract(zip_info, output_directory)
+                    out_filepaths.append(pathlib.Path(output_directory) / zip_info.filename)
     return out_filepaths
 
 
-def download_from_gcs_unpack(
+def download_archive(
     download_url: str,
     output_directory: Union[str, pathlib.Path],
 ) -> List[str]:
@@ -148,23 +150,23 @@ def download_from_gcs_unpack(
             logger.debug(error_message)
             raise requests.exceptions.HTTPError(error_message)
         # Order results are zip, job results are tgz(tar.gzipped)
-        out_filepaths: List[pathlib.Path] = []
-        if tarfile.is_tarfile(dst.name):
-            out_filepaths = unpack_tgz_files(dst.name, output_directory)
-        elif zipfile.is_zipfile(dst.name):
-            out_filepaths = unpack_zip_files(dst.name, output_directory)
-        else:
-            raise ValueError("Downloaded file is not a TGZ/TAR or ZIP archive.")
+        out_filepaths = _unpack_tar_files(dst.name, output_directory) + _unpack_zip_files(dst.name, output_directory)
+
+        if not out_filepaths:
+            raise UnsupportedArchive("Downloaded file is not a TGZ/TAR or ZIP archive.")
         logger.info(
-            "Download successful of %s files to output_directory '%s': %s",
+            "Download successful of %s files to output_directory %s",
             len(out_filepaths),
             output_directory,
-            [p.name for p in out_filepaths],
         )
     return [str(p) for p in out_filepaths]
 
 
-def download_gcs_not_unpack(download_url: str, output_directory: Union[str, pathlib.Path]) -> List[str]:
+class UnsupportedArchive(ValueError):
+    pass
+
+
+def download_file(download_url: str, output_directory: Union[str, pathlib.Path]) -> List[str]:
     """
     General download function for assets, job and jobtasks from cloud storage
     provider.

@@ -34,8 +34,10 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.0.1a2
 
 **May 7, 2024**
-- Fixed `download_from_gcs_unpack` tempdir set now to `output_dir` previously set to default temp folder
-- Renaming misnamed test for `download_from_gcs_unpack` previously named as `test_download_gcs_not_unpack`
+- Renamed `download_from_gcs_unpack` to `download_archive`
+- Renamed `download_gcs_not_unpack` to `download_file`
+- Improved test coverage for `download_archive`
+- Bug fix in `download_archive`: use output directory provided for temporary archive storage instead of default temp folder
 
 
 ## 1.0.1a1
