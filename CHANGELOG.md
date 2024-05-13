@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.0.1a4
 
 **May 13, 2024**
-- geojson dependency bumped from 3.0.1 to 3.1.0. to fix conda python 3.12 installer.
+- geojson dependency bumped from 3.0.1 to 3.1.0 to fix conda python 3.12 installer.
 
 
 ## 1.0.1a3
