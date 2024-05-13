@@ -29,6 +29,16 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+
+
+## 1.0.1
+
+**May 13, 2024**
+- Setting http_adapter default configuration.
+- Bugfix `download_archive`.
+- Bumped dependencies jinja2, tqdm.
+
+
 ## 1.0.1a3
 
 **May 7, 2024**
