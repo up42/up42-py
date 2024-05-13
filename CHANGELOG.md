@@ -34,9 +34,9 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.0.1
 
 **May 13, 2024**
-- Setting http_adapter default configuration.
-- Bugfix `download_archive`.
-- Bumped dependencies jinja2, tqdm.
+- Increased retries and backoff in http resilience.
+- Fixed bug with temporary storage overfill when downloading archives.
+- Bumped dependencies jinja2, tqdm, geojson.
 
 
 ## 1.0.1a3
