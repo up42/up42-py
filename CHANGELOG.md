@@ -31,6 +31,12 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
 
+## 1.0.2a1
+
+**May 14, 2024**
+- Adding token refresh thread-safe to fix authentication issues in parallel threads.
+
+
 ## 1.0.1
 
 **May 13, 2024**
