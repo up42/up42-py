@@ -61,7 +61,7 @@ class Up42Auth(requests.auth.AuthBase):
         self.adapter = create_adapter(include_post=True)
         self.retrieve = retrieve
         self._token = self._fetch_token()
-        self._token_lock = threading.Lock()
+        self._lock = threading.Lock()
 
     def __call__(self, request: requests.PreparedRequest) -> requests.PreparedRequest:
         request.headers["Authorization"] = f"Bearer {self.token.access_token}"
@@ -76,7 +76,7 @@ class Up42Auth(requests.auth.AuthBase):
 
     @property
     def token(self) -> Token:
-        with self._token_lock:
+        with self._lock:
             if self._token.has_expired:
                 self._token = self._fetch_token()
         return self._token

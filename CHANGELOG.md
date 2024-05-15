@@ -33,8 +33,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 1.0.2a1
 
-**May 14, 2024**
-- Adding token refresh thread-safe to fix authentication issues in parallel threads.
+**May 15, 2024**
+- Added thread safety to token retrieval.
 
 
 ## 1.0.1
