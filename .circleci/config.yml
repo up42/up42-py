@@ -144,7 +144,7 @@ workflows:
           machine-size: medium+
           name: sdk-e2e-tests
           fingerprint: 'c5:5a:28:b3:5e:21:8d:9c:6c:b1:9b:a7:7b:f3:41:0c'
-          run-command: poetry run pytest spec --junitxml=./report/junit.xml
+          run-command: make test-all
           context:
             - 'sdk-tests-staging-build'
           post-steps:
