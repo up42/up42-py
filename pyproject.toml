@@ -21,7 +21,7 @@ python = ">=3.9, <4"
 requests = "^2.31.0"
 tqdm = "^4.66.0"
 geojson = "3.1.0"
-geopandas = "^0.13.2"
+geopandas = "^0.14.4"
 pystac-client = "^0.7.2"
 pyproj = "^3.6.1"
 
