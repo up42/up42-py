@@ -97,7 +97,33 @@ def deprecation(
     return actual_decorator
 
 
-def download_from_gcs_unpack(
+def _unpack_tar_files(file_path: str, output_directory: Union[str, pathlib.Path]) -> List[pathlib.Path]:
+    out_filepaths: List[pathlib.Path] = []
+    if tarfile.is_tarfile(file_path):
+        with tarfile.open(file_path) as tar_file:
+            for tar_member in tar_file.getmembers():
+                if tar_member.isfile():
+                    if "output/" in tar_member.name:
+                        tar_member.name = tar_member.name.split("output/")[1]
+                    tar_file.extract(tar_member, output_directory)
+                    out_filepaths.append(pathlib.Path(output_directory) / tar_member.name)
+    return out_filepaths
+
+
+def _unpack_zip_files(file_path: str, output_directory: Union[str, pathlib.Path]) -> List[pathlib.Path]:
+    out_filepaths: List[pathlib.Path] = []
+    if zipfile.is_zipfile(file_path):
+        with zipfile.ZipFile(file_path) as zip_file:
+            for zip_info in zip_file.infolist():
+                if not zip_info.filename.endswith("/"):
+                    if "output/" in zip_info.filename:
+                        zip_info.filename = zip_info.filename.split("output/")[1]
+                    zip_file.extract(zip_info, output_directory)
+                    out_filepaths.append(pathlib.Path(output_directory) / zip_info.filename)
+    return out_filepaths
+
+
+def download_archive(
     download_url: str,
     output_directory: Union[str, pathlib.Path],
 ) -> List[str]:
@@ -111,52 +137,36 @@ def download_from_gcs_unpack(
             directory.
     """
     # Download
-    out_temp = tempfile.mkstemp()[1]
-    with open(out_temp, "wb") as dst:
+    with tempfile.NamedTemporaryFile(dir=output_directory) as dst:
         try:
             r = requests.get(download_url, stream=True, timeout=TIMEOUT)
             r.raise_for_status()
             for chunk in tqdm.tqdm(r.iter_content(chunk_size=CHUNK_SIZE)):
                 if chunk:  # filter out keep-alive new chunks
                     dst.write(chunk)
+            dst.flush()
         except requests.exceptions.HTTPError as err:
             error_message = f"Connection error, please try again! {err}"
             logger.debug(error_message)
             raise requests.exceptions.HTTPError(error_message)
+        # Order results are zip, job results are tgz(tar.gzipped)
+        out_filepaths = _unpack_tar_files(dst.name, output_directory) + _unpack_zip_files(dst.name, output_directory)
 
-    # Unpack
-    # Order results are zip, job results are tgz(tar.gzipped)
-    out_filepaths: List[pathlib.Path] = []
-    if tarfile.is_tarfile(out_temp):
-        with tarfile.open(out_temp) as tar_file:
-            for tar_member in tar_file.getmembers():
-                if tar_member.isfile():
-                    # Avoid up42 inherent output/ .. directory
-                    if "output/" in tar_member.name:
-                        tar_member.name = tar_member.name.split("output/")[1]
-                    tar_file.extract(tar_member, output_directory)
-                    out_filepaths.append(pathlib.Path(output_directory) / tar_member.name)
-    elif zipfile.is_zipfile(out_temp):
-        with zipfile.ZipFile(out_temp) as zip_file:
-            for zip_info in zip_file.infolist():
-                if not zip_info.filename.endswith("/"):
-                    # Avoid up42 inherent output/ .. directory
-                    if "output/" in zip_info.filename:
-                        zip_info.filename = zip_info.filename.split("output/")[1]
-                    zip_file.extract(zip_info, output_directory)
-                    out_filepaths.append(pathlib.Path(output_directory) / zip_info.filename)
-    else:
-        raise ValueError("Downloaded file is not a TGZ/TAR or ZIP archive.")
-    logger.info(
-        "Download successful of %s files to output_directory '%s': %s",
-        len(out_filepaths),
-        output_directory,
-        [p.name for p in out_filepaths],
-    )
+        if not out_filepaths:
+            raise UnsupportedArchive("Downloaded file is not a TGZ/TAR or ZIP archive.")
+        logger.info(
+            "Download successful of %s files to output_directory %s",
+            len(out_filepaths),
+            output_directory,
+        )
     return [str(p) for p in out_filepaths]
 
 
-def download_gcs_not_unpack(download_url: str, output_directory: Union[str, pathlib.Path]) -> List[str]:
+class UnsupportedArchive(ValueError):
+    pass
+
+
+def download_file(download_url: str, output_directory: Union[str, pathlib.Path]) -> List[str]:
     """
     General download function for assets, job and jobtasks from cloud storage
     provider.

@@ -31,10 +31,59 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 ## 1.1.0a1
 
-**May 2, 2024**
+**May 21, 2024**
 
 - Adding __Workspace hidden class and worskspace instance as a singleton class in `main.py`
 - Changing use of Auth Class for the workspace.auth property where required.
+
+
+
+## 1.0.2
+
+**May 15, 2024**
+- Added thread safety to token retrieval.
+
+
+## 1.0.2a1
+
+**May 15, 2024**
+- Added thread safety to token retrieval.
+
+
+## 1.0.1
+
+**May 13, 2024**
+- Increased retries and backoff in http resilience.
+- Fixed bug with temporary storage overfill when downloading archives.
+- Bumped dependencies jinja2, tqdm, geojson.
+
+## 1.0.1a4
+
+**May 13, 2024**
+- geojson dependency bumped from 3.0.1 to 3.1.0 to fix conda python 3.12 installer.
+
+
+## 1.0.1a3
+
+**May 7, 2024**
+- Setting http_adapter default configuration to `retries = 5` and `backoff factor = 1`
+
+
+## 1.0.1a2
+
+**May 7, 2024**
+- Renamed `download_from_gcs_unpack` to `download_archive`
+- Renamed `download_gcs_not_unpack` to `download_file`
+- Improved test coverage for `download_archive`
+- Bug fix in `download_archive`: use output directory provided for temporary archive storage instead of default temp folder
+
+
+## 1.0.1a1
+
+**May 7, 2024**
+- jinja2 dependency bumped from 3.1.3 to 3.1.4.
+- tqdm dependency bumped from 4.66.2 to 4.66.3.
+
 
 ## 1.0.0
 
