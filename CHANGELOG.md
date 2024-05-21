@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 1.0.3a1
 
-**May 13, 2024**
+**May 21, 2024**
 - Bumped dependencies requests.
 
 ## 1.0.2
