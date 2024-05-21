@@ -17,8 +17,8 @@ jobs:
   test:
     working_directory: *workspace-dir
     docker:
-      - image: cimg/python:3.11
-    resource_class: medium+
+      - image: cimg/python:3.12
+    resource_class: large
     steps:
       - attach_workspace:
           at: *workspace-dir
@@ -63,6 +63,50 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
+
+  test-python:
+    parameters:
+      python-version:
+        type: string
+        default: "3.11"
+    working_directory: *workspace-dir
+    docker:
+      - image: cimg/python:<< parameters.python-version >>
+    resource_class: large
+    steps:
+      - attach_workspace:
+          at: *workspace-dir
+      - checkout
+      - restore_cache:
+          name: Restoring poetry cache
+          keys:
+            - *venv-cache
+      - run:
+          name: Install requirements
+          command: |
+            poetry lock
+            poetry install --no-interaction --no-ansi
+      - save_cache:
+          name: Saving poetry cache
+          key: *venv-cache
+          paths:
+            - .venv
+      - restore_cache:
+          name: Restoring pre-commit cache
+          keys:
+            - *pre-commit-cache
+      - run:
+          name: Running pre-commit
+          command: poetry run pre-commit run --all
+      - save_cache:
+          name: Saving pre-commit cache
+          key: *pre-commit-cache
+          paths:
+            - ~/.cache/pre-commit
+      - run:
+          name: Running tests
+          command: poetry run pytest
+
   sonar:
     working_directory: *workspace-dir
     docker:
@@ -73,19 +117,6 @@ jobs:
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
 
-  test_live:
-    docker:
-      - image: cimg/python:3.11
-    steps:
-      - checkout
-      - run:
-          name: Install requirements
-          command: |
-            poetry lock
-            poetry install --no-ansi
-      - run:
-          name: Running tests
-          command: poetry run pytest --runlive --durations=5
   deploy:
     docker:
       - image: cimg/python:3.11
@@ -103,13 +134,17 @@ workflows:
           context: sonarcloud
           requires:
             - test
+      - test-python:
+          matrix:
+            parameters:
+              python-version: [ "3.9", "3.10", "3.11" ]
       - automated-test/run-sdk-tests:
           requires:
             - test
           machine-size: medium+
           name: sdk-e2e-tests
           fingerprint: 'c5:5a:28:b3:5e:21:8d:9c:6c:b1:9b:a7:7b:f3:41:0c'
-          run-command: poetry run pytest spec --junitxml=./report/junit.xml
+          run-command: make test-all
           context:
             - 'sdk-tests-staging-build'
           post-steps:
@@ -133,15 +168,3 @@ workflows:
           filters:
             branches:
               only: master
-
-  test_live:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - test_live:
-          context: up42-py-live-testing

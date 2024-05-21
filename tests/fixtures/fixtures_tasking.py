@@ -1,5 +1,4 @@
 import json
-import os
 import pathlib
 
 import pytest
@@ -8,9 +7,6 @@ from up42 import tasking
 
 from . import fixtures_globals as constants
 
-LIVE_FEASIBILITY_ID = os.getenv("LIVE_FEASIBILITY_ID")
-
-
 QUOTATION_ENDPOINT = "/v2/tasking/quotation"
 
 
@@ -18,7 +14,8 @@ QUOTATION_ENDPOINT = "/v2/tasking/quotation"
 def tasking_mock(auth_mock, requests_mock):
     url_data_product_schema = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
     with open(
-        pathlib.Path(__file__).resolve().parents[1] / "mock_data/data_product_schema_phr_tasking.json", encoding="utf-8"
+        pathlib.Path(__file__).resolve().parents[1] / "mock_data/data_product_schema_phr_tasking.json",
+        encoding="utf-8",
     ) as json_file:
         json_data_product_schema = json.load(json_file)
         requests_mock.get(url=url_data_product_schema, json=json_data_product_schema)
@@ -85,7 +82,11 @@ def tasking_mock(auth_mock, requests_mock):
             json=json_data_get_quotation,
         )
 
-    wrong_id_response_json = json.dumps({"status": 404, "title": "Resource does not exist.", "detail": {}})
+    wrong_id_response_json = {
+        "status": 404,
+        "title": "Resource does not exist.",
+        "detail": {},
+    }
     decide_quotation_endpoint = f"/v2/tasking/quotation/{constants.QUOTATION_ID}-01"
     url_decide_quotation_fail = f"{constants.API_HOST}{decide_quotation_endpoint}"
     requests_mock.patch(
@@ -96,13 +97,12 @@ def tasking_mock(auth_mock, requests_mock):
 
     decide_quotation_endpoint = f"/v2/tasking/quotation/{constants.QUOTATION_ID}-02"
     url_decide_quotation_accepted = f"{constants.API_HOST}{decide_quotation_endpoint}"
-    accepted_id_response_json = json.dumps(
-        {
-            "status": 405,
-            "title": "Resource (Quotation) is write-protected.",
-            "detail": {},
-        }
-    )
+    accepted_id_response_json = {
+        "status": 405,
+        "title": "Resource (Quotation) is write-protected.",
+        "detail": {},
+    }
+
     requests_mock.patch(
         url=url_decide_quotation_accepted,
         status_code=405,
@@ -154,27 +154,18 @@ def tasking_get_feasibility_mock(auth_mock, requests_mock):
 @pytest.fixture()
 def tasking_choose_feasibility_mock(auth_mock, requests_mock):
     wrong_feasibility_url = f"{constants.API_HOST}/v2/tasking/feasibility/{constants.WRONG_FEASIBILITY_ID}"
-    response = json.dumps(
-        {
-            "status": 404,
-            "title": "Resource (FeasibilityStudy) not found with Id='296ef160-7890-430d-8d14-e9b579ab08ba'.",
-            "detail": {},
-        }
-    )
+    response = {
+        "status": 404,
+        "title": "Resource (FeasibilityStudy) not found with Id='296ef160-7890-430d-8d14-e9b579ab08ba'.",
+        "detail": {},
+    }
     requests_mock.patch(url=wrong_feasibility_url, status_code=404, json=response)
 
-    choose_feasibility_url = f"{constants.API_HOST}/v2/tasking/feasibility/{LIVE_FEASIBILITY_ID}"
-    response = json.dumps(
-        {
-            "status": 405,
-            "title": "Resource (FeasibilityStudy) is write-protected.",
-            "detail": {},
-        }
-    )
+    choose_feasibility_url = f"{constants.API_HOST}/v2/tasking/feasibility/{constants.TEST_FEASIBILITY_ID}"
+    response = {
+        "status": 405,
+        "title": "Resource (FeasibilityStudy) is write-protected.",
+        "detail": {},
+    }
     requests_mock.patch(url=choose_feasibility_url, status_code=405, json=response)
     return tasking.Tasking(auth=auth_mock)
-
-
-@pytest.fixture()
-def tasking_live(auth_live):
-    return tasking.Tasking(auth=auth_live)

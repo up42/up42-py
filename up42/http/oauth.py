@@ -1,9 +1,9 @@
 import dataclasses as dc
 import datetime as dt
-from typing import Protocol
+import threading
+from typing import Optional, Protocol
 
 import requests
-from requests import auth
 
 from up42.http import config, http_adapter
 
@@ -23,27 +23,10 @@ class TokenRetriever(Protocol):
         ...
 
 
-class ProjectTokenRetriever:
-    def __init__(self, supply_credentials_settings=config.ProjectCredentialsSettings):
-        credentials_settings = supply_credentials_settings()
-        self.client_id = credentials_settings.client_id
-        self.client_secret = credentials_settings.client_secret
-
-    def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
-        basic_auth = auth.HTTPBasicAuth(self.client_id, self.client_secret)
-        return session.post(
-            url=token_url,
-            auth=basic_auth,
-            data={"grant_type": "client_credentials"},
-            timeout=timeout,
-        ).json()["access_token"]
-
-
 class AccountTokenRetriever:
-    def __init__(self, supply_credentials_settings=config.AccountCredentialsSettings):
-        credentials_settings = supply_credentials_settings()
-        self.username = credentials_settings.username
-        self.password = credentials_settings.password
+    def __init__(self, settings: config.AccountCredentialsSettings):
+        self.username = settings.username
+        self.password = settings.password
 
     def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
         headers = {
@@ -54,28 +37,31 @@ class AccountTokenRetriever:
             "username": self.username,
             "password": self.password,
         }
-        return session.post(
+        response = session.post(
             url=token_url,
             data=body,
             headers=headers,
             timeout=timeout,
-        ).json()["access_token"]
+        )
+        if response.ok:
+            return response.json()["access_token"]
+        raise WrongCredentials
 
 
 class Up42Auth(requests.auth.AuthBase):
     def __init__(
         self,
         retrieve: TokenRetriever,
-        supply_token_settings=config.TokenProviderSettings,
+        token_settings: config.TokenProviderSettings,
         create_adapter=http_adapter.create,
     ):
-        token_settings = supply_token_settings()
         self.token_url = token_settings.token_url
         self.duration = token_settings.duration
         self.timeout = token_settings.timeout
         self.adapter = create_adapter(include_post=True)
         self.retrieve = retrieve
         self._token = self._fetch_token()
+        self._lock = threading.Lock()
 
     def __call__(self, request: requests.PreparedRequest) -> requests.PreparedRequest:
         request.headers["Authorization"] = f"Bearer {self.token.access_token}"
@@ -90,6 +76,42 @@ class Up42Auth(requests.auth.AuthBase):
 
     @property
     def token(self) -> Token:
-        if self._token.has_expired:
-            self._token = self._fetch_token()
+        with self._lock:
+            if self._token.has_expired:
+                self._token = self._fetch_token()
         return self._token
+
+
+def detect_settings(
+    credentials: Optional[dict],
+) -> Optional[config.CredentialsSettings]:
+    if credentials:
+        if all(credentials.values()):
+            if credentials.keys() == {"username", "password"}:
+                return config.AccountCredentialsSettings(**credentials)
+            raise InvalidCredentials
+        elif any(credentials.values()):
+            raise IncompleteCredentials
+    return None
+
+
+def detect_retriever(settings: config.CredentialsSettings):
+    if isinstance(settings, config.AccountCredentialsSettings):
+        return AccountTokenRetriever(settings)
+    raise UnsupportedSettings(f"Settings {settings} are not supported")
+
+
+class InvalidCredentials(ValueError):
+    pass
+
+
+class IncompleteCredentials(ValueError):
+    pass
+
+
+class UnsupportedSettings(ValueError):
+    pass
+
+
+class WrongCredentials(ValueError):
+    pass

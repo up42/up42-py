@@ -1,12 +1,12 @@
 import json
 import pathlib
-import tempfile
 from typing import Dict
 from unittest import mock
 
 import geopandas  # type: ignore
 import pandas
 import pytest
+import requests_mock as req_mock
 from dateutil import parser
 from shapely import geometry  # type: ignore
 
@@ -187,91 +187,42 @@ def test_fc_to_query_geometry_multipolygon_raises():
     assert str(e.value) == "UP42 only accepts single geometries, the provided geometry is a MultiPolygon."
 
 
-def test_download_gcs_unpack_tgz(requests_mock):
-    cloud_storage_url = "http://clouddownload.api.com/abcdef"
+class TestDownloadArchive:
+    archive_url = "https://clouddownload.api.com/abcdef"
 
-    out_tgz = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-    with open(out_tgz, "rb") as src_tgz:
-        out_tgz_file = src_tgz.read()
-    requests_mock.get(
-        url=cloud_storage_url,
-        content=out_tgz_file,
-    )
-    with tempfile.TemporaryDirectory() as tempdir:
-        with open(pathlib.Path(tempdir) / "dummy.txt", "w", encoding="utf-8") as fp:
-            fp.write("dummy")
-        out_files = utils.download_from_gcs_unpack(
-            download_url=cloud_storage_url,
-            output_directory=tempdir,
+    @pytest.mark.parametrize("source", ["tests/mock_data/result_tif.tgz", "tests/mock_data/result_tif.zip"])
+    def test_should_download_archive(self, requests_mock: req_mock.Mocker, tmp_path, source: str):
+        requests_mock.get(
+            url=self.archive_url,
+            content=pathlib.Path(source).read_bytes(),
         )
-
+        out_files = utils.download_archive(
+            download_url=self.archive_url,
+            output_directory=tmp_path,
+        )
         for file in out_files:
             assert pathlib.Path(file).exists()
+            assert pathlib.Path(file).suffix in [".tif", ".json"]
         assert len(out_files) == 2
-        assert not (pathlib.Path(tempdir) / "output").exists()
 
+    def test_fail_to_download_non_archive_file(self, requests_mock, tmp_path):
+        source = pathlib.Path("tests/mock_data/aoi_berlin.geojson")
 
-def test_download_gcs_unpack_zip(requests_mock):
-    cloud_storage_url = "http://clouddownload.api.com/abcdef"
-
-    out_zip = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.zip"
-    with open(out_zip, "rb") as src_zip:
-        out_zip_file = src_zip.read()
-
-    requests_mock.get(
-        url=cloud_storage_url,
-        content=out_zip_file,
-    )
-    with tempfile.TemporaryDirectory() as tempdir:
-        with open(pathlib.Path(tempdir) / "dummy.txt", "w", encoding="utf-8") as fp:
-            fp.write("dummy")
-        out_files = utils.download_from_gcs_unpack(
-            download_url=cloud_storage_url,
-            output_directory=tempdir,
+        requests_mock.get(
+            url=self.archive_url,
+            content=source.read_bytes(),
         )
-
-        for file in out_files:
-            assert pathlib.Path(file).exists()
-        assert len(out_files) == 2
-        assert not (pathlib.Path(tempdir) / "output").exists()
-
-
-def test_download_gcs_not_unpack(requests_mock):
-    cloud_storage_url = "http://clouddownload.api.com/abcdef"
-
-    out_zip = pathlib.Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
-    with open(out_zip, "rb") as src_zip:
-        out_zip_file = src_zip.read()
-
-    requests_mock.get(
-        url=cloud_storage_url,
-        content=out_zip_file,
-    )
-    with tempfile.TemporaryDirectory() as tempdir:
-        with open(pathlib.Path(tempdir) / "dummy.txt", "w", encoding="utf-8") as fp:
-            fp.write("dummy")
-        with pytest.raises(ValueError):
-            utils.download_from_gcs_unpack(
-                download_url=cloud_storage_url,
-                output_directory=tempdir,
+        with pytest.raises(utils.UnsupportedArchive):
+            utils.download_archive(
+                download_url=self.archive_url,
+                output_directory=tmp_path,
             )
-
-
-def test_filter_jobs_on_mode():
-    job_json = [{"mode": "DEFAULT"}, {"mode": "DRY_RUN"}]
-    r = utils.filter_jobs_on_mode(job_json)
-    assert len(r) == 2
-    r = utils.filter_jobs_on_mode(job_json, test_jobs=False, real_jobs=True)
-    assert len(r) == 1
-    r = utils.filter_jobs_on_mode(job_json, test_jobs=True, real_jobs=False)
-    assert len(r) == 1
-    with pytest.raises(ValueError):
-        utils.filter_jobs_on_mode(job_json, test_jobs=False, real_jobs=False)
 
 
 def test_autocomplete_order_parameters():
     with open(
-        pathlib.Path(__file__).resolve().parent / "mock_data/data_product_spot_schema.json", encoding="utf-8"
+        pathlib.Path(__file__).resolve().parent / "mock_data/data_product_spot_schema.json",
+        encoding="utf-8",
     ) as json_file:
         json_data_product_schema = json.load(json_file)
     order_parameters = {

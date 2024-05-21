@@ -166,12 +166,12 @@ class Asset:
 
         download_url = self._get_download_url()
         if unpacking:
-            out_filepaths = utils.download_from_gcs_unpack(
+            out_filepaths = utils.download_archive(
                 download_url=download_url,
                 output_directory=output_directory,
             )
         else:
-            out_filepaths = utils.download_gcs_not_unpack(
+            out_filepaths = utils.download_file(
                 download_url=download_url,
                 output_directory=output_directory,
             )
@@ -210,5 +210,5 @@ class Asset:
         download_url = self.get_stac_asset_url(stac_asset=stac_asset)
         file_name = utils.get_filename(download_url, default_filename="stac_asset")
         out_file_path = output_directory / file_name
-        utils.download_gcs_not_unpack(download_url, output_directory)
+        utils.download_file(download_url, output_directory)
         return out_file_path

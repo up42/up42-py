@@ -1,7 +1,9 @@
-import base64
+import dataclasses
+import random
 import time
 
 import mock
+import pytest
 import requests
 import requests_mock as req_mock
 
@@ -10,57 +12,41 @@ from up42.http import config, oauth
 HTTP_TIMEOUT = 10
 TOKEN_VALUE = "some-token"
 TOKEN_URL = "https://localhost/oauth/token"
-project_credentials = config.ProjectCredentialsSettings(
-    client_id="client_id",
-    client_secret="client_secret",
-)
 account_credentials = config.AccountCredentialsSettings(username="some-user", password="some-pass")
 
 
-def basic_auth(username, password):
-    token = base64.b64encode(f"{username}:{password}".encode("utf-8"))
-    return f'Basic {token.decode("ascii")}'
-
-
-basic_client_auth = basic_auth(project_credentials.client_id, project_credentials.client_secret)
-basic_auth_headers = {"Authorization": basic_client_auth}
-
-
-class TestProjectTokenRetriever:
-    def test_should_retrieve(self, requests_mock: req_mock.Mocker):
-        def match_request_body(request):
-            return request.text == "grant_type=client_credentials"
-
-        retrieve = oauth.ProjectTokenRetriever(lambda: project_credentials)
-        requests_mock.post(
-            TOKEN_URL,
-            json={"access_token": TOKEN_VALUE},
-            request_headers=basic_auth_headers,
-            additional_matcher=match_request_body,
-        )
-        assert retrieve(requests.Session(), TOKEN_URL, HTTP_TIMEOUT) == TOKEN_VALUE
-        assert requests_mock.called_once
+def match_account_authentication_request_body(request):
+    return request.text == (
+        "grant_type=password&" f"username={account_credentials.username}&" f"password={account_credentials.password}"
+    )
 
 
 class TestAccountTokenRetriever:
     def test_should_retrieve(self, requests_mock: req_mock.Mocker):
-        def match_request_body(request):
-            return request.text == (
-                "grant_type=password&"
-                f"username={account_credentials.username}&"
-                f"password={account_credentials.password}"
-            )
-
-        retrieve = oauth.AccountTokenRetriever(lambda: account_credentials)
+        retrieve = oauth.AccountTokenRetriever(account_credentials)
         requests_mock.post(
             TOKEN_URL,
             json={"access_token": TOKEN_VALUE},
             request_headers={
                 "Content-Type": "application/x-www-form-urlencoded",
             },
-            additional_matcher=match_request_body,
+            additional_matcher=match_account_authentication_request_body,
         )
         assert retrieve(requests.Session(), TOKEN_URL, HTTP_TIMEOUT) == TOKEN_VALUE
+        assert requests_mock.called_once
+
+    def test_fails_to_retrieve_for_bad_response(self, requests_mock: req_mock.Mocker):
+        retrieve = oauth.AccountTokenRetriever(account_credentials)
+        requests_mock.post(
+            TOKEN_URL,
+            status_code=random.randint(400, 599),
+            request_headers={
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            additional_matcher=match_account_authentication_request_body,
+        )
+        with pytest.raises(oauth.WrongCredentials):
+            retrieve(requests.Session(), TOKEN_URL, HTTP_TIMEOUT)
         assert requests_mock.called_once
 
 
@@ -76,7 +62,7 @@ token_settings = config.TokenProviderSettings(
 class TestUp42Auth:
     def test_should_fetch_token_when_created(self):
         retrieve = mock.MagicMock(return_value=TOKEN_VALUE)
-        up42_auth = oauth.Up42Auth(retrieve=retrieve, supply_token_settings=lambda: token_settings)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
         up42_auth(mock_request)
         assert mock_request.headers["Authorization"] == f"Bearer {TOKEN_VALUE}"
         assert up42_auth.token.access_token == TOKEN_VALUE
@@ -86,7 +72,7 @@ class TestUp42Auth:
     def test_should_fetch_token_when_expired(self):
         second_token = "token2"
         retrieve = mock.MagicMock(side_effect=["token1", second_token])
-        up42_auth = oauth.Up42Auth(retrieve=retrieve, supply_token_settings=lambda: token_settings)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
         time.sleep(token_settings.duration + 1)
         up42_auth(mock_request)
 
@@ -94,3 +80,36 @@ class TestUp42Auth:
         assert up42_auth.token.access_token == second_token
         assert TOKEN_URL, HTTP_TIMEOUT == retrieve.call_args.args[1:]
         assert retrieve.call_count == 2
+
+
+class TestDetectSettings:
+    def test_should_detect_account_credentials(self):
+        assert oauth.detect_settings(dataclasses.asdict(account_credentials)) == account_credentials
+
+    def test_should_accept_empty_credentials(self):
+        credentials = {"username": None, "password": None}
+        assert not oauth.detect_settings(credentials)
+
+    def test_should_accept_missing_credentials(self):
+        assert not oauth.detect_settings(None)
+
+    def test_fails_if_credentials_are_incomplete(self):
+        credentials = {"key1": "value1", "key2": None}
+        with pytest.raises(oauth.IncompleteCredentials):
+            oauth.detect_settings(credentials)
+
+    def test_fails_if_credentials_are_invalid(self):
+        credentials = {"key1": "value1", "key2": "value2"}
+        with pytest.raises(oauth.InvalidCredentials):
+            oauth.detect_settings(credentials)
+
+
+class TestDetectRetriever:
+    def test_should_detect_account_retriever(self):
+        assert isinstance(oauth.detect_retriever(account_credentials), oauth.AccountTokenRetriever)
+
+    def test_fails_if_settings_are_not_recognized(self):
+        credentials = mock.MagicMock()
+        with pytest.raises(oauth.UnsupportedSettings) as exc_info:
+            oauth.detect_retriever(credentials)
+        assert str(credentials) in str(exc_info.value)

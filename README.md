@@ -77,4 +77,4 @@ asset.get_stac_asset_url(stac_asset=stac_items[0].assets.get("b02.tiff"))
 
 ## Support
 
-For any kind of issues or suggestions please see the [documentation](https://sdk.up42.com/), open a [GitHub issue](https://github.com/up42/up42-py/issues) or [contact support](https://up42.com/company/contact-support).
+For any kind of issues or suggestions please see the [documentation](https://sdk.up42.com/) or [contact support](https://up42.com/company/contact-support).

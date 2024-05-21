@@ -28,27 +28,18 @@ STAC_ASSET_URL = (
 )
 STAC_ASSET_HREF = "https://api.up42.com/v2/assets/v3b3e203-346d-4f67-b79b-895c36983fb8"
 STAC_ASSET_ID = "v3b3e203-346d-4f67-b79b-895c36983fb8"
-PROJECT_ID = "f19e833d-e698-4d9e-a037-2e6dbd8791ef"
-PROJECT_APIKEY = "project_apikey_123"
-PROJECT_NAME = "project_name_123"
-PROJECT_DESCRIPTION = "project_description_123"
 
 # tasking constants
 QUOTATION_ID = "805b1f27-1025-43d2-90d0-0bd3416238fb"
 WRONG_FEASIBILITY_ID = "296ef160-d890-430d-8d14-e9b579ab08ba"
 WRONG_OPTION_ID = "296ef160-7890-430d-8d14-e9b579ab08ba"
+TEST_FEASIBILITY_ID = "6f93f754-5594-42da-b6af-9064225b89e9"
+TEST_OPTION_ID = "cc3c869d-9215-4dcd-b535-b49aa28228fa"
 
-WORKFLOW_ID = "c74d73c0-6929-4549-a5c9-5a3f517f6d63"
-WORKFLOW_NAME = "workflow_name_123"
-WORKFLOW_DESCRIPTION = "workflow_description_123"
 WORKSPACE_ID = "workspace_id_123"
 USER_ID = "1094497b-11d8-4fb8-9d6a-5e24a88aa825"
-JOB_ID = "13ba070a-55b7-4b3f-95f1-7b11ac8f1175"
-JOB_ID_2 = "ce6286e2-aebb-49ce-8a09-272d6466f3c5"
-JOB_NAME = "job_name_123"
-
-JOBTASK_ID = "a16615e2-6944-4143-879e-416f2fe52de8"
-JOBTASK_NAME = "jobtask_name_123"
+USER_EMAIL = "user@up42.com"
+PASSWORD = "<PASSWORD>"
 
 DATA_PRODUCT_ID = "47dadb27-9532-4552-93a5-48f70a83eaef"
 
@@ -59,131 +50,6 @@ ASSET_ORDER_ID = "22d0b8e9-b649-4971-8adc-1a5eac1fa6f3"
 STAC_COLLECTION_ID = "e459db4c-3b9d-4aa1-8931-5df2517b49ba"
 
 WEBHOOK_ID = "123"
-
-JSON_WORKFLOW_TASKS = {
-    "error": "None",
-    "data": [
-        {
-            "id": "aa2cba17-d35c-4395-ab01-a0fd8191a4b3",
-            "name": "esa-s2-l2a-gtiff-visual:1",
-            "parentsIds": [],
-            "blockName": "esa-s2-l2a-gtiff-visual",
-            "blockVersionTag": "1.0.1",
-            "block": {
-                "id": "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
-                "name": "esa-s2-l2a-gtiff-visual",
-                "displayName": "Sentinel-2 L2A Visual (GeoTIFF)",
-                "parameters": {
-                    "time": {
-                        "type": "dateRange",
-                        "default": "2018-01-01T00:00:00+00:00/2020-12-31T23:59:59+00:00",
-                    },
-                    "ids": {"type": "array", "default": None},
-                    "bbox": {"type": "array", "default": None},
-                    "intersects": {"type": "geometry"},
-                },
-                "type": "DATA",
-                "isDryRunSupported": True,
-                "version": "1.0.1",
-            },
-            "environment": None,
-        },
-        {
-            "id": "24375b2a-288b-46c8-b404-53e48d4e7b25",
-            "name": "tiling:1",
-            "parentsIds": ["aa2cba17-d35c-4395-ab01-a0fd8191a4b3"],
-            "blockName": "tiling",
-            "blockVersionTag": "2.2.3",
-            "block": {
-                "id": "3e146dd6-2b67-4d6e-a422-bb3d973e32ff",
-                "name": "tiling",
-                "displayName": "Raster Tiling",
-                "parameters": {
-                    "nodata": {
-                        "type": "number",
-                        "default": None,
-                        "required": False,
-                        "description": "Value representing ...",
-                    },
-                    "tile_width": {
-                        "type": "number",
-                        "default": 768,
-                        "required": True,
-                        "description": "Width of a tile in pixels",
-                    },
-                    "required_but_no_default": {
-                        "type": "number",
-                        "required": True,
-                        "description": "case for tests",
-                    },
-                    "not_required_no_default": {
-                        "type": "number",
-                        "required": False,
-                        "description": "2nd case for tests",
-                    },
-                },
-                "type": "PROCESSING",
-                "isDryRunSupported": False,
-                "version": "2.2.3",
-            },
-            "environment": "None",
-        },
-    ],
-}
-
-JSON_BLOCKS = {
-    "data": [
-        {
-            "id": "4ed70368-d4e1-4462-bef6-14e768049471",
-            "name": "tiling",
-            "displayName": "Raster Tiling",
-            "type": "PROCESSING",
-        },
-        {
-            "id": "c0d04ec3-98d7-4183-902f-5bcb2a176d89",
-            "name": "sharpening",
-            "displayName": "Sharpening Filter",
-            "type": "PROCESSING",
-        },
-        {
-            "id": "c4cb8913-2ef3-4e82-a426-65ea8faacd9a",
-            "name": "esa-s2-l2a-gtiff-visual",
-            "displayName": "Sentinel-2 L2A Visual (GeoTIFF)",
-            "type": "DATA",
-        },
-    ],
-    "error": {},
-}
-
-JSON_WORKFLOW_ESTIMATION = {
-    "data": {
-        "esa-s2-l2a-gtiff-visual:1": {
-            "blockConsumption": {
-                "credit": {"max": 0, "min": 0},
-                "resources": {"max": 0, "min": 0, "unit": "SQUARE_KM"},
-            },
-            "machineConsumption": {
-                "credit": {"max": 1, "min": 1},
-                "duration": {"max": 0, "min": 0},
-            },
-        },
-        "tiling:1": {
-            "blockConsumption": {
-                "credit": {"max": 0, "min": 0},
-                "resources": {
-                    "max": 3.145728,
-                    "min": 3.145728,
-                    "unit": "MEGABYTE",
-                },
-            },
-            "machineConsumption": {
-                "credit": {"max": 9, "min": 2},
-                "duration": {"max": 428927, "min": 80930},
-            },
-        },
-    },
-    "error": {},
-}
 
 JSON_ASSET = {
     "accountId": "69353acb-f942-423f-8f32-11d6d67caa77",
@@ -419,17 +285,6 @@ JSON_WEBHOOK = {
 }
 
 JSON_BALANCE = {"data": {"balance": 10693}}
-
-MOCK_CREDITS = {
-    "data": {
-        "projectId": "20adecb9-97f6-42c0-8ba8-f1e2fa0bff39",
-        "projectDisplayId": "20adecb9",
-        "jobId": "feace0bb-ea26-4161-9026-852f26e46bc5",
-        "jobDisplayId": "feace0bb",
-        "creditsUsed": 100,
-    },
-    "error": None,
-}
 
 
 URL_STAC_CATALOG = "https://api.up42.com/v2/assets/stac"

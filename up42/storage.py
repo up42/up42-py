@@ -125,7 +125,7 @@ class Storage:
         ):
             warnings.warn(
                 "Search for geometry, acquired_before, acquired_after and custom_filter has been deprecated."
-                "Use the PySTAC client for STAC queries: https://sdk.up42.com/notebooks/stac-example/#pystac",
+                "Use the PySTAC client for STAC queries.",
                 DeprecationWarning,
                 stacklevel=2,
             )
@@ -178,7 +178,7 @@ class Storage:
         }
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
-        sort = f"{sortby},{'desc' if descending else 'asc'}"
+        sort = f"""{sortby},{"desc" if descending else "asc"}"""
         base_url = host.endpoint("/v2/orders")
 
         params = {

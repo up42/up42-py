@@ -12,7 +12,7 @@ import tqdm
 from shapely import geometry as geom  # type: ignore
 
 from up42 import auth as up42_auth
-from up42 import host, order, utils, viztools
+from up42 import host, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -24,9 +24,9 @@ class CatalogBase:
 
     def __init__(self, auth: up42_auth.Auth):
         self.auth = auth
-        self.type: Union[str, None] = None
+        self.type: Optional[str] = None
 
-    def get_data_products(self, basic: bool = True) -> Union[dict, List[dict]]:
+    def get_data_products(self, basic: bool = True) -> Union[Dict, List[Dict]]:
         """
         Get the available data product information for each collection. A data
         product is the available data configurations for each collection,
@@ -106,7 +106,7 @@ class CatalogBase:
 
     def place_order(
         self,
-        order_parameters: Union[dict, None],
+        order_parameters: Optional[Dict],
         track_status: bool = False,
         report_time: int = 120,
         **kwargs,
@@ -156,7 +156,7 @@ class CatalogBase:
         return placed_order
 
 
-class Catalog(CatalogBase, viztools.VizTools):
+class Catalog(CatalogBase):
     """
     The Catalog class enables access to the UP42 catalog
     functionality (data archive search & ordering).
@@ -172,11 +172,11 @@ class Catalog(CatalogBase, viztools.VizTools):
 
     def __init__(self, auth: up42_auth.Auth):
         super().__init__(auth)
-        self.quicklooks = None
-        self.type = "ARCHIVE"
-        self.data_products: Union[None, dict] = None
+        self.quicklooks: Optional[List[str]] = None
+        self.type: str = "ARCHIVE"
+        self.data_products: Optional[Dict] = None
 
-    def estimate_order(self, order_parameters: Union[dict, None], **kwargs) -> int:
+    def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
         """
         Estimate the cost of an order.
 
@@ -350,7 +350,7 @@ class Catalog(CatalogBase, viztools.VizTools):
         ]
         if not hosts:
             raise ValueError(
-                f"Selected collections {search_parameters['collections']} are "
+                f"""Selected collections {search_parameters["collections"]} are """
                 "not valid. See catalog.get_collections."
             )
         if len(set(hosts)) > 1:
@@ -503,7 +503,7 @@ class Catalog(CatalogBase, viztools.VizTools):
                 with open(out_path, "wb") as dst:
                     for chunk in response:
                         dst.write(chunk)
-            except ValueError:
+            except IOError:
                 logger.warning(
                     "Image with id %s does not have quicklook available. Skipping ...",
                     image_id,
