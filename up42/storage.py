@@ -8,8 +8,7 @@ import geojson  # type: ignore
 import geopandas  # type: ignore
 from shapely import geometry as shp_geometry  # type: ignore
 
-import up42.main
-from up42 import asset, asset_searcher, host, order, stac_client, utils
+from up42 import Auth, asset, asset_searcher, host, main, order, stac_client, utils
 
 logger = utils.get_logger(__name__)
 
@@ -38,9 +37,9 @@ class Storage:
     ```
     """
 
-    def __init__(self, auth: up42.Auth):
+    def __init__(self, auth: Auth):
         self.auth = auth
-        self.workspace_id = up42.main.workspace.workspace_id
+        self.workspace_id = main.workspace.id
 
     def __repr__(self):
         return f"Storage(workspace_id: {self.workspace_id})"

@@ -1,8 +1,7 @@
 from typing import List, Optional
 
-import up42.main
 from up42 import auth as up42_auth
-from up42 import host, utils
+from up42 import host, main, utils
 
 logger = utils.get_logger(__name__)
 
@@ -20,7 +19,7 @@ class Webhook:
 
     def __init__(self, auth: up42_auth.Auth, webhook_id: str, webhook_info: Optional[dict] = None):
         self.auth = auth
-        self.workspace_id = up42.main.workspace.workspace_id
+        self.workspace_id = main.workspace.id
         self.webhook_id = webhook_id
         if webhook_info is not None:
             self._info = webhook_info
@@ -117,7 +116,7 @@ class Webhooks:
 
     def __init__(self, auth: up42_auth.Auth):
         self.auth = auth
-        self.workspace_id = up42.main.workspace.workspace_id
+        self.workspace_id = main.workspace.id
 
     def get_webhook_events(self) -> dict:
         """

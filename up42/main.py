@@ -15,9 +15,9 @@ class UserNotAuthenticated(ValueError):
     pass
 
 
-class __Workspace:  # pylint: disable=invalid-name
+class _Workspace:
     _auth: Optional[up42_auth.Auth] = None
-    workspace_id: Optional[str] = None
+    id: Optional[str] = None
 
     @property
     def auth(self):
@@ -51,10 +51,10 @@ class __Workspace:  # pylint: disable=invalid-name
         )
         url = host.endpoint("/users/me")
         resp = self.auth.request("GET", url)
-        self.workspace_id = resp["data"]["id"]
+        self.id = resp["data"]["id"]
 
 
-workspace = __Workspace()
+workspace = _Workspace()
 
 authenticate = workspace.authenticate
 
