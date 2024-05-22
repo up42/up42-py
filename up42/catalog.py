@@ -11,9 +11,8 @@ import geopandas  # type: ignore
 import tqdm
 from shapely import geometry as geom  # type: ignore
 
-import up42.main
 from up42 import auth as up42_auth
-from up42 import host, order, utils
+from up42 import host, main, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -151,7 +150,7 @@ class CatalogBase:
             warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
-        placed_order = order.Order.place(self.auth, order_parameters, up42.main.workspace.id)  # type: ignore
+        placed_order = order.Order.place(self.auth, order_parameters, main.workspace.id)  # type: ignore
         if track_status:
             placed_order.track_status(report_time)
         return placed_order

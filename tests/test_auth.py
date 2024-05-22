@@ -13,7 +13,6 @@ from .fixtures import fixtures_globals as constants
 
 CONFIG_FILE = "some-config-file"
 TOKEN_ENDPOINT = constants.API_HOST + "/oauth/token"
-WORKSPACE_ENDPOINT = constants.API_HOST + "/users/me"
 URL = constants.API_HOST + "/some-url"
 RESPONSE_TEXT = "some-response-text"
 ERROR = {"some": "error"}
@@ -65,17 +64,13 @@ session = requests.Session()
 session.headers = cast(MutableMapping[str, Union[str, bytes]], REQUEST_HEADERS)
 
 
-def create_auth(requests_mock: req_mock.Mocker):
+def create_auth():
     credential_sources = [{"some": "credentials"}]
     get_sources = mock.MagicMock(return_value=credential_sources)
     create_client = mock.MagicMock()
     create_client.return_value.token = constants.TOKEN
     create_client.return_value.session = session
 
-    requests_mock.get(
-        WORKSPACE_ENDPOINT,
-        json={"data": {"id": constants.WORKSPACE_ID}},
-    )
     auth = up42_auth.Auth(
         cfg_file=CONFIG_FILE,
         username=constants.USER_EMAIL,
@@ -94,8 +89,8 @@ def create_auth(requests_mock: req_mock.Mocker):
 
 
 class TestAuth:
-    def test_should_authenticate_when_created(self, requests_mock: req_mock.Mocker):
-        auth = create_auth(requests_mock)
+    def test_should_authenticate_when_created(self):
+        auth = create_auth()
         assert auth.token == constants.TOKEN
         assert auth.session == session
 
@@ -114,7 +109,7 @@ class TestAuth:
         expected: dict,
         requests_mock: req_mock.Mocker,
     ):
-        auth = create_auth(requests_mock)
+        auth = create_auth()
         requests_mock.request(
             http_method,
             URL,
@@ -127,7 +122,7 @@ class TestAuth:
     def test_should_pass_text_for_text_response(
         self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker
     ):
-        auth = create_auth(requests_mock)
+        auth = create_auth()
         requests_mock.request(
             http_method,
             URL,
@@ -138,7 +133,7 @@ class TestAuth:
         assert auth.request(http_method, URL, request_data) == RESPONSE_TEXT
 
     def test_should_pass_response(self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker):
-        auth = create_auth(requests_mock)
+        auth = create_auth()
         requests_mock.request(
             http_method,
             URL,
@@ -151,7 +146,7 @@ class TestAuth:
         assert response.text == RESPONSE_TEXT
 
     def test_fails_if_v1_api_request_fails(self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker):
-        auth = create_auth(requests_mock)
+        auth = create_auth()
 
         requests_mock.request(
             http_method,
@@ -175,7 +170,7 @@ class TestAuth:
         error: Optional[Dict],
         requests_mock: req_mock.Mocker,
     ):
-        auth = create_auth(requests_mock)
+        auth = create_auth()
         requests_mock.request(
             http_method,
             URL,
