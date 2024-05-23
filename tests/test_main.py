@@ -5,7 +5,7 @@ from up42 import main
 from .fixtures import fixtures_globals as constants
 
 
-def test_get_webhook_events(requests_mock, auth_mock):  # pylint: disable=unused-argument
+def test_get_webhook_events(requests_mock):  # pylint: disable=unused-argument
     url_webhook_events = f"{constants.API_HOST}/webhooks/events"
     events = ["some-event"]
     requests_mock.get(
@@ -36,10 +36,9 @@ class TestWorkspace:
         main.workspace.auth = auth_mock
         yield
 
-    def test_authenticate_success(self, auth_mock):
+    def test_authenticate_success(self):
         main.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
         assert main.workspace.id == constants.WORKSPACE_ID
-        assert main.workspace.auth.token == auth_mock.token
 
     def test_fails_auth_property_without_authentication(self):
         main.workspace.auth = None

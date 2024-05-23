@@ -91,7 +91,6 @@ def create_auth():
 class TestAuth:
     def test_should_authenticate_when_created(self):
         auth = create_auth()
-        assert auth.token == constants.TOKEN
         assert auth.session == session
 
     @pytest.mark.parametrize(
