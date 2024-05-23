@@ -421,6 +421,6 @@ def stac_client(auth: requests.auth.AuthBase):
     # requests.auth.AuthBase is a returning request modifier interface
     request_modifier = cast(Callable[[requests.Request], Optional[requests.Request]], auth)
     return pystac_client.Client.open(
-        url=host.endpoint("/v2/assets/stac"),
+        url=host.endpoint("/v2/assets/stac/"),
         request_modifier=request_modifier,
     )

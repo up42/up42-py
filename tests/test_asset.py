@@ -1,3 +1,4 @@
+import datetime
 import json
 import pathlib
 from typing import Dict, List, Optional
@@ -70,12 +71,70 @@ def test_asset_info(asset_mock):
     assert asset_mock.info["name"] == constants.JSON_ASSET["name"]
 
 
-def test_asset_stac_info(asset_mock):
-    results_stac_asset = asset_mock.stac_info
-    assert results_stac_asset
-    assert results_stac_asset.extra_fields["up42-system:asset_id"] == constants.ASSET_ID
-    pystac_items = asset_mock.stac_items
-    assert isinstance(pystac_items, pystac.ItemCollection)
+class TestStacMetadata:
+    def test_should_get_stac_items_with_retries(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
+        requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
+        requests_mock.post(
+            constants.URL_STAC_SEARCH,
+            [{"status_code": 401}, {"json": constants.STAC_SEARCH_RESPONSE}],
+        )
+        asset_obj = asset.Asset(auth_mock, asset_info={"id": constants.ASSET_ID})
+        expected = pystac.ItemCollection.from_dict(constants.STAC_SEARCH_RESPONSE)
+        assert asset_obj.stac_items.to_dict() == expected.to_dict()
+
+    def test_fails_to_get_stac_items_after_retries(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
+        requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
+        requests_mock.post(constants.URL_STAC_SEARCH, status_code=401)
+        asset_obj = asset.Asset(auth_mock, asset_info={"id": constants.ASSET_ID})
+        with pytest.raises(ValueError):
+            _ = asset_obj.stac_items
+
+    def test_should_get_stac_info_with_retries(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
+        requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
+        requests_mock.post(
+            constants.URL_STAC_SEARCH,
+            [{"status_code": 401}, {"json": constants.STAC_SEARCH_RESPONSE}],
+        )
+        expected = pystac.Collection(
+            id="up42-storage",
+            description="UP42 Storage STAC API",
+            extra_fields={"up42-system:asset_id": constants.ASSET_ID},
+            extent=pystac.Extent(
+                spatial=pystac.SpatialExtent(bboxes=[[1.0, 2.0, 3.0, 4.0]]),
+                temporal=pystac.TemporalExtent(intervals=[[datetime.datetime.now(), None]]),
+            ),
+        )
+        expected.add_link(
+            pystac.Link(
+                target=constants.URL_STAC_CATALOG,
+                rel="root",
+                title="UP42 Storage",
+                media_type=pystac.MediaType.JSON,
+            )
+        )
+        requests_mock.get(
+            url=f"{constants.API_HOST}/v2/assets/stac/collections/{constants.STAC_COLLECTION_ID}",
+            json=expected.to_dict(),
+        )
+        asset_obj = asset.Asset(auth_mock, asset_info={"id": constants.ASSET_ID})
+        assert asset_obj.stac_info.to_dict() == expected.to_dict()
+
+    def test_fails_to_get_stac_info_if_items_are_empty(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
+        requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
+        requests_mock.post(
+            constants.URL_STAC_SEARCH,
+            json={"type": "FeatureCollection", "features": []},
+        )
+        asset_obj = asset.Asset(auth_mock, asset_info={"id": constants.ASSET_ID})
+        with pytest.raises(ValueError):
+            _ = asset_obj.stac_info
+
+    def test_fails_to_get_stac_info_after_retries(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
+        requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
+        requests_mock.post(constants.URL_STAC_SEARCH, status_code=401)
+        asset_obj = asset.Asset(auth_mock, asset_info={"id": constants.ASSET_ID})
+        with pytest.raises(Exception):
+            _ = asset_obj.stac_info
 
 
 def match_request_body(data: Dict):
@@ -92,13 +151,19 @@ class TestAssetUpdateMetadata:
     @pytest.mark.parametrize("title", [None, "new-title"])
     @pytest.mark.parametrize("tags", [None, [], ["tag1", "tag2"]])
     def test_should_update_metadata(
-        self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker, title: Optional[str], tags: Optional[List[str]]
+        self,
+        auth_mock: up42_auth.Auth,
+        requests_mock: req_mock.Mocker,
+        title: Optional[str],
+        tags: Optional[List[str]],
     ):
         asset_obj = asset.Asset(auth_mock, asset_info=self.asset_info)
         update_payload = {"title": title, "tags": tags}
         expected_info = {**self.asset_info, **update_payload}
         requests_mock.post(
-            url=self.endpoint_url, json=expected_info, additional_matcher=match_request_body(update_payload)
+            url=self.endpoint_url,
+            json=expected_info,
+            additional_matcher=match_request_body(update_payload),
         )
         assert asset_obj.update_metadata(title=title, tags=tags) == expected_info
 
@@ -108,7 +173,9 @@ class TestAssetUpdateMetadata:
         update_payload = {"tags": tags}
         expected_info = {**self.asset_info, **update_payload}
         requests_mock.post(
-            url=self.endpoint_url, json=expected_info, additional_matcher=match_request_body(update_payload)
+            url=self.endpoint_url,
+            json=expected_info,
+            additional_matcher=match_request_body(update_payload),
         )
         assert asset_obj.update_metadata(tags=tags) == expected_info
 
@@ -118,7 +185,9 @@ class TestAssetUpdateMetadata:
         update_payload = {"title": title}
         expected_info = {**self.asset_info, **update_payload}
         requests_mock.post(
-            url=self.endpoint_url, json=expected_info, additional_matcher=match_request_body(update_payload)
+            url=self.endpoint_url,
+            json=expected_info,
+            additional_matcher=match_request_body(update_payload),
         )
         assert asset_obj.update_metadata(title=title) == expected_info
 

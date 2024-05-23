@@ -3,11 +3,14 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pystac
 import pystac_client
+import tenacity as tnc
 
 from up42 import auth as up42_auth
 from up42 import host, utils
 
 logger = utils.get_logger(__name__)
+
+RETRIES = 5
 
 MAX_ITEM = 50
 LIMIT = 50
@@ -68,7 +71,12 @@ class Asset:
         return stac_client, stac_client.search(filter=stac_search_parameters)
 
     @property
-    def stac_info(self) -> Optional[pystac.Collection]:
+    @tnc.retry(
+        stop=tnc.stop_after_attempt(RETRIES),
+        wait=tnc.wait_exponential(multiplier=1),
+        reraise=True,
+    )
+    def stac_info(self) -> Union[pystac.Collection, pystac_client.CollectionClient]:
         """
         Gets the storage STAC information for the asset as a FeatureCollection.
         One asset can contain multiple STAC items (e.g. the PAN and multispectral images).
@@ -80,6 +88,11 @@ class Asset:
         return stac_client.get_collection(items[0].collection_id)
 
     @property
+    @tnc.retry(
+        stop=tnc.stop_after_attempt(RETRIES),
+        wait=tnc.wait_exponential(multiplier=1),
+        reraise=True,
+    )
     def stac_items(self) -> pystac.ItemCollection:
         """Returns the stac items from an UP42 asset STAC representation."""
         try:
