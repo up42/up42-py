@@ -57,11 +57,10 @@ __all__ = [
         initialize_order,
         initialize_asset,
         initialize_webhook,
+        authenticate,
         get_webhooks,
         create_webhook,
         get_webhook_events,
         get_credits_balance,
-        authenticate,
     ]
-    if hasattr(obj, "__name__")
 ]
