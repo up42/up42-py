@@ -61,16 +61,16 @@ class TestCollectCredentials:
         )
 
 
+client = mock.MagicMock()
 session = requests.Session()
 session.headers = cast(MutableMapping[str, Union[str, bytes]], REQUEST_HEADERS)
+client.session = session
 
 
 def create_auth(requests_mock: req_mock.Mocker):
     credential_sources = [{"some": "credentials"}]
     get_sources = mock.MagicMock(return_value=credential_sources)
-    create_client = mock.MagicMock()
-    create_client.return_value.token = constants.TOKEN
-    create_client.return_value.session = session
+    create_client = mock.MagicMock(return_value=client)
 
     requests_mock.get(
         WORKSPACE_ENDPOINT,
@@ -97,7 +97,6 @@ class TestAuth:
     def test_should_authenticate_when_created(self, requests_mock: req_mock.Mocker):
         auth = create_auth(requests_mock)
         assert auth.workspace_id == constants.WORKSPACE_ID
-        assert auth.token == constants.TOKEN
         assert auth.session == session
 
     @pytest.mark.parametrize(

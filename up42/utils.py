@@ -9,15 +9,18 @@ import tarfile
 import tempfile
 import warnings
 import zipfile
-from typing import List, Optional, Union, cast
+from typing import Callable, List, Optional, Union, cast
 from urllib import parse
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
+import pystac_client
 import requests
 import shapely  # type: ignore
 import tqdm
 from shapely import geometry  # type: ignore
+
+from up42 import host
 
 TIMEOUT = 120  # seconds
 CHUNK_SIZE = 1024
@@ -411,3 +414,13 @@ def read_json(path_or_dict: Union[dict, str, pathlib.Path, None]) -> Optional[di
         except FileNotFoundError as ex:
             raise ValueError(f"File {path_or_dict} does not exist!") from ex
     return cast(Optional[dict], path_or_dict)
+
+
+def stac_client(auth: requests.auth.AuthBase):
+    # pystac client accepts both returning and non-returning request modifiers
+    # requests.auth.AuthBase is a returning request modifier interface
+    request_modifier = cast(Callable[[requests.Request], Optional[requests.Request]], auth)
+    return pystac_client.Client.open(
+        url=host.endpoint("/v2/assets/stac"),
+        request_modifier=request_modifier,
+    )
