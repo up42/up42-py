@@ -63,4 +63,5 @@ __all__ = [
         get_webhook_events,
         get_credits_balance,
     ]
+    if hasattr(obj, "__name__")
 ]
