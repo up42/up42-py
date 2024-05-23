@@ -27,11 +27,9 @@ class TestCreate:
         detected_settings: List[Optional[Dict]],
     ):
         detect_settings = mock.MagicMock(side_effect=detected_settings)
-        access_token = "some-token"
         retrieve = mock.sentinel.some_object
         detect_retriever = mock.MagicMock(return_value=retrieve)
         auth = mock.MagicMock()
-        auth.token.access_token = access_token
         create_auth = mock.MagicMock(return_value=auth)
         session = mock.MagicMock()
         create_session = mock.MagicMock(return_value=session)
@@ -43,7 +41,6 @@ class TestCreate:
             create_auth=create_auth,
             create_session=create_session,
         )
-        assert result.token == access_token
         assert result.auth == auth
         assert result.session == session
         detect_settings.assert_has_calls([mock.call(source) for source in sources])

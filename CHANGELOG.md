@@ -30,10 +30,30 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 1.0.4a1
+
+**May 24, 2024**
+- Bumped dependencies `requests` from 2.31.0 to 2.32.0.
+
+## 1.0.3
+
+**May 23, 2024**
+- Added tenacity as dependency.
+- Added resilience on `asset::stac_info` and `asset::stac_items`
+- Dropped pystac client subclassing
+- Cleaned up fixtures
+- Improved test coverage
+- Dropped unneeded exposure of token
+
 ## 1.0.3a1
 
-**May 21, 2024**
-- Bumped dependencies requests.
+**May 23, 2024**
+- Added tenacity as dependency.
+- Added resilience on `asset::stac_info` and `asset::stac_items`
+- Dropped pystac client subclassing
+- Cleaned up fixtures
+- Improved test coverage
+- Dropped unneeded exposure of token
 
 ## 1.0.2
 

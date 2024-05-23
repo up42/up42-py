@@ -3,9 +3,10 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pystac
 import pystac_client
+import tenacity as tnc
 
 from up42 import auth as up42_auth
-from up42 import host, stac_client, utils
+from up42 import host, utils
 
 logger = utils.get_logger(__name__)
 
@@ -13,6 +14,11 @@ MAX_ITEM = 50
 LIMIT = 50
 
 NOT_PROVIDED = object()
+_retry = tnc.retry(
+    stop=tnc.stop_after_attempt(5),
+    wait=tnc.wait_exponential(multiplier=1),
+    reraise=True,
+)
 
 
 class Asset:
@@ -52,10 +58,8 @@ class Asset:
         url = host.endpoint(f"/v2/assets/{asset_id}/metadata")
         return self.auth.request(request_type="GET", url=url)
 
-    @property
     def _stac_search(self) -> Tuple[pystac_client.Client, pystac_client.ItemSearch]:
-        url = host.endpoint("/v2/assets/stac")
-        pystac_client_aux = stac_client.PySTACAuthClient(auth=self.auth).open(url=url)
+        stac_client = utils.stac_client(self.auth.client.auth)
         stac_search_parameters = {
             "max_items": MAX_ITEM,
             "limit": LIMIT,
@@ -67,29 +71,28 @@ class Asset:
                 ],
             },
         }
-        pystac_asset_search = pystac_client_aux.search(filter=stac_search_parameters)
-        return (pystac_client_aux, pystac_asset_search)
+        return stac_client, stac_client.search(filter=stac_search_parameters)
 
     @property
-    def stac_info(self) -> Optional[pystac.Collection]:
+    @_retry
+    def stac_info(self) -> Union[pystac.Collection, pystac_client.CollectionClient]:
         """
         Gets the storage STAC information for the asset as a FeatureCollection.
         One asset can contain multiple STAC items (e.g. the PAN and multispectral images).
         """
-        pystac_client_aux, pystac_asset_search = self._stac_search
-        resulting_item = pystac_asset_search.item_collection()
-        if resulting_item is None:
+        stac_client, stac_search = self._stac_search()
+        items = stac_search.item_collection()
+        if not items:
             raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}")
-        collection_id = resulting_item[0].collection_id
-        return pystac_client_aux.get_collection(collection_id)
+        return stac_client.get_collection(items[0].collection_id)
 
     @property
+    @_retry
     def stac_items(self) -> pystac.ItemCollection:
         """Returns the stac items from an UP42 asset STAC representation."""
         try:
-            _, pystac_asset_search = self._stac_search
-            resulting_items = pystac_asset_search.item_collection()
-            return resulting_items
+            _, stac_search = self._stac_search()
+            return stac_search.item_collection()
         except Exception as exc:
             raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}") from exc
 
@@ -165,17 +168,11 @@ class Asset:
         logger.info("Download directory: %s", output_directory)
 
         download_url = self._get_download_url()
-        if unpacking:
-            out_filepaths = utils.download_archive(
-                download_url=download_url,
-                output_directory=output_directory,
-            )
-        else:
-            out_filepaths = utils.download_file(
-                download_url=download_url,
-                output_directory=output_directory,
-            )
-
+        download = utils.download_archive if unpacking else utils.download_file
+        out_filepaths = download(
+            download_url=download_url,
+            output_directory=output_directory,
+        )
         self.results = out_filepaths
         return out_filepaths
 
