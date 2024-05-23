@@ -34,7 +34,7 @@ class _Workspace:
         cfg_file: Optional[Union[str, pathlib.Path]] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
-    ):
+    ) -> None:
         """
         Authenticate with UP42, either using account credentials or a config JSON file
         containing the corresponding credentials.

@@ -49,6 +49,12 @@ __all__ = [
         Storage,
         Tasking,
         Webhook,
+    ]
+]
+
+__all__.extend(
+    obj.__name__
+    for obj in [
         get_example_aoi,
         read_vector_file,
         initialize_catalog,
@@ -63,5 +69,4 @@ __all__ = [
         get_webhook_events,
         get_credits_balance,
     ]
-    if hasattr(obj, "__name__")
-]
+)
