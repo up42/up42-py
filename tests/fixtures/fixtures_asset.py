@@ -1,8 +1,5 @@
-import datetime
 import pathlib
 
-import pystac
-import pystac_client
 import pytest
 
 from up42 import asset
@@ -16,32 +13,6 @@ def _asset_mock(auth_mock, requests_mock):
     url_asset_info = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
     requests_mock.get(url=url_asset_info, json=constants.JSON_ASSET)
 
-    mock_item_collection = pystac.ItemCollection(
-        items=[
-            pystac.Item(
-                id="test",
-                geometry=None,
-                properties={},
-                bbox=None,
-                datetime=datetime.datetime.now(),
-            )
-        ]
-    )
-
-    url_asset_stac_info = f"{constants.API_HOST}/v2/assets/stac/search"
-
-    requests_mock.post(
-        url_asset_stac_info,
-        [
-            {"json": constants.JSON_STORAGE_STAC},
-            {"json": constants.JSON_STORAGE_STAC},
-            {"json": mock_item_collection.to_dict()},
-        ],
-    )
-
-    # asset stac item
-    requests_mock.get(url=constants.URL_STAC_CATALOG, json=constants.JSON_STAC_CATALOG_RESPONSE)
-
     # asset update
     updated_json_asset = constants.JSON_ASSET.copy()
     updated_json_asset["title"] = "some_other_title"
@@ -52,37 +23,6 @@ def _asset_mock(auth_mock, requests_mock):
     requests_mock.post(
         url=f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/download-url",
         json={"url": constants.DOWNLOAD_URL},
-    )
-
-    # stac_info url
-    mock_client = pystac_client.CollectionClient(
-        id="up42-storage",
-        description="UP42 Storage STAC API",
-        extra_fields={"up42-system:asset_id": constants.ASSET_ID},
-        extent=pystac.Extent(
-            spatial=pystac.SpatialExtent(
-                bboxes=[
-                    [
-                        13.3783333333333,
-                        52.4976111111112,
-                        13.3844444444445,
-                        52.5017222222223,
-                    ]
-                ]
-            ),
-            temporal=pystac.TemporalExtent(
-                intervals=[
-                    [
-                        datetime.datetime(2021, 5, 31),
-                        datetime.datetime(2021, 5, 31),
-                    ]
-                ]
-            ),
-        ),
-    )
-    requests_mock.get(
-        url=f"{constants.API_HOST}/v2/assets/stac/collections/{constants.STAC_COLLECTION_ID}",
-        json=mock_client.to_dict(),
     )
 
     return asset.Asset(auth=auth_mock, asset_id=constants.ASSET_ID)
