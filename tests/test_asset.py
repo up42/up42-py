@@ -119,19 +119,18 @@ class TestStacMetadata:
         asset_obj = asset.Asset(auth_mock, asset_info={"id": constants.ASSET_ID})
         assert asset_obj.stac_info.to_dict() == expected.to_dict()
 
-    def test_fails_to_get_stac_info_if_items_are_empty(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
+    @pytest.mark.parametrize(
+        "response",
+        [
+            {"status_code": 401},
+            {"json": {"type": "FeatureCollection", "features": []}},
+        ],
+    )
+    def test_fails_to_get_stac_info_after_retries(
+        self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker, response: dict
+    ):
         requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
-        requests_mock.post(
-            constants.URL_STAC_SEARCH,
-            json={"type": "FeatureCollection", "features": []},
-        )
-        asset_obj = asset.Asset(auth_mock, asset_info={"id": constants.ASSET_ID})
-        with pytest.raises(ValueError):
-            _ = asset_obj.stac_info
-
-    def test_fails_to_get_stac_info_after_retries(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
-        requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
-        requests_mock.post(constants.URL_STAC_SEARCH, status_code=401)
+        requests_mock.post(constants.URL_STAC_SEARCH, [response])
         asset_obj = asset.Asset(auth_mock, asset_info={"id": constants.ASSET_ID})
         with pytest.raises(Exception):
             _ = asset_obj.stac_info

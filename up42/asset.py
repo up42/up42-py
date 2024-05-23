@@ -10,12 +10,15 @@ from up42 import host, utils
 
 logger = utils.get_logger(__name__)
 
-RETRIES = 5
-
 MAX_ITEM = 50
 LIMIT = 50
 
 NOT_PROVIDED = object()
+_retry = tnc.retry(
+    stop=tnc.stop_after_attempt(5),
+    wait=tnc.wait_exponential(multiplier=1),
+    reraise=True,
+)
 
 
 class Asset:
@@ -71,11 +74,7 @@ class Asset:
         return stac_client, stac_client.search(filter=stac_search_parameters)
 
     @property
-    @tnc.retry(
-        stop=tnc.stop_after_attempt(RETRIES),
-        wait=tnc.wait_exponential(multiplier=1),
-        reraise=True,
-    )
+    @_retry
     def stac_info(self) -> Union[pystac.Collection, pystac_client.CollectionClient]:
         """
         Gets the storage STAC information for the asset as a FeatureCollection.
@@ -88,11 +87,7 @@ class Asset:
         return stac_client.get_collection(items[0].collection_id)
 
     @property
-    @tnc.retry(
-        stop=tnc.stop_after_attempt(RETRIES),
-        wait=tnc.wait_exponential(multiplier=1),
-        reraise=True,
-    )
+    @_retry
     def stac_items(self) -> pystac.ItemCollection:
         """Returns the stac items from an UP42 asset STAC representation."""
         try:
