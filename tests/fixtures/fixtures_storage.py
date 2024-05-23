@@ -8,16 +8,14 @@ from . import fixtures_globals as constants
 @pytest.fixture()
 def storage_mock(auth_mock, requests_mock):
     # pystac client authentication
-    url_pystac_client = f"{constants.API_HOST}/v2/assets/stac"
-    requests_mock.get(url=url_pystac_client, json=constants.PYSTAC_MOCK_CLIENT)
+    requests_mock.get(url=constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
 
     # assets
     url_storage_assets = f"{constants.API_HOST}/v2/assets"
     requests_mock.get(url=url_storage_assets, json=constants.JSON_ASSETS)
 
     # storage stac
-    url_storage_stac = f"{constants.API_HOST}/v2/assets/stac/search"
-    requests_mock.post(url=url_storage_stac, json=constants.JSON_STORAGE_STAC)
+    requests_mock.post(url=constants.URL_STAC_SEARCH, json=constants.STAC_SEARCH_RESPONSE)
 
     # asset info
     url_asset_info = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"

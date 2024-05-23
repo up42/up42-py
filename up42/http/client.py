@@ -14,10 +14,6 @@ class Client:
         self.auth = auth
         self.session = create_session(auth)
 
-    @property
-    def token(self) -> str:
-        return self.auth.token.access_token
-
 
 def _merge(
     left: Optional[config.CredentialsSettings],

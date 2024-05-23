@@ -51,6 +51,9 @@ STAC_COLLECTION_ID = "e459db4c-3b9d-4aa1-8931-5df2517b49ba"
 
 WEBHOOK_ID = "123"
 
+URL_STAC_CATALOG = "https://api.up42.com/v2/assets/stac/"
+URL_STAC_SEARCH = "https://api.up42.com/v2/assets/stac/search"
+
 JSON_ASSET = {
     "accountId": "69353acb-f942-423f-8f32-11d6d67caa77",
     "createdAt": "2022-12-07T14:25:34.968Z",
@@ -91,25 +94,7 @@ JSON_ASSETS = {
     "empty": False,
 }
 
-JSON_STORAGE_STAC = {
-    "links": [
-        {
-            "href": "https://api.up42.com/v2/assets/stac/",
-            "rel": "root",
-            "type": "application/json",
-        },
-        {
-            "href": "https://api.up42.com/v2/assets/stac/search",
-            "rel": "next",
-            "type": "application/json",
-            "body": {
-                "sortby": [{"field": "bbox", "direction": "desc"}],
-                "filter": {},
-                "token": "next:12345",
-            },
-            "method": "POST",
-        },
-    ],
+STAC_SEARCH_RESPONSE = {
     "type": "FeatureCollection",
     "features": [
         {
@@ -132,9 +117,10 @@ JSON_STORAGE_STAC = {
                     "type": "application/json",
                 },
                 {
-                    "href": "https://api.up42.com/v2/assets/stac/",
+                    "href": URL_STAC_CATALOG,
                     "rel": "root",
                     "type": "application/json",
+                    "title": "UP42 Storage",
                 },
             ],
             "stac_extensions": [
@@ -181,7 +167,7 @@ JSON_STORAGE_STAC = {
 }
 
 
-PYSTAC_MOCK_CLIENT = mock_pystac_client = {
+STAC_CATALOG_RESPONSE = {
     "conformsTo": [
         "https://api.stacspec.org/v1.0.0-rc.1/item-search#sort",
         "https://api.stacspec.org/v1.0.0-rc.1/collections",
@@ -201,12 +187,12 @@ PYSTAC_MOCK_CLIENT = mock_pystac_client = {
     ],
     "links": [
         {
-            "href": "https://api.up42.com/v2/assets/stac/",
+            "href": URL_STAC_CATALOG,
             "rel": "self",
             "type": "application/json",
         },
         {
-            "href": "https://api.up42.com/v2/assets/stac/",
+            "href": URL_STAC_CATALOG,
             "rel": "root",
             "type": "application/json",
         },
@@ -216,7 +202,7 @@ PYSTAC_MOCK_CLIENT = mock_pystac_client = {
             "type": "application/json",
         },
         {
-            "href": "https://api.up42.com/v2/assets/stac/search",
+            "href": URL_STAC_SEARCH,
             "rel": "search",
             "type": "application/json",
             "method": "POST",
@@ -285,56 +271,3 @@ JSON_WEBHOOK = {
 }
 
 JSON_BALANCE = {"data": {"balance": 10693}}
-
-
-URL_STAC_CATALOG = "https://api.up42.com/v2/assets/stac"
-
-JSON_STAC_CATALOG_RESPONSE = {
-    "type": "Catalog",
-    "id": "up42-storage",
-    "stac_version": "1.0.0",
-    "description": "UP42 Storage STAC API",
-    "links": [
-        {
-            "rel": "root",
-            "href": "https://api.up42.com/v2/assets/stac",
-            "type": "application/json",
-            "title": "UP42 Storage",
-        },
-        {
-            "rel": "data",
-            "href": "https://api.up42.com/v2/assets/stac/collections",
-            "type": "application/json",
-        },
-        {
-            "rel": "search",
-            "href": "https://api.up42.com/v2/assets/stac/search",
-            "type": "application/json",
-            "method": "POST",
-        },
-        {
-            "rel": "self",
-            "href": "https://api.up42.com/v2/assets/stac",
-            "type": "application/json",
-        },
-    ],
-    "stac_extensions": [],
-    "conformsTo": [
-        "https://api.stacspec.org/v1.0.0-rc.1/collections",
-        "https://api.stacspec.org/v1.0.0-rc.1/core",
-        "http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/features-filter",
-        "http://www.opengis.net/spec/ogcapi-features-4/1.0/conf/simpletx",
-        "https://api.stacspec.org/v1.0.0-rc.1/item-search#filter",
-        "http://www.opengis.net/spec/cql2/1.0/conf/cql2-text",
-        "https://api.stacspec.org/v1.0.0-rc.1/item-search",
-        "https://api.stacspec.org/v1.0.0-rc.1/ogcapi-features/extensions/transaction",
-        "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core",
-        "http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/filter",
-        "http://www.opengis.net/spec/cql2/1.0/conf/basic-cql2",
-        "https://api.stacspec.org/v1.0.0-rc.1/ogcapi-features",
-        "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson",
-        "https://api.stacspec.org/v1.0.0-rc.1/item-search#sort",
-        "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30",
-    ],
-    "title": "UP42 Storage",
-}

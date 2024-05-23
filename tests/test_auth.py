@@ -60,16 +60,16 @@ class TestCollectCredentials:
         )
 
 
+client = mock.MagicMock()
 session = requests.Session()
 session.headers = cast(MutableMapping[str, Union[str, bytes]], REQUEST_HEADERS)
+client.session = session
 
 
 def create_auth():
     credential_sources = [{"some": "credentials"}]
     get_sources = mock.MagicMock(return_value=credential_sources)
-    create_client = mock.MagicMock()
-    create_client.return_value.token = constants.TOKEN
-    create_client.return_value.session = session
+    create_client = mock.MagicMock(return_value=client)
 
     auth = up42_auth.Auth(
         cfg_file=CONFIG_FILE,

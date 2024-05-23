@@ -10,7 +10,7 @@ from shapely import geometry as shp_geometry  # type: ignore
 
 from up42 import asset, asset_searcher
 from up42 import auth as up42_auth
-from up42 import host, main, order, stac_client, utils
+from up42 import host, main, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -48,9 +48,7 @@ class Storage:
 
     @property
     def pystac_client(self):
-        url = host.endpoint("/v2/assets/stac")
-        pystac_client_auth = stac_client.PySTACAuthClient(auth=self.auth).open(url=url)
-        return pystac_client_auth
+        return utils.stac_client(self.auth.client.auth)
 
     def get_assets(
         self,

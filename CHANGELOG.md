@@ -37,6 +37,26 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Changing use of Auth Class for the workspace.auth property where required.
 
 
+## 1.0.3
+
+**May 23, 2024**
+- Added tenacity as dependency.
+- Added resilience on `asset::stac_info` and `asset::stac_items`
+- Dropped pystac client subclassing
+- Cleaned up fixtures
+- Improved test coverage
+- Dropped unneeded exposure of token
+
+## 1.0.3a1
+
+**May 23, 2024**
+- Added tenacity as dependency.
+- Added resilience on `asset::stac_info` and `asset::stac_items`
+- Dropped pystac client subclassing
+- Cleaned up fixtures
+- Improved test coverage
+- Dropped unneeded exposure of token
+
 
 ## 1.0.2
 
