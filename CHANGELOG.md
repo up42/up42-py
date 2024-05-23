@@ -55,6 +55,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Improved test coverage
 - Dropped unneeded exposure of token
 
+
 ## 1.0.2
 
 **May 15, 2024**
