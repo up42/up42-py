@@ -37,6 +37,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Changing use of Auth Class for the workspace.auth property where required.
 
 
+## 1.0.4a1
+
+**May 24, 2024**
+- Bumped dependencies `requests` from 2.31.0 to 2.32.0.
+
 ## 1.0.3
 
 **May 23, 2024**
