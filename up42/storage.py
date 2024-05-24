@@ -39,9 +39,9 @@ class Storage:
     ```
     """
 
-    def __init__(self, auth: up42_auth.Auth):
+    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         self.auth = auth
-        self.workspace_id = auth.workspace_id
+        self.workspace_id = workspace_id
 
     def __repr__(self):
         return f"Storage(workspace_id: {self.workspace_id})"

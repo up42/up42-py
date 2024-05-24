@@ -17,9 +17,15 @@ class Webhook:
     ```
     """
 
-    def __init__(self, auth: up42_auth.Auth, webhook_id: str, webhook_info: Optional[dict] = None):
+    def __init__(
+        self,
+        auth: up42_auth.Auth,
+        workspace_id: str,
+        webhook_id: str,
+        webhook_info: Optional[dict] = None,
+    ):
         self.auth = auth
-        self.workspace_id = auth.workspace_id
+        self.workspace_id = workspace_id
         self.webhook_id = webhook_id
         if webhook_info is not None:
             self._info = webhook_info
@@ -114,9 +120,9 @@ class Webhooks:
     ```
     """
 
-    def __init__(self, auth: up42_auth.Auth):
+    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         self.auth = auth
-        self.workspace_id = auth.workspace_id
+        self.workspace_id = workspace_id
 
     def get_webhook_events(self) -> dict:
         """
@@ -147,6 +153,7 @@ class Webhooks:
         webhooks = [
             Webhook(
                 auth=self.auth,
+                workspace_id=self.workspace_id,
                 webhook_id=webhook_info["id"],
                 webhook_info=webhook_info,
             )
@@ -186,6 +193,7 @@ class Webhooks:
         response_json = self.auth.request(request_type="POST", url=url_post, data=input_parameters)
         webhook = Webhook(
             auth=self.auth,
+            workspace_id=self.workspace_id,
             webhook_id=response_json["data"]["id"],
             webhook_info=response_json["data"],
         )

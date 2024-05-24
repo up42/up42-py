@@ -1,8 +1,7 @@
-import functools
 import logging
 import pathlib
 import warnings
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from up42 import auth as up42_auth
 from up42 import host, utils, webhooks
@@ -11,54 +10,59 @@ logger = utils.get_logger(__name__, level=logging.INFO)
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-_auth: Optional[up42_auth.Auth] = None
+
+class UserNotAuthenticated(ValueError):
+    pass
 
 
-def authenticate(
-    cfg_file: Optional[Union[str, pathlib.Path]] = None,
-    username: Optional[str] = None,
-    password: Optional[str] = None,
-):
-    """
-    Authenticate with UP42, either using account credentials or a config JSON file
-    containing the corresponding credentials.
-    Also see the documentation https://sdk.up42.com/authentication/
-
-    Args:
-        cfg_file: File path to the cfg.json with {username: "...", password: "..."}.
-        username: The username for the UP42 account (email UP42 console).
-        password: Password for the UP42 console login.
-    """
-    global _auth
-    _auth = up42_auth.Auth(
-        cfg_file=cfg_file,
-        username=username,
-        password=password,
-    )
+def _authenticated(value: Any):
+    if value:
+        return value
+    raise UserNotAuthenticated("User not authenticated.")
 
 
-def get_auth_safely() -> up42_auth.Auth:
-    if _auth:
-        return _auth
-    raise ValueError("User not authenticated.")
+class _Workspace:
+    _auth: Optional[up42_auth.Auth] = None
+    _id: Optional[str] = None
+
+    @property
+    def auth(self):
+        return _authenticated(self._auth)
+
+    @property
+    def id(self):
+        return _authenticated(self._id)
+
+    def authenticate(
+        self,
+        cfg_file: Optional[Union[str, pathlib.Path]] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+    ):
+        """
+        Authenticate with UP42, either using account credentials or a config JSON file
+        containing the corresponding credentials.
+
+        Args:
+            cfg_file: File path to the cfg.json with {username: "...", password: "..."}.
+            username: The username for the UP42 account (email UP42 console).
+            password: Password for the UP42 console login.
+        """
+        self._auth = up42_auth.Auth(
+            cfg_file=cfg_file,
+            username=username,
+            password=password,
+        )
+        url = host.endpoint("/users/me")
+        resp = self.auth.request("GET", url)
+        self._id = resp["data"]["id"]
 
 
-def check_auth(func):
-    """
-    Some functionality of the up42 import object can theoretically be used
-    before authentication with UP42, so the auth needs to be checked first.
-    """
+workspace = _Workspace()
 
-    @functools.wraps(func)  # required for mkdocstrings
-    def inner(*args, **kwargs):
-        if _auth is None:
-            raise RuntimeError("Not authenticated, call up42.authenticate() first")
-        return func(*args, **kwargs)
-
-    return inner
+authenticate = workspace.authenticate
 
 
-@check_auth
 def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
     """
     Gets all registered webhooks for this workspace.
@@ -68,10 +72,9 @@ def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
     Returns:
         A list of the registered webhooks for this workspace.
     """
-    return webhooks.Webhooks(auth=get_auth_safely()).get_webhooks(return_json=return_json)
+    return webhooks.Webhooks(auth=workspace.auth, workspace_id=workspace.id).get_webhooks(return_json=return_json)
 
 
-@check_auth
 def create_webhook(
     name: str,
     url: str,
@@ -91,12 +94,11 @@ def create_webhook(
     Returns:
         A dict with details of the registered webhook.
     """
-    return webhooks.Webhooks(auth=get_auth_safely()).create_webhook(
+    return webhooks.Webhooks(auth=workspace.auth, workspace_id=workspace.id).create_webhook(
         name=name, url=url, events=events, active=active, secret=secret
     )
 
 
-@check_auth
 def get_webhook_events() -> dict:
     """
     Gets all available webhook events.
@@ -104,10 +106,9 @@ def get_webhook_events() -> dict:
     Returns:
         A dict of the available webhook events.
     """
-    return webhooks.Webhooks(auth=get_auth_safely()).get_webhook_events()
+    return webhooks.Webhooks(auth=workspace.auth, workspace_id=workspace.id).get_webhook_events()
 
 
-@check_auth
 def get_credits_balance() -> dict:
     """
     Display the overall credits available in your account.
@@ -116,5 +117,5 @@ def get_credits_balance() -> dict:
         A dict with the balance of credits available in your account.
     """
     endpoint_url = host.endpoint("/accounts/me/credits/balance")
-    response_json = get_auth_safely().request(request_type="GET", url=endpoint_url)
+    response_json = workspace.auth.request(request_type="GET", url=endpoint_url)
     return response_json["data"]

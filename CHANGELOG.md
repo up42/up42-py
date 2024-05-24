@@ -29,6 +29,13 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.0.4a2
+
+**May 24, 2024**
+
+- Added workspace singleton in `main.py`, encapsulating global state (auth, workspace id).
+- Inject auth and workspace id instead of passing a containing object.
+
 
 ## 1.0.4a1
 

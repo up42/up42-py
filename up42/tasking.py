@@ -1,6 +1,7 @@
 """
 Tasking functionality
 """
+
 import datetime
 from typing import List, Optional, Union
 
@@ -24,8 +25,8 @@ class Tasking(catalog.CatalogBase):
     ```
     """
 
-    def __init__(self, auth: up42_auth.Auth):
-        super().__init__(auth)
+    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
+        super().__init__(auth, workspace_id)
         self.type = "TASKING"
 
     def construct_order_parameters(

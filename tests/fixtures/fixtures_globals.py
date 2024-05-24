@@ -269,5 +269,3 @@ JSON_WEBHOOK = {
         "updatedAt": "2022-06-20T04:05:31.755744Z",
     }
 }
-
-JSON_BALANCE = {"data": {"balance": 10693}}

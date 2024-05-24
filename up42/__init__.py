@@ -17,6 +17,8 @@
     ```
 """
 
+from typing import Callable, Type, Union, cast
+
 # pylint: disable=only-importing-modules-is-allowed
 from up42.asset import Asset
 from up42.auth import Auth
@@ -38,9 +40,11 @@ from up42.utils import get_up42_py_version
 from up42.webhooks import Webhook
 
 __version__ = get_up42_py_version()
-
 __all__ = [
-    obj.__name__
+    cast(
+        Union[Type, Callable],
+        obj,
+    ).__name__
     for obj in [
         Asset,
         Auth,

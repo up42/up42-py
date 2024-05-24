@@ -129,7 +129,7 @@ class Order:
         raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
-    def place(cls, auth: up42_auth.Auth, order_parameters: dict) -> "Order":
+    def place(cls, auth: up42_auth.Auth, order_parameters: dict, workspace_id: str) -> "Order":
         """
         Places an order.
 
@@ -140,7 +140,7 @@ class Order:
         Returns:
             Order: The placed order.
         """
-        url = host.endpoint(f"/v2/orders?workspaceId={auth.workspace_id}")
+        url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
         response_json = auth.request(
             request_type="POST",
             url=url,
@@ -175,7 +175,9 @@ class Order:
         )
         estimated_credits: int = response_json["summary"]["totalCredits"]
         logger.info(
-            "Order is estimated to cost %s UP42 credits (order_parameters: %s)", estimated_credits, order_parameters
+            "Order is estimated to cost %s UP42 credits (order_parameters: %s)",
+            estimated_credits,
+            order_parameters,
         )
         return estimated_credits
 

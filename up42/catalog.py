@@ -22,8 +22,9 @@ class CatalogBase:
     The base for Catalog and Tasking class, shared functionality.
     """
 
-    def __init__(self, auth: up42_auth.Auth):
+    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         self.auth = auth
+        self.workspace_id = workspace_id
         self.type: Optional[str] = None
 
     def get_data_products(self, basic: bool = True) -> Union[Dict, List[Dict]]:
@@ -150,7 +151,7 @@ class CatalogBase:
             warnings.warn(message, DeprecationWarning, stacklevel=2)
         elif order_parameters is None:
             raise ValueError("Please provide the 'order_parameters' parameter!")
-        placed_order = order.Order.place(self.auth, order_parameters)  # type: ignore
+        placed_order = order.Order.place(self.auth, order_parameters, self.workspace_id)  # type: ignore
         if track_status:
             placed_order.track_status(report_time)
         return placed_order
@@ -170,8 +171,8 @@ class Catalog(CatalogBase):
     [CatalogBase](catalogbase-reference.md) class.
     """
 
-    def __init__(self, auth: up42_auth.Auth):
-        super().__init__(auth)
+    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
+        super().__init__(auth, workspace_id)
         self.quicklooks: Optional[List[str]] = None
         self.type: str = "ARCHIVE"
         self.data_products: Optional[Dict] = None

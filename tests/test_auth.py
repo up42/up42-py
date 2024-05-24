@@ -13,7 +13,6 @@ from .fixtures import fixtures_globals as constants
 
 CONFIG_FILE = "some-config-file"
 TOKEN_ENDPOINT = constants.API_HOST + "/oauth/token"
-WORKSPACE_ENDPOINT = constants.API_HOST + "/users/me"
 URL = constants.API_HOST + "/some-url"
 RESPONSE_TEXT = "some-response-text"
 ERROR = {"some": "error"}
@@ -67,37 +66,29 @@ session.headers = cast(MutableMapping[str, Union[str, bytes]], REQUEST_HEADERS)
 client.session = session
 
 
-def create_auth(requests_mock: req_mock.Mocker):
-    credential_sources = [{"some": "credentials"}]
-    get_sources = mock.MagicMock(return_value=credential_sources)
-    create_client = mock.MagicMock(return_value=client)
-
-    requests_mock.get(
-        WORKSPACE_ENDPOINT,
-        json={"data": {"id": constants.WORKSPACE_ID}},
-    )
-    auth = up42_auth.Auth(
-        cfg_file=CONFIG_FILE,
-        username=constants.USER_EMAIL,
-        password=constants.PASSWORD,
-        get_credential_sources=get_sources,
-        create_client=create_client,
-    )
-
-    get_sources.assert_called_once_with(
-        CONFIG_FILE,
-        constants.USER_EMAIL,
-        constants.PASSWORD,
-    )
-    create_client.assert_called_once_with(credential_sources, TOKEN_ENDPOINT)
-    return auth
-
-
 class TestAuth:
-    def test_should_authenticate_when_created(self, requests_mock: req_mock.Mocker):
-        auth = create_auth(requests_mock)
-        assert auth.workspace_id == constants.WORKSPACE_ID
-        assert auth.session == session
+    def setup_method(self, _):
+        credential_sources = [{"some": "credentials"}]
+        get_sources = mock.MagicMock(return_value=credential_sources)
+        create_client = mock.MagicMock(return_value=client)
+
+        self.auth = up42_auth.Auth(
+            cfg_file=CONFIG_FILE,
+            username=constants.USER_EMAIL,
+            password=constants.PASSWORD,
+            get_credential_sources=get_sources,
+            create_client=create_client,
+        )
+
+        get_sources.assert_called_once_with(
+            CONFIG_FILE,
+            constants.USER_EMAIL,
+            constants.PASSWORD,
+        )
+        create_client.assert_called_once_with(credential_sources, TOKEN_ENDPOINT)
+
+    def test_should_authenticate_when_created(self):
+        assert self.auth.session == session
 
     @pytest.mark.parametrize(
         "expected",
@@ -114,7 +105,6 @@ class TestAuth:
         expected: dict,
         requests_mock: req_mock.Mocker,
     ):
-        auth = create_auth(requests_mock)
         requests_mock.request(
             http_method,
             URL,
@@ -122,12 +112,11 @@ class TestAuth:
             json=expected,
             additional_matcher=match_request_body(request_data),
         )
-        assert auth.request(http_method, URL, request_data) == expected
+        assert self.auth.request(http_method, URL, request_data) == expected
 
     def test_should_pass_text_for_text_response(
         self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker
     ):
-        auth = create_auth(requests_mock)
         requests_mock.request(
             http_method,
             URL,
@@ -135,10 +124,9 @@ class TestAuth:
             text=RESPONSE_TEXT,
             additional_matcher=match_request_body(request_data),
         )
-        assert auth.request(http_method, URL, request_data) == RESPONSE_TEXT
+        assert self.auth.request(http_method, URL, request_data) == RESPONSE_TEXT
 
     def test_should_pass_response(self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker):
-        auth = create_auth(requests_mock)
         requests_mock.request(
             http_method,
             URL,
@@ -146,13 +134,11 @@ class TestAuth:
             text=RESPONSE_TEXT,
             additional_matcher=match_request_body(request_data),
         )
-        response = auth.request(http_method, URL, request_data, return_text=False)
+        response = self.auth.request(http_method, URL, request_data, return_text=False)
         assert isinstance(response, requests.Response)
         assert response.text == RESPONSE_TEXT
 
     def test_fails_if_v1_api_request_fails(self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker):
-        auth = create_auth(requests_mock)
-
         requests_mock.request(
             http_method,
             URL,
@@ -161,7 +147,7 @@ class TestAuth:
             additional_matcher=match_request_body(request_data),
         )
         with pytest.raises(ValueError) as exc_info:
-            auth.request(http_method, URL, request_data)
+            self.auth.request(http_method, URL, request_data)
 
         assert str(exc_info.value) == str(ERROR)
 
@@ -175,7 +161,6 @@ class TestAuth:
         error: Optional[Dict],
         requests_mock: req_mock.Mocker,
     ):
-        auth = create_auth(requests_mock)
         requests_mock.request(
             http_method,
             URL,
@@ -185,5 +170,5 @@ class TestAuth:
             additional_matcher=match_request_body(request_data),
         )
         with pytest.raises(requests.HTTPError) as exc_info:
-            auth.request(http_method, URL, request_data, return_text=return_text)
+            self.auth.request(http_method, URL, request_data, return_text=return_text)
         assert str(exc_info.value) == (json.dumps(error) if error else "")

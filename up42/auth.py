@@ -1,6 +1,7 @@
 """
 UP42 authentication mechanism and base requests functionality
 """
+
 import json
 import pathlib
 from typing import Callable, Dict, List, Optional, Union
@@ -51,21 +52,13 @@ class Auth:
             username: The username for the UP42 account (email UP42 console).
             password: Password for the UP42 console login.
         """
-        self.workspace_id: Optional[str] = None
         credential_sources = get_credential_sources(cfg_file, username, password)
         self.client = create_client(credential_sources, host.endpoint("/oauth/token"))
-        self._get_workspace()
         logger.info("Authentication with UP42 successful!")
 
     @property
     def session(self) -> requests.Session:
         return self.client.session
-
-    def _get_workspace(self) -> None:
-        """Get user id belonging to authenticated account."""
-        url = host.endpoint("/users/me")
-        resp = self.request("GET", url)
-        self.workspace_id = resp["data"]["id"]
 
     # pylint: disable=dangerous-default-value
     def _request_helper(
