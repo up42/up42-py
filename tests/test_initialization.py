@@ -1,12 +1,14 @@
+from unittest import mock
+
 import pytest
 
 import up42
-from up42 import catalog, main, tasking
+from up42 import catalog, main, storage, tasking
 
 from .fixtures import fixtures_globals as constants
 
 
-def test_initialize_object_without_auth_raises():
+def test_fails_to_initialize_if_not_authenticated():
     with pytest.raises(main.UserNotAuthenticated):
         up42.initialize_catalog()
     with pytest.raises(main.UserNotAuthenticated):
@@ -17,32 +19,25 @@ def test_initialize_object_without_auth_raises():
         up42.initialize_asset(asset_id=constants.ASSET_ID)
 
 
-def test_global_auth_initialize_objects(
-    storage_mock,
+def test_should_initialize_objects(
+    auth_mock,
     order_mock,
     asset_mock,
 ):
-    up42.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
-    catalog_obj = up42.initialize_catalog()
-    assert isinstance(catalog_obj, catalog.Catalog)
-    storage_obj = up42.initialize_storage()
-    assert storage_obj.workspace_id == storage_mock.workspace_id
-    order_obj = up42.initialize_order(order_id=constants.ORDER_ID)
-    assert order_obj.info == order_mock.info
-    asset_obj = up42.initialize_asset(asset_id=constants.ASSET_ID)
-    assert asset_obj.info == asset_mock.info
+    with mock.patch("up42.main.workspace") as workspace_mock:
+        workspace_mock.id = constants.WORKSPACE_ID
+        workspace_mock.auth = auth_mock
 
+        catalog_obj = up42.initialize_catalog()
+        assert isinstance(catalog_obj, catalog.Catalog)
 
-@pytest.fixture(autouse=True)
-def setup_workspace(requests_mock):
-    requests_mock.post("https://api.up42.com/oauth/token", json={"access_token": constants.TOKEN})
-    requests_mock.get(
-        url="https://api.up42.com/users/me",
-        json={"data": {"id": constants.WORKSPACE_ID}},
-    )
+        storage_obj = up42.initialize_storage()
+        assert isinstance(storage_obj, storage.Storage)
+        assert storage_obj.workspace_id == constants.WORKSPACE_ID
 
-
-def test_should_initialize_tasking():
-    up42.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
-    result = up42.initialize_tasking()
-    assert isinstance(result, tasking.Tasking)
+        order_obj = up42.initialize_order(order_id=constants.ORDER_ID)
+        assert order_obj.info == order_mock.info
+        asset_obj = up42.initialize_asset(asset_id=constants.ASSET_ID)
+        assert asset_obj.info == asset_mock.info
+        result = up42.initialize_tasking()
+        assert isinstance(result, tasking.Tasking)

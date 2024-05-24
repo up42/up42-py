@@ -1,7 +1,7 @@
 import logging
 import pathlib
 import warnings
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from up42 import auth as up42_auth
 from up42 import host, utils, webhooks
@@ -15,21 +15,23 @@ class UserNotAuthenticated(ValueError):
     pass
 
 
+def _authenticated(value: Any):
+    if value:
+        return value
+    raise UserNotAuthenticated("User not authenticated.")
+
+
 class _Workspace:
     _auth: Optional[up42_auth.Auth] = None
     _id: Optional[str] = None
 
     @property
     def auth(self):
-        if self._auth:
-            return self._auth
-        raise UserNotAuthenticated("User not authenticated.")
+        return _authenticated(self._auth)
 
     @property
     def id(self):
-        if self._id:
-            return self._id
-        raise UserNotAuthenticated("User not authenticated.")
+        return _authenticated(self._id)
 
     def authenticate(
         self,

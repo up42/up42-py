@@ -8,10 +8,10 @@ from . import fixtures_globals as constants
 
 @pytest.fixture
 def auth_mock(requests_mock: req_mock.Mocker) -> up42_auth.Auth:
-    json_get_token = {
+    token_payload = {
         "data": {"accessToken": constants.TOKEN},
         "access_token": constants.TOKEN,
         "token_type": "bearer",
     }
-    requests_mock.post("https://api.up42.com/oauth/token", json=json_get_token)
+    requests_mock.post("https://api.up42.com/oauth/token", json=token_payload)
     return up42_auth.Auth(username=constants.USER_EMAIL, password=constants.PASSWORD)
