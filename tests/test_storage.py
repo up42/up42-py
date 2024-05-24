@@ -145,7 +145,7 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     url_storage_assets_paginated = f"{constants.API_HOST}/v2/assets?sort=createdAt,asc&size=50"
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
-    storage_results = storage.Storage(auth=auth_mock)
+    storage_results = storage.Storage(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
     assets = storage_results.get_assets(limit=74, sortby="createdAt", descending=False)
     assert len(assets) == 74
     assert isinstance(assets[0], asset.Asset)
@@ -291,7 +291,7 @@ def test_get_orders_v2_endpoint_params(auth_mock, requests_mock, params, expecte
             )
             for output in expected_results
         ]
-    storage_results = storage.Storage(auth=auth_mock)
+    storage_results = storage.Storage(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
     orders = storage_results.get_orders(**params)
     assert orders == expected_results
 
@@ -332,7 +332,7 @@ def test_get_orders_pagination(auth_mock, requests_mock):
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)
 
-    storage_results = storage.Storage(auth=auth_mock)
+    storage_results = storage.Storage(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
     orders = storage_results.get_orders(limit=74, sortby="createdAt", descending=False)
     assert len(orders) == 74
     assert isinstance(orders[0], order.Order)

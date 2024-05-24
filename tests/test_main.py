@@ -58,9 +58,9 @@ class TestNonWorkspace:
 
     def test_get_credits_balance(self, requests_mock):
         balance_url = f"{constants.API_HOST}/accounts/me/credits/balance"
+        balance = {"balance": 10693}
         requests_mock.get(
             url=balance_url,
-            json=constants.JSON_BALANCE,
+            json={"data": balance},
         )
-
-        assert main.get_credits_balance() == constants.JSON_BALANCE
+        assert main.get_credits_balance() == balance

@@ -30,7 +30,11 @@ def webhook_mock(auth_mock, requests_mock):
     url_delete = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks/{constants.WEBHOOK_ID}"
     requests_mock.delete(url=url_delete)
 
-    return webhooks.Webhook(auth=auth_mock, webhook_id=constants.WEBHOOK_ID)
+    return webhooks.Webhook(
+        auth=auth_mock,
+        workspace_id=constants.WORKSPACE_ID,
+        webhook_id=constants.WEBHOOK_ID,
+    )
 
 
 @pytest.fixture
@@ -73,4 +77,4 @@ def webhooks_mock(auth_mock, requests_mock):
     url_create_webhook = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks"
     requests_mock.post(url=url_create_webhook, json=constants.JSON_WEBHOOK)
 
-    return webhooks.Webhooks(auth=auth_mock)
+    return webhooks.Webhooks(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)

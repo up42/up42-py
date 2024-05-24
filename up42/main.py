@@ -72,7 +72,7 @@ def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
     Returns:
         A list of the registered webhooks for this workspace.
     """
-    return webhooks.Webhooks(auth=workspace.auth).get_webhooks(return_json=return_json)
+    return webhooks.Webhooks(auth=workspace.auth, workspace_id=workspace.id).get_webhooks(return_json=return_json)
 
 
 def create_webhook(
@@ -94,7 +94,7 @@ def create_webhook(
     Returns:
         A dict with details of the registered webhook.
     """
-    return webhooks.Webhooks(auth=workspace.auth).create_webhook(
+    return webhooks.Webhooks(auth=workspace.auth, workspace_id=workspace.id).create_webhook(
         name=name, url=url, events=events, active=active, secret=secret
     )
 
@@ -106,7 +106,7 @@ def get_webhook_events() -> dict:
     Returns:
         A dict of the available webhook events.
     """
-    return webhooks.Webhooks(auth=workspace.auth).get_webhook_events()
+    return webhooks.Webhooks(auth=workspace.auth, workspace_id=workspace.id).get_webhook_events()
 
 
 def get_credits_balance() -> dict:

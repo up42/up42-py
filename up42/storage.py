@@ -10,7 +10,7 @@ from shapely import geometry as shp_geometry  # type: ignore
 
 from up42 import asset, asset_searcher
 from up42 import auth as up42_auth
-from up42 import host, main, order, utils
+from up42 import host, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -39,9 +39,9 @@ class Storage:
     ```
     """
 
-    def __init__(self, auth: up42_auth.Auth):
+    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         self.auth = auth
-        self.workspace_id = main.workspace.id
+        self.workspace_id = workspace_id
 
     def __repr__(self):
         return f"Storage(workspace_id: {self.workspace_id})"

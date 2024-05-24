@@ -12,21 +12,21 @@ def initialize_catalog() -> catalog.Catalog:
     """
     Returns a Catalog object for using the catalog search.
     """
-    return catalog.Catalog(auth=main.workspace.auth)
+    return catalog.Catalog(auth=main.workspace.auth, workspace_id=main.workspace.id)
 
 
 def initialize_tasking() -> "tasking.Tasking":
     """
     Returns a Tasking object for creating satellite tasking orders.
     """
-    return tasking.Tasking(auth=main.workspace.auth)
+    return tasking.Tasking(auth=main.workspace.auth, workspace_id=main.workspace.id)
 
 
 def initialize_storage() -> storage.Storage:
     """
     Returns a Storage object to list orders and assets.
     """
-    return storage.Storage(auth=main.workspace.auth)
+    return storage.Storage(auth=main.workspace.auth, workspace_id=main.workspace.id)
 
 
 def initialize_order(order_id: str) -> order.Order:
@@ -57,6 +57,6 @@ def initialize_webhook(webhook_id: str) -> webhooks.Webhook:
     Args:
         webhook_id: The UP42 webhook_id
     """
-    webhook = webhooks.Webhook(auth=main.workspace.auth, webhook_id=webhook_id)
+    webhook = webhooks.Webhook(auth=main.workspace.auth, workspace_id=main.workspace.id, webhook_id=webhook_id)
     logger.info(INITIALIZED_MSG, webhook)
     return webhook
