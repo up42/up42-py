@@ -71,7 +71,6 @@ def test_asset_info(asset_mock):
     assert asset_mock.info["name"] == constants.JSON_ASSET["name"]
 
 
-@pytest.mark.skip(reason="tempo")
 class TestStacMetadata:
     def test_should_get_stac_items_with_retries(self, auth_mock: up42_auth.Auth, requests_mock: req_mock.Mocker):
         requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)

@@ -6,6 +6,7 @@ import geopandas as gpd  # type: ignore
 import pytest
 
 from up42 import catalog, order
+
 from .fixtures import fixtures_globals as constants
 
 with open(

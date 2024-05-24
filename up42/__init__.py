@@ -17,7 +17,7 @@
     ```
 """
 
-from typing import Type, Union, cast, Callable
+from typing import Callable, Type, Union, cast
 
 # pylint: disable=only-importing-modules-is-allowed
 from up42.asset import Asset
