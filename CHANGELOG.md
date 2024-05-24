@@ -31,7 +31,7 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 ## 1.1.0a1
 
-**May 21, 2024**
+**May 24, 2024**
 
 - Adding __Workspace hidden class and workspace instance as a singleton class in `main.py`
 - Changing use of Auth Class for the workspace.auth property where required.
