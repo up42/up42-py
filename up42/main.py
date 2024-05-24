@@ -17,7 +17,7 @@ class UserNotAuthenticated(ValueError):
 
 class _Workspace:
     _auth: Optional[up42_auth.Auth] = None
-    id: Optional[str] = None
+    _id: Optional[str] = None
 
     @property
     def auth(self):
@@ -25,9 +25,11 @@ class _Workspace:
             return self._auth
         raise UserNotAuthenticated("User not authenticated.")
 
-    @auth.setter
-    def auth(self, value):
-        self._auth = value
+    @property
+    def id(self):
+        if self._id:
+            return self._id
+        raise UserNotAuthenticated("User not authenticated.")
 
     def authenticate(
         self,
@@ -51,7 +53,7 @@ class _Workspace:
         )
         url = host.endpoint("/users/me")
         resp = self.auth.request("GET", url)
-        self.id = resp["data"]["id"]
+        self._id = resp["data"]["id"]
 
 
 workspace = _Workspace()

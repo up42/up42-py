@@ -1,6 +1,7 @@
 import json
 import pathlib
 import tempfile
+from unittest import mock
 
 import geopandas as gpd  # type: ignore
 import pytest
@@ -14,6 +15,13 @@ with open(
     encoding="utf-8",
 ) as json_file:
     mock_search_parameters = json.load(json_file)
+
+
+@pytest.fixture(autouse=True)
+def mock_workspace_id():
+    with mock.patch("up42.main.workspace") as mock_workspace:
+        mock_workspace.id = constants.WORKSPACE_ID
+        yield
 
 
 def test_get_collections(catalog_mock):

@@ -7,8 +7,6 @@ from .fixtures import fixtures_globals as constants
 
 
 def test_initialize_object_without_auth_raises():
-    main.workspace.auth = None
-
     with pytest.raises(main.UserNotAuthenticated):
         up42.initialize_catalog()
     with pytest.raises(main.UserNotAuthenticated):
