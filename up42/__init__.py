@@ -17,6 +17,9 @@
     ```
 """
 
+import typing
+from typing import Type, Union, cast
+
 # pylint: disable=only-importing-modules-is-allowed
 from up42.asset import Asset
 from up42.auth import Auth
@@ -38,9 +41,11 @@ from up42.utils import get_up42_py_version
 from up42.webhooks import Webhook
 
 __version__ = get_up42_py_version()
-
 __all__ = [
-    obj.__name__
+    cast(
+        Union[Type, typing.Callable],
+        obj,
+    ).__name__
     for obj in [
         Asset,
         Auth,
@@ -49,12 +54,6 @@ __all__ = [
         Storage,
         Tasking,
         Webhook,
-    ]
-]
-
-__all__.extend(
-    obj.__name__
-    for obj in [
         get_example_aoi,
         read_vector_file,
         initialize_catalog,
@@ -69,4 +68,4 @@ __all__.extend(
         get_webhook_events,
         get_credits_balance,
     ]
-)
+]
