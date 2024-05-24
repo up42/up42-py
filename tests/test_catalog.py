@@ -261,7 +261,6 @@ def test_construct_order_parameters(catalog_mock):
     assert order_parameters["params"]["acquisitionMode"] is None
 
 
-# pylint: disable=unused-argument
 def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, auth_mock):
     catalog_instance = catalog.Catalog(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
     expected_payload = {
@@ -278,7 +277,7 @@ def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, au
 
 def test_order_from_catalog(
     order_parameters,
-    order_mock,
+    order_mock,  # pylint: disable=unused-argument
     catalog_mock,
     requests_mock,
 ):
