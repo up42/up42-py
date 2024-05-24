@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 1.0.4a1
+
+**May 24, 2024**
+- Bumped dependencies `requests` from 2.31.0 to 2.32.0.
+
 ## 1.0.3
 
 **May 23, 2024**
