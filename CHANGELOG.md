@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **May 24, 2024**
 
-- Adding __Workspace hidden class and workspace instance as a singleton class in `main.py`
+- Adding _Workspace hidden class and workspace instance as a singleton class in `main.py`
 - Changing use of Auth Class for the workspace.auth property where required.
 
 
