@@ -2,11 +2,50 @@ from up42 import webhooks
 
 from .fixtures import fixtures_globals as constants
 
+metadata = {
+    "url": "url",
+    "name": "name",
+    "active": True,
+    "events": ["job.status"],
+    "secret": "secret",
+    "createdAt": "yesterday",
+    "updatedAt": "now",
+}
 
-def test_webhook_initiate(webhook_mock):
-    assert isinstance(webhook_mock, webhooks.Webhook)
-    assert webhook_mock.webhook_id == constants.WEBHOOK_ID
-    assert webhook_mock.workspace_id == constants.WORKSPACE_ID
+class TestWebhook:
+    def test_should_initialize(self, auth_mock):
+        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, constants.WEBHOOK_ID, metadata)
+        assert webhook.auth == auth_mock
+        assert webhook.workspace_id == constants.WORKSPACE_ID
+        assert webhook.webhook_id == constants.WEBHOOK_ID
+        assert metadata["name"] in repr(webhook)
+        assert str(metadata["active"]) in repr(webhook)
+        assert constants.WEBHOOK_ID in repr(webhook)
+    
+    def test_should_initialize_existing_hook(self, requests_mock):
+        url = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks/{constants.WEBHOOK_ID}"
+        requests_mock.post(url=url_create_webhook, json={"data": metadata})
+        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, constants.WEBHOOK_ID)
+        assert webhook.auth == auth_mock
+        assert webhook.workspace_id == constants.WORKSPACE_ID
+        assert webhook.webhook_id == constants.WEBHOOK_ID
+        assert webhook.info == metadata
+        assert metadata["name"] in repr(webhook)
+        assert str(metadata["active"]) in repr(webhook)
+        assert constants.WEBHOOK_ID in repr(webhook)
+
+    
+    def test_should_refresh_info(self):
+        pass
+
+    def test_should_trigger_test_events(self):
+        pass
+    
+    def test_should_update(self):
+        pass
+    
+    def test_should_delete(self):
+        pass
 
 
 def test_webhook_info(webhook_mock):
