@@ -6,38 +6,6 @@ from . import fixtures_globals as constants
 
 
 @pytest.fixture
-def webhook_mock(auth_mock, requests_mock):
-    # webhook info
-    url_webhook_info = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks/{constants.WEBHOOK_ID}"
-    requests_mock.get(url=url_webhook_info, json=constants.JSON_WEBHOOK)
-
-    # test event
-    url_test_event = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks/{constants.WEBHOOK_ID}/tests"
-    json_test_event = {
-        "data": {
-            "startedAt": "2022-06-20T04:33:48.770826Z",
-            "testsRun": 2,
-            "testsSucceeded": 0,
-        }
-    }
-    requests_mock.post(url=url_test_event, json=json_test_event)
-
-    # update
-    url_update = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks/{constants.WEBHOOK_ID}"
-    requests_mock.put(url=url_update, json=constants.JSON_WEBHOOK)
-
-    # delete
-    url_delete = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks/{constants.WEBHOOK_ID}"
-    requests_mock.delete(url=url_delete)
-
-    return webhooks.Webhook(
-        auth=auth_mock,
-        workspace_id=constants.WORKSPACE_ID,
-        webhook_id=constants.WEBHOOK_ID,
-    )
-
-
-@pytest.fixture
 def webhooks_mock(auth_mock, requests_mock):
     # events
     url_events = f"{constants.API_HOST}/webhooks/events"
