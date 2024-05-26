@@ -33,6 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **May 27, 2024**
 
+- Delegated webhook repr to its info
 - Improved test coverage for webhooks
 - Dropped unneeded shared and global fixtures for webhook tests
 
