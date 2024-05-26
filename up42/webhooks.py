@@ -33,7 +33,7 @@ class Webhook:
             self._info = self.info
 
     def __repr__(self):
-        return f"""Webhook(name: {self._info["name"]}, webhook_id: {self.webhook_id}, active: {self._info["active"]}"""
+        return repr({**self._info, "id": self.webhook_id})
 
     @property
     def info(self) -> dict:
