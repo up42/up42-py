@@ -7,11 +7,6 @@ from . import fixtures_globals as constants
 
 @pytest.fixture
 def webhooks_mock(auth_mock, requests_mock):
-    # events
-    url_events = f"{constants.API_HOST}/webhooks/events"
-    events_json = {"data": [{"name": "job.status"}], "error": None}
-    requests_mock.get(url=url_events, json=events_json)
-
     # get webhooks
     url_webhooks = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks"
     webhooks_json = {
