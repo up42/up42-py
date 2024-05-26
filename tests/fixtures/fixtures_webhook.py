@@ -1,4 +1,5 @@
 import pytest
+import requests
 
 from up42 import webhooks
 
@@ -6,7 +7,7 @@ from . import fixtures_globals as constants
 
 
 @pytest.fixture
-def webhook_mock(auth_mock, requests_mock):
+def webhook_mock(requests_mock):
     # webhook info
     url_webhook_info = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks/{constants.WEBHOOK_ID}"
     requests_mock.get(url=url_webhook_info, json=constants.JSON_WEBHOOK)
@@ -30,15 +31,22 @@ def webhook_mock(auth_mock, requests_mock):
     url_delete = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks/{constants.WEBHOOK_ID}"
     requests_mock.delete(url=url_delete)
 
+    webhooks.Webhook.session = requests.session()
     return webhooks.Webhook(
-        auth=auth_mock,
         workspace_id=constants.WORKSPACE_ID,
-        webhook_id=constants.WEBHOOK_ID,
+        url="https://test-info-webhook.com",
+        name="test_info_webhook",
+        active=False,
+        events=["job.status"],
+        id=constants.WEBHOOK_ID,
+        secret="",
+        created_at="2022-06-20T04:05:31.755744Z",
+        updated_at="2022-06-20T04:05:31.755744Z",
     )
 
 
 @pytest.fixture
-def webhooks_mock(auth_mock, requests_mock):
+def webhooks_mock(requests_mock):
     # events
     url_events = f"{constants.API_HOST}/webhooks/events"
     events_json = {"data": [{"name": "job.status"}], "error": None}
@@ -76,5 +84,4 @@ def webhooks_mock(auth_mock, requests_mock):
     # create webhook
     url_create_webhook = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks"
     requests_mock.post(url=url_create_webhook, json=constants.JSON_WEBHOOK)
-
-    return webhooks.Webhooks(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
+    webhooks.Webhook.session = requests.session()

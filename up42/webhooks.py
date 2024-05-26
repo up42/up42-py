@@ -1,49 +1,103 @@
+import dataclasses
 from typing import List, Optional
 
-from up42 import auth as up42_auth
+import requests
+
 from up42 import host, utils
 
 logger = utils.get_logger(__name__)
 
 
-class Webhook:
+class SessionMixin:
+    session: requests.Session
+
+
+@dataclasses.dataclass(eq=True)
+class Webhook(SessionMixin):
+    workspace_id: str
+    url: str
+    name: str
+    events: List[str]
+    active: bool = False
+    secret: Optional[str] = None
+    id: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
     """
     # Webhook
-
-    Webhook class to control a specific UP42 webhook, e.g. modify, test or delete the specific webhook.
-
-    ```python
-    webhook = webhook.trigger_test_event()
-    ```
+    Webhook class to control a specific UP42 webhook, e.g. create, modify, test or delete the specific webhook.
     """
 
-    def __init__(
-        self,
-        auth: up42_auth.Auth,
-        workspace_id: str,
-        webhook_id: str,
-        webhook_info: Optional[dict] = None,
-    ):
-        self.auth = auth
-        self.workspace_id = workspace_id
-        self.webhook_id = webhook_id
-        if webhook_info is not None:
-            self._info = webhook_info
+    def save(self):
+        payload = {
+            "name": self.name,
+            "url": self.url,
+            "events": self.events,
+            "secret": self.secret,
+            "active": self.active,
+        }
+
+        if self.id:
+            url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
+            response_json = self.session.put(url=url, json=payload).json()
+            self.updated_at = response_json.get("updatedAt")
+            logger.info("Updated webhook %s", self)
         else:
-            self._info = self.info
+            url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks")
+            response_json = self.session.post(url=url, json=payload).json()["data"]
+            self.id = response_json["id"]
+            self.created_at = response_json.get("createdAt")
+            self.updated_at = response_json.get("updatedAt")
+            logger.info("Created webhook %s", self)
 
-    def __repr__(self):
-        return f"""Webhook(name: {self._info["name"]}, webhook_id: {self.webhook_id}, active: {self._info["active"]}"""
-
-    @property
-    def info(self) -> dict:
+    def delete(self) -> None:
         """
-        Gets and updates the webhook metadata information.
+        Deletes a registered webhook.
         """
         url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
-        self._info = self.auth.request(request_type="GET", url=url)["data"]
-        return self._info
+        self.session.delete(url)
+        logger.info("Successfully deleted Webhook: %s", self.webhook_id)
 
+    @staticmethod
+    def _from_dict(metadata: dict, workspace_id: str) -> "Webhook":
+        return Webhook(
+            workspace_id=workspace_id,
+            id=metadata["id"],
+            secret=metadata.get("secret"),
+            active=metadata["active"],
+            url=metadata["url"],
+            name=metadata["name"],
+            events=metadata["events"],
+            created_at=metadata.get("createdAt"),
+            updated_at=metadata.get("updatedAt"),
+        )
+
+    @classmethod
+    def get(cls, webhook_id: str, workspace_id: str) -> "Webhook":
+        url = host.endpoint(f"/workspaces/{workspace_id}/webhooks/{webhook_id}")
+        metadata = cls.session.get(url).json()["data"]
+        return cls._from_dict(metadata, workspace_id)
+
+    @classmethod
+    def all(cls, workspace_id: str) -> List["Webhook"]:
+        """
+        Gets all registered webhooks for a workspace.
+
+        Args:
+            workspace_id: the id of the workspace
+
+        Returns:
+            A list of the registered webhooks for the workspace.
+        """
+
+        url = host.endpoint(f"/workspaces/{workspace_id}/webhooks")
+        response_json = cls.session.get(url).json()
+        logger.info("Queried %s webhooks.", len(response_json["data"]))
+
+        return [cls._from_dict(metadata, workspace_id) for metadata in response_json["data"]]
+
+    # TODO: model the response
     def trigger_test_events(self) -> dict:
         """
         Triggers webhook test event to test your receiving side. The UP42 server will send test
@@ -53,8 +107,56 @@ class Webhook:
             A dict with information about the test events.
         """
         url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}/tests")
-        return self.auth.request(request_type="POST", url=url)["data"]
+        return self.session.post(url).json()["data"]
 
+    # TODO: model the response
+    @classmethod
+    def all_webhook_events(cls) -> dict:
+        """
+        Gets all available webhook events.
+
+        Returns:
+            A dict of the available webhook events.
+        """
+        url = host.endpoint("/webhooks/events")
+        return cls.session.get(url).json()["data"]
+
+    # to deprecate
+    @property
+    def webhook_id(self):
+        return self.id
+
+    # to deprecate
+    @property
+    def info(self) -> dict:
+        """
+        Gets and updates the webhook metadata information.
+        """
+        return dataclasses.asdict(self)
+
+    # to deprecate
+    @classmethod
+    def create(
+        cls,
+        name: str,
+        url: str,
+        events: List[str],
+        workspace_id: str,
+        active: bool,
+        secret: Optional[str],
+    ):
+        webhook = Webhook(
+            name=name,
+            url=url,
+            events=events,
+            active=active,
+            secret=secret,
+            workspace_id=workspace_id,
+        )
+        webhook.save()
+        return webhook
+
+    # to deprecate
     def update(
         self,
         name: Optional[str] = None,
@@ -76,126 +178,16 @@ class Webhook:
         Returns:
             The updated webhook object.
         """
-        self.info  # _info could be outdated. #pylint: disable=pointless-statement
-        input_parameters = {
-            "name": name if name is not None else self._info["name"],
-            "url": url if url is not None else self._info["url"],
-            "events": events if events is not None else self._info["events"],
-            "secret": secret if secret is not None else self._info["secret"],
-            "active": active if active is not None else self._info["active"],
-        }
-        url_put = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
-        response_json = self.auth.request(request_type="PUT", url=url_put, data=input_parameters)
-        self._info = response_json["data"]
-        logger.info("Updated webhook %s", self)
+        if name:
+            self.name = name
+        if url:
+            self.url = url
+        if events:
+            self.events = events
+        if active:
+            self.active = active
+        # TODO: what was before?
+        if secret:
+            self.secret = secret
+        self.save()
         return self
-
-    def delete(self) -> None:
-        """
-        Deletes a registered webhook.
-        """
-        url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
-        self.auth.request(request_type="DELETE", url=url)
-        logger.info("Successfully deleted Webhook: %s", self.webhook_id)
-
-
-class Webhooks:
-    """
-    Contains UP42 webhooks functionality to set up a custom callback e.g. when an order is finished
-    he webhook is triggered and an event notification is transmitted via HTTPS to a specific URL.
-
-    Also see the [full webhook documentation](https://docs.up42.com/account/webhooks).
-
-    Create a new webhook or query a existing ones via the `up42` object, e.g.
-    ```python
-    webhooks = up42.get_webhooks()
-    ```
-    ```python
-    webhook = up42.initialize_webhook(webhook_id = "...")
-    ```
-
-    The resulting Webhook object lets you modify, test or delete the specific webhook, e.g.
-    ```python
-    webhook = webhook.trigger_test_event()
-    ```
-    """
-
-    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
-        self.auth = auth
-        self.workspace_id = workspace_id
-
-    def get_webhook_events(self) -> dict:
-        """
-        Gets all available webhook events.
-
-        Returns:
-            A dict of the available webhook events.
-        """
-        url = host.endpoint("/webhooks/events")
-        return self.auth.request(request_type="GET", url=url)["data"]
-
-    def get_webhooks(self, return_json: bool = False) -> List[Webhook]:
-        """
-        Gets all registered webhooks for this workspace.
-
-        Args:
-            return_json: If true returns the webhooks information as JSON instead of webhook class objects.
-
-        Returns:
-            A list of the registered webhooks for this workspace.
-        """
-        url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks")
-        response_json = self.auth.request(request_type="GET", url=url)
-        logger.info("Queried %s webhooks.", len(response_json["data"]))
-
-        if return_json:
-            return response_json["data"]
-        webhooks = [
-            Webhook(
-                auth=self.auth,
-                workspace_id=self.workspace_id,
-                webhook_id=webhook_info["id"],
-                webhook_info=webhook_info,
-            )
-            for webhook_info in response_json["data"]
-        ]
-        return webhooks
-
-    def create_webhook(
-        self,
-        name: str,
-        url: str,
-        events: List[str],
-        active: bool = False,
-        secret: Optional[str] = None,
-    ) -> Webhook:
-        """
-        Registers a new webhook in the system.
-
-        Args:
-            name: Webhook name
-            url: Unique URL where the webhook will send the message (HTTPS required)
-            events: List of event types e.g. [order.status, job.status]
-            active: Webhook status.
-            secret: String that acts as signature to the https request sent to the url.
-
-        Returns:
-            A dict with details of the registered webhook.
-        """
-        input_parameters = {
-            "name": name,
-            "url": url,
-            "events": events,
-            "secret": secret,
-            "active": active,
-        }
-        url_post = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks")
-        response_json = self.auth.request(request_type="POST", url=url_post, data=input_parameters)
-        webhook = Webhook(
-            auth=self.auth,
-            workspace_id=self.workspace_id,
-            webhook_id=response_json["data"]["id"],
-            webhook_info=response_json["data"],
-        )
-        logger.info("Created webhook %s", webhook)
-        return webhook

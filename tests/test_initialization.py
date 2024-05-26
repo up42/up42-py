@@ -41,3 +41,30 @@ def test_should_initialize_objects(
         assert asset_obj.info == asset_mock.info
         result = up42.initialize_tasking()
         assert isinstance(result, tasking.Tasking)
+
+
+class TestWebhooks:
+    @pytest.fixture(autouse=True)
+    def workspace(self, auth_mock):
+        with mock.patch("up42.main.workspace") as workspace_mock:
+            workspace_mock.auth = auth_mock
+            workspace_mock.id = constants.WORKSPACE_ID
+            yield
+
+    # create webhook coverage is missing
+
+    def test_get_webhook_events(self, requests_mock):
+        url_webhook_events = f"{constants.API_HOST}/webhooks/events"
+        events = ["some-event"]
+        requests_mock.get(
+            url=url_webhook_events,
+            json={
+                "data": events,
+                "error": {},
+            },
+        )
+        assert up42.get_webhook_events() == events
+
+    @pytest.mark.parametrize("return_json", [False, True])
+    def test_get_webhooks(self, webhooks_mock, return_json):
+        webhooks = up42.get_webhooks(return_json=return_json)
