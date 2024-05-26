@@ -40,9 +40,7 @@ class Webhook:
         """
         Gets and updates the webhook metadata information.
         """
-        url = host.endpoint(
-            f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
-        )
+        url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
         self._info = self.auth.request(request_type="GET", url=url)["data"]
         return self._info
 
@@ -54,9 +52,7 @@ class Webhook:
         Returns:
             A dict with information about the test events.
         """
-        url = host.endpoint(
-            f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}/tests"
-        )
+        url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}/tests")
         return self.auth.request(request_type="POST", url=url)["data"]
 
     def update(
@@ -88,12 +84,8 @@ class Webhook:
             "secret": secret if secret is not None else self._info["secret"],
             "active": active if active is not None else self._info["active"],
         }
-        url_put = host.endpoint(
-            f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
-        )
-        response_json = self.auth.request(
-            request_type="PUT", url=url_put, data=input_parameters
-        )
+        url_put = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
+        response_json = self.auth.request(request_type="PUT", url=url_put, data=input_parameters)
         self._info = response_json["data"]
         logger.info("Updated webhook %s", self)
         return self
@@ -102,9 +94,7 @@ class Webhook:
         """
         Deletes a registered webhook.
         """
-        url = host.endpoint(
-            f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}"
-        )
+        url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.webhook_id}")
         self.auth.request(request_type="DELETE", url=url)
         logger.info("Successfully deleted Webhook: %s", self.webhook_id)
 
@@ -200,9 +190,7 @@ class Webhooks:
             "active": active,
         }
         url_post = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks")
-        response_json = self.auth.request(
-            request_type="POST", url=url_post, data=input_parameters
-        )
+        response_json = self.auth.request(request_type="POST", url=url_post, data=input_parameters)
         webhook = Webhook(
             auth=self.auth,
             workspace_id=self.workspace_id,
