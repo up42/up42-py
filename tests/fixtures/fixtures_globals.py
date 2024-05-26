@@ -49,8 +49,6 @@ ASSET_ID2 = "88ddc9d8-f179-4821-acef-e7b2abddecr0"
 ASSET_ORDER_ID = "22d0b8e9-b649-4971-8adc-1a5eac1fa6f3"
 STAC_COLLECTION_ID = "e459db4c-3b9d-4aa1-8931-5df2517b49ba"
 
-WEBHOOK_ID = "123"
-
 URL_STAC_CATALOG = "https://api.up42.com/v2/assets/stac/"
 URL_STAC_SEARCH = "https://api.up42.com/v2/assets/stac/search"
 
@@ -255,17 +253,4 @@ JSON_ORDERS = {
     "size": 10,
     "number": 0,
     "empty": False,
-}
-
-JSON_WEBHOOK = {
-    "data": {
-        "url": "https://test-info-webhook.com",
-        "name": "test_info_webhook",
-        "active": False,
-        "events": ["job.status"],
-        "id": WEBHOOK_ID,
-        "secret": "",
-        "createdAt": "2022-06-20T04:05:31.755744Z",
-        "updatedAt": "2022-06-20T04:05:31.755744Z",
-    }
 }

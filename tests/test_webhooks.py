@@ -1,5 +1,6 @@
 import random
 import string
+import uuid
 from typing import List, Optional
 
 import pytest
@@ -9,8 +10,9 @@ from up42 import webhooks
 
 from .fixtures import fixtures_globals as constants
 
+WEBHOOK_ID = str(uuid.uuid4())
 HOOKS_URL = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks"
-HOOK_URL = f"{HOOKS_URL}/{constants.WEBHOOK_ID}"
+HOOK_URL = f"{HOOKS_URL}/{WEBHOOK_ID}"
 
 
 def random_alphanumeric():
@@ -26,7 +28,7 @@ def random_metadata() -> dict:
         "secret": random_alphanumeric(),
         "createdAt": random_alphanumeric(),
         "updatedAt": random_alphanumeric(),
-        "id": constants.WEBHOOK_ID,
+        "id": WEBHOOK_ID,
     }
 
 
@@ -35,18 +37,18 @@ metadata = random_metadata()
 
 class TestWebhook:
     def test_should_initialize(self, auth_mock):
-        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, constants.WEBHOOK_ID, metadata)
+        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, WEBHOOK_ID, metadata)
         assert webhook.auth == auth_mock
         assert webhook.workspace_id == constants.WORKSPACE_ID
-        assert webhook.webhook_id == constants.WEBHOOK_ID
+        assert webhook.webhook_id == WEBHOOK_ID
         assert repr(webhook) == repr(metadata)
 
     def test_should_initialize_existing_hook(self, auth_mock, requests_mock: req_mock.Mocker):
         requests_mock.get(url=HOOK_URL, json={"data": metadata})
-        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, constants.WEBHOOK_ID)
+        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, WEBHOOK_ID)
         assert webhook.auth == auth_mock
         assert webhook.workspace_id == constants.WORKSPACE_ID
-        assert webhook.webhook_id == constants.WEBHOOK_ID
+        assert webhook.webhook_id == WEBHOOK_ID
         assert webhook.info == metadata
         assert repr(webhook) == repr(metadata)
 
@@ -55,14 +57,14 @@ class TestWebhook:
         auth_mock,
         requests_mock: req_mock.Mocker,
     ):
-        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, constants.WEBHOOK_ID, metadata)
+        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, WEBHOOK_ID, metadata)
         new_metadata = random_metadata()
         requests_mock.get(url=HOOK_URL, json={"data": new_metadata})
         assert webhook.info == new_metadata
         assert repr(webhook) == repr(new_metadata)
 
     def test_should_trigger_test_events(self, auth_mock, requests_mock: req_mock.Mocker):
-        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, constants.WEBHOOK_ID, metadata)
+        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, WEBHOOK_ID, metadata)
         url = f"{HOOK_URL}/tests"
         test_event = {
             "startedAt": "2022-06-20T04:33:48.770826Z",
@@ -87,7 +89,7 @@ class TestWebhook:
         active: Optional[bool],
         secret: Optional[str],
     ):
-        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, constants.WEBHOOK_ID, metadata)
+        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, WEBHOOK_ID, metadata)
         latest_metadata = random_metadata()
         new_metadata = random_metadata()
         requests_mock.get(url=HOOK_URL, json={"data": latest_metadata})
@@ -103,7 +105,7 @@ class TestWebhook:
         }
 
     def test_should_delete(self, auth_mock, requests_mock: req_mock.Mocker):
-        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, constants.WEBHOOK_ID, metadata)
+        webhook = webhooks.Webhook(auth_mock, constants.WORKSPACE_ID, WEBHOOK_ID, metadata)
         requests_mock.delete(url=HOOK_URL)
         webhook.delete()
         assert requests_mock.called
@@ -131,12 +133,12 @@ class TestWebhooks:
         (webhook,) = self.webhooks.get_webhooks()
         assert isinstance(webhook, webhooks.Webhook)
         assert webhook.auth == self.webhooks.auth
-        assert webhook.webhook_id == constants.WEBHOOK_ID
+        assert webhook.webhook_id == WEBHOOK_ID
         assert webhook.workspace_id == constants.WORKSPACE_ID
         assert repr(webhook) == repr(metadata)
 
     def test_get_webhooks_as_dict(self, requests_mock: req_mock.Mocker):
-        hook = {**metadata, "id": constants.WEBHOOK_ID}
+        hook = {**metadata, "id": WEBHOOK_ID}
         requests_mock.get(HOOKS_URL, json={"data": [hook]})
         assert self.webhooks.get_webhooks(return_json=True) == [hook]
 
@@ -153,7 +155,7 @@ class TestWebhooks:
         requests_mock.post(HOOKS_URL, json={"data": metadata})
         webhook = self.webhooks.create_webhook(name=name, url=url, events=events, active=active, secret=secret)
         assert webhook.auth == self.webhooks.auth
-        assert webhook.webhook_id == constants.WEBHOOK_ID
+        assert webhook.webhook_id == WEBHOOK_ID
         assert webhook.workspace_id == constants.WORKSPACE_ID
         assert repr(webhook) == repr(metadata)
         assert requests_mock.last_request and requests_mock.last_request.json() == {

@@ -29,6 +29,13 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.0.4a3
+
+**May 27, 2024**
+
+- Improved test coverage for webhooks
+- Dropped unneeded shared and global fixtures for webhook tests
+
 ## 1.0.4a2
 
 **May 24, 2024**
