@@ -7,7 +7,6 @@ import pytest
 import requests_mock as req_mock
 
 from up42 import webhooks
-
 from .fixtures import fixtures_globals as constants
 
 WEBHOOK_ID = str(uuid.uuid4())
@@ -137,7 +136,7 @@ class TestWebhooks:
         assert webhook.workspace_id == constants.WORKSPACE_ID
         assert repr(webhook) == repr(metadata)
 
-    def test_get_webhooks_as_dict(self, requests_mock: req_mock.Mocker):
+    def test_should_get_webhooks_as_dict(self, requests_mock: req_mock.Mocker):
         hook = {**metadata, "id": WEBHOOK_ID}
         requests_mock.get(HOOKS_URL, json={"data": [hook]})
         assert self.webhooks.get_webhooks(return_json=True) == [hook]
