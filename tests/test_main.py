@@ -32,6 +32,7 @@ class TestNonWorkspace:
             workspace_mock.auth = auth_mock
             workspace_mock.id = constants.WORKSPACE_ID
             yield
+        main.workspace = main._Workspace()  # pylint: disable=protected-access
 
     def test_get_webhook_events(self, requests_mock):
         url_webhook_events = f"{constants.API_HOST}/webhooks/events"
@@ -64,3 +65,30 @@ class TestNonWorkspace:
             json={"data": balance},
         )
         assert main.get_credits_balance() == balance
+
+
+class TestSession:
+    @pytest.fixture(scope="function")
+    def dummy_instance(self):
+        class DummyInstance:
+            session = main.Session()
+
+        return DummyInstance()
+
+    def test_should_fail_if_not_authenticated(self, dummy_instance):
+        with pytest.raises(main.UserNotAuthenticated):
+            _ = dummy_instance.session
+
+    def test_should_provide_authentication(self, requests_mock, dummy_instance):
+        requests_mock.post("https://api.up42.com/oauth/token", json={"access_token": constants.TOKEN})
+        requests_mock.get(
+            url="https://api.up42.com/users/me",
+            json={"data": {"id": constants.WORKSPACE_ID}},
+        )
+        main.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
+        session = dummy_instance.session
+        assert session == main.workspace.auth.session
+
+
+class TestWorkspaceId:
+    expected_workspace_id = None
