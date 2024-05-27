@@ -3,6 +3,8 @@ import pathlib
 import warnings
 from typing import Any, List, Optional, Union
 
+import requests
+
 from up42 import auth as up42_auth
 from up42 import host, utils, webhooks
 
@@ -61,6 +63,16 @@ class _Workspace:
 workspace = _Workspace()
 
 authenticate = workspace.authenticate
+
+
+class Session:
+    def __get__(self, obj, obj_type=None) -> requests.Session:
+        return workspace.auth.session
+
+
+class WorkspaceId:
+    def __get__(self, obj, obj_type=None) -> str:
+        return obj.__data__.get("workspace_id", workspace.id)
 
 
 def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
