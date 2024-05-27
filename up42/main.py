@@ -35,6 +35,14 @@ class _Workspace:
     def id(self):
         return _authenticated(self._id)
 
+    @id.setter
+    def id(self, value):
+        self._id = value
+
+    @id.deleter
+    def id(self):
+        del self._id
+
     def authenticate(
         self,
         cfg_file: Optional[Union[str, pathlib.Path]] = None,
@@ -72,7 +80,7 @@ class Session:
 
 class WorkspaceId:
     def __get__(self, obj, obj_type=None) -> str:
-        return obj.__data__.get("workspace_id", workspace.id)
+        return obj.__dict__.get("workspace_id", workspace.id)
 
 
 def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:

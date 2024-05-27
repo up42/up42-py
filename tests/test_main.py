@@ -90,4 +90,30 @@ class TestSession:
 
 
 class TestWorkspaceId:
-    expected_workspace_id = None
+    @pytest.fixture
+    def dummy_instance_without_local_id(self, requests_mock):
+        requests_mock.post("https://api.up42.com/oauth/token", json={"access_token": constants.TOKEN})
+        requests_mock.get(
+            url="https://api.up42.com/users/me",
+            json={"data": {"id": constants.WORKSPACE_ID}},
+        )
+        main.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
+
+        class DummyInstance:
+            workspace_id = main.WorkspaceId()
+
+        return DummyInstance()
+
+    def test_should_provided_local_if_set_workspace(self):
+        class DummyInstance:
+            workspace_id = main.WorkspaceId()
+
+            def __init__(self, workspace_id=None):
+                if workspace_id:
+                    self.__dict__["workspace_id"] = workspace_id
+
+        instance_with_id = DummyInstance(workspace_id="custom_id")
+        assert instance_with_id.workspace_id == "custom_id"
+
+    def test_should_provide_workspace_id_if_not_provided(self, dummy_instance_without_local_id):
+        assert dummy_instance_without_local_id.workspace_id == constants.WORKSPACE_ID
