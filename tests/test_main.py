@@ -86,8 +86,7 @@ class TestSession:
             json={"data": {"id": constants.WORKSPACE_ID}},
         )
         main.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
-        session = dummy_instance.session
-        assert session == main.workspace.auth.session
+        assert dummy_instance.session == main.workspace.auth.session
 
 
 class TestWorkspaceId:
