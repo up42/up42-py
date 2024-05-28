@@ -79,7 +79,7 @@ class TestSession:
         with pytest.raises(main.UserNotAuthenticated):
             _ = dummy_instance.session
 
-    def test_should_provide_authentication(self, requests_mock, dummy_instance):
+    def test_should_provide_session_if_authenticated(self, requests_mock, dummy_instance):
         requests_mock.post("https://api.up42.com/oauth/token", json={"access_token": constants.TOKEN})
         requests_mock.get(
             url="https://api.up42.com/users/me",
@@ -102,7 +102,8 @@ class TestWorkspaceId:
         class DummyInstance:
             workspace_id = main.WorkspaceId()
 
-        return DummyInstance()
+        yield DummyInstance()
+        main.workspace = main._Workspace()  # pylint: disable=protected-access
 
     def test_should_provided_local_if_set_workspace(self):
         class DummyInstance:
@@ -115,5 +116,13 @@ class TestWorkspaceId:
         instance_with_id = DummyInstance(workspace_id="custom_id")
         assert instance_with_id.workspace_id == "custom_id"
 
-    def test_should_provide_workspace_id_if_not_provided(self, dummy_instance_without_local_id):
+    def test_should_provide_workspace_id_if_not_provided_authenticated(self, dummy_instance_without_local_id):
         assert dummy_instance_without_local_id.workspace_id == constants.WORKSPACE_ID
+
+    def test_should_fail_if_not_authenticated(self):
+        class DummyInstance:
+            workspace_id = main.WorkspaceId()
+
+        instance_with_id = DummyInstance()
+        with pytest.raises(main.UserNotAuthenticated):
+            _ = instance_with_id.workspace_id
