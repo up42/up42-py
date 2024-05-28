@@ -22,6 +22,7 @@ from typing import Callable, Type, Union, cast
 # pylint: disable=only-importing-modules-is-allowed
 from up42.asset import Asset
 from up42.auth import Auth
+from up42.base import authenticate, create_webhook, get_credits_balance, get_webhook_events, get_webhooks
 from up42.catalog import Catalog
 from up42.initialization import (
     initialize_asset,
@@ -31,7 +32,6 @@ from up42.initialization import (
     initialize_tasking,
     initialize_webhook,
 )
-from up42.main import authenticate, create_webhook, get_credits_balance, get_webhook_events, get_webhooks
 from up42.order import Order
 from up42.storage import Storage
 from up42.tasking import Tasking

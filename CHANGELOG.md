@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **May 27, 2024**
 
-- Added `Session` and `WorkspaceID` descriptors to provide access to session and workspace_id from other Classes.
+- Added `Session` and `WorkspaceId` descriptors to provide access to session and workspace_id from other classes.
 
 
 ## 1.0.4a2

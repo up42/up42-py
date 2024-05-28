@@ -2,17 +2,17 @@ from unittest import mock
 
 import pytest
 
-from up42 import main
+from up42 import base
 
 from .fixtures import fixtures_globals as constants
 
 
 class TestWorkspace:
     def test_fails_to_provide_properties_if_not_authenticated(self):
-        with pytest.raises(main.UserNotAuthenticated):
-            _ = main.workspace.auth
-        with pytest.raises(main.UserNotAuthenticated):
-            _ = main.workspace.id
+        with pytest.raises(base.UserNotAuthenticated):
+            _ = base.workspace.auth
+        with pytest.raises(base.UserNotAuthenticated):
+            _ = base.workspace.id
 
     def test_should_authenticate(self, requests_mock):
         requests_mock.post("https://api.up42.com/oauth/token", json={"access_token": constants.TOKEN})
@@ -20,15 +20,15 @@ class TestWorkspace:
             url="https://api.up42.com/users/me",
             json={"data": {"id": constants.WORKSPACE_ID}},
         )
-        main.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
-        assert main.workspace.id == constants.WORKSPACE_ID
+        base.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
+        assert base.workspace.id == constants.WORKSPACE_ID
 
 
 # TODO: these tests to be moved to test_initialization
 class TestNonWorkspace:
     @pytest.fixture(autouse=True)
     def workspace(self, auth_mock):
-        with mock.patch("up42.main.workspace") as workspace_mock:
+        with mock.patch("up42.base.workspace") as workspace_mock:
             workspace_mock.auth = auth_mock
             workspace_mock.id = constants.WORKSPACE_ID
             yield
@@ -43,11 +43,11 @@ class TestNonWorkspace:
                 "error": {},
             },
         )
-        assert main.get_webhook_events() == events
+        assert base.get_webhook_events() == events
 
     @pytest.mark.parametrize("return_json", [False, True])
     def test_get_webhooks(self, webhooks_mock, return_json):
-        webhooks = main.get_webhooks(return_json=return_json)
+        webhooks = base.get_webhooks(return_json=return_json)
         expected = webhooks_mock.get_webhooks(return_json=return_json)
         if return_json:
             assert webhooks == expected
@@ -63,13 +63,13 @@ class TestNonWorkspace:
             url=balance_url,
             json={"data": balance},
         )
-        assert main.get_credits_balance() == balance
+        assert base.get_credits_balance() == balance
 
 
 class TestSession:
     @pytest.fixture(autouse=True)
     def workspace(self, auth_mock):
-        with mock.patch("up42.main.workspace") as workspace_mock:
+        with mock.patch("up42.base.workspace") as workspace_mock:
             workspace_mock.auth = auth_mock
             workspace_mock.id = constants.WORKSPACE_ID
             yield
@@ -77,29 +77,29 @@ class TestSession:
     @pytest.fixture
     def record(self):
         class ActiveRecord:
-            session = main.Session()
+            session = base.Session()
 
         return ActiveRecord()
 
     def test_should_fail_if_not_authenticated(self, record):
-        main.workspace = main._Workspace()  # pylint: disable=protected-access
-        with pytest.raises(main.UserNotAuthenticated):
+        base.workspace = base._Workspace()  # pylint: disable=protected-access
+        with pytest.raises(base.UserNotAuthenticated):
             _ = record.session
 
     def test_should_provide_session_if_authenticated(self, record):
-        assert record.session == main.workspace.auth.session
+        assert record.session == base.workspace.auth.session
 
 
 class TestWorkspaceId:
     @pytest.fixture(autouse=True)
     def workspace(self, auth_mock):
-        with mock.patch("up42.main.workspace") as workspace_mock:
+        with mock.patch("up42.base.workspace") as workspace_mock:
             workspace_mock.auth = auth_mock
             workspace_mock.id = constants.WORKSPACE_ID
             yield
 
     class ActiveRecord:
-        workspace_id = main.WorkspaceId()
+        workspace_id = base.WorkspaceId()
 
         def __init__(self, workspace_id=None):
             if workspace_id:
@@ -120,6 +120,6 @@ class TestWorkspaceId:
         assert record_not_set_value.workspace_id == constants.WORKSPACE_ID
 
     def test_should_fail_if_not_authenticated(self, record_not_set_value):
-        main.workspace = main._Workspace()  # pylint: disable=protected-access
-        with pytest.raises(main.UserNotAuthenticated):
+        base.workspace = base._Workspace()  # pylint: disable=protected-access
+        with pytest.raises(base.UserNotAuthenticated):
             _ = record_not_set_value.workspace_id
