@@ -32,7 +32,6 @@ class TestNonWorkspace:
             workspace_mock.auth = auth_mock
             workspace_mock.id = constants.WORKSPACE_ID
             yield
-        main.workspace = main._Workspace()  # pylint: disable=protected-access
 
     def test_get_webhook_events(self, requests_mock):
         url_webhook_events = f"{constants.API_HOST}/webhooks/events"
@@ -68,61 +67,59 @@ class TestNonWorkspace:
 
 
 class TestSession:
-    @pytest.fixture(scope="function")
-    def dummy_instance(self):
-        class DummyInstance:
+    @pytest.fixture(autouse=True)
+    def workspace(self, auth_mock):
+        with mock.patch("up42.main.workspace") as workspace_mock:
+            workspace_mock.auth = auth_mock
+            workspace_mock.id = constants.WORKSPACE_ID
+            yield
+
+    @pytest.fixture
+    def record(self):
+        class ActiveRecord:
             session = main.Session()
 
-        return DummyInstance()
+        return ActiveRecord()
 
-    def test_should_fail_if_not_authenticated(self, dummy_instance):
+    def test_should_fail_if_not_authenticated(self, record):
+        main.workspace = main._Workspace()  # pylint: disable=protected-access
         with pytest.raises(main.UserNotAuthenticated):
-            _ = dummy_instance.session
+            _ = record.session
 
-    def test_should_provide_session_if_authenticated(self, requests_mock, dummy_instance):
-        requests_mock.post("https://api.up42.com/oauth/token", json={"access_token": constants.TOKEN})
-        requests_mock.get(
-            url="https://api.up42.com/users/me",
-            json={"data": {"id": constants.WORKSPACE_ID}},
-        )
-        main.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
-        assert dummy_instance.session == main.workspace.auth.session
+    def test_should_provide_session_if_authenticated(self, record):
+        assert record.session == main.workspace.auth.session
 
 
 class TestWorkspaceId:
+    @pytest.fixture(autouse=True)
+    def workspace(self, auth_mock):
+        with mock.patch("up42.main.workspace") as workspace_mock:
+            workspace_mock.auth = auth_mock
+            workspace_mock.id = constants.WORKSPACE_ID
+            yield
+
+    class ActiveRecord:
+        workspace_id = main.WorkspaceId()
+
+        def __init__(self, workspace_id=None):
+            if workspace_id:
+                self.workspace_id = workspace_id
+
     @pytest.fixture
-    def dummy_instance_without_local_id(self, requests_mock):
-        requests_mock.post("https://api.up42.com/oauth/token", json={"access_token": constants.TOKEN})
-        requests_mock.get(
-            url="https://api.up42.com/users/me",
-            json={"data": {"id": constants.WORKSPACE_ID}},
-        )
-        main.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
+    def record_set_value(self):
+        return self.ActiveRecord(workspace_id="custom_workspace_id")
 
-        class DummyInstance:
-            workspace_id = main.WorkspaceId()
+    @pytest.fixture
+    def record_not_set_value(self):
+        return self.ActiveRecord()
 
-        yield DummyInstance()
+    def test_should_provided_local_if_set_workspace(self, record_set_value):
+        assert record_set_value.workspace_id == "custom_workspace_id"
+
+    def test_should_provide_workspace_id_if_not_provided_authenticated(self, record_not_set_value):
+        assert record_not_set_value.workspace_id == constants.WORKSPACE_ID
+
+    def test_should_fail_if_not_authenticated(self, record_not_set_value):
         main.workspace = main._Workspace()  # pylint: disable=protected-access
-
-    def test_should_provided_local_if_set_workspace(self):
-        class DummyInstance:
-            workspace_id = main.WorkspaceId()
-
-            def __init__(self, workspace_id=None):
-                if workspace_id:
-                    self.__dict__["workspace_id"] = workspace_id
-
-        instance_with_id = DummyInstance(workspace_id="custom_id")
-        assert instance_with_id.workspace_id == "custom_id"
-
-    def test_should_provide_workspace_id_if_not_provided_authenticated(self, dummy_instance_without_local_id):
-        assert dummy_instance_without_local_id.workspace_id == constants.WORKSPACE_ID
-
-    def test_should_fail_if_not_authenticated(self):
-        class DummyInstance:
-            workspace_id = main.WorkspaceId()
-
-        instance_with_id = DummyInstance()
         with pytest.raises(main.UserNotAuthenticated):
-            _ = instance_with_id.workspace_id
+            _ = record_not_set_value.workspace_id
