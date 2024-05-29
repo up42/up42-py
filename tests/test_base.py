@@ -1,5 +1,4 @@
 import dataclasses
-import unittest
 from typing import Union
 from unittest import mock
 
@@ -36,23 +35,23 @@ class TestNonWorkspace:
             workspace_mock.id = constants.WORKSPACE_ID
             yield
 
-    @unittest.mock.patch("up42.webhooks.Webhooks")
+    @mock.patch("up42.webhooks.Webhooks")
     def test_should_get_webhook_events(self, webhooks: mock.MagicMock, auth_mock):
         events = mock.MagicMock()
-        webhooks.return_value.get_webhook_events.return_value = events
+        webhooks().get_webhook_events.return_value = events
         assert base.get_webhook_events() == events
         webhooks.assert_called_with(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
 
-    @unittest.mock.patch("up42.webhooks.Webhooks")
+    @mock.patch("up42.webhooks.Webhooks")
     @pytest.mark.parametrize("return_json", [False, True])
     def test_should_get_webhooks(self, webhooks: mock.MagicMock, auth_mock, return_json):
         hooks = mock.MagicMock()
-        webhooks.return_value.get_webhooks.return_value = hooks
+        webhooks().get_webhooks.return_value = hooks
         assert base.get_webhooks(return_json=return_json) == hooks
         webhooks.assert_called_with(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
         webhooks.return_value.get_webhooks.assert_called_with(return_json=return_json)
 
-    @unittest.mock.patch("up42.webhooks.Webhooks")
+    @mock.patch("up42.webhooks.Webhooks")
     def test_should_create_webhook(self, webhooks: mock.MagicMock, auth_mock):
         name = "name"
         url = "url"
@@ -60,12 +59,10 @@ class TestNonWorkspace:
         active = True
         secret = "secret"
         webhook = mock.MagicMock()
-        webhooks.return_value.create_webhook.return_value = webhook
+        webhooks().create_webhook.return_value = webhook
         assert webhook == base.create_webhook(name, url, events, active, secret)
         webhooks.assert_called_with(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
-        webhooks.return_value.create_webhook.assert_called_with(
-            name=name, url=url, events=events, active=active, secret=secret
-        )
+        webhooks().create_webhook.assert_called_with(name=name, url=url, events=events, active=active, secret=secret)
 
     def test_should_get_credits_balance(self, requests_mock):
         balance_url = f"{constants.API_HOST}/accounts/me/credits/balance"
