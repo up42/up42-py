@@ -100,16 +100,10 @@ class TestWorkspaceId:
             if workspace_id:
                 self.workspace_id = workspace_id
 
-    @pytest.fixture
-    def record_set_value(self):
-        return self.ActiveRecord(workspace_id="custom_workspace_id")
+    def test_should_provided_local_if_set_workspace(self):
+        record = self.ActiveRecord(workspace_id="custom_workspace_id")
+        assert record.workspace_id == "custom_workspace_id"
 
-    @pytest.fixture
-    def record_not_set_value(self):
-        return self.ActiveRecord()
-
-    def test_should_provided_local_if_set_workspace(self, record_set_value):
-        assert record_set_value.workspace_id == "custom_workspace_id"
-
-    def test_should_provide_workspace_id_if_not_provided_authenticated(self, record_not_set_value):
-        assert record_not_set_value.workspace_id == constants.WORKSPACE_ID
+    def test_should_provide_workspace_id_if_not_provided_authenticated(self):
+        record = self.ActiveRecord()
+        assert record.workspace_id == constants.WORKSPACE_ID
