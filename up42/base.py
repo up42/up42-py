@@ -74,6 +74,11 @@ class WorkspaceId:
     def __get__(self, obj, obj_type=None) -> str:
         return obj.__dict__.get("workspace_id", workspace.id)
 
+    def __set__(self, obj, value: str) -> None:
+        if value == self:
+            value = workspace.id
+        obj.__dict__["workspace_id"] = value
+
 
 def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
     """

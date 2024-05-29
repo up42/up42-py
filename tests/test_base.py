@@ -1,3 +1,5 @@
+import dataclasses
+from typing import Union
 from unittest import mock
 
 import pytest
@@ -66,7 +68,13 @@ class TestNonWorkspace:
         assert base.get_credits_balance() == balance
 
 
-class TestSession:
+@dataclasses.dataclass(eq=True)
+class ActiveRecord:
+    session = base.Session()
+    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+
+
+class TestDescriptors:
     @pytest.fixture(autouse=True)
     def workspace(self, auth_mock):
         with mock.patch("up42.base.workspace") as workspace_mock:
@@ -74,36 +82,19 @@ class TestSession:
             workspace_mock.id = constants.WORKSPACE_ID
             yield
 
-    @pytest.fixture
-    def record(self):
-        class ActiveRecord:
-            session = base.Session()
-
-        return ActiveRecord()
-
-    def test_should_provide_session_if_authenticated(self, record):
+    def test_should_provide_session(self):
+        record = ActiveRecord()
         assert record.session == base.workspace.auth.session
 
+    def test_session_should_not_be_represented(self):
+        assert "session" not in repr(ActiveRecord())
 
-class TestWorkspaceId:
-    @pytest.fixture(autouse=True)
-    def workspace(self, auth_mock):
-        with mock.patch("up42.base.workspace") as workspace_mock:
-            workspace_mock.auth = auth_mock
-            workspace_mock.id = constants.WORKSPACE_ID
-            yield
-
-    class ActiveRecord:
-        workspace_id = base.WorkspaceId()
-
-        def __init__(self, workspace_id=None):
-            if workspace_id:
-                self.workspace_id = workspace_id
-
-    def test_should_provided_local_if_set_workspace(self):
-        record = self.ActiveRecord(workspace_id="custom_workspace_id")
+    def test_should_allow_to_set_workspace_id(self):
+        record = ActiveRecord(workspace_id="custom_workspace_id")
         assert record.workspace_id == "custom_workspace_id"
+        assert "custom_workspace_id" in repr(record)
 
-    def test_should_provide_workspace_id_if_not_provided_authenticated(self):
-        record = self.ActiveRecord()
+    def test_should_provide_default_workspace_id(self):
+        record = ActiveRecord()
         assert record.workspace_id == constants.WORKSPACE_ID
+        assert constants.WORKSPACE_ID in repr(record)
