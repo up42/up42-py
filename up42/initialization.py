@@ -5,7 +5,6 @@ from up42 import asset, base, catalog, order, storage, tasking, utils, webhooks
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
-DEPRECATION_MESSAGE = "after May 15th, 2024, and will be replaced by new processing functionalities."
 INITIALIZED_MSG = "Initialized %s"
 
 
