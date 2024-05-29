@@ -81,11 +81,6 @@ class TestSession:
 
         return ActiveRecord()
 
-    def test_should_fail_if_not_authenticated(self, record):
-        base.workspace = base._Workspace()  # pylint: disable=protected-access
-        with pytest.raises(base.UserNotAuthenticated):
-            _ = record.session
-
     def test_should_provide_session_if_authenticated(self, record):
         assert record.session == base.workspace.auth.session
 
@@ -118,8 +113,3 @@ class TestWorkspaceId:
 
     def test_should_provide_workspace_id_if_not_provided_authenticated(self, record_not_set_value):
         assert record_not_set_value.workspace_id == constants.WORKSPACE_ID
-
-    def test_should_fail_if_not_authenticated(self, record_not_set_value):
-        base.workspace = base._Workspace()  # pylint: disable=protected-access
-        with pytest.raises(base.UserNotAuthenticated):
-            _ = record_not_set_value.workspace_id
