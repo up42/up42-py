@@ -58,7 +58,7 @@ def initialize_webhook(webhook_id: str) -> webhooks.Webhook:
     Args:
         webhook_id: The UP42 webhook_id
     """
-    webhook = webhooks.Webhook(auth=base.workspace.auth, workspace_id=base.workspace.id, webhook_id=webhook_id)
+    webhook = webhooks.Webhook.get(webhook_id)
     logger.info(INITIALIZED_MSG, webhook)
     return webhook
 
