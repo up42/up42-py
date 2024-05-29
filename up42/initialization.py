@@ -1,6 +1,6 @@
 import logging
 
-from up42 import asset, catalog, main, order, storage, tasking, utils, webhooks
+from up42 import asset, base, catalog, order, storage, tasking, utils, webhooks
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
@@ -12,21 +12,21 @@ def initialize_catalog() -> catalog.Catalog:
     """
     Returns a Catalog object for using the catalog search.
     """
-    return catalog.Catalog(auth=main.workspace.auth, workspace_id=main.workspace.id)
+    return catalog.Catalog(auth=base.workspace.auth, workspace_id=base.workspace.id)
 
 
 def initialize_tasking() -> "tasking.Tasking":
     """
     Returns a Tasking object for creating satellite tasking orders.
     """
-    return tasking.Tasking(auth=main.workspace.auth, workspace_id=main.workspace.id)
+    return tasking.Tasking(auth=base.workspace.auth, workspace_id=base.workspace.id)
 
 
 def initialize_storage() -> storage.Storage:
     """
     Returns a Storage object to list orders and assets.
     """
-    return storage.Storage(auth=main.workspace.auth, workspace_id=main.workspace.id)
+    return storage.Storage(auth=base.workspace.auth, workspace_id=base.workspace.id)
 
 
 def initialize_order(order_id: str) -> order.Order:
@@ -35,7 +35,7 @@ def initialize_order(order_id: str) -> order.Order:
     Args:
         order_id: The UP42 order_id
     """
-    up42_order = order.Order(auth=main.workspace.auth, order_id=order_id)
+    up42_order = order.Order(auth=base.workspace.auth, order_id=order_id)
     logger.info(INITIALIZED_MSG, up42_order)
     return up42_order
 
@@ -46,7 +46,7 @@ def initialize_asset(asset_id: str) -> asset.Asset:
     Args:
         asset_id: The UP42 asset_id
     """
-    up42_asset = asset.Asset(auth=main.workspace.auth, asset_id=asset_id)
+    up42_asset = asset.Asset(auth=base.workspace.auth, asset_id=asset_id)
     logger.info(INITIALIZED_MSG, up42_asset)
     return up42_asset
 
@@ -57,6 +57,6 @@ def initialize_webhook(webhook_id: str) -> webhooks.Webhook:
     Args:
         webhook_id: The UP42 webhook_id
     """
-    webhook = webhooks.Webhook(auth=main.workspace.auth, workspace_id=main.workspace.id, webhook_id=webhook_id)
+    webhook = webhooks.Webhook(auth=base.workspace.auth, workspace_id=base.workspace.id, webhook_id=webhook_id)
     logger.info(INITIALIZED_MSG, webhook)
     return webhook
