@@ -82,14 +82,11 @@ class Session:
         return workspace.auth.session
 
 
-class ClassWorkspaceId:
-    def __get__(self, obj, obj_type=None) -> requests.Session:
-        return workspace.id
-
-
-class InstanceWorkspaceId:
+class WorkspaceId:
     def __get__(self, obj, obj_type=None) -> str:
-        return obj.__dict__.get("workspace_id", workspace.id)
+        if obj:
+            return obj.__dict__.get("workspace_id", workspace.id)
+        return workspace.id
 
     def __set__(self, obj, value: str) -> None:
         if value == self:

@@ -10,7 +10,7 @@ logger = utils.get_logger(__name__)
 @dataclasses.dataclass
 class Webhook:
     session = base.Session()
-    workspace_id = base.ClassWorkspaceId()
+    workspace_id = base.WorkspaceId()
     url: str
     name: str
     events: List[str]

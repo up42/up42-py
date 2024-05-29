@@ -38,8 +38,8 @@ class TestWorkspace:
 @dataclasses.dataclass(eq=True)
 class ActiveRecord:
     session = base.Session()
-    class_workspace_id = base.ClassWorkspaceId()
-    workspace_id: Union[str, base.InstanceWorkspaceId] = dataclasses.field(default=base.InstanceWorkspaceId())
+    class_workspace_id = base.WorkspaceId()
+    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
 
 
 class TestDescriptors:
@@ -57,14 +57,15 @@ class TestDescriptors:
     def test_session_should_not_be_represented(self):
         assert "session" not in repr(ActiveRecord())
 
-    def test_should_allow_to_set_instance_workspace_id(self):
+    def test_workspace_id_should_provide_instance_value_when_invoked_for_object(self):
         record = ActiveRecord(workspace_id="custom_workspace_id")
         assert record.workspace_id == "custom_workspace_id"
-        assert record.class_workspace_id == constants.WORKSPACE_ID
+        assert record.class_workspace_id == "custom_workspace_id"
+        assert ActiveRecord.class_workspace_id == constants.WORKSPACE_ID
         assert "custom_workspace_id" in repr(record)
 
-    def test_should_provide_default_workspace_id(self):
+    def test_workspace_id_should_provide_default_value(self):
         record = ActiveRecord()
         assert record.workspace_id == constants.WORKSPACE_ID
-        assert record.class_workspace_id == constants.WORKSPACE_ID
+        assert ActiveRecord.class_workspace_id == constants.WORKSPACE_ID
         assert constants.WORKSPACE_ID in repr(record)
