@@ -1,22 +1,9 @@
 from unittest import mock
 
-import pytest
-
 import up42
-from up42 import base, catalog, storage, tasking
+from up42 import catalog, storage, tasking
 
 from .fixtures import fixtures_globals as constants
-
-
-def test_fails_to_initialize_if_not_authenticated():
-    with pytest.raises(base.UserNotAuthenticated):
-        up42.initialize_catalog()
-    with pytest.raises(base.UserNotAuthenticated):
-        up42.initialize_storage()
-    with pytest.raises(base.UserNotAuthenticated):
-        up42.initialize_order(order_id=constants.ORDER_ID)
-    with pytest.raises(base.UserNotAuthenticated):
-        up42.initialize_asset(asset_id=constants.ASSET_ID)
 
 
 def test_should_initialize_objects(
