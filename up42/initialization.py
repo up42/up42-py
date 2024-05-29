@@ -1,4 +1,5 @@
 import logging
+from typing import List, Optional
 
 from up42 import asset, base, catalog, order, storage, tasking, utils, webhooks
 
@@ -15,7 +16,7 @@ def initialize_catalog() -> catalog.Catalog:
     return catalog.Catalog(auth=base.workspace.auth, workspace_id=base.workspace.id)
 
 
-def initialize_tasking() -> "tasking.Tasking":
+def initialize_tasking() -> tasking.Tasking:
     """
     Returns a Tasking object for creating satellite tasking orders.
     """
@@ -60,3 +61,51 @@ def initialize_webhook(webhook_id: str) -> webhooks.Webhook:
     webhook = webhooks.Webhook(auth=base.workspace.auth, workspace_id=base.workspace.id, webhook_id=webhook_id)
     logger.info(INITIALIZED_MSG, webhook)
     return webhook
+
+
+def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
+    """
+    Gets all registered webhooks for this workspace.
+
+    Args:
+        return_json: If true returns the webhooks information as JSON instead of webhook class objects.
+    Returns:
+        A list of the registered webhooks for this workspace.
+    """
+    return webhooks.Webhooks(auth=base.workspace.auth, workspace_id=base.workspace.id).get_webhooks(
+        return_json=return_json
+    )
+
+
+def create_webhook(
+    name: str,
+    url: str,
+    events: List[str],
+    active: bool = False,
+    secret: Optional[str] = None,
+) -> webhooks.Webhook:
+    """
+    Registers a new webhook in the system.
+
+    Args:
+        name: Webhook name
+        url: Unique URL where the webhook will send the message (HTTPS required)
+        events: List of event types (order status / job task status)
+        active: Webhook status.
+        secret: String that acts as signature to the https request sent to the url.
+    Returns:
+        A dict with details of the registered webhook.
+    """
+    return webhooks.Webhooks(auth=base.workspace.auth, workspace_id=base.workspace.id).create_webhook(
+        name=name, url=url, events=events, active=active, secret=secret
+    )
+
+
+def get_webhook_events() -> dict:
+    """
+    Gets all available webhook events.
+
+    Returns:
+        A dict of the available webhook events.
+    """
+    return webhooks.Webhooks(auth=base.workspace.auth, workspace_id=base.workspace.id).get_webhook_events()
