@@ -166,12 +166,6 @@ class TestWebhook:
         assert hook == dataclasses.replace(webhook, updated_at=updated_at, **updates)
         assert requests_mock.last_request and requests_mock.last_request.json() == updates
 
-
-class TestWebhooks:
-    @pytest.fixture(autouse=True)
-    def setup_webhooks(self, auth_mock):
-        self.webhooks = webhooks.Webhooks(auth_mock, constants.WORKSPACE_ID)
-
     def test_should_get_webhook_events(self, requests_mock: req_mock.Mocker):
         url = f"{constants.API_HOST}/webhooks/events"
         events = ["some-event"]
@@ -182,18 +176,18 @@ class TestWebhooks:
                 "error": {},
             },
         )
-        assert self.webhooks.get_webhook_events() == events
+        assert webhooks.Webhook.get_webhook_events() == events
 
-    def test_should_get_webhooks(self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook):
+    def test_should_get_all_webhooks(self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook):
         requests_mock.get(HOOKS_URL, json={"data": [metadata]})
-        assert self.webhooks.get_webhooks() == [webhook]
+        assert webhooks.Webhook.all() == [webhook]
 
-    def test_should_get_webhooks_as_dict(self, requests_mock: req_mock.Mocker):
+    def test_should_get_all_webhooks_as_dict(self, requests_mock: req_mock.Mocker):
         requests_mock.get(HOOKS_URL, json={"data": [metadata]})
-        assert self.webhooks.get_webhooks(return_json=True) == [metadata]
+        assert webhooks.Webhook.all(return_json=True) == [metadata]
 
     @pytest.mark.parametrize("secret", [random_alphanumeric(), None])
-    def test_should_create_webhook(
+    def test_should_create(
         self,
         requests_mock: req_mock.Mocker,
         webhook: webhooks.Webhook,
@@ -204,7 +198,7 @@ class TestWebhooks:
         events = [random_alphanumeric()]
         active = random.choice([True, False])
         requests_mock.post(HOOKS_URL, json={"data": metadata})
-        assert self.webhooks.create_webhook(
+        assert webhooks.Webhook.create(
             name=name, url=url, events=events, active=active, secret=secret
         ) == dataclasses.replace(webhook, name=name, url=url, active=active, events=events, secret=secret)
 
