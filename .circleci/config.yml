@@ -53,9 +53,9 @@ jobs:
           name: Running tests
           command: |
             mkdir ./test-results
-            poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
+            poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --junitxml=test_results/results.xml --durations=3 
       - store_test_results:
-          path: ./test-results
+          path: test-results
       - store_artifacts:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
