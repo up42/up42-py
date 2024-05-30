@@ -52,10 +52,10 @@ jobs:
       - run:
           name: Running tests
           command: |
-            mkdir test-results
+            mkdir ./test-results
             poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
       - store_test_results:
-          path: test-results
+          path: ./test-results
       - store_artifacts:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
@@ -110,10 +110,10 @@ jobs:
       - run:
           name: Running tests
           command: |
-            mkdir test-results
+            mkdir ./test-results
             poetry run pytest
       - store_test_results:
-          path: test_results
+          path: ./test_results
 
   sonar:
     working_directory: *workspace-dir
