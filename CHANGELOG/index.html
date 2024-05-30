@@ -1,0 +1,2143 @@
+<!-- Elements added to main will be displayed on all pages -->
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="UP42 Python SDK">
+      
+      
+      
+        <link rel="canonical" href="https://up42.github.io/up42-py/CHANGELOG/">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/logo-up42.ico">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.14">
+    
+    
+      
+        <title>Changelog - UP42 Python SDK</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.10ba22f1.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+<script>
+var gtmId = 'GTM-TQPKQK7';
+if (typeof window !== 'undefined' && window.location.href.includes('127.0.0.1')) {
+  gtmId = 'GTM-XXX'
+}
+(function(w,d,s,l,i){
+  w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer', gtmId);
+</script>
+
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","UA-132885718-1"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","UA-132885718-1",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=UA-132885718-1",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="UP42 Python SDK" class="md-header__button md-logo" aria-label="UP42 Python SDK" data-md-component="logo">
+      
+  
+  <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" viewBox="0 0 300 300" width="300" height="300"><defs><path d="M0 0L301.5 0L301.5 300L0 300L0 0Z" id="a1GmkaXFhc"></path><path d="M46.9 105.6C46.9 142.93 46.9 163.67 46.9 167.82C46.9 177.98 53.89 183.69 64.36 183.69C74.84 183.69 81.82 178.3 81.82 167.82C81.82 163.67 81.82 142.93 81.82 105.6L105.95 105.6C105.95 142.93 105.95 163.67 105.95 167.82C105.95 190.04 89.44 205.6 64.36 205.6C39.28 205.6 22.46 190.04 22.46 167.82C22.46 163.67 22.46 142.93 22.46 105.6L46.9 105.6Z" id="ePubGLbJJ"></path><path d="M164.89 105.6C184.57 105.6 197.8 119.79 197.8 139.79C197.8 159.79 184.57 174.63 164.89 174.63C163.73 174.63 157.93 174.63 147.48 174.63L147.48 205.6L122.64 205.6L122.64 105.6C147.99 105.6 162.08 105.6 164.89 105.6ZM172.64 140.11C172.64 132.37 168.44 126.56 160.06 126.56C159.22 126.56 155.02 126.56 147.48 126.56L147.48 153.66L159.73 153.66C168.34 149.79 172.64 145.27 172.64 140.11Z" id="e3xlgi979P"></path><path d="M228.42 85.15L237.44 85.15L237.44 118.88L245.01 118.88L245.01 125.37L237.44 125.37L237.44 140.15L229.68 140.15L229.68 125.55L202.63 125.55L202.45 120.5L228.42 85.15ZM229.5 118.7C229.5 106.79 229.5 100.18 229.5 98.86C229.5 96.33 229.86 93.45 229.86 93.45C229.85 93.45 229.7 93.45 229.68 93.45C228.96 95.07 227.88 96.52 226.98 97.96C225.92 99.35 220.63 106.32 211.11 118.88L211.11 118.88L229.5 118.88L229.5 118.7Z" id="c1yTzdREXX"></path><path d="M276.4 101.25C276.4 95.94 272.34 92.23 266.5 92.23C259.25 92.23 255.36 99.13 255.36 99.13C254.8 98.75 250.27 95.78 249.7 95.41C253.24 89.05 259.78 85.15 267.03 85.15C277.11 85.15 284.36 91.34 284.36 100.72C284.36 118.4 258.19 121.23 258.01 133.61C259.83 133.61 268.91 133.61 285.25 133.61L285.25 140.15C264.03 140.15 252.24 140.15 249.88 140.15C249.7 138.56 249.53 137.15 249.53 135.91C249.53 116.63 276.4 113.8 276.4 101.25Z" id="d2t6xtf3zG"></path></defs><g><g><g><use xlink:href="#a1GmkaXFhc" opacity="1" fill="#242c5c" fill-opacity="1"></use></g><g><use xlink:href="#ePubGLbJJ" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#ePubGLbJJ" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#e3xlgi979P" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#e3xlgi979P" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#c1yTzdREXX" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#c1yTzdREXX" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#d2t6xtf3zG" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#d2t6xtf3zG" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g></g></g></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            UP42 Python SDK
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/up42/up42-py" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    up42-py
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="UP42 Python SDK" class="md-nav__button md-logo" aria-label="UP42 Python SDK" data-md-component="logo">
+      
+  
+  <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" viewBox="0 0 300 300" width="300" height="300"><defs><path d="M0 0L301.5 0L301.5 300L0 300L0 0Z" id="a1GmkaXFhc"></path><path d="M46.9 105.6C46.9 142.93 46.9 163.67 46.9 167.82C46.9 177.98 53.89 183.69 64.36 183.69C74.84 183.69 81.82 178.3 81.82 167.82C81.82 163.67 81.82 142.93 81.82 105.6L105.95 105.6C105.95 142.93 105.95 163.67 105.95 167.82C105.95 190.04 89.44 205.6 64.36 205.6C39.28 205.6 22.46 190.04 22.46 167.82C22.46 163.67 22.46 142.93 22.46 105.6L46.9 105.6Z" id="ePubGLbJJ"></path><path d="M164.89 105.6C184.57 105.6 197.8 119.79 197.8 139.79C197.8 159.79 184.57 174.63 164.89 174.63C163.73 174.63 157.93 174.63 147.48 174.63L147.48 205.6L122.64 205.6L122.64 105.6C147.99 105.6 162.08 105.6 164.89 105.6ZM172.64 140.11C172.64 132.37 168.44 126.56 160.06 126.56C159.22 126.56 155.02 126.56 147.48 126.56L147.48 153.66L159.73 153.66C168.34 149.79 172.64 145.27 172.64 140.11Z" id="e3xlgi979P"></path><path d="M228.42 85.15L237.44 85.15L237.44 118.88L245.01 118.88L245.01 125.37L237.44 125.37L237.44 140.15L229.68 140.15L229.68 125.55L202.63 125.55L202.45 120.5L228.42 85.15ZM229.5 118.7C229.5 106.79 229.5 100.18 229.5 98.86C229.5 96.33 229.86 93.45 229.86 93.45C229.85 93.45 229.7 93.45 229.68 93.45C228.96 95.07 227.88 96.52 226.98 97.96C225.92 99.35 220.63 106.32 211.11 118.88L211.11 118.88L229.5 118.88L229.5 118.7Z" id="c1yTzdREXX"></path><path d="M276.4 101.25C276.4 95.94 272.34 92.23 266.5 92.23C259.25 92.23 255.36 99.13 255.36 99.13C254.8 98.75 250.27 95.78 249.7 95.41C253.24 89.05 259.78 85.15 267.03 85.15C277.11 85.15 284.36 91.34 284.36 100.72C284.36 118.4 258.19 121.23 258.01 133.61C259.83 133.61 268.91 133.61 285.25 133.61L285.25 140.15C264.03 140.15 252.24 140.15 249.88 140.15C249.7 138.56 249.53 137.15 249.53 135.91C249.53 116.63 276.4 113.8 276.4 101.25Z" id="d2t6xtf3zG"></path></defs><g><g><g><use xlink:href="#a1GmkaXFhc" opacity="1" fill="#242c5c" fill-opacity="1"></use></g><g><use xlink:href="#ePubGLbJJ" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#ePubGLbJJ" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#e3xlgi979P" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#e3xlgi979P" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#c1yTzdREXX" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#c1yTzdREXX" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g><g><use xlink:href="#d2t6xtf3zG" opacity="1" fill="#ffffff" fill-opacity="1"></use><g><use xlink:href="#d2t6xtf3zG" opacity="1" fill-opacity="0" stroke="#ffffff" stroke-width="1" stroke-opacity="1"></use></g></g></g></g></svg>
+
+    </a>
+    UP42 Python SDK
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/up42/up42-py" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    up42-py
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#104a5" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.4a5
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#104a4" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.4a4
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#104a3" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.4a3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#104a2" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.4a2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#104a1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.4a1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#103" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#103a1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.3a1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#102" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#102a1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.2a1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#101" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#101a4" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.1a4
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#101a3" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.1a3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#101a2" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.1a2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#101a1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.1a1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#100" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#100a7" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.0a7
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#100a6" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.0a6
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#100a5" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.0a5
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#100a4" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.0a4
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#100a3" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.0a3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#100a2" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.0a2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#100a1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.0.0a1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0372" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371a11" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1a11
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371a10" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1a10
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371a9" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1a9
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371a8" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1a8
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371a7" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1a7
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371a6" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1a6
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371a5" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1a5
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371a4" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1a4
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371a3" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1a3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371a2" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1a2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0371a1" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.1a1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a14" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a14
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a13" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a13
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a12" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a12
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a11" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a11
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a10" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a10
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a9" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a9
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a8" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a8
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a7" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a7
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a6" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a6
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a5" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a5
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a4" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a4
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a3" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a2" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a1" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0370a0" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.37.0a0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0360" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.36.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0350" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.35.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0341" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.34.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0340" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.34.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0331" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.33.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0330" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.33.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0320" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.32.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0310" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.31.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0301" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.30.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0300" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.30.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0290" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.29.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0281" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.28.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0280" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.28.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0271" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.27.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0270" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.27.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0260" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.26.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0250" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.25.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0240" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.24.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0231" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.23.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0230" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.23.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0222" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.22.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0221" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.22.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0220" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.22.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0210" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.21.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0202" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.20.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0201" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.20.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0200" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.20.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0190" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.19.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0181" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.18.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0180" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.18.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0170" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.17.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0160" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0152" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.15.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0151" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.15.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0150" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0140" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0131" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.13.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0130" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0120" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0110" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0101" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.10.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#0100" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#093" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.9.3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#092" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.9.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#091" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.9.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#090" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#083" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.8.3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#082" class="md-nav__link">
+    <span class="md-ellipsis">
+      0.8.2
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<p>Update your installation to the latest version with the following command:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">pip</label><label for="__tabbed_1_2">conda</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>up42-py<span class="w"> </span>--upgrade
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>conda<span class="w"> </span>update<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>up42-py
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>You can check your current version with the following command:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">pip</label><label for="__tabbed_2_2">conda</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>show<span class="w"> </span>up42-py
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>conda<span class="w"> </span>search<span class="w"> </span>up42-py
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>For more information, see <a href="https://pypi.org/project/up42-py/">UP42 Python package description</a>.</p>
+<h2 id="104a5">1.0.4a5<a class="headerlink" href="#104a5" title="Permanent link">&para;</a></h2>
+<p><strong>May 30, 2024</strong></p>
+<ul>
+<li>Move webhooks related code from <code>base.py</code></li>
+</ul>
+<h2 id="104a4">1.0.4a4<a class="headerlink" href="#104a4" title="Permanent link">&para;</a></h2>
+<p><strong>May 29, 2024</strong></p>
+<ul>
+<li>Delegated webhook repr to its info</li>
+<li>Improved test coverage for webhooks</li>
+<li>Dropped unneeded shared and global fixtures for webhook tests</li>
+</ul>
+<h2 id="104a3">1.0.4a3<a class="headerlink" href="#104a3" title="Permanent link">&para;</a></h2>
+<p><strong>May 27, 2024</strong></p>
+<ul>
+<li>Added <code>Session</code> and <code>WorkspaceId</code> descriptors to provide access to session and workspace_id from other classes.</li>
+<li>Renaming <code>main</code> module to <code>base</code>.</li>
+</ul>
+<h2 id="104a2">1.0.4a2<a class="headerlink" href="#104a2" title="Permanent link">&para;</a></h2>
+<p><strong>May 24, 2024</strong></p>
+<ul>
+<li>Added workspace singleton in <code>main.py</code>, encapsulating global state (auth, workspace id).</li>
+<li>Inject auth and workspace id instead of passing a containing object.</li>
+</ul>
+<h2 id="104a1">1.0.4a1<a class="headerlink" href="#104a1" title="Permanent link">&para;</a></h2>
+<p><strong>May 24, 2024</strong>
+- Bumped dependencies <code>requests</code> from 2.31.0 to 2.32.0.</p>
+<h2 id="103">1.0.3<a class="headerlink" href="#103" title="Permanent link">&para;</a></h2>
+<p><strong>May 23, 2024</strong>
+- Added tenacity as dependency.
+- Added resilience on <code>asset::stac_info</code> and <code>asset::stac_items</code>
+- Dropped pystac client subclassing
+- Cleaned up fixtures
+- Improved test coverage
+- Dropped unneeded exposure of token</p>
+<h2 id="103a1">1.0.3a1<a class="headerlink" href="#103a1" title="Permanent link">&para;</a></h2>
+<p><strong>May 23, 2024</strong>
+- Added tenacity as dependency.
+- Added resilience on <code>asset::stac_info</code> and <code>asset::stac_items</code>
+- Dropped pystac client subclassing
+- Cleaned up fixtures
+- Improved test coverage
+- Dropped unneeded exposure of token</p>
+<h2 id="102">1.0.2<a class="headerlink" href="#102" title="Permanent link">&para;</a></h2>
+<p><strong>May 15, 2024</strong>
+- Added thread safety to token retrieval.</p>
+<h2 id="102a1">1.0.2a1<a class="headerlink" href="#102a1" title="Permanent link">&para;</a></h2>
+<p><strong>May 15, 2024</strong>
+- Added thread safety to token retrieval.</p>
+<h2 id="101">1.0.1<a class="headerlink" href="#101" title="Permanent link">&para;</a></h2>
+<p><strong>May 13, 2024</strong>
+- Increased retries and backoff in http resilience.
+- Fixed bug with temporary storage overfill when downloading archives.
+- Bumped dependencies jinja2, tqdm, geojson.</p>
+<h2 id="101a4">1.0.1a4<a class="headerlink" href="#101a4" title="Permanent link">&para;</a></h2>
+<p><strong>May 13, 2024</strong>
+- geojson dependency bumped from 3.0.1 to 3.1.0 to fix conda python 3.12 installer.</p>
+<h2 id="101a3">1.0.1a3<a class="headerlink" href="#101a3" title="Permanent link">&para;</a></h2>
+<p><strong>May 7, 2024</strong>
+- Setting http_adapter default configuration to <code>retries = 5</code> and <code>backoff factor = 1</code></p>
+<h2 id="101a2">1.0.1a2<a class="headerlink" href="#101a2" title="Permanent link">&para;</a></h2>
+<p><strong>May 7, 2024</strong>
+- Renamed <code>download_from_gcs_unpack</code> to <code>download_archive</code>
+- Renamed <code>download_gcs_not_unpack</code> to <code>download_file</code>
+- Improved test coverage for <code>download_archive</code>
+- Bug fix in <code>download_archive</code>: use output directory provided for temporary archive storage instead of default temp folder</p>
+<h2 id="101a1">1.0.1a1<a class="headerlink" href="#101a1" title="Permanent link">&para;</a></h2>
+<p><strong>May 7, 2024</strong>
+- jinja2 dependency bumped from 3.1.3 to 3.1.4.
+- tqdm dependency bumped from 4.66.2 to 4.66.3.</p>
+<h2 id="100">1.0.0<a class="headerlink" href="#100" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 17, 2024</strong>
+- Dropped deprecated functionalities: Jobs, Projects, Workflows, Viztools
+- Dropped deprecated code related to blocks</p>
+<h2 id="100a7">1.0.0a7<a class="headerlink" href="#100a7" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 16, 2024</strong>
+- Dropped <code>get_blocks</code>, <code>get_block_details</code> and <code>get_block_coverage</code> from <code>main.py</code></p>
+<h2 id="100a6">1.0.0a6<a class="headerlink" href="#100a6" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 16, 2024</strong>
+- Dropped project id and api key based authentication in <code>main.py</code>, <code>auth.py</code>, <code>http/oauth.py</code> and <code>http/client.py</code>
+- Adapted tests and fixtures
+- Dropped viztools.py</p>
+<h2 id="100a5">1.0.0a5<a class="headerlink" href="#100a5" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 16, 2024</strong></p>
+<ul>
+<li>Dropped deprecated Workflow functions - info, workflow_tasks, get_workflow_tasks, get_parameters_info,
+ _get_default_parameters (internal function), _construct_full_workflow_tasks_dict (internal function),
+ get_jobs, delete</li>
+<li>Dropped Workflow tests and fixtures</li>
+</ul>
+<h2 id="100a4">1.0.0a4<a class="headerlink" href="#100a4" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 15, 2024</strong></p>
+<ul>
+<li>Dropped deprecated Jobtask functions - info, get_results_json, download_results, download_quicklooks</li>
+<li>Dropped Jobtask tests and fixtures</li>
+</ul>
+<h2 id="100a3">1.0.0a3<a class="headerlink" href="#100a3" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 15, 2024</strong></p>
+<ul>
+<li>Dropped deprecated Job functions - info, status, is_succeeded, download_quicklooks, get_results_json, download_results,
+get_logs, upload_results_to_bucket, get_jobtasks, get_jobtasks_results_json, get_credits</li>
+<li>Dropped Job tests and fixtures</li>
+</ul>
+<h2 id="100a2">1.0.0a2<a class="headerlink" href="#100a2" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 15, 2024</strong></p>
+<ul>
+<li>Dropped deprecated JobCollection functions - info, status, apply, download_results</li>
+<li>Dropped deprecated Project functions - info, get_workflows, get_project_settings, get_jobs</li>
+<li>Dropped Project's fixtures and tests</li>
+<li>Dropped JobCollection's fixtures and tests</li>
+<li>Dropped Workflow's get_jobs function</li>
+</ul>
+<h2 id="100a1">1.0.0a1<a class="headerlink" href="#100a1" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 15, 2024</strong></p>
+<ul>
+<li>Dropped deprecated viztools functions: folium_base_map(), plot_quicklooks(), plot_coverage(), draw_aoi(), _map_images() (internal function), map_quicklooks(), plot_coverage(), plot_results(), requires_viz() (internal function), map_results(), render() (internal function)</li>
+</ul>
+<h2 id="0372">0.37.2<a class="headerlink" href="#0372" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 8, 2024</strong></p>
+<p>Dependabot security updates:
+ - Bump black from 22.12.0 to 24.3.0
+ - Bump pillow from 10.2.0 to 10.3.0</p>
+<h2 id="0371">0.37.1<a class="headerlink" href="#0371" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 5, 2024</strong></p>
+<ul>
+<li>Removed upper bound for Python 3.12.</li>
+<li>Dropped support for Python 3.8.</li>
+<li>New authentication token are retrieved upon expiration instead of every request.</li>
+<li>Dropped tenacity, requests-oauthlib and types-oauthlib as dependencies.</li>
+<li>Updated the deprecation date for <code>Jobs</code>, <code>Workflow</code>, and <code>Projects</code> related features.</li>
+<li>Multiple refactoring improvements.</li>
+</ul>
+<h2 id="0371a11">0.37.1a11<a class="headerlink" href="#0371a11" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 4, 2024</strong></p>
+<ul>
+<li>Added standard headers to <code>http/session.py</code></li>
+<li>Added session provisioning to <code>auth.py</code> and <code>http/client.py</code></li>
+<li>Dropped undocumented <code>authenticate</code> flag in <code>auth.py</code></li>
+<li>Dropped undocumented kwargs in <code>auth.py</code> and <code>main.py</code></li>
+</ul>
+<h2 id="0371a10">0.37.1a10<a class="headerlink" href="#0371a10" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 3, 2024</strong></p>
+<ul>
+<li>Updating the deprecation date for <code>Jobs</code>, <code>Workflow</code>, and <code>Projects</code> related features.</li>
+</ul>
+<h2 id="0371a9">0.37.1a9<a class="headerlink" href="#0371a9" title="Permanent link">&para;</a></h2>
+<p><strong>Apr 2, 2024</strong></p>
+<ul>
+<li>Dropped legacy <code>estimation.py</code>, <code>test_estimation.py</code> and <code>fixtures_estimation.py</code></li>
+</ul>
+<h2 id="0371a8">0.37.1a8<a class="headerlink" href="#0371a8" title="Permanent link">&para;</a></h2>
+<p><strong>March 28, 2024</strong></p>
+<ul>
+<li>Dependency injection and test coverage improvement in <code>auth.py</code></li>
+</ul>
+<h2 id="0371a7">0.37.1a7<a class="headerlink" href="#0371a7" title="Permanent link">&para;</a></h2>
+<p><strong>March 27, 2024</strong></p>
+<ul>
+<li>Raise typed error if token retrieval fails due to wrong credentials.</li>
+</ul>
+<h2 id="0371a6">0.37.1a6<a class="headerlink" href="#0371a6" title="Permanent link">&para;</a></h2>
+<p><strong>March 26, 2024</strong></p>
+<ul>
+<li>Switched to using <code>http.client.Client</code> in <code>auth.py</code> for authentication and token management</li>
+<li>Dropped unneeded resiliency code</li>
+<li>Dropped tenacity, requests-oauthlib and types-oauthlib as unneeded dependencies</li>
+</ul>
+<h2 id="0371a5">0.37.1a5<a class="headerlink" href="#0371a5" title="Permanent link">&para;</a></h2>
+<p><strong>March 21, 2024</strong></p>
+<ul>
+<li>Run test pipeline on Python versions 3.9 to 3.12</li>
+<li>Removed upper bound for Python 3.12</li>
+<li>Dropped support for Python 3.8</li>
+</ul>
+<h2 id="0371a4">0.37.1a4<a class="headerlink" href="#0371a4" title="Permanent link">&para;</a></h2>
+<p><strong>March 21, 2024</strong></p>
+<ul>
+<li>New http stack client to provide resilient token and requests compliant authentication.</li>
+</ul>
+<h2 id="0371a3">0.37.1a3<a class="headerlink" href="#0371a3" title="Permanent link">&para;</a></h2>
+<p><strong>March 20, 2024</strong></p>
+<ul>
+<li>Detection of token retriever based on supplied settings.</li>
+</ul>
+<h2 id="0371a2">0.37.1a2<a class="headerlink" href="#0371a2" title="Permanent link">&para;</a></h2>
+<p><strong>March 19, 2024</strong></p>
+<ul>
+<li>Detection of credentials settings based on supplied credentials.</li>
+</ul>
+<h2 id="0371a1">0.37.1a1<a class="headerlink" href="#0371a1" title="Permanent link">&para;</a></h2>
+<p><strong>March 19, 2024</strong></p>
+<ul>
+<li>Dropped all the live tests.</li>
+</ul>
+<h2 id="0370">0.37.0<a class="headerlink" href="#0370" title="Permanent link">&para;</a></h2>
+<p><strong>March 15, 2024</strong></p>
+<ul>
+<li>Fixed inadvertent title and tags removals during asset metadata updates.</li>
+<li>Dropped unneeded <code>auth::env</code> property and the corresponding tests.</li>
+<li>Generalized new authentication stack to cover account authentication case.</li>
+<li>Added new components within the HTTP layer to facilitate future enhancements in authentication and request processes.</li>
+<li>Adjusted most of the code in accordance with pylint checks.</li>
+</ul>
+<h2 id="0370a14">0.37.0a14<a class="headerlink" href="#0370a14" title="Permanent link">&para;</a></h2>
+<p><strong>March 15, 2024</strong></p>
+<ul>
+<li>Fixed inadvertent titles and tags removals during asset metadata updates.</li>
+</ul>
+<h2 id="0370a13">0.37.0a13<a class="headerlink" href="#0370a13" title="Permanent link">&para;</a></h2>
+<p><strong>March 15, 2024</strong></p>
+<ul>
+<li>Dropped unneeded <code>auth::env</code> property and the corresponding tests.</li>
+</ul>
+<h2 id="0370a12">0.37.0a12<a class="headerlink" href="#0370a12" title="Permanent link">&para;</a></h2>
+<p><strong>March 14, 2024</strong></p>
+<ul>
+<li>Adjusted <code>initialization.py</code>, <code>test_initialization.py</code>, <code>main.py</code> and <code>test_main.py</code> in accordance with Pylint checks.</li>
+</ul>
+<h2 id="0370a11">0.37.0a11<a class="headerlink" href="#0370a11" title="Permanent link">&para;</a></h2>
+<p><strong>March 14, 2024</strong></p>
+<ul>
+<li>Adjusted <code>asset.py</code>, <code>asset_searcher.py</code>, <code>test_asset.py</code> and <code>fixtures_asset.py</code> in accordance with Pylint checks.</li>
+<li>Adjusted <code>test_http_adapter.py</code> in accordance with Pylint checks.</li>
+<li>Dropped <code>test_e2e_catalog.py</code> since it is covered by SDK tests.</li>
+<li>Fixed a flaky test in <code>test_session.py</code></li>
+</ul>
+<h2 id="0370a10">0.37.0a10<a class="headerlink" href="#0370a10" title="Permanent link">&para;</a></h2>
+<p><strong>March 13, 2024</strong></p>
+<ul>
+<li>Adjusted <code>webhooks.py</code>, <code>test_webhooks.py</code> and <code>fixtures_webhook.py</code> in accordance with Pylint checks.</li>
+<li>Dropped <code>test_e2e_30sec.py</code> since it covers functionality dropped earlier.</li>
+</ul>
+<h2 id="0370a9">0.37.0a9<a class="headerlink" href="#0370a9" title="Permanent link">&para;</a></h2>
+<p><strong>March 13, 2024</strong></p>
+<ul>
+<li>Adjusted <code>macros.py</code>, <code>utils.py</code>, and <code>test_utils.py</code> in accordance with Pylint checks.</li>
+</ul>
+<h2 id="0370a8">0.37.0a8<a class="headerlink" href="#0370a8" title="Permanent link">&para;</a></h2>
+<p><strong>March 13, 2024</strong></p>
+<ul>
+<li>Adjusted <code>estimation.py</code>, <code>test_estimation.py</code> and <code>fixtures_estimation.py</code> in accordance with Pylint checks.</li>
+</ul>
+<h2 id="0370a7">0.37.0a7<a class="headerlink" href="#0370a7" title="Permanent link">&para;</a></h2>
+<p><strong>March 13, 2024</strong></p>
+<ul>
+<li>Adjusted <code>order.py</code>, <code>test_order.py</code> and <code>fixtures_order.py</code> in accordance with Pylint checks.</li>
+</ul>
+<h2 id="0370a6">0.37.0a6<a class="headerlink" href="#0370a6" title="Permanent link">&para;</a></h2>
+<p><strong>March 13, 2024</strong></p>
+<ul>
+<li>Adjusted <code>host.py</code>, <code>tools.py</code>, <code>test_tools.py</code>, <code>storage.py</code>, <code>test_storage.py</code> and <code>fixtures_storage.py</code> in accordance with Pylint checks.</li>
+</ul>
+<h2 id="0370a5">0.37.0a5<a class="headerlink" href="#0370a5" title="Permanent link">&para;</a></h2>
+<p><strong>March 11, 2024</strong></p>
+<ul>
+<li>Adjusted <code>auth.py</code> and <code>oauth.py</code> with their coverage and fixtures in accordance with Pylint checks.</li>
+<li>Adjusted <code>conftest.py</code> in accordance with Pylint checks.</li>
+</ul>
+<h2 id="0370a4">0.37.0a4<a class="headerlink" href="#0370a4" title="Permanent link">&para;</a></h2>
+<p><strong>March 07, 2024</strong></p>
+<ul>
+<li>Generalized new authentication stack to cover account authentication case.</li>
+</ul>
+<h2 id="0370a3">0.37.0a3<a class="headerlink" href="#0370a3" title="Permanent link">&para;</a></h2>
+<p><strong>March 07, 2024</strong></p>
+<ul>
+<li>Adjusted <code>tasking.py</code>, <code>test_tasking.py</code>, and <code>fixtures_tasking.py</code> in accordance with Pylint checks.</li>
+</ul>
+<h2 id="0370a2">0.37.0a2<a class="headerlink" href="#0370a2" title="Permanent link">&para;</a></h2>
+<p><strong>March 06, 2024</strong></p>
+<ul>
+<li>Adjusted <code>catalog.py</code> and <code>test_catalog.py</code> in accordance with Pylint checks.</li>
+<li>Conducted minor refactoring in other classes due to changes in function names within the authentication module.</li>
+</ul>
+<h2 id="0370a1">0.37.0a1<a class="headerlink" href="#0370a1" title="Permanent link">&para;</a></h2>
+<p><strong>March 06, 2024</strong></p>
+<ul>
+<li>Added a new component within the HTTP layer to facilitate future enhancements in authentication and request processes: ported a resilient and authenticated cached session.</li>
+</ul>
+<h2 id="0370a0">0.37.0a0<a class="headerlink" href="#0370a0" title="Permanent link">&para;</a></h2>
+<p><strong>March 04, 2024</strong></p>
+<p>Added new components within the HTTP layer to facilitate future enhancements in authentication and request processes:</p>
+<ul>
+<li>Ported the HTTP adapter, providing configurable resilience.</li>
+<li>Ported resilient project authentication, managing token expiration.</li>
+</ul>
+<h2 id="0360">0.36.0<a class="headerlink" href="#0360" title="Permanent link">&para;</a></h2>
+<p><strong>February 20, 2024</strong></p>
+<ul>
+<li>Updated the <code>place_order()</code> and <code>estimate_order()</code> functions of the CatalogBase class to the latest version of the API.</li>
+</ul>
+<h2 id="0350">0.35.0<a class="headerlink" href="#0350" title="Permanent link">&para;</a></h2>
+<p><strong>January 25, 2024</strong></p>
+<ul>
+<li>
+<p>Discontinued support for the following edit and create functions:</p>
+<ul>
+<li>
+<p>up42:</p>
+<ul>
+<li><code>validate_manifest()</code></li>
+</ul>
+</li>
+<li>
+<p>Project:</p>
+<ul>
+<li><code>max_concurrent_jobs</code></li>
+<li><code>update_project_settings()</code></li>
+<li><code>create_workflow()</code></li>
+</ul>
+</li>
+<li>
+<p>Workflow:</p>
+<ul>
+<li><code>max_concurrent_jobs</code></li>
+<li><code>update_name()</code></li>
+<li><code>add_workflow_tasks()</code></li>
+<li><code>get_compatible_blocks()</code></li>
+<li><code>get_parameters_info()</code></li>
+<li><code>construct_parameters()</code></li>
+<li><code>construct_parameters_parallel()</code></li>
+<li><code>estimate_job()</code></li>
+<li><code>test_job()</code></li>
+<li><code>test_jobs_parallel()</code></li>
+<li><code>run_job()</code></li>
+<li><code>run_jobs_parallel()</code></li>
+</ul>
+</li>
+<li>
+<p>Job:</p>
+<ul>
+<li><code>track_status()</code></li>
+<li><code>cancel_job()</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Marked the following visualization functions as deprecated:</p>
+<ul>
+<li>
+<p>up42:</p>
+<ul>
+<li><code>viztools.folium_base_map()</code></li>
+</ul>
+</li>
+<li>
+<p>Catalog:</p>
+<ul>
+<li><code>plot_coverage()</code></li>
+<li><code>map_quicklooks()</code></li>
+<li><code>plot_quicklooks()</code></li>
+</ul>
+</li>
+<li>
+<p>Job:</p>
+<ul>
+<li><code>map_results()</code></li>
+<li><code>plot_results()</code></li>
+</ul>
+</li>
+<li>
+<p>JobCollection:</p>
+<ul>
+<li><code>map_results()</code></li>
+<li><code>plot_results()</code></li>
+</ul>
+</li>
+<li>
+<p>JobTask:</p>
+<ul>
+<li><code>map_results()</code></li>
+<li><code>plot_results()</code></li>
+<li><code>plot_quicklooks()</code></li>
+</ul>
+</li>
+</ul>
+<p>They will be discontinued after March 31, 2024.</p>
+</li>
+</ul>
+<h2 id="0341">0.34.1<a class="headerlink" href="#0341" title="Permanent link">&para;</a></h2>
+<p><strong>December 15, 2023</strong></p>
+<ul>
+<li>Restored the <code>order.get_assets</code> function.</li>
+</ul>
+<h2 id="0340">0.34.0<a class="headerlink" href="#0340" title="Permanent link">&para;</a></h2>
+<p><strong>December 13, 2023</strong></p>
+<ul>
+<li>Updated the <code>storage.get_orders</code> function to the latest version of the API.</li>
+<li>Set Poetry as the only dependency manager.</li>
+<li>Discontinued support for the <code>order.get_assets</code> function.</li>
+</ul>
+<h2 id="0331">0.33.1<a class="headerlink" href="#0331" title="Permanent link">&para;</a></h2>
+<p><strong>November 23, 2023</strong></p>
+<p>Marked the following parameters of <code>storage.get_assets</code> as deprecated to enforce the use of the PySTAC client search.</p>
+<ul>
+<li><code>geometry</code></li>
+<li><code>acquired_before</code></li>
+<li><code>acquired_after</code></li>
+<li><code>custom_filter</code></li>
+</ul>
+<h2 id="0330">0.33.0<a class="headerlink" href="#0330" title="Permanent link">&para;</a></h2>
+<p><strong>November 14, 2023</strong></p>
+<ul>
+<li>Updated authentication by changing it from project-based to account-based.</li>
+<li>Added a new function to the Asset class: <code>get_stac_asset_url</code> generates a signed URL that allows to download a STAC asset from storage without authentication.</li>
+</ul>
+<h2 id="0320">0.32.0<a class="headerlink" href="#0320" title="Permanent link">&para;</a></h2>
+<p><strong>September 7, 2023</strong></p>
+<p>A new function added to the Asset class:</p>
+<ul>
+<li><code>download_stac_asset</code> allows you to download STAC assets from storage.</li>
+</ul>
+<h2 id="0310">0.31.0<a class="headerlink" href="#0310" title="Permanent link">&para;</a></h2>
+<p><strong>August 9, 2023</strong></p>
+<ul>
+<li>Supported STAC assets in <code>asset.stac_items</code>.</li>
+<li>Added substatuses to <code>order.track_status</code>.</li>
+<li>Limited <code>catalog.search(sort_by)</code> to <code>acquisition_date</code> only.</li>
+<li>Removed <code>get_credits_history</code> from the main class.</li>
+<li><code>asset.stac_info</code> now returns the <code>pystac.Collection</code> object.</li>
+<li>Python 3.7 is no longer supported.</li>
+</ul>
+<h2 id="0301">0.30.1<a class="headerlink" href="#0301" title="Permanent link">&para;</a></h2>
+<p><strong>July 14, 2023</strong></p>
+<p>Fixed the failing construct_order_parameters function and updated tests.</p>
+<h2 id="0300">0.30.0<a class="headerlink" href="#0300" title="Permanent link">&para;</a></h2>
+<p><strong>July 3, 2023</strong></p>
+<p>Added a new <code>tags</code> argument to the following functions:</p>
+<ul>
+<li><code>construct_order_parameters</code>, to assign tags to new tasking and catalog orders.</li>
+<li><code>get_order</code>, to filter orders by tags.</li>
+<li><code>get_assets</code>, to filter assets by tags.</li>
+</ul>
+<h2 id="0290">0.29.0<a class="headerlink" href="#0290" title="Permanent link">&para;</a></h2>
+<p><strong>June 20, 2023</strong></p>
+<p>Integrated new functions into the Tasking class:</p>
+<ul>
+<li><code>get_feasibility</code> — Returns a list of feasibility studies for tasking orders.</li>
+<li><code>choose_feasibility</code> — Allows accepting one of the proposed feasibility study options.</li>
+<li><code>get_quotations</code> — Returns a list of all quotations for tasking orders.</li>
+<li><code>decide_quotation</code> — Allows accepting or rejecting a quotation for a tasking order.</li>
+</ul>
+<h2 id="0281">0.28.1<a class="headerlink" href="#0281" title="Permanent link">&para;</a></h2>
+<p><strong>April 6, 2023</strong></p>
+<ul>
+<li>Updating test to latest version</li>
+</ul>
+<h2 id="0280">0.28.0<a class="headerlink" href="#0280" title="Permanent link">&para;</a></h2>
+<p><strong>February 17, 2023</strong></p>
+<ul>
+<li>Added STAC search functionality to storage.get_assets.
+  Now you can filter assets by new parameters: <code>geometry</code>, <code>acquired_after</code>, <code>acquired_before</code>,
+  <code>collection_names</code>, <code>producer_names</code>, <code>tags</code>, <code>search</code>, <code>sources</code>.</li>
+<li>Added storage.pystac_client.
+  Use it to authenticate PySTAC client to access your UP42 storage assets using its library.</li>
+<li>Added asset.stac_info.
+  Use it to access STAC metadata, such as acquisition, sensor, and collection information.</li>
+</ul>
+<h2 id="0271">0.27.1<a class="headerlink" href="#0271" title="Permanent link">&para;</a></h2>
+<p><strong>January 26, 2023</strong></p>
+<ul>
+<li>Improve error communication of functions using API v2 endpoints.</li>
+<li>add <code>up42.__version__</code> attribute to access the package version with Python.</li>
+<li>Adapt asset class attributes (<code>created</code> to <code>createdAt</code>) to UP42 API.</li>
+</ul>
+<h2 id="0270">0.27.0<a class="headerlink" href="#0270" title="Permanent link">&para;</a></h2>
+<p><strong>December 12, 2022</strong></p>
+<ul>
+<li>Add <code>asset.update_metadata()</code> for adjusting title &amp; tags of an asset.</li>
+<li><code>storage.get_assets()</code> has new parameters <code>created_after</code>, <code>created_before</code>, <code>workspace_id</code>  to better filter the
+  desired assets. It now queries the assets of all accessible workspaces by default.</li>
+<li>Adopt new UP42 API 2.0 endpoints for user storage &amp; assets.</li>
+</ul>
+<h2 id="0260">0.26.0<a class="headerlink" href="#0260" title="Permanent link">&para;</a></h2>
+<p><strong>November 2, 2022</strong></p>
+<ul>
+<li>Remove Python version upper bound, this will enable immediate but untested installation with any new Python version.</li>
+<li>Changes to <code>workflow.construct_parameters</code>:</li>
+<li>Deprecates the <code>assets</code> parameter (list of asset objects), instead use <code>asset_ids</code> (list of asset_ids).</li>
+<li>Removes limitation of using only assets originating from blocks, now also supports assets from catalog &amp;
+    tasking.</li>
+<li>In addition to required parameters, now adds all optional parameters that have default values.</li>
+<li><code>tasking.construct_order_parameters</code> now accepts a Point feature (e.g. use with Blacksky).</li>
+<li>Fix: <code>get_data_products</code> with <code>basic=False</code> now correctly returns only tasking OR catalog products.</li>
+<li>The up42 object now correctly does not give access to third party imports anymore (restructured init module).</li>
+</ul>
+<h2 id="0250">0.25.0<a class="headerlink" href="#0250" title="Permanent link">&para;</a></h2>
+<p><strong>October 25, 2022</strong></p>
+<ul>
+<li>Add dedicated tasking class for improved handling of satellite tasking orders.</li>
+<li><code>construct_order_parameters</code> now also adds the parameters specific to the selected data-product, and suggests
+  possible values based on the data-product schema.</li>
+</ul>
+<h2 id="0240">0.24.0<a class="headerlink" href="#0240" title="Permanent link">&para;</a></h2>
+<p><strong>October 20, 2022</strong></p>
+<ul>
+<li>Add <code>catalog.get_data_product_schema()</code> for details on the order parameters</li>
+<li>Switches parameter <code>sensor</code> to <code>collection</code> in <code>catalog.download_quicklooks</code>.</li>
+<li>Various small improvements e.g. quicklooks automatic band selection, Reduced use of default parameters in
+  constructor methods, error message display, optimized API call handling for parameter validation etc.</li>
+<li>Internal: Separation of Catalog and CatalogBase to prepare addition of Tasking class, reorganize test fixtures.</li>
+</ul>
+<h2 id="0231">0.23.1<a class="headerlink" href="#0231" title="Permanent link">&para;</a></h2>
+<p><strong>October 5, 2022</strong></p>
+<ul>
+<li>Fixes issue with filename of downloaded assets containing two suffix <code>.</code> e.g. <code>./output..zip</code>.
+  Resolves <a href="https://github.com/up42/up42-py/issues/350">#350</a></li>
+</ul>
+<h2 id="0230">0.23.0<a class="headerlink" href="#0230" title="Permanent link">&para;</a></h2>
+<p><strong>September 20, 2022</strong></p>
+<ul>
+<li>Integrates the UP42 data productsm e.g. the selection "Display" and "Reflectance" configuration in the ordering process. The new ordering process requires the selection of a specific data product.</li>
+<li>The <code>order_parameters</code> argument for <code>catalog.estimate_order</code> and <code>catalog.place_order</code> now has a different structure.
+  <strong>The previous option to just specify the collection name will soon be deactivated in the UP42 API!</strong></li>
+<li>New function <code>catalog.get_data_products</code></li>
+<li>New function <code>catalog.construct_order_parameters</code></li>
+<li><code>catalog.construct_search_parameters</code> replaces <code>catalog.construct_parameters</code> which is deprecated and will be
+  removed in v0.25.0</li>
+</ul>
+<h2 id="0222">0.22.2<a class="headerlink" href="#0222" title="Permanent link">&para;</a></h2>
+<p><strong>July 21, 2022</strong></p>
+<ul>
+<li>Fix unpacking of order assets if no output topfolder inherent in archive</li>
+</ul>
+<h2 id="0221">0.22.1<a class="headerlink" href="#0221" title="Permanent link">&para;</a></h2>
+<p><strong>July 19, 2022</strong></p>
+<ul>
+<li>Fix conda release (include requirements-viz file)</li>
+</ul>
+<h2 id="0220">0.22.0<a class="headerlink" href="#0220" title="Permanent link">&para;</a></h2>
+<p><strong>July 5, 2022</strong></p>
+<ul>
+<li>Adds webhooks functionality to the SDK, see new webhooks docs chapter.</li>
+<li>Introduces optional installation option for the visualization functionalities. The required dependencies are now
+  not installed by default.</li>
+<li>Removes <code>order.metadata</code> property, as removed from UP42 API.</li>
+<li>Fix: Using a MultiPolygon geometry in construct_parameters will now correctly raise an error as not accepted.</li>
+<li>Documentation overhaul &amp; various improvements</li>
+</ul>
+<h2 id="0210">0.21.0<a class="headerlink" href="#0210" title="Permanent link">&para;</a></h2>
+<p><strong>May 12, 2022</strong></p>
+<ul>
+<li>Adding <code>up42.get_balance</code> and <code>up42.get_credits_history</code> features for allowing account information retrieval.</li>
+<li>Adding <code>up42.get_block_coverage</code> features for retrieval of the catalog blocks' coverage as GeoJSON.</li>
+<li><code>project.get_jobs</code> now has sorting criteria, sorting order and limit parameters.</li>
+<li>Catalog search now enables search for Pleiades Neo etc. (uses host specific API endpoints)</li>
+<li>Fix: <code>project.get_jobs</code> now correctly queries the full number of jobs.</li>
+</ul>
+<h2 id="0202">0.20.2<a class="headerlink" href="#0202" title="Permanent link">&para;</a></h2>
+<p><strong>April 10, 2022</strong></p>
+<ul>
+<li>Update documentation</li>
+<li>Non functional changes to enable conda release</li>
+<li>Update requirements and removing overlapping subdependencies</li>
+</ul>
+<h2 id="0201">0.20.1<a class="headerlink" href="#0201" title="Permanent link">&para;</a></h2>
+<p><strong>April 5, 2022</strong></p>
+<ul>
+<li>Update documentation for latest changes on the user console.</li>
+<li>Remove outdated examples.</li>
+<li>Add required files on the dist version for allowing creation of conda meta files.</li>
+</ul>
+<h2 id="0200">0.20.0<a class="headerlink" href="#0200" title="Permanent link">&para;</a></h2>
+<p><strong>February 15, 2022</strong></p>
+<ul>
+<li>Enables getting credits consumed by a job via <code>job.get_credits</code>.</li>
+</ul>
+<h2 id="0190">0.19.0<a class="headerlink" href="#0190" title="Permanent link">&para;</a></h2>
+<p><strong>January 28, 2022</strong></p>
+<ul>
+<li>Add support for UP42 data collections via <code>catalog.get_collections</code>.</li>
+<li>Switch <code>catalog.construct_parameters</code> to use <code>collection</code> instead of <code>sensor</code> for
+  the collection selection.</li>
+<li>Refactor retry mechanism. Resolves issue of unintended token renewals &amp; further limits
+  retries.</li>
+</ul>
+<h2 id="0181">0.18.1<a class="headerlink" href="#0181" title="Permanent link">&para;</a></h2>
+<p><strong>December 20, 2021</strong></p>
+<ul>
+<li>Allow installation with Python 3.9</li>
+</ul>
+<h2 id="0180">0.18.0<a class="headerlink" href="#0180" title="Permanent link">&para;</a></h2>
+<p><strong>November 10, 2021</strong></p>
+<ul>
+<li>Add sorting criteria, sorting order and results limit parameters to <code>storage.get_orders</code>
+  and <code>storage.get_assets</code>. Now also uses results pagination which avoids timeout issues
+  when querying large asset/order collections.</li>
+<li>Significant speed improvement for:
+    -<code>.get_jobs</code>, <code>.get_workflows</code>, <code>.get_assets</code>, <code>.get_orders</code> calls.<ul>
+<li><code>workflow.create_workflow</code> when used with <code>existing=True</code>.</li>
+<li>Printing objects representations, which now does not trigger additional object info API calls.</li>
+</ul>
+</li>
+<li>Removal: Removes deprecated handling of multiple features as input geometry in <code>.construct_parameters</code>
+  Instead, using multiple features or a MultiPolygon will now raise an error.
+  This aligns the Python SDK with the regular UP42 platform behaviour.</li>
+<li>Removal: Remove the Python SDK Command Line Interface.</li>
+<li>Fix: JobTask.info and the printout now uses the correct jobtask information.</li>
+</ul>
+<h2 id="0170">0.17.0<a class="headerlink" href="#0170" title="Permanent link">&para;</a></h2>
+<p><strong>September 10, 2021</strong></p>
+<ul>
+<li>Adds <code>usage_type</code> parameter for selection of "DATA" and "ANALYTICS" data in catalog search.</li>
+<li>Adds automatic handling of catalog search results pagination when requesting more
+  than 500 results.</li>
+<li>Adds support for datetime objects and all iso-format compatible time strings to
+  <code>construct_parameters</code>.</li>
+<li>Fix: <code>get_compatible_blocks</code> with an empty workflow now returns all data blocks.</li>
+<li>Start deprecation for <code>handle_multiple_features</code> parameter in <code>construct_parameters</code> to
+  guarantee parity with UP42 platform. In the future, the UP42 SDK will only handle
+  single geometries.</li>
+<li>Uses Oauth for access token handling.</li>
+</ul>
+<h2 id="0160">0.16.0<a class="headerlink" href="#0160" title="Permanent link">&para;</a></h2>
+<p><strong>June 30, 2021</strong></p>
+<ul>
+<li>Limit memory usage for large file downloads (#237)</li>
+<li>Remove deprecated job.get_status() (Replace by job.status) (#224)</li>
+<li>Remove deprecated jobcollection.get_job_info() and jobcollection.get_status() (Replaced by jobcollection.info and jobcollection.status)</li>
+<li>Remove order-id functionality (#228)</li>
+<li>Limit installation to Python &lt;=3.9.4</li>
+<li>Internal code improvements (e.g. project settings, retry)</li>
+</ul>
+<h2 id="0152">0.15.2<a class="headerlink" href="#0152" title="Permanent link">&para;</a></h2>
+<p><strong>April 7, 2021</strong></p>
+<ul>
+<li>Enables plotting of jobcollection with <code>.map_results()</code>.</li>
+<li>Fixes <code>.cancel_job()</code> functionality.</li>
+</ul>
+<h2 id="0151">0.15.1<a class="headerlink" href="#0151" title="Permanent link">&para;</a></h2>
+<p><strong>March 12, 2021</strong></p>
+<ul>
+<li>Fixes breaking API change in catalog search.</li>
+<li>Catalog search result now contains a <code>sceneId</code> property instead of <code>scene_id</code>.</li>
+</ul>
+<h2 id="0150">0.15.0<a class="headerlink" href="#0150" title="Permanent link">&para;</a></h2>
+<p><strong>January 27, 2021</strong></p>
+<ul>
+<li>Add <code>Storage</code>, <code>Order</code> and <code>Asset</code> objects.</li>
+<li>Add possibility to create orders from <code>Catalog</code> with <code>Catalog.place_order</code>.</li>
+<li>Add possibility to use assets in job parameters with <code>Workflow.construct_paramaters</code>.</li>
+<li>Update job estimation endpoint.</li>
+<li>Multiple documentation fixes.</li>
+</ul>
+<h2 id="0140">0.14.0<a class="headerlink" href="#0140" title="Permanent link">&para;</a></h2>
+<p><strong>December 7, 2020</strong></p>
+<ul>
+<li>Add <code>workflow.estimate_job()</code> function for estimation of credit costs &amp; job duration before running a job.</li>
+<li>Add <code>bands=[3,2,1]</code> parameter in <code>.plot_results()</code> and <code>.map_results()</code> for band &amp; band order selection.</li>
+<li><code>.plot_results()</code> now accepts kwargs of <a href="https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show">rasterio.plot.show</a> and matplotlib.</li>
+<li>Add <code>up42.initialize_jobcollection()</code></li>
+<li>Add <code>get_estimation=False</code> parameter to <code>workflow.test_job</code>.</li>
+<li>Add ship-identification example.</li>
+<li>Overhaul "Getting started" examples.</li>
+</ul>
+<h2 id="0131">0.13.1<a class="headerlink" href="#0131" title="Permanent link">&para;</a></h2>
+<p><strong>November 18, 2020</strong></p>
+<ul>
+<li>Handle request rate limits via retry mechanism.</li>
+<li>Limit <code>map_quicklooks()</code> to 100 quicklooks.</li>
+<li>Add aircraft detection example &amp; documentation improvements.</li>
+</ul>
+<h2 id="0130">0.13.0<a class="headerlink" href="#0130" title="Permanent link">&para;</a></h2>
+<p><strong>October 30, 2020</strong></p>
+<ul>
+<li>New consistent use &amp; documentation of the basic functionality:<ul>
+<li>All <a href="up42-reference.md">basic functions</a> (e.g. <code>up42.get_blocks</code>) are accessible
+    from the <code>up42</code> import object. Now consistently documented in the <code>up42</code>
+    <a href="up42-reference.md">object code reference</a>.</li>
+<li>The option to use this basic functionality from any lower level object will soon be
+    removed (e.g. <code>project.get_blocks</code>, <code>workflow.get_blocks</code>). Now triggers a deprecation warning.</li>
+</ul>
+</li>
+<li>The plotting functionality of each object is now documented directly in that <a href="job-reference.md">object's code reference</a>.</li>
+<li>Fix: Repair catalog search for sobloo.</li>
+<li><em>Various improvements to docs &amp; code reference.</em></li>
+<li><em>Overhaul &amp; simplify test fixtures.</em></li>
+<li><em>Split off viztools module from tools module.</em></li>
+</ul>
+<h2 id="0120">0.12.0<a class="headerlink" href="#0120" title="Permanent link">&para;</a></h2>
+<p><strong>October 14, 2020</strong></p>
+<ul>
+<li>Simplify object representation, also simplifies logger messages.</li>
+<li>Add <code>.info</code> property to all objects to get the detailed object information, deprecation process for <code>.get_info</code>.</li>
+<li>Add <code>.status</code> property to job, jobtask and jobcollection objects. Deprecation process for <code>.get_status</code>.</li>
+<li>Add selection of job mode for <code>.get_jobs</code>.</li>
+<li>Add description of initialization of each object to code reference.</li>
+<li>Fix: Use correct cutoff time 23:59:59 in default datetimes.</li>
+<li>Fix: Download jobtasks to respective jobtask subfolders instead of the job folder.</li>
+<li>Unpin geopandas version in requirements.</li>
+<li>Move sdk documentation to custom subdomain "sdk.up42.com".</li>
+<li><em>Simplify mock tests &amp; test fixtures</em></li>
+</ul>
+<h2 id="0110">0.11.0<a class="headerlink" href="#0110" title="Permanent link">&para;</a></h2>
+<p><strong>August 13, 2020</strong></p>
+<ul>
+<li>Fix: Remove buffer 0 for fixing invalid geometry.</li>
+<li>Add <code>.map_quicklooks</code> method for visualising quicklooks interactively.</li>
+<li>Add an example notebook for mapping quicklooks using <code>.map_quicklooks</code> method.</li>
+</ul>
+<h2 id="0101">0.10.1<a class="headerlink" href="#0101" title="Permanent link">&para;</a></h2>
+<p><strong>August 13, 2020</strong></p>
+<ul>
+<li>Hotfix: Fixes usage of multiple features as the input geometry.</li>
+</ul>
+<h2 id="0100">0.10.0<a class="headerlink" href="#0100" title="Permanent link">&para;</a></h2>
+<p><strong>August 7, 2020</strong></p>
+<ul>
+<li>Add parallel jobs feature. Allows running jobs for multiple geometries, scene_ids or
+ timeperiods in parallel. Adds <code>workflow.construct_parameters_parallel</code>,
+ <code>workflow.test_job_parallel</code>, <code>workflow.run_job_parallel</code> and the new <code>JobCollection</code> object.</li>
+<li>Adjusts <code>workflow.get_jobs</code> and <code>project.get_jobs</code> to return JobCollections.</li>
+<li>Adjusts airports-parallel example notebook to use the parallel jobs feature.</li>
+<li>Adjusts flood mapping example notebook to use OSM block.</li>
+<li>Adds option to not unpack results in <code>job.download_results</code>.</li>
+<li>Now allows passing only scene_ids to <code>workflow.construct_parameters</code>.</li>
+<li>Improves layout of image results plots for multiple results.</li>
+<li>Added binder links.</li>
+<li>Now truncates log messages &gt; 2k characters.</li>
+<li><em>Various small improvements &amp; code refactorings.</em></li>
+</ul>
+<h2 id="093">0.9.3<a class="headerlink" href="#093" title="Permanent link">&para;</a></h2>
+<p><strong>July 15, 2020</strong></p>
+<ul>
+<li>Add support for secondary GeoJSON file to <code>job.map_results</code></li>
+</ul>
+<h2 id="092">0.9.2<a class="headerlink" href="#092" title="Permanent link">&para;</a></h2>
+<p><strong>July 4, 2020</strong></p>
+<ul>
+<li>Fix inconsistency with <code>job.map_results</code> selecting the JSON instead of the image</li>
+</ul>
+<h2 id="091">0.9.1<a class="headerlink" href="#091" title="Permanent link">&para;</a></h2>
+<p><strong>June 25, 2020</strong></p>
+<ul>
+<li>Fixes typo in catalog search parameters</li>
+</ul>
+<h2 id="090">0.9.0<a class="headerlink" href="#090" title="Permanent link">&para;</a></h2>
+<p><strong>May 7, 2020</strong></p>
+<ul>
+<li>Enable block_name and block_display_name for <code>workflow.add_workflow_tasks</code></li>
+<li>Replace requirement to specify provider by sensor for <code>catalog.download_quicklooks</code></li>
+<li>Add option to disable logging in <code>up42.settings</code></li>
+<li>Add <code>project.get_jobs</code> and limit <code>workflow.get_jobs</code> to jobs in the workflow.</li>
+<li>Fix download of all output files</li>
+<li>Job name selectabable in <code>workflow.test_job</code> and <code>workflow.run_job</code> (with added suffix _py)</li>
+<li>Fix CRS issues in make <code>job.map_results</code>, make plotting functionalities more robust</li>
+</ul>
+<h2 id="083">0.8.3<a class="headerlink" href="#083" title="Permanent link">&para;</a></h2>
+<p><strong>April 30, 2020</strong></p>
+<ul>
+<li>Pin geopandas to 0.7.0, package requires new CRS convention</li>
+</ul>
+<h2 id="082">0.8.2<a class="headerlink" href="#082" title="Permanent link">&para;</a></h2>
+<p><strong>April 24, 2020</strong></p>
+<ul>
+<li>Removed <code>job.create_and_run_job</code>, now split into <code>job.test_job</code> and <code>job.run_job</code></li>
+</ul>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+<footer class="md-footer">
+    <div class="md-footer-meta md-typeset">
+        <div class="md-footer-meta__inner md-grid">
+            <!-- Copyright and theme information -->
+            <div class="md-footer-copyright">
+                
+                <div class="md-footer-copyright__highlight">
+                    UP42 2023
+                </div>
+                
+                powered by
+                <a href="https://www.mkdocs.org" title="MkDocs">MkDocs</a>
+                and
+                <a href="https://squidfunk.github.io/mkdocs-material/"
+                   title="Material for MkDocs">
+                    Material for MkDocs</a>
+            </div>
+            
+            <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://up42.com" target="_blank" rel="noopener" title="up42.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40h-16c-1.1 0-2.2 0-3.3-.1-1.4.1-2.8.1-4.2.1H392c-22.1 0-40-17.9-40-40v-88c0-17.7-14.3-32-32-32h-64c-17.7 0-32 14.3-32 32v88c0 22.1-17.9 40-40 40h-55.9c-1.5 0-3-.1-4.5-.2-1.2.1-2.4.2-3.6.2h-16c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9.1-2.8v-69.6H32c-18 0-32-14-32-32.1 0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7l255.4 224.5c8 7 12 15 11 24z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/up42_" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/company/up42/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/up42" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://hub.docker.com/u/up42" target="_blank" rel="noopener" title="hub.docker.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:support@up42.com" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4l217.6 163.2c11.4 8.5 27 8.5 38.4 0l217.6-163.2c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48H48zM0 176v208c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V176L294.4 339.2a63.9 63.9 0 0 1-76.8 0L0 176z"/></svg>
+    </a>
+  
+</div>
+            
+        </div>
+    </div>
+</footer>
+
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.bd41221c.min.js"></script>
+      
+        <script src="../stylesheets/extra.js"></script>
+      
+    
+  </body>
+</html>
