@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **May 30, 2024**
 
-- Moved instance methods of `Webhook` class to class methods of `Webhook` class and dropped the former.
+- Moved instance methods of `Webhooks` class to class methods of `Webhook` class and dropped the former.
 
 ## 1.0.4a6
 
