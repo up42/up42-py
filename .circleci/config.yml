@@ -49,11 +49,12 @@ jobs:
           key: *pre-commit-cache
           paths:
             - ~/.cache/pre-commit
+      
       - run:
-          name: Running tests
-          command: poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
+         name: Running tests
+         command: poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml tests/ --junitxml=test_results/results.xml --durations=3
       - store_test_results:
-          path:  ~/test_results
+         path: tests/test_results
       - store_artifacts:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
