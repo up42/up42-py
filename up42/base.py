@@ -1,12 +1,12 @@
 import logging
 import pathlib
 import warnings
-from typing import Any, List, Optional, Union
+from typing import Any, Optional, Union
 
 import requests
 
 from up42 import auth as up42_auth
-from up42 import host, utils, webhooks
+from up42 import host, utils
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
@@ -59,10 +59,22 @@ class _Workspace:
         resp = self.auth.request("GET", url)
         self._id = resp["data"]["id"]
 
+    def get_credits_balance(self) -> dict:
+        """
+        Display the overall credits available in your account.
+
+        Returns:
+            A dict with the balance of credits available in your account.
+        """
+        endpoint_url = host.endpoint("/accounts/me/credits/balance")
+        response_json = self.auth.request(request_type="GET", url=endpoint_url)
+        return response_json["data"]
+
 
 workspace = _Workspace()
 
 authenticate = workspace.authenticate
+get_credits_balance = workspace.get_credits_balance
 
 
 class Session:
@@ -78,61 +90,3 @@ class WorkspaceId:
         if value == self:
             value = workspace.id
         obj.__dict__["workspace_id"] = value
-
-
-def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
-    """
-    Gets all registered webhooks for this workspace.
-
-    Args:
-        return_json: If true returns the webhooks information as JSON instead of webhook class objects.
-    Returns:
-        A list of the registered webhooks for this workspace.
-    """
-    return webhooks.Webhooks(auth=workspace.auth, workspace_id=workspace.id).get_webhooks(return_json=return_json)
-
-
-def create_webhook(
-    name: str,
-    url: str,
-    events: List[str],
-    active: bool = False,
-    secret: Optional[str] = None,
-):
-    """
-    Registers a new webhook in the system.
-
-    Args:
-        name: Webhook name
-        url: Unique URL where the webhook will send the message (HTTPS required)
-        events: List of event types (order status / job task status)
-        active: Webhook status.
-        secret: String that acts as signature to the https request sent to the url.
-    Returns:
-        A dict with details of the registered webhook.
-    """
-    return webhooks.Webhooks(auth=workspace.auth, workspace_id=workspace.id).create_webhook(
-        name=name, url=url, events=events, active=active, secret=secret
-    )
-
-
-def get_webhook_events() -> dict:
-    """
-    Gets all available webhook events.
-
-    Returns:
-        A dict of the available webhook events.
-    """
-    return webhooks.Webhooks(auth=workspace.auth, workspace_id=workspace.id).get_webhook_events()
-
-
-def get_credits_balance() -> dict:
-    """
-    Display the overall credits available in your account.
-
-    Returns:
-        A dict with the balance of credits available in your account.
-    """
-    endpoint_url = host.endpoint("/accounts/me/credits/balance")
-    response_json = workspace.auth.request(request_type="GET", url=endpoint_url)
-    return response_json["data"]
