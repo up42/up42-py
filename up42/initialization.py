@@ -5,7 +5,6 @@ from up42 import asset, base, catalog, order, storage, tasking, utils, webhooks
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
-DEPRECATION_MESSAGE = "after May 15th, 2024, and will be replaced by new processing functionalities."
 INITIALIZED_MSG = "Initialized %s"
 
 
@@ -58,7 +57,7 @@ def initialize_webhook(webhook_id: str) -> webhooks.Webhook:
     Args:
         webhook_id: The UP42 webhook_id
     """
-    webhook = webhooks.Webhook(auth=base.workspace.auth, workspace_id=base.workspace.id, webhook_id=webhook_id)
+    webhook = webhooks.Webhook.get(webhook_id)
     logger.info(INITIALIZED_MSG, webhook)
     return webhook
 
