@@ -52,6 +52,8 @@ jobs:
       - run:
           name: Running tests
           command: poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
+      - store_test_results:
+          path: out/test_results
       - store_artifacts:
           path: .coverage-reports/coverage.xml
       - store_artifacts:
