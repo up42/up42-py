@@ -51,13 +51,12 @@ jobs:
             - ~/.cache/pre-commit
       - run:
           name: Running tests
-          command: poetry run pytest --junitxml=test_results/results.xml --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
+          command: |
+            poetry run pytest
       - store_test_results:
-          path: test_results
+          path: out/test_results
       - store_artifacts:
-          path: .coverage-reports/coverage.xml
-      - store_artifacts:
-          path: .coverage
+          path: out/coverage
       - persist_to_workspace:
           root: ./
           paths:
@@ -107,9 +106,12 @@ jobs:
             - ~/.cache/pre-commit
       - run:
           name: Running tests
-          command: poetry run pytest --junitxml=test_results/results.xml
+          command: |
+            poetry run pytest
       - store_test_results:
-          path: test_results
+          path: out/test_results
+      - store_artifacts:
+          path: out/coverage
 
   sonar:
     working_directory: *workspace-dir
