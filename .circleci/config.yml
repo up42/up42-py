@@ -113,7 +113,7 @@ jobs:
             mkdir test-results
             poetry run pytest
       - store_test_results:
-          path: ~/test_results
+          path: test_results
 
   sonar:
     working_directory: *workspace-dir
