@@ -65,6 +65,7 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
+            - out
 
   test-python:
     parameters:
