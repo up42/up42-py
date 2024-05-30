@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.0.4a7
+
+**May 30, 2024**
+
+- Moved instance methods of `Webhook` class to class methods of `Webhook` class and dropped the former.
+
 ## 1.0.4a6
 
 **May 30, 2024**
