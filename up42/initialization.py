@@ -71,9 +71,7 @@ def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
     Returns:
         A list of the registered webhooks for this workspace.
     """
-    return webhooks.Webhooks(auth=base.workspace.auth, workspace_id=base.workspace.id).get_webhooks(
-        return_json=return_json
-    )
+    return webhooks.Webhook.all(return_json=return_json)
 
 
 def create_webhook(
@@ -95,9 +93,7 @@ def create_webhook(
     Returns:
         A dict with details of the registered webhook.
     """
-    return webhooks.Webhooks(auth=base.workspace.auth, workspace_id=base.workspace.id).create_webhook(
-        name=name, url=url, events=events, active=active, secret=secret
-    )
+    return webhooks.Webhook.create(name=name, url=url, events=events, active=active, secret=secret)
 
 
 def get_webhook_events() -> dict:
@@ -107,4 +103,4 @@ def get_webhook_events() -> dict:
     Returns:
         A dict of the available webhook events.
     """
-    return webhooks.Webhooks(auth=base.workspace.auth, workspace_id=base.workspace.id).get_webhook_events()
+    return webhooks.Webhook.get_webhook_events()
