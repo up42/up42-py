@@ -51,11 +51,14 @@ jobs:
             - ~/.cache/pre-commit
       - run:
           name: Running tests
-          command: poetry run pytest --cov=up42/ --cov-report=xml:.coverage-reports/coverage.xml --durations=3
+          command: |
+            poetry run pytest
+      - store_test_results:
+          path: out/test_results
       - store_artifacts:
-          path: .coverage-reports/coverage.xml
-      - store_artifacts:
-          path: .coverage
+          path: out/coverage
+      - sonarcloud/scan:
+          sonar_token_variable_name: SONAR_TOKEN
       - persist_to_workspace:
           root: ./
           paths:
@@ -105,17 +108,12 @@ jobs:
             - ~/.cache/pre-commit
       - run:
           name: Running tests
-          command: poetry run pytest
-
-  sonar:
-    working_directory: *workspace-dir
-    docker:
-      - image: cimg/base:2021.04
-    steps:
-      - attach_workspace:
-          at: *workspace-dir
-      - sonarcloud/scan:
-          sonar_token_variable_name: SONAR_TOKEN
+          command: |
+            poetry run pytest
+      - store_test_results:
+          path: out/test_results
+      - store_artifacts:
+          path: out/coverage
 
   deploy:
     docker:
@@ -129,11 +127,8 @@ jobs:
 workflows:
   test_and_deploy:
     jobs:
-      - test
-      - sonar:
+      - test:
           context: sonarcloud
-          requires:
-            - test
       - test-python:
           matrix:
             parameters:
