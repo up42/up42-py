@@ -38,7 +38,6 @@ class Asset:
         asset_id: Optional[str] = None,
         asset_info: Optional[dict] = None,
     ):
-        print("test")
         if asset_id is not None and asset_info is not None:
             raise ValueError("asset_id and asset_info cannot be provided simultaneously.")
         if asset_id is None and asset_info is None:
