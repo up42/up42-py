@@ -1,0 +1,12 @@
+[run]
+data_file = out/coverage/data_file
+omit = tests/*
+
+[report]
+show_missing = True
+
+[html]
+directory = out/coverage
+
+[xml]
+output = out/coverage/coverage.xml
