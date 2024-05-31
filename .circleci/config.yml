@@ -127,7 +127,9 @@ jobs:
 workflows:
   test_and_deploy:
     jobs:
-      - test
+      - test:
+        context:
+          - sonarcloud
       - test-python:
           matrix:
             parameters:
