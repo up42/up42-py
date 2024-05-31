@@ -64,6 +64,11 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
+      - run: 
+          name: Check workspace contents
+          command: |
+            ls -la
+            ls -la tests
 
   test-python:
     parameters:
