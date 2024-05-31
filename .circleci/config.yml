@@ -120,6 +120,10 @@ jobs:
     steps:
       - attach_workspace:
           at: *workspace-dir
+      - run:
+          name: Print Workspace
+          command: |
+            ls -a
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
 
