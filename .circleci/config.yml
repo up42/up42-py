@@ -57,6 +57,8 @@ jobs:
           path: out/test_results
       - store_artifacts:
           path: out/coverage
+      - sonarcloud/scan:
+          sonar_token_variable_name: SONAR_TOKEN
       - persist_to_workspace:
           root: ./
           paths:
@@ -112,21 +114,6 @@ jobs:
           path: out/test_results
       - store_artifacts:
           path: out/coverage
-
-  sonar:
-    working_directory: *workspace-dir
-    docker:
-      - image: cimg/base:2021.04
-    steps:
-      - attach_workspace:
-          at: *workspace-dir
-      - run:
-          name: Check workspace contents
-          command: |
-            ls -la
-            ls -la tests
-      - sonarcloud/scan:
-          sonar_token_variable_name: SONAR_TOKEN
 
   deploy:
     docker:
