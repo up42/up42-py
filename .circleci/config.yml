@@ -128,10 +128,6 @@ workflows:
   test_and_deploy:
     jobs:
       - test
-      - sonar:
-          context: sonarcloud
-          requires:
-            - test
       - test-python:
           matrix:
             parameters:
