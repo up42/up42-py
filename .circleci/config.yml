@@ -120,6 +120,11 @@ jobs:
     steps:
       - attach_workspace:
           at: *workspace-dir
+      - run:
+          name: Check workspace contents
+          command: |
+            ls -la
+            ls -la tests
       - sonarcloud/scan:
           sonar_token_variable_name: SONAR_TOKEN
 
