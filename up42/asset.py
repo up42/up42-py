@@ -55,7 +55,6 @@ class Asset:
         return self.info.get("id")
 
     def _get_info(self, asset_id: str):
-        print("test")
         url = host.endpoint(f"/v2/assets/{asset_id}/metadata")
         return self.auth.request(request_type="GET", url=url)
 
