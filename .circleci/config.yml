@@ -64,7 +64,7 @@ jobs:
             - .coverage-reports
             - .circleci
             - sonar-project.properties
-      - run: 
+      - run:
           name: Check workspace contents
           command: |
             ls -la
