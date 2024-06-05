@@ -1,6 +1,6 @@
-import abc
 import dataclasses
-from typing import Optional
+import datetime
+import enum
 
 import pystac
 import requests
@@ -12,6 +12,19 @@ logger = utils.get_logger(__name__)
 
 
 pystac_client = up42.initialize_storage().pystac_client
+
+
+class JobStatuses(enum.Enum):
+    CREATED = "created"
+    VALID = "valid"
+    INVALID = "invalid"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+    RUNNING = "running"
+    SUCCESSFUL = "successful"
+    FAILED = "failed"
+    CAPTURED = "captured"
+    RELEASED = "released"
 
 
 @dataclasses.dataclass(eq=True)
@@ -32,24 +45,19 @@ class BaseJob:
     id: str
 
     @property
-    def __job_metadata(self):
+    def __job_metadata(self) -> dict:
         url = host.endpoint(f"/v2/processing/jobs/{self.id}")
         try:
-            job_metadata = self.session.get(url).json()
-            job_results = job_metadata["results"]
-            if "errors" in job_results:
+            job_response = self.session.get(url)
+            job_response.raise_for_status()
+            if "errors" in (job_results := job_response.json()["results"]):
                 self.errors = {JobError(**error) for error in job_results["errors"]}
-            return job_metadata
+            return job_response.json()
         except requests.HTTPError as err:
-            if err.response.status_code == 422:
-                errors = err.response.json()["errors"]
-                self.errors = {JobError(**error) for error in errors}
+            if err.response.status_code == 402:
+                raise ValueError(f"Job {self.id} not found") from err
             else:
                 raise err
-
-    @abc.abstractmethod
-    def definition(self):
-        ...
 
     @property
     def results(self) -> pystac.Collection:
@@ -62,29 +70,47 @@ class BaseJob:
         raise ValueError("No result found for this job_id, please check status and errors.")
 
     @property
-    def credit_consumption(self) -> Optional[JobCreditConsumption]:
+    def credit_consumption(self) -> JobCreditConsumption:
         if "creditConsumption" in self.__job_metadata:
             return JobCreditConsumption(**self.__job_metadata["creditConsumption"])
-        return None
+        raise ValueError(f"Job: {self.id}, has not credit consumption." "See the job status, and errors for details.")
 
-    def __getattr__(self, name: str):
-        metadata_key_map = {
-            "process_id": "processID",
-            "account_id": "accountID",
-            "workspace_id": "workspaceID",
-            "type": "type",
-            "status": "status",
-            "created": "created",
-            "started": "started",
-            "finished": "finished",
-            "updated": "updated",
-        }
-        metadata_key = metadata_key_map.get(name)
+    @property
+    def process_id(self) -> str:
+        return self.__job_metadata["processID"]
 
-        if metadata_key is None:
-            raise AttributeError(f"'BaseJob' object has no attribute '{name}'")
+    @property
+    def type(self) -> str:
+        return self.__job_metadata["type"]
 
-        try:
-            return self.__job_metadata[metadata_key]
-        except KeyError as err:
-            raise AttributeError(f"Job metadata does not contain '{metadata_key}' for '{name}'") from err
+    @property
+    def account_id(self) -> str:
+        return self.__job_metadata["accountID"]
+
+    @property
+    def workspace_id(self) -> str:
+        return self.__job_metadata["workspaceID"]
+
+    @property
+    def definition(self) -> dict:
+        return self.__job_metadata["definition"]
+
+    @property
+    def status(self) -> JobStatuses:
+        return JobStatuses(self.__job_metadata["status"])
+
+    @property
+    def created(self) -> datetime.datetime:
+        return datetime.datetime.fromisoformat(self.__job_metadata["created"])
+
+    @property
+    def started(self) -> datetime.datetime:
+        return datetime.datetime.fromisoformat(self.__job_metadata["started"])
+
+    @property
+    def finished(self) -> datetime.datetime:
+        return datetime.datetime.fromisoformat(self.__job_metadata["finished"])
+
+    @property
+    def updated(self) -> datetime.datetime:
+        return datetime.datetime.fromisoformat(self.__job_metadata["updated"])

@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+# 1.0.4a9
+
+**Jun 8, 2024**
+
+- Added module `ogc_jobs.py` with base `JobBase` class with post-construct job definition.
+
 ## 1.0.4a7
 
 **May 30, 2024**
