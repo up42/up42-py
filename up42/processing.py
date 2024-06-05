@@ -1,6 +1,6 @@
 import abc
 import dataclasses
-from typing import Sequence, Union
+from typing import List, Union
 
 import pystac
 import requests
@@ -14,7 +14,7 @@ class ValidationError:
     name: str
 
 
-class BaseJobTemplate:
+class JobTemplate:
     session = base.Session()
     process_id: str
     title: str
@@ -28,7 +28,7 @@ class BaseJobTemplate:
 
     def __post_init__(self):
         self.__validate()
-        # TODO: compute cost for valid template
+        # TODO: compute cost if valid
 
     def __validate(self) -> None:
         url = host.endpoint(f"/v2/processing/processes/{self.process_id}/validation")
@@ -57,7 +57,7 @@ class BaseJobTemplate:
     # TODO: def create_job(self) -> Job:
 
 
-class SingleItemBaseJobTemplate(BaseJobTemplate):
+class SingleItemJobTemplate(JobTemplate):
     item: pystac.Item
 
     @property
@@ -65,12 +65,12 @@ class SingleItemBaseJobTemplate(BaseJobTemplate):
         return {"title": self.title, "item": self.item.get_self_href()}
 
 
-class MultiItemBaseJobTemplate(BaseJobTemplate):
-    items: Sequence[pystac.Item]
+class MultiItemJobTemplate(JobTemplate):
+    items: List[pystac.Item]
 
     @property
     def inputs(self) -> Union[dict]:
         return {
             "title": self.title,
-            "items": {item.get_self_href() for item in self.items},
+            "items": [item.get_self_href() for item in self.items],
         }
