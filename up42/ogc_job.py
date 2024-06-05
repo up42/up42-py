@@ -1,17 +1,14 @@
 import dataclasses
 import datetime
 import enum
+from typing import Union
 
 import pystac
 import requests
 
-import up42
 from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
-
-
-pystac_client = up42.initialize_storage().pystac_client
 
 
 class JobStatuses(enum.Enum):
@@ -42,7 +39,10 @@ class JobCreditConsumption:
 
 class BaseJob:
     session = base.Session()
+    workspace_id: Union[str, base.WorkspaceId]
     id: str
+
+    pystac_client = utils.stac_client(base.workspace.auth.client.auth)
 
     @property
     def __job_metadata(self) -> dict:
@@ -64,7 +64,7 @@ class BaseJob:
         job_results = self.__job_metadata["results"]
         if "collection" in job_results:
             try:
-                return pystac_client.get_collection(collection_id=job_results["collection"].split("/")[-1])
+                return self.pystac_client.get_collection(collection_id=job_results["collection"].split("/")[-1])
             except Exception as err:
                 raise ValueError("Not valid STAC collection in job result.") from err
         raise ValueError("No result found for this job_id, please check status and errors.")
@@ -88,7 +88,7 @@ class BaseJob:
         return self.__job_metadata["accountID"]
 
     @property
-    def workspace_id(self) -> str:
+    def job_workspace_id(self) -> str:
         return self.__job_metadata["workspaceID"]
 
     @property
