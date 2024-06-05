@@ -24,7 +24,7 @@ class JobTemplate:
     @property
     @abc.abstractmethod
     def inputs(self) -> dict:
-        ...
+        pass
 
     def __post_init__(self):
         self.__validate()
@@ -35,7 +35,6 @@ class JobTemplate:
         try:
             _ = self.session.post(url, json={"inputs": self.inputs})
         except requests.HTTPError as err:
-            # process 400 and 422 errors (exclude those from retries)
             if (status_code := err.response.status_code) in (400, 422):
                 if status_code == 400:
                     self.errors = {
@@ -61,7 +60,7 @@ class SingleItemJobTemplate(JobTemplate):
     item: pystac.Item
 
     @property
-    def inputs(self) -> Union[dict]:
+    def inputs(self) -> dict:
         return {"title": self.title, "item": self.item.get_self_href()}
 
 
@@ -69,7 +68,7 @@ class MultiItemJobTemplate(JobTemplate):
     items: List[pystac.Item]
 
     @property
-    def inputs(self) -> Union[dict]:
+    def inputs(self) -> dict:
         return {
             "title": self.title,
             "items": [item.get_self_href() for item in self.items],

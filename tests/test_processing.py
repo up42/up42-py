@@ -36,12 +36,12 @@ ITEM = pystac.Item.from_dict(
 def workspace():
     with mock.patch("up42.base.workspace") as workspace_mock:
         session = requests.Session()
-        session.hooks = {"response": lambda r, *args, **kwargs: r.raise_for_status()}
+        session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
         workspace_mock.auth.session = session
         yield
 
 
-@dataclasses.dataclass(eq=True)
+@dataclasses.dataclass
 class SampleJobTemplate(processing.JobTemplate):
     title: str
     process_id = PROCESS_ID
@@ -91,7 +91,7 @@ class TestJobTemplate:
         assert not template.is_valid
         assert template.errors == {error}
 
-    def test_should_construct_valid_template(self, requests_mock: req_mock.Mocker):
+    def test_should_construct(self, requests_mock: req_mock.Mocker):
         requests_mock.post(
             VALIDATION_URL,
             status_code=200,
@@ -102,7 +102,7 @@ class TestJobTemplate:
         assert not template.errors
 
 
-@dataclasses.dataclass(eq=True)
+@dataclasses.dataclass
 class SampleSingleItemJobTemplate(processing.SingleItemJobTemplate):
     item: pystac.Item
     title: str
@@ -124,7 +124,7 @@ class TestSingleItemJobTemplate:
         assert template.inputs == {"title": TITLE, "item": ITEM_URL}
 
 
-@dataclasses.dataclass(eq=True)
+@dataclasses.dataclass
 class SampleMultiItemJobTemplate(processing.MultiItemJobTemplate):
     items: List[pystac.Item]
     title: str
