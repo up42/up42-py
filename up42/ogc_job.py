@@ -101,16 +101,16 @@ class BaseJob:
 
     @property
     def created(self) -> datetime.datetime:
-        return datetime.datetime.fromisoformat(self.__job_metadata["created"])
+        return datetime.datetime.fromisoformat(self.__job_metadata["created"].rstrip("Z"))
 
     @property
     def started(self) -> datetime.datetime:
-        return datetime.datetime.fromisoformat(self.__job_metadata["started"])
+        return datetime.datetime.fromisoformat(self.__job_metadata["started"].rstrip("Z"))
 
     @property
     def finished(self) -> datetime.datetime:
-        return datetime.datetime.fromisoformat(self.__job_metadata["finished"])
+        return datetime.datetime.fromisoformat(self.__job_metadata["finished"].rstrip("Z"))
 
     @property
     def updated(self) -> datetime.datetime:
-        return datetime.datetime.fromisoformat(self.__job_metadata["updated"])
+        return datetime.datetime.fromisoformat(self.__job_metadata["updated"].rstrip("Z"))
