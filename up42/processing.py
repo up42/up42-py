@@ -1,6 +1,6 @@
 import abc
 import dataclasses
-from typing import Union, Sequence
+from typing import Sequence, Union
 
 import pystac
 import requests
@@ -19,11 +19,12 @@ class BaseJobTemplate:
     process_id: str
     title: str
     workspace_id: Union[str, base.WorkspaceId]
-    errors: set[ValidationError] = {}
+    errors: set[ValidationError] = set()
 
     @property
     @abc.abstractmethod
-    def inputs(self) -> dict: ...
+    def inputs(self) -> dict:
+        ...
 
     def __post_init__(self):
         self.__validate()

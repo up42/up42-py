@@ -3,15 +3,12 @@ from typing import Union
 
 import pystac
 
-from up42 import base
-from up42.processing import SingleItemBaseJobTemplate
+from up42 import base, processing
 
 
 @dataclasses.dataclass(eq=True, frozen=True)
-class PansharpeningJobTemplate(SingleItemBaseJobTemplate):
+class PansharpeningJobTemplate(processing.SingleItemBaseJobTemplate):
     item: pystac.Item
     title: str
     process_id: str = "pansharpening"
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(
-        default=base.WorkspaceId()
-    )
+    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())

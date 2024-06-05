@@ -7,6 +7,7 @@ import requests
 import requests_mock as req_mock
 
 from up42 import processing
+
 from .fixtures import fixtures_globals as constants
 
 PROCESS_ID = "process-id"
@@ -35,21 +36,15 @@ class TestJobTemplate(processing.BaseJobTemplate):
 class TestBaseJobTemplate:
     # TODO: match request bodies
 
-    def test_fails_to_construct_if_validation_fails(
-        self, requests_mock: req_mock.Mocker
-    ):
+    def test_fails_to_construct_if_validation_fails(self, requests_mock: req_mock.Mocker):
         error_code = random.randint(430, 599)
         requests_mock.post(VALIDATION_URL, status_code=error_code)
         with pytest.raises(requests.exceptions.HTTPError) as error:
             _ = TestJobTemplate(title="title")
         assert error.value.response.status_code == error_code
 
-    def test_should_be_invalid_if_inputs_are_malformed(
-        self, requests_mock: req_mock.Mocker
-    ):
-        error = processing.ValidationError(
-            name="InvalidSchema", message="data.inputs must contain ['item'] properties"
-        )
+    def test_should_be_invalid_if_inputs_are_malformed(self, requests_mock: req_mock.Mocker):
+        error = processing.ValidationError(name="InvalidSchema", message="data.inputs must contain ['item'] properties")
         requests_mock.post(
             VALIDATION_URL,
             status_code=400,
@@ -59,12 +54,8 @@ class TestBaseJobTemplate:
         assert not template.is_valid
         assert template.errors == {error}
 
-    def test_should_be_invalid_if_inputs_are_invalid(
-        self, requests_mock: req_mock.Mocker
-    ):
-        error = processing.ValidationError(
-            name="InvalidTitle", message="title is too long"
-        )
+    def test_should_be_invalid_if_inputs_are_invalid(self, requests_mock: req_mock.Mocker):
+        error = processing.ValidationError(name="InvalidTitle", message="title is too long")
         requests_mock.post(
             VALIDATION_URL,
             status_code=422,
