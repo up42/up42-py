@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Jun 8, 2024**
 
-- Added module `ogc_jobs.py` with base `JobBase` class with post-construct job definition.
+- Added module `ogc_jobs.py` with base `JobBase` class.
 
 ## 1.0.4a7
 
