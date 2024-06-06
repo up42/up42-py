@@ -43,7 +43,7 @@ class BaseJob:
     id: str
 
     @property
-    def pystac_client(self):
+    def _pystac_client(self):
         return utils.stac_client(base.workspace.auth.client.auth)
 
     @property
@@ -66,7 +66,7 @@ class BaseJob:
         job_results = self.__job_metadata["results"]
         if "collection" in job_results:
             try:
-                return self.pystac_client.get_collection(collection_id=job_results["collection"].split("/")[-1])
+                return self._pystac_client.get_collection(collection_id=job_results["collection"].split("/")[-1])
             except Exception as err:
                 raise ValueError("Not valid STAC collection in job result.") from err
         raise ValueError("No result found for this job_id, please check status and errors.")
