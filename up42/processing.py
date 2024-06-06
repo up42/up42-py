@@ -14,6 +14,9 @@ class ValidationError:
     name: str
 
 
+CostType = Union[int, float, "Cost"]
+
+
 @dataclasses.dataclass(frozen=True)
 class Cost:
     strategy: str
@@ -21,22 +24,22 @@ class Cost:
     size: Optional[int] = None
     unit: Optional[str] = None
 
-    def __le__(self, other):
+    def __le__(self, other: CostType):
         if isinstance(other, Cost):
             return self.credits <= other.credits
         else:
             return self.credits <= other
 
-    def __lt__(self, other):
+    def __lt__(self, other: CostType):
         if isinstance(other, Cost):
             return self.credits < other.credits
         else:
             return self.credits < other
 
-    def __ge__(self, other):
+    def __ge__(self, other: CostType):
         return not self < other
 
-    def __gt__(self, other):
+    def __gt__(self, other: CostType):
         return not self <= other
 
 

@@ -44,7 +44,11 @@ def workspace():
 class TestCost:
     @pytest.mark.parametrize("high_value", [11, 11.0, processing.Cost(strategy="strategy", credits=11)])
     @pytest.mark.parametrize("low_value", [9, 9.0, processing.Cost(strategy="strategy", credits=9)])
-    def test_should_compare_with_numbers_and_costs_using_credits(self, high_value, low_value):
+    def test_should_compare_with_numbers_and_costs_using_credits(
+        self,
+        high_value: processing.CostType,
+        low_value: processing.CostType,
+    ):
         cost = processing.Cost(strategy="strategy", credits=10)
         assert cost > low_value and cost >= low_value
         assert cost < high_value and cost <= high_value
@@ -212,4 +216,5 @@ class TestMultiItemJobTemplate:
             title=TITLE,
         )
         assert template.is_valid
+        assert template.cost == cost
         assert template.inputs == {"title": TITLE, "items": [ITEM_URL]}
