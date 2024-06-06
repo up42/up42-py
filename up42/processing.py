@@ -46,7 +46,6 @@ class Cost:
 class JobTemplate:
     session = base.Session()
     process_id: ClassVar[str]
-    title: str
     workspace_id: Union[str, base.WorkspaceId]
     errors: set[ValidationError] = set()
 
