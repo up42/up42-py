@@ -3,6 +3,7 @@ import datetime
 from unittest import mock
 
 import pystac
+import pystac_client
 import pytest
 import requests
 import requests_mock as req_mock
@@ -153,6 +154,18 @@ class TestJobBase:
         result_collection = test_success_job.collection
         assert result_collection == mock_collection
         mock_pystac_client.return_value.get_collection.assert_called_once_with(collection_id=RESULT_COLLECTION_ID)
+
+    @mock.patch("up42.ogc_job.BaseJob._job_metadata", new_callable=mock.PropertyMock)
+    @mock.patch("up42.ogc_job.BaseJob._pystac_client", new_callable=mock.PropertyMock)
+    def test_collection_invalid_stac(self, mock_pystac_client, mock_job_metadata):
+        mock_job_metadata.return_value = {"results": {"collection": "invalid_url"}}
+        mock_pystac_client.return_value.get_collection.return_value = mock.Mock(spec=pystac_client)
+        mock_pystac_client.get_collection.return_value = mock.Mock(spec=pystac_client)
+        mock_pystac_client.return_value.get_collection.side_effect = Exception("Invalid STAC collection")
+        mock_pystac_client.return_value.get_collection.side_effect = Exception("Invalid STAC collection")
+        job = SampleJob(RESULT_COLLECTION_ID)
+        with pytest.raises(ogc_job.JobResultError):
+            _ = job.collection
 
     def test_collection_no_result(self, test_job_with_error):
         with pytest.raises(ogc_job.JobResultError):
