@@ -6,16 +6,6 @@ import pystac
 from up42 import processing
 
 
-def _create_single_item_template(name: str, process_id: str):
-    template_class = dataclasses.make_dataclass(
-        name=name,
-        fields=[("title", str), ("item", pystac.Item)],
-        bases=(processing.SingleItemJobTemplate),
-    )
-    template_class.process_id = process_id
-    return template_class
-
-
 @dataclasses.dataclass
 class SpaceptBuildingsDetection(processing.SingleItemJobTemplate):
     title: str

@@ -1,4 +1,3 @@
-from typing import Type
 from unittest import mock
 
 import pystac
@@ -38,9 +37,7 @@ class TestParameterlessTemplates:
             templates.OrbitalInsightTrucksDetection,
         ],
     )
-    def test_should_construct_single_item_job_templates(
-        self, template_class: Type[processing.JobTemplate]
-    ):
+    def test_should_construct_single_item_job_templates(self, template_class):
         template = template_class(title=TITLE, item=item)
         assert template.is_valid and template.cost == COST
         assert template.inputs == {"title": TITLE, "item": ITEM_URL}
