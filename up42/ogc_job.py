@@ -11,6 +11,10 @@ from up42 import base, host, utils
 logger = utils.get_logger(__name__)
 
 
+class JobResultError(ValueError):
+    pass
+
+
 class JobStatuses(enum.Enum):
     CREATED = "created"
     VALID = "valid"
@@ -47,72 +51,84 @@ class BaseJob:
         return utils.stac_client(base.workspace.auth.client.auth)
 
     @property
-    def __job_metadata(self) -> dict:
+    def _job_metadata(self) -> dict:
         url = host.endpoint(f"/v2/processing/jobs/{self.id}")
         try:
             job_response = self.session.get(url)
             job_response.raise_for_status()
-            if "errors" in (job_results := job_response.json()["results"]):
-                self.errors = {JobError(**error) for error in job_results["errors"]}
             return job_response.json()
         except requests.HTTPError as err:
             if err.response.status_code == 402:
-                raise ValueError(f"Job {self.id} not found") from err
+                raise JobResultError(f"Job {self.id} not found") from err
             else:
                 raise err
 
     @property
-    def results(self) -> pystac.Collection:
-        job_results = self.__job_metadata["results"]
+    def errors(self) -> list:
+        job_results = self._job_metadata["results"]
+        if "errors" in job_results:
+            return [JobError(**error) for error in job_results["errors"]]
+        return list()
+
+    @property
+    def collection(self) -> pystac.Collection:
+        job_results = self._job_metadata["results"]
         if "collection" in job_results:
             try:
                 return self._pystac_client.get_collection(collection_id=job_results["collection"].split("/")[-1])
             except Exception as err:
-                raise ValueError("Not valid STAC collection in job result.") from err
-        raise ValueError("No result found for this job_id, please check status and errors.")
+                raise JobResultError("Not valid STAC collection in job result.") from err
+        raise JobResultError("No result found for this job_id, please check status and errors.")
 
     @property
     def credit_consumption(self) -> JobCreditConsumption:
-        if "creditConsumption" in self.__job_metadata:
-            return JobCreditConsumption(**self.__job_metadata["creditConsumption"])
-        raise ValueError(f"Job: {self.id}, has not credit consumption." "See the job status, and errors for details.")
+        if "creditConsumption" in self._job_metadata:
+            consumption_data = self._job_metadata["creditConsumption"]
+            return JobCreditConsumption(
+                credits=consumption_data["credits"],
+                hold_id=consumption_data["holdID"],
+                consumption_id=consumption_data["consumptionID"],
+            )
+        raise JobResultError(
+            f"Job: {self.id}, has not credit consumption." "See the job status, and errors for details."
+        )
 
     @property
     def process_id(self) -> str:
-        return self.__job_metadata["processID"]
+        return self._job_metadata["processID"]
 
     @property
     def type(self) -> str:
-        return self.__job_metadata["type"]
+        return self._job_metadata["type"]
 
     @property
     def account_id(self) -> str:
-        return self.__job_metadata["accountID"]
+        return self._job_metadata["accountID"]
 
     @property
     def job_workspace_id(self) -> str:
-        return self.__job_metadata["workspaceID"]
+        return self._job_metadata["workspaceID"]
 
     @property
     def definition(self) -> dict:
-        return self.__job_metadata["definition"]
+        return self._job_metadata["definition"]
 
     @property
     def status(self) -> JobStatuses:
-        return JobStatuses(self.__job_metadata["status"])
+        return JobStatuses(self._job_metadata["status"])
 
     @property
     def created(self) -> datetime.datetime:
-        return datetime.datetime.fromisoformat(self.__job_metadata["created"].rstrip("Z"))
+        return datetime.datetime.fromisoformat(self._job_metadata["created"].rstrip("Z"))
 
     @property
     def started(self) -> datetime.datetime:
-        return datetime.datetime.fromisoformat(self.__job_metadata["started"].rstrip("Z"))
+        return datetime.datetime.fromisoformat(self._job_metadata["started"].rstrip("Z"))
 
     @property
     def finished(self) -> datetime.datetime:
-        return datetime.datetime.fromisoformat(self.__job_metadata["finished"].rstrip("Z"))
+        return datetime.datetime.fromisoformat(self._job_metadata["finished"].rstrip("Z"))
 
     @property
     def updated(self) -> datetime.datetime:
-        return datetime.datetime.fromisoformat(self.__job_metadata["updated"].rstrip("Z"))
+        return datetime.datetime.fromisoformat(self._job_metadata["updated"].rstrip("Z"))
