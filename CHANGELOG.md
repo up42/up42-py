@@ -35,6 +35,13 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 - Added module `ogc_jobs.py` with base `JobBase` class for future specific Job classes.
 
+## 1.0.4a8
+
+**Jun 6, 2024**
+
+- Added module `processing.py` with base `JobTemplate` class with post-construct inputs validation.
+- Added helper `SingleItemJobTemplate` and `MultiItemJobTemplate` classes as bases for future specific processing templates.
+
 ## 1.0.4a7
 
 **May 30, 2024**
