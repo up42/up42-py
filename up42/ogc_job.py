@@ -42,7 +42,9 @@ class BaseJob:
     workspace_id: Union[str, base.WorkspaceId]
     id: str
 
-    pystac_client = utils.stac_client(base.workspace.auth.client.auth)
+    @property
+    def pystac_client(self):
+        return utils.stac_client(base.workspace.auth.client.auth)
 
     @property
     def __job_metadata(self) -> dict:
