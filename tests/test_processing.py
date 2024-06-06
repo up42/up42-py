@@ -1,6 +1,5 @@
 import dataclasses
 import random
-from typing import List
 from unittest import mock
 
 import pystac
@@ -160,8 +159,6 @@ class TestJobTemplate:
 
 @dataclasses.dataclass
 class SampleSingleItemJobTemplate(processing.SingleItemJobTemplate):
-    item: pystac.Item
-    title: str
     process_id = PROCESS_ID
 
 
@@ -191,8 +188,6 @@ class TestSingleItemJobTemplate:
 
 @dataclasses.dataclass
 class SampleMultiItemJobTemplate(processing.MultiItemJobTemplate):
-    items: List[pystac.Item]
-    title: str
     process_id = PROCESS_ID
 
 

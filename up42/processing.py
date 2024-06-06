@@ -1,6 +1,6 @@
 import abc
 import dataclasses
-from typing import List, Optional, Union
+from typing import ClassVar, List, Optional, Union
 
 import pystac
 import requests
@@ -45,7 +45,7 @@ class Cost:
 
 class JobTemplate:
     session = base.Session()
-    process_id: str
+    process_id: ClassVar[str]
     title: str
     workspace_id: Union[str, base.WorkspaceId]
     errors: set[ValidationError] = set()
@@ -96,7 +96,9 @@ class JobTemplate:
     # TODO: def create_job(self) -> Job:
 
 
+@dataclasses.dataclass
 class SingleItemJobTemplate(JobTemplate):
+    title: str
     item: pystac.Item
 
     @property
@@ -104,7 +106,9 @@ class SingleItemJobTemplate(JobTemplate):
         return {"title": self.title, "item": self.item.get_self_href()}
 
 
+@dataclasses.dataclass
 class MultiItemJobTemplate(JobTemplate):
+    title: str
     items: List[pystac.Item]
 
     @property
