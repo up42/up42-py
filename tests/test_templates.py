@@ -3,6 +3,7 @@ from unittest import mock
 import pystac
 import pytest
 
+from tests.fixtures import fixtures_globals as constants
 from up42 import processing, templates
 
 TITLE = "title"
@@ -38,7 +39,7 @@ class TestParameterlessTemplates:
         ],
     )
     def test_should_construct_single_item_job_templates(self, template_class):
-        template = template_class(title=TITLE, item=item)
+        template = template_class(title=TITLE, item=item, workspace_id=constants.WORKSPACE_ID)
         assert template.is_valid and template.cost == COST
         assert template.inputs == {"title": TITLE, "item": ITEM_URL}
 
@@ -51,6 +52,6 @@ class TestParameterlessTemplates:
         ],
     )
     def test_should_construct_multi_item_template(self, template_class):
-        template = template_class(title=TITLE, items=[item])
+        template = template_class(title=TITLE, items=[item], workspace_id=constants.WORKSPACE_ID)
         assert template.is_valid and template.cost == COST
         assert template.inputs == {"title": TITLE, "items": [ITEM_URL]}
