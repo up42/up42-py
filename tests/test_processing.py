@@ -70,10 +70,10 @@ def workspace():
 
 @pytest.fixture(name="job")
 def _job():
-    created = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["created"]))
-    started = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["started"]))
-    finished = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["finished"]))
-    updated = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["updated"]))
+    created = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["created"]).rstrip("Z"))
+    started = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["started"]).rstrip("Z"))
+    finished = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["finished"]).rstrip("Z"))
+    updated = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["updated"]).rstrip("Z"))
     return processing.Job(
         process_id=JOB_SUCCESS_RESPONSE["processID"],
         id=JOB_SUCCESS_RESPONSE["jobID"],

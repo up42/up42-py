@@ -162,10 +162,10 @@ class Job:
 
     @staticmethod
     def from_metadata(metadata: JobMetadata) -> "Job":
-        created = datetime.datetime.fromisoformat(metadata["created"]) if metadata["created"] else None
-        started = datetime.datetime.fromisoformat(metadata["started"]) if metadata["started"] else None
-        finished = datetime.datetime.fromisoformat(metadata["finished"]) if metadata["finished"] else None
-        updated = datetime.datetime.fromisoformat(metadata["updated"]) if metadata["updated"] else None
+        created = datetime.datetime.fromisoformat(metadata["created"].rstrip("Z")) if metadata["created"] else None
+        started = datetime.datetime.fromisoformat(metadata["started"].rstrip("Z")) if metadata["started"] else None
+        finished = datetime.datetime.fromisoformat(metadata["finished"].rstrip("Z")) if metadata["finished"] else None
+        updated = datetime.datetime.fromisoformat(metadata["updated"].rstrip("Z")) if metadata["updated"] else None
         return Job(
             process_id=metadata["processID"],
             id=metadata["jobID"],
