@@ -29,6 +29,13 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+
+## 1.0.4a11
+
+**Jun 10, 2024**
+
+- Added job templates for `SpaceptAugmentation`, `NSUpsamling`, `Pansharpening` to `templates.py`
+
 ## 1.0.4a10
 
 **Jun 7, 2024**
@@ -46,7 +53,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Jun 6, 2024**
 
 - Added module `processing.py` with base `JobTemplate` class with post-construct inputs validation.
-- Added helper `SingleItemJobTemplate` and `MultiItemJobTemplate` classes as bases for future specific processing templates.
+- Added helper `SingleItemJobTemplate` and `MultiItemJobTemplate` classes as bases for future specific processing
+  templates.
 
 ## 1.0.4a7
 
@@ -74,14 +82,12 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Improved test coverage for webhooks
 - Dropped unneeded shared and global fixtures for webhook tests
 
-
 ## 1.0.4a3
 
 **May 27, 2024**
 
 - Added `Session` and `WorkspaceId` descriptors to provide access to session and workspace_id from other classes.
 - Renaming `main` module to `base`.
-
 
 ## 1.0.4a2
 
@@ -90,15 +96,16 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Added workspace singleton in `main.py`, encapsulating global state (auth, workspace id).
 - Inject auth and workspace id instead of passing a containing object.
 
-
 ## 1.0.4a1
 
 **May 24, 2024**
+
 - Bumped dependencies `requests` from 2.31.0 to 2.32.0.
 
 ## 1.0.3
 
 **May 23, 2024**
+
 - Added tenacity as dependency.
 - Added resilience on `asset::stac_info` and `asset::stac_items`
 - Dropped pystac client subclassing
@@ -109,6 +116,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.0.3a1
 
 **May 23, 2024**
+
 - Added tenacity as dependency.
 - Added resilience on `asset::stac_info` and `asset::stac_items`
 - Dropped pystac client subclassing
@@ -116,22 +124,22 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Improved test coverage
 - Dropped unneeded exposure of token
 
-
 ## 1.0.2
 
 **May 15, 2024**
-- Added thread safety to token retrieval.
 
+- Added thread safety to token retrieval.
 
 ## 1.0.2a1
 
 **May 15, 2024**
-- Added thread safety to token retrieval.
 
+- Added thread safety to token retrieval.
 
 ## 1.0.1
 
 **May 13, 2024**
+
 - Increased retries and backoff in http resilience.
 - Fixed bug with temporary storage overfill when downloading archives.
 - Bumped dependencies jinja2, tqdm, geojson.
@@ -139,46 +147,49 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.0.1a4
 
 **May 13, 2024**
-- geojson dependency bumped from 3.0.1 to 3.1.0 to fix conda python 3.12 installer.
 
+- geojson dependency bumped from 3.0.1 to 3.1.0 to fix conda python 3.12 installer.
 
 ## 1.0.1a3
 
 **May 7, 2024**
-- Setting http_adapter default configuration to `retries = 5` and `backoff factor = 1`
 
+- Setting http_adapter default configuration to `retries = 5` and `backoff factor = 1`
 
 ## 1.0.1a2
 
 **May 7, 2024**
+
 - Renamed `download_from_gcs_unpack` to `download_archive`
 - Renamed `download_gcs_not_unpack` to `download_file`
 - Improved test coverage for `download_archive`
-- Bug fix in `download_archive`: use output directory provided for temporary archive storage instead of default temp folder
-
+- Bug fix in `download_archive`: use output directory provided for temporary archive storage instead of default temp
+  folder
 
 ## 1.0.1a1
 
 **May 7, 2024**
+
 - jinja2 dependency bumped from 3.1.3 to 3.1.4.
 - tqdm dependency bumped from 4.66.2 to 4.66.3.
-
 
 ## 1.0.0
 
 **Apr 17, 2024**
+
 - Dropped deprecated functionalities: Jobs, Projects, Workflows, Viztools
 - Dropped deprecated code related to blocks
-
 
 ## 1.0.0a7
 
 **Apr 16, 2024**
+
 - Dropped `get_blocks`, `get_block_details` and `get_block_coverage` from `main.py`
 
 ## 1.0.0a6
 
 **Apr 16, 2024**
+
 - Dropped project id and api key based authentication in `main.py`, `auth.py`, `http/oauth.py` and `http/client.py`
 - Adapted tests and fixtures
 - Dropped viztools.py
@@ -188,8 +199,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Apr 16, 2024**
 
 - Dropped deprecated Workflow functions - info, workflow_tasks, get_workflow_tasks, get_parameters_info,
- _get_default_parameters (internal function), _construct_full_workflow_tasks_dict (internal function),
- get_jobs, delete
+  _get_default_parameters (internal function), _construct_full_workflow_tasks_dict (internal function),
+  get_jobs, delete
 - Dropped Workflow tests and fixtures
 
 ## 1.0.0a4
@@ -203,8 +214,9 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Apr 15, 2024**
 
-- Dropped deprecated Job functions - info, status, is_succeeded, download_quicklooks, get_results_json, download_results,
-get_logs, upload_results_to_bucket, get_jobtasks, get_jobtasks_results_json, get_credits
+- Dropped deprecated Job functions - info, status, is_succeeded, download_quicklooks, get_results_json,
+  download_results,
+  get_logs, upload_results_to_bucket, get_jobtasks, get_jobtasks_results_json, get_credits
 - Dropped Job tests and fixtures
 
 ## 1.0.0a2
@@ -221,15 +233,18 @@ get_logs, upload_results_to_bucket, get_jobtasks, get_jobtasks_results_json, get
 
 **Apr 15, 2024**
 
-- Dropped deprecated viztools functions: folium_base_map(), plot_quicklooks(), plot_coverage(), draw_aoi(), _map_images() (internal function), map_quicklooks(), plot_coverage(), plot_results(), requires_viz() (internal function), map_results(), render() (internal function)
+- Dropped deprecated viztools functions: folium_base_map(), plot_quicklooks(), plot_coverage(), draw_aoi(), _
+  map_images() (internal function), map_quicklooks(), plot_coverage(), plot_results(), requires_viz() (internal
+  function), map_results(), render() (internal function)
 
 ## 0.37.2
 
 **Apr 8, 2024**
 
 Dependabot security updates:
- - Bump black from 22.12.0 to 24.3.0
- - Bump pillow from 10.2.0 to 10.3.0
+
+- Bump black from 22.12.0 to 24.3.0
+- Bump pillow from 10.2.0 to 10.3.0
 
 ## 0.37.1
 
@@ -283,7 +298,6 @@ Dependabot security updates:
 - Dropped unneeded resiliency code
 - Dropped tenacity, requests-oauthlib and types-oauthlib as unneeded dependencies
 
-
 ## 0.37.1a5
 
 **March 21, 2024**
@@ -292,13 +306,11 @@ Dependabot security updates:
 - Removed upper bound for Python 3.12
 - Dropped support for Python 3.8
 
-
 ## 0.37.1a4
 
 **March 21, 2024**
 
 - New http stack client to provide resilient token and requests compliant authentication.
-
 
 ## 0.37.1a3
 
@@ -306,20 +318,17 @@ Dependabot security updates:
 
 - Detection of token retriever based on supplied settings.
 
-
 ## 0.37.1a2
 
 **March 19, 2024**
 
 - Detection of credentials settings based on supplied credentials.
 
-
 ## 0.37.1a1
 
 **March 19, 2024**
 
 - Dropped all the live tests.
-
 
 ## 0.37.0
 
@@ -330,7 +339,6 @@ Dependabot security updates:
 - Generalized new authentication stack to cover account authentication case.
 - Added new components within the HTTP layer to facilitate future enhancements in authentication and request processes.
 - Adjusted most of the code in accordance with pylint checks.
-
 
 ## 0.37.0a14
 
@@ -344,13 +352,11 @@ Dependabot security updates:
 
 - Dropped unneeded `auth::env` property and the corresponding tests.
 
-
 ## 0.37.0a12
 
 **March 14, 2024**
 
 - Adjusted `initialization.py`, `test_initialization.py`, `main.py` and `test_main.py` in accordance with Pylint checks.
-
 
 ## 0.37.0a11
 
@@ -360,7 +366,6 @@ Dependabot security updates:
 - Adjusted `test_http_adapter.py` in accordance with Pylint checks.
 - Dropped `test_e2e_catalog.py` since it is covered by SDK tests.
 - Fixed a flaky test in `test_session.py`
-
 
 ## 0.37.0a10
 
@@ -375,13 +380,11 @@ Dependabot security updates:
 
 - Adjusted `macros.py`, `utils.py`, and `test_utils.py` in accordance with Pylint checks.
 
-
 ## 0.37.0a8
 
 **March 13, 2024**
 
 - Adjusted `estimation.py`, `test_estimation.py` and `fixtures_estimation.py` in accordance with Pylint checks.
-
 
 ## 0.37.0a7
 
@@ -389,12 +392,12 @@ Dependabot security updates:
 
 - Adjusted `order.py`, `test_order.py` and `fixtures_order.py` in accordance with Pylint checks.
 
-
 ## 0.37.0a6
 
 **March 13, 2024**
 
-- Adjusted `host.py`, `tools.py`, `test_tools.py`, `storage.py`, `test_storage.py` and `fixtures_storage.py` in accordance with Pylint checks.
+- Adjusted `host.py`, `tools.py`, `test_tools.py`, `storage.py`, `test_storage.py` and `fixtures_storage.py` in
+  accordance with Pylint checks.
 
 ## 0.37.0a5
 
@@ -402,7 +405,6 @@ Dependabot security updates:
 
 - Adjusted `auth.py` and `oauth.py` with their coverage and fixtures in accordance with Pylint checks.
 - Adjusted `conftest.py` in accordance with Pylint checks.
-
 
 ## 0.37.0a4
 
@@ -423,13 +425,12 @@ Dependabot security updates:
 - Adjusted `catalog.py` and `test_catalog.py` in accordance with Pylint checks.
 - Conducted minor refactoring in other classes due to changes in function names within the authentication module.
 
-
 ## 0.37.0a1
 
 **March 06, 2024**
 
-- Added a new component within the HTTP layer to facilitate future enhancements in authentication and request processes: ported a resilient and authenticated cached session.
-
+- Added a new component within the HTTP layer to facilitate future enhancements in authentication and request processes:
+  ported a resilient and authenticated cached session.
 
 ## 0.37.0a0
 
@@ -444,7 +445,8 @@ Added new components within the HTTP layer to facilitate future enhancements in 
 
 **February 20, 2024**
 
-- Updated the `place_order()` and `estimate_order()` functions of the CatalogBase class to the latest version of the API.
+- Updated the `place_order()` and `estimate_order()` functions of the CatalogBase class to the latest version of the
+  API.
 
 ## 0.35.0
 
@@ -501,8 +503,7 @@ Added new components within the HTTP layer to facilitate future enhancements in 
         - `plot_results()`
         - `plot_quicklooks()`
 
-    They will be discontinued after March 31, 2024.
-
+  They will be discontinued after March 31, 2024.
 
 ## 0.34.1
 
@@ -534,7 +535,8 @@ Marked the following parameters of `storage.get_assets` as deprecated to enforce
 **November 14, 2023**
 
 - Updated authentication by changing it from project-based to account-based.
-- Added a new function to the Asset class: `get_stac_asset_url` generates a signed URL that allows to download a STAC asset from storage without authentication.
+- Added a new function to the Asset class: `get_stac_asset_url` generates a signed URL that allows to download a STAC
+  asset from storage without authentication.
 
 ## 0.32.0
 
@@ -623,10 +625,10 @@ Integrated new functions into the Tasking class:
 
 - Remove Python version upper bound, this will enable immediate but untested installation with any new Python version.
 - Changes to `workflow.construct_parameters`:
-  - Deprecates the `assets` parameter (list of asset objects), instead use `asset_ids` (list of asset_ids).
-  - Removes limitation of using only assets originating from blocks, now also supports assets from catalog &
-    tasking.
-  - In addition to required parameters, now adds all optional parameters that have default values.
+    - Deprecates the `assets` parameter (list of asset objects), instead use `asset_ids` (list of asset_ids).
+    - Removes limitation of using only assets originating from blocks, now also supports assets from catalog &
+      tasking.
+    - In addition to required parameters, now adds all optional parameters that have default values.
 - `tasking.construct_order_parameters` now accepts a Point feature (e.g. use with Blacksky).
 - Fix: `get_data_products` with `basic=False` now correctly returns only tasking OR catalog products.
 - The up42 object now correctly does not give access to third party imports anymore (restructured init module).
@@ -660,7 +662,8 @@ Integrated new functions into the Tasking class:
 
 **September 20, 2022**
 
-- Integrates the UP42 data productsm e.g. the selection "Display" and "Reflectance" configuration in the ordering process. The new ordering process requires the selection of a specific data product.
+- Integrates the UP42 data productsm e.g. the selection "Display" and "Reflectance" configuration in the ordering
+  process. The new ordering process requires the selection of a specific data product.
 - The `order_parameters` argument for `catalog.estimate_order` and `catalog.place_order` now has a different structure.
   **The previous option to just specify the collection name will soon be deactivated in the UP42 API!**
 - New function `catalog.get_data_products`
@@ -747,7 +750,7 @@ Integrated new functions into the Tasking class:
   and `storage.get_assets`. Now also uses results pagination which avoids timeout issues
   when querying large asset/order collections.
 - Significant speed improvement for:
-    -`.get_jobs`, `.get_workflows`, `.get_assets`, `.get_orders` calls.
+  -`.get_jobs`, `.get_workflows`, `.get_assets`, `.get_orders` calls.
     - `workflow.create_workflow` when used with `existing=True`.
     - Printing objects representations, which now does not trigger additional object info API calls.
 - Removal: Removes deprecated handling of multiple features as input geometry in `.construct_parameters`
@@ -777,7 +780,8 @@ Integrated new functions into the Tasking class:
 
 - Limit memory usage for large file downloads (#237)
 - Remove deprecated job.get_status() (Replace by job.status) (#224)
-- Remove deprecated jobcollection.get_job_info() and jobcollection.get_status() (Replaced by jobcollection.info and jobcollection.status)
+- Remove deprecated jobcollection.get_job_info() and jobcollection.get_status() (Replaced by jobcollection.info and
+  jobcollection.status)
 - Remove order-id functionality (#228)
 - Limit installation to Python <=3.9.4
 - Internal code improvements (e.g. project settings, retry)
@@ -812,7 +816,9 @@ Integrated new functions into the Tasking class:
 
 - Add `workflow.estimate_job()` function for estimation of credit costs & job duration before running a job.
 - Add `bands=[3,2,1]` parameter in `.plot_results()` and `.map_results()` for band & band order selection.
-- `.plot_results()` now accepts kwargs of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show) and matplotlib.
+- `.plot_results()` now accepts kwargs
+  of [rasterio.plot.show](https://rasterio.readthedocs.io/en/latest/api/rasterio.plot.html#rasterio.plot.show) and
+  matplotlib.
 - Add `up42.initialize_jobcollection()`
 - Add `get_estimation=False` parameter to `workflow.test_job`.
 - Add ship-identification example.
@@ -832,11 +838,12 @@ Integrated new functions into the Tasking class:
 
 - New consistent use & documentation of the basic functionality:
     - All [basic functions](up42-reference.md) (e.g. `up42.get_blocks`) are accessible
-        from the `up42` import object. Now consistently documented in the `up42`
-        [object code reference](up42-reference.md).
+      from the `up42` import object. Now consistently documented in the `up42`
+      [object code reference](up42-reference.md).
     - The option to use this basic functionality from any lower level object will soon be
-        removed (e.g. `project.get_blocks`, `workflow.get_blocks`). Now triggers a deprecation warning.
-- The plotting functionality of each object is now documented directly in that [object's code reference](job-reference.md).
+      removed (e.g. `project.get_blocks`, `workflow.get_blocks`). Now triggers a deprecation warning.
+- The plotting functionality of each object is now documented directly in
+  that [object's code reference](job-reference.md).
 - Fix: Repair catalog search for sobloo.
 - *Various improvements to docs & code reference.*
 - *Overhaul & simplify test fixtures.*
@@ -876,8 +883,8 @@ Integrated new functions into the Tasking class:
 **August 7, 2020**
 
 - Add parallel jobs feature. Allows running jobs for multiple geometries, scene_ids or
- timeperiods in parallel. Adds `workflow.construct_parameters_parallel`,
- `workflow.test_job_parallel`, `workflow.run_job_parallel` and the new `JobCollection` object.
+  timeperiods in parallel. Adds `workflow.construct_parameters_parallel`,
+  `workflow.test_job_parallel`, `workflow.run_job_parallel` and the new `JobCollection` object.
 - Adjusts `workflow.get_jobs` and `project.get_jobs` to return JobCollections.
 - Adjusts airports-parallel example notebook to use the parallel jobs feature.
 - Adjusts flood mapping example notebook to use OSM block.
