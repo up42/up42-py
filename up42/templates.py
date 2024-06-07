@@ -4,6 +4,7 @@ from typing import List, Optional, Union
 from up42 import base, processing
 
 
+# TODO: drop these with Python 3.10 kw_only=True data classes
 @dataclasses.dataclass
 class WorkspaceIdSingleItemTemplate(processing.SingleItemJobTemplate):
     workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
