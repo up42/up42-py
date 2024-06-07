@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.0.4a11
+
+**Jun 10, 2024**
+
+- Added job template execution to `templates.py`
+
 ## 1.0.4a10
 
 **Jun 7, 2024**

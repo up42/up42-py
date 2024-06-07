@@ -17,6 +17,16 @@ class ValidationError:
 CostType = Union[int, float, "Cost"]
 
 
+# TODO: the structure will come later with Job Active Record implementation
+@dataclasses.dataclass
+class Job:
+    metadata: dict
+
+    @staticmethod
+    def from_metadata(metadata: dict):
+        return Job(metadata=metadata)
+
+
 @dataclasses.dataclass(frozen=True)
 class Cost:
     strategy: str
@@ -92,7 +102,10 @@ class JobTemplate:
     def is_valid(self) -> bool:
         return not self.errors
 
-    # TODO: def create_job(self) -> Job:
+    def execute(self) -> Job:
+        url = host.endpoint(f"/v2/processing/processes/{self.process_id}/execution")
+        job_metadata = self.session.post(url, json={"inputs": self.inputs}).json()
+        return Job.from_metadata(job_metadata)
 
 
 @dataclasses.dataclass
