@@ -1,6 +1,8 @@
 import dataclasses
 import datetime
 import random
+import uuid
+from typing import Optional
 from unittest import mock
 
 import pystac
@@ -31,26 +33,24 @@ ITEM = pystac.Item.from_dict(
     }
 )
 
-JOB_ID = "21e447c4-56e5-4f29-bb5a-1358e756515a"
+JOB_ID = str(uuid.uuid4())
 GET_JOB_URL = f"{constants.API_HOST}/v2/processing/jobs/{JOB_ID}"
-HOST_RESULTS = "https://api.up42.dev"
-RESULT_COLLECTION_ID = "d8ec4a66-18a2-40bb-b73d-86ff9540de51"
-RESULT_ITEM_ID = "5cd3a187-26ee-4764-ad21-b2927610caca"
-RESULT_CREDITS = 1
-RESULT_JOB_WORKSPACE_ID = "8710edff-5fd8-4638-b75d-aa1110448370"
-RESULT_ACCOUNT_ID = "04eb7366-f2a4-401f-953d-517aea4353d1"
-RESULTS_DEFINITION = {
+COLLECTION_ID = str(uuid.uuid4())
+ITEM_ID = str(uuid.uuid4())
+CREDITS = 1
+ACCOUNT_ID = str(uuid.uuid4())
+DEFINITION = {
     "inputs": {
-        "item": f"{HOST_RESULTS}/v2/assets/stac/collections/" f"{RESULT_COLLECTION_ID}/items/{RESULT_ITEM_ID}",
-        "title": "Test xbxw",
+        "item": f"{ITEM_URL}/{COLLECTION_ID}/items/{ITEM_ID}",
+        "title": TITLE,
     }
 }
 JOB_SUCCESS_RESPONSE: processing.JobMetadata = {
-    "processID": "pansharpening",
+    "processID": PROCESS_ID,
     "jobID": JOB_ID,
-    "accountID": RESULT_ACCOUNT_ID,
-    "workspaceID": RESULT_JOB_WORKSPACE_ID,
-    "definition": RESULTS_DEFINITION,
+    "accountID": ACCOUNT_ID,
+    "workspaceID": constants.WORKSPACE_ID,
+    "definition": DEFINITION,
     "status": "captured",
     "created": "2024-06-05T13:12:48.124568Z",
     "updated": "2024-06-05T13:13:27.426795Z",
@@ -70,21 +70,20 @@ def workspace():
 
 @pytest.fixture(name="job")
 def _job():
-    created = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["created"]).rstrip("Z"))
-    started = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["started"]).rstrip("Z"))
-    finished = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["finished"]).rstrip("Z"))
-    updated = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["updated"]).rstrip("Z"))
+    def to_datetime(value: Optional[str]):
+        return value and datetime.datetime.fromisoformat(value.rstrip("Z"))
+
     return processing.Job(
         process_id=JOB_SUCCESS_RESPONSE["processID"],
         id=JOB_SUCCESS_RESPONSE["jobID"],
         account_id=JOB_SUCCESS_RESPONSE["accountID"],
         workspace_id=JOB_SUCCESS_RESPONSE["workspaceID"],
         definition=JOB_SUCCESS_RESPONSE["definition"],
-        status=processing.JobStatuses(JOB_SUCCESS_RESPONSE["status"]),
-        created=created,
-        started=started,
-        finished=finished,
-        updated=updated,
+        status=processing.JobStatus(JOB_SUCCESS_RESPONSE["status"]),
+        created=to_datetime(JOB_SUCCESS_RESPONSE["created"]),
+        started=to_datetime(JOB_SUCCESS_RESPONSE["started"]),
+        finished=to_datetime(JOB_SUCCESS_RESPONSE["finished"]),
+        updated=to_datetime(JOB_SUCCESS_RESPONSE["updated"]),
     )
 
 
@@ -264,23 +263,6 @@ class TestMultiItemJobTemplate:
 
 
 class TestJob:
-    @pytest.fixture
-    def test_success_job(self, requests_mock: req_mock.Mocker):
-        requests_mock.get(url=GET_JOB_URL, json=JOB_SUCCESS_RESPONSE)
-        return processing.Job.get(JOB_ID)
-
     def test_should_get_job(self, requests_mock: req_mock.Mocker, job: processing.Job):
         requests_mock.get(url=GET_JOB_URL, json=JOB_SUCCESS_RESPONSE)
         assert processing.Job.get(JOB_ID) == job
-
-    def test_should_return_job_properties(self, test_success_job):
-        assert test_success_job.status == processing.JobStatuses.CAPTURED
-        assert test_success_job.account_id == RESULT_ACCOUNT_ID
-        assert test_success_job.workspace_id == RESULT_JOB_WORKSPACE_ID
-        assert test_success_job.definition == RESULTS_DEFINITION
-
-    def test_should_format_datetime_properties(self, test_success_job):
-        assert isinstance(test_success_job.created, datetime.datetime)
-        assert isinstance(test_success_job.started, datetime.datetime)
-        assert isinstance(test_success_job.finished, datetime.datetime)
-        assert isinstance(test_success_job.updated, datetime.datetime)

@@ -120,7 +120,7 @@ class MultiItemJobTemplate(JobTemplate):
         }
 
 
-class JobStatuses(enum.Enum):
+class JobStatus(enum.Enum):
     CREATED = "created"
     VALID = "valid"
     INVALID = "invalid"
@@ -134,9 +134,9 @@ class JobStatuses(enum.Enum):
 
 
 class JobMetadata(TypedDict):
-    processID: Optional[str]  # pylint: disable=invalid-name
+    processID: str  # pylint: disable=invalid-name
     jobID: str  # pylint: disable=invalid-name
-    accountID: Optional[str]  # pylint: disable=invalid-name
+    accountID: str  # pylint: disable=invalid-name
     workspaceID: Optional[str]  # pylint: disable=invalid-name
     definition: dict
     status: str
@@ -149,34 +149,34 @@ class JobMetadata(TypedDict):
 @dataclasses.dataclass
 class Job:
     session = base.Session()
-    process_id: Optional[str]
+    process_id: str
     id: str
-    account_id: Optional[str]
+    account_id: str
     workspace_id: Optional[str]
     definition: dict
-    status: JobStatuses
+    status: JobStatus
     created: Optional[datetime.datetime] = None
     started: Optional[datetime.datetime] = None
     finished: Optional[datetime.datetime] = None
     updated: Optional[datetime.datetime] = None
 
     @staticmethod
+    def __to_datetime(value: Optional[str]):
+        return value and datetime.datetime.fromisoformat(value.rstrip("Z"))
+
+    @staticmethod
     def from_metadata(metadata: JobMetadata) -> "Job":
-        created = datetime.datetime.fromisoformat(metadata["created"].rstrip("Z")) if metadata["created"] else None
-        started = datetime.datetime.fromisoformat(metadata["started"].rstrip("Z")) if metadata["started"] else None
-        finished = datetime.datetime.fromisoformat(metadata["finished"].rstrip("Z")) if metadata["finished"] else None
-        updated = datetime.datetime.fromisoformat(metadata["updated"].rstrip("Z")) if metadata["updated"] else None
         return Job(
             process_id=metadata["processID"],
             id=metadata["jobID"],
             account_id=metadata["accountID"],
             workspace_id=metadata["workspaceID"],
             definition=metadata["definition"],
-            status=JobStatuses(metadata["status"]),
-            created=created,
-            started=started,
-            finished=finished,
-            updated=updated,
+            status=JobStatus(metadata["status"]),
+            created=Job.__to_datetime(metadata["created"]),
+            started=Job.__to_datetime(metadata["started"]),
+            finished=Job.__to_datetime(metadata["finished"]),
+            updated=Job.__to_datetime(metadata["updated"]),
         )
 
     @classmethod
