@@ -218,23 +218,24 @@ class TestMultiItemJobTemplate:
 
 JOB_ID = "21e447c4-56e5-4f29-bb5a-1358e756515a"
 GET_JOB_URL = f"{constants.API_HOST}/v2/processing/jobs/{JOB_ID}"
+HOST_RESULTS = "https://api.up42.dev"
 RESULT_COLLECTION_ID = "d8ec4a66-18a2-40bb-b73d-86ff9540de51"
 RESULT_ITEM_ID = "5cd3a187-26ee-4764-ad21-b2927610caca"
 RESULT_CREDITS = 1
 RESULT_JOB_WORKSPACE_ID = "8710edff-5fd8-4638-b75d-aa1110448370"
 RESULT_ACCOUNT_ID = "04eb7366-f2a4-401f-953d-517aea4353d1"
-HOST_RESULTS = "https://api.up42.dev"
+RESULTS_DEFINITION = {
+    "inputs": {
+        "item": f"{HOST_RESULTS}/v2/assets/stac/collections/" f"{RESULT_COLLECTION_ID}/items/{RESULT_ITEM_ID}",
+        "title": "Test xbxw",
+    }
+}
 JOB_SUCCESS_RESPONSE: processing.JobMetadata = {
     "processID": "pansharpening",
     "jobID": JOB_ID,
     "accountID": RESULT_ACCOUNT_ID,
     "workspaceID": RESULT_JOB_WORKSPACE_ID,
-    "definition": {
-        "inputs": {
-            "item": f"{HOST_RESULTS}/v2/assets/stac/collections/" f"{RESULT_COLLECTION_ID}/items/{RESULT_ITEM_ID}",
-            "title": "Test xbxw",
-        }
-    },
+    "definition": RESULTS_DEFINITION,
     "status": "captured",
     "created": "2024-06-05T13:12:48.124568Z",
     "updated": "2024-06-05T13:13:27.426795Z",
@@ -245,6 +246,10 @@ JOB_SUCCESS_RESPONSE: processing.JobMetadata = {
 
 @pytest.fixture(name="job")
 def _job():
+    created = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["created"]))
+    started = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["started"]))
+    finished = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["finished"]))
+    updated = datetime.datetime.fromisoformat(str(JOB_SUCCESS_RESPONSE["updated"]))
     return processing.Job(
         process_id=JOB_SUCCESS_RESPONSE["processID"],
         id=JOB_SUCCESS_RESPONSE["jobID"],
@@ -252,14 +257,31 @@ def _job():
         workspace_id=JOB_SUCCESS_RESPONSE["workspaceID"],
         definition=JOB_SUCCESS_RESPONSE["definition"],
         status=processing.JobStatuses(JOB_SUCCESS_RESPONSE["status"]),
-        created=datetime.datetime.fromisoformat(JOB_SUCCESS_RESPONSE["created"]),
-        started=datetime.datetime.fromisoformat(JOB_SUCCESS_RESPONSE["started"]),
-        finished=datetime.datetime.fromisoformat(JOB_SUCCESS_RESPONSE["finished"]),
-        updated=datetime.datetime.fromisoformat(JOB_SUCCESS_RESPONSE["updated"]),
+        created=created,
+        started=started,
+        finished=finished,
+        updated=updated,
     )
 
 
 class TestJob:
-    def test_should_get_webhook(self, requests_mock: req_mock.Mocker, job: processing.Job):
+    @pytest.fixture
+    def test_success_job(self, requests_mock: req_mock.Mocker):
+        requests_mock.get(url=GET_JOB_URL, json=JOB_SUCCESS_RESPONSE)
+        return processing.Job.get(JOB_ID)
+
+    def test_should_get_job(self, requests_mock: req_mock.Mocker, job: processing.Job):
         requests_mock.get(url=GET_JOB_URL, json=JOB_SUCCESS_RESPONSE)
         assert processing.Job.get(JOB_ID) == job
+
+    def test_should_return_job_properties(self, test_success_job):
+        assert test_success_job.status == processing.JobStatuses.CAPTURED
+        assert test_success_job.account_id == RESULT_ACCOUNT_ID
+        assert test_success_job.workspace_id == RESULT_JOB_WORKSPACE_ID
+        assert test_success_job.definition == RESULTS_DEFINITION
+
+    def test_should_format_datetime_properties(self, test_success_job):
+        assert isinstance(test_success_job.created, datetime.datetime)
+        assert isinstance(test_success_job.started, datetime.datetime)
+        assert isinstance(test_success_job.finished, datetime.datetime)
+        assert isinstance(test_success_job.updated, datetime.datetime)
