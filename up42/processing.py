@@ -1,6 +1,8 @@
 import abc
 import dataclasses
-from typing import ClassVar, List, Optional, Union
+import datetime
+import enum
+from typing import ClassVar, List, Optional, TypedDict, Union
 
 import pystac
 import requests
@@ -116,3 +118,69 @@ class MultiItemJobTemplate(JobTemplate):
             "title": self.title,
             "items": [item.get_self_href() for item in self.items],
         }
+
+
+class JobStatuses(enum.Enum):
+    CREATED = "created"
+    VALID = "valid"
+    INVALID = "invalid"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+    RUNNING = "running"
+    SUCCESSFUL = "successful"
+    FAILED = "failed"
+    CAPTURED = "captured"
+    RELEASED = "released"
+
+
+JobMetadata = TypedDict(
+    "JobMetadata",
+    {
+        "processID": str,
+        "jobID": str,
+        "accountID": str,
+        "workspaceID": str,
+        "definition": dict,
+        "status": str,
+        "created": str,
+        "started": str,
+        "finished": str,
+        "updated": str,
+    },
+)
+
+
+@dataclasses.dataclass
+class Job:
+    session = base.Session()
+    process_id: str
+    id: str
+    account_id: str
+    workspace_id: str
+    definition: dict
+    status: JobStatuses
+    created: datetime.datetime
+    started: datetime.datetime
+    finished: datetime.datetime
+    updated: datetime.datetime
+
+    @staticmethod
+    def from_metadata(metadata: JobMetadata) -> "Job":
+        return Job(
+            process_id=metadata["processID"],
+            id=metadata["jobID"],
+            account_id=metadata["accountID"],
+            workspace_id=metadata["workspaceID"],
+            definition=metadata["definition"],
+            status=JobStatuses(metadata["status"]),
+            created=datetime.datetime.fromisoformat(metadata["created"]),
+            started=datetime.datetime.fromisoformat(metadata["started"]),
+            finished=datetime.datetime.fromisoformat(metadata["finished"]),
+            updated=datetime.datetime.fromisoformat(metadata["updated"]),
+        )
+
+    @classmethod
+    def get(cls, job_id: str) -> "Job":
+        url = host.endpoint(f"/v2/processing/jobs/{job_id}")
+        metadata = cls.session.get(url).json()
+        return cls.from_metadata(metadata)
