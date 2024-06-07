@@ -1,6 +1,6 @@
 import abc
 import dataclasses
-from typing import List, Union
+from typing import ClassVar, List, Optional, Union
 
 import pystac
 import requests
@@ -8,16 +8,44 @@ import requests
 from up42 import base, host
 
 
-@dataclasses.dataclass(eq=True, frozen=True)
+@dataclasses.dataclass(frozen=True)
 class ValidationError:
     message: str
     name: str
 
 
+CostType = Union[int, float, "Cost"]
+
+
+@dataclasses.dataclass(frozen=True)
+class Cost:
+    strategy: str
+    credits: int
+    size: Optional[int] = None
+    unit: Optional[str] = None
+
+    def __le__(self, other: CostType):
+        if isinstance(other, Cost):
+            return self.credits <= other.credits
+        else:
+            return self.credits <= other
+
+    def __lt__(self, other: CostType):
+        if isinstance(other, Cost):
+            return self.credits < other.credits
+        else:
+            return self.credits < other
+
+    def __ge__(self, other: CostType):
+        return not self < other
+
+    def __gt__(self, other: CostType):
+        return not self <= other
+
+
 class JobTemplate:
     session = base.Session()
-    process_id: str
-    title: str
+    process_id: ClassVar[str]
     workspace_id: Union[str, base.WorkspaceId]
     errors: set[ValidationError] = set()
 
@@ -28,7 +56,8 @@ class JobTemplate:
 
     def __post_init__(self):
         self.__validate()
-        # TODO: compute cost if valid
+        if self.is_valid:
+            self.__evaluate()
 
     def __validate(self) -> None:
         url = host.endpoint(f"/v2/processing/processes/{self.process_id}/validation")
@@ -49,6 +78,16 @@ class JobTemplate:
             else:
                 raise err
 
+    def __evaluate(self):
+        url = host.endpoint(f"/v2/processing/processes/{self.process_id}/cost")
+        payload = self.session.post(url, json={"inputs": self.inputs}).json()
+        self.cost = Cost(
+            strategy=payload["pricingStrategy"],
+            credits=payload["totalCredits"],
+            size=payload.get("totalSize"),
+            unit=payload.get("unit"),
+        )
+
     @property
     def is_valid(self) -> bool:
         return not self.errors
@@ -56,7 +95,9 @@ class JobTemplate:
     # TODO: def create_job(self) -> Job:
 
 
+@dataclasses.dataclass
 class SingleItemJobTemplate(JobTemplate):
+    title: str
     item: pystac.Item
 
     @property
@@ -64,7 +105,9 @@ class SingleItemJobTemplate(JobTemplate):
         return {"title": self.title, "item": self.item.get_self_href()}
 
 
+@dataclasses.dataclass
 class MultiItemJobTemplate(JobTemplate):
+    title: str
     items: List[pystac.Item]
 
     @property
