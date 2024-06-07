@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Jun 8, 2024**
 
-- Added class `Jobs` to `processing` module to support executed jobs features.
+- Added class `Jobs` to `processing` module to access job features.
 
 ## 1.0.4a9
 
