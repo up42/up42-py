@@ -2,7 +2,6 @@ import dataclasses
 import datetime
 import random
 import uuid
-from typing import Optional
 from unittest import mock
 
 import pystac
@@ -45,18 +44,30 @@ DEFINITION = {
         "title": TITLE,
     }
 }
-JOB_SUCCESS_RESPONSE: processing.JobMetadata = {
+NOW = datetime.datetime.now()
+JOB_METADATA: processing.JobMetadata = {
     "processID": PROCESS_ID,
     "jobID": JOB_ID,
     "accountID": ACCOUNT_ID,
     "workspaceID": constants.WORKSPACE_ID,
     "definition": DEFINITION,
-    "status": "captured",
-    "created": "2024-06-05T13:12:48.124568Z",
-    "updated": "2024-06-05T13:13:27.426795Z",
-    "started": "2024-06-05T13:12:56.542773Z",
-    "finished": "2024-06-05T13:13:27.320528Z",
+    "status": "created",
+    "created": f"{NOW.isoformat()}Z",
+    "updated": f"{NOW.isoformat()}Z",
+    "started": None,
+    "finished": None,
 }
+
+JOB = processing.Job(
+    process_id=PROCESS_ID,
+    id=JOB_ID,
+    account_id=ACCOUNT_ID,
+    workspace_id=constants.WORKSPACE_ID,
+    definition=DEFINITION,
+    status=processing.JobStatus.CREATED,
+    created=NOW,
+    updated=NOW,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -66,25 +77,6 @@ def workspace():
         session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
         workspace_mock.auth.session = session
         yield
-
-
-@pytest.fixture(name="job")
-def _job():
-    def to_datetime(value: Optional[str]):
-        return value and datetime.datetime.fromisoformat(value.rstrip("Z"))
-
-    return processing.Job(
-        process_id=JOB_SUCCESS_RESPONSE["processID"],
-        id=JOB_SUCCESS_RESPONSE["jobID"],
-        account_id=JOB_SUCCESS_RESPONSE["accountID"],
-        workspace_id=JOB_SUCCESS_RESPONSE["workspaceID"],
-        definition=JOB_SUCCESS_RESPONSE["definition"],
-        status=processing.JobStatus(JOB_SUCCESS_RESPONSE["status"]),
-        created=to_datetime(JOB_SUCCESS_RESPONSE["created"]),
-        started=to_datetime(JOB_SUCCESS_RESPONSE["started"]),
-        finished=to_datetime(JOB_SUCCESS_RESPONSE["finished"]),
-        updated=to_datetime(JOB_SUCCESS_RESPONSE["updated"]),
-    )
 
 
 class TestCost:
@@ -263,6 +255,6 @@ class TestMultiItemJobTemplate:
 
 
 class TestJob:
-    def test_should_get_job(self, requests_mock: req_mock.Mocker, job: processing.Job):
-        requests_mock.get(url=GET_JOB_URL, json=JOB_SUCCESS_RESPONSE)
-        assert processing.Job.get(JOB_ID) == job
+    def test_should_get_job(self, requests_mock: req_mock.Mocker):
+        requests_mock.get(url=GET_JOB_URL, json=JOB_METADATA)
+        assert processing.Job.get(JOB_ID) == JOB
