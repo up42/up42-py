@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "up42-py"
-version = "1.0.4a12"
+version = "1.0.4a13"
 description = "Python SDK for UP42, the geospatial marketplace and developer platform."
 authors = ["UP42 GmbH <support@up42.com>"]
 license = "https://github.com/up42/up42-py/blob/master/LICENSE"
@@ -21,7 +21,7 @@ python = ">=3.9, <4"
 requests = "^2.31.0"
 tqdm = "^4.66.0"
 geojson = "3.1.0"
-geopandas = "^0.13.2"
+geopandas = "^0"
 pystac-client = "^0.7.2"
 pyproj = "^3.6.1"
 tenacity = "^8.3.0"
