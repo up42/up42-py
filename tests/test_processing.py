@@ -41,7 +41,7 @@ CREDITS = 1
 ACCOUNT_ID = str(uuid.uuid4())
 DEFINITION = {
     "inputs": {
-        "item": f"{ITEM_URL}/{COLLECTION_ID}/items/{ITEM_ID}",
+        "item": ITEM_URL,
         "title": TITLE,
     }
 }

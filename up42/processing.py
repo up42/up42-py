@@ -140,10 +140,10 @@ class JobMetadata(TypedDict):
     workspaceID: Optional[str]  # pylint: disable=invalid-name
     definition: dict
     status: str
-    created: Optional[str]
+    created: str
     started: Optional[str]
     finished: Optional[str]
-    updated: Optional[str]
+    updated: str
 
 
 @dataclasses.dataclass
@@ -155,10 +155,10 @@ class Job:
     workspace_id: Optional[str]
     definition: dict
     status: JobStatus
-    created: Optional[datetime.datetime] = None
+    created: datetime.datetime
+    updated: datetime.datetime
     started: Optional[datetime.datetime] = None
     finished: Optional[datetime.datetime] = None
-    updated: Optional[datetime.datetime] = None
 
     @staticmethod
     def __to_datetime(value: Optional[str]):
