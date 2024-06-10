@@ -29,6 +29,11 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.0.4a12
+
+**May 24, 2024**
+- Bumped dependencies `geopandas` from 0.13.2 to at least 0.14.4.
+
 ## 1.0.4a11
 
 **Jun 10, 2024**
