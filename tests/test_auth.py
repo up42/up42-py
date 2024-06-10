@@ -9,6 +9,7 @@ import requests_mock as req_mock
 
 from up42 import auth as up42_auth
 
+from . import helpers
 from .fixtures import fixtures_globals as constants
 
 CONFIG_FILE = "some-config-file"
@@ -31,14 +32,6 @@ def _http_method(request):
 @pytest.fixture(name="request_data", params=[{}, {"some": "data"}])
 def _request_data(request):
     return request.param
-
-
-# TODO: drop duplication in asset and oauth tests
-def match_request_body(data: Dict):
-    def matcher(request):
-        return request.text == json.dumps(data)
-
-    return matcher
 
 
 class TestCollectCredentials:
@@ -110,7 +103,7 @@ class TestAuth:
             URL,
             request_headers=REQUEST_HEADERS,
             json=expected,
-            additional_matcher=match_request_body(request_data),
+            additional_matcher=helpers.match_request_body(request_data),
         )
         assert self.auth.request(http_method, URL, request_data) == expected
 
@@ -122,7 +115,7 @@ class TestAuth:
             URL,
             request_headers=REQUEST_HEADERS,
             text=RESPONSE_TEXT,
-            additional_matcher=match_request_body(request_data),
+            additional_matcher=helpers.match_request_body(request_data),
         )
         assert self.auth.request(http_method, URL, request_data) == RESPONSE_TEXT
 
@@ -132,7 +125,7 @@ class TestAuth:
             URL,
             request_headers=REQUEST_HEADERS,
             text=RESPONSE_TEXT,
-            additional_matcher=match_request_body(request_data),
+            additional_matcher=helpers.match_request_body(request_data),
         )
         response = self.auth.request(http_method, URL, request_data, return_text=False)
         assert isinstance(response, requests.Response)
@@ -144,7 +137,7 @@ class TestAuth:
             URL,
             request_headers=REQUEST_HEADERS,
             json={"error": ERROR},
-            additional_matcher=match_request_body(request_data),
+            additional_matcher=helpers.match_request_body(request_data),
         )
         with pytest.raises(ValueError) as exc_info:
             self.auth.request(http_method, URL, request_data)
@@ -167,7 +160,7 @@ class TestAuth:
             request_headers=REQUEST_HEADERS,
             status_code=random.randint(400, 599),
             json=error,
-            additional_matcher=match_request_body(request_data),
+            additional_matcher=helpers.match_request_body(request_data),
         )
         with pytest.raises(requests.HTTPError) as exc_info:
             self.auth.request(http_method, URL, request_data, return_text=return_text)

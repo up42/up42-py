@@ -1,7 +1,6 @@
 import datetime
-import json
 import pathlib
-from typing import Dict, List, Optional
+from typing import List, Optional
 from unittest import mock
 
 import pystac
@@ -12,6 +11,7 @@ from up42 import asset
 from up42 import auth as up42_auth
 from up42 import host
 
+from . import helpers
 from .fixtures import fixtures_globals as constants
 
 
@@ -136,13 +136,6 @@ class TestStacMetadata:
             _ = asset_obj.stac_info
 
 
-def match_request_body(data: Dict):
-    def matcher(request):
-        return request.text == json.dumps(data)
-
-    return matcher
-
-
 class TestAssetUpdateMetadata:
     asset_info = {"id": constants.ASSET_ID, "title": "title", "tags": ["tag1"]}
     endpoint_url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
@@ -162,7 +155,7 @@ class TestAssetUpdateMetadata:
         requests_mock.post(
             url=self.endpoint_url,
             json=expected_info,
-            additional_matcher=match_request_body(update_payload),
+            additional_matcher=helpers.match_request_body(update_payload),
         )
         assert asset_obj.update_metadata(title=title, tags=tags) == expected_info
 
@@ -174,7 +167,7 @@ class TestAssetUpdateMetadata:
         requests_mock.post(
             url=self.endpoint_url,
             json=expected_info,
-            additional_matcher=match_request_body(update_payload),
+            additional_matcher=helpers.match_request_body(update_payload),
         )
         assert asset_obj.update_metadata(tags=tags) == expected_info
 
@@ -186,7 +179,7 @@ class TestAssetUpdateMetadata:
         requests_mock.post(
             url=self.endpoint_url,
             json=expected_info,
-            additional_matcher=match_request_body(update_payload),
+            additional_matcher=helpers.match_request_body(update_payload),
         )
         assert asset_obj.update_metadata(title=title) == expected_info
 
