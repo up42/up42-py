@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.0.4a12
 
 **June 10, 2024**
-- Bumped dependencies `geopandas` from 0.13.2 to at least 0.14.0.
+- Allow dependency `geopandas` from 0.13.2 to any version less than `1`.
 
 ## 1.0.4a11
 
