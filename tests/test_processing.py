@@ -34,8 +34,6 @@ ITEM = pystac.Item.from_dict(
 
 JOB_ID = str(uuid.uuid4())
 GET_JOB_URL = f"{constants.API_HOST}/v2/processing/jobs/{JOB_ID}"
-COLLECTION_ID = str(uuid.uuid4())
-ITEM_ID = str(uuid.uuid4())
 CREDITS = 1
 ACCOUNT_ID = str(uuid.uuid4())
 DEFINITION = {
