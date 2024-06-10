@@ -1,5 +1,7 @@
 import dataclasses
+import datetime
 import random
+import uuid
 from unittest import mock
 
 import pystac
@@ -28,6 +30,41 @@ ITEM = pystac.Item.from_dict(
         "bbox": [0, 0, 0, 0],
         "stac_extensions": [],
     }
+)
+
+JOB_ID = str(uuid.uuid4())
+GET_JOB_URL = f"{constants.API_HOST}/v2/processing/jobs/{JOB_ID}"
+CREDITS = 1
+ACCOUNT_ID = str(uuid.uuid4())
+DEFINITION = {
+    "inputs": {
+        "item": ITEM_URL,
+        "title": TITLE,
+    }
+}
+NOW = datetime.datetime.now()
+JOB_METADATA: processing.JobMetadata = {
+    "processID": PROCESS_ID,
+    "jobID": JOB_ID,
+    "accountID": ACCOUNT_ID,
+    "workspaceID": constants.WORKSPACE_ID,
+    "definition": DEFINITION,
+    "status": "created",
+    "created": f"{NOW.isoformat()}Z",
+    "updated": f"{NOW.isoformat()}Z",
+    "started": None,
+    "finished": None,
+}
+
+JOB = processing.Job(
+    process_id=PROCESS_ID,
+    id=JOB_ID,
+    account_id=ACCOUNT_ID,
+    workspace_id=constants.WORKSPACE_ID,
+    definition=DEFINITION,
+    status=processing.JobStatus.CREATED,
+    created=NOW,
+    updated=NOW,
 )
 
 
@@ -213,3 +250,9 @@ class TestMultiItemJobTemplate:
         assert template.is_valid
         assert template.cost == cost
         assert template.inputs == {"title": TITLE, "items": [ITEM_URL]}
+
+
+class TestJob:
+    def test_should_get_job(self, requests_mock: req_mock.Mocker):
+        requests_mock.get(url=GET_JOB_URL, json=JOB_METADATA)
+        assert processing.Job.get(JOB_ID) == JOB
