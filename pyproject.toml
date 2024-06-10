@@ -21,7 +21,7 @@ python = ">=3.9, <4"
 requests = "^2.31.0"
 tqdm = "^4.66.0"
 geojson = "3.1.0"
-geopandas = "^0.14.0"
+geopandas = "^0"
 pystac-client = "^0.7.2"
 pyproj = "^3.6.1"
 tenacity = "^8.3.0"
@@ -63,6 +63,7 @@ mkdocs-redirects = ">=1.2.1"
 [tool.pytest.ini_options]
 pythonpath = "."
 addopts = "--cov --cov-report=html --cov-report=xml --junitxml=out/test_results/junit.xml"
+
 
 
 
