@@ -13,7 +13,7 @@ import requests_mock as req_mock
 
 from tests import helpers
 from tests.fixtures import fixtures_globals as constants
-from up42 import processing
+from up42 import processing, utils
 
 PROCESS_ID = "process-id"
 VALIDATION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/validation"
@@ -300,7 +300,7 @@ class TestJob:
         status: Optional[List[processing.JobStatus]],
         min_duration: Optional[int],
         max_duration: Optional[int],
-        sort_by: Optional[processing.JobSorting],
+        sort_by: Optional[utils.SortingField],
     ):
         query_params: dict[str, Any] = {}
         if process_id:
