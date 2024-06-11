@@ -7,7 +7,7 @@ from typing import ClassVar, List, Optional, TypedDict, Union
 import pystac
 import requests
 
-from up42 import base, host
+from up42 import base, host, utils
 
 
 @dataclasses.dataclass(frozen=True)
@@ -35,6 +35,7 @@ class JobMetadata(TypedDict):
     accountID: str  # pylint: disable=invalid-name
     workspaceID: Optional[str]  # pylint: disable=invalid-name
     definition: dict
+    results: dict
     status: str
     created: str
     started: Optional[str]
@@ -49,6 +50,7 @@ class Job:
     id: str
     account_id: str
     workspace_id: Optional[str]
+    collection: pystac.Collection
     definition: dict
     status: JobStatus
     created: datetime.datetime
@@ -61,12 +63,20 @@ class Job:
         return value and datetime.datetime.fromisoformat(value.rstrip("Z"))
 
     @staticmethod
+    def _pystac_client():
+        return utils.stac_client(base.workspace.auth.client.auth)
+
+    @staticmethod
     def from_metadata(metadata: JobMetadata) -> "Job":
+        if "collection" in metadata["results"]:
+            collection_id = metadata["results"]["collection"].split("/")[-1]
+            collection = Job._pystac_client().get_collection(collection_id)
         return Job(
             process_id=metadata["processID"],
             id=metadata["jobID"],
             account_id=metadata["accountID"],
             workspace_id=metadata["workspaceID"],
+            collection=collection,
             definition=metadata["definition"],
             status=JobStatus(metadata["status"]),
             created=Job.__to_datetime(metadata["created"]),

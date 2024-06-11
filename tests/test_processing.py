@@ -18,7 +18,24 @@ VALIDATION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/val
 COST_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/cost"
 EXECUTION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/execution"
 TITLE = "title"
-ITEM_URL = "https://item-url"
+COLLECTION_ID = str(uuid.uuid4())
+ITEM_ID = uuid.uuid4()
+COLLECTION_URL = f"https://collection-url/v2/assets/stac/collections/{COLLECTION_ID}"
+ITEM_URL = "https://item-url/"
+COLLECTION = pystac.Collection.from_dict(
+    {
+        "type": "Collection",
+        "stac_version": "1.0.0",
+        "id": COLLECTION_ID,
+        "description": "A collection of sample items",
+        "license": "proprietary",
+        "extent": {
+            "spatial": {"bbox": [[-180, -90, 180, 90]]},
+            "temporal": {"interval": [["2023-01-01T00:00:00Z", None]]},
+        },
+        "links": [],
+    }
+)
 ITEM = pystac.Item.from_dict(
     {
         "type": "Feature",
@@ -50,6 +67,7 @@ JOB_METADATA: processing.JobMetadata = {
     "accountID": ACCOUNT_ID,
     "workspaceID": constants.WORKSPACE_ID,
     "definition": DEFINITION,
+    "results": {"collection": f"{COLLECTION_URL}"},
     "status": "created",
     "created": f"{NOW.isoformat()}Z",
     "updated": f"{NOW.isoformat()}Z",
@@ -63,6 +81,7 @@ JOB = processing.Job(
     account_id=ACCOUNT_ID,
     workspace_id=constants.WORKSPACE_ID,
     definition=DEFINITION,
+    collection=COLLECTION,
     status=processing.JobStatus.CREATED,
     created=NOW,
     updated=NOW,
@@ -194,7 +213,11 @@ class TestJobTemplate:
         assert not template.errors
         assert template.cost == cost
 
-    def test_should_execute(self, requests_mock: req_mock.Mocker):
+    @mock.patch("up42.utils.stac_client")
+    def test_should_execute(self, mock_stac_client, requests_mock: req_mock.Mocker):
+        mock_pystac_client = mock.MagicMock()
+        mock_pystac_client.get_collection.return_value = COLLECTION
+        mock_stac_client.return_value = mock_pystac_client
         cost = processing.Cost(strategy="none", credits=1)
         requests_mock.post(
             VALIDATION_URL,
@@ -279,6 +302,10 @@ class TestMultiItemJobTemplate:
 
 
 class TestJob:
-    def test_should_get_job(self, requests_mock: req_mock.Mocker):
+    @mock.patch("up42.utils.stac_client")
+    def test_should_get_job(self, mock_stac_client, requests_mock: req_mock.Mocker):
+        mock_pystac_client = mock.MagicMock()
+        mock_pystac_client.get_collection.return_value = COLLECTION
+        mock_stac_client.return_value = mock_pystac_client
         requests_mock.get(url=GET_JOB_URL, json=JOB_METADATA)
         assert processing.Job.get(JOB_ID) == JOB
