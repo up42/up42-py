@@ -1,7 +1,9 @@
 import dataclasses
 import datetime
 import random
+import urllib.parse
 import uuid
+from typing import Any, List, Optional
 from unittest import mock
 
 import pystac
@@ -33,7 +35,8 @@ ITEM = pystac.Item.from_dict(
 )
 
 JOB_ID = str(uuid.uuid4())
-GET_JOB_URL = f"{constants.API_HOST}/v2/processing/jobs/{JOB_ID}"
+JOBS_URL = f"{constants.API_HOST}/v2/processing/jobs"
+JOB_URL = f"{JOBS_URL}/{JOB_ID}"
 CREDITS = 1
 ACCOUNT_ID = str(uuid.uuid4())
 DEFINITION = {
@@ -254,5 +257,61 @@ class TestMultiItemJobTemplate:
 
 class TestJob:
     def test_should_get_job(self, requests_mock: req_mock.Mocker):
-        requests_mock.get(url=GET_JOB_URL, json=JOB_METADATA)
+        requests_mock.get(url=JOB_URL, json=JOB_METADATA)
         assert processing.Job.get(JOB_ID) == JOB
+
+    @pytest.mark.parametrize("process_id", [None, [PROCESS_ID]])
+    @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
+    @pytest.mark.parametrize("status", [None, [processing.JobStatus.CAPTURED]])
+    @pytest.mark.parametrize("min_duration", [None, 1])
+    @pytest.mark.parametrize("max_duration", [None, 10])
+    def test_should_get_all_jobs(
+        self,
+        requests_mock: req_mock.Mocker,
+        process_id: Optional[List[str]],
+        workspace_id: Optional[str],
+        status: Optional[List[processing.JobStatus]],
+        min_duration: Optional[int],
+        max_duration: Optional[int],
+    ):
+        query_params: dict[str, Any] = {}
+        if process_id:
+            query_params["processID"] = process_id
+        if workspace_id:
+            query_params["workspaceID"] = workspace_id
+        if status:
+            query_params["status"] = [entry.value for entry in status]
+        if min_duration:
+            query_params["minDuration"] = min_duration
+        if max_duration:
+            query_params["maxDuration"] = str(max_duration)
+
+        query = urllib.parse.urlencode(query_params)
+
+        next_page_url = f"{JOBS_URL}/next"
+        requests_mock.get(
+            url=JOBS_URL + (query and f"?{query}"),
+            json={
+                "jobs": [JOB_METADATA] * 3,
+                "links": [{"rel": "next", "href": next_page_url}],
+            },
+        )
+        requests_mock.get(
+            url=next_page_url,
+            json={
+                "jobs": [JOB_METADATA] * 2,
+                "links": [],
+            },
+        )
+        assert (
+            list(
+                processing.Job.all(
+                    process_id=process_id,
+                    workspace_id=workspace_id,
+                    status=status,
+                    min_duration=min_duration,
+                    max_duration=max_duration,
+                )
+            )
+            == [JOB] * 5
+        )
