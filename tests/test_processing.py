@@ -18,6 +18,7 @@ from up42 import processing
 PROCESS_ID = "process-id"
 VALIDATION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/validation"
 COST_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/cost"
+EXECUTION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/execution"
 TITLE = "title"
 ITEM_URL = "https://item-url"
 ITEM = pystac.Item.from_dict(
@@ -194,6 +195,31 @@ class TestJobTemplate:
         template = SampleJobTemplate(title=TITLE)
         assert template.is_valid
         assert not template.errors
+        assert template.cost == cost
+
+    def test_should_execute(self, requests_mock: req_mock.Mocker):
+        cost = processing.Cost(strategy="none", credits=1)
+        requests_mock.post(
+            VALIDATION_URL,
+            status_code=200,
+            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
+        )
+        cost_payload = {"pricingStrategy": cost.strategy, "totalCredits": cost.credits}
+        requests_mock.post(
+            COST_URL,
+            status_code=200,
+            json=cost_payload,
+            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
+        )
+        requests_mock.post(
+            EXECUTION_URL,
+            status_code=200,
+            json=JOB_METADATA,
+            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
+        )
+        template = SampleJobTemplate(title=TITLE)
+        assert template.execute() == JOB
+        assert template.is_valid and not template.errors
         assert template.cost == cost
 
 

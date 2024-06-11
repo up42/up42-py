@@ -16,6 +16,79 @@ class ValidationError:
     name: str
 
 
+class JobStatus(enum.Enum):
+    CREATED = "created"
+    VALID = "valid"
+    INVALID = "invalid"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+    RUNNING = "running"
+    SUCCESSFUL = "successful"
+    FAILED = "failed"
+    CAPTURED = "captured"
+    RELEASED = "released"
+
+
+class JobMetadata(TypedDict):
+    processID: str  # pylint: disable=invalid-name
+    jobID: str  # pylint: disable=invalid-name
+    accountID: str  # pylint: disable=invalid-name
+    workspaceID: Optional[str]  # pylint: disable=invalid-name
+    definition: dict
+    status: str
+    created: str
+    started: Optional[str]
+    finished: Optional[str]
+    updated: str
+
+
+class JobSorting:
+    process_id = utils.SortingField("processID")
+    status = utils.SortingField("status")
+    created = utils.SortingField("created")
+    credits = utils.SortingField("creditConsumption.credits")
+
+
+@dataclasses.dataclass
+class Job:
+    session = base.Session()
+    process_id: str
+    id: str
+    account_id: str
+    workspace_id: Optional[str]
+    definition: dict
+    status: JobStatus
+    created: datetime.datetime
+    updated: datetime.datetime
+    started: Optional[datetime.datetime] = None
+    finished: Optional[datetime.datetime] = None
+
+    @staticmethod
+    def __to_datetime(value: Optional[str]):
+        return value and datetime.datetime.fromisoformat(value.rstrip("Z"))
+
+    @staticmethod
+    def from_metadata(metadata: JobMetadata) -> "Job":
+        return Job(
+            process_id=metadata["processID"],
+            id=metadata["jobID"],
+            account_id=metadata["accountID"],
+            workspace_id=metadata["workspaceID"],
+            definition=metadata["definition"],
+            status=JobStatus(metadata["status"]),
+            created=Job.__to_datetime(metadata["created"]),
+            started=Job.__to_datetime(metadata["started"]),
+            finished=Job.__to_datetime(metadata["finished"]),
+            updated=Job.__to_datetime(metadata["updated"]),
+        )
+
+    @classmethod
+    def get(cls, job_id: str) -> "Job":
+        url = host.endpoint(f"/v2/processing/jobs/{job_id}")
+        metadata = cls.session.get(url).json()
+        return cls.from_metadata(metadata)
+
+
 CostType = Union[int, float, "Cost"]
 
 
@@ -94,103 +167,10 @@ class JobTemplate:
     def is_valid(self) -> bool:
         return not self.errors
 
-    # TODO: def create_job(self) -> Job:
-
-
-@dataclasses.dataclass
-class SingleItemJobTemplate(JobTemplate):
-    title: str
-    item: pystac.Item
-
-    @property
-    def inputs(self) -> dict:
-        return {"title": self.title, "item": self.item.get_self_href()}
-
-
-@dataclasses.dataclass
-class MultiItemJobTemplate(JobTemplate):
-    title: str
-    items: List[pystac.Item]
-
-    @property
-    def inputs(self) -> dict:
-        return {
-            "title": self.title,
-            "items": [item.get_self_href() for item in self.items],
-        }
-
-
-class JobStatus(enum.Enum):
-    CREATED = "created"
-    VALID = "valid"
-    INVALID = "invalid"
-    ACCEPTED = "accepted"
-    REJECTED = "rejected"
-    RUNNING = "running"
-    SUCCESSFUL = "successful"
-    FAILED = "failed"
-    CAPTURED = "captured"
-    RELEASED = "released"
-
-
-class JobMetadata(TypedDict):
-    processID: str  # pylint: disable=invalid-name
-    jobID: str  # pylint: disable=invalid-name
-    accountID: str  # pylint: disable=invalid-name
-    workspaceID: Optional[str]  # pylint: disable=invalid-name
-    definition: dict
-    status: str
-    created: str
-    started: Optional[str]
-    finished: Optional[str]
-    updated: str
-
-
-class JobSorting:
-    process_id = utils.SortingField("processID")
-    status = utils.SortingField("status")
-    created = utils.SortingField("created")
-    credits = utils.SortingField("creditConsumption.credits")
-
-
-@dataclasses.dataclass
-class Job:
-    session = base.Session()
-    process_id: str
-    id: str
-    account_id: str
-    workspace_id: Optional[str]
-    definition: dict
-    status: JobStatus
-    created: datetime.datetime
-    updated: datetime.datetime
-    started: Optional[datetime.datetime] = None
-    finished: Optional[datetime.datetime] = None
-
-    @staticmethod
-    def __to_datetime(value: Optional[str]):
-        return value and datetime.datetime.fromisoformat(value.rstrip("Z"))
-
-    @staticmethod
-    def from_metadata(metadata: JobMetadata) -> "Job":
-        return Job(
-            process_id=metadata["processID"],
-            id=metadata["jobID"],
-            account_id=metadata["accountID"],
-            workspace_id=metadata["workspaceID"],
-            definition=metadata["definition"],
-            status=JobStatus(metadata["status"]),
-            created=Job.__to_datetime(metadata["created"]),
-            started=Job.__to_datetime(metadata["started"]),
-            finished=Job.__to_datetime(metadata["finished"]),
-            updated=Job.__to_datetime(metadata["updated"]),
-        )
-
-    @classmethod
-    def get(cls, job_id: str) -> "Job":
-        url = host.endpoint(f"/v2/processing/jobs/{job_id}")
-        metadata = cls.session.get(url).json()
-        return cls.from_metadata(metadata)
+    def execute(self) -> Job:
+        url = host.endpoint(f"/v2/processing/processes/{self.process_id}/execution")
+        job_metadata = self.session.post(url, json={"inputs": self.inputs}).json()
+        return Job.from_metadata(job_metadata)
 
     @classmethod
     def all(
@@ -220,7 +200,9 @@ class Job:
         }
 
         def get_pages():
-            page = cls.session.get(host.endpoint("/v2/processing/jobs"), params=query_params).json()
+            page = cls.session.get(
+                host.endpoint("/v2/processing/jobs"), params=query_params
+            ).json()
             while page:
                 yield page["jobs"]
                 next_page_url = next(
@@ -232,3 +214,26 @@ class Job:
         for page in get_pages():
             for metadata in page:
                 yield Job.from_metadata(metadata)
+
+
+@dataclasses.dataclass
+class SingleItemJobTemplate(JobTemplate):
+    title: str
+    item: pystac.Item
+
+    @property
+    def inputs(self) -> dict:
+        return {"title": self.title, "item": self.item.get_self_href()}
+
+
+@dataclasses.dataclass
+class MultiItemJobTemplate(JobTemplate):
+    title: str
+    items: List[pystac.Item]
+
+    @property
+    def inputs(self) -> dict:
+        return {
+            "title": self.title,
+            "items": [item.get_self_href() for item in self.items],
+        }
