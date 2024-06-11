@@ -73,20 +73,14 @@ JOB = processing.Job(
 def workspace():
     with mock.patch("up42.base.workspace") as workspace_mock:
         session = requests.Session()
-        session.hooks = {
-            "response": lambda response, *args, **kwargs: response.raise_for_status()
-        }
+        session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
         workspace_mock.auth.session = session
         yield
 
 
 class TestCost:
-    @pytest.mark.parametrize(
-        "high_value", [11, 11.0, processing.Cost(strategy="strategy", credits=11)]
-    )
-    @pytest.mark.parametrize(
-        "low_value", [9, 9.0, processing.Cost(strategy="strategy", credits=9)]
-    )
+    @pytest.mark.parametrize("high_value", [11, 11.0, processing.Cost(strategy="strategy", credits=11)])
+    @pytest.mark.parametrize("low_value", [9, 9.0, processing.Cost(strategy="strategy", credits=9)])
     def test_should_compare_with_numbers_and_costs_using_credits(
         self,
         high_value: processing.CostType,
@@ -108,9 +102,7 @@ class SampleJobTemplate(processing.JobTemplate):
 
 
 class TestJobTemplate:
-    def test_fails_to_construct_if_validation_fails(
-        self, requests_mock: req_mock.Mocker
-    ):
+    def test_fails_to_construct_if_validation_fails(self, requests_mock: req_mock.Mocker):
         error_code = random.randint(430, 599)
         requests_mock.post(
             VALIDATION_URL,
@@ -122,12 +114,8 @@ class TestJobTemplate:
         assert error.value.response.status_code == error_code
         assert requests_mock.call_count == 1
 
-    def test_should_be_invalid_if_inputs_are_malformed(
-        self, requests_mock: req_mock.Mocker
-    ):
-        error = processing.ValidationError(
-            name="InvalidSchema", message="data.inputs must contain ['item'] properties"
-        )
+    def test_should_be_invalid_if_inputs_are_malformed(self, requests_mock: req_mock.Mocker):
+        error = processing.ValidationError(name="InvalidSchema", message="data.inputs must contain ['item'] properties")
         requests_mock.post(
             VALIDATION_URL,
             status_code=400,
@@ -138,12 +126,8 @@ class TestJobTemplate:
         assert not template.is_valid
         assert template.errors == {error}
 
-    def test_should_be_invalid_if_inputs_are_invalid(
-        self, requests_mock: req_mock.Mocker
-    ):
-        error = processing.ValidationError(
-            name="InvalidTitle", message="title is too long"
-        )
+    def test_should_be_invalid_if_inputs_are_invalid(self, requests_mock: req_mock.Mocker):
+        error = processing.ValidationError(name="InvalidTitle", message="title is too long")
         requests_mock.post(
             VALIDATION_URL,
             status_code=422,
@@ -158,9 +142,7 @@ class TestJobTemplate:
         assert not template.is_valid
         assert template.errors == {error}
 
-    def test_fails_to_construct_if_evaluation_fails(
-        self, requests_mock: req_mock.Mocker
-    ):
+    def test_fails_to_construct_if_evaluation_fails(self, requests_mock: req_mock.Mocker):
         error_code = random.randint(400, 599)
         requests_mock.post(
             VALIDATION_URL,
@@ -185,9 +167,7 @@ class TestJobTemplate:
             processing.Cost(strategy="area", credits=1, size=5, unit="SKM"),
         ],
     )
-    def test_should_construct(
-        self, requests_mock: req_mock.Mocker, cost: processing.Cost
-    ):
+    def test_should_construct(self, requests_mock: req_mock.Mocker, cost: processing.Cost):
         requests_mock.post(
             VALIDATION_URL,
             status_code=200,
@@ -248,9 +228,7 @@ class SampleSingleItemJobTemplate(processing.SingleItemJobTemplate):
 class TestSingleItemJobTemplate:
     def test_should_provide_inputs(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="discount", credits=-1)
-        body_matcher = helpers.match_request_body(
-            {"inputs": {"title": TITLE, "item": ITEM_URL}}
-        )
+        body_matcher = helpers.match_request_body({"inputs": {"title": TITLE, "item": ITEM_URL}})
         requests_mock.post(
             VALIDATION_URL,
             status_code=200,
@@ -279,9 +257,7 @@ class SampleMultiItemJobTemplate(processing.MultiItemJobTemplate):
 class TestMultiItemJobTemplate:
     def test_should_provide_inputs(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="discount", credits=-1)
-        body_matcher = helpers.match_request_body(
-            {"inputs": {"title": TITLE, "items": [ITEM_URL]}}
-        )
+        body_matcher = helpers.match_request_body({"inputs": {"title": TITLE, "items": [ITEM_URL]}})
         requests_mock.post(
             VALIDATION_URL,
             status_code=200,
