@@ -50,11 +50,11 @@ class Job:
     id: str
     account_id: str
     workspace_id: Optional[str]
-    collection: pystac.Collection
     definition: dict
     status: JobStatus
     created: datetime.datetime
     updated: datetime.datetime
+    collection: Optional[pystac.Collection] = None
     started: Optional[datetime.datetime] = None
     finished: Optional[datetime.datetime] = None
 
@@ -68,15 +68,20 @@ class Job:
 
     @staticmethod
     def from_metadata(metadata: JobMetadata) -> "Job":
-        if "collection" in metadata["results"]:
-            collection_id = metadata["results"]["collection"].split("/")[-1]
-            collection = Job._pystac_client().get_collection(collection_id)
+        def get_metadata_collection(
+            metadata: JobMetadata,
+        ) -> Optional[pystac.Collection]:
+            if "collection" in metadata["results"]:
+                collection_id = metadata["results"]["collection"].split("/")[-1]
+                return Job._pystac_client().get_collection(collection_id)
+            return None
+
         return Job(
             process_id=metadata["processID"],
             id=metadata["jobID"],
             account_id=metadata["accountID"],
             workspace_id=metadata["workspaceID"],
-            collection=collection,
+            collection=get_metadata_collection(metadata),
             definition=metadata["definition"],
             status=JobStatus(metadata["status"]),
             created=Job.__to_datetime(metadata["created"]),
