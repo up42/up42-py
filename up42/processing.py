@@ -2,7 +2,7 @@ import abc
 import dataclasses
 import datetime
 import enum
-from typing import ClassVar, List, Optional, TypedDict, Union
+from typing import ClassVar, Iterator, List, Optional, TypedDict, Union
 
 import pystac
 import requests
@@ -184,3 +184,46 @@ class Job:
         url = host.endpoint(f"/v2/processing/jobs/{job_id}")
         metadata = cls.session.get(url).json()
         return cls.from_metadata(metadata)
+
+    @classmethod
+    def all(
+        cls,
+        process_ids: Optional[List[str]] = None,
+        workspace_id: Optional[str] = None,
+        statuses: Optional[List[JobStatus]] = None,
+        min_duration: Optional[int] = None,
+        max_duration: Optional[int] = None,
+        # can be specified via Sorting.process_id.desc & Sorting.created.asc
+        # sort_by: Optional[Sorting] = None
+        *,
+        # used only for performance tuning and testing, affecting only limit parameter
+        page_size: Optional[int],
+    ) -> Iterator["Job"]:
+        query_params = {
+            key: str(value)
+            for key, value in {
+                "workspaceId": workspace_id,
+                "processId": process_ids,
+                "status": statuses,
+                "minDuration": min_duration,
+                "maxDuration": max_duration,
+                "limit": page_size,
+            }.items()
+            if value
+        }
+
+        def get_pages():
+            page = cls.session.get(
+                host.endpoint("/v2/processing/jobs"), params=query_params
+            ).json()
+            while page:
+                yield page["jobs"]
+                next_page_url = next(
+                    (link["href"] for link in page["links"] if link["rel"] == "next"),
+                    None,
+                )
+                page = next_page_url and cls.session.get(next_page_url).json()
+
+        for page in get_pages():
+            for metadata in page:
+                yield Job.from_metadata(metadata)
