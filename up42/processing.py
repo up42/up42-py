@@ -44,7 +44,7 @@ class JobMetadata(TypedDict):
 
 
 class UnfinishedJob(Exception):
-    """Job status hasn't been succeeded or failed yet"""
+    """Job hasn't finished yet with success or failure"""
 
 
 @dataclasses.dataclass
