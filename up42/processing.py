@@ -7,7 +7,7 @@ from typing import ClassVar, Iterator, List, Optional, TypedDict, Union
 import pystac
 import requests
 
-from up42 import base, host
+from up42 import base, host, utils
 
 
 @dataclasses.dataclass(frozen=True)
@@ -146,6 +146,13 @@ class JobMetadata(TypedDict):
     updated: str
 
 
+class JobSorting:
+    process_id = utils.SortingField("processID")
+    status = utils.SortingField("status")
+    created = utils.SortingField("created")
+    credits = utils.SortingField("creditConsumption.credits")
+
+
 @dataclasses.dataclass
 class Job:
     session = base.Session()
@@ -193,6 +200,7 @@ class Job:
         status: Optional[List[JobStatus]] = None,
         min_duration: Optional[int] = None,
         max_duration: Optional[int] = None,
+        sort_by: Optional[JobSorting] = None,
         *,
         # used only for performance tuning and testing only
         page_size: Optional[int] = None,
@@ -206,6 +214,7 @@ class Job:
                 "minDuration": min_duration,
                 "maxDuration": max_duration,
                 "limit": page_size,
+                "sort": sort_by,
             }.items()
             if value
         }

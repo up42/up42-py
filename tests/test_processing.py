@@ -265,6 +265,7 @@ class TestJob:
     @pytest.mark.parametrize("status", [None, [processing.JobStatus.CAPTURED]])
     @pytest.mark.parametrize("min_duration", [None, 1])
     @pytest.mark.parametrize("max_duration", [None, 10])
+    @pytest.mark.parametrize("sort_by", [None, processing.JobSorting.process_id.desc])
     def test_should_get_all_jobs(
         self,
         requests_mock: req_mock.Mocker,
@@ -273,6 +274,7 @@ class TestJob:
         status: Optional[List[processing.JobStatus]],
         min_duration: Optional[int],
         max_duration: Optional[int],
+        sort_by: Optional[processing.JobSorting],
     ):
         query_params: dict[str, Any] = {}
         if process_id:
@@ -284,7 +286,9 @@ class TestJob:
         if min_duration:
             query_params["minDuration"] = min_duration
         if max_duration:
-            query_params["maxDuration"] = str(max_duration)
+            query_params["maxDuration"] = max_duration
+        if sort_by:
+            query_params["sort"] = str(sort_by)
 
         query = urllib.parse.urlencode(query_params)
 
@@ -311,6 +315,7 @@ class TestJob:
                     status=status,
                     min_duration=min_duration,
                     max_duration=max_duration,
+                    sort_by=sort_by,
                 )
             )
             == [JOB] * 5
