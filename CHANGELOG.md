@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Jun 13, 2024**
 
-- Added `credit_consumption`, `collection`, and `errors` to job class in processing module.
+- Added `collection` to job class in processing module.
 
 ## 1.0.4a15
 
