@@ -216,7 +216,7 @@ class TestJobTemplate:
         assert not template.errors
         assert template.cost == cost
 
-    @mock.patch("up42.utils.stac_client")
+    @mock.patch("up42.base.StacClient")
     def test_should_execute(self, mock_stac_client, requests_mock: req_mock.Mocker):
         mock_pystac_client = mock.MagicMock()
         mock_pystac_client.get_collection.return_value = COLLECTION
@@ -305,13 +305,16 @@ class TestMultiItemJobTemplate:
 
 
 class TestJob:
-    @mock.patch("up42.utils.stac_client")
+    @mock.patch("up42.base.StacClient")
     def test_should_get_job(self, mock_stac_client, requests_mock: req_mock.Mocker):
         mock_pystac_client = mock.MagicMock()
         mock_pystac_client.get_collection.return_value = COLLECTION
         mock_stac_client.return_value = mock_pystac_client
         requests_mock.get(url=JOB_URL, json=JOB_METADATA)
         assert processing.Job.get(JOB_ID) == JOB
+        collection = JOB.collection
+        assert collection == COLLECTION
+        assert collection.id == COLLECTION_ID
 
     @pytest.mark.parametrize("process_id", [None, [PROCESS_ID]])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
