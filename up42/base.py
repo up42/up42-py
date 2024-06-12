@@ -3,6 +3,7 @@ import pathlib
 import warnings
 from typing import Any, Optional, Union
 
+import pystac_client
 import requests
 
 from up42 import auth as up42_auth
@@ -92,3 +93,8 @@ class WorkspaceId:
         if value == self:
             value = workspace.id
         obj.__dict__["workspace_id"] = value
+
+
+class StacClient:
+    def __get__(self, obj, obj_type=None) -> pystac_client.Client:
+        return utils.stac_client(workspace.auth.client.auth)
