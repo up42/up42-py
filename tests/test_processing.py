@@ -21,23 +21,8 @@ COST_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/cost"
 EXECUTION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/execution"
 TITLE = "title"
 COLLECTION_ID = str(uuid.uuid4())
-ITEM_ID = uuid.uuid4()
-COLLECTION_URL = f"https://collection-url/v2/assets/stac/collections/{COLLECTION_ID}"
+COLLECTION_URL = f"https://collections/{COLLECTION_ID}"
 ITEM_URL = "https://item-url/"
-COLLECTION = pystac.Collection.from_dict(
-    {
-        "type": "Collection",
-        "stac_version": "1.0.0",
-        "id": COLLECTION_ID,
-        "description": "A collection of sample items",
-        "license": "proprietary",
-        "extent": {
-            "spatial": {"bbox": [[-180, -90, 180, 90]]},
-            "temporal": {"interval": [["2023-01-01T00:00:00Z", None]]},
-        },
-        "links": [],
-    }
-)
 ITEM = pystac.Item.from_dict(
     {
         "type": "Feature",
@@ -85,17 +70,6 @@ JOB = processing.Job(
     workspace_id=constants.WORKSPACE_ID,
     definition=DEFINITION,
     collection_url=COLLECTION_URL,
-    status=processing.JobStatus.CREATED,
-    created=NOW,
-    updated=NOW,
-)
-
-JOB_NO_COLLECTION_URL = processing.Job(
-    process_id=PROCESS_ID,
-    id=JOB_ID,
-    account_id=ACCOUNT_ID,
-    workspace_id=constants.WORKSPACE_ID,
-    definition=DEFINITION,
     status=processing.JobStatus.CREATED,
     created=NOW,
     updated=NOW,
@@ -227,11 +201,7 @@ class TestJobTemplate:
         assert not template.errors
         assert template.cost == cost
 
-    @mock.patch("up42.base.StacClient")
-    def test_should_execute(self, mock_stac_client, requests_mock: req_mock.Mocker):
-        mock_pystac_client = mock.MagicMock()
-        mock_pystac_client.get_collection.return_value = COLLECTION
-        mock_stac_client.return_value = mock_pystac_client
+    def test_should_execute(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="none", credits=1)
         requests_mock.post(
             VALIDATION_URL,
@@ -316,19 +286,19 @@ class TestMultiItemJobTemplate:
 
 
 class TestJob:
-    @mock.patch("up42.base.StacClient")
-    def test_should_get_job(self, mock_stac_client, requests_mock: req_mock.Mocker):
-        mock_pystac_client = mock.MagicMock()
-        mock_pystac_client.get_collection.return_value = COLLECTION
-        mock_stac_client.return_value = mock_pystac_client
+    def test_should_get_job(self, requests_mock: req_mock.Mocker):
         requests_mock.get(url=JOB_URL, json=JOB_METADATA)
         assert processing.Job.get(JOB_ID) == JOB
-        collection = JOB.collection
-        assert collection == COLLECTION
+
+    @mock.patch("up42.base.StacClient")
+    def test_should_get_collection(self):
+        collection = mock.MagicMock()
+        assert JOB.collection == collection
         assert collection.id == COLLECTION_ID
 
-    def test_collection_property_with_none_url(self):
-        assert JOB_NO_COLLECTION_URL.collection is None
+    def test_should_get_no_collection_if_collection_url_is_missing(self):
+        job = dataclasses.replace(JOB, collection_url=None)
+        assert not job.collection
 
     @pytest.mark.parametrize("process_id", [None, [PROCESS_ID]])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])

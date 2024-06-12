@@ -5,7 +5,6 @@ import enum
 from typing import ClassVar, Iterator, List, Optional, TypedDict, Union
 
 import pystac
-import pystac_client
 import requests
 
 from up42 import base, host, utils
@@ -30,9 +29,15 @@ class JobStatus(enum.Enum):
     RELEASED = "released"
 
 
-class JobResults(TypedDict):
-    collection: str
-    # To do: include errors
+@dataclasses.dataclass(eq=True)
+class JobError:
+    message: str
+    name: str
+
+
+class JobResults(TypedDict, total=False):
+    collection: Optional[str]
+    errors: Optional[list[JobError]]
 
 
 class JobMetadata(TypedDict):
@@ -63,6 +68,7 @@ def _to_datetime(value: Optional[str]):
 @dataclasses.dataclass
 class Job:
     session = base.Session()
+    stac_client = base.StacClient()
     process_id: str
     id: str
     account_id: str
@@ -76,15 +82,11 @@ class Job:
     finished: Optional[datetime.datetime] = None
 
     @property
-    def _client(self) -> pystac_client.Client:
-        return base.StacClient()  # type: ignore
-
-    @property
     def collection(self) -> Optional[pystac.Collection]:
         if self.collection_url is None:
             return None
         collection_id = self.collection_url.split("/")[-1]
-        return self._client.get_collection(collection_id)
+        return self.stac_client.get_collection(collection_id)
 
     @staticmethod
     def from_metadata(metadata: JobMetadata) -> "Job":
