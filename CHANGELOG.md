@@ -29,6 +29,13 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.0.4a18
+
+**Jun 13, 2024**
+
+- Deprecate legacy webhook code.
+- Drop long deprecated `Catalog::construct_parameters`.
+
 ## 1.0.4a17
 
 **Jun 13, 2024**
