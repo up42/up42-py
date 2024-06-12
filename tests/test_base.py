@@ -2,7 +2,9 @@ import dataclasses
 from typing import Union
 from unittest import mock
 
+import pystac_client
 import pytest
+import requests_mock as req_mock
 
 from up42 import base
 
@@ -40,6 +42,7 @@ class ActiveRecord:
     session = base.Session()
     class_workspace_id = base.WorkspaceId()
     workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    stac_client = base.StacClient()
 
 
 class TestDescriptors:
@@ -69,3 +72,9 @@ class TestDescriptors:
         assert record.workspace_id == constants.WORKSPACE_ID
         assert ActiveRecord.class_workspace_id == constants.WORKSPACE_ID
         assert constants.WORKSPACE_ID in repr(record)
+
+    def test_should_provide_stac_client(self, requests_mock: req_mock.Mocker):
+        requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
+        record = ActiveRecord()
+        assert isinstance(record.stac_client, pystac_client.Client)
+        assert requests_mock.called

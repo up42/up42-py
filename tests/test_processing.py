@@ -20,7 +20,9 @@ VALIDATION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/val
 COST_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/cost"
 EXECUTION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/execution"
 TITLE = "title"
-ITEM_URL = "https://item-url"
+COLLECTION_ID = str(uuid.uuid4())
+COLLECTION_URL = f"https://collections/{COLLECTION_ID}"
+ITEM_URL = "https://item-url/"
 ITEM = pystac.Item.from_dict(
     {
         "type": "Feature",
@@ -53,6 +55,7 @@ JOB_METADATA: processing.JobMetadata = {
     "accountID": ACCOUNT_ID,
     "workspaceID": constants.WORKSPACE_ID,
     "definition": DEFINITION,
+    "results": {"collection": f"{COLLECTION_URL}"},
     "status": "created",
     "created": f"{NOW.isoformat()}Z",
     "updated": f"{NOW.isoformat()}Z",
@@ -66,6 +69,7 @@ JOB = processing.Job(
     account_id=ACCOUNT_ID,
     workspace_id=constants.WORKSPACE_ID,
     definition=DEFINITION,
+    collection_url=COLLECTION_URL,
     status=processing.JobStatus.CREATED,
     created=NOW,
     updated=NOW,
@@ -73,12 +77,11 @@ JOB = processing.Job(
 
 
 @pytest.fixture(autouse=True)
-def workspace():
-    with mock.patch("up42.base.workspace") as workspace_mock:
-        session = requests.Session()
-        session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
-        workspace_mock.auth.session = session
-        yield
+def set_status_raising_session():
+    session = requests.Session()
+    session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
+    processing.Job.session = session  # type: ignore
+    processing.JobTemplate.session = session  # type: ignore
 
 
 class TestCost:
@@ -285,6 +288,15 @@ class TestJob:
     def test_should_get_job(self, requests_mock: req_mock.Mocker):
         requests_mock.get(url=JOB_URL, json=JOB_METADATA)
         assert processing.Job.get(JOB_ID) == JOB
+
+    def test_should_get_collection(self):
+        stac_client = JOB.stac_client = mock.MagicMock()
+        assert JOB.collection == stac_client.get_collection.return_value
+        stac_client.get_collection.assert_called_with(COLLECTION_ID)
+
+    def test_should_get_no_collection_if_collection_url_is_missing(self):
+        job = dataclasses.replace(JOB, collection_url=None)
+        assert not job.collection
 
     @pytest.mark.parametrize("process_id", [None, [PROCESS_ID]])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])

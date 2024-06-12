@@ -29,12 +29,17 @@ class JobStatus(enum.Enum):
     RELEASED = "released"
 
 
+class JobResults(TypedDict, total=False):
+    collection: Optional[str]
+
+
 class JobMetadata(TypedDict):
     processID: str  # pylint: disable=invalid-name
     jobID: str  # pylint: disable=invalid-name
     accountID: str  # pylint: disable=invalid-name
     workspaceID: Optional[str]  # pylint: disable=invalid-name
     definition: dict
+    results: JobResults
     status: str
     created: str
     started: Optional[str]
@@ -56,6 +61,7 @@ def _to_datetime(value: Optional[str]):
 @dataclasses.dataclass
 class Job:
     session = base.Session()
+    stac_client = base.StacClient()
     process_id: str
     id: str
     account_id: str
@@ -64,8 +70,16 @@ class Job:
     status: JobStatus
     created: datetime.datetime
     updated: datetime.datetime
+    collection_url: Optional[str] = None
     started: Optional[datetime.datetime] = None
     finished: Optional[datetime.datetime] = None
+
+    @property
+    def collection(self) -> Optional[pystac.Collection]:
+        if self.collection_url is None:
+            return None
+        collection_id = self.collection_url.split("/")[-1]
+        return self.stac_client.get_collection(collection_id)
 
     @staticmethod
     def from_metadata(metadata: JobMetadata) -> "Job":
@@ -74,6 +88,7 @@ class Job:
             id=metadata["jobID"],
             account_id=metadata["accountID"],
             workspace_id=metadata["workspaceID"],
+            collection_url=metadata.get("results", {}).get("collection"),
             definition=metadata["definition"],
             status=JobStatus(metadata["status"]),
             created=_to_datetime(metadata["created"]),
