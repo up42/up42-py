@@ -4,8 +4,9 @@ from unittest import mock
 
 import pystac_client
 import pytest
+import requests_mock as req_mock
 
-from up42 import base, utils
+from up42 import base
 
 from .fixtures import fixtures_globals as constants
 
@@ -41,6 +42,7 @@ class ActiveRecord:
     session = base.Session()
     class_workspace_id = base.WorkspaceId()
     workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    stac_client = base.StacClient()
 
 
 class TestDescriptors:
@@ -50,10 +52,6 @@ class TestDescriptors:
             workspace_mock.auth = auth_mock
             workspace_mock.id = constants.WORKSPACE_ID
             yield
-
-    @pytest.fixture
-    def mock_client(self):
-        return mock.MagicMock(spec=pystac_client.Client)
 
     def test_should_provide_session(self):
         record = ActiveRecord()
@@ -75,13 +73,8 @@ class TestDescriptors:
         assert ActiveRecord.class_workspace_id == constants.WORKSPACE_ID
         assert constants.WORKSPACE_ID in repr(record)
 
-    @mock.patch.object(utils, "stac_client")
-    def test_get_returns_stac_client(self, mock_stac_client, mock_client):
-        mock_stac_client.return_value = mock_client
-
-        class SampleStacClient:
-            stac_client = base.StacClient()
-
-        test_instance = SampleStacClient()
-        result = test_instance.stac_client
-        assert result == mock_client
+    def test_should_provide_stac_client(self, requests_mock: req_mock.Mocker):
+        requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
+        record = ActiveRecord()
+        assert isinstance(record.stac_client, pystac_client.Client)
+        assert requests_mock.called

@@ -29,15 +29,8 @@ class JobStatus(enum.Enum):
     RELEASED = "released"
 
 
-@dataclasses.dataclass(eq=True)
-class JobError:
-    message: str
-    name: str
-
-
 class JobResults(TypedDict, total=False):
     collection: Optional[str]
-    errors: Optional[list[JobError]]
 
 
 class JobMetadata(TypedDict):

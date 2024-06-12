@@ -77,12 +77,11 @@ JOB = processing.Job(
 
 
 @pytest.fixture(autouse=True)
-def workspace():
-    with mock.patch("up42.base.workspace") as workspace_mock:
-        session = requests.Session()
-        session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
-        workspace_mock.auth.session = session
-        yield
+def set_status_raising_session():
+    session = requests.Session()
+    session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
+    processing.Job.session = session  # type: ignore
+    processing.JobTemplate.session = session  # type: ignore
 
 
 class TestCost:
@@ -290,11 +289,10 @@ class TestJob:
         requests_mock.get(url=JOB_URL, json=JOB_METADATA)
         assert processing.Job.get(JOB_ID) == JOB
 
-    @mock.patch("up42.base.StacClient")
     def test_should_get_collection(self):
-        collection = mock.MagicMock()
-        assert JOB.collection == collection
-        assert collection.id == COLLECTION_ID
+        stac_client = JOB.stac_client = mock.MagicMock()
+        assert JOB.collection == stac_client.get_collection.return_value
+        stac_client.get_collection.assert_called_with(COLLECTION_ID)
 
     def test_should_get_no_collection_if_collection_url_is_missing(self):
         job = dataclasses.replace(JOB, collection_url=None)
