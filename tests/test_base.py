@@ -2,9 +2,10 @@ import dataclasses
 from typing import Union
 from unittest import mock
 
+import pystac_client
 import pytest
 
-from up42 import base
+from up42 import base, utils
 
 from .fixtures import fixtures_globals as constants
 
@@ -50,6 +51,10 @@ class TestDescriptors:
             workspace_mock.id = constants.WORKSPACE_ID
             yield
 
+    @pytest.fixture
+    def mock_client(self):
+        return mock.MagicMock(spec=pystac_client.Client)
+
     def test_should_provide_session(self):
         record = ActiveRecord()
         assert record.session == base.workspace.auth.session
@@ -69,3 +74,14 @@ class TestDescriptors:
         assert record.workspace_id == constants.WORKSPACE_ID
         assert ActiveRecord.class_workspace_id == constants.WORKSPACE_ID
         assert constants.WORKSPACE_ID in repr(record)
+
+    @mock.patch.object(utils, "stac_client")
+    def test_get_returns_stac_client(self, mock_stac_client, mock_client):
+        mock_stac_client.return_value = mock_client
+
+        class SampleStacClient:
+            stac_client = base.StacClient()
+
+        test_instance = SampleStacClient()
+        result = test_instance.stac_client
+        assert result == mock_client
