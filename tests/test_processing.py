@@ -90,6 +90,17 @@ JOB = processing.Job(
     updated=NOW,
 )
 
+JOB_NO_COLLECTION_URL = processing.Job(
+    process_id=PROCESS_ID,
+    id=JOB_ID,
+    account_id=ACCOUNT_ID,
+    workspace_id=constants.WORKSPACE_ID,
+    definition=DEFINITION,
+    status=processing.JobStatus.CREATED,
+    created=NOW,
+    updated=NOW,
+)
+
 
 @pytest.fixture(autouse=True)
 def workspace():
@@ -315,6 +326,9 @@ class TestJob:
         collection = JOB.collection
         assert collection == COLLECTION
         assert collection.id == COLLECTION_ID
+
+    def test_collection_property_with_none_url(self):
+        assert JOB_NO_COLLECTION_URL.collection is None
 
     @pytest.mark.parametrize("process_id", [None, [PROCESS_ID]])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
