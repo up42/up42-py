@@ -2,7 +2,7 @@ import abc
 import dataclasses
 import datetime
 import enum
-from typing import ClassVar, List, Optional, TypedDict, Union
+from typing import ClassVar, Iterator, List, Optional, TypedDict, Union
 
 import pystac
 import requests
@@ -43,6 +43,17 @@ class JobMetadata(TypedDict):
     updated: str
 
 
+class JobSorting:
+    process_id = utils.SortingField("processID")
+    status = utils.SortingField("status")
+    created = utils.SortingField("created")
+    credits = utils.SortingField("creditConsumption.credits")
+
+
+def _to_datetime(value: Optional[str]):
+    return value and datetime.datetime.fromisoformat(value.rstrip("Z"))
+
+
 @dataclasses.dataclass
 class Job:
     session = base.Session()
@@ -57,10 +68,6 @@ class Job:
     collection_url: Optional[str] = None
     started: Optional[datetime.datetime] = None
     finished: Optional[datetime.datetime] = None
-
-    @staticmethod
-    def __to_datetime(value: Optional[str]):
-        return value and datetime.datetime.fromisoformat(value.rstrip("Z"))
 
     @staticmethod
     def _pystac_client():
@@ -83,10 +90,10 @@ class Job:
             collection_url=metadata.get("results", {}).get("collection"),
             definition=metadata["definition"],
             status=JobStatus(metadata["status"]),
-            created=Job.__to_datetime(metadata["created"]),
-            started=Job.__to_datetime(metadata["started"]),
-            finished=Job.__to_datetime(metadata["finished"]),
-            updated=Job.__to_datetime(metadata["updated"]),
+            created=_to_datetime(metadata["created"]),
+            started=_to_datetime(metadata["started"]),
+            finished=_to_datetime(metadata["finished"]),
+            updated=_to_datetime(metadata["updated"]),
         )
 
     @classmethod
@@ -94,6 +101,47 @@ class Job:
         url = host.endpoint(f"/v2/processing/jobs/{job_id}")
         metadata = cls.session.get(url).json()
         return cls.from_metadata(metadata)
+
+    @classmethod
+    def all(
+        cls,
+        process_id: Optional[List[str]] = None,
+        workspace_id: Optional[str] = None,
+        status: Optional[List[JobStatus]] = None,
+        min_duration: Optional[int] = None,
+        max_duration: Optional[int] = None,
+        sort_by: Optional[utils.SortingField] = None,
+        *,
+        # used only for performance tuning and testing only
+        page_size: Optional[int] = None,
+    ) -> Iterator["Job"]:
+        query_params = {
+            key: str(value)
+            for key, value in {
+                "workspaceID": workspace_id,
+                "processID": process_id,
+                "status": [entry.value for entry in status] if status else None,
+                "minDuration": min_duration,
+                "maxDuration": max_duration,
+                "limit": page_size,
+                "sort": sort_by,
+            }.items()
+            if value
+        }
+
+        def get_pages():
+            page = cls.session.get(host.endpoint("/v2/processing/jobs"), params=query_params).json()
+            while page:
+                yield page["jobs"]
+                next_page_url = next(
+                    (link["href"] for link in page["links"] if link["rel"] == "next"),
+                    None,
+                )
+                page = next_page_url and cls.session.get(next_page_url).json()
+
+        for page in get_pages():
+            for metadata in page:
+                yield Job.from_metadata(metadata)
 
 
 CostType = Union[int, float, "Cost"]
