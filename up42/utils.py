@@ -1,4 +1,5 @@
 import copy
+import dataclasses
 import datetime
 import functools
 import importlib.metadata
@@ -424,3 +425,21 @@ def stac_client(auth: requests.auth.AuthBase):
         url=host.endpoint("/v2/assets/stac/"),
         request_modifier=request_modifier,
     )
+
+
+@dataclasses.dataclass(frozen=True)
+class SortingField:
+    name: str
+    ascending: bool = True
+
+    @property
+    def asc(self):
+        return SortingField(name=self.name)
+
+    @property
+    def desc(self):
+        return SortingField(name=self.name, ascending=False)
+
+    def __str__(self):
+        order = "asc" if self.ascending else "desc"
+        return f"{self.name},{order}"
