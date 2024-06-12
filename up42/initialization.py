@@ -51,6 +51,7 @@ def initialize_asset(asset_id: str) -> asset.Asset:
     return up42_asset
 
 
+@utils.deprecation("up42.Webhook::get", "2.0.0")
 def initialize_webhook(webhook_id: str) -> webhooks.Webhook:
     """
     Returns a Webhook object (has to exist on UP42).
@@ -62,6 +63,7 @@ def initialize_webhook(webhook_id: str) -> webhooks.Webhook:
     return webhook
 
 
+@utils.deprecation("up42.Webhook::all", "2.0.0")
 def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
     """
     Gets all registered webhooks for this workspace.
@@ -74,6 +76,7 @@ def get_webhooks(return_json: bool = False) -> List[webhooks.Webhook]:
     return webhooks.Webhook.all(return_json=return_json)
 
 
+@utils.deprecation("up42.Webhook::save", "2.0.0")
 def create_webhook(
     name: str,
     url: str,
@@ -96,6 +99,7 @@ def create_webhook(
     return webhooks.Webhook.create(name=name, url=url, events=events, active=active, secret=secret)
 
 
+@utils.deprecation("up42.Webhook::get_webhook_events", "2.0.0")
 def get_webhook_events() -> dict:
     """
     Gets all available webhook events.

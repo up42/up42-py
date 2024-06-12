@@ -1,4 +1,5 @@
 import dataclasses
+import warnings
 from typing import List, Optional
 
 from up42 import base, host, utils
@@ -68,10 +69,12 @@ class Webhook:
         return cls.from_metadata(metadata)
 
     @property
+    @utils.deprecation("up42.Webhook properties", "2.0.0")
     def info(self) -> dict:
         return dataclasses.asdict(self)
 
     @property
+    @utils.deprecation("up42.Webhook.id", "2.0.0")
     def webhook_id(self):
         return self.id
 
@@ -86,6 +89,7 @@ class Webhook:
         url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.id}/tests")
         return self.session.post(url=url).json()["data"]
 
+    @utils.deprecation("up42.Webhook::save", "2.0.0")
     def update(
         self,
         name: Optional[str] = None,
@@ -151,10 +155,16 @@ class Webhook:
         logger.info("Queried %s webhooks.", len(payload))
 
         if return_json:
+            warnings.warn(
+                "return_json is deprecated and will be dropped in version 2.0.0",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             return payload
         return [cls.from_metadata(metadata) for metadata in payload]
 
     @classmethod
+    @utils.deprecation("up42.Webhook::save", "2.0.0")
     def create(
         cls,
         name: str,
