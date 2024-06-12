@@ -29,13 +29,18 @@ class JobStatus(enum.Enum):
     RELEASED = "released"
 
 
+class JobResults(TypedDict):
+    collection: str
+    # To do: include errors
+
+
 class JobMetadata(TypedDict):
     processID: str  # pylint: disable=invalid-name
     jobID: str  # pylint: disable=invalid-name
     accountID: str  # pylint: disable=invalid-name
     workspaceID: Optional[str]  # pylint: disable=invalid-name
     definition: dict
-    results: dict
+    results: JobResults
     status: str
     created: str
     started: Optional[str]
@@ -69,16 +74,13 @@ class Job:
     started: Optional[datetime.datetime] = None
     finished: Optional[datetime.datetime] = None
 
-    @staticmethod
-    def _pystac_client():
-        return utils.stac_client(base.workspace.auth.client.auth)
-
     @property
     def collection(self) -> Optional[pystac.Collection]:
         if self.collection_url is None:
             return None
         collection_id = self.collection_url.split("/")[-1]
-        return Job._pystac_client().get_collection(collection_id)
+        client: base.StacClient = base.StacClient()
+        return client.get_collection(collection_id)  # type: ignore
 
     @staticmethod
     def from_metadata(metadata: JobMetadata) -> "Job":
