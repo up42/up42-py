@@ -5,6 +5,7 @@ import enum
 from typing import ClassVar, Iterator, List, Optional, TypedDict, Union
 
 import pystac
+import pystac_client
 import requests
 
 from up42 import base, host, utils
@@ -75,12 +76,15 @@ class Job:
     finished: Optional[datetime.datetime] = None
 
     @property
+    def _client(self) -> pystac_client.Client:
+        return base.StacClient()  # type: ignore
+
+    @property
     def collection(self) -> Optional[pystac.Collection]:
         if self.collection_url is None:
             return None
         collection_id = self.collection_url.split("/")[-1]
-        client: base.StacClient = base.StacClient()
-        return client.get_collection(collection_id)  # type: ignore
+        return self._client.get_collection(collection_id)
 
     @staticmethod
     def from_metadata(metadata: JobMetadata) -> "Job":
