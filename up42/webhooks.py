@@ -74,7 +74,7 @@ class Webhook:
         return dataclasses.asdict(self)
 
     @property
-    @utils.deprecation("up42.Webhook.id", "2.0.0")
+    @utils.deprecation("up42.Webhook::id", "2.0.0")
     def webhook_id(self):
         return self.id
 
