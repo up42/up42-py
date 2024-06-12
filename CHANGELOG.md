@@ -34,6 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Jun 13, 2024**
 
 - Added `collection` to job class in processing module.
+- Added `StacClient` descriptor to base module.
 
 ## 1.0.4a16
 
