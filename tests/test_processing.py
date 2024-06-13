@@ -49,13 +49,18 @@ DEFINITION = {
     }
 }
 NOW = datetime.datetime.now()
+INVALID_TITLE_ERROR = processing.ValidationError(name="InvalidTitle", message="title is too long")
 JOB_METADATA: processing.JobMetadata = {
     "processID": PROCESS_ID,
     "jobID": JOB_ID,
     "accountID": ACCOUNT_ID,
     "workspaceID": constants.WORKSPACE_ID,
     "definition": DEFINITION,
-    "results": {"collection": f"{COLLECTION_URL}"},
+    "results": {
+        "collection": f"{COLLECTION_URL}",
+        "errors": [dataclasses.asdict(INVALID_TITLE_ERROR)],
+    },
+    "creditConsumption": {"credits": CREDITS},
     "status": "created",
     "created": f"{NOW.isoformat()}Z",
     "updated": f"{NOW.isoformat()}Z",
@@ -70,6 +75,8 @@ JOB = processing.Job(
     workspace_id=constants.WORKSPACE_ID,
     definition=DEFINITION,
     collection_url=COLLECTION_URL,
+    errors=[INVALID_TITLE_ERROR],
+    credits=CREDITS,
     status=processing.JobStatus.CREATED,
     created=NOW,
     updated=NOW,
@@ -133,20 +140,19 @@ class TestJobTemplate:
         assert template.errors == {error}
 
     def test_should_be_invalid_if_inputs_are_invalid(self, requests_mock: req_mock.Mocker):
-        error = processing.ValidationError(name="InvalidTitle", message="title is too long")
         requests_mock.post(
             VALIDATION_URL,
             status_code=422,
             json={
                 "title": "Unprocessable Entity",
                 "status": 422,
-                "errors": [dataclasses.asdict(error)],
+                "errors": [dataclasses.asdict(INVALID_TITLE_ERROR)],
             },
             additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
         )
         template = SampleJobTemplate(title=TITLE)
         assert not template.is_valid
-        assert template.errors == {error}
+        assert template.errors == {INVALID_TITLE_ERROR}
 
     def test_fails_to_construct_if_evaluation_fails(self, requests_mock: req_mock.Mocker):
         error_code = random.randint(400, 599)

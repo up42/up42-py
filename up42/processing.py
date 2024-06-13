@@ -31,15 +31,18 @@ class JobStatus(enum.Enum):
 
 class JobResults(TypedDict, total=False):
     collection: Optional[str]
+    errors: Optional[List[dict]]
 
 
 class JobMetadata(TypedDict):
+    # pylint: disable=invalid-name
     processID: str  # pylint: disable=invalid-name
     jobID: str  # pylint: disable=invalid-name
     accountID: str  # pylint: disable=invalid-name
     workspaceID: Optional[str]  # pylint: disable=invalid-name
     definition: dict
-    results: JobResults
+    results: Optional[JobResults]
+    creditConsumption: Optional[dict]
     status: str
     created: str
     started: Optional[str]
@@ -71,6 +74,8 @@ class Job:
     created: datetime.datetime
     updated: datetime.datetime
     collection_url: Optional[str] = None
+    errors: Optional[List[ValidationError]] = None
+    credits: Optional[int] = None
     started: Optional[datetime.datetime] = None
     finished: Optional[datetime.datetime] = None
 
@@ -83,12 +88,17 @@ class Job:
 
     @staticmethod
     def from_metadata(metadata: JobMetadata) -> "Job":
+        results: JobResults = metadata.get("results") or {}
+        errors = [ValidationError(**error) for error in (results.get("errors") or [])]
+        consumption = metadata.get("creditConsumption") or {}
         return Job(
             process_id=metadata["processID"],
             id=metadata["jobID"],
             account_id=metadata["accountID"],
             workspace_id=metadata["workspaceID"],
-            collection_url=metadata.get("results", {}).get("collection"),
+            collection_url=results.get("collection"),
+            errors=errors or None,
+            credits=consumption.get("credits"),
             definition=metadata["definition"],
             status=JobStatus(metadata["status"]),
             created=_to_datetime(metadata["created"]),
