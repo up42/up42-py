@@ -36,10 +36,10 @@ class JobResults(TypedDict, total=False):
 
 class JobMetadata(TypedDict):
     # pylint: disable=invalid-name
-    processID: str  # pylint: disable=invalid-name
-    jobID: str  # pylint: disable=invalid-name
-    accountID: str  # pylint: disable=invalid-name
-    workspaceID: Optional[str]  # pylint: disable=invalid-name
+    processID: str
+    jobID: str
+    accountID: str
+    workspaceID: Optional[str]
     definition: dict
     results: Optional[JobResults]
     creditConsumption: Optional[dict]
@@ -89,7 +89,8 @@ class Job:
     @staticmethod
     def from_metadata(metadata: JobMetadata) -> "Job":
         results: JobResults = metadata.get("results") or {}
-        errors = [ValidationError(**error) for error in (results.get("errors") or [])]
+        errors = results.get("errors") or []
+        validation_errors = [ValidationError(**error) for error in errors]
         consumption = metadata.get("creditConsumption") or {}
         return Job(
             process_id=metadata["processID"],
@@ -97,7 +98,7 @@ class Job:
             account_id=metadata["accountID"],
             workspace_id=metadata["workspaceID"],
             collection_url=results.get("collection"),
-            errors=errors or None,
+            errors=validation_errors or None,
             credits=consumption.get("credits"),
             definition=metadata["definition"],
             status=JobStatus(metadata["status"]),
