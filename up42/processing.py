@@ -6,6 +6,7 @@ from typing import ClassVar, Iterator, List, Optional, TypedDict, Union
 
 import pystac
 import requests
+import tenacity as tnc
 
 from up42 import base, host, utils
 
@@ -48,6 +49,10 @@ class JobMetadata(TypedDict):
     started: Optional[str]
     finished: Optional[str]
     updated: str
+
+
+class UnfinishedJob(Exception):
+    """Job hasn't finished yet with success or failure"""
 
 
 class JobSorting:
@@ -107,6 +112,27 @@ class Job:
             finished=_to_datetime(metadata["finished"]),
             updated=_to_datetime(metadata["updated"]),
         )
+
+    def track(self, *, wait: int = 60, retries: int = 60 * 24 * 3):
+        @tnc.retry(
+            stop=tnc.stop_after_attempt(retries),
+            wait=tnc.wait_fixed(wait),
+            retry=tnc.retry_if_exception_type(UnfinishedJob),
+            reraise=True,
+        )
+        def update():
+            job = Job.get(self.id)
+            self.status = job.status
+            self.updated = job.updated
+            self.finished = job.finished
+            self.started = job.started
+            self.collection_url = job.collection_url
+            self.errors = job.errors
+            self.credits = job.credits
+            if self.status not in [JobStatus.SUCCESSFUL, JobStatus.FAILED]:
+                raise UnfinishedJob
+
+        update()
 
     @classmethod
     def get(cls, job_id: str) -> "Job":
