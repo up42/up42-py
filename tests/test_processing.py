@@ -304,6 +304,61 @@ class TestJob:
         job = dataclasses.replace(JOB, collection_url=None)
         assert not job.collection
 
+    @pytest.mark.parametrize("status", [processing.JobStatus.SUCCESSFUL, processing.JobStatus.FAILED])
+    def test_should_track_until_job_finishes(self, requests_mock: req_mock.Mocker, status: processing.JobStatus):
+        updated = NOW + datetime.timedelta(minutes=4)
+        started = NOW + datetime.timedelta(minutes=2)
+        finished = NOW + datetime.timedelta(minutes=3)
+        requests_mock.get(
+            url=JOB_URL,
+            response_list=[
+                {
+                    "json": {
+                        **JOB_METADATA,
+                        "updated": f"{started}Z",
+                        "started": f"{started}Z",
+                        "status": processing.JobStatus.RUNNING.value,
+                        "results": {
+                            "collection": None,
+                            "errors": None,
+                        },
+                    }
+                },
+                {
+                    "json": {
+                        **JOB_METADATA,
+                        "updated": f"{updated}Z",
+                        "started": f"{started}Z",
+                        "finished": f"{finished}Z",
+                        "status": status.value,
+                    }
+                },
+            ],
+        )
+        job = dataclasses.replace(JOB)
+        job.track(wait=1, retries=2)
+        assert job == dataclasses.replace(JOB, finished=finished, started=started, updated=updated, status=status)
+
+    def test_fails_to_track_if_job_retrieval_fails(self, requests_mock: req_mock.Mocker):
+        requests_mock.get(
+            url=JOB_URL,
+            status_code=500,
+        )
+        job = dataclasses.replace(JOB)
+        with pytest.raises(requests.exceptions.HTTPError):
+            job.track(wait=1, retries=10)
+        assert requests_mock.call_count == 1
+
+    def test_fails_to_track_if_job_finishes_after_attempts_finished(self, requests_mock: req_mock.Mocker):
+        requests_mock.get(
+            url=JOB_URL,
+            json=JOB_METADATA,
+        )
+        job = dataclasses.replace(JOB)
+        with pytest.raises(processing.UnfinishedJob):
+            job.track(wait=1, retries=2)
+        assert requests_mock.call_count == 2
+
     @pytest.mark.parametrize("process_id", [None, [PROCESS_ID]])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize("status", [None, [processing.JobStatus.CAPTURED]])
