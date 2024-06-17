@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Jun 17, 2024**
 
 - Added processing job tracking.
-- Upgrade tenacity. 
+- Upgrade tenacity.
 
 ## 1.0.4a19
 
