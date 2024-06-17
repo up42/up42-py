@@ -1,4 +1,5 @@
 import copy
+import dataclasses
 import datetime
 import functools
 import importlib.metadata
@@ -72,26 +73,23 @@ logger = get_logger(__name__)
 
 
 def deprecation(
-    replacement_name: str,
+    replacement_name: Optional[str],
     version: str,
-    extra_message: str = "",
 ):
     """
     Decorator for custom deprecation warnings.
 
     Args:
         replacement_name: Name of the replacement function.
-        version: The package version in which the deprecation will happen.
+        version: The breaking package version
         extra_message: Optional message after default deprecation warning.
     """
 
     def actual_decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            message = (
-                f"`{func.__name__}` will be deprecated in version {version}, "
-                f"use `{replacement_name}` instead! {extra_message}"
-            )
+            replace_with = f", use `{replacement_name}` instead" if replacement_name else ""
+            message = f"`{func.__name__}` is deprecated and will be dropped in version {version}{replace_with}."
             warnings.warn(message, DeprecationWarning, stacklevel=2)
             return func(*args, **kwargs)
 
@@ -424,3 +422,21 @@ def stac_client(auth: requests.auth.AuthBase):
         url=host.endpoint("/v2/assets/stac/"),
         request_modifier=request_modifier,
     )
+
+
+@dataclasses.dataclass(frozen=True)
+class SortingField:
+    name: str
+    ascending: bool = True
+
+    @property
+    def asc(self):
+        return SortingField(name=self.name)
+
+    @property
+    def desc(self):
+        return SortingField(name=self.name, ascending=False)
+
+    def __str__(self):
+        order = "asc" if self.ascending else "desc"
+        return f"{self.name},{order}"

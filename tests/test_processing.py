@@ -1,7 +1,9 @@
 import dataclasses
 import datetime
 import random
+import urllib.parse
 import uuid
+from typing import Any, List, Optional
 from unittest import mock
 
 import pystac
@@ -11,14 +13,16 @@ import requests_mock as req_mock
 
 from tests import helpers
 from tests.fixtures import fixtures_globals as constants
-from up42 import processing
+from up42 import processing, utils
 
 PROCESS_ID = "process-id"
 VALIDATION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/validation"
 COST_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/cost"
 EXECUTION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/execution"
 TITLE = "title"
-ITEM_URL = "https://item-url"
+COLLECTION_ID = str(uuid.uuid4())
+COLLECTION_URL = f"https://collections/{COLLECTION_ID}"
+ITEM_URL = "https://item-url/"
 ITEM = pystac.Item.from_dict(
     {
         "type": "Feature",
@@ -34,7 +38,8 @@ ITEM = pystac.Item.from_dict(
 )
 
 JOB_ID = str(uuid.uuid4())
-GET_JOB_URL = f"{constants.API_HOST}/v2/processing/jobs/{JOB_ID}"
+JOBS_URL = f"{constants.API_HOST}/v2/processing/jobs"
+JOB_URL = f"{JOBS_URL}/{JOB_ID}"
 CREDITS = 1
 ACCOUNT_ID = str(uuid.uuid4())
 DEFINITION = {
@@ -44,12 +49,18 @@ DEFINITION = {
     }
 }
 NOW = datetime.datetime.now()
+INVALID_TITLE_ERROR = processing.ValidationError(name="InvalidTitle", message="title is too long")
 JOB_METADATA: processing.JobMetadata = {
     "processID": PROCESS_ID,
     "jobID": JOB_ID,
     "accountID": ACCOUNT_ID,
     "workspaceID": constants.WORKSPACE_ID,
     "definition": DEFINITION,
+    "results": {
+        "collection": f"{COLLECTION_URL}",
+        "errors": [dataclasses.asdict(INVALID_TITLE_ERROR)],
+    },
+    "creditConsumption": {"credits": CREDITS},
     "status": "created",
     "created": f"{NOW.isoformat()}Z",
     "updated": f"{NOW.isoformat()}Z",
@@ -63,6 +74,9 @@ JOB = processing.Job(
     account_id=ACCOUNT_ID,
     workspace_id=constants.WORKSPACE_ID,
     definition=DEFINITION,
+    collection_url=COLLECTION_URL,
+    errors=[INVALID_TITLE_ERROR],
+    credits=CREDITS,
     status=processing.JobStatus.CREATED,
     created=NOW,
     updated=NOW,
@@ -70,12 +84,11 @@ JOB = processing.Job(
 
 
 @pytest.fixture(autouse=True)
-def workspace():
-    with mock.patch("up42.base.workspace") as workspace_mock:
-        session = requests.Session()
-        session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
-        workspace_mock.auth.session = session
-        yield
+def set_status_raising_session():
+    session = requests.Session()
+    session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
+    processing.Job.session = session  # type: ignore
+    processing.JobTemplate.session = session  # type: ignore
 
 
 class TestCost:
@@ -127,20 +140,19 @@ class TestJobTemplate:
         assert template.errors == {error}
 
     def test_should_be_invalid_if_inputs_are_invalid(self, requests_mock: req_mock.Mocker):
-        error = processing.ValidationError(name="InvalidTitle", message="title is too long")
         requests_mock.post(
             VALIDATION_URL,
             status_code=422,
             json={
                 "title": "Unprocessable Entity",
                 "status": 422,
-                "errors": [dataclasses.asdict(error)],
+                "errors": [dataclasses.asdict(INVALID_TITLE_ERROR)],
             },
             additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
         )
         template = SampleJobTemplate(title=TITLE)
         assert not template.is_valid
-        assert template.errors == {error}
+        assert template.errors == {INVALID_TITLE_ERROR}
 
     def test_fails_to_construct_if_evaluation_fails(self, requests_mock: req_mock.Mocker):
         error_code = random.randint(400, 599)
@@ -280,8 +292,17 @@ class TestMultiItemJobTemplate:
 
 class TestJob:
     def test_should_get_job(self, requests_mock: req_mock.Mocker):
-        requests_mock.get(url=GET_JOB_URL, json=JOB_METADATA)
+        requests_mock.get(url=JOB_URL, json=JOB_METADATA)
         assert processing.Job.get(JOB_ID) == JOB
+
+    def test_should_get_collection(self):
+        stac_client = JOB.stac_client = mock.MagicMock()
+        assert JOB.collection == stac_client.get_collection.return_value
+        stac_client.get_collection.assert_called_with(COLLECTION_ID)
+
+    def test_should_get_no_collection_if_collection_url_is_missing(self):
+        job = dataclasses.replace(JOB, collection_url=None)
+        assert not job.collection
 
     @pytest.mark.parametrize("status", [processing.JobStatus.SUCCESSFUL, processing.JobStatus.FAILED])
     def test_should_track_until_job_finishes(self, requests_mock: req_mock.Mocker, status: processing.JobStatus):
@@ -289,7 +310,7 @@ class TestJob:
         started = NOW + datetime.timedelta(minutes=2)
         finished = NOW + datetime.timedelta(minutes=3)
         requests_mock.get(
-            url=GET_JOB_URL,
+            url=JOB_URL,
             response_list=[
                 {
                     "json": {
@@ -316,7 +337,7 @@ class TestJob:
 
     def test_fails_to_track_if_job_retrieval_fails(self, requests_mock: req_mock.Mocker):
         requests_mock.get(
-            url=GET_JOB_URL,
+            url=JOB_URL,
             status_code=500,
         )
         job = dataclasses.replace(JOB)
@@ -326,10 +347,71 @@ class TestJob:
 
     def test_fails_to_track_if_job_finishes_after_attempts_finished(self, requests_mock: req_mock.Mocker):
         requests_mock.get(
-            url=GET_JOB_URL,
+            url=JOB_URL,
             json=JOB_METADATA,
         )
         job = dataclasses.replace(JOB)
         with pytest.raises(processing.UnfinishedJob):
             job.track(wait=1, retries=2)
         assert requests_mock.call_count == 2
+
+    @pytest.mark.parametrize("process_id", [None, [PROCESS_ID]])
+    @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
+    @pytest.mark.parametrize("status", [None, [processing.JobStatus.CAPTURED]])
+    @pytest.mark.parametrize("min_duration", [None, 1])
+    @pytest.mark.parametrize("max_duration", [None, 10])
+    @pytest.mark.parametrize("sort_by", [None, processing.JobSorting.process_id.desc])
+    def test_should_get_all_jobs(
+        self,
+        requests_mock: req_mock.Mocker,
+        process_id: Optional[List[str]],
+        workspace_id: Optional[str],
+        status: Optional[List[processing.JobStatus]],
+        min_duration: Optional[int],
+        max_duration: Optional[int],
+        sort_by: Optional[utils.SortingField],
+    ):
+        query_params: dict[str, Any] = {}
+        if process_id:
+            query_params["processID"] = process_id
+        if workspace_id:
+            query_params["workspaceID"] = workspace_id
+        if status:
+            query_params["status"] = [entry.value for entry in status]
+        if min_duration:
+            query_params["minDuration"] = min_duration
+        if max_duration:
+            query_params["maxDuration"] = max_duration
+        if sort_by:
+            query_params["sort"] = str(sort_by)
+
+        query = urllib.parse.urlencode(query_params)
+
+        next_page_url = f"{JOBS_URL}/next"
+        requests_mock.get(
+            url=JOBS_URL + (query and f"?{query}"),
+            json={
+                "jobs": [JOB_METADATA] * 3,
+                "links": [{"rel": "next", "href": next_page_url}],
+            },
+        )
+        requests_mock.get(
+            url=next_page_url,
+            json={
+                "jobs": [JOB_METADATA] * 2,
+                "links": [],
+            },
+        )
+        assert (
+            list(
+                processing.Job.all(
+                    process_id=process_id,
+                    workspace_id=workspace_id,
+                    status=status,
+                    min_duration=min_duration,
+                    max_duration=max_duration,
+                    sort_by=sort_by,
+                )
+            )
+            == [JOB] * 5
+        )

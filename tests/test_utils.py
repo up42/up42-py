@@ -275,3 +275,16 @@ def test_read_json_fails_if_path_not_found(str_or_path):
         assert utils.read_json(path_or_dict=str_or_path)
 
     assert str(str_or_path) in str(ex.value)
+
+
+class TestSortingField:
+    @pytest.mark.parametrize("ascending", [True, False])
+    def test_should_provide_directions(self, ascending: bool):
+        field = utils.SortingField(name="name", ascending=ascending)
+        assert field.asc == utils.SortingField(name="name", ascending=True)
+        assert field.desc == utils.SortingField(name="name", ascending=False)
+
+    def test_should_stringify(self):
+        field = utils.SortingField(name="name")
+        assert str(field.asc) == "name,asc"
+        assert str(field.desc) == "name,desc"

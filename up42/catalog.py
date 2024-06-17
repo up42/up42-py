@@ -205,11 +205,6 @@ class Catalog(CatalogBase):
             raise ValueError("Please provide the 'order_parameters' parameter!")
         return order.Order.estimate(self.auth, order_parameters)  # type: ignore
 
-    @utils.deprecation("construct_search_parameters", "0.25.0")
-    def construct_parameters(self, **kwargs):  # pragma: no cover
-        """Deprecated, see construct_search_parameters"""
-        return self.construct_search_parameters(**kwargs)
-
     @staticmethod
     def construct_search_parameters(
         geometry: Union[
