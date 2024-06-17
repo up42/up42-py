@@ -33,39 +33,39 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Jun 17, 2024**
 
-**New Features**
+## New Features
 
-**- Processing Module:**
+### Processing Module:**
 - Introduced the `Job` class for interacting with processing jobs.
 - Implemented job querying capabilities (processing.py).
 - Added a collection attribute to the `Job` class.
 - Introduced processing job tracking.
 
-**- Job Templates:**
+### Job Templates:
 - Created basic single and multi-item processing job templates in templates.py.
 - Enabled job template execution (templates.py).
 - Added specialized templates for `SpaceptAugmentation`, `NSUpsamling`, and `Pansharpening`.
 - Added cost evaluation to the JobTemplate class (number comparison).
 - Implemented `SingleItemJobTemplate` and `MultiItemJobTemplate` helper classes.
 
-**Improvements**
+## Improvements
 
-**- Base Module (formerly main):**
+### Base Module (formerly main):
 - Renamed the `main` module to `base` for clarity.
 - Added descriptors: `Session`, `WorkspaceId`, and `StacClient` to `base` module for improved access within classes.
 
-**- Webhooks:**
+### Webhooks:
 - Refactored webhooks as active records.
 - Consolidated webhook code into a dedicated module/class.
 - Enhanced test coverage for webhooks.
 - Deprecated legacy webhook code.
 
-**Dependencies:**
+## Dependencies:
 - Updated requests to 2.32.0.
 - Relaxed geopandas version constraint to < 1.
 - Upgraded tornado to 6.4.1.
 
-**Bugfixes:**
+## Bugfixes:
 - Enabled deep copy in Up42Auth for compatibility.
 - Fix `tenacity not Found` Error by upgrading `tenacity` dependency.
 - Removed deprecated Catalog::construct_parameters method.
