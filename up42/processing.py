@@ -130,8 +130,8 @@ class Job:
         query_params = {
             key: str(value)
             for key, value in {
-                "workspaceID": workspace_id,
-                "processID": process_id,
+                "workspaceId": workspace_id,
+                "processId": process_id,
                 "status": [entry.value for entry in status] if status else None,
                 "minDuration": min_duration,
                 "maxDuration": max_duration,
