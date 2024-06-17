@@ -318,6 +318,10 @@ class TestJob:
                         "updated": f"{started}Z",
                         "started": f"{started}Z",
                         "status": processing.JobStatus.RUNNING.value,
+                        "results": {
+                            "collection": None,
+                            "errors": None,
+                        },
                     }
                 },
                 {
@@ -333,7 +337,7 @@ class TestJob:
         )
         job = dataclasses.replace(JOB)
         job.track(wait=1, retries=2)
-        assert job.finished == finished and job.started == started and job.updated == updated and job.status == status
+        assert job == dataclasses.replace(JOB, finished=finished, started=started, updated=updated, status=status)
 
     def test_fails_to_track_if_job_retrieval_fails(self, requests_mock: req_mock.Mocker):
         requests_mock.get(
