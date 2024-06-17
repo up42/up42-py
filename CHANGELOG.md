@@ -35,13 +35,13 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **New Features**
 
-**Processing Module:**
+**- Processing Module:**
 - Introduced the Job class for interacting with processing jobs.
 - Implemented job querying capabilities (processing.py).
 - Added a collection attribute to the Job class.
 - Introduced processing job tracking.
 
-**Job Templates:**
+**- Job Templates:**
 - Created basic single and multi-item processing job templates in templates.py.
 - Enabled job template execution (templates.py).
 - Added specialized templates for `SpaceptAugmentation`, `NSUpsamling`, and `Pansharpening`.
@@ -50,11 +50,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Improvements**
 
-**Base Module (formerly main):**
+**- Base Module (formerly main):**
 - Renamed the `main` module to `base` for clarity.
 - Added descriptors: `Session`, `WorkspaceId`, and `StacClient` to `base` module for improved access within classes.
 
-**Webhooks:**
+**- Webhooks:**
 - Refactored webhooks as active records.
 - Consolidated webhook code into a dedicated module/class.
 - Enhanced test coverage for webhooks.
