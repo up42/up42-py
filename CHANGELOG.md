@@ -36,9 +36,9 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **New Features**
 
 **- Processing Module:**
-- Introduced the Job class for interacting with processing jobs.
+- Introduced the `Job` class for interacting with processing jobs.
 - Implemented job querying capabilities (processing.py).
-- Added a collection attribute to the Job class.
+- Added a collection attribute to the `Job` class.
 - Introduced processing job tracking.
 
 **- Job Templates:**
@@ -67,7 +67,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Bugfixes:**
 - Enabled deep copy in Up42Auth for compatibility.
-- Upgraded tenacity.
+- Fix `tenacity not Found` Error by upgrading `tenacity` dependency.
 - Removed unneeded fixtures for webhook tests.
 - Removed deprecated Catalog::construct_parameters method.
 
