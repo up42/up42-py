@@ -68,7 +68,6 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Bugfixes:**
 - Enabled deep copy in Up42Auth for compatibility.
 - Fix `tenacity not Found` Error by upgrading `tenacity` dependency.
-- Removed unneeded fixtures for webhook tests.
 - Removed deprecated Catalog::construct_parameters method.
 
 ## 1.0.4a21
