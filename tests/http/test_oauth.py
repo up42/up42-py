@@ -1,3 +1,4 @@
+import copy
 import dataclasses
 import random
 import time
@@ -65,7 +66,6 @@ class TestUp42Auth:
         up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
         up42_auth(mock_request)
         assert mock_request.headers["Authorization"] == f"Bearer {TOKEN_VALUE}"
-        assert up42_auth.token.access_token == TOKEN_VALUE
         retrieve.assert_called_once()
         assert TOKEN_URL, HTTP_TIMEOUT == retrieve.call_args.args[1:]
 
@@ -77,9 +77,14 @@ class TestUp42Auth:
         up42_auth(mock_request)
 
         assert mock_request.headers["Authorization"] == f"Bearer {second_token}"
-        assert up42_auth.token.access_token == second_token
         assert TOKEN_URL, HTTP_TIMEOUT == retrieve.call_args.args[1:]
         assert retrieve.call_count == 2
+
+    def test_should_deepcopy_itself(self):
+        retrieve = mock.MagicMock(return_value=TOKEN_VALUE)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
+        assert copy.deepcopy(up42_auth) == up42_auth
+        retrieve.assert_called_once()
 
 
 class TestDetectSettings:

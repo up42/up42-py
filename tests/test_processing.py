@@ -377,9 +377,9 @@ class TestJob:
     ):
         query_params: dict[str, Any] = {}
         if process_id:
-            query_params["processID"] = process_id
+            query_params["processId"] = process_id
         if workspace_id:
-            query_params["workspaceID"] = workspace_id
+            query_params["workspaceId"] = workspace_id
         if status:
             query_params["status"] = [entry.value for entry in status]
         if min_duration:

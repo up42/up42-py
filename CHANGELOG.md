@@ -29,6 +29,13 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.0.4a21
+
+**Jun 17, 2024**
+
+- Support deep copy in `Up42Auth` to be compliant with pystac client.
+- Align processing job query parameter names.
+
 ## 1.0.4a20
 
 **Jun 17, 2024**

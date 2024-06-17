@@ -64,7 +64,7 @@ class Up42Auth(requests.auth.AuthBase):
         self._lock = threading.Lock()
 
     def __call__(self, request: requests.PreparedRequest) -> requests.PreparedRequest:
-        request.headers["Authorization"] = f"Bearer {self.token.access_token}"
+        request.headers["Authorization"] = f"Bearer {self._access_token}"
         return request
 
     def _fetch_token(self):
@@ -75,11 +75,17 @@ class Up42Auth(requests.auth.AuthBase):
         return Token(access_token=access_token, expires_on=expires_on)
 
     @property
-    def token(self) -> Token:
+    def _access_token(self) -> Token:
         with self._lock:
             if self._token.has_expired:
                 self._token = self._fetch_token()
-        return self._token
+        return self._token.access_token
+
+    def __deepcopy__(self, memo: dict):
+        # Pystac client deep copies the request modifier this class is used for.
+        # We return the same instance to share authentication settings between
+        # possible parallel calls to avoid multiple token generation.
+        return self
 
 
 def detect_settings(
