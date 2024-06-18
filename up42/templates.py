@@ -85,6 +85,7 @@ class SpaceptAugmentation(processing.SingleItemJobTemplate):
     denoising_factor: int = 0
     colour_denoising_factor: int = 10
     workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    process_id = "augmentation-spacept"
 
     @property
     def inputs(self):
@@ -100,6 +101,7 @@ class NSUpsamling(processing.SingleItemJobTemplate):
     ned: bool = False
     rgb: bool = True
     workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    process_id = "upsampling-ns"
 
     @property
     def inputs(self):
@@ -120,6 +122,7 @@ class GreyWeight:
 class Pansharpening(processing.SingleItemJobTemplate):
     grey_weights: Optional[List[GreyWeight]] = None
     workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    process_id = "pansharpening"
 
     @property
     def inputs(self):
