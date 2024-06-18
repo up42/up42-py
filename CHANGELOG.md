@@ -75,6 +75,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Jun 18, 2024**
 
 - Export `Job` and `JobSorting` in `up42` namespace.
+- Fix missing process ids for processing templates.
+- Rename `templates.py` to `processing_templates.py`.
 
 ## 1.0.4a21
 
