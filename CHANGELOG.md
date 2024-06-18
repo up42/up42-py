@@ -70,6 +70,12 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Fix `tenacity not Found` Error by upgrading `tenacity` dependency.
 - Removed deprecated Catalog::construct_parameters method.
 
+## 1.1.0a1
+
+**Jun 18, 2024**
+
+- Export `Job` and `JobSorting` in `up42` namespace.
+
 ## 1.0.4a21
 
 **Jun 17, 2024**
