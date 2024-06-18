@@ -175,7 +175,7 @@ class Job:
                     (link["href"] for link in page["links"] if link["rel"] == "next"),
                     None,
                 )
-                page = next_page_url and cls.session.get(next_page_url).json()
+                page = next_page_url and cls.session.get(host.endpoint(next_page_url)).json()
 
         for page in get_pages():
             for metadata in page:

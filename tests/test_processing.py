@@ -391,7 +391,7 @@ class TestJob:
 
         query = urllib.parse.urlencode(query_params)
 
-        next_page_url = f"{JOBS_URL}/next"
+        next_page_url = "/v2/processing/jobs/next"
         requests_mock.get(
             url=JOBS_URL + (query and f"?{query}"),
             json={
@@ -400,7 +400,7 @@ class TestJob:
             },
         )
         requests_mock.get(
-            url=next_page_url,
+            url=f"{constants.API_HOST}{next_page_url}",
             json={
                 "jobs": [JOB_METADATA] * 2,
                 "links": [],
