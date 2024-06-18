@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.0a3
+
+**Jun 19, 2024**
+
+- Export `JobStatus` in `up42` namespace.
+
 ## 1.1.0a2
 
 **Jun 18, 2024**
