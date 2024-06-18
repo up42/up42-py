@@ -36,6 +36,7 @@ from up42.initialization import (
     initialize_webhook,
 )
 from up42.order import Order
+from up42.processing import Job, JobSorting
 from up42.storage import Storage
 from up42.tasking import Tasking
 from up42.tools import get_example_aoi, read_vector_file
@@ -69,5 +70,7 @@ __all__ = [
         create_webhook,
         get_webhook_events,
         get_credits_balance,
+        Job,
+        JobSorting,
     ]
 ]

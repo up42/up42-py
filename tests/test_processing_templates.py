@@ -6,7 +6,8 @@ import pystac
 import pytest
 
 from tests.fixtures import fixtures_globals as constants
-from up42 import processing, templates
+from up42 import processing
+from up42 import processing_templates as templates
 
 TITLE = "title"
 ITEM_URL = "https://item-url"
