@@ -262,7 +262,9 @@ class JobTemplate:
 
     def execute(self) -> Job:
         url = host.endpoint(f"/v2/processing/processes/{self.process_id}/execution")
-        job_metadata = self.session.post(url, json={"inputs": self.inputs}).json()
+        job_metadata = self.session.post(
+            url, params={"workspaceId": self.workspace_id}, json={"inputs": self.inputs}
+        ).json()
         return Job.from_metadata(job_metadata)
 
 

@@ -18,7 +18,9 @@ from up42 import processing, utils
 PROCESS_ID = "process-id"
 VALIDATION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/validation"
 COST_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/cost"
-EXECUTION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/execution"
+EXECUTION_URL = (
+    f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/execution?workspaceId={constants.WORKSPACE_ID}"
+)
 TITLE = "title"
 COLLECTION_ID = str(uuid.uuid4())
 COLLECTION_URL = f"https://collections/{COLLECTION_ID}"
@@ -108,6 +110,7 @@ class TestCost:
 class SampleJobTemplate(processing.JobTemplate):
     title: str
     process_id = PROCESS_ID
+    workspace_id = constants.WORKSPACE_ID
 
     @property
     def inputs(self) -> dict:
