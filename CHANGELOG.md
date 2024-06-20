@@ -29,6 +29,15 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.0a6
+
+**Jun 20, 2024**
+
+- Trim nanoseconds in job metadata timestamps since not supported by native Python datetime.
+- Fix processing job tracking to wait until credits are captured or released.
+- Fix multiple status value query parameter to use concatenation with commas.
+- Change default status ordering to descending.
+
 ## 1.1.0a5
 
 **Jun 20, 2024**
