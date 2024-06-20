@@ -50,8 +50,11 @@ DEFINITION = {
         "title": TITLE,
     }
 }
-NOW = datetime.datetime.now()
-NANOSECONDS = "123Z"
+NOW_AS_STR = datetime.datetime.now().isoformat(timespec="milliseconds")
+NOW = datetime.datetime.fromisoformat(NOW_AS_STR)
+
+MICROSECONDS = "123456Z"
+
 INVALID_TITLE_ERROR = processing.ValidationError(name="InvalidTitle", message="title is too long")
 JOB_METADATA: processing.JobMetadata = {
     "processID": PROCESS_ID,
@@ -65,8 +68,8 @@ JOB_METADATA: processing.JobMetadata = {
     },
     "creditConsumption": {"credits": CREDITS},
     "status": "created",
-    "created": f"{NOW.isoformat()}{NANOSECONDS}",
-    "updated": f"{NOW.isoformat()}{NANOSECONDS}",
+    "created": f"{NOW_AS_STR}{MICROSECONDS}",
+    "updated": f"{NOW_AS_STR}{MICROSECONDS}",
     "started": None,
     "finished": None,
 }
@@ -84,6 +87,10 @@ JOB = processing.Job(
     created=NOW,
     updated=NOW,
 )
+
+
+def as_java_timestamp(value: datetime.datetime):
+    return value.isoformat(timespec="milliseconds") + MICROSECONDS
 
 
 @pytest.fixture(autouse=True)
@@ -319,8 +326,8 @@ class TestJob:
                 {
                     "json": {
                         **JOB_METADATA,
-                        "updated": f"{started}{NANOSECONDS}",
-                        "started": f"{started}{NANOSECONDS}",
+                        "updated": as_java_timestamp(started),
+                        "started": as_java_timestamp(started),
                         "status": processing.JobStatus.RUNNING.value,
                         "results": {
                             "collection": None,
@@ -331,9 +338,9 @@ class TestJob:
                 {
                     "json": {
                         **JOB_METADATA,
-                        "updated": f"{updated}{NANOSECONDS}",
-                        "started": f"{started}{NANOSECONDS}",
-                        "finished": f"{finished}{NANOSECONDS}",
+                        "updated": as_java_timestamp(updated),
+                        "started": as_java_timestamp(started),
+                        "finished": as_java_timestamp(finished),
                         "status": status.value,
                     }
                 },
@@ -363,7 +370,7 @@ class TestJob:
             job.track(wait=1, retries=2)
         assert requests_mock.call_count == 2
 
-    @pytest.mark.parametrize("process_id", [None, [PROCESS_ID]])
+    @pytest.mark.parametrize("process_id", [None, [PROCESS_ID, "another-id"]])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize("status", [None, random.choices(list(processing.JobStatus), k=2)])
     @pytest.mark.parametrize("min_duration", [None, 1])
@@ -381,7 +388,7 @@ class TestJob:
     ):
         query_params: dict[str, Any] = {}
         if process_id:
-            query_params["processId"] = process_id
+            query_params["processId"] = ",".join(process_id)
         if workspace_id:
             query_params["workspaceId"] = workspace_id
         if status:

@@ -29,6 +29,14 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.0a7
+
+**Jun 20, 2024**
+
+- Trim off milliseconds in job metadata timestamps to avoid rounding errors.
+- Fix multiple process id value query parameter to use concatenation with commas.
+- Change default created and credits ordering as descending.
+
 ## 1.1.0a6
 
 **Jun 20, 2024**

@@ -10,7 +10,7 @@ import tenacity as tnc
 
 from up42 import base, host, utils
 
-ISO_FORMAT_LENGTH = 26
+ISO_FORMAT_LENGTH = 23  # precision including milliseconds
 
 
 @dataclasses.dataclass(frozen=True)
@@ -60,8 +60,8 @@ class UnfinishedJob(Exception):
 class JobSorting:
     process_id = utils.SortingField("processID")
     status = utils.SortingField("status", ascending=False)
-    created = utils.SortingField("created")
-    credits = utils.SortingField("creditConsumption.credits")
+    created = utils.SortingField("created", ascending=False)
+    credits = utils.SortingField("creditConsumption.credits", ascending=False)
 
 
 def _to_datetime(value: Optional[str]):
@@ -159,7 +159,7 @@ class Job:
             key: str(value)
             for key, value in {
                 "workspaceId": workspace_id,
-                "processId": process_id,
+                "processId": ",".join(process_id) if process_id else None,
                 "status": ",".join(entry.value for entry in status) if status else None,
                 "minDuration": min_duration,
                 "maxDuration": max_duration,
