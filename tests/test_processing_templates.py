@@ -29,16 +29,16 @@ class TestParameterlessTemplates:
     @pytest.mark.parametrize(
         "template_class",
         [
-            templates.SpaceptBuildingsDetection,
-            templates.SpaceptTreesDetection,
-            templates.SpaceptTreeHeightsDetection,
-            templates.SpaceptShadowsDetection,
-            templates.AirbusShipsDetection,
-            templates.AirbusStorageTanksDetection,
-            templates.AirbusWindTurbinesDetection,
-            templates.OrbitalInsightCarsDetection,
-            templates.OrbitalInsightAircraftDetection,
-            templates.OrbitalInsightTrucksDetection,
+            templates.DetectionBuildingsSpacept,
+            templates.DetectionTreesSpacept,
+            templates.DetectionTreesHeightsSpacept,
+            templates.DetectionShadowsSpacept,
+            templates.DetectionShipsAirbus,
+            templates.DetectionStorageTanksAirbus,
+            templates.DetectionWindTurbinesAirbus,
+            templates.DetectionCarsOI,
+            templates.DetectionAircraftOI,
+            templates.DetectionTrucksOI,
         ],
     )
     def test_should_construct_single_item_job_templates(self, template_class):
@@ -49,9 +49,9 @@ class TestParameterlessTemplates:
     @pytest.mark.parametrize(
         "template_class",
         [
-            templates.SpaceptChangeDetection,
-            templates.HypervergePleiadesChangeDetection,
-            templates.HypervergeSpotChangeDetection,
+            templates.DetectionChangeSpacept,
+            templates.DetectionChangePleiadesHyperverge,
+            templates.DetectionChangeSPOTHyperverge,
         ],
     )
     def test_should_construct_multi_item_template(self, template_class):
@@ -64,7 +64,7 @@ class TestSpaceptAugmentation:
     def test_should_construct_template(self):
         denoising_factor = random.randint(0, 100)
         colour_denoising_factor = random.randint(0, 100)
-        template = templates.SpaceptAugmentation(
+        template = templates.AugmentationSpacept(
             title=TITLE,
             item=item,
             denoising_factor=denoising_factor,
@@ -83,7 +83,7 @@ class TestSpaceptAugmentation:
 class TestNSUpsampling:
     def test_should_construct_template(self):
         ned, rgb = random.choices([True, False], k=2)
-        template = templates.NSUpsamling(
+        template = templates.UpsamplingNS(
             title=TITLE,
             item=item,
             ned=ned,
