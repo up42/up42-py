@@ -16,72 +16,72 @@ class WorkspaceIdMultiItemTemplate(processing.MultiItemJobTemplate):
 
 
 @dataclasses.dataclass
-class SpaceptBuildingsDetection(WorkspaceIdSingleItemTemplate):
+class DetectionBuildingsSpacept(WorkspaceIdSingleItemTemplate):
     process_id = "detection-buildings-spacept"
 
 
 @dataclasses.dataclass
-class SpaceptTreesDetection(WorkspaceIdSingleItemTemplate):
+class DetectionTreesSpacept(WorkspaceIdSingleItemTemplate):
     process_id = "detection-trees-spacept"
 
 
 @dataclasses.dataclass
-class SpaceptTreeHeightsDetection(WorkspaceIdSingleItemTemplate):
+class DetectionTreesHeightsSpacept(WorkspaceIdSingleItemTemplate):
     process_id = "detection-trees-heights-spacept"
 
 
 @dataclasses.dataclass
-class SpaceptShadowsDetection(WorkspaceIdSingleItemTemplate):
+class DetectionShadowsSpacept(WorkspaceIdSingleItemTemplate):
     process_id = "detection-shadows-spacept"
 
 
 @dataclasses.dataclass
-class AirbusShipsDetection(WorkspaceIdSingleItemTemplate):
+class DetectionShipsAirbus(WorkspaceIdSingleItemTemplate):
     process_id = "detection-ships-airbus"
 
 
 @dataclasses.dataclass
-class AirbusWindTurbinesDetection(WorkspaceIdSingleItemTemplate):
+class DetectionWindTurbinesAirbus(WorkspaceIdSingleItemTemplate):
     process_id = "detection-wind-turbines-airbus"
 
 
 @dataclasses.dataclass
-class AirbusStorageTanksDetection(WorkspaceIdSingleItemTemplate):
+class DetectionStorageTanksAirbus(WorkspaceIdSingleItemTemplate):
     process_id = "detection-storage-tanks-airbus"
 
 
 @dataclasses.dataclass
-class OrbitalInsightTrucksDetection(WorkspaceIdSingleItemTemplate):
+class DetectionTrucksOI(WorkspaceIdSingleItemTemplate):
     process_id = "detection-trucks-oi"
 
 
 @dataclasses.dataclass
-class OrbitalInsightCarsDetection(WorkspaceIdSingleItemTemplate):
+class DetectionCarsOI(WorkspaceIdSingleItemTemplate):
     process_id = "detection-cars-oi"
 
 
 @dataclasses.dataclass
-class OrbitalInsightAircraftDetection(WorkspaceIdSingleItemTemplate):
+class DetectionAircraftOI(WorkspaceIdSingleItemTemplate):
     process_id = "detection-aircraft-oi"
 
 
 @dataclasses.dataclass
-class SpaceptChangeDetection(WorkspaceIdMultiItemTemplate):
+class DetectionChangeSpacept(WorkspaceIdMultiItemTemplate):
     process_id = "detection-change-spacept"
 
 
 @dataclasses.dataclass
-class HypervergePleiadesChangeDetection(WorkspaceIdMultiItemTemplate):
+class DetectionChangePleiadesHyperverge(WorkspaceIdMultiItemTemplate):
     process_id = "detection-change-pleiades-hyperverge"
 
 
 @dataclasses.dataclass
-class HypervergeSpotChangeDetection(WorkspaceIdMultiItemTemplate):
+class DetectionChangeSPOTHyperverge(WorkspaceIdMultiItemTemplate):
     process_id = "detection-change-spot-hyperverge"
 
 
 @dataclasses.dataclass
-class SpaceptAugmentation(processing.SingleItemJobTemplate):
+class AugmentationSpacept(processing.SingleItemJobTemplate):
     denoising_factor: int = 0
     colour_denoising_factor: int = 10
     workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
@@ -97,7 +97,7 @@ class SpaceptAugmentation(processing.SingleItemJobTemplate):
 
 
 @dataclasses.dataclass
-class NSUpsamling(processing.SingleItemJobTemplate):
+class UpsamplingNS(processing.SingleItemJobTemplate):
     ned: bool = False
     rgb: bool = True
     workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
