@@ -51,6 +51,7 @@ DEFINITION = {
     }
 }
 NOW = datetime.datetime.now()
+NANOSECONDS = "123Z"
 INVALID_TITLE_ERROR = processing.ValidationError(name="InvalidTitle", message="title is too long")
 JOB_METADATA: processing.JobMetadata = {
     "processID": PROCESS_ID,
@@ -64,8 +65,8 @@ JOB_METADATA: processing.JobMetadata = {
     },
     "creditConsumption": {"credits": CREDITS},
     "status": "created",
-    "created": f"{NOW.isoformat()}Z",
-    "updated": f"{NOW.isoformat()}Z",
+    "created": f"{NOW.isoformat()}{NANOSECONDS}",
+    "updated": f"{NOW.isoformat()}{NANOSECONDS}",
     "started": None,
     "finished": None,
 }
@@ -307,7 +308,7 @@ class TestJob:
         job = dataclasses.replace(JOB, collection_url=None)
         assert not job.collection
 
-    @pytest.mark.parametrize("status", [processing.JobStatus.SUCCESSFUL, processing.JobStatus.FAILED])
+    @pytest.mark.parametrize("status", [processing.JobStatus.CAPTURED, processing.JobStatus.RELEASED])
     def test_should_track_until_job_finishes(self, requests_mock: req_mock.Mocker, status: processing.JobStatus):
         updated = NOW + datetime.timedelta(minutes=4)
         started = NOW + datetime.timedelta(minutes=2)
@@ -318,8 +319,8 @@ class TestJob:
                 {
                     "json": {
                         **JOB_METADATA,
-                        "updated": f"{started}Z",
-                        "started": f"{started}Z",
+                        "updated": f"{started}{NANOSECONDS}",
+                        "started": f"{started}{NANOSECONDS}",
                         "status": processing.JobStatus.RUNNING.value,
                         "results": {
                             "collection": None,
@@ -330,9 +331,9 @@ class TestJob:
                 {
                     "json": {
                         **JOB_METADATA,
-                        "updated": f"{updated}Z",
-                        "started": f"{started}Z",
-                        "finished": f"{finished}Z",
+                        "updated": f"{updated}{NANOSECONDS}",
+                        "started": f"{started}{NANOSECONDS}",
+                        "finished": f"{finished}{NANOSECONDS}",
                         "status": status.value,
                     }
                 },
@@ -364,7 +365,7 @@ class TestJob:
 
     @pytest.mark.parametrize("process_id", [None, [PROCESS_ID]])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
-    @pytest.mark.parametrize("status", [None, [processing.JobStatus.CAPTURED]])
+    @pytest.mark.parametrize("status", [None, random.choices(list(processing.JobStatus), k=2)])
     @pytest.mark.parametrize("min_duration", [None, 1])
     @pytest.mark.parametrize("max_duration", [None, 10])
     @pytest.mark.parametrize("sort_by", [None, processing.JobSorting.process_id.desc])
@@ -384,7 +385,7 @@ class TestJob:
         if workspace_id:
             query_params["workspaceId"] = workspace_id
         if status:
-            query_params["status"] = [entry.value for entry in status]
+            query_params["status"] = ",".join(entry.value for entry in status)
         if min_duration:
             query_params["minDuration"] = min_duration
         if max_duration:
