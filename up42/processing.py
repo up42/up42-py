@@ -10,6 +10,8 @@ import tenacity as tnc
 
 from up42 import base, host, utils
 
+ISO_FORMAT_LENGTH = 26
+
 
 @dataclasses.dataclass(frozen=True)
 class ValidationError:
@@ -57,13 +59,13 @@ class UnfinishedJob(Exception):
 
 class JobSorting:
     process_id = utils.SortingField("processID")
-    status = utils.SortingField("status")
+    status = utils.SortingField("status", ascending=False)
     created = utils.SortingField("created")
     credits = utils.SortingField("creditConsumption.credits")
 
 
 def _to_datetime(value: Optional[str]):
-    return value and datetime.datetime.fromisoformat(value.rstrip("Z"))
+    return value and datetime.datetime.fromisoformat(value[:ISO_FORMAT_LENGTH])
 
 
 @dataclasses.dataclass
@@ -129,7 +131,7 @@ class Job:
             self.collection_url = job.collection_url
             self.errors = job.errors
             self.credits = job.credits
-            if self.status not in [JobStatus.SUCCESSFUL, JobStatus.FAILED]:
+            if self.status not in [JobStatus.CAPTURED, JobStatus.RELEASED]:
                 raise UnfinishedJob
 
         update()
@@ -150,7 +152,7 @@ class Job:
         max_duration: Optional[int] = None,
         sort_by: Optional[utils.SortingField] = None,
         *,
-        # used only for performance tuning and testing only
+        # used for performance tuning and testing only
         page_size: Optional[int] = None,
     ) -> Iterator["Job"]:
         query_params = {
@@ -158,7 +160,7 @@ class Job:
             for key, value in {
                 "workspaceId": workspace_id,
                 "processId": process_id,
-                "status": [entry.value for entry in status] if status else None,
+                "status": ",".join(entry.value for entry in status) if status else None,
                 "minDuration": min_duration,
                 "maxDuration": max_duration,
                 "limit": page_size,
