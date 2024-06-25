@@ -33,12 +33,9 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Jun 25, 2024**
 
-### New Features
-
-- `JobStatus` and `Job` classes now available in `up42` namespace.
-
 ### Changes
 
+- `Job`, `JobSorting` and `JobStatus` classes now available in `up42` namespace.
 - Change default created and credits ordering as descending.
 - Change default status ordering to descending.
 - Rename `templates.py` to `processing_templates.py`.
