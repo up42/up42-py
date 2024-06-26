@@ -13,8 +13,11 @@ from up42.http import config, oauth
 HTTP_TIMEOUT = 10
 TOKEN_VALUE = "some-token"
 TOKEN_URL = "https://localhost/oauth/token"
-account_credentials = config.AccountCredentialsSettings(
-    username="some-user", password="some-pass"
+account_credentials = config.AccountCredentialsSettings(username="some-user", password="some-pass")
+token_settings = config.TokenProviderSettings(
+    token_url=TOKEN_URL,
+    duration=2,
+    timeout=HTTP_TIMEOUT,
 )
 
 
@@ -38,7 +41,7 @@ class TestAccountTokenRetriever:
             },
             additional_matcher=match_account_authentication_request_body,
         )
-        assert retrieve(requests.Session(), TOKEN_URL, HTTP_TIMEOUT) == TOKEN_VALUE
+        assert retrieve(requests.Session(), token_settings) == TOKEN_VALUE
         assert requests_mock.called_once
 
     def test_fails_to_retrieve_for_bad_response(self, requests_mock: req_mock.Mocker):
@@ -52,17 +55,12 @@ class TestAccountTokenRetriever:
             additional_matcher=match_account_authentication_request_body,
         )
         with pytest.raises(oauth.WrongCredentials):
-            retrieve(requests.Session(), TOKEN_URL, HTTP_TIMEOUT)
+            retrieve(requests.Session(), token_settings)
         assert requests_mock.called_once
 
 
 mock_request = mock.MagicMock()
 mock_request.headers = {}
-token_settings = config.TokenProviderSettings(
-    token_url=TOKEN_URL,
-    duration=2,
-    timeout=HTTP_TIMEOUT,
-)
 
 
 class TestUp42Auth:
@@ -72,7 +70,7 @@ class TestUp42Auth:
         up42_auth(mock_request)
         assert mock_request.headers["Authorization"] == f"Bearer {TOKEN_VALUE}"
         retrieve.assert_called_once()
-        assert TOKEN_URL, HTTP_TIMEOUT == retrieve.call_args.args[1:]
+        assert token_settings == retrieve.call_args.args[1]
 
     def test_should_fetch_token_when_expired(self):
         second_token = "token2"
@@ -82,7 +80,7 @@ class TestUp42Auth:
         up42_auth(mock_request)
 
         assert mock_request.headers["Authorization"] == f"Bearer {second_token}"
-        assert TOKEN_URL, HTTP_TIMEOUT == retrieve.call_args.args[1:]
+        assert token_settings == retrieve.call_args.args[1]
         assert retrieve.call_count == 2
 
     def test_should_deepcopy_itself(self):
@@ -94,10 +92,7 @@ class TestUp42Auth:
 
 class TestDetectSettings:
     def test_should_detect_account_credentials(self):
-        assert (
-            oauth.detect_settings(dataclasses.asdict(account_credentials))
-            == account_credentials
-        )
+        assert oauth.detect_settings(dataclasses.asdict(account_credentials)) == account_credentials
 
     def test_should_accept_empty_credentials(self):
         credentials = {"username": None, "password": None}
@@ -119,9 +114,7 @@ class TestDetectSettings:
 
 class TestDetectRetriever:
     def test_should_detect_account_retriever(self):
-        assert isinstance(
-            oauth.detect_retriever(account_credentials), oauth.AccountTokenRetriever
-        )
+        assert isinstance(oauth.detect_retriever(account_credentials), oauth.AccountTokenRetriever)
 
     def test_fails_if_settings_are_not_recognized(self):
         credentials = mock.MagicMock()

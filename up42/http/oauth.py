@@ -9,6 +9,7 @@ from up42.http import config, http_adapter
 
 CLIENT_ID = "up42-sdk"
 
+
 @dc.dataclass(eq=True, frozen=True)
 class Token:
     access_token: str
@@ -20,7 +21,7 @@ class Token:
 
 
 class TokenRetriever(Protocol):
-    def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
+    def __call__(self, session: requests.Session, settings: config.TokenProviderSettings) -> str:
         ...
 
 
@@ -29,7 +30,7 @@ class AccountTokenRetriever:
         self.username = settings.username
         self.password = settings.password
 
-    def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
+    def __call__(self, session: requests.Session, settings: config.TokenProviderSettings) -> str:
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
         }
@@ -40,10 +41,10 @@ class AccountTokenRetriever:
             "client_id": CLIENT_ID,
         }
         response = session.post(
-            url=token_url,
+            url=settings.token_url,
             data=body,
             headers=headers,
-            timeout=timeout,
+            timeout=settings.timeout,
         )
         if response.ok:
             return response.json()["access_token"]
@@ -60,6 +61,7 @@ class Up42Auth(requests.auth.AuthBase):
         self.token_url = token_settings.token_url
         self.duration = token_settings.duration
         self.timeout = token_settings.timeout
+        self.token_settings = token_settings
         self.adapter = create_adapter(include_post=True)
         self.retrieve = retrieve
         self._token = self._fetch_token()
@@ -72,7 +74,7 @@ class Up42Auth(requests.auth.AuthBase):
     def _fetch_token(self):
         session = requests.Session()
         session.mount("https://", self.adapter)
-        access_token = self.retrieve(session, self.token_url, self.timeout)
+        access_token = self.retrieve(session, self.token_settings)
         expires_on = dt.datetime.now() + dt.timedelta(seconds=self.duration)
         return Token(access_token=access_token, expires_on=expires_on)
 
