@@ -53,7 +53,7 @@ class Auth:
             password: Password for the UP42 console login.
         """
         credential_sources = get_credential_sources(cfg_file, username, password)
-        self.client = create_client(credential_sources, host.endpoint("/oauth/token"))
+        self.client = create_client(credential_sources, host.token_endpoint())
         logger.info("Authentication with UP42 successful!")
 
     @property

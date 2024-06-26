@@ -1,5 +1,6 @@
 TOKEN = "token_123"
 API_HOST = "https://api.up42.com"
+TOKEN_ENDPOINT = "https://auth.up42.com/realms/public/protocol/openid-connect/token"
 DOWNLOAD_URL = "http://up42.api.com/abcdef.tgz"
 DOWNLOAD_URL2 = (
     "https://storage.googleapis.com/user-storage-interstellar-prod/workspace/"

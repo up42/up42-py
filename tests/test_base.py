@@ -7,7 +7,6 @@ import pytest
 import requests_mock as req_mock
 
 from up42 import base
-
 from .fixtures import fixtures_globals as constants
 
 
@@ -19,7 +18,7 @@ class TestWorkspace:
             _ = base.workspace.id
 
     def test_should_authenticate(self, requests_mock):
-        requests_mock.post("https://api.up42.com/oauth/token", json={"access_token": constants.TOKEN})
+        requests_mock.post(constants.TOKEN_ENDPOINT, json={"access_token": constants.TOKEN})
         requests_mock.get(
             url="https://api.up42.com/users/me",
             json={"data": {"id": constants.WORKSPACE_ID}},
