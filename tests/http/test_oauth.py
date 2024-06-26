@@ -1,5 +1,6 @@
 import copy
 import dataclasses
+import datetime
 import random
 import time
 
@@ -19,6 +20,19 @@ token_settings = config.TokenProviderSettings(
     duration=2,
     timeout=HTTP_TIMEOUT,
 )
+NOW = datetime.datetime.now()
+
+TOKEN = oauth.Token(
+    access_token=TOKEN_VALUE,
+    expires_on=NOW + datetime.timedelta(seconds=token_settings.duration),
+)
+
+
+@pytest.fixture
+def freeze_time():
+    with mock.patch("datetime.datetime") as mock_datetime:
+        mock_datetime.now.return_value = NOW
+        yield
 
 
 def match_account_authentication_request_body(request):
@@ -31,6 +45,7 @@ def match_account_authentication_request_body(request):
 
 
 class TestAccountTokenRetriever:
+    @pytest.mark.usefixtures("freeze_time")
     def test_should_retrieve(self, requests_mock: req_mock.Mocker):
         retrieve = oauth.AccountTokenRetriever(account_credentials)
         requests_mock.post(
@@ -41,7 +56,7 @@ class TestAccountTokenRetriever:
             },
             additional_matcher=match_account_authentication_request_body,
         )
-        assert retrieve(requests.Session(), token_settings) == TOKEN_VALUE
+        assert retrieve(requests.Session(), token_settings) == TOKEN
         assert requests_mock.called_once
 
     def test_fails_to_retrieve_for_bad_response(self, requests_mock: req_mock.Mocker):
@@ -65,7 +80,7 @@ mock_request.headers = {}
 
 class TestUp42Auth:
     def test_should_fetch_token_when_created(self):
-        retrieve = mock.MagicMock(return_value=TOKEN_VALUE)
+        retrieve = mock.MagicMock(return_value=TOKEN)
         up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
         up42_auth(mock_request)
         assert mock_request.headers["Authorization"] == f"Bearer {TOKEN_VALUE}"
@@ -73,18 +88,18 @@ class TestUp42Auth:
         assert token_settings == retrieve.call_args.args[1]
 
     def test_should_fetch_token_when_expired(self):
-        second_token = "token2"
-        retrieve = mock.MagicMock(side_effect=["token1", second_token])
+        second_token = oauth.Token(access_token="token2", expires_on=NOW + datetime.timedelta(days=1))
+        retrieve = mock.MagicMock(side_effect=[TOKEN, second_token])
         up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
         time.sleep(token_settings.duration + 1)
         up42_auth(mock_request)
 
-        assert mock_request.headers["Authorization"] == f"Bearer {second_token}"
+        assert mock_request.headers["Authorization"] == f"Bearer {second_token.access_token}"
         assert token_settings == retrieve.call_args.args[1]
         assert retrieve.call_count == 2
 
     def test_should_deepcopy_itself(self):
-        retrieve = mock.MagicMock(return_value=TOKEN_VALUE)
+        retrieve = mock.MagicMock(return_value=TOKEN)
         up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
         assert copy.deepcopy(up42_auth) == up42_auth
         retrieve.assert_called_once()

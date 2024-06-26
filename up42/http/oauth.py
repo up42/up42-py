@@ -21,7 +21,7 @@ class Token:
 
 
 class TokenRetriever(Protocol):
-    def __call__(self, session: requests.Session, settings: config.TokenProviderSettings) -> str:
+    def __call__(self, session: requests.Session, settings: config.TokenProviderSettings) -> Token:
         ...
 
 
@@ -30,7 +30,7 @@ class AccountTokenRetriever:
         self.username = settings.username
         self.password = settings.password
 
-    def __call__(self, session: requests.Session, settings: config.TokenProviderSettings) -> str:
+    def __call__(self, session: requests.Session, settings: config.TokenProviderSettings) -> Token:
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
         }
@@ -47,7 +47,9 @@ class AccountTokenRetriever:
             timeout=settings.timeout,
         )
         if response.ok:
-            return response.json()["access_token"]
+            access_token = response.json()["access_token"]
+            expires_on = dt.datetime.now() + dt.timedelta(seconds=settings.duration)
+            return Token(access_token=access_token, expires_on=expires_on)
         raise WrongCredentials
 
 
@@ -58,9 +60,6 @@ class Up42Auth(requests.auth.AuthBase):
         token_settings: config.TokenProviderSettings,
         create_adapter=http_adapter.create,
     ):
-        self.token_url = token_settings.token_url
-        self.duration = token_settings.duration
-        self.timeout = token_settings.timeout
         self.token_settings = token_settings
         self.adapter = create_adapter(include_post=True)
         self.retrieve = retrieve
@@ -74,9 +73,7 @@ class Up42Auth(requests.auth.AuthBase):
     def _fetch_token(self):
         session = requests.Session()
         session.mount("https://", self.adapter)
-        access_token = self.retrieve(session, self.token_settings)
-        expires_on = dt.datetime.now() + dt.timedelta(seconds=self.duration)
-        return Token(access_token=access_token, expires_on=expires_on)
+        return self.retrieve(session, self.token_settings)
 
     @property
     def _access_token(self) -> Token:
