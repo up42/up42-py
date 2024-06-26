@@ -13,12 +13,17 @@ from up42.http import config, oauth
 HTTP_TIMEOUT = 10
 TOKEN_VALUE = "some-token"
 TOKEN_URL = "https://localhost/oauth/token"
-account_credentials = config.AccountCredentialsSettings(username="some-user", password="some-pass")
+account_credentials = config.AccountCredentialsSettings(
+    username="some-user", password="some-pass"
+)
 
 
 def match_account_authentication_request_body(request):
     return request.text == (
-        "grant_type=password&" f"username={account_credentials.username}&" f"password={account_credentials.password}"
+        "grant_type=password&"
+        f"username={account_credentials.username}&"
+        f"password={account_credentials.password}&"
+        f"client_id={oauth.CLIENT_ID}"
     )
 
 
@@ -89,7 +94,10 @@ class TestUp42Auth:
 
 class TestDetectSettings:
     def test_should_detect_account_credentials(self):
-        assert oauth.detect_settings(dataclasses.asdict(account_credentials)) == account_credentials
+        assert (
+            oauth.detect_settings(dataclasses.asdict(account_credentials))
+            == account_credentials
+        )
 
     def test_should_accept_empty_credentials(self):
         credentials = {"username": None, "password": None}
@@ -111,7 +119,9 @@ class TestDetectSettings:
 
 class TestDetectRetriever:
     def test_should_detect_account_retriever(self):
-        assert isinstance(oauth.detect_retriever(account_credentials), oauth.AccountTokenRetriever)
+        assert isinstance(
+            oauth.detect_retriever(account_credentials), oauth.AccountTokenRetriever
+        )
 
     def test_fails_if_settings_are_not_recognized(self):
         credentials = mock.MagicMock()

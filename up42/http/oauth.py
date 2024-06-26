@@ -7,6 +7,7 @@ import requests
 
 from up42.http import config, http_adapter
 
+CLIENT_ID = "up42-sdk"
 
 @dc.dataclass(eq=True, frozen=True)
 class Token:
@@ -36,6 +37,7 @@ class AccountTokenRetriever:
             "grant_type": "password",
             "username": self.username,
             "password": self.password,
+            "client_id": CLIENT_ID,
         }
         response = session.post(
             url=token_url,
