@@ -1,9 +1,6 @@
 (insert scope and description here)
 
-Items:
-* [ ] Implemented (new) unit tests
-* [ ] Updated [documentation](sdk.up42.com)
-
-For release:
+Checklist:
+* [ ] Test coverage
 * [ ] Bumped version
 * [ ] Added changelog

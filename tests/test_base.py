@@ -7,6 +7,7 @@ import pytest
 import requests_mock as req_mock
 
 from up42 import base
+
 from .fixtures import fixtures_globals as constants
 
 
