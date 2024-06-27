@@ -1,6 +1,6 @@
-(insert scope and description here)
+See changelog.
 
 Checklist:
 * [ ] Test coverage
-* [ ] Bumped version
-* [ ] Added changelog
+* [ ] Version bump
+* [ ] Changelog update

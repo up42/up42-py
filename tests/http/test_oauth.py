@@ -14,7 +14,7 @@ from up42.http import config, oauth
 HTTP_TIMEOUT = 10
 TOKEN_VALUE = "some-token"
 TOKEN_URL = "https://localhost/oauth/token"
-TOKEN_EXPIRES_IN = 2
+TOKEN_EXPIRES_IN = 3
 ACCOUNT_CREDENTIALS = config.AccountCredentialsSettings(username="some-user", password="some-pass")
 TOKEN_SETTINGS = config.TokenProviderSettings(token_url=TOKEN_URL, timeout=HTTP_TIMEOUT, expiry_offset=1)
 NOW = datetime.datetime.now()
