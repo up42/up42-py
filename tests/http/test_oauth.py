@@ -14,17 +14,13 @@ from up42.http import config, oauth
 HTTP_TIMEOUT = 10
 TOKEN_VALUE = "some-token"
 TOKEN_URL = "https://localhost/oauth/token"
-account_credentials = config.AccountCredentialsSettings(username="some-user", password="some-pass")
-token_settings = config.TokenProviderSettings(
-    token_url=TOKEN_URL,
-    duration=2,
-    timeout=HTTP_TIMEOUT,
-)
+TOKEN_EXPIRES_IN = 2
+ACCOUNT_CREDENTIALS = config.AccountCredentialsSettings(username="some-user", password="some-pass")
+TOKEN_SETTINGS = config.TokenProviderSettings(token_url=TOKEN_URL, timeout=HTTP_TIMEOUT, expiry_offset=1)
 NOW = datetime.datetime.now()
-
 TOKEN = oauth.Token(
     access_token=TOKEN_VALUE,
-    expires_on=NOW + datetime.timedelta(seconds=token_settings.duration),
+    expires_on=NOW + datetime.timedelta(seconds=TOKEN_EXPIRES_IN - TOKEN_SETTINGS.expiry_offset),
 )
 
 
@@ -38,8 +34,8 @@ def freeze_time():
 def match_account_authentication_request_body(request):
     return request.text == (
         "grant_type=password&"
-        f"username={account_credentials.username}&"
-        f"password={account_credentials.password}&"
+        f"username={ACCOUNT_CREDENTIALS.username}&"
+        f"password={ACCOUNT_CREDENTIALS.password}&"
         f"client_id={oauth.CLIENT_ID}"
     )
 
@@ -47,23 +43,20 @@ def match_account_authentication_request_body(request):
 class TestAccountTokenRetriever:
     @pytest.mark.usefixtures("freeze_time")
     def test_should_retrieve(self, requests_mock: req_mock.Mocker):
-        retrieve = oauth.AccountTokenRetriever(account_credentials)
+        retrieve = oauth.AccountTokenRetriever(ACCOUNT_CREDENTIALS)
         requests_mock.post(
             TOKEN_URL,
-            json={"access_token": TOKEN_VALUE},
+            json={"access_token": TOKEN_VALUE, "expires_in": TOKEN_EXPIRES_IN},
             request_headers={
                 "Content-Type": "application/x-www-form-urlencoded",
             },
             additional_matcher=match_account_authentication_request_body,
         )
-        assert retrieve(requests.Session(), token_settings) == oauth.Token(
-            access_token=TOKEN_VALUE,
-            expires_on=NOW + datetime.timedelta(seconds=token_settings.duration - token_settings.expiry_offset),
-        )
+        assert retrieve(requests.Session(), TOKEN_SETTINGS) == TOKEN
         assert requests_mock.called_once
 
     def test_fails_to_retrieve_for_bad_response(self, requests_mock: req_mock.Mocker):
-        retrieve = oauth.AccountTokenRetriever(account_credentials)
+        retrieve = oauth.AccountTokenRetriever(ACCOUNT_CREDENTIALS)
         requests_mock.post(
             TOKEN_URL,
             status_code=random.randint(400, 599),
@@ -73,7 +66,7 @@ class TestAccountTokenRetriever:
             additional_matcher=match_account_authentication_request_body,
         )
         with pytest.raises(oauth.WrongCredentials):
-            retrieve(requests.Session(), token_settings)
+            retrieve(requests.Session(), TOKEN_SETTINGS)
         assert requests_mock.called_once
 
 
@@ -84,33 +77,33 @@ mock_request.headers = {}
 class TestUp42Auth:
     def test_should_fetch_token_when_created(self):
         retrieve = mock.MagicMock(return_value=TOKEN)
-        up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=TOKEN_SETTINGS)
         up42_auth(mock_request)
         assert mock_request.headers["Authorization"] == f"Bearer {TOKEN_VALUE}"
         retrieve.assert_called_once()
-        assert token_settings == retrieve.call_args.args[1]
+        assert TOKEN_SETTINGS == retrieve.call_args.args[1]
 
     def test_should_fetch_token_when_expired(self):
         second_token = oauth.Token(access_token="token2", expires_on=NOW + datetime.timedelta(days=1))
         retrieve = mock.MagicMock(side_effect=[TOKEN, second_token])
-        up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
-        time.sleep(token_settings.duration + 1)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=TOKEN_SETTINGS)
+        time.sleep(TOKEN_EXPIRES_IN)
         up42_auth(mock_request)
 
         assert mock_request.headers["Authorization"] == f"Bearer {second_token.access_token}"
-        assert token_settings == retrieve.call_args.args[1]
+        assert TOKEN_SETTINGS == retrieve.call_args.args[1]
         assert retrieve.call_count == 2
 
     def test_should_deepcopy_itself(self):
         retrieve = mock.MagicMock(return_value=TOKEN)
-        up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=token_settings)
+        up42_auth = oauth.Up42Auth(retrieve=retrieve, token_settings=TOKEN_SETTINGS)
         assert copy.deepcopy(up42_auth) == up42_auth
         retrieve.assert_called_once()
 
 
 class TestDetectSettings:
     def test_should_detect_account_credentials(self):
-        assert oauth.detect_settings(dataclasses.asdict(account_credentials)) == account_credentials
+        assert oauth.detect_settings(dataclasses.asdict(ACCOUNT_CREDENTIALS)) == ACCOUNT_CREDENTIALS
 
     def test_should_accept_empty_credentials(self):
         credentials = {"username": None, "password": None}
@@ -132,7 +125,7 @@ class TestDetectSettings:
 
 class TestDetectRetriever:
     def test_should_detect_account_retriever(self):
-        assert isinstance(oauth.detect_retriever(account_credentials), oauth.AccountTokenRetriever)
+        assert isinstance(oauth.detect_retriever(ACCOUNT_CREDENTIALS), oauth.AccountTokenRetriever)
 
     def test_fails_if_settings_are_not_recognized(self):
         credentials = mock.MagicMock()
