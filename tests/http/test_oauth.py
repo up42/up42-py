@@ -56,7 +56,10 @@ class TestAccountTokenRetriever:
             },
             additional_matcher=match_account_authentication_request_body,
         )
-        assert retrieve(requests.Session(), token_settings) == TOKEN
+        assert retrieve(requests.Session(), token_settings) == oauth.Token(
+            access_token=TOKEN_VALUE,
+            expires_on=NOW + datetime.timedelta(seconds=token_settings.duration - token_settings.expiry_offset),
+        )
         assert requests_mock.called_once
 
     def test_fails_to_retrieve_for_bad_response(self, requests_mock: req_mock.Mocker):

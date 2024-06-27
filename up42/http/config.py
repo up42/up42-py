@@ -12,6 +12,7 @@ class ResilienceSettings:
 class TokenProviderSettings:
     token_url: str
     duration: int = 5 * 60 - 1
+    expiry_offset: int = 30
     timeout: int = 120
 
 

@@ -48,7 +48,7 @@ class AccountTokenRetriever:
         )
         if response.ok:
             access_token = response.json()["access_token"]
-            expires_on = dt.datetime.now() + dt.timedelta(seconds=settings.duration)
+            expires_on = dt.datetime.now() + dt.timedelta(seconds=settings.duration - settings.expiry_offset)
             return Token(access_token=access_token, expires_on=expires_on)
         raise WrongCredentials
 
