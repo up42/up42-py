@@ -29,6 +29,14 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.1a1
+
+**Jun 27, 2024**
+
+- Switch to new token endpoint in `auth.py` and `oauth.py`.
+- Use token duration information from token data instead of static configuration.
+- Use expiry offset to refresh token 30s earlier.
+
 ## 1.1.0
 
 **Jun 25, 2024**

@@ -7,6 +7,8 @@ import requests
 
 from up42.http import config, http_adapter
 
+CLIENT_ID = "up42-sdk"
+
 
 @dc.dataclass(eq=True, frozen=True)
 class Token:
@@ -19,7 +21,7 @@ class Token:
 
 
 class TokenRetriever(Protocol):
-    def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
+    def __call__(self, session: requests.Session, settings: config.TokenProviderSettings) -> Token:
         ...
 
 
@@ -28,7 +30,7 @@ class AccountTokenRetriever:
         self.username = settings.username
         self.password = settings.password
 
-    def __call__(self, session: requests.Session, token_url: str, timeout: int) -> str:
+    def __call__(self, session: requests.Session, settings: config.TokenProviderSettings) -> Token:
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
         }
@@ -36,15 +38,19 @@ class AccountTokenRetriever:
             "grant_type": "password",
             "username": self.username,
             "password": self.password,
+            "client_id": CLIENT_ID,
         }
         response = session.post(
-            url=token_url,
+            url=settings.token_url,
             data=body,
             headers=headers,
-            timeout=timeout,
+            timeout=settings.timeout,
         )
         if response.ok:
-            return response.json()["access_token"]
+            token_data = response.json()
+            access_token = token_data["access_token"]
+            expires_on = dt.datetime.now() + dt.timedelta(seconds=token_data["expires_in"] - settings.expiry_offset)
+            return Token(access_token=access_token, expires_on=expires_on)
         raise WrongCredentials
 
 
@@ -55,9 +61,7 @@ class Up42Auth(requests.auth.AuthBase):
         token_settings: config.TokenProviderSettings,
         create_adapter=http_adapter.create,
     ):
-        self.token_url = token_settings.token_url
-        self.duration = token_settings.duration
-        self.timeout = token_settings.timeout
+        self.token_settings = token_settings
         self.adapter = create_adapter(include_post=True)
         self.retrieve = retrieve
         self._token = self._fetch_token()
@@ -70,9 +74,7 @@ class Up42Auth(requests.auth.AuthBase):
     def _fetch_token(self):
         session = requests.Session()
         session.mount("https://", self.adapter)
-        access_token = self.retrieve(session, self.token_url, self.timeout)
-        expires_on = dt.datetime.now() + dt.timedelta(seconds=self.duration)
-        return Token(access_token=access_token, expires_on=expires_on)
+        return self.retrieve(session, self.token_settings)
 
     @property
     def _access_token(self) -> Token:
