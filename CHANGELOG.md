@@ -29,11 +29,86 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.1a2
+
+**Jul 8, 2024**
+
+- Bumped dependencies `urllib` from 2.2.1 to 2.2.2.
+
+## 1.1.1a1
+
+**Jun 27, 2024**
+
+- Switch to new token endpoint in `auth.py` and `oauth.py`.
+- Use token duration information from token data instead of static configuration.
+- Use expiry offset to refresh token 30s earlier.
+
+## 1.1.0
+
+**Jun 25, 2024**
+
+### Changes
+
+- `Job`, `JobSorting` and `JobStatus` classes now available in `up42` namespace.
+- Change default created and credits ordering as descending.
+- Change default status ordering to descending.
+- Rename `templates.py` to `processing_templates.py`.
+
+### Fixes
+
+- Fix multiple process id value query parameter to use concatenation with commas.
+- Fix multiple status value query parameter to use concatenation with commas.
+- Fix processing job tracking to wait until credits are captured or released.
+- Fix missing process ids for processing templates.
+
+### Improvements
+
+- Trim off milliseconds in job metadata timestamps to avoid rounding errors.
+- Trim nanoseconds in job metadata timestamps since not supported by native Python datetime.
+- Update processing template names.
+- Add missing `workspace_id` query param to job execution.
+- Convert relative paths in processing job page links to absolute ones.
+
+## 1.1.0a7
+
+**Jun 20, 2024**
+
+- Trim off milliseconds in job metadata timestamps to avoid rounding errors.
+- Fix multiple process id value query parameter to use concatenation with commas.
+- Change default created and credits ordering as descending.
+
+## 1.1.0a6
+
+**Jun 20, 2024**
+
+- Trim nanoseconds in job metadata timestamps since not supported by native Python datetime.
+- Fix processing job tracking to wait until credits are captured or released.
+- Fix multiple status value query parameter to use concatenation with commas.
+- Change default status ordering to descending.
+
+## 1.1.0a5
+
+**Jun 20, 2024**
+
+- Update processing template names.
+
+## 1.1.0a4
+
+**Jun 19, 2024**
+
+- Add missing workspace id query param to job execution.
+
+## 1.1.0a3
+
+**Jun 19, 2024**
+
+- Export `JobStatus` in `up42` namespace.
+
 ## 1.1.0a2
 
 **Jun 18, 2024**
 
-- Bumped dependencies `urllib` from 2.2.1 to 2.2.2.
+- Convert relative paths in processing job page links to absolute ones.
 
 ## 1.1.0a1
 

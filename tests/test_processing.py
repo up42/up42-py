@@ -18,7 +18,9 @@ from up42 import processing, utils
 PROCESS_ID = "process-id"
 VALIDATION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/validation"
 COST_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/cost"
-EXECUTION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/execution"
+EXECUTION_URL = (
+    f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/execution?workspaceId={constants.WORKSPACE_ID}"
+)
 TITLE = "title"
 COLLECTION_ID = str(uuid.uuid4())
 COLLECTION_URL = f"https://collections/{COLLECTION_ID}"
@@ -48,7 +50,11 @@ DEFINITION = {
         "title": TITLE,
     }
 }
-NOW = datetime.datetime.now()
+NOW_AS_STR = datetime.datetime.now().isoformat(timespec="milliseconds")
+NOW = datetime.datetime.fromisoformat(NOW_AS_STR)
+
+MICROSECONDS = "123456Z"
+
 INVALID_TITLE_ERROR = processing.ValidationError(name="InvalidTitle", message="title is too long")
 JOB_METADATA: processing.JobMetadata = {
     "processID": PROCESS_ID,
@@ -62,8 +68,8 @@ JOB_METADATA: processing.JobMetadata = {
     },
     "creditConsumption": {"credits": CREDITS},
     "status": "created",
-    "created": f"{NOW.isoformat()}Z",
-    "updated": f"{NOW.isoformat()}Z",
+    "created": f"{NOW_AS_STR}{MICROSECONDS}",
+    "updated": f"{NOW_AS_STR}{MICROSECONDS}",
     "started": None,
     "finished": None,
 }
@@ -81,6 +87,10 @@ JOB = processing.Job(
     created=NOW,
     updated=NOW,
 )
+
+
+def as_java_timestamp(value: datetime.datetime):
+    return value.isoformat(timespec="milliseconds") + MICROSECONDS
 
 
 @pytest.fixture(autouse=True)
@@ -108,6 +118,7 @@ class TestCost:
 class SampleJobTemplate(processing.JobTemplate):
     title: str
     process_id = PROCESS_ID
+    workspace_id = constants.WORKSPACE_ID
 
     @property
     def inputs(self) -> dict:
@@ -304,7 +315,7 @@ class TestJob:
         job = dataclasses.replace(JOB, collection_url=None)
         assert not job.collection
 
-    @pytest.mark.parametrize("status", [processing.JobStatus.SUCCESSFUL, processing.JobStatus.FAILED])
+    @pytest.mark.parametrize("status", [processing.JobStatus.CAPTURED, processing.JobStatus.RELEASED])
     def test_should_track_until_job_finishes(self, requests_mock: req_mock.Mocker, status: processing.JobStatus):
         updated = NOW + datetime.timedelta(minutes=4)
         started = NOW + datetime.timedelta(minutes=2)
@@ -315,8 +326,8 @@ class TestJob:
                 {
                     "json": {
                         **JOB_METADATA,
-                        "updated": f"{started}Z",
-                        "started": f"{started}Z",
+                        "updated": as_java_timestamp(started),
+                        "started": as_java_timestamp(started),
                         "status": processing.JobStatus.RUNNING.value,
                         "results": {
                             "collection": None,
@@ -327,9 +338,9 @@ class TestJob:
                 {
                     "json": {
                         **JOB_METADATA,
-                        "updated": f"{updated}Z",
-                        "started": f"{started}Z",
-                        "finished": f"{finished}Z",
+                        "updated": as_java_timestamp(updated),
+                        "started": as_java_timestamp(started),
+                        "finished": as_java_timestamp(finished),
                         "status": status.value,
                     }
                 },
@@ -359,9 +370,9 @@ class TestJob:
             job.track(wait=1, retries=2)
         assert requests_mock.call_count == 2
 
-    @pytest.mark.parametrize("process_id", [None, [PROCESS_ID]])
+    @pytest.mark.parametrize("process_id", [None, [PROCESS_ID, "another-id"]])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
-    @pytest.mark.parametrize("status", [None, [processing.JobStatus.CAPTURED]])
+    @pytest.mark.parametrize("status", [None, random.choices(list(processing.JobStatus), k=2)])
     @pytest.mark.parametrize("min_duration", [None, 1])
     @pytest.mark.parametrize("max_duration", [None, 10])
     @pytest.mark.parametrize("sort_by", [None, processing.JobSorting.process_id.desc])
@@ -377,11 +388,11 @@ class TestJob:
     ):
         query_params: dict[str, Any] = {}
         if process_id:
-            query_params["processId"] = process_id
+            query_params["processId"] = ",".join(process_id)
         if workspace_id:
             query_params["workspaceId"] = workspace_id
         if status:
-            query_params["status"] = [entry.value for entry in status]
+            query_params["status"] = ",".join(entry.value for entry in status)
         if min_duration:
             query_params["minDuration"] = min_duration
         if max_duration:
@@ -391,7 +402,7 @@ class TestJob:
 
         query = urllib.parse.urlencode(query_params)
 
-        next_page_url = f"{JOBS_URL}/next"
+        next_page_url = "/v2/processing/jobs/next"
         requests_mock.get(
             url=JOBS_URL + (query and f"?{query}"),
             json={
@@ -400,7 +411,7 @@ class TestJob:
             },
         )
         requests_mock.get(
-            url=next_page_url,
+            url=f"{constants.API_HOST}{next_page_url}",
             json={
                 "jobs": [JOB_METADATA] * 2,
                 "links": [],

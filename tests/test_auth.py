@@ -13,7 +13,6 @@ from . import helpers
 from .fixtures import fixtures_globals as constants
 
 CONFIG_FILE = "some-config-file"
-TOKEN_ENDPOINT = constants.API_HOST + "/oauth/token"
 URL = constants.API_HOST + "/some-url"
 RESPONSE_TEXT = "some-response-text"
 ERROR = {"some": "error"}
@@ -78,7 +77,7 @@ class TestAuth:
             constants.USER_EMAIL,
             constants.PASSWORD,
         )
-        create_client.assert_called_once_with(credential_sources, TOKEN_ENDPOINT)
+        create_client.assert_called_once_with(credential_sources, constants.TOKEN_ENDPOINT)
 
     def test_should_authenticate_when_created(self):
         assert self.auth.session == session
