@@ -34,6 +34,12 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Jul 8, 2024**
 - Bumped dependencies `certifi` from 2024.2.2 to 2024.7.4.
 
+## 1.1.1a2
+
+**Jul 8, 2024**
+
+- Bumped dependencies `urllib` from 2.2.1 to 2.2.2.
+
 ## 1.1.1a1
 
 **Jun 27, 2024**
