@@ -4,7 +4,7 @@ Catalog search functionality
 
 import pathlib
 import warnings
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Literal, Optional, TypedDict, Union, cast
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
@@ -15,6 +15,54 @@ from up42 import auth as up42_auth
 from up42 import host, order, utils
 
 logger = utils.get_logger(__name__)
+
+
+class ResolutionValue(TypedDict):
+    minimum: float
+    maximum: Optional[float]
+
+
+class Host(TypedDict):
+    # pylint: disable=invalid-name
+    name: str
+    title: str
+    description: str
+    createdAt: Optional[str]
+    updatedAt: Optional[str]
+    isIntegrated: bool
+    isCommercial: bool
+
+
+class Producer(TypedDict):
+    # pylint: disable=invalid-name
+    name: str
+    title: str
+    description: str
+    createdAt: Optional[str]
+    updatedAt: Optional[str]
+    isIntegrated: bool
+
+
+class Collection(TypedDict, total=False):
+    # pylint: disable=invalid-name
+    name: str
+    title: str
+    description: str
+    type: Literal["ARCHIVE", "TASKING"]
+    restricted: bool
+    createdAt: Optional[str]
+    updatedAt: Optional[str]
+    host: Host
+    # Deprecated
+    hostName: str
+    producer: Producer
+    # Deprecated
+    producerName: str
+    isIntegrated: bool
+    isOptical: bool
+    resolutionClass: Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]
+    productType: Literal["OPTICAL", "SAR", "ELEVATION"]
+    resolutionValue: ResolutionValue
 
 
 class CatalogBase:
@@ -39,7 +87,7 @@ class CatalogBase:
                 default True.
         """
         url = host.endpoint("/data-products")
-        json_response = self.auth.request("GET", url)
+        json_response = self.auth.session.get(url).json()
         unfiltered_products: list = json_response["data"]
 
         products = []
@@ -96,14 +144,13 @@ class CatalogBase:
         json_response = self.auth.request("GET", url)
         return json_response  # Does not contain APIv1 "data" key
 
-    def get_collections(self) -> Union[Dict, List]:
+    def get_collections(self) -> list[Collection]:
         """
         Get the available data collections.
         """
         url = host.endpoint("/collections")
-        json_response = self.auth.request("GET", url)
-        collections = [c for c in json_response["data"] if c["type"] == self.type]
-        return collections
+        collections = self.auth.session.get(url).json()["data"]
+        return [collection for collection in collections if collection["type"] == self.type]
 
     def place_order(
         self,
