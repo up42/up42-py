@@ -4,7 +4,7 @@ Catalog search functionality
 
 import pathlib
 import warnings
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
@@ -175,7 +175,6 @@ class Catalog(CatalogBase):
         super().__init__(auth, workspace_id)
         self.quicklooks: Optional[List[str]] = None
         self.type: str = "ARCHIVE"
-        self.data_products: Optional[Dict] = None
 
     def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
         """
@@ -291,6 +290,15 @@ class Catalog(CatalogBase):
 
         return search_parameters
 
+    def _get_host(self, collections: list[str]) -> str:
+        data_products = cast(dict[Any, Any], self.get_data_products(basic=True))
+        hosts = {product["host"] for product in data_products.values() if product["collection"] in [collections]}
+        if not hosts:
+            raise ValueError(f"""Selected collections {collections} are """ "not valid. See catalog.get_collections.")
+        if len(hosts) > 1:
+            raise ValueError("Only collections with the same host can be searched " "at the same time.")
+        return hosts.pop()
+
     def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[geopandas.GeoDataFrame, dict]:
         """
         Searches the catalog for the the search parameters and
@@ -337,26 +345,7 @@ class Catalog(CatalogBase):
             search_parameters["limit"] = 500
 
         # UP42 API can query multiple collections of the same host at once.
-        if self.data_products is None:
-            self.data_products = self.get_data_products(basic=True)  # type: ignore
-        hosts = [
-            v["host"]
-            for v in self.data_products.values()  # type: ignore
-            if v["collection"] in search_parameters["collections"]
-        ]
-        if not hosts:
-            raise ValueError(
-                f"""Selected collections {search_parameters["collections"]} are """
-                "not valid. See catalog.get_collections."
-            )
-        if len(set(hosts)) > 1:
-            raise ValueError(
-                "Only collections with the same host can be searched "
-                "at the same time. Please adjust the "
-                "collections in the search_parameters!"
-            )
-        product_host = hosts[0]
-
+        product_host = self._get_host(search_parameters["collections"])
         url = host.endpoint(f"/catalog/hosts/{product_host}/stac/search")
         response_json: dict = self.auth.request("POST", url, search_parameters)
         features = response_json["features"]
@@ -471,12 +460,7 @@ class Catalog(CatalogBase):
         Returns:
             List of quicklook image output file paths.
         """
-        if self.data_products is None:
-            self.data_products = self.get_data_products(basic=True)  # type: ignore
-        hosts = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
-        if not host:
-            raise ValueError(f"Selected collections {collection} is not valid. See catalog.get_collections.")
-        product_host = hosts[0]
+        product_host = self._get_host([collection])
         logger.info("Downloading quicklooks from provider %s.", product_host)
 
         if output_directory is None:

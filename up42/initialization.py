@@ -100,7 +100,7 @@ def create_webhook(
 
 
 @utils.deprecation("up42.Webhook::get_webhook_events", "2.0.0")
-def get_webhook_events() -> dict:
+def get_webhook_events() -> list[dict]:
     """
     Gets all available webhook events.
 
