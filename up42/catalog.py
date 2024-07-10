@@ -43,7 +43,7 @@ class Producer(TypedDict):
     isIntegrated: bool
 
 
-class Collection(TypedDict, total=False):
+class Collection(TypedDict):
     # pylint: disable=invalid-name
     name: str
     title: str
@@ -65,6 +65,37 @@ class Collection(TypedDict, total=False):
     resolutionValue: ResolutionValue
 
 
+class ProductConfiguration(TypedDict):
+    # pylint: disable=invalid-name
+    host: Host
+    hostName: str
+    title: str
+    description: str
+    id: str
+    configuration: dict
+    createdAt: Optional[str]
+    updatedAt: Optional[str]
+    isIntegrated: bool
+
+
+class DataProduct(TypedDict):
+    # pylint: disable=invalid-name
+    id: str
+    productConfiguration: ProductConfiguration
+    productConfigurationId: str
+    collection: Collection
+    collectionName: str
+    createdAt: Optional[str]
+    updatedAt: Optional[str]
+    isIntegrated: bool
+
+
+class CollectionOverview(TypedDict):
+    collection: str
+    host: str
+    data_products: dict[str, str]
+
+
 class CatalogBase:
     """
     The base for Catalog and Tasking class, shared functionality.
@@ -75,7 +106,7 @@ class CatalogBase:
         self.workspace_id = workspace_id
         self.type: Optional[str] = None
 
-    def get_data_products(self, basic: bool = True) -> Union[Dict, List[Dict]]:
+    def get_data_products(self, basic: bool = True) -> Union[List[DataProduct], dict[str, CollectionOverview]]:
         """
         Get the available data product information for each collection. A data
         product is the available data configurations for each collection,
@@ -87,49 +118,39 @@ class CatalogBase:
                 default True.
         """
         url = host.endpoint("/data-products")
-        json_response = self.auth.session.get(url).json()
-        unfiltered_products: list = json_response["data"]
+        integrated_products: list[DataProduct] = self.auth.session.get(url, params={"is_integrated": "true"}).json()[
+            "data"
+        ]
 
         products = []
-        for product in unfiltered_products:
+        for product in integrated_products:
             if product["collection"]["type"] != self.type:
                 continue
-            try:
-                if not product["collection"]["isIntegrated"]:
-                    continue
-            except KeyError:
-                # isIntegrated potentially removed from future public API
-                pass
-            try:
-                if not product["productConfiguration"]["isIntegrated"]:
-                    continue
-            except KeyError:
-                pass
             products.append(product)
 
         if not basic:
             return products
         else:
-            collection_overview = {}
+            overview: dict[str, CollectionOverview] = {}
             for product in products:
                 collection_title = product["collection"]["title"]
-                collection_name = product["collectionName"]
+                collection_name = product["collection"]["name"]
                 product_host = product["collection"]["host"]["name"]
                 data_product = {product["productConfiguration"]["title"]: product["id"]}
 
-                if collection_title not in collection_overview:
-                    collection_overview[collection_title] = {
+                if collection_title not in overview:
+                    overview[collection_title] = {
                         "collection": collection_name,
                         "host": product_host,
                         "data_products": data_product,
                     }
                 else:
                     # Add additional products for same collection
-                    collection_overview[collection_title]["data_products"][
-                        product["productConfiguration"]["title"]
-                    ] = product["id"]
+                    overview[collection_title]["data_products"][product["productConfiguration"]["title"]] = product[
+                        "id"
+                    ]
 
-            return collection_overview
+            return overview
 
     def get_data_product_schema(self, data_product_id: str) -> dict:
         """
