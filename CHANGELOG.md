@@ -29,6 +29,16 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.1a4
+
+**Jul 15, 2024**
+- Extract `ProductGlossary` in `catalog.py`.
+- Provide type hints for `ProductGlossary` methods.
+- Simplify the usage of `get_data_products` in `CatalogBase`.
+- Fix type hint for `get_webhook_events`.
+- Reduce the usage `auth::request` in `base.py`.
+
+
 ## 1.1.1a3
 
 **Jul 8, 2024**
