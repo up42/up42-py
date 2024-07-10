@@ -376,7 +376,8 @@ class Catalog(CatalogBase):
         return search_parameters
 
     def _get_host(self, collections: list[str]) -> str:
-        data_products = cast(dict[Any, Any], self.get_data_products(basic=True))
+        # FIXME: switch to using collections info instead of data products
+        data_products = cast(dict[str, CollectionOverview], self.get_data_products(basic=True))
         hosts = {product["host"] for product in data_products.values() if product["collection"] in collections}
         if not hosts:
             raise ValueError(f"""Selected collections {collections} are """ "not valid. See catalog.get_collections.")
