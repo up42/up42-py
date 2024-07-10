@@ -370,7 +370,7 @@ class Catalog(CatalogBase):
 
     def _get_host(self, collections: list[str]) -> str:
         data_products = cast(dict[Any, Any], self.get_data_products(basic=True))
-        hosts = {product["host"] for product in data_products.values() if product["collection"] in [collections]}
+        hosts = {product["host"] for product in data_products.values() if product["collection"] in collections}
         if not hosts:
             raise ValueError(f"""Selected collections {collections} are """ "not valid. See catalog.get_collections.")
         if len(hosts) > 1:
