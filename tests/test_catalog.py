@@ -28,7 +28,7 @@ def set_status_raising_session():
 class TestProductGlossary:
     @pytest.mark.parametrize("collection_type", ["ARCHIVE", "TASKING"])
     def test_should_get_collections(self, requests_mock: req_mock.Mocker, collection_type: catalog.CollectionType):
-        url = f"{constants.API_HOST}/collections"
+        url = f"{constants.API_HOST}/collections?is_integrated=true&paginated=false"
         target_collection = {"type": collection_type}
         ignored_collection = {"type": "other_type"}
         requests_mock.get(url, json={"data": [target_collection, ignored_collection]})
@@ -36,7 +36,7 @@ class TestProductGlossary:
 
     @pytest.mark.parametrize("collection_type", ["ARCHIVE", "TASKING"])
     def test_get_data_products_grouped(self, requests_mock: req_mock.Mocker, collection_type: catalog.CollectionType):
-        url = f"{constants.API_HOST}/data-products"
+        url = f"{constants.API_HOST}/data-products?is_integrated=true&paginated=false"
         requests_mock.get(
             url,
             json={
@@ -73,7 +73,7 @@ class TestProductGlossary:
 
     @pytest.mark.parametrize("collection_type", ["ARCHIVE", "TASKING"])
     def test_should_get_data_products(self, requests_mock: req_mock.Mocker, collection_type: catalog.CollectionType):
-        url = f"{constants.API_HOST}/data-products"
+        url = f"{constants.API_HOST}/data-products?is_integrated=true&paginated=false"
         target_product = {"collection": {"type": collection_type}}
         ignored_product = {"collection": {"type": "other_type"}}
         requests_mock.get(url, json={"data": [target_product, ignored_product]})

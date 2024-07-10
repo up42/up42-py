@@ -63,6 +63,7 @@ class Collection(TypedDict):
     # Deprecated
     producerName: str
     isIntegrated: bool
+    # Deprecated
     isOptical: bool
     resolutionClass: Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]
     productType: Literal["OPTICAL", "SAR", "ELEVATION"]
@@ -85,9 +86,12 @@ class ProductConfiguration(TypedDict):
 class DataProduct(TypedDict):
     # pylint: disable=invalid-name
     id: str
+    # Deprecated
     productConfiguration: ProductConfiguration
+    # Deprecated
     productConfigurationId: str
     collection: Collection
+    # Deprecated
     collectionName: str
     createdAt: Optional[str]
     updatedAt: Optional[str]
@@ -100,6 +104,9 @@ class CollectionOverview(TypedDict):
     data_products: dict[str, str]
 
 
+PRODUCT_GLOSSARY_PARAMS = {"is_integrated": "true", "paginated": "false"}
+
+
 class ProductGlossary:
     session = base.Session()
 
@@ -109,8 +116,8 @@ class ProductGlossary:
         Get the available data collections.
         """
         url = host.endpoint("/collections")
-        collections = cls.session.get(url).json()["data"]
-        return [collection for collection in collections if collection["type"] == collection_type]
+        integrated_collections = cls.session.get(url, params=PRODUCT_GLOSSARY_PARAMS).json()["data"]
+        return [collection for collection in integrated_collections if collection["type"] == collection_type]
 
     @classmethod
     def get_data_products(
@@ -128,7 +135,7 @@ class ProductGlossary:
                 default True.
         """
         url = host.endpoint("/data-products")
-        integrated_products: list[DataProduct] = cls.session.get(url, params={"is_integrated": "true"}).json()["data"]
+        integrated_products: list[DataProduct] = cls.session.get(url, params=PRODUCT_GLOSSARY_PARAMS).json()["data"]
 
         products = []
         for product in integrated_products:
@@ -136,23 +143,22 @@ class ProductGlossary:
                 continue
             products.append(product)
 
-        if not grouped:
-            return products
-        else:
+        if grouped:
             overview: dict[str, CollectionOverview] = {}
             for product in products:
                 collection_title = product["collection"]["title"]
                 collection_name = product["collection"]["name"]
-                product_host = product["collection"]["host"]["name"]
+                host_name = product["collection"]["host"]["name"]
                 data_product = {product["productConfiguration"]["title"]: product["id"]}
                 collection_info: CollectionOverview = {
                     "collection": collection_name,
-                    "host": product_host,
+                    "host": host_name,
                     "data_products": {},
                 }
                 overview.setdefault(collection_title, collection_info)["data_products"].update(data_product)
 
             return overview
+        return products
 
 
 class CatalogBase:
@@ -163,6 +169,7 @@ class CatalogBase:
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         self.auth = auth
         self.workspace_id = workspace_id
+        # FIXME: cannot be optional
         self.type: Optional[CollectionType] = None
 
     def get_collections(self) -> list[Collection]:
