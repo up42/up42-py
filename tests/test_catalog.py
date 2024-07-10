@@ -4,6 +4,8 @@ import tempfile
 
 import geopandas as gpd  # type: ignore
 import pytest
+import requests
+import requests_mock as req_mock
 
 from up42 import catalog, order
 
@@ -16,39 +18,79 @@ with open(
     mock_search_parameters = json.load(json_file)
 
 
-def test_get_collections(catalog_mock):
-    collections = catalog_mock.get_collections()
-    assert isinstance(collections, list)
-    assert collections[0]["name"]
+@pytest.fixture(autouse=True)
+def set_status_raising_session():
+    session = requests.Session()
+    session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
+    catalog.ProductGlossary.session = session  # type: ignore
+
+
+class TestProductGlossary:
+    @pytest.mark.parametrize("collection_type", ["ARCHIVE", "TASKING"])
+    def test_should_get_collections(self, requests_mock: req_mock.Mocker, collection_type: catalog.CollectionType):
+        url = f"{constants.API_HOST}/collections"
+        target_collection = {"type": collection_type}
+        ignored_collection = {"type": "other_type"}
+        requests_mock.get(url, json={"data": [target_collection, ignored_collection]})
+        assert catalog.ProductGlossary.get_collections(collection_type) == [target_collection]
+
+    @pytest.mark.parametrize("collection_type", ["ARCHIVE", "TASKING"])
+    def test_get_data_products_grouped(self, requests_mock: req_mock.Mocker, collection_type: catalog.CollectionType):
+        url = f"{constants.API_HOST}/data-products"
+        requests_mock.get(
+            url,
+            json={
+                "data": [
+                    {
+                        "id": 1,
+                        "collection": {
+                            "type": collection_type,
+                            "title": "title",
+                            "name": "name",
+                            "host": {"name": "host_name"},
+                        },
+                        "productConfiguration": {"title": "config1"},
+                    },
+                    {
+                        "id": 2,
+                        "collection": {
+                            "type": collection_type,
+                            "title": "title",
+                            "name": "name",
+                            "host": {"name": "host_name"},
+                        },
+                        "productConfiguration": {"title": "config2"},
+                    },
+                    {
+                        "id": 2,
+                        "collection": {
+                            "type": "other_tyoe",
+                        },
+                    },
+                ]
+            },
+        )
+        assert catalog.ProductGlossary.get_data_products(collection_type, grouped=True) == {
+            "title": {
+                "collection": "name",
+                "host": "host_name",
+                "data_products": {"config1": 1, "config2": 2},
+            }
+        }
+
+    @pytest.mark.parametrize("collection_type", ["ARCHIVE", "TASKING"])
+    def test_should_get_data_products(self, requests_mock: req_mock.Mocker, collection_type: catalog.CollectionType):
+        url = f"{constants.API_HOST}/data-products"
+        target_product = {"collection": {"type": collection_type}}
+        ignored_product = {"collection": {"type": "other_type"}}
+        requests_mock.get(url, json={"data": [target_product, ignored_product]})
+        assert catalog.ProductGlossary.get_data_products(collection_type, grouped=False) == [target_product]
 
 
 def test_get_data_product_schema(catalog_mock):
     data_product_schema = catalog_mock.get_data_product_schema(constants.DATA_PRODUCT_ID)
     assert isinstance(data_product_schema, dict)
     assert data_product_schema["properties"]
-
-
-def test_get_data_products_basic(catalog_mock):
-    data_products_basic = catalog_mock.get_data_products()
-    assert isinstance(data_products_basic, dict)
-    basic_keys = {"data_products", "host", "collection"}
-    assert basic_keys <= set(list(data_products_basic.values())[0].keys())
-    assert "tasking_should_be_filtered_in_catalog_test" not in data_products_basic
-    assert "test_not_integrated" not in data_products_basic
-    assert len(data_products_basic) == 2
-
-
-def test_get_data_products(catalog_mock):
-    data_products = catalog_mock.get_data_products(basic=False)
-    assert isinstance(data_products, list)
-    assert data_products[0]["id"]
-
-    for product in data_products:
-        assert product["collection"]["title"] not in [
-            "tasking_should_be_filtered_in_catalog_test",
-            "test_not_integrated",
-        ]
-    assert len(data_products) == 2
 
 
 def test_construct_search_parameters(catalog_mock):

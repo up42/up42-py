@@ -10,9 +10,10 @@ import geojson  # type: ignore
 import geopandas  # type: ignore
 import tqdm
 from shapely import geometry as geom  # type: ignore
+from typing_extensions import TypeAlias
 
 from up42 import auth as up42_auth
-from up42 import host, order, utils
+from up42 import base, host, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -43,12 +44,15 @@ class Producer(TypedDict):
     isIntegrated: bool
 
 
+CollectionType: TypeAlias = Literal["ARCHIVE", "TASKING"]
+
+
 class Collection(TypedDict):
     # pylint: disable=invalid-name
     name: str
     title: str
     description: str
-    type: Literal["ARCHIVE", "TASKING"]
+    type: CollectionType
     restricted: bool
     createdAt: Optional[str]
     updatedAt: Optional[str]
@@ -96,39 +100,43 @@ class CollectionOverview(TypedDict):
     data_products: dict[str, str]
 
 
-class CatalogBase:
-    """
-    The base for Catalog and Tasking class, shared functionality.
-    """
+class ProductGlossary:
+    session = base.Session()
 
-    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
-        self.auth = auth
-        self.workspace_id = workspace_id
-        self.type: Optional[str] = None
+    @classmethod
+    def get_collections(cls, collection_type: Optional[CollectionType]) -> list[Collection]:
+        """
+        Get the available data collections.
+        """
+        url = host.endpoint("/collections")
+        collections = cls.session.get(url).json()["data"]
+        return [collection for collection in collections if collection["type"] == collection_type]
 
-    def get_data_products(self, basic: bool = True) -> Union[List[DataProduct], dict[str, CollectionOverview]]:
+    @classmethod
+    def get_data_products(
+        cls, collection_type: Optional[CollectionType], grouped: bool
+    ) -> Union[List[DataProduct], dict[str, CollectionOverview]]:
         """
         Get the available data product information for each collection. A data
         product is the available data configurations for each collection,
         e.g. Pleiades Display product.
 
         Args:
-            basic: A dictionary containing only the collection title,
+            collection_type: The type of the target collections
+            grouped: A dictionary containing only the collection title,
                 name, host and available data product configurations,
                 default True.
         """
         url = host.endpoint("/data-products")
-        integrated_products: list[DataProduct] = self.auth.session.get(url, params={"is_integrated": "true"}).json()[
-            "data"
-        ]
+        integrated_products: list[DataProduct] = cls.session.get(url, params={"is_integrated": "true"}).json()["data"]
 
         products = []
         for product in integrated_products:
-            if product["collection"]["type"] != self.type:
+            if product["collection"]["type"] != collection_type:
                 continue
             products.append(product)
 
-        if not basic:
+        if not grouped:
             return products
         else:
             overview: dict[str, CollectionOverview] = {}
@@ -137,20 +145,31 @@ class CatalogBase:
                 collection_name = product["collection"]["name"]
                 product_host = product["collection"]["host"]["name"]
                 data_product = {product["productConfiguration"]["title"]: product["id"]}
-
-                if collection_title not in overview:
-                    overview[collection_title] = {
-                        "collection": collection_name,
-                        "host": product_host,
-                        "data_products": data_product,
-                    }
-                else:
-                    # Add additional products for same collection
-                    overview[collection_title]["data_products"][product["productConfiguration"]["title"]] = product[
-                        "id"
-                    ]
+                collection_info: CollectionOverview = {
+                    "collection": collection_name,
+                    "host": product_host,
+                    "data_products": {},
+                }
+                overview.setdefault(collection_title, collection_info)["data_products"].update(data_product)
 
             return overview
+
+
+class CatalogBase:
+    """
+    The base for Catalog and Tasking class, shared functionality.
+    """
+
+    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
+        self.auth = auth
+        self.workspace_id = workspace_id
+        self.type: Optional[CollectionType] = None
+
+    def get_collections(self) -> list[Collection]:
+        return ProductGlossary.get_collections(self.type)
+
+    def get_data_products(self, basic: bool = True) -> Union[List[DataProduct], dict[str, CollectionOverview]]:
+        return ProductGlossary.get_data_products(self.type, basic)
 
     def get_data_product_schema(self, data_product_id: str) -> dict:
         """
@@ -162,16 +181,7 @@ class CatalogBase:
             data_product_id: The id of a catalog/tasking data product.
         """
         url = host.endpoint(f"/orders/schema/{data_product_id}")
-        json_response = self.auth.request("GET", url)
-        return json_response  # Does not contain APIv1 "data" key
-
-    def get_collections(self) -> list[Collection]:
-        """
-        Get the available data collections.
-        """
-        url = host.endpoint("/collections")
-        collections = self.auth.session.get(url).json()["data"]
-        return [collection for collection in collections if collection["type"] == self.type]
+        return self.auth.request("GET", url)
 
     def place_order(
         self,
@@ -242,7 +252,7 @@ class Catalog(CatalogBase):
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         super().__init__(auth, workspace_id)
         self.quicklooks: Optional[List[str]] = None
-        self.type: str = "ARCHIVE"
+        self.type = "ARCHIVE"
 
     def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
         """
