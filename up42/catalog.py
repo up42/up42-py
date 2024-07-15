@@ -10,7 +10,6 @@ import geojson  # type: ignore
 import geopandas  # type: ignore
 import tqdm
 from shapely import geometry as geom  # type: ignore
-from typing_extensions import TypeAlias
 
 from up42 import auth as up42_auth
 from up42 import base, host, order, utils
@@ -44,7 +43,7 @@ class Producer(TypedDict):
     isIntegrated: bool
 
 
-CollectionType: TypeAlias = Literal["ARCHIVE", "TASKING"]
+CollectionType = Literal["ARCHIVE", "TASKING"]
 
 
 class Collection(TypedDict):
