@@ -4,17 +4,161 @@ Catalog search functionality
 
 import pathlib
 import warnings
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, TypedDict, Union, cast
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
 import tqdm
 from shapely import geometry as geom  # type: ignore
+from typing_extensions import TypeAlias
 
 from up42 import auth as up42_auth
-from up42 import host, order, utils
+from up42 import base, host, order, utils
 
 logger = utils.get_logger(__name__)
+
+
+class ResolutionValue(TypedDict):
+    minimum: float
+    maximum: Optional[float]
+
+
+class Host(TypedDict):
+    # pylint: disable=invalid-name
+    name: str
+    title: str
+    description: str
+    createdAt: Optional[str]
+    updatedAt: Optional[str]
+    isIntegrated: bool
+    isCommercial: bool
+
+
+class Producer(TypedDict):
+    # pylint: disable=invalid-name
+    name: str
+    title: str
+    description: str
+    createdAt: Optional[str]
+    updatedAt: Optional[str]
+    isIntegrated: bool
+
+
+CollectionType: TypeAlias = Literal["ARCHIVE", "TASKING"]
+
+
+class Collection(TypedDict):
+    # pylint: disable=invalid-name
+    name: str
+    title: str
+    description: str
+    type: CollectionType
+    restricted: bool
+    createdAt: Optional[str]
+    updatedAt: Optional[str]
+    host: Host
+    # Deprecated
+    hostName: str
+    producer: Producer
+    # Deprecated
+    producerName: str
+    isIntegrated: bool
+    # Deprecated
+    isOptical: bool
+    resolutionClass: Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]
+    productType: Literal["OPTICAL", "SAR", "ELEVATION"]
+    resolutionValue: ResolutionValue
+
+
+class ProductConfiguration(TypedDict):
+    # pylint: disable=invalid-name
+    host: Host
+    hostName: str
+    title: str
+    description: str
+    id: str
+    configuration: dict
+    createdAt: Optional[str]
+    updatedAt: Optional[str]
+    isIntegrated: bool
+
+
+class DataProduct(TypedDict):
+    # pylint: disable=invalid-name
+    id: str
+    # Deprecated
+    productConfiguration: ProductConfiguration
+    # Deprecated
+    productConfigurationId: str
+    collection: Collection
+    # Deprecated
+    collectionName: str
+    createdAt: Optional[str]
+    updatedAt: Optional[str]
+    isIntegrated: bool
+
+
+class CollectionOverview(TypedDict):
+    collection: str
+    host: str
+    data_products: dict[str, str]
+
+
+PRODUCT_GLOSSARY_PARAMS = {"is_integrated": "true", "paginated": "false"}
+
+
+class ProductGlossary:
+    session = base.Session()
+
+    @classmethod
+    def get_collections(cls, collection_type: Optional[CollectionType]) -> list[Collection]:
+        """
+        Get the available data collections.
+        """
+        url = host.endpoint("/collections")
+        integrated_collections = cls.session.get(url, params=PRODUCT_GLOSSARY_PARAMS).json()["data"]
+        return [collection for collection in integrated_collections if collection["type"] == collection_type]
+
+    @classmethod
+    def get_data_products(
+        cls, collection_type: Optional[CollectionType], grouped: bool
+    ) -> Union[List[DataProduct], dict[str, CollectionOverview]]:
+        """
+        Get the available data product information for each collection. A data
+        product is the available data configurations for each collection,
+        e.g. Pleiades Display product.
+
+        Args:
+            collection_type: The type of the target collections
+            grouped: A dictionary containing only the collection title,
+                name, host and available data product configurations,
+                default True.
+        """
+        url = host.endpoint("/data-products")
+        integrated_products: list[DataProduct] = cls.session.get(url, params=PRODUCT_GLOSSARY_PARAMS).json()["data"]
+
+        products = []
+        for product in integrated_products:
+            if product["collection"]["type"] != collection_type:
+                continue
+            products.append(product)
+
+        if grouped:
+            overview: dict[str, CollectionOverview] = {}
+            for product in products:
+                collection_title = product["collection"]["title"]
+                collection_name = product["collection"]["name"]
+                host_name = product["collection"]["host"]["name"]
+                data_product = {product["productConfiguration"]["title"]: product["id"]}
+                collection_info: CollectionOverview = {
+                    "collection": collection_name,
+                    "host": host_name,
+                    "data_products": {},
+                }
+                overview.setdefault(collection_title, collection_info)["data_products"].update(data_product)
+
+            return overview
+        return products
 
 
 class CatalogBase:
@@ -25,63 +169,14 @@ class CatalogBase:
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         self.auth = auth
         self.workspace_id = workspace_id
-        self.type: Optional[str] = None
+        # FIXME: cannot be optional
+        self.type: Optional[CollectionType] = None
 
-    def get_data_products(self, basic: bool = True) -> Union[Dict, List[Dict]]:
-        """
-        Get the available data product information for each collection. A data
-        product is the available data configurations for each collection,
-        e.g. Pleiades Display product.
+    def get_collections(self) -> list[Collection]:
+        return ProductGlossary.get_collections(self.type)
 
-        Args:
-            basic: A dictionary containing only the collection title,
-                name, host and available data product configurations,
-                default True.
-        """
-        url = host.endpoint("/data-products")
-        json_response = self.auth.request("GET", url)
-        unfiltered_products: list = json_response["data"]
-
-        products = []
-        for product in unfiltered_products:
-            if product["collection"]["type"] != self.type:
-                continue
-            try:
-                if not product["collection"]["isIntegrated"]:
-                    continue
-            except KeyError:
-                # isIntegrated potentially removed from future public API
-                pass
-            try:
-                if not product["productConfiguration"]["isIntegrated"]:
-                    continue
-            except KeyError:
-                pass
-            products.append(product)
-
-        if not basic:
-            return products
-        else:
-            collection_overview = {}
-            for product in products:
-                collection_title = product["collection"]["title"]
-                collection_name = product["collectionName"]
-                product_host = product["collection"]["host"]["name"]
-                data_product = {product["productConfiguration"]["title"]: product["id"]}
-
-                if collection_title not in collection_overview:
-                    collection_overview[collection_title] = {
-                        "collection": collection_name,
-                        "host": product_host,
-                        "data_products": data_product,
-                    }
-                else:
-                    # Add additional products for same collection
-                    collection_overview[collection_title]["data_products"][
-                        product["productConfiguration"]["title"]
-                    ] = product["id"]
-
-            return collection_overview
+    def get_data_products(self, basic: bool = True) -> Union[List[DataProduct], dict[str, CollectionOverview]]:
+        return ProductGlossary.get_data_products(self.type, basic)
 
     def get_data_product_schema(self, data_product_id: str) -> dict:
         """
@@ -93,17 +188,7 @@ class CatalogBase:
             data_product_id: The id of a catalog/tasking data product.
         """
         url = host.endpoint(f"/orders/schema/{data_product_id}")
-        json_response = self.auth.request("GET", url)
-        return json_response  # Does not contain APIv1 "data" key
-
-    def get_collections(self) -> Union[Dict, List]:
-        """
-        Get the available data collections.
-        """
-        url = host.endpoint("/collections")
-        json_response = self.auth.request("GET", url)
-        collections = [c for c in json_response["data"] if c["type"] == self.type]
-        return collections
+        return self.auth.request("GET", url)
 
     def place_order(
         self,
@@ -174,8 +259,7 @@ class Catalog(CatalogBase):
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         super().__init__(auth, workspace_id)
         self.quicklooks: Optional[List[str]] = None
-        self.type: str = "ARCHIVE"
-        self.data_products: Optional[Dict] = None
+        self.type = "ARCHIVE"
 
     def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
         """
@@ -291,6 +375,16 @@ class Catalog(CatalogBase):
 
         return search_parameters
 
+    def _get_host(self, collections: list[str]) -> str:
+        # FIXME: switch to using collections info instead of data products
+        data_products = cast(dict[str, CollectionOverview], self.get_data_products(basic=True))
+        hosts = {product["host"] for product in data_products.values() if product["collection"] in collections}
+        if not hosts:
+            raise ValueError(f"""Selected collections {collections} are """ "not valid. See catalog.get_collections.")
+        if len(hosts) > 1:
+            raise ValueError("Only collections with the same host can be searched " "at the same time.")
+        return hosts.pop()
+
     def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[geopandas.GeoDataFrame, dict]:
         """
         Searches the catalog for the the search parameters and
@@ -337,26 +431,7 @@ class Catalog(CatalogBase):
             search_parameters["limit"] = 500
 
         # UP42 API can query multiple collections of the same host at once.
-        if self.data_products is None:
-            self.data_products = self.get_data_products(basic=True)  # type: ignore
-        hosts = [
-            v["host"]
-            for v in self.data_products.values()  # type: ignore
-            if v["collection"] in search_parameters["collections"]
-        ]
-        if not hosts:
-            raise ValueError(
-                f"""Selected collections {search_parameters["collections"]} are """
-                "not valid. See catalog.get_collections."
-            )
-        if len(set(hosts)) > 1:
-            raise ValueError(
-                "Only collections with the same host can be searched "
-                "at the same time. Please adjust the "
-                "collections in the search_parameters!"
-            )
-        product_host = hosts[0]
-
+        product_host = self._get_host(search_parameters["collections"])
         url = host.endpoint(f"/catalog/hosts/{product_host}/stac/search")
         response_json: dict = self.auth.request("POST", url, search_parameters)
         features = response_json["features"]
@@ -471,12 +546,7 @@ class Catalog(CatalogBase):
         Returns:
             List of quicklook image output file paths.
         """
-        if self.data_products is None:
-            self.data_products = self.get_data_products(basic=True)  # type: ignore
-        hosts = [v["host"] for v in self.data_products.values() if v["collection"] == collection]  # type: ignore
-        if not host:
-            raise ValueError(f"Selected collections {collection} is not valid. See catalog.get_collections.")
-        product_host = hosts[0]
+        product_host = self._get_host([collection])
         logger.info("Downloading quicklooks from provider %s.", product_host)
 
         if output_directory is None:

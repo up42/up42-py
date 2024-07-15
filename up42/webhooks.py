@@ -129,7 +129,7 @@ class Webhook:
         logger.info("Successfully deleted Webhook: %s", self.id)
 
     @classmethod
-    def get_webhook_events(cls) -> dict:
+    def get_webhook_events(cls) -> list[dict]:
         """
         Gets all available webhook events.
 
