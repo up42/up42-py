@@ -1,8 +1,9 @@
 import json
 import pathlib
-import tempfile
+import uuid
 
 import geopandas as gpd  # type: ignore
+import mock
 import pytest
 import requests
 import requests_mock as req_mock
@@ -23,6 +24,7 @@ def set_status_raising_session():
     session = requests.Session()
     session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
     catalog.ProductGlossary.session = session  # type: ignore
+    catalog.CatalogBase.session = session  # type: ignore
 
 
 class TestProductGlossary:
@@ -238,51 +240,45 @@ def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
     assert all(search_results.collection.isin(["phr", "spot"]))
 
 
-def test_download_quicklook(catalog_mock, requests_mock):
-    sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
-    host = "oneatlas"
-    url_quicklooks = f"{constants.API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
-    quicklook_file = pathlib.Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    requests_mock.get(url_quicklooks, content=open(quicklook_file, "rb").read())
-
-    with tempfile.TemporaryDirectory() as tempdir:
-        out_paths = catalog_mock.download_quicklooks(image_ids=[sel_id], collection="phr", output_directory=tempdir)
-        assert len(out_paths) == 1
-        assert pathlib.Path(out_paths[0]).exists()
-        assert pathlib.Path(out_paths[0]).suffix == ".jpg"
-
-
-def test_download_no_quicklook(catalog_mock, requests_mock):
-    sel_id = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
-    host = "oneatlas"
-    url_quicklook = f"{constants.API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
-    requests_mock.get(url_quicklook, status_code=404)
-
-    with tempfile.TemporaryDirectory() as tempdir:
-        out_paths = catalog_mock.download_quicklooks(image_ids=[sel_id], collection="phr", output_directory=tempdir)
-        assert len(out_paths) == 0
-
-
-def test_download_1_quicklook_1_no_quicklook(catalog_mock, requests_mock):
-    sel_id_no = "dfc54412-8b9c-45a3-b46a-dd030a47c2f3"
-    sel_id = "6dffb8be-c2ab-46e3-9c1c-6958a54e4527"
-    host = "oneatlas"
-    url_no_quicklook = f"{constants.API_HOST}/catalog/{host}/image/{sel_id_no}/quicklook"
-    requests_mock.get(url_no_quicklook, status_code=404)
-
-    url_quicklook = f"{constants.API_HOST}/catalog/{host}/image/{sel_id}/quicklook"
-    quicklook_file = pathlib.Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-    requests_mock.get(url_quicklook, content=open(quicklook_file, "rb").read())
-
-    with tempfile.TemporaryDirectory() as tempdir:
-        out_paths = catalog_mock.download_quicklooks(
-            image_ids=[sel_id, sel_id_no],
-            collection="phr",
-            output_directory=tempdir,
+class TestCatalog:
+    def test_should_download_available_quicklooks(self, requests_mock: req_mock.Mocker, tmp_path):
+        missing_image_id = str(uuid.uuid4())
+        image_id = str(uuid.uuid4())
+        host = "oneatlas"
+        collection = "phr"
+        data_products_url = f"{constants.API_HOST}/data-products?is_integrated=true&paginated=false"
+        requests_mock.get(
+            data_products_url,
+            json={
+                "data": [
+                    {
+                        "id": "id",
+                        "collection": {
+                            "type": "ARCHIVE",
+                            "title": "title",
+                            "name": collection,
+                            "host": {"name": host},
+                        },
+                        "productConfiguration": {"title": "config"},
+                    }
+                ]
+            },
         )
-        assert len(out_paths) == 1
-        assert pathlib.Path(out_paths[0]).exists()
-        assert pathlib.Path(out_paths[0]).suffix == ".jpg"
+
+        missing_quicklook_url = f"{constants.API_HOST}/catalog/{host}/image/{missing_image_id}/quicklook"
+        requests_mock.get(missing_quicklook_url, status_code=404)
+
+        quicklook_url = f"{constants.API_HOST}/catalog/{host}/image/{image_id}/quicklook"
+        quicklook_file = pathlib.Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+        requests_mock.get(quicklook_url, content=quicklook_file.read_bytes())
+
+        out_paths = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID).download_quicklooks(
+            image_ids=[image_id, missing_image_id],
+            collection=collection,
+            output_directory=tmp_path,
+        )
+        assert out_paths == [str(tmp_path / f"quicklook_{image_id}.jpg")]
+        assert requests_mock.call_count == 3
 
 
 def test_construct_order_parameters(catalog_mock):
