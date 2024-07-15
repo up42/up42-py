@@ -418,35 +418,18 @@ class Catalog(CatalogBase):
         """
         logger.info("Searching catalog with search_parameters: %s", search_parameters)
 
-        # The API request would fail with a limit above 500,
-        # thus 500 is forced in the initial
-        # request but additional results are handled below via pagination.
-        try:
-            max_limit = search_parameters["limit"]
-        except KeyError:
-            logger.info("No `limit` parameter in search_parameters, using default 500.")
-            max_limit = 500
+        if "limit" in search_parameters:
+            search_parameters["limit"] = min(search_parameters["limit"], 500)
 
-        if max_limit > 500:
-            search_parameters["limit"] = 500
-
-        # UP42 API can query multiple collections of the same host at once.
         product_host = self._get_host(search_parameters["collections"])
         url = host.endpoint(f"/catalog/hosts/{product_host}/stac/search")
-        response_json: dict = self.auth.request("POST", url, search_parameters)
-        features = response_json["features"]
+        features = []
 
-        # Search results with more than 500 items
-        # are given as 50-per-page additional pages.
-        while len(features) < max_limit:
-            pagination_exhausted = len(response_json["links"]) == 1
-            if pagination_exhausted:
-                break
-            next_page_url = response_json["links"][1]["href"]
-            response_json = self.auth.request("POST", next_page_url, search_parameters)
-            features += response_json["features"]
+        while url:
+            page: dict = self.session.post(url, json=search_parameters).json()
+            features += page["features"]
+            url = next((link["href"] for link in page["links"] if link["rel"] == "next"), None)
 
-        features = features[:max_limit]
         if not features:
             df = geopandas.GeoDataFrame(columns=["geometry"], geometry="geometry")
         else:
