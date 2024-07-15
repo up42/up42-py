@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.1.1a6
 
 **Jul 15, 2024**
-- Improve `Catalog::download_quicklooks` code. 
+- Improve `Catalog::download_quicklooks` code.
 - Improve test coverage for `Catalog::download_quicklooks` type alias.
 - Drop unused `return_text` parameter in `Auth::request`.
 - Add `session` descriptor to `CatalogBase`.
