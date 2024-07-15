@@ -165,6 +165,8 @@ class CatalogBase:
     The base for Catalog and Tasking class, shared functionality.
     """
 
+    session = base.Session()
+
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         self.auth = auth
         self.workspace_id = workspace_id
@@ -257,7 +259,6 @@ class Catalog(CatalogBase):
 
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         super().__init__(auth, workspace_id)
-        self.quicklooks: Optional[List[str]] = None
         self.type = "ARCHIVE"
 
     def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
@@ -530,8 +531,7 @@ class Catalog(CatalogBase):
         output_directory: Union[str, pathlib.Path, None] = None,
     ) -> List[str]:
         """
-        Gets the quicklooks of scenes from a single sensor. After download, can
-        be plotted via catalog.map_quicklooks() or catalog.plot_quicklooks().
+        Gets the quicklooks of scenes from a single sensor.
 
         Args:
             image_ids: List of provider image_ids
@@ -555,23 +555,21 @@ class Catalog(CatalogBase):
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", output_directory)
 
-        if isinstance(image_ids, str):
-            image_ids = [image_ids]
-
         out_paths: List[str] = []
         for image_id in tqdm.tqdm(image_ids):
             try:
                 url = host.endpoint(f"/catalog/{product_host}/image/{image_id}/quicklook")
-                response = self.auth.request(request_type="GET", url=url, return_text=False)
-                out_path = output_directory / f"quicklook_{image_id}.jpg"
-                out_paths.append(str(out_path))
+                response = self.session.get(url)
+                # TODO: should detect extensions based on response content type
+                # TODO: to be simplified using utils.download_file
+                out_path = str(output_directory / f"quicklook_{image_id}.jpg")
                 with open(out_path, "wb") as dst:
                     for chunk in response:
                         dst.write(chunk)
+                out_paths.append(out_path)
             except IOError:
                 logger.warning(
                     "Image with id %s does not have quicklook available. Skipping ...",
                     image_id,
                 )
-        self.quicklooks = out_paths  # pylint: disable=attribute-defined-outside-init
         return out_paths

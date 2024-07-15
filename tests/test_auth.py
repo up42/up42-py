@@ -118,18 +118,6 @@ class TestAuth:
         )
         assert self.auth.request(http_method, URL, request_data) == RESPONSE_TEXT
 
-    def test_should_pass_response(self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker):
-        requests_mock.request(
-            http_method,
-            URL,
-            request_headers=REQUEST_HEADERS,
-            text=RESPONSE_TEXT,
-            additional_matcher=helpers.match_request_body(request_data),
-        )
-        response = self.auth.request(http_method, URL, request_data, return_text=False)
-        assert isinstance(response, requests.Response)
-        assert response.text == RESPONSE_TEXT
-
     def test_fails_if_v1_api_request_fails(self, http_method: str, request_data: dict, requests_mock: req_mock.Mocker):
         requests_mock.request(
             http_method,
@@ -143,13 +131,11 @@ class TestAuth:
 
         assert str(exc_info.value) == str(ERROR)
 
-    @pytest.mark.parametrize("return_text", [True, False])
     @pytest.mark.parametrize("error", [None, ERROR])
     def test_fails_if_status_code_is_bad(
         self,
         http_method: str,
         request_data: dict,
-        return_text: bool,
         error: Optional[Dict],
         requests_mock: req_mock.Mocker,
     ):
@@ -162,5 +148,5 @@ class TestAuth:
             additional_matcher=helpers.match_request_body(request_data),
         )
         with pytest.raises(requests.HTTPError) as exc_info:
-            self.auth.request(http_method, URL, request_data, return_text=return_text)
+            self.auth.request(http_method, URL, request_data)
         assert str(exc_info.value) == (json.dumps(error) if error else "")

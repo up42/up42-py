@@ -93,7 +93,6 @@ class Auth:
         request_type: str,
         url: str,
         data: dict = {},
-        return_text: bool = True,
     ):
         """
         Makes a request to the API, handles authentication and SDK headers
@@ -109,22 +108,15 @@ class Auth:
 
         try:
             response: requests.Response = self._request_helper(request_type, url, data)
-            if return_text:
-                try:
-                    response_json = response.json()
-                    # v1 endpoints give response format {"data": ..., "error": ...}
-                    if (
-                        isinstance(response_json, dict)
-                        and response_json.get("error")
-                        and response_json.get("data") is None
-                    ):
-                        raise ValueError(response_json["error"])
-                    # Catalog search, JobTask logs etc. does not have the usual {"data": {}, "error": {}} format.
-                    return response_json
-                except json.JSONDecodeError:  # e.g. JobTask logs are str format.
-                    return response.text
-            else:  # E.g. for DELETE
-                return response
+            try:
+                response_json = response.json()
+                # v1 endpoints give response format {"data": ..., "error": ...}
+                if isinstance(response_json, dict) and response_json.get("error") and response_json.get("data") is None:
+                    raise ValueError(response_json["error"])
+                # Catalog search, JobTask logs etc. does not have the usual {"data": {}, "error": {}} format.
+                return response_json
+            except json.JSONDecodeError:  # e.g. JobTask logs are str format.
+                return response.text
 
         except requests.exceptions.HTTPError as err:
             # v2 endpoints follow RFC 7807 for errors and will fail with http error
