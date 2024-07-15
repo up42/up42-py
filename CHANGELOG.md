@@ -29,6 +29,11 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.1a5
+
+**Jul 15, 2024**
+- Extract `CollectionType` type alias.
+
 ## 1.1.1a4
 
 **Jul 15, 2024**
