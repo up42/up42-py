@@ -380,9 +380,9 @@ class Catalog(CatalogBase):
         data_products = cast(dict[str, CollectionOverview], self.get_data_products(basic=True))
         hosts = {product["host"] for product in data_products.values() if product["collection"] in collections}
         if not hosts:
-            raise ValueError(f"""Selected collections {collections} are """ "not valid. See catalog.get_collections.")
+            raise ValueError(f"Selected collections {collections} are not valid. See catalog.get_collections.")
         if len(hosts) > 1:
-            raise ValueError("Only collections with the same host can be searched " "at the same time.")
+            raise ValueError("Only collections with the same host can be searched at the same time.")
         return hosts.pop()
 
     def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[geopandas.GeoDataFrame, dict]:
