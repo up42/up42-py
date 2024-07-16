@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.1a7
+
+**Jul 16, 2024**
+- Simplify pagination in `Catalog::search` code.
+- Improve test coverage for `Catalog::search`.
+
 ## 1.1.1a6
 
 **Jul 15, 2024**

@@ -1,22 +1,30 @@
 import json
 import pathlib
-import uuid
 
 import geopandas as gpd  # type: ignore
 import mock
 import pytest
 import requests
 import requests_mock as req_mock
+import shapely  # type: ignore
 
 from up42 import catalog, order
 
+from . import helpers
 from .fixtures import fixtures_globals as constants
 
-with open(
-    pathlib.Path(__file__).resolve().parent / "mock_data/search_params_simple.json",
-    encoding="utf-8",
-) as json_file:
-    mock_search_parameters = json.load(json_file)
+PHR = "phr"
+SIMPLE_BOX = shapely.box(0, 0, 1, 1).__geo_interface__
+SEARCH_PARAMETERS = {
+    "datetime": "2014-01-01T00:00:00Z/2022-12-31T23:59:59Z",
+    "intersects": SIMPLE_BOX,
+    "collections": [PHR],
+    "limit": 4,
+    "query": {
+        "cloudCoverage": {"lte": 20},
+        "up42:usageType": {"in": ["DATA", "ANALYTICS"]},
+    },
+}
 
 
 @pytest.fixture(autouse=True)
@@ -88,27 +96,137 @@ def test_get_data_product_schema(catalog_mock):
     assert data_product_schema["properties"]
 
 
+class TestCatalog:
+    host = "oneatlas"
+    catalog = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID)
+
+    @pytest.fixture
+    def data_products(self, requests_mock: req_mock.Mocker):
+        data_products_url = f"{constants.API_HOST}/data-products?is_integrated=true&paginated=false"
+        requests_mock.get(
+            data_products_url,
+            json={
+                "data": [
+                    {
+                        "id": "id",
+                        "collection": {
+                            "type": "ARCHIVE",
+                            "title": "title",
+                            "name": PHR,
+                            "host": {"name": self.host},
+                        },
+                        "productConfiguration": {"title": "config"},
+                    }
+                ]
+            },
+        )
+
+    @pytest.mark.usefixtures("data_products")
+    def test_search_fails_if_host_is_not_found(self):
+        with pytest.raises(ValueError, match=r"Selected collections \['unknown'\] are not valid.*"):
+            self.catalog.search({"collections": ["unknown"]})
+
+    def test_search_fails_if_collections_hosted_by_different_hosts(self, requests_mock: req_mock.Mocker):
+        data_products_url = f"{constants.API_HOST}/data-products?is_integrated=true&paginated=false"
+        requests_mock.get(
+            data_products_url,
+            json={
+                "data": [
+                    {
+                        "id": idx,
+                        "collection": {
+                            "type": "ARCHIVE",
+                            "title": f"title{idx}",
+                            "name": f"collection{idx}",
+                            "host": {"name": f"host{idx}"},
+                        },
+                        "productConfiguration": {"title": f"config{idx}"},
+                    }
+                    for idx in [1, 2]
+                ]
+            },
+        )
+        with pytest.raises(ValueError):
+            self.catalog.search({"collections": ["collection1", "collection2"]})
+
+    @pytest.mark.usefixtures("data_products")
+    def test_should_search(self, requests_mock: req_mock.Mocker):
+        search_url = f"{constants.API_HOST}/catalog/hosts/{self.host}/stac/search"
+        next_page_url = f"{search_url}/next"
+        bbox = (1.0, 2.0, 1.0, 2.0)
+        feature = {
+            "type": "Feature",
+            "properties": {
+                "some": "data",
+            },
+            "geometry": {"type": "Point", "coordinates": (1.0, 2.0)},
+        }
+        first_page = {
+            "type": "FeatureCollection",
+            "features": [feature],
+            "links": [
+                {
+                    "rel": "next",
+                    "href": next_page_url,
+                }
+            ],
+        }
+        second_page = {**first_page, "links": []}
+        requests_mock.post(
+            url=search_url,
+            json=first_page,
+            additional_matcher=helpers.match_request_body(SEARCH_PARAMETERS),
+        )
+        requests_mock.post(
+            url=next_page_url,
+            json=second_page,
+            additional_matcher=helpers.match_request_body(SEARCH_PARAMETERS),
+        )
+
+        results = self.catalog.search(SEARCH_PARAMETERS)
+
+        assert isinstance(results, gpd.GeoDataFrame)
+        assert results.__geo_interface__ == {
+            "type": "FeatureCollection",
+            "features": [
+                {**feature, "id": "0", "bbox": bbox},
+                {**feature, "id": "1", "bbox": bbox},
+            ],
+            "bbox": bbox,
+        }
+
+    @pytest.mark.usefixtures("data_products")
+    def test_should_download_available_quicklooks(self, requests_mock: req_mock.Mocker, tmp_path):
+        missing_image_id = "missing-image-id"
+        image_id = "image-id"
+        missing_quicklook_url = f"{constants.API_HOST}/catalog/{self.host}/image/{missing_image_id}/quicklook"
+        requests_mock.get(missing_quicklook_url, status_code=404)
+
+        quicklook_url = f"{constants.API_HOST}/catalog/{self.host}/image/{image_id}/quicklook"
+        quicklook_file = pathlib.Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
+        requests_mock.get(quicklook_url, content=quicklook_file.read_bytes())
+
+        out_paths = self.catalog.download_quicklooks(
+            image_ids=[image_id, missing_image_id],
+            collection=PHR,
+            output_directory=tmp_path,
+        )
+        assert out_paths == [str(tmp_path / f"quicklook_{image_id}.jpg")]
+
+
 def test_construct_search_parameters(catalog_mock):
-    search_parameters = catalog_mock.construct_search_parameters(
-        geometry=mock_search_parameters["intersects"],
-        collections=["phr"],
-        start_date="2014-01-01",
-        end_date="2022-12-31",
-        usage_type=["DATA", "ANALYTICS"],
-        limit=4,
-        max_cloudcover=20,
+    assert (
+        catalog_mock.construct_search_parameters(
+            geometry=SIMPLE_BOX,
+            collections=[PHR],
+            start_date="2014-01-01",
+            end_date="2022-12-31",
+            usage_type=["DATA", "ANALYTICS"],
+            limit=4,
+            max_cloudcover=20,
+        )
+        == SEARCH_PARAMETERS
     )
-    assert isinstance(search_parameters, dict)
-    assert search_parameters["datetime"] == mock_search_parameters["datetime"]
-    search_params_coords = {
-        "type": search_parameters["intersects"]["type"],
-        "coordinates": [
-            [[float(coord[0]), float(coord[1])] for coord in search_parameters["intersects"]["coordinates"][0]]
-        ],
-    }
-    assert search_params_coords == mock_search_parameters["intersects"]
-    assert search_parameters["limit"] == mock_search_parameters["limit"]
-    assert search_parameters["query"] == mock_search_parameters["query"]
 
 
 def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
@@ -123,28 +241,28 @@ def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
             geometry=fc,
             start_date="2020-01-01",
             end_date="2020-08-10",
-            collections=["phr"],
+            collections=[PHR],
             limit=10,
             max_cloudcover=15,
         )
     assert str(e.value) == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
 
 
-def test_search(catalog_mock):
-    search_results = catalog_mock.search(mock_search_parameters)
+def test_construct_order_parameters(catalog_mock):
+    order_parameters = catalog_mock.construct_order_parameters(
+        data_product_id=constants.DATA_PRODUCT_ID,
+        image_id="123",
+        aoi=SIMPLE_BOX,
+    )
+    assert isinstance(order_parameters, dict)
+    assert list(order_parameters.keys()) == ["dataProduct", "params"]
+    assert order_parameters["params"]["acquisitionMode"] is None
 
-    assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (4, 15)
 
-
-def test_search_usagetype(catalog_usagetype_mock):
+def test_search_usagetype(catalog_mock):
     """
     Result & Result2 are one of the combinations of
     "DATA" and "ANALYTICS". Result2 can be None.
-
-    Test is not pytest-paramterized as the same
-    catalog_usagetype_mock needs be used for
-    each iteration.
 
     The result assertion needs to allow multiple combinations,
     e.g. when searching for ["DATA", "ANALYTICS"],
@@ -164,132 +282,20 @@ def test_search_usagetype(catalog_usagetype_mock):
     }
 
     for params in [params1, params2, params3]:
-        search_parameters = catalog_usagetype_mock.construct_search_parameters(
+        assert catalog_mock.construct_search_parameters(
             start_date="2014-01-01T00:00:00",
             end_date="2020-12-31T23:59:59",
-            collections=["phr"],
+            collections=[PHR],
             limit=1,
             usage_type=params["usage_type"],
-            geometry={
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [13.375966, 52.515068],
-                        [13.375966, 52.516639],
-                        [13.378314, 52.516639],
-                        [13.378314, 52.515068],
-                        [13.375966, 52.515068],
-                    ]
-                ],
-            },
-        )
-
-    search_results = catalog_usagetype_mock.search(search_parameters, as_dataframe=True)
-    assert all(search_results["up42:usageType"].apply(lambda x: params["result1"] in x or params["result2"] in x))
-
-
-def test_search_catalog_pagination(catalog_mock):
-    search_params_limit_614 = {
-        "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
-        "intersects": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [12.008056640625, 52.66305767075935],
-                    [16.292724609375, 52.66305767075935],
-                    [16.292724609375, 52.72963909783717],
-                    [12.008056640625, 52.72963909783717],
-                    [12.008056640625, 52.66305767075935],
-                ]
-            ],
-        },
-        "limit": 614,
-        "collections": ["phr", "spot"],
-    }
-    search_results = catalog_mock.search(search_params_limit_614)
-    assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (614, 15)
-
-
-def test_search_catalog_pagination_exhausted(catalog_pagination_mock):
-    """
-    Search results pagination is exhausted after 1 extra page (50 elements),
-    resulting in only 500+50 features even though
-    the limit parameter asked for 614.
-    """
-    search_params_limit_614 = {
-        "datetime": "2014-01-01T00:00:00Z/2020-01-20T23:59:59Z",
-        "intersects": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [12.008056640625, 52.66305767075935],
-                    [16.292724609375, 52.66305767075935],
-                    [16.292724609375, 52.72963909783717],
-                    [12.008056640625, 52.72963909783717],
-                    [12.008056640625, 52.66305767075935],
-                ]
-            ],
-        },
-        "limit": 614,
-        "collections": ["phr", "spot"],
-    }
-    search_results = catalog_pagination_mock.search(search_params_limit_614)
-    assert isinstance(search_results, gpd.GeoDataFrame)
-    assert search_results.shape == (550, 15)
-    assert all(search_results.collection.isin(["phr", "spot"]))
-
-
-class TestCatalog:
-    def test_should_download_available_quicklooks(self, requests_mock: req_mock.Mocker, tmp_path):
-        missing_image_id = str(uuid.uuid4())
-        image_id = str(uuid.uuid4())
-        host = "oneatlas"
-        collection = "phr"
-        data_products_url = f"{constants.API_HOST}/data-products?is_integrated=true&paginated=false"
-        requests_mock.get(
-            data_products_url,
-            json={
-                "data": [
-                    {
-                        "id": "id",
-                        "collection": {
-                            "type": "ARCHIVE",
-                            "title": "title",
-                            "name": collection,
-                            "host": {"name": host},
-                        },
-                        "productConfiguration": {"title": "config"},
-                    }
-                ]
-            },
-        )
-
-        missing_quicklook_url = f"{constants.API_HOST}/catalog/{host}/image/{missing_image_id}/quicklook"
-        requests_mock.get(missing_quicklook_url, status_code=404)
-
-        quicklook_url = f"{constants.API_HOST}/catalog/{host}/image/{image_id}/quicklook"
-        quicklook_file = pathlib.Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
-        requests_mock.get(quicklook_url, content=quicklook_file.read_bytes())
-
-        out_paths = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID).download_quicklooks(
-            image_ids=[image_id, missing_image_id],
-            collection=collection,
-            output_directory=tmp_path,
-        )
-        assert out_paths == [str(tmp_path / f"quicklook_{image_id}.jpg")]
-        assert requests_mock.call_count == 3
-
-
-def test_construct_order_parameters(catalog_mock):
-    order_parameters = catalog_mock.construct_order_parameters(
-        data_product_id=constants.DATA_PRODUCT_ID,
-        image_id="123",
-        aoi=mock_search_parameters["intersects"],
-    )
-    assert isinstance(order_parameters, dict)
-    assert list(order_parameters.keys()) == ["dataProduct", "params"]
-    assert order_parameters["params"]["acquisitionMode"] is None
+            geometry=SIMPLE_BOX,
+        ) == {
+            "datetime": "2014-01-01T00:00:00Z/2020-12-31T23:59:59Z",
+            "intersects": SIMPLE_BOX,
+            "limit": 1,
+            "collections": [PHR],
+            "query": {"up42:usageType": {"in": params["usage_type"]}},
+        }
 
 
 def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, auth_mock):
