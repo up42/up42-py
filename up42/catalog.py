@@ -385,8 +385,7 @@ class Catalog(CatalogBase):
 
     def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[geopandas.GeoDataFrame, dict]:
         """
-        Searches the catalog for the the search parameters and
-        returns the metadata of the matching scenes.
+        Searches the catalog  and returns the metadata of the matching scenes.
 
         Args:
             search_parameters: The catalog search parameters, see example.
