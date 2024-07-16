@@ -365,15 +365,13 @@ class Catalog(CatalogBase):
             else:
                 raise ValueError("Select correct `usage_type`")
 
-        search_parameters = {
+        return {
             "datetime": time_period,
             "intersects": aoi_geometry,
             "limit": limit,
             "collections": collections,
             "query": query_filters,
         }
-
-        return search_parameters
 
     def _get_host(self, collections: list[str]) -> str:
         # FIXME: switch to using collections info instead of data products
