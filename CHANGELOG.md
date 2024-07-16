@@ -29,6 +29,11 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.1a9
+
+**Jul 17, 2024**
+- Bumped dependencies `zipp` from 3.17.0 to 3.19.1.
+
 ## 1.1.1a7
 
 **Jul 16, 2024**
