@@ -29,6 +29,11 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.1a8
+
+**Jul 17, 2024**
+- Bumped dependencies `setuptools` from 69.1.1 to 70.0.0.
+
 ## 1.1.1a7
 
 **Jul 16, 2024**
