@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.1a11
+
+**Jul 30, 2024**
+- Added EULA acceptance check to processing job templates.
+- Add various failure statuses to job tracking stop list.
+
 ## 1.1.1a10
 
 **Jul 29, 2024**
