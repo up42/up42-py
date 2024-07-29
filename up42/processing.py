@@ -21,6 +21,8 @@ class ValidationError:
 
 class JobStatus(enum.Enum):
     CREATED = "created"
+    LICENSED = "licensed"
+    UNLICENSED = "unlicensed"
     VALID = "valid"
     INVALID = "invalid"
     ACCEPTED = "accepted"
@@ -30,6 +32,15 @@ class JobStatus(enum.Enum):
     FAILED = "failed"
     CAPTURED = "captured"
     RELEASED = "released"
+
+
+TERMINAL_STATUSES = [
+    JobStatus.CAPTURED,
+    JobStatus.RELEASED,
+    JobStatus.INVALID,
+    JobStatus.REJECTED,
+    JobStatus.UNLICENSED,
+]
 
 
 class JobResults(TypedDict, total=False):
@@ -131,7 +142,7 @@ class Job:
             self.collection_url = job.collection_url
             self.errors = job.errors
             self.credits = job.credits
-            if self.status not in [JobStatus.CAPTURED, JobStatus.RELEASED, JobStatus.INVALID, JobStatus.REJECTED]:
+            if self.status not in TERMINAL_STATUSES:
                 raise UnfinishedJob
 
         update()

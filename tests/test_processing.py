@@ -350,15 +350,7 @@ class TestJob:
         job = dataclasses.replace(JOB, collection_url=None)
         assert not job.collection
 
-    @pytest.mark.parametrize(
-        "status",
-        [
-            processing.JobStatus.CAPTURED,
-            processing.JobStatus.RELEASED,
-            processing.JobStatus.REJECTED,
-            processing.JobStatus.INVALID,
-        ],
-    )
+    @pytest.mark.parametrize("status", processing.TERMINAL_STATUSES)
     def test_should_track_until_job_finishes(self, requests_mock: req_mock.Mocker, status: processing.JobStatus):
         updated = NOW + datetime.timedelta(minutes=4)
         started = NOW + datetime.timedelta(minutes=2)
