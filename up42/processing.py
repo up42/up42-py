@@ -230,9 +230,9 @@ class JobTemplate:
             self.__evaluate()
 
     def __validate(self):
-        self.errors = self.__is_eula_accepted() or self.__validate_inputs()
+        self.errors = self.__validate_eula() or self.__validate_inputs()
 
-    def __is_eula_accepted(self) -> set[ValidationError]:
+    def __validate_eula(self) -> set[ValidationError]:
         process_url = host.endpoint(f"/v2/processing/processes/{self.process_id}")
         description = self.session.get(process_url).json()
         eula_id = next(
