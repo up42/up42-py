@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Jul 30, 2024**
 - Added EULA acceptance check to processing job templates.
 - Added various failure statuses to job tracking stop list.
-- Added EULA related status to processing jobs.
+- Added EULA related statuses to processing jobs.
 
 ## 1.1.1a10
 
