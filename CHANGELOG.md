@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 1.1.1a10
 
 **Jul 29, 2024**
-- Deprecated `get_data_product` method in `CatalogBase` class.
+- Deprecated `get_data_products` method in `CatalogBase` class.
 
 ## 1.1.1a9
 

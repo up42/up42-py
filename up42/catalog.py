@@ -176,7 +176,7 @@ class CatalogBase:
     def get_collections(self) -> list[Collection]:
         return ProductGlossary.get_collections(self.type)
 
-    @utils.deprecation("ProductGlossary::get_data_products", "2.0.0")
+    @utils.deprecation("ProductGlossary::get_collection", "2.0.0")
     def get_data_products(self, basic: bool = True) -> Union[List[DataProduct], dict[str, CollectionOverview]]:
         return ProductGlossary.get_data_products(self.type, basic)
 
