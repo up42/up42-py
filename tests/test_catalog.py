@@ -1,5 +1,7 @@
 import json
 import pathlib
+import urllib.parse
+from typing import Any, Optional
 
 import geopandas as gpd  # type: ignore
 import mock
@@ -8,7 +10,7 @@ import requests
 import requests_mock as req_mock
 import shapely  # type: ignore
 
-from up42 import catalog, order
+from up42 import catalog, order, utils
 
 from . import helpers
 from .fixtures import fixtures_globals as constants
@@ -36,13 +38,69 @@ def set_status_raising_session():
 
 
 class TestProductGlossary:
-    @pytest.mark.parametrize("collection_type", ["ARCHIVE", "TASKING"])
-    def test_should_get_collections(self, requests_mock: req_mock.Mocker, collection_type: catalog.CollectionType):
-        url = f"{constants.API_HOST}/collections?is_integrated=true&paginated=false"
+    @pytest.mark.parametrize("collection_type", [None, "ARCHIVE", "TASKING"])
+    @pytest.mark.parametrize("only_non_commercial", [None, True, False])
+    @pytest.mark.parametrize("sort_by", [None, str(utils.SortingField("createdAt", ascending=False))])
+    def test_should_get_collections_v2(
+        self,
+        requests_mock: req_mock.Mocker,
+        collection_type: catalog.CollectionType,
+        only_non_commercial: bool,
+        sort_by: Optional[utils.SortingField],
+    ):
         target_collection = {"type": collection_type}
-        ignored_collection = {"type": "other_type"}
-        requests_mock.get(url, json={"data": [target_collection, ignored_collection]})
-        assert catalog.ProductGlossary.get_collections(collection_type) == [target_collection]
+        ignored_collection = {"type": "OTHER_TYPE"}
+        query_params: dict[str, Any] = {}
+        if only_non_commercial:
+            query_params["onlyNonCommercial"] = ("true" if only_non_commercial else "false",)
+        if sort_by:
+            query_params["sort"] = str(sort_by)
+        query_params["page"] = 0
+
+        query = urllib.parse.urlencode(query_params, doseq=True)
+        base_url = f"{constants.API_HOST}/v2/collections"
+        requests_mock.get(
+            url=base_url + (query and f"?{query}"),
+            json={
+                "content": [target_collection, ignored_collection] * 3,
+                "totalPages": 2,
+            },
+        )
+
+        query_params["page"] = "1"
+        query = urllib.parse.urlencode(query_params, doseq=True)
+        requests_mock.get(
+            url=base_url + (query and f"?{query}"),
+            json={
+                "content": [target_collection, ignored_collection] * 2,
+                "totalPages": 2,
+            },
+        )
+
+        query_params["page"] = "2"
+        query = urllib.parse.urlencode(query_params, doseq=True)
+        requests_mock.get(
+            url=base_url + (query and f"?{query}"),
+            json={
+                "content": [],
+                "totalPages": 2,
+            },
+        )
+        expected_collection = (
+            [target_collection]
+            if collection_type is not None
+            else [target_collection, ignored_collection]  # type: ignore[list-item]
+        )
+        assert (
+            list(
+                catalog.ProductGlossary.get_collections(
+                    collection_type=collection_type,
+                    only_non_commercial=only_non_commercial,
+                    sortby=sort_by,
+                )
+            )
+            == expected_collection * 5
+        )
 
     @pytest.mark.parametrize("collection_type", ["ARCHIVE", "TASKING"])
     def test_get_data_products_grouped(self, requests_mock: req_mock.Mocker, collection_type: catalog.CollectionType):

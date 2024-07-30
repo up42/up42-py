@@ -29,6 +29,11 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 1.1.1a11
+
+**Jul 31, 2024**
+- Switch to new `v2` product glossary endpoint in `get_collections` method for `ProductGlossary` class.
+
 ## 1.1.1a10
 
 **Jul 29, 2024**

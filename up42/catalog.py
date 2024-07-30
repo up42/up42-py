@@ -2,9 +2,10 @@
 Catalog search functionality
 """
 
+import enum
 import pathlib
 import warnings
-from typing import Any, Dict, List, Literal, Optional, TypedDict, Union, cast
+from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict, Union, cast
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
@@ -17,9 +18,57 @@ from up42 import base, host, order, utils
 logger = utils.get_logger(__name__)
 
 
+CollectionType = Literal["ARCHIVE", "TASKING"]
+
+
+class IntegrationValue(enum.Enum):
+    ACCESS_APPROVAL_REQUIRED = "ACCESS_APPROVAL_REQUIRED"
+    SAMPLE_DATA_AVAILABLE = "SAMPLE_DATA_AVAILABLE"
+    MANUAL_REQUEST_REQUIRED = "MANUAL_REQUEST_REQUIRED"
+    FEASIBILITY_MAY_BE_REQUIRED = "FEASIBILITY_MAY_BE_REQUIRED"
+    QUOTATION_REQUIRED = "QUOTATION_REQUIRED"
+    PRICE_ESTIMATION_AVAILABLE = "PRICE_ESTIMATION_AVAILABLE"
+    SEARCH_AVAILABLE = "SEARCH_AVAILABLE"
+    THUMBNAIL_AVAILABLE = "THUMBNAIL_AVAILABLE"
+    QUICKLOOK_AVAILABLE = "QUICKLOOK_AVAILABLE"
+
+
 class ResolutionValue(TypedDict):
+    description: Optional[str]
     minimum: float
     maximum: Optional[float]
+
+
+class CollectionMetadata(TypedDict):
+    product_type: Optional[Literal["OPTICAL", "SAR", "ELEVATION"]]
+    resolution_class: Optional[Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]]
+    resolution_calue: Optional[ResolutionValue]
+
+
+class Provider(TypedDict):
+    name: str
+    title: str
+    description: str
+    roles: Literal["PRODUCER", "HOST"]
+
+
+class DataProductV2(TypedDict):
+    id: Optional[str]
+    name: str
+    title: str
+    description: str
+    eula_id: Optional[str]
+
+
+class CollectionV2(TypedDict, total=False):
+    name: str
+    title: str
+    description: str
+    type: CollectionType
+    integrations: list[IntegrationValue]
+    metadata: Optional[CollectionMetadata]
+    providers: list[Provider]
+    data_products: list[DataProductV2]
 
 
 class Host(TypedDict):
@@ -41,9 +90,6 @@ class Producer(TypedDict):
     createdAt: Optional[str]
     updatedAt: Optional[str]
     isIntegrated: bool
-
-
-CollectionType = Literal["ARCHIVE", "TASKING"]
 
 
 class Collection(TypedDict):
@@ -110,13 +156,39 @@ class ProductGlossary:
     session = base.Session()
 
     @classmethod
-    def get_collections(cls, collection_type: Optional[CollectionType]) -> list[Collection]:
+    def get_collections(
+        cls,
+        collection_type: Optional[CollectionType],
+        only_non_commercial: bool = False,
+        sortby: Optional[utils.SortingField] = None,
+    ) -> Iterator["CollectionV2"]:
         """
         Get the available data collections.
         """
-        url = host.endpoint("/collections")
-        integrated_collections = cls.session.get(url, params=PRODUCT_GLOSSARY_PARAMS).json()["data"]
-        return [collection for collection in integrated_collections if collection["type"] == collection_type]
+        query_params = {
+            key: str(value)
+            for key, value in {
+                "onlyNonCommercial": "true" if only_non_commercial else "false",
+                "sort": sortby,
+                "page": "0",
+            }.items()
+            if value
+        }
+
+        def get_pages():
+            current_page = 0
+            page = cls.session.get(host.endpoint("/v2/collections"), params=query_params).json()
+            total_pages = page["totalPages"]
+            while current_page < total_pages:
+                yield page["content"]
+                current_page += 1
+                query_params["page"] = str(current_page)
+                page = cls.session.get(host.endpoint("/v2/collections"), params=query_params).json()
+
+        for page_content in get_pages():
+            for collection in page_content:
+                if collection["type"] == collection_type or collection_type is None:
+                    yield CollectionV2(**collection)
 
     @classmethod
     def get_data_products(
@@ -173,7 +245,7 @@ class CatalogBase:
         # FIXME: cannot be optional
         self.type: Optional[CollectionType] = None
 
-    def get_collections(self) -> list[Collection]:
+    def get_collections(self) -> Iterator[CollectionV2]:
         return ProductGlossary.get_collections(self.type)
 
     @utils.deprecation("ProductGlossary::get_collections", "2.0.0")
