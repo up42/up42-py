@@ -16,6 +16,18 @@ from tests.fixtures import fixtures_globals as constants
 from up42 import processing, utils
 
 PROCESS_ID = "process-id"
+EULA_ID = str(uuid.uuid4())
+PROCESS_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}"
+PROCESS_SUMMARY = {
+    "id": PROCESS_ID,
+    "additionalParameters": {
+        "parameters": [
+            {"name": "eula-id", "value": [EULA_ID]},
+            {"name": "price", "value": [{"credits": 1, "unit": "SQ_KM"}]},
+        ]
+    },
+}
+EULA_URL = f"{constants.API_HOST}/v2/eulas/{EULA_ID}"
 VALIDATION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/validation"
 COST_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/cost"
 EXECUTION_URL = (
@@ -125,7 +137,25 @@ class SampleJobTemplate(processing.JobTemplate):
         return {"title": self.title}
 
 
+@pytest.fixture
+def eula_accepted(requests_mock: req_mock.Mocker):
+    requests_mock.get(PROCESS_URL, json=PROCESS_SUMMARY)
+    requests_mock.get(EULA_URL, json={"isAccepted": True})
+
+
 class TestJobTemplate:
+    def test_should_be_invalid_if_eula_not_accepted(self, requests_mock: req_mock.Mocker):
+        error = processing.ValidationError(
+            name="EulaNotAccepted",
+            message=f"EULA for the process {PROCESS_ID} not accepted.",
+        )
+        requests_mock.get(PROCESS_URL, json=PROCESS_SUMMARY)
+        requests_mock.get(EULA_URL, json={"isAccepted": False})
+        template = SampleJobTemplate(title=TITLE)
+        assert not template.is_valid
+        assert template.errors == {error}
+
+    @pytest.mark.usefixtures("eula_accepted")
     def test_fails_to_construct_if_validation_fails(self, requests_mock: req_mock.Mocker):
         error_code = random.randint(430, 599)
         requests_mock.post(
@@ -136,8 +166,8 @@ class TestJobTemplate:
         with pytest.raises(requests.exceptions.HTTPError) as error:
             _ = SampleJobTemplate(title=TITLE)
         assert error.value.response.status_code == error_code
-        assert requests_mock.call_count == 1
 
+    @pytest.mark.usefixtures("eula_accepted")
     def test_should_be_invalid_if_inputs_are_malformed(self, requests_mock: req_mock.Mocker):
         error = processing.ValidationError(name="InvalidSchema", message="data.inputs must contain ['item'] properties")
         requests_mock.post(
@@ -150,6 +180,7 @@ class TestJobTemplate:
         assert not template.is_valid
         assert template.errors == {error}
 
+    @pytest.mark.usefixtures("eula_accepted")
     def test_should_be_invalid_if_inputs_are_invalid(self, requests_mock: req_mock.Mocker):
         requests_mock.post(
             VALIDATION_URL,
@@ -165,6 +196,7 @@ class TestJobTemplate:
         assert not template.is_valid
         assert template.errors == {INVALID_TITLE_ERROR}
 
+    @pytest.mark.usefixtures("eula_accepted")
     def test_fails_to_construct_if_evaluation_fails(self, requests_mock: req_mock.Mocker):
         error_code = random.randint(400, 599)
         requests_mock.post(
@@ -181,7 +213,6 @@ class TestJobTemplate:
         with pytest.raises(requests.exceptions.HTTPError) as error:
             _ = SampleJobTemplate(title=TITLE)
         assert error.value.response.status_code == error_code
-        assert requests_mock.call_count == 2
 
     @pytest.mark.parametrize(
         "cost",
@@ -190,6 +221,7 @@ class TestJobTemplate:
             processing.Cost(strategy="area", credits=1, size=5, unit="SKM"),
         ],
     )
+    @pytest.mark.usefixtures("eula_accepted")
     def test_should_construct(self, requests_mock: req_mock.Mocker, cost: processing.Cost):
         requests_mock.post(
             VALIDATION_URL,
@@ -217,6 +249,7 @@ class TestJobTemplate:
         assert not template.errors
         assert template.cost == cost
 
+    @pytest.mark.usefixtures("eula_accepted")
     def test_should_execute(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="none", credits=1)
         requests_mock.post(
@@ -249,6 +282,7 @@ class SampleSingleItemJobTemplate(processing.SingleItemJobTemplate):
 
 
 class TestSingleItemJobTemplate:
+    @pytest.mark.usefixtures("eula_accepted")
     def test_should_provide_inputs(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="discount", credits=-1)
         body_matcher = helpers.match_request_body({"inputs": {"title": TITLE, "item": ITEM_URL}})
@@ -278,6 +312,7 @@ class SampleMultiItemJobTemplate(processing.MultiItemJobTemplate):
 
 
 class TestMultiItemJobTemplate:
+    @pytest.mark.usefixtures("eula_accepted")
     def test_should_provide_inputs(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="discount", credits=-1)
         body_matcher = helpers.match_request_body({"inputs": {"title": TITLE, "items": [ITEM_URL]}})
@@ -315,7 +350,7 @@ class TestJob:
         job = dataclasses.replace(JOB, collection_url=None)
         assert not job.collection
 
-    @pytest.mark.parametrize("status", [processing.JobStatus.CAPTURED, processing.JobStatus.RELEASED])
+    @pytest.mark.parametrize("status", processing.TERMINAL_STATUSES)
     def test_should_track_until_job_finishes(self, requests_mock: req_mock.Mocker, status: processing.JobStatus):
         updated = NOW + datetime.timedelta(minutes=4)
         started = NOW + datetime.timedelta(minutes=2)

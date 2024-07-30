@@ -21,6 +21,8 @@ class ValidationError:
 
 class JobStatus(enum.Enum):
     CREATED = "created"
+    LICENSED = "licensed"
+    UNLICENSED = "unlicensed"
     VALID = "valid"
     INVALID = "invalid"
     ACCEPTED = "accepted"
@@ -30,6 +32,15 @@ class JobStatus(enum.Enum):
     FAILED = "failed"
     CAPTURED = "captured"
     RELEASED = "released"
+
+
+TERMINAL_STATUSES = [
+    JobStatus.CAPTURED,
+    JobStatus.RELEASED,
+    JobStatus.INVALID,
+    JobStatus.REJECTED,
+    JobStatus.UNLICENSED,
+]
 
 
 class JobResults(TypedDict, total=False):
@@ -131,7 +142,7 @@ class Job:
             self.collection_url = job.collection_url
             self.errors = job.errors
             self.credits = job.credits
-            if self.status not in [JobStatus.CAPTURED, JobStatus.RELEASED]:
+            if self.status not in TERMINAL_STATUSES:
                 raise UnfinishedJob
 
         update()
@@ -229,14 +240,36 @@ class JobTemplate:
         if self.is_valid:
             self.__evaluate()
 
-    def __validate(self) -> None:
+    def __validate(self):
+        self.errors = self.__validate_eula() or self.__validate_inputs()
+
+    def __validate_eula(self) -> set[ValidationError]:
+        process_url = host.endpoint(f"/v2/processing/processes/{self.process_id}")
+        description = self.session.get(process_url).json()
+        eula_id = next(
+            parameter["value"][0]
+            for parameter in description["additionalParameters"]["parameters"]
+            if parameter["name"] == "eula-id"
+        )
+        eula_url = host.endpoint(f"/v2/eulas/{eula_id}")
+        eula = self.session.get(eula_url).json()
+        if not eula["isAccepted"]:
+            return {
+                ValidationError(
+                    name="EulaNotAccepted",
+                    message=f"EULA for the process {self.process_id} not accepted.",
+                )
+            }
+        return set()
+
+    def __validate_inputs(self) -> set[ValidationError]:
         url = host.endpoint(f"/v2/processing/processes/{self.process_id}/validation")
         try:
             _ = self.session.post(url, json={"inputs": self.inputs})
         except requests.HTTPError as err:
             if (status_code := err.response.status_code) in (400, 422):
                 if status_code == 400:
-                    self.errors = {
+                    return {
                         ValidationError(
                             name="InvalidSchema",
                             message=err.response.json()["schema-error"],
@@ -244,9 +277,10 @@ class JobTemplate:
                     }
                 if status_code == 422:
                     errors = err.response.json()["errors"]
-                    self.errors = {ValidationError(**error) for error in errors}
+                    return {ValidationError(**error) for error in errors}
             else:
                 raise err
+        return set()
 
     def __evaluate(self):
         url = host.endpoint(f"/v2/processing/processes/{self.process_id}/cost")
