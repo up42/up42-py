@@ -158,7 +158,7 @@ class ProductGlossary:
     @classmethod
     def get_collections(
         cls,
-        collection_type: Optional[CollectionType],
+        collection_type: Optional[CollectionType] = None,
         only_non_commercial: bool = False,
         sortby: Optional[utils.SortingField] = None,
     ) -> Iterator["CollectionV2"]:
