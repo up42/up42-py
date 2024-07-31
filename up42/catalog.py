@@ -292,12 +292,13 @@ class Catalog(CatalogBase):
             "query": query_filters,
         }
 
-    def _get_host(self, collections: list[str]) -> str:
-        # FIXME: switch to using collections info instead of data products
-        all_collections = ProductGlossary.get_collections(self.type)
-        hosts = {collection["host"]["name"] for collection in all_collections if collection["name"] in collections}
+    def _get_host(self, collection_names: list[str]) -> str:
+        collections = ProductGlossary.get_collections(self.type)
+        hosts = {collection["host"]["name"] for collection in collections if collection["name"] in collection_names}
         if not hosts:
-            raise ValueError(f"Selected collections {collections} are not valid. See ProductGlossary.get_collections.")
+            raise ValueError(
+                f"Selected collections {collection_names} are not valid. See ProductGlossary.get_collections."
+            )
         if len(hosts) > 1:
             raise ValueError("Only collections with the same host can be searched at the same time.")
         return hosts.pop()
