@@ -52,7 +52,7 @@ class Provider(TypedDict):
     roles: list[Literal["PRODUCER", "HOST"]]
 
 
-class DataProductV2(TypedDict):
+class DataProduct(TypedDict):
     id: Optional[str]
     name: str
     title: str
@@ -60,7 +60,7 @@ class DataProductV2(TypedDict):
     eula_id: Optional[str]
 
 
-class CollectionV2(TypedDict, total=False):
+class Collection(TypedDict, total=False):
     name: str
     title: str
     description: str
@@ -68,51 +68,7 @@ class CollectionV2(TypedDict, total=False):
     integrations: list[IntegrationValue]
     metadata: Optional[CollectionMetadata]
     providers: list[Provider]
-    data_products: list[DataProductV2]
-
-
-class Host(TypedDict):
-    # pylint: disable=invalid-name
-    name: str
-    title: str
-    description: str
-    createdAt: Optional[str]
-    updatedAt: Optional[str]
-    isIntegrated: bool
-    isCommercial: bool
-
-
-class Producer(TypedDict):
-    # pylint: disable=invalid-name
-    name: str
-    title: str
-    description: str
-    createdAt: Optional[str]
-    updatedAt: Optional[str]
-    isIntegrated: bool
-
-
-class Collection(TypedDict):
-    # pylint: disable=invalid-name
-    name: str
-    title: str
-    description: str
-    type: CollectionType
-    restricted: bool
-    createdAt: Optional[str]
-    updatedAt: Optional[str]
-    host: Host
-    # Deprecated
-    hostName: str
-    producer: Producer
-    # Deprecated
-    producerName: str
-    isIntegrated: bool
-    # Deprecated
-    isOptical: bool
-    resolutionClass: Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]
-    productType: Literal["OPTICAL", "SAR", "ELEVATION"]
-    resolutionValue: ResolutionValue
+    data_products: list[DataProduct]
 
 
 PRODUCT_GLOSSARY_PARAMS = {"is_integrated": "true", "paginated": "false"}
@@ -127,7 +83,7 @@ class ProductGlossary:
         collection_type: Optional[CollectionType] = None,
         only_non_commercial: bool = False,
         sortby: Optional[utils.SortingField] = None,
-    ) -> Iterator["CollectionV2"]:
+    ) -> Iterator["Collection"]:
         """
         Get the available data collections.
         """
@@ -154,7 +110,7 @@ class ProductGlossary:
         for page_content in get_pages():
             for collection in page_content:
                 if collection["type"] == collection_type or collection_type is None:
-                    yield CollectionV2(**collection)
+                    yield Collection(**collection)
 
 
 class CatalogBase:
