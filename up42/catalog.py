@@ -2,10 +2,11 @@
 Catalog search functionality
 """
 
+import dataclasses
 import enum
 import pathlib
 import warnings
-from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict, Union
+from typing import Any, Dict, Iterator, List, Literal, Optional, Union
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
@@ -18,7 +19,9 @@ from up42 import base, host, order, utils
 logger = utils.get_logger(__name__)
 
 
-CollectionType = Literal["ARCHIVE", "TASKING"]
+class CollectionType(enum.Enum):
+    ARCHIVE = "ARCHIVE"
+    TASKING = "TASKING"
 
 
 class IntegrationValue(enum.Enum):
@@ -33,42 +36,47 @@ class IntegrationValue(enum.Enum):
     QUICKLOOK_AVAILABLE = "QUICKLOOK_AVAILABLE"
 
 
-class ResolutionValue(TypedDict):
-    description: Optional[str]
+@dataclasses.dataclass
+class ResolutionValue:
     minimum: float
-    maximum: Optional[float]
+    description: Optional[str] = None
+    maximum: Optional[float] = None
 
 
-class CollectionMetadata(TypedDict):
-    product_type: Optional[Literal["OPTICAL", "SAR", "ELEVATION"]]
-    resolution_class: Optional[Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]]
-    resolution_calue: Optional[ResolutionValue]
+@dataclasses.dataclass
+class CollectionMetadata:
+    product_type: Optional[Literal["OPTICAL", "SAR", "ELEVATION"]] = None
+    resolution_class: Optional[Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]] = None
+    resolution_value: Optional[ResolutionValue] = None
 
 
-class Provider(TypedDict):
+@dataclasses.dataclass
+class Provider:
     name: str
     title: str
     description: str
     roles: list[Literal["PRODUCER", "HOST"]]
 
 
-class DataProduct(TypedDict):
-    id: Optional[str]
+@dataclasses.dataclass
+class DataProduct:
     name: str
     title: str
     description: str
-    eula_id: Optional[str]
+    id: Optional[str] = None
+    eula_id: Optional[str] = None
 
 
-class Collection(TypedDict, total=False):
+@dataclasses.dataclass
+class Collection:
     name: str
     title: str
     description: str
     type: CollectionType
     integrations: list[IntegrationValue]
-    metadata: Optional[CollectionMetadata]
     providers: list[Provider]
     data_products: list[DataProduct]
+    metadata: Optional[CollectionMetadata] = None
 
 
 PRODUCT_GLOSSARY_PARAMS = {"is_integrated": "true", "paginated": "false"}
@@ -109,8 +117,32 @@ class ProductGlossary:
 
         for page_content in get_pages():
             for collection in page_content:
-                if collection["type"] == collection_type or collection_type is None:
-                    yield Collection(**collection)
+                if collection_type is None or (collection and collection["type"] == collection_type.value):
+                    yield Collection(
+                        name=collection["name"],
+                        title=collection["title"],
+                        description=collection["description"],
+                        type=CollectionType(collection["type"]),
+                        integrations=[IntegrationValue(integration) for integration in collection["integrations"]],
+                        providers=[Provider(**provider) for provider in collection["providers"]],
+                        data_products=[
+                            DataProduct(
+                                id=data_product.get("id", None),
+                                name=data_product["name"],
+                                title=data_product["title"],
+                                description=data_product["description"],
+                                eula_id=data_product.get("eulaId", None),
+                            )
+                            for data_product in collection["dataProducts"]
+                        ],
+                        metadata=CollectionMetadata(
+                            product_type=collection["metadata"].get("ProductType", None),
+                            resolution_class=collection["metadata"].get("resolutionClass", None),
+                            resolution_value=collection["metadata"].get("resolutionValue", None),
+                        )
+                        if collection.get("metadata", None) is not None
+                        else None,
+                    )
 
 
 class CatalogBase:
@@ -206,7 +238,7 @@ class Catalog(CatalogBase):
 
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         super().__init__(auth, workspace_id)
-        self.type: CollectionType = "ARCHIVE"
+        self.type: CollectionType = CollectionType("ARCHIVE")
 
     def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
         """
@@ -323,9 +355,9 @@ class Catalog(CatalogBase):
     def _get_host(self, collection_names: list[str]) -> str:
         providers = []
         for collection in ProductGlossary.get_collections(collection_type=self.type):
-            if collection["name"] in collection_names:
-                providers.extend(collection["providers"])
-        hosts = {provider["name"] for provider in providers if "HOST" in provider["roles"]}
+            if collection.name in collection_names:
+                providers.extend(collection.providers)
+        hosts = {provider.name for provider in providers if "HOST" in provider.roles}
 
         if not hosts:
             raise ValueError(

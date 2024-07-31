@@ -1,3 +1,4 @@
+import copy
 import json
 import pathlib
 import urllib.parse
@@ -27,6 +28,33 @@ SEARCH_PARAMETERS = {
         "up42:usageType": {"in": ["DATA", "ANALYTICS"]},
     },
 }
+COLLECTION_NAME = "pneo"
+COLLECTION_TITLE = "Pléiades Neo"
+COLLECTION_DESCRIPTION = "Very high resolution 30 cm optical satellite imagery"
+COLLECTION_INTEGRATIONS = ["ACCESS_APPROVAL_REQUIRED", "FEASIBILITY_MAY_BE_REQUIRED"]
+COLLECTION_PROVIDERS = [
+    {
+        "name": "oneatlas",
+        "title": "OneAtlas",
+        "description": "OneAtlas.",
+        "roles": ["PRODUCER", "HOST"],
+    }
+]
+COLLECTION_DATAPRODUCTS = [
+    {
+        "name": "pneo-analytic",
+        "title": "Analytic",
+        "description": "A reflectance product that was radiometrically corrected",
+    }
+]
+COLLECTION_METADATA = {
+    "name": COLLECTION_NAME,
+    "title": COLLECTION_TITLE,
+    "description": COLLECTION_DESCRIPTION,
+    "integrations": COLLECTION_INTEGRATIONS,
+    "providers": COLLECTION_PROVIDERS,
+    "dataProducts": COLLECTION_DATAPRODUCTS,
+}
 
 
 @pytest.fixture(autouse=True)
@@ -44,12 +72,52 @@ class TestProductGlossary:
     def test_should_get_collections_v2(
         self,
         requests_mock: req_mock.Mocker,
-        collection_type: catalog.CollectionType,
+        collection_type: str,
         only_non_commercial: bool,
         sort_by: Optional[utils.SortingField],
     ):
-        target_collection = {"type": collection_type}
-        ignored_collection = {"type": "OTHER_TYPE"}
+        target_type = collection_type if collection_type is not None else "ARCHIVE"
+        other_type = "TASKING" if target_type == "ARCHIVE" else "ARCHIVE"
+        collection_test = catalog.Collection(
+            name=COLLECTION_NAME,
+            title=COLLECTION_TITLE,
+            type=catalog.CollectionType(target_type),
+            description=COLLECTION_DESCRIPTION,
+            integrations=[catalog.IntegrationValue(integration) for integration in COLLECTION_INTEGRATIONS],
+            providers=[catalog.Provider(**provider) for provider in COLLECTION_PROVIDERS],  # type: ignore[arg-type]
+            data_products=[
+                catalog.DataProduct(
+                    id=data_product.get("id", None),
+                    name=data_product["name"],
+                    title=data_product["title"],
+                    description=data_product["description"],
+                    eula_id=data_product.get("eulaId", None),
+                )
+                for data_product in COLLECTION_DATAPRODUCTS
+            ],
+        )
+        other_collection = catalog.Collection(
+            name=COLLECTION_NAME,
+            title=COLLECTION_TITLE,
+            type=catalog.CollectionType(other_type),
+            description=COLLECTION_DESCRIPTION,
+            integrations=[catalog.IntegrationValue(integration) for integration in COLLECTION_INTEGRATIONS],
+            providers=[catalog.Provider(**provider) for provider in COLLECTION_PROVIDERS],  # type: ignore[arg-type]
+            data_products=[
+                catalog.DataProduct(
+                    id=data_product.get("id", None),
+                    name=data_product["name"],
+                    title=data_product["title"],
+                    description=data_product["description"],
+                    eula_id=data_product.get("eulaId", None),
+                )
+                for data_product in COLLECTION_DATAPRODUCTS
+            ],
+        )
+        target_collection = copy.deepcopy(COLLECTION_METADATA)
+        target_collection["type"] = target_type
+        ignored_collection = copy.deepcopy(target_collection)
+        ignored_collection["type"] = other_type
         query_params: dict[str, Any] = {}
         if only_non_commercial:
             query_params["onlyNonCommercial"] = ("true" if only_non_commercial else "false",)
@@ -87,14 +155,14 @@ class TestProductGlossary:
             },
         )
         expected_collection = (
-            [target_collection]
+            [collection_test]
             if collection_type is not None
-            else [target_collection, ignored_collection]  # type: ignore[list-item]
+            else [collection_test, other_collection]  # type: ignore[list-item]
         )
         assert (
             list(
                 catalog.ProductGlossary.get_collections(
-                    collection_type=collection_type,
+                    collection_type=catalog.CollectionType(collection_type) if collection_type is not None else None,
                     only_non_commercial=only_non_commercial,
                     sortby=sort_by,
                 )
@@ -123,8 +191,18 @@ class TestCatalog:
                     {
                         "type": "ARCHIVE",
                         "title": "title",
+                        "description": COLLECTION_DESCRIPTION,
+                        "integrations": COLLECTION_INTEGRATIONS,
                         "name": PHR,
-                        "providers": [{"name": self.host, "roles": ["PRODUCER", "HOST"]}],
+                        "providers": [
+                            {
+                                "name": self.host,
+                                "title": "provider title",
+                                "description": "test",
+                                "roles": ["PRODUCER", "HOST"],
+                            }
+                        ],
+                        "dataProducts": COLLECTION_DATAPRODUCTS,
                     }
                 ],
                 "totalPages": 1,
@@ -146,7 +224,12 @@ class TestCatalog:
                         "type": "ARCHIVE",
                         "title": f"title{idx}",
                         "name": f"collection{idx}",
-                        "providers": [{"name": f"host{idx}", "roles": ["HOST"]}],
+                        "description": COLLECTION_DESCRIPTION,
+                        "integrations": COLLECTION_INTEGRATIONS,
+                        "dataProducts": COLLECTION_DATAPRODUCTS,
+                        "providers": [
+                            {"name": f"host{idx}", "title": "provider title", "description": "test", "roles": ["HOST"]}
+                        ],
                     }
                     for idx in [1, 2]
                 ],
