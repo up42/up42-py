@@ -69,7 +69,7 @@ class TestProductGlossary:
     @pytest.mark.parametrize("collection_type", [None, "ARCHIVE", "TASKING"])
     @pytest.mark.parametrize("only_non_commercial", [None, True, False])
     @pytest.mark.parametrize("sort_by", [None, str(utils.SortingField("createdAt", ascending=False))])
-    def test_should_get_collections_v2(
+    def test_should_get_collections(
         self,
         requests_mock: req_mock.Mocker,
         collection_type: str,
