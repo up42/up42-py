@@ -5,7 +5,7 @@ Catalog search functionality
 import enum
 import pathlib
 import warnings
-from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict, Union, cast
+from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict, Union
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
@@ -49,7 +49,7 @@ class Provider(TypedDict):
     name: str
     title: str
     description: str
-    roles: Literal["PRODUCER", "HOST"]
+    roles: list[Literal["PRODUCER", "HOST"]]
 
 
 class DataProductV2(TypedDict):
@@ -115,40 +115,6 @@ class Collection(TypedDict):
     resolutionValue: ResolutionValue
 
 
-class ProductConfiguration(TypedDict):
-    # pylint: disable=invalid-name
-    host: Host
-    hostName: str
-    title: str
-    description: str
-    id: str
-    configuration: dict
-    createdAt: Optional[str]
-    updatedAt: Optional[str]
-    isIntegrated: bool
-
-
-class DataProduct(TypedDict):
-    # pylint: disable=invalid-name
-    id: str
-    # Deprecated
-    productConfiguration: ProductConfiguration
-    # Deprecated
-    productConfigurationId: str
-    collection: Collection
-    # Deprecated
-    collectionName: str
-    createdAt: Optional[str]
-    updatedAt: Optional[str]
-    isIntegrated: bool
-
-
-class CollectionOverview(TypedDict):
-    collection: str
-    host: str
-    data_products: dict[str, str]
-
-
 PRODUCT_GLOSSARY_PARAMS = {"is_integrated": "true", "paginated": "false"}
 
 
@@ -190,47 +156,6 @@ class ProductGlossary:
                 if collection["type"] == collection_type or collection_type is None:
                     yield CollectionV2(**collection)
 
-    @classmethod
-    def get_data_products(
-        cls, collection_type: Optional[CollectionType], grouped: bool
-    ) -> Union[List[DataProduct], dict[str, CollectionOverview]]:
-        """
-        Get the available data product information for each collection. A data
-        product is the available data configurations for each collection,
-        e.g. Pleiades Display product.
-
-        Args:
-            collection_type: The type of the target collections
-            grouped: A dictionary containing only the collection title,
-                name, host and available data product configurations,
-                default True.
-        """
-        url = host.endpoint("/data-products")
-        integrated_products: list[DataProduct] = cls.session.get(url, params=PRODUCT_GLOSSARY_PARAMS).json()["data"]
-
-        products = []
-        for product in integrated_products:
-            if product["collection"]["type"] != collection_type:
-                continue
-            products.append(product)
-
-        if grouped:
-            overview: dict[str, CollectionOverview] = {}
-            for product in products:
-                collection_title = product["collection"]["title"]
-                collection_name = product["collection"]["name"]
-                host_name = product["collection"]["host"]["name"]
-                data_product = {product["productConfiguration"]["title"]: product["id"]}
-                collection_info: CollectionOverview = {
-                    "collection": collection_name,
-                    "host": host_name,
-                    "data_products": {},
-                }
-                overview.setdefault(collection_title, collection_info)["data_products"].update(data_product)
-
-            return overview
-        return products
-
 
 class CatalogBase:
     """
@@ -244,13 +169,6 @@ class CatalogBase:
         self.workspace_id = workspace_id
         # FIXME: cannot be optional
         self.type: Optional[CollectionType] = None
-
-    def get_collections(self) -> Iterator[CollectionV2]:
-        return ProductGlossary.get_collections(self.type)
-
-    @utils.deprecation("ProductGlossary::get_collections", "2.0.0")
-    def get_data_products(self, basic: bool = True) -> Union[List[DataProduct], dict[str, CollectionOverview]]:
-        return ProductGlossary.get_data_products(self.type, basic)
 
     def get_data_product_schema(self, data_product_id: str) -> dict:
         """
@@ -332,7 +250,7 @@ class Catalog(CatalogBase):
 
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         super().__init__(auth, workspace_id)
-        self.type = "ARCHIVE"
+        self.type: CollectionType = "ARCHIVE"
 
     def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
         """
@@ -446,12 +364,17 @@ class Catalog(CatalogBase):
             "query": query_filters,
         }
 
-    def _get_host(self, collections: list[str]) -> str:
-        # FIXME: switch to using collections info instead of data products
-        data_products = cast(dict[str, CollectionOverview], self.get_data_products(basic=True))
-        hosts = {product["host"] for product in data_products.values() if product["collection"] in collections}
+    def _get_host(self, collection_names: list[str]) -> str:
+        providers = []
+        for collection in ProductGlossary.get_collections(collection_type=self.type):
+            if collection["name"] in collection_names:
+                providers.extend(collection["providers"])
+        hosts = {provider["name"] for provider in providers if "HOST" in provider["roles"]}
+
         if not hosts:
-            raise ValueError(f"Selected collections {collections} are not valid. See catalog.get_collections.")
+            raise ValueError(
+                f"Selected collections {collection_names} are not valid. See ProductGlossary.get_collections."
+            )
         if len(hosts) > 1:
             raise ValueError("Only collections with the same host can be searched at the same time.")
         return hosts.pop()

@@ -53,6 +53,7 @@ up42.authenticate(
 
 # Identify the right data product for your use-case
 catalog = up42.initialize_catalog()
+# FIXME: to be fixed in a follow PR using newer ProductGlossary::get_collections
 data_product_id = catalog.get_data_products(basic=True).get("Sentinel-2").get("data_products").get("Level-2A")
 data_products = catalog.get_data_products(basic=True)
 

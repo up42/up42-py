@@ -34,6 +34,45 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Jul 31, 2024**
 - Switch to new `v2` product glossary endpoint in `get_collections` method for `ProductGlossary` class.
 
+## 2.0.0a1
+
+**Jul 31, 2024**
+- Dropped `ProductGlossary::get_data_products` and switched to `ProductGlossary::get_collections` in dependencies.
+
+## 1.1.1
+
+**Jul 31, 2024**
+### Changes
+- Added EULA acceptance check to processing job templates.
+- Added EULA related statuses to processing jobs.
+- Added various failure statuses to job tracking stop list.
+- Added `session` descriptor to `CatalogBase`.
+- Deprecated `get_data_products` method in `CatalogBase` class.
+- Extract `CollectionType` type alias.
+- Extract `ProductGlossary` in `catalog.py`.
+- Provide type hints for `ProductGlossary` methods.
+- Switch to new token endpoint in `auth.py` and `oauth.py`.
+
+### Fixes
+- Fix type hint for `get_webhook_events`.
+
+### Improvements
+- Drop unused `return_text` parameter in `Auth::request`.
+- Improve test coverage for `Catalog::search`.
+- Improve `Catalog::download_quicklooks` code.
+- Improve test coverage for `Catalog::download_quicklooks` type alias.
+- Reduce the usage `auth::request` in `base.py`.
+- Simplify the usage of `get_data_products` in `CatalogBase`.
+- Simplify pagination in `Catalog::search` code.
+- Use token duration information from token data instead of static configuration.
+- Use expiry offset to refresh token 30s earlier.
+
+### Dependencies:
+- Bumped dependencies `certifi` from 2024.2.2 to 2024.7.4.
+- Bumped dependencies `setuptools` from 69.1.1 to 70.0.0.
+- Bumped dependencies `urllib` from 2.2.1 to 2.2.2.
+- Bumped dependencies `zipp` from 3.17.0 to 3.19.1.
+
 ## 1.1.1a11
 
 **Jul 30, 2024**

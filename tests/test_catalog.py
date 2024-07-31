@@ -102,51 +102,6 @@ class TestProductGlossary:
             == expected_collection * 5
         )
 
-    @pytest.mark.parametrize("collection_type", ["ARCHIVE", "TASKING"])
-    def test_get_data_products_grouped(self, requests_mock: req_mock.Mocker, collection_type: catalog.CollectionType):
-        url = f"{constants.API_HOST}/data-products?is_integrated=true&paginated=false"
-        requests_mock.get(
-            url,
-            json={
-                "data": [
-                    *[
-                        {
-                            "id": idx,
-                            "collection": {
-                                "type": collection_type,
-                                "title": "title",
-                                "name": "name",
-                                "host": {"name": "host_name"},
-                            },
-                            "productConfiguration": {"title": f"config{idx}"},
-                        }
-                        for idx in [1, 2]
-                    ],
-                    {
-                        "id": 3,
-                        "collection": {
-                            "type": "other_type",
-                        },
-                    },
-                ]
-            },
-        )
-        assert catalog.ProductGlossary.get_data_products(collection_type, grouped=True) == {
-            "title": {
-                "collection": "name",
-                "host": "host_name",
-                "data_products": {"config1": 1, "config2": 2},
-            }
-        }
-
-    @pytest.mark.parametrize("collection_type", ["ARCHIVE", "TASKING"])
-    def test_should_get_data_products(self, requests_mock: req_mock.Mocker, collection_type: catalog.CollectionType):
-        url = f"{constants.API_HOST}/data-products?is_integrated=true&paginated=false"
-        target_product = {"collection": {"type": collection_type}}
-        ignored_product = {"collection": {"type": "other_type"}}
-        requests_mock.get(url, json={"data": [target_product, ignored_product]})
-        assert catalog.ProductGlossary.get_data_products(collection_type, grouped=False) == [target_product]
-
 
 def test_get_data_product_schema(catalog_mock):
     data_product_schema = catalog_mock.get_data_product_schema(constants.DATA_PRODUCT_ID)
@@ -159,46 +114,38 @@ class TestCatalog:
     catalog = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID)
 
     @pytest.fixture
-    def data_products(self, requests_mock: req_mock.Mocker):
-        data_products_url = f"{constants.API_HOST}/data-products?is_integrated=true&paginated=false"
+    def product_glossary(self, requests_mock: req_mock.Mocker):
+        collections_url = f"{constants.API_HOST}/collections?is_integrated=true&paginated=false"
         requests_mock.get(
-            data_products_url,
+            collections_url,
             json={
                 "data": [
                     {
-                        "id": "id",
-                        "collection": {
-                            "type": "ARCHIVE",
-                            "title": "title",
-                            "name": PHR,
-                            "host": {"name": self.host},
-                        },
-                        "productConfiguration": {"title": "config"},
+                        "type": "ARCHIVE",
+                        "title": "title",
+                        "name": PHR,
+                        "host": {"name": self.host},
                     }
                 ]
             },
         )
 
-    @pytest.mark.usefixtures("data_products")
+    @pytest.mark.usefixtures("product_glossary")
     def test_search_fails_if_host_is_not_found(self):
         with pytest.raises(ValueError, match=r"Selected collections \['unknown'\] are not valid.*"):
             self.catalog.search({"collections": ["unknown"]})
 
     def test_search_fails_if_collections_hosted_by_different_hosts(self, requests_mock: req_mock.Mocker):
-        data_products_url = f"{constants.API_HOST}/data-products?is_integrated=true&paginated=false"
+        data_products_url = f"{constants.API_HOST}/collections?is_integrated=true&paginated=false"
         requests_mock.get(
             data_products_url,
             json={
                 "data": [
                     {
-                        "id": idx,
-                        "collection": {
-                            "type": "ARCHIVE",
-                            "title": f"title{idx}",
-                            "name": f"collection{idx}",
-                            "host": {"name": f"host{idx}"},
-                        },
-                        "productConfiguration": {"title": f"config{idx}"},
+                        "type": "ARCHIVE",
+                        "title": f"title{idx}",
+                        "name": f"collection{idx}",
+                        "host": {"name": f"host{idx}"},
                     }
                     for idx in [1, 2]
                 ]
@@ -207,7 +154,7 @@ class TestCatalog:
         with pytest.raises(ValueError):
             self.catalog.search({"collections": ["collection1", "collection2"]})
 
-    @pytest.mark.usefixtures("data_products")
+    @pytest.mark.usefixtures("product_glossary")
     def test_should_search(self, requests_mock: req_mock.Mocker):
         search_url = f"{constants.API_HOST}/catalog/hosts/{self.host}/stac/search"
         next_page_url = f"{search_url}/next"
@@ -253,7 +200,7 @@ class TestCatalog:
             "bbox": bbox,
         }
 
-    @pytest.mark.usefixtures("data_products")
+    @pytest.mark.usefixtures("product_glossary")
     def test_should_download_available_quicklooks(self, requests_mock: req_mock.Mocker, tmp_path):
         missing_image_id = "missing-image-id"
         image_id = "image-id"
