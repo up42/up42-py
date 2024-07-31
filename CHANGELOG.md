@@ -34,6 +34,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Jul 31, 2024**
 - Switch to new `v2` product glossary endpoint in `get_collections` method for `ProductGlossary` class.
 
+## 2.0.0a2
+
+**Jul 31, 2024**
+- Dropped `processing_templates.AugmentationSpacept`.
+
 ## 2.0.0a1
 
 **Jul 31, 2024**
