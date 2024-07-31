@@ -115,18 +115,19 @@ class TestCatalog:
 
     @pytest.fixture
     def product_glossary(self, requests_mock: req_mock.Mocker):
-        collections_url = f"{constants.API_HOST}/collections?is_integrated=true&paginated=false"
+        collections_url = f"{constants.API_HOST}/v2/collections"
         requests_mock.get(
             collections_url,
             json={
-                "data": [
+                "content": [
                     {
                         "type": "ARCHIVE",
                         "title": "title",
                         "name": PHR,
-                        "host": {"name": self.host},
+                        "providers": [{"name": self.host, "roles": ["PRODUCER", "HOST"]}],
                     }
-                ]
+                ],
+                "totalPages": 1,
             },
         )
 
@@ -136,19 +137,20 @@ class TestCatalog:
             self.catalog.search({"collections": ["unknown"]})
 
     def test_search_fails_if_collections_hosted_by_different_hosts(self, requests_mock: req_mock.Mocker):
-        data_products_url = f"{constants.API_HOST}/collections?is_integrated=true&paginated=false"
+        data_products_url = f"{constants.API_HOST}/v2/collections"
         requests_mock.get(
             data_products_url,
             json={
-                "data": [
+                "content": [
                     {
                         "type": "ARCHIVE",
                         "title": f"title{idx}",
                         "name": f"collection{idx}",
-                        "host": {"name": f"host{idx}"},
+                        "providers": [{"name": f"host{idx}", "roles": ["HOST"]}],
                     }
                     for idx in [1, 2]
-                ]
+                ],
+                "totalPages": 1,
             },
         )
         with pytest.raises(ValueError):
