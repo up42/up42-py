@@ -33,6 +33,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Jul 31, 2024**
 - Switch to new `v2` product glossary endpoint in `get_collections` method for `ProductGlossary` class.
+- Updated `Collection` class in `catalog.py` to match `ProductGlossary` v2.
+- Dropped `ProductGlossary` classes `Producer`, `Host` in `catalog.py`.
 
 ## 2.0.0a2
 
