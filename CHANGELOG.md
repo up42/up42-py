@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 2.0.0a1
 
 **Jul 31, 2024**
-- Dropped `ProductGlossary::get_data_products` and switched to `ProductGlossary::get_collections` in dependencies. 
+- Dropped `ProductGlossary::get_data_products` and switched to `ProductGlossary::get_collections` in dependencies.
 
 ## 1.1.1
 
