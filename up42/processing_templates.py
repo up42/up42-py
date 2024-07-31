@@ -81,22 +81,6 @@ class DetectionChangeSPOTHyperverge(WorkspaceIdMultiItemTemplate):
 
 
 @dataclasses.dataclass
-class AugmentationSpacept(processing.SingleItemJobTemplate):
-    denoising_factor: int = 0
-    colour_denoising_factor: int = 10
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
-    process_id = "augmentation-spacept"
-
-    @property
-    def inputs(self):
-        return {
-            **super().inputs,
-            "denoising_factor": self.denoising_factor,
-            "colour_denoising_factor": self.colour_denoising_factor,
-        }
-
-
-@dataclasses.dataclass
 class UpsamplingNS(processing.SingleItemJobTemplate):
     ned: bool = False
     rgb: bool = True

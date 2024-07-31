@@ -60,26 +60,6 @@ class TestParameterlessTemplates:
         assert template.inputs == {"title": TITLE, "items": [ITEM_URL]}
 
 
-class TestSpaceptAugmentation:
-    def test_should_construct_template(self):
-        denoising_factor = random.randint(0, 100)
-        colour_denoising_factor = random.randint(0, 100)
-        template = templates.AugmentationSpacept(
-            title=TITLE,
-            item=item,
-            denoising_factor=denoising_factor,
-            colour_denoising_factor=colour_denoising_factor,
-            workspace_id=constants.WORKSPACE_ID,
-        )
-        assert template.is_valid and template.cost == COST
-        assert template.inputs == {
-            "title": TITLE,
-            "item": ITEM_URL,
-            "denoising_factor": denoising_factor,
-            "colour_denoising_factor": colour_denoising_factor,
-        }
-
-
 class TestNSUpsampling:
     def test_should_construct_template(self):
         ned, rgb = random.choices([True, False], k=2)
