@@ -1,5 +1,4 @@
 import dataclasses
-import warnings
 from typing import List, Optional
 
 from up42 import base, host, utils
@@ -68,16 +67,6 @@ class Webhook:
         metadata = cls.session.get(url).json()["data"]
         return cls.from_metadata(metadata)
 
-    @property
-    @utils.deprecation("up42.Webhook properties", "2.0.0")
-    def info(self) -> dict:
-        return dataclasses.asdict(self)
-
-    @property
-    @utils.deprecation("up42.Webhook::id", "2.0.0")
-    def webhook_id(self):
-        return self.id
-
     def trigger_test_events(self) -> dict:
         """
         Triggers webhook test event to test your receiving side. The UP42 server will send test
@@ -88,37 +77,6 @@ class Webhook:
         """
         url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.id}/tests")
         return self.session.post(url=url).json()["data"]
-
-    @utils.deprecation("up42.Webhook::save", "2.0.0")
-    def update(
-        self,
-        name: Optional[str] = None,
-        url: Optional[str] = None,
-        events: Optional[List[str]] = None,
-        active: Optional[bool] = None,
-        secret: Optional[str] = None,
-    ) -> "Webhook":
-        """
-        Updates a registered webhook.
-
-        Args:
-            name: Updated webhook name
-            url: Updated unique URL where the webhook will send the message (HTTPS required)
-            events: Updated list of event types [order.status, job.status].
-            active: Updated webhook status.
-            secret: Updated string that acts as signature to the https request sent to the url.
-
-        Returns:
-            The updated webhook object.
-        """
-        self.name = name or self.name
-        self.url = url or self.url
-        self.events = events or self.events
-        self.secret = secret or self.secret
-        self.active = active if active is not None else self.active
-        self.save()
-        logger.info("Updated webhook %s", self)
-        return self
 
     def delete(self) -> None:
         """
@@ -140,12 +98,9 @@ class Webhook:
         return cls.session.get(url=url).json()["data"]
 
     @classmethod
-    def all(cls, return_json: bool = False) -> List["Webhook"]:
+    def all(cls) -> List["Webhook"]:
         """
         Gets all registered webhooks for this workspace.
-
-        Args:
-            return_json: If true returns the webhooks information as JSON instead of webhook class objects.
 
         Returns:
             A list of the registered webhooks for this workspace.
@@ -154,38 +109,4 @@ class Webhook:
         payload = cls.session.get(url=url).json()["data"]
         logger.info("Queried %s webhooks.", len(payload))
 
-        if return_json:
-            warnings.warn(
-                "return_json is deprecated and will be dropped in version 2.0.0",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            return payload
         return [cls.from_metadata(metadata) for metadata in payload]
-
-    @classmethod
-    @utils.deprecation("up42.Webhook::save", "2.0.0")
-    def create(
-        cls,
-        name: str,
-        url: str,
-        events: List[str],
-        active: bool = False,
-        secret: Optional[str] = None,
-    ) -> "Webhook":
-        """
-        Registers a new webhook in the system.
-
-        Args:
-            name: Webhook name
-            url: Unique URL where the webhook will send the message (HTTPS required)
-            events: List of event types e.g. [order.status, job.status]
-            active: Webhook status.
-            secret: String that acts as signature to the https request sent to the url.
-
-        Returns:
-            The newly registered webhook.
-        """
-        webhook = cls(name=name, url=url, events=events, secret=secret, active=active)
-        webhook.save()
-        return webhook
