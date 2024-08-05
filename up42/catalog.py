@@ -115,7 +115,6 @@ class CatalogBase:
         order_parameters: Optional[Dict],
         track_status: bool = False,
         report_time: int = 120,
-        **kwargs,
     ) -> order.Order:
         """
         Place an order.
@@ -127,11 +126,6 @@ class CatalogBase:
                 the Order once it is `FULFILLED` or `FAILED`.
             report_time (int): The interval (in seconds) to query
                 the order status if `track_status` is True.
-
-        Warning "Deprecated order parameters"
-            The use of the 'scene' and 'geometry' parameters for
-            the data ordering is deprecated. Please use the new
-            order_parameters parameter as described above.
 
          Warning:
             When placing orders of items that are in
@@ -146,16 +140,6 @@ class CatalogBase:
         Returns:
             Order class object of the placed order.
         """
-        if "scene" in kwargs or "geometry" in kwargs:
-            # Deprecated, to be removed, use order_parameters.
-            message = (
-                "The use of the 'scene' and 'geometry' parameters "
-                "for the data ordering is deprecated. "
-                "Please use the new 'order_parameters' parameter."
-            )
-            warnings.warn(message, DeprecationWarning, stacklevel=2)
-        elif order_parameters is None:
-            raise ValueError("Please provide the 'order_parameters' parameter!")
         placed_order = order.Order.place(self.auth, order_parameters, self.workspace_id)  # type: ignore
         if track_status:
             placed_order.track_status(report_time)
@@ -180,7 +164,7 @@ class Catalog(CatalogBase):
         super().__init__(auth, workspace_id)
         self.type: CollectionType = "ARCHIVE"
 
-    def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
+    def estimate_order(self, order_parameters: Optional[Dict]) -> int:
         """
         Estimate the cost of an order.
 
@@ -190,22 +174,8 @@ class Catalog(CatalogBase):
 
         Returns:
             int: An estimated cost for the order in UP42 credits.
-
-        Warning "Deprecated order parameters"
-            The use of the 'scene' and 'geometry' parameters for
-            the data estimation is deprecated. Please use the new
-            order_parameters parameter as described above.
         """
-        if "scene" in kwargs or "geometry" in kwargs:
-            # Deprecated, to be removed, use order_parameters.
-            message = (
-                "The use of the 'scene' and 'geometry' parameters "
-                "for the data estimation is deprecated. "
-                "Please use the new 'order_parameters' parameter."
-            )
-            warnings.warn(message, DeprecationWarning, stacklevel=2)
-        elif order_parameters is None:
-            raise ValueError("Please provide the 'order_parameters' parameter!")
+
         return order.Order.estimate(self.auth, order_parameters)  # type: ignore
 
     @staticmethod
