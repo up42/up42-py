@@ -3,10 +3,6 @@ import enum
 from typing import List, Optional, Union
 from urllib import parse
 
-import geojson  # type: ignore
-import geopandas  # type: ignore
-from shapely import geometry as shp_geometry  # type: ignore
-
 from up42 import asset, asset_searcher
 from up42 import auth as up42_auth
 from up42 import host, order, utils

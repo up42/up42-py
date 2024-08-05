@@ -3,7 +3,6 @@ Catalog search functionality
 """
 
 import pathlib
-import warnings
 from typing import Any, Dict, List, Literal, Optional, TypedDict, Union
 
 import geojson  # type: ignore

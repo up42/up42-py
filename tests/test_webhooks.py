@@ -9,6 +9,7 @@ import requests
 import requests_mock as req_mock
 
 from up42 import webhooks
+
 from .fixtures import fixtures_globals as constants
 
 WEBHOOK_ID = str(uuid.uuid4())
@@ -59,15 +60,11 @@ def _webhook():
 
 
 class TestWebhook:
-    def test_should_get_webhook(
-        self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook
-    ):
+    def test_should_get_webhook(self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook):
         requests_mock.get(url=HOOK_URL, json={"data": metadata})
         assert webhooks.Webhook.get(WEBHOOK_ID) == webhook
 
-    def test_should_trigger_test_events(
-        self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook
-    ):
+    def test_should_trigger_test_events(self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook):
         url = f"{HOOK_URL}/tests"
         test_event = {
             "startedAt": "2022-06-20T04:33:48.770826Z",
@@ -77,16 +74,12 @@ class TestWebhook:
         requests_mock.post(url=url, json={"data": test_event})
         assert webhook.trigger_test_events() == test_event
 
-    def test_should_delete(
-        self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook
-    ):
+    def test_should_delete(self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook):
         requests_mock.delete(url=HOOK_URL)
         webhook.delete()
         assert requests_mock.called
 
-    def test_should_save_new(
-        self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook
-    ):
+    def test_should_save_new(self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook):
         hook = dataclasses.replace(webhook, id=None, created_at=None, updated_at=None)
         requests_mock.post(
             HOOKS_URL,
@@ -120,9 +113,7 @@ class TestWebhook:
         requests_mock.put(HOOK_URL, json={"data": {"updatedAt": updated_at}})
         hook.save()
         assert hook == dataclasses.replace(webhook, updated_at=updated_at, **updates)
-        assert (
-            requests_mock.last_request and requests_mock.last_request.json() == updates
-        )
+        assert requests_mock.last_request and requests_mock.last_request.json() == updates
 
     def test_should_get_webhook_events(self, requests_mock: req_mock.Mocker):
         url = f"{constants.API_HOST}/webhooks/events"
@@ -136,12 +127,6 @@ class TestWebhook:
         )
         assert webhooks.Webhook.get_webhook_events() == events
 
-    def test_should_get_all_webhooks(
-        self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook
-    ):
+    def test_should_get_all_webhooks(self, requests_mock: req_mock.Mocker, webhook: webhooks.Webhook):
         requests_mock.get(HOOKS_URL, json={"data": [metadata]})
         assert webhooks.Webhook.all() == [webhook]
-
-    def test_should_get_all_webhooks_as_dict(self, requests_mock: req_mock.Mocker):
-        requests_mock.get(HOOKS_URL, json={"data": [metadata]})
-        assert webhooks.Webhook.all(return_json=True) == [metadata]
