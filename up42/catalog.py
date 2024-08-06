@@ -79,7 +79,7 @@ class Collection:
     metadata: Optional[CollectionMetadata]
 
 
-class ProductGlossarySorting:
+class CollectionSorting:
     name = utils.SortingField("name")
     title = utils.SortingField("title")
     description = utils.SortingField("description")
@@ -95,28 +95,23 @@ class ProductGlossary:
         collection_type: Optional[CollectionType] = None,
         sort_by: Optional[utils.SortingField] = None,
     ) -> Iterator[Collection]:
-        query_params: dict[str, Union[str, int]] = {
-            key: str(value)
-            for key, value in {
-                "sort": sort_by,
-                "page": 0,
-            }.items()
-            if value is not None
-        }
+        query_params: dict[str, Any] = {"sort": sort_by} if sort_by else {}
 
         def get_pages():
             current_page = 0
-            page = cls.session.get(host.endpoint("/v2/collections"), params=query_params).json()
-            total_pages = page["totalPages"]
-            while current_page < total_pages:
-                yield page["content"]
-                current_page += 1
+            while True:
                 query_params["page"] = current_page
                 page = cls.session.get(host.endpoint("/v2/collections"), params=query_params).json()
+                total_pages = page["totalPages"]
+                yield page["content"]
+                current_page += 1
+                if current_page == total_pages:
+                    break
 
         for page_content in get_pages():
             for collection in page_content:
                 if collection_type is None or collection["type"] == collection_type.value:
+                    metadata = collection.get("metadata")
                     yield Collection(
                         name=collection["name"],
                         title=collection["title"],
@@ -126,12 +121,21 @@ class ProductGlossary:
                         providers=[Provider(**provider) for provider in collection["providers"]],
                         data_products=[
                             DataProduct(
-                                **data_product,
-                                eula_id=data_product.get("eulaId", None),
+                                name=data_product["name"],
+                                title=data_product["title"],
+                                description=data_product["description"],
+                                id=data_product.get("id"),
+                                eula_id=data_product.get("eulaId"),
                             )
                             for data_product in collection["dataProducts"]
                         ],
-                        metadata=collection.get("metadata", None),
+                        metadata=metadata
+                        and CollectionMetadata(
+                            product_type=metadata.get("productType"),
+                            resolution_class=metadata.get("resolutionClass"),
+                            resolution_value=metadata.get("resolutionValue")
+                            and ResolutionValue(**metadata.get("resolutionValue")),
+                        ),
                     )
 
 
@@ -343,11 +347,14 @@ class Catalog(CatalogBase):
         }
 
     def _get_host(self, collection_names: list[str]) -> str:
-        providers = []
-        for collection in ProductGlossary.get_collections(collection_type=self.type):
-            if collection.name in collection_names:
-                providers.extend(collection.providers)
-        hosts = {provider.name for provider in providers if "HOST" in provider.roles}
+        collections = ProductGlossary.get_collections(collection_type=self.type)
+        hosts = {
+            provider.name
+            for collection in collections
+            if collection.name in collection_names
+            for provider in collection.providers
+            if "HOST" in provider.roles
+        }
 
         if not hosts:
             raise ValueError(

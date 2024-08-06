@@ -1,8 +1,7 @@
-import copy
+import dataclasses
 import json
 import pathlib
-import urllib.parse
-from typing import Any, Optional
+from typing import Optional
 
 import geopandas as gpd  # type: ignore
 import mock
@@ -28,34 +27,36 @@ SEARCH_PARAMETERS = {
         "up42:usageType": {"in": ["DATA", "ANALYTICS"]},
     },
 }
-COLLECTION_NAME = "pneo"
-COLLECTION_TITLE = "Pléiades Neo"
-COLLECTION_DESCRIPTION = "Very high resolution 30 cm optical satellite imagery"
-COLLECTION_INTEGRATIONS = ["ACCESS_APPROVAL_REQUIRED", "FEASIBILITY_MAY_BE_REQUIRED"]
-COLLECTION_PROVIDERS = [
-    {
-        "name": "oneatlas",
-        "title": "OneAtlas",
-        "description": "OneAtlas.",
-        "roles": ["PRODUCER", "HOST"],
-    }
-]
-COLLECTION_DATAPRODUCTS = [
-    {
-        "id": "test-id",
-        "name": "pneo-analytic",
-        "title": "Analytic",
-        "description": "A reflectance product that was radiometrically corrected",
-    }
-]
-COLLECTION_METADATA = {
-    "name": COLLECTION_NAME,
-    "title": COLLECTION_TITLE,
-    "description": COLLECTION_DESCRIPTION,
-    "integrations": COLLECTION_INTEGRATIONS,
-    "providers": COLLECTION_PROVIDERS,
-    "dataProducts": COLLECTION_DATAPRODUCTS,
-}
+DATA_PRODUCT = catalog.DataProduct(
+    name="data-product-name",
+    title="data-product-title",
+    description="data-product",
+    id="data-product-id",
+    eula_id="eula-id",
+)
+RESOLUTION_VALUE = catalog.ResolutionValue(minimum=0.0, maximum=1.0, description="resolution value")
+COLLECTION_METADATA = catalog.CollectionMetadata(
+    product_type="OPTICAL",
+    resolution_class="VERY_HIGH",
+    resolution_value=RESOLUTION_VALUE,
+)
+COLLECTION = catalog.Collection(
+    name="collection-name",
+    title="collection-title",
+    description="collection",
+    type=catalog.CollectionType.ARCHIVE,
+    integrations=list(catalog.IntegrationValue),
+    providers=[
+        catalog.Provider(
+            name="provider-name",
+            title="provider-title",
+            description="provider",
+            roles=["PRODUCER", "HOST"],
+        )
+    ],
+    data_products=[DATA_PRODUCT],
+    metadata=COLLECTION_METADATA,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -67,109 +68,52 @@ def set_status_raising_session():
 
 
 class TestProductGlossary:
-    @pytest.mark.parametrize("collection_type", [None, catalog.CollectionType.ARCHIVE, catalog.CollectionType.TASKING])
-    @pytest.mark.parametrize("sort_by", [None, catalog.ProductGlossarySorting.name])
+    @pytest.mark.parametrize(
+        "collection_type",
+        [None, catalog.CollectionType.ARCHIVE, catalog.CollectionType.TASKING],
+    )
+    @pytest.mark.parametrize("sort_by", [None, catalog.CollectionSorting.name])
     def test_should_get_collections(
         self,
         requests_mock: req_mock.Mocker,
         collection_type: catalog.CollectionType,
         sort_by: Optional[utils.SortingField],
     ):
-        target_type = collection_type if collection_type is not None else catalog.CollectionType.ARCHIVE
-        other_type = (
-            catalog.CollectionType.TASKING
-            if target_type == catalog.CollectionType.ARCHIVE
-            else catalog.CollectionType.ARCHIVE
-        )
-        collection_test = catalog.Collection(
-            name=COLLECTION_NAME,
-            title=COLLECTION_TITLE,
-            type=target_type,
-            description=COLLECTION_DESCRIPTION,
-            integrations=[catalog.IntegrationValue(integration) for integration in COLLECTION_INTEGRATIONS],
-            providers=[catalog.Provider(**provider) for provider in COLLECTION_PROVIDERS],  # type: ignore[arg-type]
-            metadata=None,
-            data_products=[
-                catalog.DataProduct(
-                    id=data_product.get("id", None),
-                    name=data_product["name"],
-                    title=data_product["title"],
-                    description=data_product["description"],
-                    eula_id=data_product.get("eulaId", None),
-                )
-                for data_product in COLLECTION_DATAPRODUCTS
-            ],
-        )
-        other_collection = catalog.Collection(
-            name=COLLECTION_NAME,
-            title=COLLECTION_TITLE,
-            type=other_type,
-            description=COLLECTION_DESCRIPTION,
-            integrations=[catalog.IntegrationValue(integration) for integration in COLLECTION_INTEGRATIONS],
-            providers=[catalog.Provider(**provider) for provider in COLLECTION_PROVIDERS],  # type: ignore[arg-type]
-            metadata=None,
-            data_products=[
-                catalog.DataProduct(
-                    id=data_product.get("id", None),
-                    name=data_product["name"],
-                    title=data_product["title"],
-                    description=data_product["description"],
-                    eula_id=data_product.get("eulaId", None),
-                )
-                for data_product in COLLECTION_DATAPRODUCTS
-            ],
-        )
-        target_collection = copy.deepcopy(COLLECTION_METADATA)
-        target_collection["type"] = target_type.value
-        ignored_collection = copy.deepcopy(target_collection)
-        ignored_collection["type"] = other_type.value
-        query_params: dict[str, Any] = {}
-        if sort_by:
-            query_params["sort"] = str(sort_by)
-        query_params["page"] = 0
-
-        query = urllib.parse.urlencode(query_params, doseq=True)
-        base_url = f"{constants.API_HOST}/v2/collections"
-        requests_mock.get(
-            url=base_url + (query and f"?{query}"),
-            json={
-                "content": [target_collection, ignored_collection] * 3,
-                "totalPages": 2,
-            },
-        )
-
-        query_params["page"] = 1
-        query = urllib.parse.urlencode(query_params, doseq=True)
-        requests_mock.get(
-            url=base_url + (query and f"?{query}"),
-            json={
-                "content": [target_collection, ignored_collection] * 2,
-                "totalPages": 2,
-            },
-        )
-
-        query_params["page"] = 2
-        query = urllib.parse.urlencode(query_params, doseq=True)
-        requests_mock.get(
-            url=base_url + (query and f"?{query}"),
-            json={
-                "content": [],
-                "totalPages": 2,
-            },
-        )
-        expected_collection = (
-            [collection_test]
-            if collection_type is not None
-            else [collection_test, other_collection]  # type: ignore[list-item]
-        )
-        assert (
-            list(
-                catalog.ProductGlossary.get_collections(
-                    collection_type=collection_type if collection_type is not None else None,
-                    sort_by=sort_by,
-                )
+        collections = [
+            {
+                "name": COLLECTION.name,
+                "description": COLLECTION.description,
+                "title": COLLECTION.title,
+                "type": type_value.value,
+                "integrations": [entry.value for entry in catalog.IntegrationValue],
+                "providers": [dataclasses.asdict(COLLECTION.providers[0])],
+                "dataProducts": [
+                    {
+                        "name": DATA_PRODUCT.name,
+                        "title": DATA_PRODUCT.title,
+                        "description": DATA_PRODUCT.description,
+                        "id": DATA_PRODUCT.id,
+                        "eulaId": DATA_PRODUCT.eula_id,
+                    }
+                ],
+                "metadata": {
+                    "productType": COLLECTION_METADATA.product_type,
+                    "resolutionClass": COLLECTION_METADATA.resolution_class,
+                    "resolutionValue": dataclasses.asdict(RESOLUTION_VALUE),
+                },
+            }
+            for type_value in list(catalog.CollectionType)
+        ]
+        sorting_param = f"sort={sort_by}&" if sort_by else ""
+        for page in [0, 1]:
+            requests_mock.get(
+                f"{constants.API_HOST}/v2/collections?{sorting_param}page={page}",
+                json={"content": collections, "totalPages": 2},
             )
-            == expected_collection * 5
+        possible_types = [collection_type] if collection_type else list(catalog.CollectionType)
+        assert (
+            list(catalog.ProductGlossary.get_collections(collection_type=collection_type, sort_by=sort_by))
+            == [dataclasses.replace(COLLECTION, type=possible_type) for possible_type in possible_types] * 2
         )
 
 
@@ -193,18 +137,18 @@ class TestCatalog:
                     {
                         "type": "ARCHIVE",
                         "title": "title",
-                        "description": COLLECTION_DESCRIPTION,
-                        "integrations": COLLECTION_INTEGRATIONS,
+                        "description": "collection",
+                        "integrations": list(catalog.IntegrationValue),
                         "name": PHR,
                         "providers": [
                             {
                                 "name": self.host,
-                                "title": "provider title",
-                                "description": "test",
+                                "title": "provider-title",
+                                "description": "provider",
                                 "roles": ["PRODUCER", "HOST"],
                             }
                         ],
-                        "dataProducts": COLLECTION_DATAPRODUCTS,
+                        "dataProducts": [],
                     }
                 ],
                 "totalPages": 1,
@@ -226,11 +170,16 @@ class TestCatalog:
                         "type": "ARCHIVE",
                         "title": f"title{idx}",
                         "name": f"collection{idx}",
-                        "description": COLLECTION_DESCRIPTION,
-                        "integrations": COLLECTION_INTEGRATIONS,
-                        "dataProducts": COLLECTION_DATAPRODUCTS,
+                        "description": "collection",
+                        "integrations": list(catalog.IntegrationValue),
+                        "dataProducts": [],
                         "providers": [
-                            {"name": f"host{idx}", "title": "provider title", "description": "test", "roles": ["HOST"]}
+                            {
+                                "name": f"host{idx}",
+                                "title": "provider-title",
+                                "description": "provider",
+                                "roles": ["HOST"],
+                            }
                         ],
                     }
                     for idx in [1, 2]
