@@ -81,8 +81,8 @@ class Collection:
 
 class ProductGlossarySorting:
     name = utils.SortingField("name")
-    title = utils.SortingField("title", ascending=False)
-    description = utils.SortingField("description", ascending=False)
+    title = utils.SortingField("title")
+    description = utils.SortingField("description")
 
 
 class ProductGlossary:
@@ -117,7 +117,7 @@ class ProductGlossary:
 
         for page_content in get_pages():
             for collection in page_content:
-                if collection_type is None or (collection and collection["type"] == collection_type.value):
+                if collection_type is None or collection["type"] == collection_type.value:
                     yield Collection(
                         name=collection["name"],
                         title=collection["title"],
