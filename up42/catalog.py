@@ -132,13 +132,7 @@ class ProductGlossary:
                             )
                             for data_product in collection["dataProducts"]
                         ],
-                        metadata=CollectionMetadata(
-                            product_type=collection["metadata"].get("ProductType", None),
-                            resolution_class=collection["metadata"].get("resolutionClass", None),
-                            resolution_value=collection["metadata"].get("resolutionValue", None),
-                        )
-                        if collection.get("metadata", None) is not None
-                        else None,
+                        metadata=collection.get("metadata", None),
                     )
 
 
