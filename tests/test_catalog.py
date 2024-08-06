@@ -1,5 +1,7 @@
+import dataclasses
 import json
 import pathlib
+from typing import Optional
 
 import geopandas as gpd  # type: ignore
 import mock
@@ -8,7 +10,7 @@ import requests
 import requests_mock as req_mock
 import shapely  # type: ignore
 
-from up42 import catalog, order
+from up42 import catalog, order, utils
 
 from . import helpers
 from .fixtures import fixtures_globals as constants
@@ -25,6 +27,36 @@ SEARCH_PARAMETERS = {
         "up42:usageType": {"in": ["DATA", "ANALYTICS"]},
     },
 }
+DATA_PRODUCT = catalog.DataProduct(
+    name="data-product-name",
+    title="data-product-title",
+    description="data-product",
+    id="data-product-id",
+    eula_id="eula-id",
+)
+RESOLUTION_VALUE = catalog.ResolutionValue(minimum=0.0, maximum=1.0, description="resolution value")
+COLLECTION_METADATA = catalog.CollectionMetadata(
+    product_type="OPTICAL",
+    resolution_class="VERY_HIGH",
+    resolution_value=RESOLUTION_VALUE,
+)
+COLLECTION = catalog.Collection(
+    name="collection-name",
+    title="collection-title",
+    description="collection",
+    type=catalog.CollectionType.ARCHIVE,
+    integrations=list(catalog.IntegrationValue),
+    providers=[
+        catalog.Provider(
+            name="provider-name",
+            title="provider-title",
+            description="provider",
+            roles=["PRODUCER", "HOST"],
+        )
+    ],
+    data_products=[DATA_PRODUCT],
+    metadata=COLLECTION_METADATA,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -36,13 +68,53 @@ def set_status_raising_session():
 
 
 class TestProductGlossary:
-    @pytest.mark.parametrize("collection_type", ["ARCHIVE", "TASKING"])
-    def test_should_get_collections(self, requests_mock: req_mock.Mocker, collection_type: catalog.CollectionType):
-        url = f"{constants.API_HOST}/collections?is_integrated=true&paginated=false"
-        target_collection = {"type": collection_type}
-        ignored_collection = {"type": "other_type"}
-        requests_mock.get(url, json={"data": [target_collection, ignored_collection]})
-        assert catalog.ProductGlossary.get_collections(collection_type) == [target_collection]
+    @pytest.mark.parametrize(
+        "collection_type",
+        [None, catalog.CollectionType.ARCHIVE, catalog.CollectionType.TASKING],
+    )
+    @pytest.mark.parametrize("sort_by", [None, catalog.CollectionSorting.name])
+    def test_should_get_collections(
+        self,
+        requests_mock: req_mock.Mocker,
+        collection_type: catalog.CollectionType,
+        sort_by: Optional[utils.SortingField],
+    ):
+        collections = [
+            {
+                "name": COLLECTION.name,
+                "description": COLLECTION.description,
+                "title": COLLECTION.title,
+                "type": type_value.value,
+                "integrations": [entry.value for entry in catalog.IntegrationValue],
+                "providers": [dataclasses.asdict(COLLECTION.providers[0])],
+                "dataProducts": [
+                    {
+                        "name": DATA_PRODUCT.name,
+                        "title": DATA_PRODUCT.title,
+                        "description": DATA_PRODUCT.description,
+                        "id": DATA_PRODUCT.id,
+                        "eulaId": DATA_PRODUCT.eula_id,
+                    }
+                ],
+                "metadata": {
+                    "productType": COLLECTION_METADATA.product_type,
+                    "resolutionClass": COLLECTION_METADATA.resolution_class,
+                    "resolutionValue": dataclasses.asdict(RESOLUTION_VALUE),
+                },
+            }
+            for type_value in list(catalog.CollectionType)
+        ]
+        sorting_param = f"sort={sort_by}&" if sort_by else ""
+        for page in [0, 1]:
+            requests_mock.get(
+                f"{constants.API_HOST}/v2/collections?{sorting_param}page={page}",
+                json={"content": collections, "totalPages": 2},
+            )
+        possible_types = [collection_type] if collection_type else list(catalog.CollectionType)
+        assert (
+            list(catalog.ProductGlossary.get_collections(collection_type=collection_type, sort_by=sort_by))
+            == [dataclasses.replace(COLLECTION, type=possible_type) for possible_type in possible_types] * 2
+        )
 
 
 def test_get_data_product_schema(catalog_mock):
@@ -57,18 +129,29 @@ class TestCatalog:
 
     @pytest.fixture
     def product_glossary(self, requests_mock: req_mock.Mocker):
-        collections_url = f"{constants.API_HOST}/collections?is_integrated=true&paginated=false"
+        collections_url = f"{constants.API_HOST}/v2/collections"
         requests_mock.get(
             collections_url,
             json={
-                "data": [
+                "content": [
                     {
                         "type": "ARCHIVE",
                         "title": "title",
+                        "description": "collection",
+                        "integrations": [],
                         "name": PHR,
-                        "host": {"name": self.host},
+                        "providers": [
+                            {
+                                "name": self.host,
+                                "title": "provider-title",
+                                "description": "provider",
+                                "roles": ["PRODUCER", "HOST"],
+                            }
+                        ],
+                        "dataProducts": [],
                     }
-                ]
+                ],
+                "totalPages": 1,
             },
         )
 
@@ -78,19 +161,30 @@ class TestCatalog:
             self.catalog.search({"collections": ["unknown"]})
 
     def test_search_fails_if_collections_hosted_by_different_hosts(self, requests_mock: req_mock.Mocker):
-        data_products_url = f"{constants.API_HOST}/collections?is_integrated=true&paginated=false"
+        collections_url = f"{constants.API_HOST}/v2/collections"
         requests_mock.get(
-            data_products_url,
+            collections_url,
             json={
-                "data": [
+                "content": [
                     {
                         "type": "ARCHIVE",
                         "title": f"title{idx}",
                         "name": f"collection{idx}",
-                        "host": {"name": f"host{idx}"},
+                        "description": "collection",
+                        "integrations": [],
+                        "dataProducts": [],
+                        "providers": [
+                            {
+                                "name": f"host{idx}",
+                                "title": "provider-title",
+                                "description": "provider",
+                                "roles": ["HOST"],
+                            }
+                        ],
                     }
                     for idx in [1, 2]
-                ]
+                ],
+                "totalPages": 1,
             },
         )
         with pytest.raises(ValueError):

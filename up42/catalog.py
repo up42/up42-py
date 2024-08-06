@@ -2,9 +2,11 @@
 Catalog search functionality
 """
 
+import dataclasses
+import enum
 import pathlib
 import warnings
-from typing import Any, Dict, List, Literal, Optional, TypedDict, Union
+from typing import Any, Dict, Iterator, List, Literal, Optional, Union
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
@@ -17,72 +19,124 @@ from up42 import base, host, order, utils
 logger = utils.get_logger(__name__)
 
 
-class ResolutionValue(TypedDict):
+class CollectionType(enum.Enum):
+    ARCHIVE = "ARCHIVE"
+    TASKING = "TASKING"
+
+
+class IntegrationValue(enum.Enum):
+    ACCESS_APPROVAL_REQUIRED = "ACCESS_APPROVAL_REQUIRED"
+    SAMPLE_DATA_AVAILABLE = "SAMPLE_DATA_AVAILABLE"
+    MANUAL_REQUEST_REQUIRED = "MANUAL_REQUEST_REQUIRED"
+    FEASIBILITY_MAY_BE_REQUIRED = "FEASIBILITY_MAY_BE_REQUIRED"
+    QUOTATION_REQUIRED = "QUOTATION_REQUIRED"
+    PRICE_ESTIMATION_AVAILABLE = "PRICE_ESTIMATION_AVAILABLE"
+    SEARCH_AVAILABLE = "SEARCH_AVAILABLE"
+    THUMBNAIL_AVAILABLE = "THUMBNAIL_AVAILABLE"
+    QUICKLOOK_AVAILABLE = "QUICKLOOK_AVAILABLE"
+
+
+@dataclasses.dataclass
+class ResolutionValue:
     minimum: float
+    description: Optional[str]
     maximum: Optional[float]
 
 
-class Host(TypedDict):
-    # pylint: disable=invalid-name
+@dataclasses.dataclass
+class CollectionMetadata:
+    product_type: Optional[Literal["OPTICAL", "SAR", "ELEVATION"]]
+    resolution_class: Optional[Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]]
+    resolution_value: Optional[ResolutionValue]
+
+
+@dataclasses.dataclass
+class Provider:
     name: str
     title: str
     description: str
-    createdAt: Optional[str]
-    updatedAt: Optional[str]
-    isIntegrated: bool
-    isCommercial: bool
+    roles: list[Literal["PRODUCER", "HOST"]]
 
 
-class Producer(TypedDict):
-    # pylint: disable=invalid-name
+@dataclasses.dataclass
+class DataProduct:
     name: str
     title: str
     description: str
-    createdAt: Optional[str]
-    updatedAt: Optional[str]
-    isIntegrated: bool
+    id: Optional[str]
+    eula_id: Optional[str]
 
 
-CollectionType = Literal["ARCHIVE", "TASKING"]
-
-
-class Collection(TypedDict):
-    # pylint: disable=invalid-name
+@dataclasses.dataclass
+class Collection:
     name: str
     title: str
     description: str
     type: CollectionType
-    restricted: bool
-    createdAt: Optional[str]
-    updatedAt: Optional[str]
-    host: Host
-    # Deprecated
-    hostName: str
-    producer: Producer
-    # Deprecated
-    producerName: str
-    isIntegrated: bool
-    # Deprecated
-    isOptical: bool
-    resolutionClass: Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]
-    productType: Literal["OPTICAL", "SAR", "ELEVATION"]
-    resolutionValue: ResolutionValue
+    integrations: list[IntegrationValue]
+    providers: list[Provider]
+    data_products: list[DataProduct]
+    metadata: Optional[CollectionMetadata]
 
 
-PRODUCT_GLOSSARY_PARAMS = {"is_integrated": "true", "paginated": "false"}
+class CollectionSorting:
+    name = utils.SortingField("name")
+    title = utils.SortingField("title")
+    description = utils.SortingField("description")
+    type = utils.SortingField("type")
 
 
 class ProductGlossary:
     session = base.Session()
 
     @classmethod
-    def get_collections(cls, collection_type: Optional[CollectionType]) -> list[Collection]:
-        """
-        Get the available data collections.
-        """
-        url = host.endpoint("/collections")
-        integrated_collections = cls.session.get(url, params=PRODUCT_GLOSSARY_PARAMS).json()["data"]
-        return [collection for collection in integrated_collections if collection["type"] == collection_type]
+    def get_collections(
+        cls,
+        collection_type: Optional[CollectionType] = None,
+        sort_by: Optional[utils.SortingField] = None,
+    ) -> Iterator[Collection]:
+        query_params: dict[str, Any] = {"sort": sort_by} if sort_by else {}
+
+        def get_pages():
+            current_page = 0
+            while True:
+                query_params["page"] = current_page
+                page = cls.session.get(host.endpoint("/v2/collections"), params=query_params).json()
+                total_pages = page["totalPages"]
+                yield page["content"]
+                current_page += 1
+                if current_page == total_pages:
+                    break
+
+        for page_content in get_pages():
+            for collection in page_content:
+                if collection_type is None or collection["type"] == collection_type.value:
+                    metadata = collection.get("metadata")
+                    yield Collection(
+                        name=collection["name"],
+                        title=collection["title"],
+                        description=collection["description"],
+                        type=CollectionType(collection["type"]),
+                        integrations=[IntegrationValue(integration) for integration in collection["integrations"]],
+                        providers=[Provider(**provider) for provider in collection["providers"]],
+                        data_products=[
+                            DataProduct(
+                                name=data_product["name"],
+                                title=data_product["title"],
+                                description=data_product["description"],
+                                id=data_product.get("id"),
+                                eula_id=data_product.get("eulaId"),
+                            )
+                            for data_product in collection["dataProducts"]
+                        ],
+                        metadata=metadata
+                        and CollectionMetadata(
+                            product_type=metadata.get("productType"),
+                            resolution_class=metadata.get("resolutionClass"),
+                            resolution_value=metadata.get("resolutionValue")
+                            and ResolutionValue(**metadata.get("resolutionValue")),
+                        ),
+                    )
 
 
 class CatalogBase:
@@ -178,7 +232,7 @@ class Catalog(CatalogBase):
 
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         super().__init__(auth, workspace_id)
-        self.type: CollectionType = "ARCHIVE"
+        self.type: CollectionType = CollectionType.ARCHIVE
 
     def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
         """
@@ -293,8 +347,15 @@ class Catalog(CatalogBase):
         }
 
     def _get_host(self, collection_names: list[str]) -> str:
-        collections = ProductGlossary.get_collections(self.type)
-        hosts = {collection["host"]["name"] for collection in collections if collection["name"] in collection_names}
+        collections = ProductGlossary.get_collections(collection_type=self.type)
+        hosts = {
+            provider.name
+            for collection in collections
+            if collection.name in collection_names
+            for provider in collection.providers
+            if "HOST" in provider.roles
+        }
+
         if not hosts:
             raise ValueError(
                 f"Selected collections {collection_names} are not valid. See ProductGlossary.get_collections."
