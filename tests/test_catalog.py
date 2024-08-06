@@ -170,7 +170,7 @@ class TestProductGlossary:
                 catalog.ProductGlossary.get_collections(
                     collection_type=collection_type if collection_type is not None else None,
                     only_non_commercial=only_non_commercial,
-                    sortby=sort_by,
+                    sort_by=sort_by,
                 )
             )
             == expected_collection * 5

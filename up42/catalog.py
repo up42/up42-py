@@ -87,16 +87,13 @@ class ProductGlossary:
         cls,
         collection_type: Optional[CollectionType] = None,
         only_non_commercial: bool = False,
-        sortby: Optional[utils.SortingField] = None,
-    ) -> Iterator["Collection"]:
-        """
-        Get the available data collections.
-        """
+        sort_by: Optional[utils.SortingField] = None,
+    ) -> Iterator[Collection]:
         query_params = {
             key: str(value)
             for key, value in {
                 "onlyNonCommercial": "true" if only_non_commercial else "false",
-                "sort": sortby,
+                "sort": sort_by,
                 "page": "0",
             }.items()
             if value
