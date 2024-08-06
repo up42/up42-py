@@ -1,7 +1,5 @@
-import dataclasses
 import json
 import pathlib
-from typing import Optional
 
 import geopandas as gpd  # type: ignore
 import mock
@@ -10,7 +8,7 @@ import requests
 import requests_mock as req_mock
 import shapely  # type: ignore
 
-from up42 import catalog, order, utils
+from up42 import catalog, glossary, order
 
 from . import helpers
 from .fixtures import fixtures_globals as constants
@@ -27,94 +25,14 @@ SEARCH_PARAMETERS = {
         "up42:usageType": {"in": ["DATA", "ANALYTICS"]},
     },
 }
-DATA_PRODUCT = catalog.DataProduct(
-    name="data-product-name",
-    title="data-product-title",
-    description="data-product",
-    id="data-product-id",
-    eula_id="eula-id",
-)
-RESOLUTION_VALUE = catalog.ResolutionValue(minimum=0.0, maximum=1.0, description="resolution value")
-COLLECTION_METADATA = catalog.CollectionMetadata(
-    product_type="OPTICAL",
-    resolution_class="VERY_HIGH",
-    resolution_value=RESOLUTION_VALUE,
-)
-COLLECTION = catalog.Collection(
-    name="collection-name",
-    title="collection-title",
-    description="collection",
-    type=catalog.CollectionType.ARCHIVE,
-    integrations=list(catalog.IntegrationValue),
-    providers=[
-        catalog.Provider(
-            name="provider-name",
-            title="provider-title",
-            description="provider",
-            roles=["PRODUCER", "HOST"],
-        )
-    ],
-    data_products=[DATA_PRODUCT],
-    metadata=COLLECTION_METADATA,
-)
 
 
 @pytest.fixture(autouse=True)
 def set_status_raising_session():
     session = requests.Session()
     session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
-    catalog.ProductGlossary.session = session  # type: ignore
+    glossary.ProductGlossary.session = session  # type: ignore
     catalog.CatalogBase.session = session  # type: ignore
-
-
-class TestProductGlossary:
-    @pytest.mark.parametrize(
-        "collection_type",
-        [None, catalog.CollectionType.ARCHIVE, catalog.CollectionType.TASKING],
-    )
-    @pytest.mark.parametrize("sort_by", [None, catalog.CollectionSorting.name])
-    def test_should_get_collections(
-        self,
-        requests_mock: req_mock.Mocker,
-        collection_type: catalog.CollectionType,
-        sort_by: Optional[utils.SortingField],
-    ):
-        collections = [
-            {
-                "name": COLLECTION.name,
-                "description": COLLECTION.description,
-                "title": COLLECTION.title,
-                "type": type_value.value,
-                "integrations": [entry.value for entry in catalog.IntegrationValue],
-                "providers": [dataclasses.asdict(COLLECTION.providers[0])],
-                "dataProducts": [
-                    {
-                        "name": DATA_PRODUCT.name,
-                        "title": DATA_PRODUCT.title,
-                        "description": DATA_PRODUCT.description,
-                        "id": DATA_PRODUCT.id,
-                        "eulaId": DATA_PRODUCT.eula_id,
-                    }
-                ],
-                "metadata": {
-                    "productType": COLLECTION_METADATA.product_type,
-                    "resolutionClass": COLLECTION_METADATA.resolution_class,
-                    "resolutionValue": dataclasses.asdict(RESOLUTION_VALUE),
-                },
-            }
-            for type_value in list(catalog.CollectionType)
-        ]
-        sorting_param = f"sort={sort_by}&" if sort_by else ""
-        for page in [0, 1]:
-            requests_mock.get(
-                f"{constants.API_HOST}/v2/collections?{sorting_param}page={page}",
-                json={"content": collections, "totalPages": 2},
-            )
-        possible_types = [collection_type] if collection_type else list(catalog.CollectionType)
-        assert (
-            list(catalog.ProductGlossary.get_collections(collection_type=collection_type, sort_by=sort_by))
-            == [dataclasses.replace(COLLECTION, type=possible_type) for possible_type in possible_types] * 2
-        )
 
 
 def test_get_data_product_schema(catalog_mock):
