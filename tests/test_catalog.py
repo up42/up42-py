@@ -141,7 +141,7 @@ class TestProductGlossary:
             },
         )
 
-        query_params["page"] = "1"
+        query_params["page"] = 1
         query = urllib.parse.urlencode(query_params, doseq=True)
         requests_mock.get(
             url=base_url + (query and f"?{query}"),
@@ -151,7 +151,7 @@ class TestProductGlossary:
             },
         )
 
-        query_params["page"] = "2"
+        query_params["page"] = 2
         query = urllib.parse.urlencode(query_params, doseq=True)
         requests_mock.get(
             url=base_url + (query and f"?{query}"),

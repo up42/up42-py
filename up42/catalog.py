@@ -89,14 +89,14 @@ class ProductGlossary:
         only_non_commercial: bool = False,
         sort_by: Optional[utils.SortingField] = None,
     ) -> Iterator[Collection]:
-        query_params = {
+        query_params: dict[str, Union[str, int]] = {
             key: str(value)
             for key, value in {
                 "onlyNonCommercial": "true" if only_non_commercial else "false",
                 "sort": sort_by,
-                "page": "0",
+                "page": 0,
             }.items()
-            if value
+            if value is not None
         }
 
         def get_pages():
@@ -106,7 +106,7 @@ class ProductGlossary:
             while current_page < total_pages:
                 yield page["content"]
                 current_page += 1
-                query_params["page"] = str(current_page)
+                query_params["page"] = current_page
                 page = cls.session.get(host.endpoint("/v2/collections"), params=query_params).json()
 
         for page_content in get_pages():
