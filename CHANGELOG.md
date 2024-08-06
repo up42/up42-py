@@ -31,7 +31,7 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 ## 2.0.0a3
 
-**Jul 31, 2024**
+**Aug 06, 2024**
 - Switch to the new product glossary V2 endpoint in `ProductGlossaty::get_collections`.
 - Updated `Collection` class in `catalog.py` to match new `ProductGlossary` endpoints.
 - Dropped `ProductGlossary` classes `Producer` and `Host` in `catalog.py`.

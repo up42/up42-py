@@ -66,25 +66,30 @@ def set_status_raising_session():
 
 
 class TestProductGlossary:
-    @pytest.mark.parametrize("collection_type", [None, "ARCHIVE", "TASKING"])
+    @pytest.mark.parametrize("collection_type", [None, catalog.CollectionType.ARCHIVE, catalog.CollectionType.TASKING])
     @pytest.mark.parametrize("only_non_commercial", [None, True, False])
     @pytest.mark.parametrize("sort_by", [None, str(utils.SortingField("createdAt", ascending=False))])
     def test_should_get_collections(
         self,
         requests_mock: req_mock.Mocker,
-        collection_type: str,
+        collection_type: catalog.CollectionType,
         only_non_commercial: bool,
         sort_by: Optional[utils.SortingField],
     ):
-        target_type = collection_type if collection_type is not None else "ARCHIVE"
-        other_type = "TASKING" if target_type == "ARCHIVE" else "ARCHIVE"
+        target_type = collection_type if collection_type is not None else catalog.CollectionType.ARCHIVE
+        other_type = (
+            catalog.CollectionType.TASKING
+            if target_type == catalog.CollectionType.ARCHIVE
+            else catalog.CollectionType.ARCHIVE
+        )
         collection_test = catalog.Collection(
             name=COLLECTION_NAME,
             title=COLLECTION_TITLE,
-            type=catalog.CollectionType(target_type),
+            type=target_type,
             description=COLLECTION_DESCRIPTION,
             integrations=[catalog.IntegrationValue(integration) for integration in COLLECTION_INTEGRATIONS],
             providers=[catalog.Provider(**provider) for provider in COLLECTION_PROVIDERS],  # type: ignore[arg-type]
+            metadata=None,
             data_products=[
                 catalog.DataProduct(
                     id=data_product.get("id", None),
@@ -99,10 +104,11 @@ class TestProductGlossary:
         other_collection = catalog.Collection(
             name=COLLECTION_NAME,
             title=COLLECTION_TITLE,
-            type=catalog.CollectionType(other_type),
+            type=other_type,
             description=COLLECTION_DESCRIPTION,
             integrations=[catalog.IntegrationValue(integration) for integration in COLLECTION_INTEGRATIONS],
             providers=[catalog.Provider(**provider) for provider in COLLECTION_PROVIDERS],  # type: ignore[arg-type]
+            metadata=None,
             data_products=[
                 catalog.DataProduct(
                     id=data_product.get("id", None),
@@ -115,9 +121,9 @@ class TestProductGlossary:
             ],
         )
         target_collection = copy.deepcopy(COLLECTION_METADATA)
-        target_collection["type"] = target_type
+        target_collection["type"] = target_type.value
         ignored_collection = copy.deepcopy(target_collection)
-        ignored_collection["type"] = other_type
+        ignored_collection["type"] = other_type.value
         query_params: dict[str, Any] = {}
         if only_non_commercial:
             query_params["onlyNonCommercial"] = ("true" if only_non_commercial else "false",)
@@ -162,7 +168,7 @@ class TestProductGlossary:
         assert (
             list(
                 catalog.ProductGlossary.get_collections(
-                    collection_type=catalog.CollectionType(collection_type) if collection_type is not None else None,
+                    collection_type=collection_type if collection_type is not None else None,
                     only_non_commercial=only_non_commercial,
                     sortby=sort_by,
                 )
@@ -215,9 +221,9 @@ class TestCatalog:
             self.catalog.search({"collections": ["unknown"]})
 
     def test_search_fails_if_collections_hosted_by_different_hosts(self, requests_mock: req_mock.Mocker):
-        data_products_url = f"{constants.API_HOST}/v2/collections"
+        collections_url = f"{constants.API_HOST}/v2/collections"
         requests_mock.get(
-            data_products_url,
+            collections_url,
             json={
                 "content": [
                     {

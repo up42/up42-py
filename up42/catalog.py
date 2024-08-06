@@ -39,15 +39,15 @@ class IntegrationValue(enum.Enum):
 @dataclasses.dataclass
 class ResolutionValue:
     minimum: float
-    description: Optional[str] = None
-    maximum: Optional[float] = None
+    description: Optional[str]
+    maximum: Optional[float]
 
 
 @dataclasses.dataclass
 class CollectionMetadata:
-    product_type: Optional[Literal["OPTICAL", "SAR", "ELEVATION"]] = None
-    resolution_class: Optional[Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]] = None
-    resolution_value: Optional[ResolutionValue] = None
+    product_type: Optional[Literal["OPTICAL", "SAR", "ELEVATION"]]
+    resolution_class: Optional[Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]]
+    resolution_value: Optional[ResolutionValue]
 
 
 @dataclasses.dataclass
@@ -63,8 +63,8 @@ class DataProduct:
     name: str
     title: str
     description: str
-    id: Optional[str] = None
-    eula_id: Optional[str] = None
+    id: Optional[str]
+    eula_id: Optional[str]
 
 
 @dataclasses.dataclass
@@ -76,10 +76,7 @@ class Collection:
     integrations: list[IntegrationValue]
     providers: list[Provider]
     data_products: list[DataProduct]
-    metadata: Optional[CollectionMetadata] = None
-
-
-PRODUCT_GLOSSARY_PARAMS = {"is_integrated": "true", "paginated": "false"}
+    metadata: Optional[CollectionMetadata]
 
 
 class ProductGlossary:
