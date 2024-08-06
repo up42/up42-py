@@ -83,6 +83,7 @@ class ProductGlossarySorting:
     name = utils.SortingField("name")
     title = utils.SortingField("title")
     description = utils.SortingField("description")
+    type = utils.SortingField("type")
 
 
 class ProductGlossary:
@@ -92,13 +93,11 @@ class ProductGlossary:
     def get_collections(
         cls,
         collection_type: Optional[CollectionType] = None,
-        only_non_commercial: bool = False,
         sort_by: Optional[utils.SortingField] = None,
     ) -> Iterator[Collection]:
         query_params: dict[str, Union[str, int]] = {
             key: str(value)
             for key, value in {
-                "onlyNonCommercial": "true" if only_non_commercial else "false",
                 "sort": sort_by,
                 "page": 0,
             }.items()

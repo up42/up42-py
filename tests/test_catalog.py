@@ -68,13 +68,11 @@ def set_status_raising_session():
 
 class TestProductGlossary:
     @pytest.mark.parametrize("collection_type", [None, catalog.CollectionType.ARCHIVE, catalog.CollectionType.TASKING])
-    @pytest.mark.parametrize("only_non_commercial", [None, True, False])
     @pytest.mark.parametrize("sort_by", [None, catalog.ProductGlossarySorting.name])
     def test_should_get_collections(
         self,
         requests_mock: req_mock.Mocker,
         collection_type: catalog.CollectionType,
-        only_non_commercial: bool,
         sort_by: Optional[utils.SortingField],
     ):
         target_type = collection_type if collection_type is not None else catalog.CollectionType.ARCHIVE
@@ -126,8 +124,6 @@ class TestProductGlossary:
         ignored_collection = copy.deepcopy(target_collection)
         ignored_collection["type"] = other_type.value
         query_params: dict[str, Any] = {}
-        if only_non_commercial:
-            query_params["onlyNonCommercial"] = ("true" if only_non_commercial else "false",)
         if sort_by:
             query_params["sort"] = str(sort_by)
         query_params["page"] = 0
@@ -170,7 +166,6 @@ class TestProductGlossary:
             list(
                 catalog.ProductGlossary.get_collections(
                     collection_type=collection_type if collection_type is not None else None,
-                    only_non_commercial=only_non_commercial,
                     sort_by=sort_by,
                 )
             )
