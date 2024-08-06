@@ -192,9 +192,7 @@ class Catalog(CatalogBase):
         end_date: str = "2020-01-30",
         usage_type: Optional[List[str]] = None,
         limit: int = 10,
-        max_cloudcover: Optional[int] = None,
-        sortby: Optional[str] = None,
-        ascending: Optional[bool] = None,
+        max_cloudcover: Optional[int] = None
     ) -> dict:
         """
         Helps constructing the parameters dictionary required for the search.
@@ -222,14 +220,10 @@ class Catalog(CatalogBase):
             max_cloudcover: Optional. Maximum cloud coverage percent.
                 e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloud coverage.
-            sortby: (deprecated)
-            ascending: (deprecated)
         Returns:
             The constructed parameters dictionary.
         """
 
-        if sortby is not None or ascending is not None:
-            logger.info("sortby is deprecated, currently only sorting output by creation date.")
         start = utils.format_time(start_date)
         end = utils.format_time(end_date, set_end_of_day=True)
         time_period = f"{start}/{end}"
