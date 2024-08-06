@@ -138,7 +138,7 @@ class TestCatalog:
                         "type": "ARCHIVE",
                         "title": "title",
                         "description": "collection",
-                        "integrations": list(catalog.IntegrationValue),
+                        "integrations": [],
                         "name": PHR,
                         "providers": [
                             {
@@ -171,7 +171,7 @@ class TestCatalog:
                         "title": f"title{idx}",
                         "name": f"collection{idx}",
                         "description": "collection",
-                        "integrations": list(catalog.IntegrationValue),
+                        "integrations": [],
                         "dataProducts": [],
                         "providers": [
                             {
