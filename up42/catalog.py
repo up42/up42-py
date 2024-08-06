@@ -192,7 +192,7 @@ class Catalog(CatalogBase):
         end_date: str = "2020-01-30",
         usage_type: Optional[List[str]] = None,
         limit: int = 10,
-        max_cloudcover: Optional[int] = None
+        max_cloudcover: Optional[int] = None,
     ) -> dict:
         """
         Helps constructing the parameters dictionary required for the search.

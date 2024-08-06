@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Aug 6, 2024**
 The following deprecated code was dropped:
-- Functions in `up42` global namespace 
+- Functions in `up42` global namespace
   - `initialize_webhook`
   - `get_webhooks`
   - `create_webhook`
