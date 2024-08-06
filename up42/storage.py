@@ -1,12 +1,7 @@
 import datetime
 import enum
-import warnings
 from typing import List, Optional, Union
 from urllib import parse
-
-import geojson  # type: ignore
-import geopandas  # type: ignore
-from shapely import geometry as shp_geometry  # type: ignore
 
 from up42 import asset, asset_searcher
 from up42 import auth as up42_auth
@@ -54,25 +49,12 @@ class Storage:
         self,
         created_after: Optional[Union[str, datetime.datetime]] = None,
         created_before: Optional[Union[str, datetime.datetime]] = None,
-        acquired_after: Optional[Union[str, datetime.datetime]] = None,
-        acquired_before: Optional[Union[str, datetime.datetime]] = None,
-        geometry: Optional[
-            Union[
-                dict,
-                geojson.Feature,
-                geojson.FeatureCollection,
-                list,
-                geopandas.GeoDataFrame,
-                shp_geometry.Polygon,
-            ]
-        ] = None,
         workspace_id: Optional[str] = None,
         collection_names: Optional[List[str]] = None,
         producer_names: Optional[List[str]] = None,
         tags: Optional[List[str]] = None,
         sources: Optional[List[str]] = None,
         search: Optional[str] = None,
-        custom_filter: Optional[dict] = None,
         limit: Optional[int] = None,
         sortby: str = "createdAt",
         descending: bool = True,
@@ -84,9 +66,6 @@ class Storage:
         Args:
             created_after: Search for assets created after the specified timestamp, in `"YYYY-MM-DD"` format.
             created_before: Search for assets created before the specified timestamp, in `"YYYY-MM-DD"` format.
-            acquired_after: Deprecated filter.
-            acquired_before: Deprecated filter.
-            geometry: Deprecated filter.
             workspace_id: Search by the workspace ID.
             collection_names: Search for assets from any of the provided geospatial collections.
             producer_names: Search for assets from any of the provided producers.
@@ -94,7 +73,6 @@ class Storage:
             sources: Search for assets from any of the provided sources.\
                 The allowed values: `"ARCHIVE"`, `"TASKING"`, `"USER"`.
             search: Search for assets that contain the provided search query in their name, title, or order ID.
-            custom_filter: Deprecated filter.
             limit: The number of results on a results page.
             sortby: The property to sort by.
             descending: The sorting order: <ul><li>`true` — descending</li><li>`false` — ascending</li></ul>
@@ -121,22 +99,6 @@ class Storage:
             sortby=sortby,
             descending=descending,
         )
-
-        if (
-            acquired_before is not None
-            or acquired_after is not None
-            or geometry is not None
-            or custom_filter is not None
-        ):
-            warnings.warn(
-                "Search for geometry, acquired_before, acquired_after and custom_filter has been deprecated."
-                "Use the PySTAC client for STAC queries.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            raise ValueError(
-                "Search for geometry, acquired_before, acquired_after and custom_filter is no longer supported."
-            )
 
         if return_json:
             return assets_json

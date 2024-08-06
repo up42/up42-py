@@ -25,15 +25,11 @@ from up42.auth import Auth
 from up42.base import authenticate, get_credits_balance
 from up42.catalog import Catalog, CollectionSorting, ProductGlossary
 from up42.initialization import (
-    create_webhook,
-    get_webhook_events,
-    get_webhooks,
     initialize_asset,
     initialize_catalog,
     initialize_order,
     initialize_storage,
     initialize_tasking,
-    initialize_webhook,
 )
 from up42.order import Order
 from up42.processing import Job, JobSorting, JobStatus
@@ -64,11 +60,7 @@ __all__ = [
         initialize_storage,
         initialize_order,
         initialize_asset,
-        initialize_webhook,
         authenticate,
-        get_webhooks,
-        create_webhook,
-        get_webhook_events,
         get_credits_balance,
         Job,
         JobSorting,

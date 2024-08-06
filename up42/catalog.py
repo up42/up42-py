@@ -5,7 +5,6 @@ Catalog search functionality
 import dataclasses
 import enum
 import pathlib
-import warnings
 from typing import Any, Dict, Iterator, List, Literal, Optional, Union
 
 import geojson  # type: ignore
@@ -39,8 +38,8 @@ class IntegrationValue(enum.Enum):
 @dataclasses.dataclass
 class ResolutionValue:
     minimum: float
-    description: Optional[str]
-    maximum: Optional[float]
+    description: Optional[str] = None
+    maximum: Optional[float] = None
 
 
 @dataclasses.dataclass
@@ -169,7 +168,6 @@ class CatalogBase:
         order_parameters: Optional[Dict],
         track_status: bool = False,
         report_time: int = 120,
-        **kwargs,
     ) -> order.Order:
         """
         Place an order.
@@ -181,11 +179,6 @@ class CatalogBase:
                 the Order once it is `FULFILLED` or `FAILED`.
             report_time (int): The interval (in seconds) to query
                 the order status if `track_status` is True.
-
-        Warning "Deprecated order parameters"
-            The use of the 'scene' and 'geometry' parameters for
-            the data ordering is deprecated. Please use the new
-            order_parameters parameter as described above.
 
          Warning:
             When placing orders of items that are in
@@ -200,16 +193,6 @@ class CatalogBase:
         Returns:
             Order class object of the placed order.
         """
-        if "scene" in kwargs or "geometry" in kwargs:
-            # Deprecated, to be removed, use order_parameters.
-            message = (
-                "The use of the 'scene' and 'geometry' parameters "
-                "for the data ordering is deprecated. "
-                "Please use the new 'order_parameters' parameter."
-            )
-            warnings.warn(message, DeprecationWarning, stacklevel=2)
-        elif order_parameters is None:
-            raise ValueError("Please provide the 'order_parameters' parameter!")
         placed_order = order.Order.place(self.auth, order_parameters, self.workspace_id)  # type: ignore
         if track_status:
             placed_order.track_status(report_time)
@@ -234,7 +217,7 @@ class Catalog(CatalogBase):
         super().__init__(auth, workspace_id)
         self.type: CollectionType = CollectionType.ARCHIVE
 
-    def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
+    def estimate_order(self, order_parameters: Optional[Dict]) -> int:
         """
         Estimate the cost of an order.
 
@@ -244,22 +227,8 @@ class Catalog(CatalogBase):
 
         Returns:
             int: An estimated cost for the order in UP42 credits.
-
-        Warning "Deprecated order parameters"
-            The use of the 'scene' and 'geometry' parameters for
-            the data estimation is deprecated. Please use the new
-            order_parameters parameter as described above.
         """
-        if "scene" in kwargs or "geometry" in kwargs:
-            # Deprecated, to be removed, use order_parameters.
-            message = (
-                "The use of the 'scene' and 'geometry' parameters "
-                "for the data estimation is deprecated. "
-                "Please use the new 'order_parameters' parameter."
-            )
-            warnings.warn(message, DeprecationWarning, stacklevel=2)
-        elif order_parameters is None:
-            raise ValueError("Please provide the 'order_parameters' parameter!")
+
         return order.Order.estimate(self.auth, order_parameters)  # type: ignore
 
     @staticmethod
@@ -278,8 +247,6 @@ class Catalog(CatalogBase):
         usage_type: Optional[List[str]] = None,
         limit: int = 10,
         max_cloudcover: Optional[int] = None,
-        sortby: Optional[str] = None,
-        ascending: Optional[bool] = None,
     ) -> dict:
         """
         Helps constructing the parameters dictionary required for the search.
@@ -307,14 +274,10 @@ class Catalog(CatalogBase):
             max_cloudcover: Optional. Maximum cloud coverage percent.
                 e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloud coverage.
-            sortby: (deprecated)
-            ascending: (deprecated)
         Returns:
             The constructed parameters dictionary.
         """
 
-        if sortby is not None or ascending is not None:
-            logger.info("sortby is deprecated, currently only sorting output by creation date.")
         start = utils.format_time(start_date)
         end = utils.format_time(end_date, set_end_of_day=True)
         time_period = f"{start}/{end}"

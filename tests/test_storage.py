@@ -101,18 +101,6 @@ def test_get_assets(storage_mock):
     assert assets[0].asset_id == constants.ASSET_ID
 
 
-def test_get_assets_with_search_stac(storage_mock):
-    with pytest.raises(ValueError) as e:
-        storage_mock.get_assets(
-            created_after="2020-01-01",
-            created_before="2023-01-01",
-            acquired_after="2020-01-01",
-            acquired_before="2023-01-01",
-            tags=["project-7", "optical"],
-        )
-        assert "no longer supported" in str(e.value)
-
-
 def test_get_assets_pagination(auth_mock, requests_mock):
     """
     SDK test account holds too few assets to query multiple pages via pagination,

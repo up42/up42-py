@@ -16,12 +16,6 @@ def workspace(auth_mock):
         yield
 
 
-@pytest.fixture(name="webhooks")
-def _webhooks():
-    with mock.patch("up42.webhooks.Webhook") as webhooks_class_mock:
-        yield webhooks_class_mock
-
-
 def test_should_initialize_objects(
     order_mock,
     asset_mock,
@@ -39,29 +33,3 @@ def test_should_initialize_objects(
     assert asset_obj.info == asset_mock.info
     result = up42.initialize_tasking()
     assert isinstance(result, tasking.Tasking)
-
-
-def test_should_get_webhook_events(webhooks: mock.MagicMock):
-    events = mock.MagicMock()
-    webhooks.get_webhook_events.return_value = events
-    assert up42.get_webhook_events() == events
-
-
-@pytest.mark.parametrize("return_json", [False, True])
-def test_should_get_webhooks(webhooks: mock.MagicMock, return_json):
-    hooks = mock.MagicMock()
-    webhooks.all.return_value = hooks
-    assert up42.get_webhooks(return_json=return_json) == hooks
-    webhooks.all.assert_called_with(return_json=return_json)
-
-
-def test_should_create_webhook(webhooks: mock.MagicMock):
-    name = "name"
-    url = "url"
-    events = ["event"]
-    active = True
-    secret = "secret"
-    webhook = mock.MagicMock()
-    webhooks.create.return_value = webhook
-    assert webhook == up42.create_webhook(name, url, events, active, secret)
-    webhooks.create.assert_called_with(name=name, url=url, events=events, active=active, secret=secret)
