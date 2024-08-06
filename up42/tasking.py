@@ -9,9 +9,8 @@ import geojson  # type: ignore
 import geopandas  # type: ignore
 from shapely import geometry as shp_geometry  # type: ignore
 
-import up42.glossary
 from up42 import auth as up42_auth
-from up42 import catalog, host, utils
+from up42 import catalog, glossary, host, utils
 
 logger = utils.get_logger(__name__)
 
@@ -28,7 +27,7 @@ class Tasking(catalog.CatalogBase):
 
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         super().__init__(auth, workspace_id)
-        self.type = up42.glossary.CollectionType.TASKING
+        self.type = glossary.CollectionType.TASKING
 
     def construct_order_parameters(
         self,
