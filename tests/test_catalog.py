@@ -68,7 +68,7 @@ def set_status_raising_session():
 class TestProductGlossary:
     @pytest.mark.parametrize("collection_type", [None, catalog.CollectionType.ARCHIVE, catalog.CollectionType.TASKING])
     @pytest.mark.parametrize("only_non_commercial", [None, True, False])
-    @pytest.mark.parametrize("sort_by", [None, str(utils.SortingField("createdAt", ascending=False))])
+    @pytest.mark.parametrize("sort_by", [None, catalog.ProductGlossarySorting.name])
     def test_should_get_collections(
         self,
         requests_mock: req_mock.Mocker,

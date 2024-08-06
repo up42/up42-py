@@ -23,7 +23,7 @@ from typing import Callable, Type, Union, cast
 from up42.asset import Asset
 from up42.auth import Auth
 from up42.base import authenticate, get_credits_balance
-from up42.catalog import Catalog
+from up42.catalog import Catalog, ProductGlossarySorting
 from up42.initialization import (
     create_webhook,
     get_webhook_events,
@@ -73,5 +73,6 @@ __all__ = [
         Job,
         JobSorting,
         JobStatus,
+        ProductGlossarySorting,
     ]
 ]

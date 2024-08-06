@@ -79,6 +79,12 @@ class Collection:
     metadata: Optional[CollectionMetadata]
 
 
+class ProductGlossarySorting:
+    name = utils.SortingField("name")
+    title = utils.SortingField("title", ascending=False)
+    description = utils.SortingField("description", ascending=False)
+
+
 class ProductGlossary:
     session = base.Session()
 
