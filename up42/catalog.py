@@ -232,7 +232,7 @@ class Catalog(CatalogBase):
 
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         super().__init__(auth, workspace_id)
-        self.type: CollectionType = CollectionType("ARCHIVE")
+        self.type: CollectionType = CollectionType.ARCHIVE
 
     def estimate_order(self, order_parameters: Optional[Dict], **kwargs) -> int:
         """
