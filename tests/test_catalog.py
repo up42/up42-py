@@ -42,6 +42,7 @@ COLLECTION_PROVIDERS = [
 ]
 COLLECTION_DATAPRODUCTS = [
     {
+        "id": "test-id",
         "name": "pneo-analytic",
         "title": "Analytic",
         "description": "A reflectance product that was radiometrically corrected",

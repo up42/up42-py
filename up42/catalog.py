@@ -127,10 +127,7 @@ class ProductGlossary:
                         providers=[Provider(**provider) for provider in collection["providers"]],
                         data_products=[
                             DataProduct(
-                                id=data_product.get("id", None),
-                                name=data_product["name"],
-                                title=data_product["title"],
-                                description=data_product["description"],
+                                **data_product,
                                 eula_id=data_product.get("eulaId", None),
                             )
                             for data_product in collection["dataProducts"]
