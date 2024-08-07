@@ -47,8 +47,10 @@ The following deprecated code was dropped (**Breaking**):
   - `get_webhooks`
   - `create_webhook`
   - `get_webhook_events`
+
   in `CatalogBase` class
   - keyword arguments in `place_order` method - used to pass arguments `scene` and `geometry`
+
   in `Catalog` class
   - keyword arguments in `estimate_order` method - used to pass arguments `scene` and `geometry`
   - `sortby` and `ascending` arguments in `construct_search_parameters` method
