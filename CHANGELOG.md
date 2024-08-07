@@ -40,23 +40,24 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Published `CollectionType` in the global namespace.
 
 ### Removed
-The following deprecated code was dropped:
-**Breaking:**
+The following deprecated code was dropped (**Breaking**):
+
 - Functions in `up42` global namespace
   - `initialize_webhook`
   - `get_webhooks`
   - `create_webhook`
   - `get_webhook_events`
-- in `CatalogBase` class
+  in `CatalogBase` class
   - keyword arguments in `place_order` method - used to pass arguments `scene` and `geometry`
-- in `Catalog` class
+  in `Catalog` class
   - keyword arguments in `estimate_order` method - used to pass arguments `scene` and `geometry`
   - `sortby` and `ascending` arguments in `construct_search_parameters` method
   - `acquired_after`, `acquired_before`, `geometry` and `custom_filter` arguments in `get_assets` method
-- in `Webhook` class
+  in `Webhook` class
   - `info` and `webhook_id` properties
   - `update` and `create` methods
   - `return_json` argument in `all` method.
+
 - Dropped `ProductGlossary` classes `Producer` and `Host` in `catalog.py`.
 - Dropped `processing_templates.AugmentationSpacept`.
 
