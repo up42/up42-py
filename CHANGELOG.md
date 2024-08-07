@@ -29,6 +29,41 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.0.0
+
+**Aug 8, 2024**
+
+### Changed
+- **Breaking:** Switch to the new product glossary V2 endpoint in `ProductGlossary::get_collections`.
+- **Breaking:** Updated `Collection` class in `catalog.py` to match new `ProductGlossary` endpoints.
+- Moved `ProductGlossary` and its dependencies to `glossary.py`.
+- Published `CollectionType` in the global namespace.
+
+### Removed
+The following deprecated code was dropped (**Breaking**):
+
+- Functions in `up42` global namespace
+  - `initialize_webhook`
+  - `get_webhooks`
+  - `create_webhook`
+  - `get_webhook_events`
+
+  in `CatalogBase` class
+  - keyword arguments in `place_order` method - used to pass arguments `scene` and `geometry`
+
+  in `Catalog` class
+  - keyword arguments in `estimate_order` method - used to pass arguments `scene` and `geometry`
+  - `sortby` and `ascending` arguments in `construct_search_parameters` method
+  - `acquired_after`, `acquired_before`, `geometry` and `custom_filter` arguments in `get_assets` method
+  in `Webhook` class
+  - `info` and `webhook_id` properties
+  - `update` and `create` methods
+  - `return_json` argument in `all` method.
+
+- Dropped `ProductGlossary` classes `Producer` and `Host` in `catalog.py`.
+- Dropped `processing_templates.AugmentationSpacept`.
+
+
 ## 2.0.0a5
 
 **Aug 7, 2024**
