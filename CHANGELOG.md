@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Aug 8, 2024**
 
 ### Changed
-- **Breaking:** Switch to the new product glossary V2 endpoint in `ProductGlossaty::get_collections`.
+- **Breaking:** Switch to the new product glossary V2 endpoint in `ProductGlossary::get_collections`.
 - **Breaking:** Updated `Collection` class in `catalog.py` to match new `ProductGlossary` endpoints.
 - Moved `ProductGlossary` and its dependencies to `glossary.py`.
 - Published `CollectionType` in the global namespace.
