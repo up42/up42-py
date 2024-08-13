@@ -1,6 +1,8 @@
 import dataclasses
 import enum
-from typing import Any, Iterator, Literal, Optional, TypeAlias
+from typing import Any, Iterator, Literal, Optional
+
+from typing_extensions import TypeAlias
 
 from up42 import base, host, utils
 
