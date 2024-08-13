@@ -2,6 +2,8 @@ import dataclasses
 import enum
 from typing import Any, Iterator, Literal, Optional
 
+from typing_extensions import TypeAlias
+
 from up42 import base, host, utils
 
 
@@ -10,16 +12,18 @@ class CollectionType(enum.Enum):
     TASKING = "TASKING"
 
 
-class IntegrationValue(enum.Enum):
-    ACCESS_APPROVAL_REQUIRED = "ACCESS_APPROVAL_REQUIRED"
-    SAMPLE_DATA_AVAILABLE = "SAMPLE_DATA_AVAILABLE"
-    MANUAL_REQUEST_REQUIRED = "MANUAL_REQUEST_REQUIRED"
-    FEASIBILITY_MAY_BE_REQUIRED = "FEASIBILITY_MAY_BE_REQUIRED"
-    QUOTATION_REQUIRED = "QUOTATION_REQUIRED"
-    PRICE_ESTIMATION_AVAILABLE = "PRICE_ESTIMATION_AVAILABLE"
-    SEARCH_AVAILABLE = "SEARCH_AVAILABLE"
-    THUMBNAIL_AVAILABLE = "THUMBNAIL_AVAILABLE"
-    QUICKLOOK_AVAILABLE = "QUICKLOOK_AVAILABLE"
+IntegrationValue: TypeAlias = Literal[
+    "ACCESS_APPROVAL_REQUIRED",
+    "SAMPLE_DATA_AVAILABLE",
+    "MANUAL_REQUEST_REQUIRED",
+    "FEASIBILITY_STUDY_REQUIRED",
+    "FEASIBILITY_MAY_BE_REQUIRED",
+    "QUOTATION_REQUIRED",
+    "PRICE_ESTIMATION_AVAILABLE",
+    "SEARCH_AVAILABLE",
+    "THUMBNAIL_AVAILABLE",
+    "QUICKLOOK_AVAILABLE",
+]
 
 
 @dataclasses.dataclass
@@ -103,7 +107,7 @@ class ProductGlossary:
                         title=collection["title"],
                         description=collection["description"],
                         type=CollectionType(collection["type"]),
-                        integrations=[IntegrationValue(integration) for integration in collection["integrations"]],
+                        integrations=collection["integrations"],
                         providers=[Provider(**provider) for provider in collection["providers"]],
                         data_products=[
                             DataProduct(
