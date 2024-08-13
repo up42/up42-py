@@ -29,6 +29,10 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.0.1a1
+
+- Switch `ProductGlossart::IntegrationValue` from `Enum` to `Literal`.
+
 ## 2.0.0
 
 **Aug 8, 2024**

@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Optional
+from typing import List, Optional
 
 import pytest
 import requests
@@ -16,6 +16,17 @@ DATA_PRODUCT = glossary.DataProduct(
     eula_id="eula-id",
 )
 RESOLUTION_VALUE = glossary.ResolutionValue(minimum=0.0, maximum=1.0, description="resolution value")
+INTEGRATION_VALUES: List[glossary.IntegrationValue] = [
+    "ACCESS_APPROVAL_REQUIRED",
+    "SAMPLE_DATA_AVAILABLE",
+    "MANUAL_REQUEST_REQUIRED",
+    "FEASIBILITY_MAY_BE_REQUIRED",
+    "QUOTATION_REQUIRED",
+    "PRICE_ESTIMATION_AVAILABLE",
+    "SEARCH_AVAILABLE",
+    "THUMBNAIL_AVAILABLE",
+    "QUICKLOOK_AVAILABLE",
+]
 COLLECTION_METADATA = glossary.CollectionMetadata(
     product_type="OPTICAL",
     resolution_class="VERY_HIGH",
@@ -26,7 +37,7 @@ COLLECTION = glossary.Collection(
     title="collection-title",
     description="collection",
     type=glossary.CollectionType.ARCHIVE,
-    integrations=list(glossary.IntegrationValue),
+    integrations=INTEGRATION_VALUES,
     providers=[
         glossary.Provider(
             name="provider-name",
@@ -69,7 +80,7 @@ class TestProductGlossary:
                 "description": COLLECTION.description,
                 "title": COLLECTION.title,
                 "type": type_value.value,
-                "integrations": [entry.value for entry in glossary.IntegrationValue],
+                "integrations": INTEGRATION_VALUES,
                 "providers": [dataclasses.asdict(COLLECTION.providers[0])],
                 "dataProducts": [
                     {
