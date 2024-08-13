@@ -2,8 +2,6 @@ import dataclasses
 import enum
 from typing import Any, Iterator, Literal, Optional
 
-from typing_extensions import TypeAlias
-
 from up42 import base, host, utils
 
 
@@ -12,7 +10,7 @@ class CollectionType(enum.Enum):
     TASKING = "TASKING"
 
 
-IntegrationValue: TypeAlias = Literal[
+IntegrationValue = Literal[
     "ACCESS_APPROVAL_REQUIRED",
     "SAMPLE_DATA_AVAILABLE",
     "MANUAL_REQUEST_REQUIRED",
