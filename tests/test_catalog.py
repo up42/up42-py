@@ -28,6 +28,14 @@ SEARCH_PARAMETERS = {
 
 
 @pytest.fixture(autouse=True)
+def workspace():
+    with mock.patch("up42.base.workspace") as workspace_mock:
+        workspace_mock.auth.session = requests.session()
+        workspace_mock.id = constants.WORKSPACE_ID
+        yield
+
+
+@pytest.fixture(autouse=True)
 def set_status_raising_session():
     session = requests.Session()
     session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
@@ -301,9 +309,9 @@ def test_order_from_catalog_track_status(catalog_order_parameters, order_mock, c
     requests_mock.get(
         url_order_info,
         [
-            {"json": {"status": "PLACED"}},
-            {"json": {"status": "BEING_FULFILLED"}},
-            {"json": {"status": "FULFILLED"}},
+            {"json": {"status": "PLACED", "type": "ARCHIVE"}},
+            {"json": {"status": "BEING_FULFILLED", "type": "ARCHIVE"}},
+            {"json": {"status": "FULFILLED", "type": "ARCHIVE"}},
         ],
     )
     placed_order = catalog_mock.place_order(

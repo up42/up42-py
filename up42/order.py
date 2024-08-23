@@ -1,10 +1,11 @@
 import copy
+import dataclasses
 import time
-from typing import Any, Dict, List, Optional, TypedDict
+from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict
 
-from up42 import asset, asset_searcher
+from up42 import asset
 from up42 import auth as up42_auth
-from up42 import host, utils
+from up42 import base, glossary, host, utils
 
 logger = utils.get_logger(__name__)
 
@@ -32,6 +33,32 @@ def _translate_construct_parameters(order_parameters):
     return order_parameters_v2
 
 
+OrderStatus = Literal[
+    "CREATED",
+    "BEING_PLACED",
+    "PLACED",
+    "BEING_FULFILLED",
+    "DELIVERY_INITIALIZATION_FAILED",
+    "DOWNLOAD_FAILED",
+    "DOWNLOADED",
+    "FULFILLED",
+    "FAILED",
+    "FAILED_PERMANENTLY",
+]
+
+OrderSubtatus = Literal[
+    "FEASIBILITY_WAITING_UPLOAD",
+    "FEASIBILITY_WAITING_RESPONSE",
+    "QUOTATION_WAITING_UPLOAD",
+    "QUOTATION_WAITING_RESPONSE",
+    "QUOTATION_ACCEPTED",
+]
+
+
+class OrderSorting:
+    name = utils.SortingField("name")
+
+
 class OrderParams(TypedDict):
     """
     Represents the stucture data format for the order parameters.
@@ -46,6 +73,7 @@ class OrderParams(TypedDict):
     tags: List[str]
 
 
+@dataclasses.dataclass
 class Order:
     """
     The Order class enables you to place, inspect and get information on orders.
@@ -56,45 +84,95 @@ class Order:
     ```
     """
 
-    def __init__(
-        self,
-        auth: up42_auth.Auth,
-        order_id: str,
-        order_parameters: Optional[dict] = None,
-        order_info: Optional[dict] = None,
-    ):
-        self.auth = auth
-        self.order_id = order_id
-        self.order_parameters = order_parameters
-        if order_info is not None:
-            self._info = order_info
-        else:
-            self._info = self.info
+    session = base.Session()
+    workspace_id = base.WorkspaceId()
+    order_id: str
+    order_parameters: Optional[dict] = None
+    order_info: Optional[dict] = None
 
     def __repr__(self):
         return (
-            f"""Order(order_id: {self.order_id}, status: {self._info["status"]},"""
-            f"""createdAt: {self._info["createdAt"]}, updatedAt: {self._info["updatedAt"]})"""
+            f"""Order(order_id: {self.order_id}, status: {self.info["status"]},"""
+            f"""createdAt: {self.info["createdAt"]}, updatedAt: {self.info["updatedAt"]})"""
         )
 
     def __eq__(self, other: Optional[object]):
-        return other and hasattr(other, "_info") and other._info == self._info
+        return other and hasattr(other, "info") and other.info == self.info
+
+    @staticmethod
+    def from_metadata(metadata: dict) -> "Order":
+        return Order(
+            order_id=str(metadata.get("id")),
+            order_info=metadata,
+        )
+
+    @staticmethod
+    def _get_pages(session, endpoint: str, params: dict[str, Any]):
+        response = session.get(host.endpoint(endpoint), params=params).json()
+        total_pages = response["totalPages"]
+        while True:
+            yield response["content"]
+            params["page"] += 1
+            if params["page"] == total_pages:
+                break
+            response = session.get(host.endpoint(endpoint), params=params).json()
+
+    @classmethod
+    def get(cls, order_id: str) -> "Order":
+        url = host.endpoint(f"/v2/orders/{order_id}")
+        metadata = cls.session.get(url).json()
+        return cls.from_metadata(metadata)
+
+    @classmethod
+    def all(
+        cls,
+        workspace_id: Optional[str] = None,
+        order_type: Optional[glossary.CollectionType] = None,
+        status: Optional[list[OrderStatus]] = None,
+        substatus: Optional[list[OrderSubtatus]] = None,
+        display_name: Optional[int] = None,
+        tags: Optional[list[str]] = None,
+        sort_by: Optional[OrderSorting] = None,
+        *,
+        # used for performance tuning and testing only
+        page_size: Optional[int] = None,
+    ) -> Iterator["Order"]:
+        query_params: dict[str, Any] = {
+            key: str(value)
+            for key, value in {
+                "workspaceId": workspace_id,
+                "type": order_type.value if order_type else None,
+                "status": ",".join(entry for entry in status) if status else None,
+                "subStatus": ",".join(entry for entry in substatus) if substatus else None,
+                "displayName": display_name,
+                "tags": ",".join(entry for entry in tags) if tags else None,
+                "limit": page_size,
+                "sort": sort_by,
+            }.items()
+            if value
+        }
+        query_params["page"] = 0
+
+        for page in cls._get_pages(cls.session, "/v2/orders", query_params):
+            for metadata in page:
+                yield Order.from_metadata(metadata)
 
     @property
     def info(self) -> dict:
         """
         Gets and updates the order information.
         """
-        url = host.endpoint(f"/v2/orders/{self.order_id}")
-        response_json = self.auth.request(request_type="GET", url=url)
-        self._info = response_json
-        return self._info
+        if self.order_info is None:
+            url = host.endpoint(f"/v2/orders/{self.order_id}")
+            self.order_info = self.session.get(url=url).json()
+        return self.order_info
 
     @property
-    def status(self) -> str:
+    def status(self) -> OrderStatus:
         """
         Gets the Order status. One of `PLACED`, `FAILED`, `FULFILLED`, `BEING_FULFILLED`, `FAILED_PERMANENTLY`.
         """
+        self.order_info = None
         status = self.info["status"]
         logger.info("Order is %s", status)
         return status
@@ -118,68 +196,16 @@ class Order:
         """
         return self.status == "FULFILLED"
 
-    def get_assets(self) -> List[asset.Asset]:
+    def get_assets(self) -> Iterator[asset.Asset]:
         """
         Gets the Order assets or results.
         """
-        if self.is_fulfilled:
-            params: asset_searcher.AssetSearchParams = {"search": self.order_id}
-            assets_response = asset_searcher.search_assets(self.auth, params=params)
-            return [asset.Asset(self.auth, asset_info=asset_info) for asset_info in assets_response]
-        raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
-
-    @classmethod
-    def place(cls, auth: up42_auth.Auth, order_parameters: dict, workspace_id: str) -> "Order":
-        """
-        Places an order.
-
-        Args:
-            auth: An authentication object.
-            order_parameters: A dictionary for the order configuration.
-
-        Returns:
-            Order: The placed order.
-        """
-        url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
-        response_json = auth.request(
-            request_type="POST",
-            url=url,
-            data=_translate_construct_parameters(order_parameters),
-        )
-        if response_json["errors"]:
-            message = response_json["errors"][0]["message"]
-            raise ValueError(f"Order was not placed: {message}")
-        order_id = response_json["results"][0]["id"]
-        order = cls(auth=auth, order_id=order_id, order_parameters=order_parameters)
-        logger.info("Order %s is now %s.", order.order_id, order.status)
-        return order
-
-    @staticmethod
-    def estimate(auth: up42_auth.Auth, order_parameters: OrderParams) -> int:
-        """
-        Returns an estimation of the cost of an order.
-
-        Args:
-            auth: An authentication object.
-            order_parameters: A dictionary for the order configuration.
-
-        Returns:
-            int: The estimated cost of the order
-        """
-
-        url = host.endpoint("/v2/orders/estimate")
-        response_json = auth.request(
-            request_type="POST",
-            url=url,
-            data=_translate_construct_parameters(order_parameters),
-        )
-        estimated_credits: int = response_json["summary"]["totalCredits"]
-        logger.info(
-            "Order is estimated to cost %s UP42 credits (order_parameters: %s)",
-            estimated_credits,
-            order_parameters,
-        )
-        return estimated_credits
+        if not (self.is_fulfilled) and self.status != "BEING_FULFILLED":
+            raise ValueError(f"Order {self.order_id} is not valid. Current status is {self.status}")
+        params = {"search": self.order_id, "page": 0}
+        for page in self._get_pages(self.session, "/v2/assets", params):
+            for asset_info in page:
+                yield asset.Asset(base.workspace.auth, asset_info=asset_info)
 
     def track_status(self, report_time: int = 120) -> str:
         """
@@ -238,3 +264,56 @@ class Order:
 
         logger.info("Order is fulfilled successfully! - %s", self.order_id)
         return self.status
+
+
+def estimate(auth: up42_auth.Auth, order_parameters: OrderParams) -> int:
+    """
+    Returns an estimation of the cost of an order.
+
+    Args:
+        auth: An authentication object.
+        order_parameters: A dictionary for the order configuration.
+
+    Returns:
+        int: The estimated cost of the order
+    """
+
+    url = host.endpoint("/v2/orders/estimate")
+    response_json = auth.request(
+        request_type="POST",
+        url=url,
+        data=_translate_construct_parameters(order_parameters),
+    )
+    estimated_credits: int = response_json["summary"]["totalCredits"]
+    logger.info(
+        "Order is estimated to cost %s UP42 credits (order_parameters: %s)",
+        estimated_credits,
+        order_parameters,
+    )
+    return estimated_credits
+
+
+def place(auth: up42_auth.Auth, order_parameters: dict, workspace_id: str) -> Order:
+    """
+    Places an order.
+
+    Args:
+        auth: An authentication object.
+        order_parameters: A dictionary for the order configuration.
+
+    Returns:
+        Order: The placed order.
+    """
+    url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
+    response_json = auth.request(
+        request_type="POST",
+        url=url,
+        data=_translate_construct_parameters(order_parameters),
+    )
+    if response_json["errors"]:
+        message = response_json["errors"][0]["message"]
+        raise ValueError(f"Order was not placed: {message}")
+    order_id = response_json["results"][0]["id"]
+    order_obj = Order(order_id=order_id, order_parameters=order_parameters)
+    logger.info("Order %s is now %s.", order_obj.order_id, order_obj.status)
+    return order_obj
