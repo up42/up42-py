@@ -128,7 +128,7 @@ def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_m
             "errors": [],
         },
     )
-    order_placed = order.place(auth_mock, catalog_order_parameters, constants.WORKSPACE_ID)
+    order_placed = order.place_order(auth_mock, catalog_order_parameters, constants.WORKSPACE_ID)
     assert order_placed == order_mock
     assert order_placed.order_id == constants.ORDER_ID
     assert order_placed.order_parameters == catalog_order_parameters
@@ -144,7 +144,7 @@ def test_place_order_fails_if_response_contains_error(catalog_order_parameters, 
         },
     )
     with pytest.raises(ValueError) as err:
-        order.place(auth_mock, catalog_order_parameters, constants.WORKSPACE_ID)
+        order.place_order(auth_mock, catalog_order_parameters, constants.WORKSPACE_ID)
     assert error_content in str(err.value)
 
 
@@ -208,7 +208,7 @@ def test_estimate_order(catalog_order_parameters, auth_mock, requests_mock):
     }
     url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
     requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = order.estimate(auth_mock, catalog_order_parameters)
+    estimation = order.estimate_order(auth_mock, catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
 

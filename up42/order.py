@@ -100,13 +100,6 @@ class Order:
         return other and hasattr(other, "info") and other.info == self.info
 
     @staticmethod
-    def from_metadata(metadata: dict) -> "Order":
-        return Order(
-            order_id=str(metadata.get("id")),
-            order_info=metadata,
-        )
-
-    @staticmethod
     def _get_pages(session, endpoint: str, params: dict[str, Any]):
         response = session.get(host.endpoint(endpoint), params=params).json()
         total_pages = response["totalPages"]
@@ -116,6 +109,13 @@ class Order:
             if params["page"] == total_pages:
                 break
             response = session.get(host.endpoint(endpoint), params=params).json()
+
+    @staticmethod
+    def from_metadata(metadata: dict) -> "Order":
+        return Order(
+            order_id=str(metadata.get("id")),
+            order_info=metadata,
+        )
 
     @classmethod
     def get(cls, order_id: str) -> "Order":
@@ -266,7 +266,7 @@ class Order:
         return self.status
 
 
-def estimate(auth: up42_auth.Auth, order_parameters: OrderParams) -> int:
+def estimate_order(auth: up42_auth.Auth, order_parameters: OrderParams) -> int:
     """
     Returns an estimation of the cost of an order.
 
@@ -293,7 +293,7 @@ def estimate(auth: up42_auth.Auth, order_parameters: OrderParams) -> int:
     return estimated_credits
 
 
-def place(auth: up42_auth.Auth, order_parameters: dict, workspace_id: str) -> Order:
+def place_order(auth: up42_auth.Auth, order_parameters: dict, workspace_id: str) -> Order:
     """
     Places an order.
 

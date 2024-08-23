@@ -71,7 +71,7 @@ class CatalogBase:
         Returns:
             Order class object of the placed order.
         """
-        placed_order = order.place(self.auth, order_parameters, self.workspace_id)  # type: ignore
+        placed_order = order.place_order(self.auth, order_parameters, self.workspace_id)  # type: ignore
         if track_status:
             placed_order.track_status(report_time)
         return placed_order
@@ -107,7 +107,7 @@ class Catalog(CatalogBase):
             int: An estimated cost for the order in UP42 credits.
         """
 
-        return order.estimate(self.auth, order_parameters)  # type: ignore
+        return order.estimate_order(self.auth, order_parameters)  # type: ignore
 
     @staticmethod
     def construct_search_parameters(
