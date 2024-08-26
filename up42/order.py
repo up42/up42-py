@@ -162,6 +162,28 @@ class Order:
             for asset_info in page:
                 yield asset.Asset(base.workspace.auth, asset_info=asset_info)
 
+    @classmethod
+    def place(cls, order_parameters: dict, workspace_id: str) -> "Order":
+        """
+        Places an order.
+
+        Args:
+            auth: An authentication object.
+            order_parameters: A dictionary for the order configuration.
+
+        Returns:
+            Order: The placed order.
+        """
+        url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
+        response_json = cls.session.post(url=url, json=_translate_construct_parameters(order_parameters)).json()
+        if response_json["errors"]:
+            message = response_json["errors"][0]["message"]
+            raise ValueError(f"Order was not placed: {message}")
+        order_id = response_json["results"][0]["id"]
+        order_obj = Order(order_id=order_id, order_parameters=order_parameters)
+        logger.info("Order %s is now %s.", order_obj.order_id, order_obj.status)
+        return order_obj
+
     @staticmethod
     def estimate(auth: up42_auth.Auth, order_parameters: OrderParams) -> int:
         """
@@ -188,28 +210,6 @@ class Order:
             order_parameters,
         )
         return estimated_credits
-
-    @classmethod
-    def place(cls, order_parameters: dict, workspace_id: str) -> "Order":
-        """
-        Places an order.
-
-        Args:
-            auth: An authentication object.
-            order_parameters: A dictionary for the order configuration.
-
-        Returns:
-            Order: The placed order.
-        """
-        url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
-        response_json = cls.session.post(url=url, json=_translate_construct_parameters(order_parameters)).json()
-        if response_json["errors"]:
-            message = response_json["errors"][0]["message"]
-            raise ValueError(f"Order was not placed: {message}")
-        order_id = response_json["results"][0]["id"]
-        order_obj = Order(order_id=order_id, order_parameters=order_parameters)
-        logger.info("Order %s is now %s.", order_obj.order_id, order_obj.status)
-        return order_obj
 
     def track_status(self, report_time: int = 120) -> str:
         """
