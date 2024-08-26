@@ -32,10 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 2.1.0a1
 
-**TBD, 2024**
-
-- Switching `Order` class to descriptor
-- `Order.place` and `Order.estimate` moved to `place_order` and `estimate_order` module level functions.
+**Aug 26, 2024**
 - `Order.get_assets` now allows to get assets from orders in `BEING_FULFILLED` state.
 - `Order.get_assets` now returning an iterator instear of list.
 
