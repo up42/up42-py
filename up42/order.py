@@ -218,7 +218,6 @@ class Order:
         time_asleep = 0
 
         # check order details and react for tasking orders.
-
         while not self.is_fulfilled:
             status = self.status
             substatus_message = (

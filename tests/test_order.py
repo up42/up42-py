@@ -131,19 +131,18 @@ def test_place_order_fails_if_response_contains_error(catalog_order_parameters, 
     assert error_content in str(err.value)
 
 
-def test_track_status_running(order_mock, requests_mock):
-    del order_mock._info
-
-    url_job_info = f"{constants.API_HOST}/v2/orders/{order_mock.order_id}"
-
-    status_responses = [
+def test_track_status_running(auth_mock, requests_mock):
+    url_job_info = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
+    placed_response = [
         {
             "json": {
                 "status": "PLACED",
                 "type": "TASKING",
-                "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                "orderDetails": {"subStatus": "NON_STANDARD_RESPONSE"},
             }
-        },
+        }
+    ] * 10
+    being_fulfilled_response = [
         {
             "json": {
                 "status": "BEING_FULFILLED",
@@ -151,16 +150,23 @@ def test_track_status_running(order_mock, requests_mock):
                 "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
             }
         },
+    ] * 10
+    fulfilled_response = [
         {
             "json": {
                 "status": "FULFILLED",
                 "type": "TASKING",
                 "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
             }
-        },
+        }
     ]
+
+    status_responses = placed_response
+    status_responses.extend(being_fulfilled_response)
+    status_responses.extend(fulfilled_response)
     requests_mock.get(url_job_info, status_responses)
-    order_status = order_mock.track_status(report_time=0.1)
+    order_test = order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
+    order_status = order_test.track_status(report_time=1)
     assert order_status == "FULFILLED"
 
 
