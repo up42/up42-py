@@ -154,15 +154,14 @@ def test_place_order_fails_if_response_contains_error(catalog_order_parameters, 
     assert error_content in str(err.value)
 
 
-def test_track_status_running(order_mock, requests_mock):
-    url_job_info = f"{constants.API_HOST}/v2/orders/{order_mock.order_id}"
-
+def test_track_status_running(requests_mock):
+    url_job_info = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
     status_responses = [
         {
             "json": {
                 "status": "PLACED",
                 "type": "TASKING",
-                "orderDetails": {"subStatus": "NOT_STANDARD_SUBSTATUS"},
+                "orderDetails": {"subStatus": "NON_STANDARD_STATUS"},
             }
         },
         {
@@ -181,7 +180,8 @@ def test_track_status_running(order_mock, requests_mock):
         },
     ]
     requests_mock.get(url_job_info, status_responses)
-    order_status = order_mock.track_status(report_time=0.1)
+    order_test = order.Order(constants.ORDER_ID)
+    order_status = order_test.track_status(report_time=1)
     assert order_status == "FULFILLED"
 
 
