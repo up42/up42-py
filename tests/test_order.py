@@ -162,7 +162,7 @@ def test_track_status_running(order_mock, requests_mock):
             "json": {
                 "status": "PLACED",
                 "type": "TASKING",
-                "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
+                "orderDetails": {"subStatus": "NOT_STANDARD_SUBSTATUS"},
             }
         },
         {
