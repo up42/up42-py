@@ -212,7 +212,7 @@ class Order:
             if substatus in substatus_user_messages:
                 message = substatus_user_messages[substatus]
                 return f"{substatus}, {message}"
-            return f"{substatus}."
+            return f"{substatus}"
 
         logger.info("Tracking order status, reporting every %s seconds...", report_time)
         time_asleep = 0
@@ -227,7 +227,7 @@ class Order:
             if status in ["PLACED", "BEING_FULFILLED"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info("Order is %s! - %s", status, self.order_id)
-                    logger.info("subsatus: %s.", substatus_message)
+                    logger.info(substatus_message)
 
             elif status in ["FAILED", "FAILED_PERMANENTLY"]:
                 logger.info("Order is %s! - %s", status, self.order_id)
