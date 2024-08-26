@@ -1,5 +1,4 @@
 import copy
-import dataclasses
 import time
 from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict
 
@@ -55,10 +54,6 @@ OrderSubtatus = Literal[
 ]
 
 
-class OrderSorting:
-    name = utils.SortingField("name")
-
-
 class OrderParams(TypedDict):
     """
     Represents the stucture data format for the order parameters.
@@ -73,7 +68,6 @@ class OrderParams(TypedDict):
     tags: List[str]
 
 
-@dataclasses.dataclass
 class Order:
     """
     The Order class enables you to place, inspect and get information on orders.
