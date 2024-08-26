@@ -180,9 +180,9 @@ class Order:
             message = response_json["errors"][0]["message"]
             raise ValueError(f"Order was not placed: {message}")
         order_id = response_json["results"][0]["id"]
-        order_obj = Order(order_id=order_id, order_parameters=order_parameters)
-        logger.info("Order %s is now %s.", order_obj.order_id, order_obj.status)
-        return order_obj
+        order = cls(order_id=order_id, order_parameters=order_parameters)
+        logger.info("Order %s is now %s.", order.order_id, order.status)
+        return order
 
     @staticmethod
     def estimate(auth: up42_auth.Auth, order_parameters: OrderParams) -> int:
