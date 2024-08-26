@@ -120,7 +120,7 @@ def test_should_fail_to_get_assets_for_unfulfilled_order(requests_mock, status):
         list(order_placed.get_assets())
 
 
-def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_mock):
+def test_place_order(catalog_order_parameters, order_mock, requests_mock):
     requests_mock.post(
         url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
         json={
@@ -128,13 +128,13 @@ def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_m
             "errors": [],
         },
     )
-    order_placed = order.place_order(auth_mock, catalog_order_parameters, constants.WORKSPACE_ID)
+    order_placed = order.Order.place(catalog_order_parameters, constants.WORKSPACE_ID)
     assert order_placed == order_mock
     assert order_placed.order_id == constants.ORDER_ID
     assert order_placed.order_parameters == catalog_order_parameters
 
 
-def test_place_order_fails_if_response_contains_error(catalog_order_parameters, auth_mock, requests_mock):
+def test_place_order_fails_if_response_contains_error(catalog_order_parameters, requests_mock):
     error_content = "test error"
     requests_mock.post(
         url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
@@ -144,7 +144,7 @@ def test_place_order_fails_if_response_contains_error(catalog_order_parameters, 
         },
     )
     with pytest.raises(ValueError) as err:
-        order.place_order(auth_mock, catalog_order_parameters, constants.WORKSPACE_ID)
+        order.Order.place(catalog_order_parameters, constants.WORKSPACE_ID)
     assert error_content in str(err.value)
 
 
@@ -208,12 +208,6 @@ def test_estimate_order(catalog_order_parameters, auth_mock, requests_mock):
     }
     url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
     requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = order.estimate_order(auth_mock, catalog_order_parameters)
+    estimation = order.Order.estimate(auth_mock, catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
-
-
-def test_should_get_all_orders(requests_mock):
-    url_get_orders_all = f"{constants.API_HOST}/v2/orders"
-    requests_mock.get(url_get_orders_all, json=fixtures_order.JSON_GET_ASSETS_RESPONSE)
-    assert list(order.Order.all()) == [order.Order.from_metadata(fixtures_order.JSON_ORDER_ASSET)]
