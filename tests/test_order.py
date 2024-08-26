@@ -1,3 +1,5 @@
+import copy
+from typing import Any, Dict
 from unittest import mock
 
 import pytest
@@ -87,15 +89,19 @@ def test_order_parameters(order_mock):
 )
 def test_get_assets_should_search_assets_by_order_id(requests_mock, status):
     order_response = {"id": constants.ORDER_ID, "status": status}
-
     url_order_info = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
     requests_mock.get(url=url_order_info, json=order_response)
+    response_assets_json: Dict[str, Any] = copy.deepcopy(fixtures_order.JSON_GET_ASSETS_RESPONSE)
+    response_assets_json["totalPages"] = 2
     url_asset_info = f"{constants.API_HOST}/v2/assets?search={constants.ORDER_ID}&page=0"
-    requests_mock.get(url=url_asset_info, json=fixtures_order.JSON_GET_ASSETS_RESPONSE)
+    requests_mock.get(url=url_asset_info, json=response_assets_json)
+    response_assets_json["pageable"]["pageNumber"] = 2
+    url_asset_info = f"{constants.API_HOST}/v2/assets?search={constants.ORDER_ID}&page=1"
+    requests_mock.get(url=url_asset_info, json=response_assets_json)
     order_placed = order.Order(order_id=constants.ORDER_ID)
-    (asset_returned,) = list(order_placed.get_assets())
-    assert isinstance(asset_returned, asset.Asset)
-    assert asset_returned.asset_id == constants.ASSET_ORDER_ID
+    asset_returned = list(order_placed.get_assets())
+    assert all(isinstance(asset_element, asset.Asset) for asset_element in asset_returned)
+    assert all(asset_element.asset_id == constants.ASSET_ORDER_ID for asset_element in asset_returned)
 
 
 @pytest.mark.parametrize(
