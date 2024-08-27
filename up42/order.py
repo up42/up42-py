@@ -60,12 +60,10 @@ class Order:
         self,
         auth: up42_auth.Auth,
         order_id: str,
-        order_parameters: Optional[dict] = None,
         order_info: Optional[dict] = None,
     ):
         self.auth = auth
         self.order_id = order_id
-        self.order_parameters = order_parameters
         if order_info is not None:
             self._info = order_info
         else:
@@ -105,8 +103,7 @@ class Order:
         Gets the Order Details. Only for tasking type orders, archive types return empty.
         """
         if self.info["type"] == "TASKING":
-            order_details = self.info["orderDetails"]
-            return order_details
+            return self.info["orderDetails"]
         logger.info("Order is not TASKING type. Order details are not provided.")
         return {}
 
@@ -150,7 +147,7 @@ class Order:
             message = response_json["errors"][0]["message"]
             raise ValueError(f"Order was not placed: {message}")
         order_id = response_json["results"][0]["id"]
-        order = cls(auth=auth, order_id=order_id, order_parameters=order_parameters)
+        order = cls(auth=auth, order_id=order_id)
         logger.info("Order %s is now %s.", order.order_id, order.status)
         return order
 
