@@ -30,10 +30,10 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-## 2.1.0a1
+## 2.1.0a2
 
-**Aug 27, 2024**
-- Fix test coverage `Order` class.
+**TBD, 2024**
+- Fix test coverage `Order:track_status` and `Order:place` methods.
 
 ## 2.0.1
 
