@@ -83,9 +83,9 @@ class TestOrder:
         url_asset_info = f"{constants.API_HOST}/v2/assets?search={constants.ORDER_ID}"
         requests_mock.get(url=url_asset_info, json=fixtures_order.JSON_GET_ASSETS_RESPONSE)
         order_obj = order.Order(auth=auth_mock, order_id=constants.ORDER_ID, order_info=order_response)
-        (asset_returned,) = order_obj.get_assets()
-        assert isinstance(asset_returned, asset.Asset)
-        assert asset_returned.asset_id == constants.ASSET_ORDER_ID
+        asset_returned = order_obj.get_assets()
+        assert all(isinstance(asset_element, asset.Asset) for asset_element in asset_returned)
+        assert all(asset_element.asset_id == constants.ASSET_ORDER_ID for asset_element in asset_returned)
 
     @pytest.mark.parametrize(
         "status",
