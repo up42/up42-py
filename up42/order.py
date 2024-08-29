@@ -178,7 +178,7 @@ class Order:
         )
         return estimated_credits
 
-    def track_status(self, report_time: int = 120) -> str:
+    def track_status(self, report_time: float = 120) -> str:
         """
         Continuously gets the order status until order is fulfilled or failed.
 
@@ -212,7 +212,7 @@ class Order:
             return f"{substatus}"
 
         logger.info("Tracking order status, reporting every %s seconds...", report_time)
-        time_asleep = 0
+        time_asleep: float = 0
 
         # check order details and react for tasking orders.
 

@@ -34,6 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **TBD, 2024**
 - Fix test coverage for `Order:estimate`, `Order:place`, and `Order:track_status` methods.
+- change `Order.track_status` report_time input type to float.
 
 ## 2.0.1
 
