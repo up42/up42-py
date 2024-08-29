@@ -6,7 +6,8 @@ from up42 import asset, order
 from .fixtures import fixtures_globals as constants
 from .fixtures import fixtures_order
 
-ORDER_ENDPOINT_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
+ORDER_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
+ORDER_TRANSACTION_URL = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
 
 
 def test_init(order_mock):
@@ -102,69 +103,7 @@ def test_should_fail_to_get_assets_for_unfulfilled_order(auth_mock, requests_moc
 
 
 class TestOrder:
-    order_parameters_catalog: order.OrderParams = {
-        "dataProduct": "some-data-product",
-        "params": {"aoi": {"some": "data"}},
-    }
-    order_parameters_tasking: order.OrderParams = {
-        "dataProduct": "some-data-product",
-        "params": {"geometry": {"some": "data"}},
-    }
-    order_parameters = [
-        (order_parameters_catalog),
-        (order_parameters_tasking),
-    ]
-
-    def test_estimate_order(self, auth_mock, requests_mock):
-        response_payload = {
-            "summary": {"totalCredits": 100},
-            "errors": [],
-        }
-        url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
-        requests_mock.post(url=url_order_estimation, json=response_payload)
-        estimation = order.Order.estimate(auth_mock, self.order_parameters_catalog)
-        assert estimation == 100
-
-    @pytest.mark.parametrize(
-        "order_parameters",
-        order_parameters,
-        ids=["ARCHIVE", "TASKING"],
-    )
-    def test_place_order(self, auth_mock, requests_mock: req_mock.Mocker, order_parameters):
-        url = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
-        info = {"status": "SOME STATUS"}
-        requests_mock.get(
-            url=ORDER_ENDPOINT_URL,
-            json=info,
-        )
-        order_response = {"results": [{"id": constants.ORDER_ID}], "errors": []}
-        requests_mock.post(
-            url=url,
-            json=order_response,
-        )
-        order_placed = order.Order.place(auth_mock, order_parameters, constants.WORKSPACE_ID)
-        expected_order = order.Order(auth_mock, order_id=constants.ORDER_ID, order_info=info)
-        assert order_placed == expected_order
-        assert order_placed.order_id == constants.ORDER_ID
-
-    @pytest.mark.parametrize(
-        "order_parameters",
-        order_parameters,
-        ids=["ARCHIVE", "TASKING"],
-    )
-    def test_place_order_fails_if_response_contains_error(self, auth_mock, requests_mock, order_parameters):
-        url = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
-        order_response_with_error = {"results": [], "errors": [{"message": "test error"}]}
-        requests_mock.post(
-            url=url,
-            json=order_response_with_error,
-        )
-        with pytest.raises(ValueError) as err:
-            order.Order.place(auth_mock, order_parameters, constants.WORKSPACE_ID)
-            assert "test error" in str(err.value)
-
     def test_track_status_running(self, auth_mock, requests_mock):
-        url_job_info = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
         placed_response = [
             {
                 "json": {
@@ -196,30 +135,102 @@ class TestOrder:
         status_responses = placed_response
         status_responses.extend(being_fulfilled_response)
         status_responses.extend(fulfilled_response)
-        requests_mock.get(url_job_info, status_responses)
+        requests_mock.get(ORDER_URL, status_responses)
         order_test = order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
         order_status = order_test.track_status(report_time=1)
         assert order_status == "FULFILLED"
 
     @pytest.mark.parametrize("status", ["FULFILLED"])
-    def test_track_status_pass(self, order_mock, status, requests_mock):
-        del order_mock._info
-
-        url_job_info = f"{constants.API_HOST}/v2/orders/{order_mock.order_id}"
-        requests_mock.get(url=url_job_info, json={"status": status})
-
-        order_status = order_mock.track_status()
+    def test_track_status_pass(self, auth_mock, requests_mock, status):
+        requests_mock.get(url=ORDER_URL, json={"status": status})
+        order_placed = order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
+        order_status = order_placed.track_status()
         assert order_status == status
 
     @pytest.mark.parametrize("status", ["FAILED", "FAILED_PERMANENTLY"])
-    def test_track_status_fail(self, order_mock, status, requests_mock):
-        del order_mock._info
-
-        url_job_info = f"{constants.API_HOST}/v2/orders/{order_mock.order_id}"
+    def test_track_status_fail(self, auth_mock, requests_mock, status):
         requests_mock.get(
-            url=url_job_info,
+            url=ORDER_URL,
             json={"status": status, "type": "ARCHIVE"},
         )
-
+        order_placed = order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
         with pytest.raises(ValueError):
-            order_mock.track_status()
+            order_placed.track_status()
+
+
+class TestOrderTransactions:
+    order_parameters_catalog: order.OrderParams = {
+        "dataProduct": "some-data-product",
+        "params": {"aoi": {"some": "data"}},
+    }
+    order_parameters_tasking: order.OrderParams = {
+        "dataProduct": "some-data-product",
+        "params": {"geometry": {"some": "data"}},
+    }
+    order_parameters = [
+        (order_parameters_catalog),
+        (order_parameters_tasking),
+    ]
+
+    @pytest.mark.parametrize(
+        "order_parameters",
+        order_parameters,
+        ids=["ARCHIVE", "TASKING"],
+    )
+    def test_should_return_order_estimation(self, auth_mock, requests_mock, order_parameters):
+        expected_credits = 100
+        estimation_response = {
+            "summary": {"totalCredits": expected_credits},
+            "errors": [],
+        }
+        url = f"{constants.API_HOST}/v2/orders/estimate"
+        requests_mock.post(url=url, json=estimation_response)
+        estimation = order.Order.estimate(auth_mock, order_parameters)
+        assert estimation == expected_credits
+
+    @pytest.mark.parametrize(
+        "order_parameters",
+        order_parameters,
+        ids=["ARCHIVE", "TASKING"],
+    )
+    def test_estimate_order_fails_if_response_contains_error(self, auth_mock, requests_mock, order_parameters):
+        estimation_response_with_error = {"errors": [{"message": "test error"}]}
+        url = f"{constants.API_HOST}/v2/orders/estimate"
+        requests_mock.post(url=url, json=estimation_response_with_error)
+        with pytest.raises(KeyError):
+            order.Order.estimate(auth_mock, order_parameters)
+
+    @pytest.mark.parametrize(
+        "order_parameters",
+        order_parameters,
+        ids=["ARCHIVE", "TASKING"],
+    )
+    def test_should_return_order_placed(self, auth_mock, requests_mock: req_mock.Mocker, order_parameters):
+        info = {"status": "SOME STATUS"}
+        requests_mock.get(
+            url=ORDER_URL,
+            json=info,
+        )
+        order_response = {"results": [{"id": constants.ORDER_ID}], "errors": []}
+        requests_mock.post(
+            url=ORDER_TRANSACTION_URL,
+            json=order_response,
+        )
+        order_placed = order.Order.place(auth_mock, order_parameters, constants.WORKSPACE_ID)
+        expected_order = order.Order(auth_mock, order_id=constants.ORDER_ID, order_info=info)
+        assert order_placed == expected_order
+
+    @pytest.mark.parametrize(
+        "order_parameters",
+        order_parameters,
+        ids=["ARCHIVE", "TASKING"],
+    )
+    def test_place_order_fails_if_response_contains_error(self, auth_mock, requests_mock, order_parameters):
+        order_response_with_error = {"results": [], "errors": [{"message": "test error"}]}
+        requests_mock.post(
+            url=ORDER_TRANSACTION_URL,
+            json=order_response_with_error,
+        )
+        with pytest.raises(ValueError) as err:
+            order.Order.place(auth_mock, order_parameters, constants.WORKSPACE_ID)
+            assert "test error" in str(err.value)

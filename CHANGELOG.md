@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 2.1.0a2
 
 **TBD, 2024**
-- Fix test coverage `Order:track_status` and `Order:place` methods.
+- Fix test coverage for `Order:estimate`, `Order:place`, and `Order:track_status` methods.
 
 ## 2.0.1
 
