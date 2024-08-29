@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 2.1.0a1
 
 **TBD, 2024**
-- Fix test coverage `Order` class.
+- Improve test coverage `Order` class.
 
 ## 2.0.1
 
