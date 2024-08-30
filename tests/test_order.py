@@ -110,7 +110,7 @@ class TestOrder:
             "FAILED_PERMANENTLY",
         ],
     )
-    def test_fails_to_get_assets_if_not_fulfilled(self, auth_mock, requests_mock, status: str):
+    def test_fails_to_get_assets_if_not_fulfilled(self, auth_mock, requests_mock: req_mock.Mocker, status: str):
         info = {"status": status}
         requests_mock.get(url=ORDER_URL, json=info)
         order_obj = order.Order(auth=auth_mock, order_id=constants.ORDER_ID, order_info=info)
