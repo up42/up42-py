@@ -1,3 +1,4 @@
+import re
 from unittest import mock
 
 import pytest
@@ -71,12 +72,12 @@ class TestOrder:
         ],
         ids=["FULFILLED", "OTHER STATUS"],
     )
-    def test_should_compute_is_fulfilled(self, auth_mock, requests_mock: req_mock.Mocker, info: dict, expected: dict):
+    def test_should_compute_is_fulfilled(self, auth_mock, requests_mock: req_mock.Mocker, info: dict, expected: bool):
         requests_mock.get(url=ORDER_URL, json=info)
         order_obj = order.Order(auth_mock, order_id=constants.ORDER_ID, order_info=info)
         assert order_obj.is_fulfilled == expected
 
-    def test_should_get_assets_if_fulfilled(self, auth_mock, requests_mock):
+    def test_should_get_assets_if_fulfilled(self, auth_mock, requests_mock: req_mock.Mocker):
         info = {"id": constants.ORDER_ID, "status": "FULFILLED"}
         requests_mock.get(url=ORDER_URL, json=info)
         url_asset_info = f"{constants.API_HOST}/v2/assets?search={constants.ORDER_ID}"
@@ -91,9 +92,9 @@ class TestOrder:
         }
         requests_mock.get(url=url_asset_info, json=asset_info)
         order_obj = order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
-        assets = order_obj.get_assets()
-        assert all(isinstance(asset_element, asset.Asset) for asset_element in assets)
-        assert all(asset_element.asset_id == constants.ASSET_ORDER_ID for asset_element in assets)
+        (asset_obj,) = order_obj.get_assets()
+        assert isinstance(asset_obj, asset.Asset)
+        assert asset_obj.asset_id == constants.ASSET_ORDER_ID
 
     @pytest.mark.parametrize(
         "status",
@@ -109,12 +110,13 @@ class TestOrder:
             "FAILED_PERMANENTLY",
         ],
     )
-    def test_fails_to_get_assets_if_not_fulfilled(self, status):
-        auth = mock.MagicMock()
+    def test_fails_to_get_assets_if_not_fulfilled(self, auth_mock, requests_mock, status: str):
         info = {"status": status}
-        order_obj = order.Order(auth=auth, order_id=constants.ORDER_ID, order_info=info)
-        with pytest.raises(order.OrderUnfulfilledError):
+        requests_mock.get(url=ORDER_URL, json=info)
+        order_obj = order.Order(auth=auth_mock, order_id=constants.ORDER_ID, order_info=info)
+        with pytest.raises(order.OrderUnfulfilledError) as err:
             order_obj.get_assets()
+        assert re.compile(f".*{constants.ORDER_ID}.*{status}").match(str(err.value)) is not None
 
 
 def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_mock):
