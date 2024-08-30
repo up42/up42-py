@@ -130,7 +130,7 @@ class TestOrder:
             json=info,
         )
         order_placed = order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
-        with pytest.raises(ValueError):
+        with pytest.raises(order.FailedOrder):
             order_placed.track_status()
 
 
