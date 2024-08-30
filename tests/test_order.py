@@ -102,7 +102,7 @@ def test_should_fail_to_get_assets_for_unfulfilled_order(auth_mock, requests_moc
 
 
 class TestOrder:
-    def test_should_track_order_status_until_fulfilled(self, auth_mock, requests_mock):
+    def test_should_track_order_status_until_fulfilled(self, auth_mock, requests_mock: req_mock.Mocker):
         def create_tracking_response(status, order_sub_status):
             return [
                 {
@@ -123,7 +123,7 @@ class TestOrder:
         assert order_status == "FULFILLED"
 
     @pytest.mark.parametrize("status", ["FAILED", "FAILED_PERMANENTLY"])
-    def test_track_order_should_fail_if_status_not_valid(self, auth_mock, requests_mock, status):
+    def test_track_order_should_fail_if_status_not_valid(self, auth_mock, requests_mock: req_mock.Mocker, status: str):
         info = {"status": status, "type": "ANY"}
         requests_mock.get(
             url=ORDER_URL,
@@ -138,7 +138,7 @@ class TestOrderTransactions:
     order_place_url = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
 
     @pytest.fixture(scope="class", params=["catalog", "tasking"])
-    def order_parameters(self, request):
+    def order_parameters(self, request) -> order.OrderParams:
         order_parameters_catalog: order.OrderParams = {
             "dataProduct": "some-data-product",
             "params": {"aoi": {"some": "data"}},
@@ -153,7 +153,9 @@ class TestOrderTransactions:
         }
         return mocks[request.param]
 
-    def test_should_return_order_estimation(self, auth_mock, requests_mock, order_parameters):
+    def test_should_return_order_estimation(
+        self, auth_mock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
+    ):
         order_estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
         expected_credits = 100
         estimation_response = {
@@ -165,7 +167,7 @@ class TestOrderTransactions:
         assert estimation == expected_credits
 
     def test_place_order_should_return_expected_order(
-        self, auth_mock, requests_mock: req_mock.Mocker, order_parameters
+        self, auth_mock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
     ):
         info = {"status": "SOME STATUS"}
         requests_mock.get(
@@ -181,11 +183,15 @@ class TestOrderTransactions:
         expected_order = order.Order(auth_mock, order_id=constants.ORDER_ID, order_info=info)
         assert order_placed == expected_order
 
-    def test_place_order_fails_if_response_contains_error(self, auth_mock, requests_mock, order_parameters):
-        order_response_with_error = {"results": [], "errors": [{"message": "test error"}]}
+    def test_place_order_fails_if_response_contains_error(
+        self, auth_mock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
+    ):
+        error_msg = "test error"
+        order_response_with_error = {"results": [], "errors": [{"message": error_msg}]}
         requests_mock.post(
             url=self.order_place_url,
             json=order_response_with_error,
         )
-        with pytest.raises(ValueError):
+        with pytest.raises(order.FailedOrder) as err:
             order.Order.place(auth_mock, order_parameters, constants.WORKSPACE_ID)
+        assert error_msg in str(err.value)

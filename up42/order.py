@@ -32,6 +32,10 @@ def _translate_construct_parameters(order_parameters):
     return order_parameters_v2
 
 
+class FailedOrder(ValueError):
+    pass
+
+
 class OrderParams(TypedDict, total=False):
     """
     Represents the stucture data format for the order parameters.
@@ -126,7 +130,7 @@ class Order:
         raise ValueError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
-    def place(cls, auth: up42_auth.Auth, order_parameters: dict, workspace_id: str) -> "Order":
+    def place(cls, auth: up42_auth.Auth, order_parameters: OrderParams, workspace_id: str) -> "Order":
         """
         Places an order.
 
@@ -145,7 +149,7 @@ class Order:
         )
         if response_json["errors"]:
             message = response_json["errors"][0]["message"]
-            raise ValueError(f"Order was not placed: {message}")
+            raise FailedOrder(f"Order was not placed: {message}")
         order_id = response_json["results"][0]["id"]
         order = cls(auth=auth, order_id=order_id)
         logger.info("Order %s is now %s.", order.order_id, order.status)
@@ -228,7 +232,7 @@ class Order:
 
             elif status in ["FAILED", "FAILED_PERMANENTLY"]:
                 logger.info("Order is %s! - %s", status, self.order_id)
-                raise ValueError("Order has failed!")
+                raise FailedOrder("Order has failed!")
 
             time.sleep(report_time)
             time_asleep += report_time
