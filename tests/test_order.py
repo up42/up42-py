@@ -6,7 +6,6 @@ import requests_mock as req_mock
 from up42 import asset, order
 
 from .fixtures import fixtures_globals as constants
-from .fixtures import fixtures_order
 
 ORDER_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
 
@@ -59,7 +58,7 @@ class TestOrder:
         ],
         ids=["ARCHIVE", "TASKING"],
     )
-    def test_should_provide_order_details(self, auth_mock, requests_mock: req_mock.Mocker, info: dict, expected):
+    def test_should_provide_order_details(self, auth_mock, requests_mock: req_mock.Mocker, info: dict, expected: dict):
         requests_mock.get(url=ORDER_URL, json=info)
         order_obj = order.Order(auth_mock, order_id=constants.ORDER_ID, order_info=info)
         assert order_obj.order_details == expected
@@ -72,20 +71,29 @@ class TestOrder:
         ],
         ids=["FULFILLED", "OTHER STATUS"],
     )
-    def test_should_compute_is_fulfilled(self, auth_mock, requests_mock: req_mock.Mocker, info: dict, expected):
+    def test_should_compute_is_fulfilled(self, auth_mock, requests_mock: req_mock.Mocker, info: dict, expected: dict):
         requests_mock.get(url=ORDER_URL, json=info)
         order_obj = order.Order(auth_mock, order_id=constants.ORDER_ID, order_info=info)
         assert order_obj.is_fulfilled == expected
 
-    def test_get_assets_should_search_assets_by_order_id(self, auth_mock, requests_mock):
-        order_response = {"id": constants.ORDER_ID, "status": "FULFILLED"}
-        requests_mock.get(url=ORDER_URL, json=order_response)
+    def test_should_get_assets_if_fulfilled(self, auth_mock, requests_mock):
+        info = {"id": constants.ORDER_ID, "status": "FULFILLED"}
+        requests_mock.get(url=ORDER_URL, json=info)
         url_asset_info = f"{constants.API_HOST}/v2/assets?search={constants.ORDER_ID}"
-        requests_mock.get(url=url_asset_info, json=fixtures_order.JSON_GET_ASSETS_RESPONSE)
-        order_obj = order.Order(auth=auth_mock, order_id=constants.ORDER_ID, order_info=order_response)
-        asset_returned = order_obj.get_assets()
-        assert all(isinstance(asset_element, asset.Asset) for asset_element in asset_returned)
-        assert all(asset_element.asset_id == constants.ASSET_ORDER_ID for asset_element in asset_returned)
+        asset_info = {
+            "content": [
+                {
+                    "id": constants.ASSET_ORDER_ID,
+                }
+            ],
+            "totalPages": 1,
+            "totalElements": 1,
+        }
+        requests_mock.get(url=url_asset_info, json=asset_info)
+        order_obj = order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
+        assets = order_obj.get_assets()
+        assert all(isinstance(asset_element, asset.Asset) for asset_element in assets)
+        assert all(asset_element.asset_id == constants.ASSET_ORDER_ID for asset_element in assets)
 
     @pytest.mark.parametrize(
         "status",
@@ -101,11 +109,11 @@ class TestOrder:
             "FAILED_PERMANENTLY",
         ],
     )
-    def test_should_fail_to_get_assets_for_unfulfilled_order(self, status):
+    def test_fails_to_get_assets_if_not_fulfilled(self, status):
         auth = mock.MagicMock()
         info = {"status": status}
         order_obj = order.Order(auth=auth, order_id=constants.ORDER_ID, order_info=info)
-        with pytest.raises(ValueError):
+        with pytest.raises(order.OrderUnfulfilledError):
             order_obj.get_assets()
 
 
