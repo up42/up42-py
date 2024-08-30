@@ -1,4 +1,3 @@
-import re
 from unittest import mock
 
 import pytest
@@ -114,9 +113,8 @@ class TestOrder:
         info = {"status": status}
         requests_mock.get(url=ORDER_URL, json=info)
         order_obj = order.Order(auth=auth_mock, order_id=constants.ORDER_ID, order_info=info)
-        with pytest.raises(order.UnfulfilledOrder) as err:
+        with pytest.raises(order.UnfulfilledOrder, match=f".*{constants.ORDER_ID}.*{status}"):
             order_obj.get_assets()
-        assert re.compile(f".*{constants.ORDER_ID}.*{status}").match(str(err.value)) is not None
 
 
 def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_mock):
