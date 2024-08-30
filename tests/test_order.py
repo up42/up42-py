@@ -102,13 +102,19 @@ def test_should_fail_to_get_assets_for_unfulfilled_order(auth_mock, requests_moc
 
 
 class TestOrder:
-    def test_should_track_order_status_until_fulfilled(self, auth_mock, requests_mock: req_mock.Mocker):
+    @pytest.mark.parametrize(
+        "order_type",
+        ["TASKING", "ARCHIVE"],
+    )
+    def test_should_track_order_status_until_fulfilled(
+        self, auth_mock, requests_mock: req_mock.Mocker, order_type: str
+    ):
         def create_tracking_response(status, order_sub_status):
             return [
                 {
                     "json": {
                         "status": status,
-                        "type": "TASKING",
+                        "type": order_type,
                         "orderDetails": {"subStatus": order_sub_status},
                     }
                 }
