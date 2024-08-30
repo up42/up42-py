@@ -32,7 +32,7 @@ def _translate_construct_parameters(order_parameters):
     return order_parameters_v2
 
 
-class OrderUnfulfilledError(ValueError):
+class UnfulfilledOrder(ValueError):
     pass
 
 
@@ -127,7 +127,7 @@ class Order:
             params: asset_searcher.AssetSearchParams = {"search": self.order_id}
             assets_response = asset_searcher.search_assets(self.auth, params=params)
             return [asset.Asset(self.auth, asset_info=asset_info) for asset_info in assets_response]
-        raise OrderUnfulfilledError(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
+        raise UnfulfilledOrder(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
     def place(cls, auth: up42_auth.Auth, order_parameters: dict, workspace_id: str) -> "Order":
