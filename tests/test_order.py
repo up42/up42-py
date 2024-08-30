@@ -198,6 +198,5 @@ class TestOrderTransactions:
             url=self.order_place_url,
             json=order_response_with_error,
         )
-        with pytest.raises(order.FailedOrder) as err:
+        with pytest.raises(order.FailedOrder, match=error_msg):
             order.Order.place(auth_mock, order_parameters, constants.WORKSPACE_ID)
-        assert error_msg in str(err.value)
