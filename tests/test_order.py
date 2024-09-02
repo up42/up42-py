@@ -8,9 +8,18 @@ from up42 import asset, order
 from .fixtures import fixtures_globals as constants
 
 ORDER_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
+ORDER_PLACEMENT_URL = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
 
 
 class TestOrder:
+    @pytest.fixture(scope="class", params=["catalog", "tasking"])
+    def order_parameters(self, request) -> order.OrderParams:
+        geometry_key = "aoi" if request.param == "catalog" else "geometry"
+        return {
+            "dataProduct": "some-data-product",
+            "params": {geometry_key: {"some": "shape"}},
+        }
+
     def test_should_initialize_with_info_provided(self):
         auth = mock.MagicMock()
         info = {"some": "data"}
@@ -116,100 +125,63 @@ class TestOrder:
         with pytest.raises(order.UnfulfilledOrder, match=f".*{constants.ORDER_ID}.*{status}"):
             order_obj.get_assets()
 
-
-def test_place_order(catalog_order_parameters, auth_mock, order_mock, requests_mock):
-    requests_mock.post(
-        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-        json={
-            "results": [{"index": 0, "id": constants.ORDER_ID}],
-            "errors": [],
-        },
+    @pytest.mark.parametrize(
+        "info",
+        [{"type": "ARCHIVE"}, {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}}],
+        ids=["ARCHIVE", "TASKING"],
     )
-    order_placed = order.Order.place(auth_mock, catalog_order_parameters, constants.WORKSPACE_ID)
-    assert order_placed == order_mock
-    assert order_placed.order_id == constants.ORDER_ID
+    def test_should_track_order_status_until_fulfilled(self, auth_mock, requests_mock: req_mock.Mocker, info: dict):
+        responses = []
+        statuses = ["PLACED", "BEING_FULFILLED", "FULFILLED"]
+        responses = [{"json": {"status": status, **info}} for status in statuses]
+        requests_mock.get(ORDER_URL, responses)
+        order_obj = order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
+        assert order_obj.track_status(report_time=0.1) == "FULFILLED"
 
+    @pytest.mark.parametrize("status", ["FAILED", "FAILED_PERMANENTLY"])
+    def test_fails_to_track_order_if_status_not_valid(self, auth_mock, requests_mock: req_mock.Mocker, status: str):
+        info = {"status": status, "type": "ANY"}
+        requests_mock.get(
+            url=ORDER_URL,
+            json=info,
+        )
+        order_obj = order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
+        with pytest.raises(order.FailedOrder):
+            order_obj.track_status()
 
-def test_place_order_fails_if_response_contains_error(catalog_order_parameters, auth_mock, requests_mock):
-    error_content = "test error"
-    requests_mock.post(
-        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-        json={
-            "results": [],
-            "errors": [{"message": error_content}],
-        },
-    )
-    with pytest.raises(ValueError) as err:
-        order.Order.place(auth_mock, catalog_order_parameters, constants.WORKSPACE_ID)
-    assert error_content in str(err.value)
+    def test_should_estimate(self, auth_mock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams):
+        order_estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
+        expected_credits = 100
+        requests_mock.post(
+            url=order_estimate_url,
+            json={
+                "summary": {"totalCredits": expected_credits},
+                "errors": [],
+            },
+        )
+        assert order.Order.estimate(auth_mock, order_parameters) == expected_credits
 
+    def test_should_place_order(self, auth_mock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams):
+        info = {"status": "SOME STATUS"}
+        requests_mock.get(
+            url=ORDER_URL,
+            json=info,
+        )
+        requests_mock.post(
+            url=ORDER_PLACEMENT_URL,
+            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
+        )
+        order_obj = order.Order.place(auth_mock, order_parameters, constants.WORKSPACE_ID)
+        assert order_obj == order.Order(auth_mock, order_id=constants.ORDER_ID, order_info=info)
 
-def test_track_status_running(order_mock, requests_mock):
-    del order_mock._info
-
-    url_job_info = f"{constants.API_HOST}/v2/orders/{order_mock.order_id}"
-
-    status_responses = [
-        {
-            "json": {
-                "status": "PLACED",
-                "type": "TASKING",
-                "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
-            }
-        },
-        {
-            "json": {
-                "status": "BEING_FULFILLED",
-                "type": "TASKING",
-                "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
-            }
-        },
-        {
-            "json": {
-                "status": "FULFILLED",
-                "type": "TASKING",
-                "orderDetails": {"subStatus": "FEASIBILITY_WAITING_UPLOAD"},
-            }
-        },
-    ]
-    requests_mock.get(url_job_info, status_responses)
-    order_status = order_mock.track_status(report_time=0.1)
-    assert order_status == "FULFILLED"
-
-
-@pytest.mark.parametrize("status", ["FULFILLED"])
-def test_track_status_pass(order_mock, status, requests_mock):
-    del order_mock._info
-
-    url_job_info = f"{constants.API_HOST}/v2/orders/{order_mock.order_id}"
-    requests_mock.get(url=url_job_info, json={"status": status})
-
-    order_status = order_mock.track_status()
-    assert order_status == status
-
-
-@pytest.mark.parametrize("status", ["FAILED", "FAILED_PERMANENTLY"])
-def test_track_status_fail(order_mock, status, requests_mock):
-    del order_mock._info
-
-    url_job_info = f"{constants.API_HOST}/v2/orders/{order_mock.order_id}"
-    requests_mock.get(
-        url=url_job_info,
-        json={"status": status, "type": "ARCHIVE"},
-    )
-
-    with pytest.raises(ValueError):
-        order_mock.track_status()
-
-
-def test_estimate_order(catalog_order_parameters, auth_mock, requests_mock):
-    expected_payload = {
-        "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
-        "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
-        "errors": [],
-    }
-    url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
-    requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = order.Order.estimate(auth_mock, catalog_order_parameters)
-    assert isinstance(estimation, int)
-    assert estimation == 100
+    def test_fails_to_place_order_if_response_contains_error(
+        self, auth_mock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
+    ):
+        error_msg = "test error"
+        order_response_with_error = {"results": [], "errors": [{"message": error_msg}]}
+        requests_mock.post(
+            url=ORDER_PLACEMENT_URL,
+            json=order_response_with_error,
+        )
+        with pytest.raises(order.FailedOrderPlacement, match=error_msg):
+            order.Order.place(auth_mock, order_parameters, constants.WORKSPACE_ID)

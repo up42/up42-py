@@ -36,7 +36,15 @@ class UnfulfilledOrder(ValueError):
     pass
 
 
-class OrderParams(TypedDict):
+class FailedOrder(ValueError):
+    pass
+
+
+class FailedOrderPlacement(ValueError):
+    pass
+
+
+class OrderParams(TypedDict, total=False):
     """
     Represents the stucture data format for the order parameters.
     dataProduct: The dataProduct id for the specific product configuration.
@@ -130,7 +138,7 @@ class Order:
         raise UnfulfilledOrder(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod
-    def place(cls, auth: up42_auth.Auth, order_parameters: dict, workspace_id: str) -> "Order":
+    def place(cls, auth: up42_auth.Auth, order_parameters: OrderParams, workspace_id: str) -> "Order":
         """
         Places an order.
 
@@ -149,7 +157,7 @@ class Order:
         )
         if response_json["errors"]:
             message = response_json["errors"][0]["message"]
-            raise ValueError(f"Order was not placed: {message}")
+            raise FailedOrderPlacement(f"Order was not placed: {message}")
         order_id = response_json["results"][0]["id"]
         order = cls(auth=auth, order_id=order_id)
         logger.info("Order %s is now %s.", order.order_id, order.status)
@@ -182,7 +190,7 @@ class Order:
         )
         return estimated_credits
 
-    def track_status(self, report_time: int = 120) -> str:
+    def track_status(self, report_time: float = 120) -> str:
         """
         Continuously gets the order status until order is fulfilled or failed.
 
@@ -200,42 +208,19 @@ class Order:
         Returns:
             str: The final order status.
         """
-
-        def substatus_messages(substatus: str) -> str:
-            substatus_user_messages = {
-                "FEASIBILITY_WAITING_UPLOAD": "Wait for feasibility.",
-                "FEASIBILITY_WAITING_RESPONSE": "Feasibility is ready.",
-                "QUOTATION_WAITING_UPLOAD": "Wait for quotation.",
-                "QUOTATION_WAITING_RESPONSE": "Quotation is ready",
-                "QUOTATION_ACCEPTED": "In progress.",
-            }
-
-            if substatus in substatus_user_messages:
-                message = substatus_user_messages[substatus]
-                return f"{substatus}, {message}"
-            return f"{substatus}"
-
         logger.info("Tracking order status, reporting every %s seconds...", report_time)
-        time_asleep = 0
-
-        # check order details and react for tasking orders.
-
-        while not self.is_fulfilled:
-            status = self.status
-            substatus_message = (
-                substatus_messages(self.order_details.get("subStatus", "")) if self.info["type"] == "TASKING" else ""
-            )
-            if status in ["PLACED", "BEING_FULFILLED"]:
-                if time_asleep != 0 and time_asleep % report_time == 0:
-                    logger.info("Order is %s! - %s", status, self.order_id)
-                    logger.info(substatus_message)
-
-            elif status in ["FAILED", "FAILED_PERMANENTLY"]:
+        time_asleep: float = 0
+        current_info = copy.deepcopy(self._info)
+        while (status := current_info["status"]) != "FULFILLED":
+            sub_status = current_info.get("orderDetails", {}).get("subStatus")
+            status += f": {sub_status}" if sub_status is not None else ""
+            if time_asleep != 0 and time_asleep % report_time == 0:
                 logger.info("Order is %s! - %s", status, self.order_id)
-                raise ValueError("Order has failed!")
-
+            if status in ["FAILED", "FAILED_PERMANENTLY"]:
+                raise FailedOrder("Order has failed!")
             time.sleep(report_time)
             time_asleep += report_time
+            current_info = copy.deepcopy(self.info)
 
         logger.info("Order is fulfilled successfully! - %s", self.order_id)
-        return self.status
+        return current_info["status"]
