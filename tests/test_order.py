@@ -8,7 +8,7 @@ from up42 import asset, order
 from .fixtures import fixtures_globals as constants
 
 ORDER_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
-ORDER_PLACE_URL = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
+ORDER_PLACEMENT_URL = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
 
 
 class TestOrder:
@@ -126,18 +126,14 @@ class TestOrder:
             order_obj.get_assets()
 
     @pytest.mark.parametrize(
-        "order_type",
+        "info",
         [{"type": "ARCHIVE"}, {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}}],
         ids=["ARCHIVE", "TASKING"],
     )
-    def test_should_track_order_status_until_fulfilled(
-        self, auth_mock, requests_mock: req_mock.Mocker, order_type: dict
-    ):
+    def test_should_track_order_status_until_fulfilled(self, auth_mock, requests_mock: req_mock.Mocker, info: dict):
         responses = []
-        for status in ["PLACED", "BEING_FULFILLED", "FULFILLED"]:
-            response = order_type.copy()
-            response["status"] = status
-            responses.append({"json": response})
+        statuses = ["PLACED", "BEING_FULFILLED", "FULFILLED"]
+        responses = [{"json": {"status": status, **info}} for status in statuses]
         requests_mock.get(ORDER_URL, responses)
         order_obj = order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
         assert order_obj.track_status(report_time=0.1) == "FULFILLED"
@@ -172,7 +168,7 @@ class TestOrder:
             json=info,
         )
         requests_mock.post(
-            url=ORDER_PLACE_URL,
+            url=ORDER_PLACEMENT_URL,
             json={"results": [{"id": constants.ORDER_ID}], "errors": []},
         )
         order_obj = order.Order.place(auth_mock, order_parameters, constants.WORKSPACE_ID)
@@ -185,8 +181,8 @@ class TestOrder:
         error_msg = "test error"
         order_response_with_error = {"results": [], "errors": [{"message": error_msg}]}
         requests_mock.post(
-            url=ORDER_PLACE_URL,
+            url=ORDER_PLACEMENT_URL,
             json=order_response_with_error,
         )
-        with pytest.raises(order.PlaceFailed, match=error_msg):
+        with pytest.raises(order.FailedOrderPlacement, match=error_msg):
             order.Order.place(auth_mock, order_parameters, constants.WORKSPACE_ID)

@@ -40,7 +40,7 @@ class FailedOrder(ValueError):
     pass
 
 
-class PlaceFailed(ValueError):
+class FailedOrderPlacement(ValueError):
     pass
 
 
@@ -157,7 +157,7 @@ class Order:
         )
         if response_json["errors"]:
             message = response_json["errors"][0]["message"]
-            raise PlaceFailed(f"Order was not placed: {message}")
+            raise FailedOrderPlacement(f"Order was not placed: {message}")
         order_id = response_json["results"][0]["id"]
         order = cls(auth=auth, order_id=order_id)
         logger.info("Order %s is now %s.", order.order_id, order.status)
@@ -208,32 +208,19 @@ class Order:
         Returns:
             str: The final order status.
         """
-        substatus_user_messages = {
-            "FEASIBILITY_WAITING_UPLOAD": " Wait for feasibility.",
-            "FEASIBILITY_WAITING_RESPONSE": " Feasibility is ready.",
-            "QUOTATION_WAITING_UPLOAD": " Wait for quotation.",
-            "QUOTATION_WAITING_RESPONSE": " Quotation is ready",
-            "QUOTATION_ACCEPTED": " In progress.",
-        }
         logger.info("Tracking order status, reporting every %s seconds...", report_time)
         time_asleep: float = 0
-
         current_info = copy.deepcopy(self._info)
-        while current_info["status"] != "FULFILLED":
-            status = current_info["status"]
-            substatus_message = current_info.get("orderDetails", {"subStatus": ""})["subStatus"]
-            if substatus_message:
-                substatus_message += substatus_user_messages.get(substatus_message, "")
-            if status in ["PLACED", "BEING_FULFILLED"]:
-                if time_asleep != 0 and time_asleep % report_time == 0:
-                    logger.info("Order is %s! - %s", status, self.order_id)
-                    logger.info(substatus_message)
-            elif status in ["FAILED", "FAILED_PERMANENTLY"]:
+        while (status := current_info["status"]) != "FULFILLED":
+            sub_status = current_info.get("orderDetails", {}).get("subStatus")
+            status += f": {sub_status}" if sub_status is not None else ""
+            if time_asleep != 0 and time_asleep % report_time == 0:
                 logger.info("Order is %s! - %s", status, self.order_id)
-                raise FailedOrder("Order has failed!")
+                if status in ["FAILED", "FAILED_PERMANENTLY"]:
+                    raise FailedOrder("Order has failed!")
             time.sleep(report_time)
             time_asleep += report_time
             current_info = copy.deepcopy(self.info)
 
         logger.info("Order is fulfilled successfully! - %s", self.order_id)
-        return self.status
+        return current_info["status"]
