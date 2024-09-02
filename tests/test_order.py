@@ -127,26 +127,18 @@ class TestOrder:
 
     @pytest.mark.parametrize(
         "order_type",
-        ["TASKING", "ARCHIVE"],
+        [{"type": "ARCHIVE"}, {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}}],
+        ids=["ARCHIVE", "TASKING"],
     )
     def test_should_track_order_status_until_fulfilled(
-        self, auth_mock, requests_mock: req_mock.Mocker, order_type: str
+        self, auth_mock, requests_mock: req_mock.Mocker, order_type: dict
     ):
-        def create_tracking_response(status, order_sub_status):
-            return [
-                {
-                    "json": {
-                        "status": status,
-                        "type": order_type,
-                        "orderDetails": {"subStatus": order_sub_status},
-                    }
-                }
-            ]
-
-        tracking_response = create_tracking_response("PLACED", "ANY_SUBSTATUS") * 10
-        tracking_response.extend(create_tracking_response("BEING_FULFILLED", "FEASIBILITY_WAITING_UPLOAD") * 10)
-        tracking_response.extend(create_tracking_response("FULFILLED", ""))
-        requests_mock.get(ORDER_URL, tracking_response)
+        responses = []
+        for status in ["PLACED", "BEING_FULFILLED", "FULFILLED"]:
+            response = order_type.copy()
+            response["status"] = status
+            responses.append({"json": response})
+        requests_mock.get(ORDER_URL, responses)
         order_obj = order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
         assert order_obj.track_status(report_time=0.1) == "FULFILLED"
 

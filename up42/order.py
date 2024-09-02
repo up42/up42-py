@@ -226,24 +226,20 @@ class Order:
         logger.info("Tracking order status, reporting every %s seconds...", report_time)
         time_asleep: float = 0
 
-        # check order details and react for tasking orders.
-
-        while not self.is_fulfilled:
-            status = self.status
-            substatus_message = (
-                substatus_messages(self.order_details.get("subStatus", "")) if self.info["type"] == "TASKING" else ""
-            )
+        current_info = copy.deepcopy(self._info)
+        while current_info["status"] != "FULFILLED":
+            status = current_info["status"]
+            substatus_message = substatus_messages(current_info.get("orderDetails", {"subStatus": ""})["subStatus"])
             if status in ["PLACED", "BEING_FULFILLED"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info("Order is %s! - %s", status, self.order_id)
                     logger.info(substatus_message)
-
             elif status in ["FAILED", "FAILED_PERMANENTLY"]:
                 logger.info("Order is %s! - %s", status, self.order_id)
                 raise FailedOrder("Order has failed!")
-
             time.sleep(report_time)
             time_asleep += report_time
+            current_info = copy.deepcopy(self.info)
 
         logger.info("Order is fulfilled successfully! - %s", self.order_id)
         return self.status
