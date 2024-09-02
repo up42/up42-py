@@ -208,28 +208,22 @@ class Order:
         Returns:
             str: The final order status.
         """
-
-        def substatus_messages(substatus: str) -> str:
-            substatus_user_messages = {
-                "FEASIBILITY_WAITING_UPLOAD": "Wait for feasibility.",
-                "FEASIBILITY_WAITING_RESPONSE": "Feasibility is ready.",
-                "QUOTATION_WAITING_UPLOAD": "Wait for quotation.",
-                "QUOTATION_WAITING_RESPONSE": "Quotation is ready",
-                "QUOTATION_ACCEPTED": "In progress.",
-            }
-
-            if substatus in substatus_user_messages:
-                message = substatus_user_messages[substatus]
-                return f"{substatus}, {message}"
-            return f"{substatus}"
-
+        substatus_user_messages = {
+            "FEASIBILITY_WAITING_UPLOAD": " Wait for feasibility.",
+            "FEASIBILITY_WAITING_RESPONSE": " Feasibility is ready.",
+            "QUOTATION_WAITING_UPLOAD": " Wait for quotation.",
+            "QUOTATION_WAITING_RESPONSE": " Quotation is ready",
+            "QUOTATION_ACCEPTED": " In progress.",
+        }
         logger.info("Tracking order status, reporting every %s seconds...", report_time)
         time_asleep: float = 0
 
         current_info = copy.deepcopy(self._info)
         while current_info["status"] != "FULFILLED":
             status = current_info["status"]
-            substatus_message = substatus_messages(current_info.get("orderDetails", {"subStatus": ""})["subStatus"])
+            substatus_message = current_info.get("orderDetails", {"subStatus": ""})["subStatus"]
+            if substatus_message:
+                substatus_message += substatus_user_messages.get(substatus_message, "")
             if status in ["PLACED", "BEING_FULFILLED"]:
                 if time_asleep != 0 and time_asleep % report_time == 0:
                     logger.info("Order is %s! - %s", status, self.order_id)
