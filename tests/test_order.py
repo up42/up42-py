@@ -172,8 +172,7 @@ class TestOrder:
             json={"results": [{"id": constants.ORDER_ID}], "errors": []},
         )
         order_obj = order.Order.place(auth_mock, order_parameters, constants.WORKSPACE_ID)
-        expected = order.Order(auth_mock, order_id=constants.ORDER_ID, order_info=info)
-        assert order_obj == expected
+        assert order_obj == order.Order(auth_mock, order_id=constants.ORDER_ID, order_info=info)
 
     def test_fails_to_place_order_if_response_contains_error(
         self, auth_mock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams

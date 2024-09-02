@@ -216,8 +216,8 @@ class Order:
             status += f": {sub_status}" if sub_status is not None else ""
             if time_asleep != 0 and time_asleep % report_time == 0:
                 logger.info("Order is %s! - %s", status, self.order_id)
-                if status in ["FAILED", "FAILED_PERMANENTLY"]:
-                    raise FailedOrder("Order has failed!")
+            if status in ["FAILED", "FAILED_PERMANENTLY"]:
+                raise FailedOrder("Order has failed!")
             time.sleep(report_time)
             time_asleep += report_time
             current_info = copy.deepcopy(self.info)
