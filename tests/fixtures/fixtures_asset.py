@@ -8,7 +8,7 @@ from . import fixtures_globals as constants
 
 
 @pytest.fixture(name="asset_mock")
-def _asset_mock(auth_mock, requests_mock):
+def _asset_mock(requests_mock):
     # asset info
     url_asset_info = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
     requests_mock.get(url=url_asset_info, json=constants.JSON_ASSET)
@@ -25,11 +25,11 @@ def _asset_mock(auth_mock, requests_mock):
         json={"url": constants.DOWNLOAD_URL},
     )
 
-    return asset.Asset(auth=auth_mock, asset_id=constants.ASSET_ID)
+    return asset.Asset(asset_id=constants.ASSET_ID)
 
 
 @pytest.fixture(name="asset_mock2")
-def _asset_mock2(auth_mock, requests_mock):
+def _asset_mock2(requests_mock):
     url_asset_info = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID2}/metadata"
     requests_mock.get(url=url_asset_info, json={**constants.JSON_ASSET, "id": constants.ASSET_ID2})
     requests_mock.post(
@@ -48,7 +48,7 @@ def _asset_mock2(auth_mock, requests_mock):
         url=constants.STAC_ASSET_URL,
         content=out_file,
     )
-    return asset.Asset(auth=auth_mock, asset_id=constants.ASSET_ID2)
+    return asset.Asset(asset_id=constants.ASSET_ID2)
 
 
 @pytest.fixture(params=["asset_mock", "asset_mock2"])

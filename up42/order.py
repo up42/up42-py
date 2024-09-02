@@ -134,7 +134,7 @@ class Order:
         if self.is_fulfilled:
             params: asset_searcher.AssetSearchParams = {"search": self.order_id}
             assets_response = asset_searcher.search_assets(self.auth, params=params)
-            return [asset.Asset(self.auth, asset_info=asset_info) for asset_info in assets_response]
+            return [asset.Asset(asset_info=asset_info) for asset_info in assets_response]
         raise UnfulfilledOrder(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
 
     @classmethod

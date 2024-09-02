@@ -103,7 +103,7 @@ class Storage:
         if return_json:
             return assets_json
         else:
-            return [asset.Asset(self.auth, asset_info=asset_json) for asset_json in assets_json]
+            return [asset.Asset(asset_info=asset_json) for asset_json in assets_json]
 
     def get_orders(
         self,

@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 2.1.0a3
+
+**Sep 3, 2024**
+- Switch `Asset` class to use `workspace` and `session` descriptors.
+
 ## 2.1.0a2
 
 **Sep 2, 2024**
