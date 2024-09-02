@@ -40,6 +40,10 @@ class FailedOrder(ValueError):
     pass
 
 
+class PlaceFailed(ValueError):
+    pass
+
+
 class OrderParams(TypedDict, total=False):
     """
     Represents the stucture data format for the order parameters.
@@ -153,7 +157,7 @@ class Order:
         )
         if response_json["errors"]:
             message = response_json["errors"][0]["message"]
-            raise FailedOrder(f"Order was not placed: {message}")
+            raise PlaceFailed(f"Order was not placed: {message}")
         order_id = response_json["results"][0]["id"]
         order = cls(auth=auth, order_id=order_id)
         logger.info("Order %s is now %s.", order.order_id, order.status)
