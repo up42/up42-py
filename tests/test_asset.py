@@ -107,10 +107,10 @@ class TestAsset:
             url=f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/download-url",
             json={"url": constants.DOWNLOAD_URL},
         )
-        download_files = asset_obj.download(output_directory, unpacking=unpacking)
-        assert len(download_files) == len(expected_files)
-        assert all([pathlib.Path(p).exists() and pathlib.Path(p).name in expected_files for p in download_files])
-        assert asset_obj.results == download_files
+        downloaded_files = asset_obj.download(output_directory, unpacking=unpacking)
+        assert len(downloaded_files) == len(expected_files)
+        assert all([pathlib.Path(p).exists() and pathlib.Path(p).name in expected_files for p in downloaded_files])
+        assert asset_obj.results == downloaded_files
 
     def test_should_download_stac_assets(
         self, requests_mock: req_mock.Mocker, output_directory: Optional[str], expected_stac_files: str
