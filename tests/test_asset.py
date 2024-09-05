@@ -22,55 +22,111 @@ def workspace():
         yield
 
 
-def test_should_delegate_repr_to_info():
+class TestAsset:
     asset_info = {"id": constants.ASSET_ID, "other": "data"}
-    asset_obj = asset.Asset(asset_info=asset_info)
-    assert repr(asset_obj) == repr(asset_info)
 
+    @pytest.fixture(params=["output_dir", "no_output_dir"])
+    def output_directory(self, request, tmp_path) -> Optional[str]:
+        return tmp_path if request.param == "output_dir" else None
 
-@pytest.mark.parametrize(
-    "asset_id, asset_info, expected_error",
-    [
-        (
-            None,
-            None,
-            "Either asset_id or asset_info should be provided in the constructor.",
-        ),
-        (
-            "some_asset_id",
-            {"id": constants.ASSET_ID},
-            "asset_id and asset_info cannot be provided simultaneously.",
-        ),
-    ],
-    ids=[
-        "Sc 1: Both asset_id and asset_info provided",
-        "Sc 2: Both asset_id and asset_info not provided",
-    ],
-)
-def test_init_should_accept_only_asset_id_or_info(asset_id, asset_info, expected_error):
-    with pytest.raises(ValueError) as err:
-        asset.Asset(asset_id=asset_id, asset_info=asset_info)
-    assert expected_error == str(err.value)
+    @pytest.fixture(params=["unpack", "no_unpack"])
+    def expected_files(self, requests_mock: req_mock.Mocker, request) -> List[str]:
+        sample_tgz = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
+        with open(sample_tgz, "rb") as src_tgz:
+            sample_tgz_content = src_tgz.read()
+            requests_mock.get(
+                url=constants.DOWNLOAD_URL,
+                content=sample_tgz_content,
+                headers={"x-goog-stored-content-length": "163"},
+            )
+            sample_files = (
+                [
+                    "7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif",
+                    "data.json",
+                ]
+                if request.param == "unpack"
+                else ["output.tgz"]
+            )
+            return sample_files
 
+    @pytest.fixture()
+    def expected_stac_files(self, requests_mock: req_mock.Mocker) -> str:
+        sample_stac = pathlib.Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
+        with open(sample_stac, "rb") as src_file:
+            out_file = src_file.read()
+            requests_mock.get(
+                url=constants.STAC_ASSET_URL,
+                content=out_file,
+            )
+            return "bsg-104-20230522-044750-90756881_ortho.tiff"
 
-def test_should_initialize_with_retrieved_info(requests_mock):
-    url_asset_info = host.endpoint(f"/v2/assets/{constants.ASSET_ID}/metadata")
-    requests_mock.get(url=url_asset_info, json=constants.JSON_ASSET)
-    asset_obj = asset.Asset(asset_id=constants.ASSET_ID)
-    assert asset_obj.info == constants.JSON_ASSET
+    def test_should_delegate_repr_to_info(self):
+        assert repr(asset.Asset(asset_info=self.asset_info)) == repr(self.asset_info)
 
+    def test_should_initialize(self, requests_mock: req_mock.Mocker):
+        url = host.endpoint(f"/v2/assets/{constants.ASSET_ID}/metadata")
+        requests_mock.get(url=url, json=self.asset_info)
+        assert asset.Asset(asset_id=constants.ASSET_ID).info == self.asset_info
 
-def test_should_initialize_with_provided_info():
-    provided_info = {"id": constants.ASSET_ID, "name": "test name"}
-    asset_obj = asset.Asset(asset_info=provided_info)
-    assert asset_obj.asset_id == constants.ASSET_ID
-    assert asset_obj.info == provided_info
+    def test_should_initialize_with_info_provided(self):
+        assert asset.Asset(asset_info=self.asset_info).info == self.asset_info
 
+    @pytest.mark.parametrize(
+        "asset_id, asset_info, expected_error",
+        [
+            (
+                None,
+                None,
+                "Either asset_id or asset_info should be provided in the constructor.",
+            ),
+            (
+                constants.ASSET_ID,
+                {"id": constants.ASSET_ID},
+                "asset_id and asset_info cannot be provided simultaneously.",
+            ),
+        ],
+        ids=[
+            "Both asset_id and asset_info provided",
+            "Neither asset_id and asset_info provided",
+        ],
+    )
+    def test_fails_initialize_with_concurrent_or_empty_info_id(
+        self, asset_id: Optional[str], asset_info: Optional[dict], expected_error: str
+    ):
+        with pytest.raises(ValueError, match=expected_error):
+            asset.Asset(asset_id=asset_id, asset_info=asset_info)
 
-def test_asset_info(asset_mock):
-    assert asset_mock.info
-    assert asset_mock.info["id"] == constants.ASSET_ID
-    assert asset_mock.info["name"] == constants.JSON_ASSET["name"]
+    def test_should_download_expected_files(
+        self, requests_mock: req_mock.Mocker, output_directory: Optional[str], expected_files: List[str]
+    ):
+        url = host.endpoint(f"/v2/assets/{constants.ASSET_ID}/metadata")
+        unpacking = len(expected_files) > 1
+        requests_mock.get(url=url, json=self.asset_info)
+        asset_obj = asset.Asset(asset_id=constants.ASSET_ID)
+        requests_mock.post(
+            url=f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/download-url",
+            json={"url": constants.DOWNLOAD_URL},
+        )
+        download_files = asset_obj.download(output_directory, unpacking=unpacking)
+        assert len(download_files) == len(expected_files)
+        assert all([pathlib.Path(p).exists() and pathlib.Path(p).name in expected_files for p in download_files])
+        assert asset_obj.results == download_files
+
+    def test_should_download_stac_assets(
+        self, requests_mock: req_mock.Mocker, output_directory: Optional[str], expected_stac_files: str
+    ):
+        url = host.endpoint(f"/v2/assets/{constants.ASSET_ID}/metadata")
+        requests_mock.get(url=url, json=self.asset_info)
+        asset_obj = asset.Asset(asset_id=constants.ASSET_ID)
+        requests_mock.post(
+            url=f"{constants.API_HOST}/v2/assets/{constants.STAC_ASSET_ID}/download-url",
+            json={"url": constants.STAC_ASSET_URL},
+        )
+        out_path = asset_obj.download_stac_asset(
+            pystac.Asset(href=constants.STAC_ASSET_HREF, roles=["data"]), output_directory
+        )
+        assert out_path.exists()
+        assert out_path.name == expected_stac_files
 
 
 class TestStacMetadata:
@@ -181,74 +237,3 @@ class TestAssetUpdateMetadata:
             additional_matcher=helpers.match_request_body(update_payload),
         )
         assert asset_obj.update_metadata(title=title) == expected_info
-
-
-@pytest.mark.parametrize("with_output_directory", [True, False])
-def test_asset_download(asset_mock, requests_mock, tmp_path, with_output_directory):
-    out_tgz = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-    with open(out_tgz, "rb") as src_tgz:
-        out_tgz_file = src_tgz.read()
-    requests_mock.get(
-        url=constants.DOWNLOAD_URL,
-        content=out_tgz_file,
-        headers={"x-goog-stored-content-length": "163"},
-    )
-
-    output_directory = tmp_path if with_output_directory else None
-    out_files = asset_mock.download(output_directory)
-    out_paths = [pathlib.Path(p) for p in out_files]
-    for path in out_paths:
-        assert path.exists()
-    assert len(out_paths) == 2
-    assert out_paths[0].name in [
-        "7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif",
-        "data.json",
-    ]
-    assert out_paths[1].name in [
-        "7e17f023-a8e3-43bd-aaac-5bbef749c7f4_0-0.tif",
-        "data.json",
-    ]
-    assert out_paths[0] != out_paths[1]
-    assert out_paths[1].parent.exists()
-    assert out_paths[1].parent.is_dir()
-
-
-def test_asset_download_no_unpacking(assets_fixture, requests_mock, tmp_path):
-    asset_fixture = assets_fixture["asset_fixture"]
-    download_url = assets_fixture["download_url"]
-    out_file_name = assets_fixture["outfile_name"]
-    out_tgz = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
-    with open(out_tgz, "rb") as src_tgz:
-        out_tgz_file = src_tgz.read()
-    requests_mock.get(
-        url=download_url,
-        content=out_tgz_file,
-        headers={"x-goog-stored-content-length": "163"},
-    )
-
-    out_files = asset_fixture.download(tmp_path, unpacking=False)
-    for file in out_files:
-        assert pathlib.Path(file).exists()
-        assert pathlib.Path(file).name == out_file_name
-    assert len(out_files) == 1
-
-
-@pytest.mark.parametrize("with_output_directory", [True, False])
-def test_download_stac_asset(asset_mock2, requests_mock, tmp_path, with_output_directory):
-    out_file_path = pathlib.Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
-    with open(out_file_path, "rb") as src_file:
-        out_file = src_file.read()
-    requests_mock.get(
-        url=constants.STAC_ASSET_HREF,
-        content=out_file,
-        headers={
-            "Authorization": "Bearer some_token_value",
-        },
-    )
-
-    output_directory = tmp_path if with_output_directory else None
-    out_path = asset_mock2.download_stac_asset(
-        pystac.Asset(href=constants.STAC_ASSET_HREF, roles=["data"]), output_directory
-    )
-    assert out_path.exists()
-    assert out_path.name == "bsg-104-20230522-044750-90756881_ortho.tiff"
