@@ -32,7 +32,6 @@ class Asset:
     """
 
     session = base.Session()
-    workspace_id = base.WorkspaceId()
 
     def __init__(
         self,
