@@ -203,7 +203,7 @@ class Asset:
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", output_directory)
         download_url = self.get_stac_asset_url(stac_asset=stac_asset)
-        file_name = utils.get_filename(download_url, default_filename="stac_asset")
+        file_name = utils.get_filename(download_url, default_filename="output")
         out_file_path = output_directory / file_name
         utils.download_file(download_url, output_directory)
         return out_file_path

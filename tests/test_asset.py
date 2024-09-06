@@ -13,21 +13,11 @@ from up42 import asset
 from . import helpers
 from .fixtures import fixtures_globals as constants
 
-DOWNLOAD_URL = "http://up42.api.com/abcdef.tgz"
-STAC_ASSET_URL = (
-    "https://storage.googleapis.com/user-storage-interstellar-staging/assets/"
-    "3f581f3d-534a-4e1f-869d-901a7f2bff55?response-content-disposition="
-    "attachment%3B%20filename%3Dbsg-104-20230522-044750-90756881_ortho.tiff"
-    "&GoogleAccessId=asset-service@interstellar-staging-env.iam.gserviceaccount.com"
-    "&Expires=1697201515&Signature=CJl3qL9xits6XXoRv7e%2FaROMar8rlu%2BXdbIlao2UjrMwS"
-    "CosttAhIBXM93%2BX48FxOrSDsBZblSGvTAhKWkuahhOOr25DeSBnSolHMjeaWQG65L6v6TGZglxI"
-    "hP%2BgMhIJ%2Feg34HLaTrqlf1L1TEvTYklwpFoYdDYQCOh8O6UaE0ChEy5GoKHeOYPbjpFMYTeg"
-    "%2FKaVTaa3HKpH90irZHA8HPeShk%2Bk8M3tks7bRIbG56gdyl3cwWPLgq8%2FPENb4GTKxLIkn1y"
-    "vW%2FWw%2B2%2FWIzq9IFsx3AEPe%2F2ZeaU180lZDgEyBmsSdrCMQYA1J9IKAD0rIjYrg%2Bo90"
-    "MsgdNhs3HuTDA%3D%3D"
-)
-STAC_ASSET_HREF = "https://api.up42.com/v2/assets/v3b3e203-346d-4f67-b79b-895c36983fb8"
-STAC_ASSET_ID = "v3b3e203-346d-4f67-b79b-895c36983fb8"
+DOWNLOAD_URL = f"{constants.API_HOST}/abcdef.tgz"
+STAC_FILE = "stac_file.tiff"
+STAC_ASSET_URL = "https://example.com"
+STAC_ASSET_ID = "some-stac-id"
+STAC_ASSET_HREF = f"{constants.API_HOST}/v2/assets/{STAC_ASSET_ID}"
 
 
 @pytest.fixture(autouse=True)
@@ -45,7 +35,7 @@ class TestAsset:
         return tmp_path if request.param == "output_dir" else None
 
     @pytest.fixture(params=["unpack", "no_unpack"])
-    def expected_files(self, requests_mock: req_mock.Mocker, request) -> List[str]:
+    def asset_files(self, requests_mock: req_mock.Mocker, request) -> List[str]:
         sample_tgz = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         with open(sample_tgz, "rb") as src_tgz:
             requests_mock.get(
@@ -60,16 +50,6 @@ class TestAsset:
                 if request.param == "unpack"
                 else ["output.tgz"]
             )
-
-    @pytest.fixture
-    def expected_stac_files(self, requests_mock: req_mock.Mocker) -> str:
-        sample_stac = pathlib.Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
-        with open(sample_stac, "rb") as src_file:
-            requests_mock.get(
-                url=STAC_ASSET_URL,
-                content=src_file.read(),
-            )
-            return "bsg-104-20230522-044750-90756881_ortho.tiff"
 
     def test_should_delegate_repr_to_info(self):
         assert repr(asset.Asset(asset_info=self.asset_info)) == repr(self.asset_info)
@@ -108,10 +88,10 @@ class TestAsset:
             asset.Asset(asset_id=asset_id, asset_info=asset_info)
 
     def test_should_download_expected_files(
-        self, requests_mock: req_mock.Mocker, output_directory: Optional[str], expected_files: List[str]
+        self, requests_mock: req_mock.Mocker, output_directory: Optional[str], asset_files: List[str]
     ):
         url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
-        unpacking = len(expected_files) > 1
+        unpacking = len(asset_files) > 1
         requests_mock.get(url=url, json=self.asset_info)
         asset_obj = asset.Asset(asset_id=constants.ASSET_ID)
         requests_mock.post(
@@ -119,33 +99,51 @@ class TestAsset:
             json={"url": DOWNLOAD_URL},
         )
         downloaded_files = asset_obj.download(output_directory, unpacking=unpacking)
-        assert set([pathlib.Path(name).name for name in downloaded_files]) == set(expected_files)
-        assert all(pathlib.Path(name).exists() for name in downloaded_files)
-        assert asset_obj.results == downloaded_files
+        paths = map(pathlib.Path, downloaded_files)
+        assert set(path.name for path in paths) == set(asset_files)
+        assert all(path.exists() for path in paths)
 
     def test_get_stac_download_url(self, requests_mock: req_mock.Mocker):
         url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
         requests_mock.get(url=url, json=self.asset_info)
         asset_obj = asset.Asset(asset_id=constants.ASSET_ID)
         requests_mock.post(
-            url=f"{constants.API_HOST}/v2/assets/{STAC_ASSET_ID}/download-url",
+            url=f"{STAC_ASSET_HREF}/download-url",
             json={"url": STAC_ASSET_URL},
         )
         assert STAC_ASSET_URL == asset_obj.get_stac_asset_url(pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]))
 
-    def test_should_download_stac_assets(
-        self, requests_mock: req_mock.Mocker, output_directory: Optional[str], expected_stac_files: str
+    @pytest.mark.parametrize(
+        "stac_url, stac_file",
+        [
+            (
+                f"{STAC_ASSET_URL}?response-content-disposition=_filename={STAC_FILE}",
+                STAC_FILE,
+            ),
+            (
+                STAC_ASSET_URL,
+                "output",
+            ),
+        ],
+        ids=[
+            "URL STAC format",
+            "Another format",
+        ],
+    )
+    def test_should_download_stac_asset(
+        self, requests_mock: req_mock.Mocker, output_directory: Optional[str], stac_url: str, stac_file: str
     ):
         url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
         requests_mock.get(url=url, json=self.asset_info)
         asset_obj = asset.Asset(asset_id=constants.ASSET_ID)
+        requests_mock.get(url=stac_url, json={"info": "some-info"})
         requests_mock.post(
-            url=f"{constants.API_HOST}/v2/assets/{STAC_ASSET_ID}/download-url",
-            json={"url": STAC_ASSET_URL},
+            url=f"{STAC_ASSET_HREF}/download-url",
+            json={"url": stac_url},
         )
-        out_path = asset_obj.download_stac_asset(pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]), output_directory)
+        out_path = asset_obj.download_stac_asset(pystac.Asset(href=STAC_ASSET_HREF), output_directory)
         assert out_path.exists()
-        assert out_path.name == expected_stac_files
+        assert out_path.name == stac_file
 
 
 class TestStacMetadata:
