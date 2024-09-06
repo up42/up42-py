@@ -111,7 +111,7 @@ class TestAsset:
             url=f"{STAC_ASSET_HREF}/download-url",
             json={"url": STAC_ASSET_URL},
         )
-        assert STAC_ASSET_URL == asset_obj.get_stac_asset_url(pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]))
+        assert STAC_ASSET_URL == asset_obj.get_stac_asset_url(pystac.Asset(href=STAC_ASSET_HREF))
 
     @pytest.mark.parametrize(
         "stac_url, stac_file",
