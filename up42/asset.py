@@ -138,7 +138,6 @@ class Asset:
             Signed URL for the STAC Asset.
         """
         stac_asset_id = stac_asset.href.split("/")[-1]
-        # so we can utilize all functionalities of Auth class
         return self._get_download_url(stac_asset_id=stac_asset_id)
 
     def download(

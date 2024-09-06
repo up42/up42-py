@@ -8,7 +8,7 @@ import pytest
 import requests
 import requests_mock as req_mock
 
-from up42 import asset, host
+from up42 import asset
 
 from . import helpers
 from .fixtures import fixtures_globals as constants
@@ -75,7 +75,7 @@ class TestAsset:
         assert repr(asset.Asset(asset_info=self.asset_info)) == repr(self.asset_info)
 
     def test_should_initialize(self, requests_mock: req_mock.Mocker):
-        url = host.endpoint(f"/v2/assets/{constants.ASSET_ID}/metadata")
+        url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
         requests_mock.get(url=url, json=self.asset_info)
         assert asset.Asset(asset_id=constants.ASSET_ID).info == self.asset_info
 
@@ -123,10 +123,20 @@ class TestAsset:
         assert all(pathlib.Path(name).exists() for name in downloaded_files)
         assert asset_obj.results == downloaded_files
 
+    def test_get_stac_download_url(self, requests_mock: req_mock.Mocker):
+        url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
+        requests_mock.get(url=url, json=self.asset_info)
+        asset_obj = asset.Asset(asset_id=constants.ASSET_ID)
+        requests_mock.post(
+            url=f"{constants.API_HOST}/v2/assets/{STAC_ASSET_ID}/download-url",
+            json={"url": STAC_ASSET_URL},
+        )
+        assert STAC_ASSET_URL == asset_obj.get_stac_asset_url(pystac.Asset(href=STAC_ASSET_HREF, roles=["data"]))
+
     def test_should_download_stac_assets(
         self, requests_mock: req_mock.Mocker, output_directory: Optional[str], expected_stac_files: str
     ):
-        url = host.endpoint(f"/v2/assets/{constants.ASSET_ID}/metadata")
+        url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
         requests_mock.get(url=url, json=self.asset_info)
         asset_obj = asset.Asset(asset_id=constants.ASSET_ID)
         requests_mock.post(
