@@ -32,8 +32,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 2.1.0a3
 
-**Sep 3, 2024**
-- Switch `Asset` class to use `workspace` and `session` descriptors.
+**Sep 9, 2024**
+- Switch `Asset` class to use `session` descriptor.
 - Improve test coverage `Asset` class.
 
 ## 2.1.0a2

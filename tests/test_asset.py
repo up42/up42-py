@@ -48,10 +48,9 @@ class TestAsset:
     def expected_files(self, requests_mock: req_mock.Mocker, request) -> List[str]:
         sample_tgz = pathlib.Path(__file__).resolve().parent / "mock_data/result_tif.tgz"
         with open(sample_tgz, "rb") as src_tgz:
-            sample_tgz_content = src_tgz.read()
             requests_mock.get(
                 url=DOWNLOAD_URL,
-                content=sample_tgz_content,
+                content=src_tgz.read(),
             )
             return (
                 [
