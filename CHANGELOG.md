@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 2.1.0a3
 
-**Sep 9, 2024**
+**Sep 10, 2024**
 - Switch `Asset` class to use `session` descriptor.
 - Improve test coverage `Asset` class.
 

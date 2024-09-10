@@ -1,8 +1,9 @@
 import pathlib
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 import pystac
 import pystac_client
+import requests
 import tenacity as tnc
 
 from up42 import base, host, utils
@@ -44,7 +45,6 @@ class Asset:
             raise ValueError("Either asset_id or asset_info should be provided in the constructor.")
 
         self.info = self._get_info(asset_id) if asset_id is not None else asset_info
-        self.results: Union[List[str], None] = None
 
     def __repr__(self):
         return self.info.__repr__()
@@ -58,8 +58,7 @@ class Asset:
         return self.session.get(url=url).json()
 
     def _stac_search(self) -> Tuple[pystac_client.Client, pystac_client.ItemSearch]:
-        # TODO: Migrate Storage to use session and workspace as well
-        stac_client = utils.stac_client(self.session.auth)  # type: ignore[arg-type]
+        stac_client = utils.stac_client(cast(requests.auth.AuthBase, self.session.auth))
         stac_search_parameters = {
             "max_items": MAX_ITEM,
             "limit": LIMIT,
@@ -167,12 +166,10 @@ class Asset:
 
         download_url = self._get_download_url()
         download = utils.download_archive if unpacking else utils.download_file
-        out_filepaths = download(
+        return download(
             download_url=download_url,
             output_directory=output_directory,
         )
-        self.results = out_filepaths
-        return out_filepaths
 
     def download_stac_asset(
         self,
@@ -203,7 +200,4 @@ class Asset:
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", output_directory)
         download_url = self.get_stac_asset_url(stac_asset=stac_asset)
-        file_name = utils.get_filename(download_url, default_filename="output")
-        out_file_path = output_directory / file_name
-        utils.download_file(download_url, output_directory)
-        return out_file_path
+        return pathlib.Path(utils.download_file(download_url, output_directory)[0])
