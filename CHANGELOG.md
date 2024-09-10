@@ -34,6 +34,9 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Sep 11, 2024**
 - `Order.get_assets` now allows to get assets from orders in `BEING_FULFILLED` state.
+- Switch `Orders` class to use `session` and `workspace_id` descriptors.
+- Set `OrderParams` as input type for `CatalogBase::place` and `Catalog::estimate`.
+- Add `OrderParamsV2` as output type for `_translate_construct_parameters` in order module.
 
 ## 2.1.0a3
 
@@ -56,7 +59,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Aug 15, 2024**
 
-- Switch `ProductGlossart::IntegrationValue` from `Enum` to `Literal`.
+- Switch `ProductGlossary::IntegrationValue` from `Enum` to `Literal`.
 - Fixed `FEASIBILITY_STUDY_MAY_BE_REQUIRED` value in the `glossary.IntegrationValue` Literal.
 
 
