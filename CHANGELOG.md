@@ -37,6 +37,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Switch `Orders` class to use `session` and `workspace_id` descriptors.
 - Set `OrderParams` as input type for `CatalogBase::place` and `Catalog::estimate`.
 - Add `OrderParamsV2` as output type for `_translate_construct_parameters` in order module.
+- Switch `Order::status` from `str` to `Literal`.
 
 ## 2.1.0a3
 
