@@ -28,10 +28,11 @@ class OrderParams(TypedDict, total=False):
 
 class OrderParamsV2(TypedDict, total=False):
     """
-    Represents the stucture data format for the order parameters.
+    Represents the stucture data format for the order parameters for the V2 endpoint.
     dataProduct: The dataProduct id for the specific product configuration.
-    params: Order parameters for each product. \
-        They are different from product to product depending on product schema.
+    displayName: The default name that will be identifying the order.
+    featureCollection: The AOI of the order.
+    params: Order parameters for each product.
     tags: User tags to helping to identify the order.
     """
 
