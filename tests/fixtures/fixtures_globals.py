@@ -1,34 +1,6 @@
 TOKEN = "token_123"
 API_HOST = "https://api.up42.com"
 TOKEN_ENDPOINT = "https://auth.up42.com/realms/public/protocol/openid-connect/token"
-DOWNLOAD_URL = "http://up42.api.com/abcdef.tgz"
-DOWNLOAD_URL2 = (
-    "https://storage.googleapis.com/user-storage-interstellar-prod/workspace/"
-    "a917e589-1187-402f-8bf8-38937d6fe713/block-output/"
-    "78ddc9d8-f179-4821-acef-e7b2abddece0/data.tgz?"
-    "response-content-disposition=attachment%3B%20filename%3DDS_SPOT6_202206240959075_"
-    "FR1_FR1_SV1_SV1_E013N52_01709&GoogleAccessId=asset-service@interstellar-prod-env."
-    "iam.gserviceaccount.com&Expires=1691664318&Signature=py7zPKQdqE%2FnVNOVz1eNkc4dR"
-    "C465zAnRPcX2UOeKsYSJeEkkkBCnCqFyhG07qXlMd7xi5Rz7KCe3ZZUgFNmLjkoCEV6CEhX4zaf"
-    "LR2219MteRM8EURVxYvL8MAbcxjqscKcjm10CGXnOb1e4C4Ap7NW9lqUPp6WS%2BJjNe5mYyZuv"
-    "xsD2vPiVpoYsuuqFIr5Dp2JQsOriuV4xdwRx6EiGkjo2VkadH%2BfEr3o2wjDstvxCmtV6BE8W"
-    "cjvDcUPTeIYjHYjBMV0yBOO0FHnzZLRFtpmoXQ5LjIuDb8NYiPcf044XiLIWIdrDhPliMAWZr"
-    "whx5CG98M2Y4buui4C24JD6Q%3D%3D"
-)
-STAC_ASSET_URL = (
-    "https://storage.googleapis.com/user-storage-interstellar-staging/assets/"
-    "3f581f3d-534a-4e1f-869d-901a7f2bff55?response-content-disposition="
-    "attachment%3B%20filename%3Dbsg-104-20230522-044750-90756881_ortho.tiff"
-    "&GoogleAccessId=asset-service@interstellar-staging-env.iam.gserviceaccount.com"
-    "&Expires=1697201515&Signature=CJl3qL9xits6XXoRv7e%2FaROMar8rlu%2BXdbIlao2UjrMwS"
-    "CosttAhIBXM93%2BX48FxOrSDsBZblSGvTAhKWkuahhOOr25DeSBnSolHMjeaWQG65L6v6TGZglxI"
-    "hP%2BgMhIJ%2Feg34HLaTrqlf1L1TEvTYklwpFoYdDYQCOh8O6UaE0ChEy5GoKHeOYPbjpFMYTeg"
-    "%2FKaVTaa3HKpH90irZHA8HPeShk%2Bk8M3tks7bRIbG56gdyl3cwWPLgq8%2FPENb4GTKxLIkn1y"
-    "vW%2FWw%2B2%2FWIzq9IFsx3AEPe%2F2ZeaU180lZDgEyBmsSdrCMQYA1J9IKAD0rIjYrg%2Bo90"
-    "MsgdNhs3HuTDA%3D%3D"
-)
-STAC_ASSET_HREF = "https://api.up42.com/v2/assets/v3b3e203-346d-4f67-b79b-895c36983fb8"
-STAC_ASSET_ID = "v3b3e203-346d-4f67-b79b-895c36983fb8"
 
 # tasking constants
 QUOTATION_ID = "805b1f27-1025-43d2-90d0-0bd3416238fb"
@@ -46,7 +18,6 @@ DATA_PRODUCT_ID = "47dadb27-9532-4552-93a5-48f70a83eaef"
 
 ORDER_ID = "da2310a2-c7fb-42ed-bead-fb49ad862c67"
 ASSET_ID = "363f89c1-3586-4b14-9a49-03a890c3b593"
-ASSET_ID2 = "88ddc9d8-f179-4821-acef-e7b2abddecr0"
 ASSET_ORDER_ID = "22d0b8e9-b649-4971-8adc-1a5eac1fa6f3"
 STAC_COLLECTION_ID = "e459db4c-3b9d-4aa1-8931-5df2517b49ba"
 

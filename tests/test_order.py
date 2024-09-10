@@ -91,8 +91,15 @@ class TestOrder:
         order_obj = order.Order(order_id=constants.ORDER_ID, order_info=info)
         assert order_obj.is_fulfilled == expected
 
-    def test_should_get_assets_if_fulfilled(self, requests_mock: req_mock.Mocker):
-        info = {"id": constants.ORDER_ID, "status": "FULFILLED"}
+    @pytest.mark.parametrize(
+        "status",
+        [
+            "FULFILLED",
+            "BEING_FULFILLED",
+        ],
+    )
+    def test_should_get_assets_if_fulfilled(self, requests_mock: req_mock.Mocker, status: str):
+        info = {"id": constants.ORDER_ID, "status": status}
         requests_mock.get(url=ORDER_URL, json=info)
         url_asset_info = f"{constants.API_HOST}/v2/assets?search={constants.ORDER_ID}"
         asset_info = {
@@ -106,7 +113,7 @@ class TestOrder:
         }
         requests_mock.get(url=url_asset_info, json=asset_info)
         order_obj = order.Order(order_id=constants.ORDER_ID)
-        (asset_obj,) = order_obj.get_assets()
+        asset_obj = order_obj.get_assets()[0]
         assert isinstance(asset_obj, asset.Asset)
         assert asset_obj.asset_id == constants.ASSET_ORDER_ID
 

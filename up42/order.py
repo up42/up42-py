@@ -1,6 +1,6 @@
 import copy
 import time
-from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict
+from typing import Any, Dict, List, Literal, Optional, TypedDict
 
 from up42 import asset
 from up42 import auth as up42_auth
@@ -149,7 +149,7 @@ class Order:
         """
         return self.status == "FULFILLED"
 
-    def get_assets(self) -> Iterator[asset.Asset]:
+    def get_assets(self) -> list[asset.Asset]:
         """
         Gets the Order assets or results.
         """
@@ -168,9 +168,11 @@ class Order:
         if current_info["status"] != "FULFILLED" and current_info["status"] != "BEING_FULFILLED":
             raise UnfulfilledOrder(f"Order {self.order_id} is not valid. Current status is {current_info['status']}")
         params = {"search": self.order_id, "page": 0}
+        order_assets = []
         for page in get_pages("/v2/assets", params):
             for asset_info in page:
-                yield asset.Asset(base.workspace.auth, asset_info=asset_info)
+                order_assets.append(asset.Asset(asset_info=asset_info))
+        return order_assets
 
     @classmethod
     def place(cls, order_parameters: OrderParams, workspace_id: str) -> "Order":
