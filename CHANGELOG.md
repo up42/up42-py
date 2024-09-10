@@ -81,7 +81,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Aug 13, 2024**
 
-- Switch `ProductGlossart::IntegrationValue` from `Enum` to `Literal`.
+- Switch `ProductGlossary::IntegrationValue` from `Enum` to `Literal`.
 
 ## 2.0.0
 
