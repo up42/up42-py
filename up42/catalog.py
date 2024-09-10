@@ -43,7 +43,7 @@ class CatalogBase:
 
     def place_order(
         self,
-        order_parameters: Optional[Dict],
+        order_parameters: order.OrderParams,
         track_status: bool = False,
         report_time: int = 120,
     ) -> order.Order:
@@ -71,7 +71,7 @@ class CatalogBase:
         Returns:
             Order class object of the placed order.
         """
-        placed_order = order.Order.place(order_parameters, self.workspace_id)  # type: ignore
+        placed_order = order.Order.place(order_parameters, self.workspace_id)
         if track_status:
             placed_order.track_status(report_time)
         return placed_order

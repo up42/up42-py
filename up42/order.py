@@ -1,6 +1,6 @@
 import copy
 import time
-from typing import Any, Dict, List, Literal, Optional, TypedDict
+from typing import Any, Dict, List, Literal, Optional, TypedDict, cast
 
 from up42 import asset
 from up42 import auth as up42_auth
@@ -12,8 +12,39 @@ MAX_ITEM = 200
 LIMIT = 200
 
 
-def _translate_construct_parameters(order_parameters):
-    order_parameters_v2 = copy.deepcopy(order_parameters)
+class OrderParams(TypedDict, total=False):
+    """
+    Represents the stucture data format for the order parameters.
+    dataProduct: The dataProduct id for the specific product configuration.
+    params: Order parameters for each product. \
+        They are different from product to product depending on product schema.
+    tags: User tags to helping to identify the order.
+    """
+
+    dataProduct: str  # pylint: disable=invalid-name
+    params: Dict[str, Any]
+    tags: List[str]
+
+
+class OrderParamsV2(TypedDict, total=False):
+    """
+    Represents the stucture data format for the order parameters.
+    dataProduct: The dataProduct id for the specific product configuration.
+    params: Order parameters for each product. \
+        They are different from product to product depending on product schema.
+    tags: User tags to helping to identify the order.
+    """
+
+    # pylint: disable=invalid-name
+    dataProduct: str
+    displayName: str
+    params: Dict[str, Any]
+    featureCollection: Dict[str, Any]
+    tags: List[str]
+
+
+def _translate_construct_parameters(order_parameters: OrderParams) -> OrderParamsV2:
+    order_parameters_v2 = cast(OrderParamsV2, copy.deepcopy(order_parameters))
     params = order_parameters_v2["params"]
     data_product_id = order_parameters_v2["dataProduct"]
     default_name = f"{data_product_id} order"
@@ -64,20 +95,6 @@ class FailedOrder(ValueError):
 
 class FailedOrderPlacement(ValueError):
     pass
-
-
-class OrderParams(TypedDict, total=False):
-    """
-    Represents the stucture data format for the order parameters.
-    dataProduct: The dataProduct id for the specific product configuration.
-    params: Order parameters for each product. \
-        They are different from product to product depending on product schema.
-    tags: User tags to helping to identify the order.
-    """
-
-    dataProduct: str  # pylint: disable=invalid-name
-    params: Dict[str, Any]
-    tags: List[str]
 
 
 class Order:
@@ -149,7 +166,7 @@ class Order:
         """
         return self.status == "FULFILLED"
 
-    def get_assets(self) -> list[asset.Asset]:
+    def get_assets(self) -> List[asset.Asset]:
         """
         Gets the Order assets or results.
         """
@@ -213,7 +230,7 @@ class Order:
         response_json = auth.request(
             request_type="POST",
             url=url,
-            data=_translate_construct_parameters(order_parameters),
+            data=cast(Dict[Any, Any], _translate_construct_parameters(order_parameters)),
         )
         estimated_credits: int = response_json["summary"]["totalCredits"]
         logger.info(
