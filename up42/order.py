@@ -48,10 +48,9 @@ def _translate_construct_parameters(order_parameters: OrderParams) -> OrderParam
     order_parameters_v2 = cast(OrderParamsV2, copy.deepcopy(order_parameters))
     params = order_parameters_v2["params"]
     data_product_id = order_parameters_v2["dataProduct"]
-    default_name = f"{data_product_id} order"
-    order_parameters_v2["displayName"] = params.get("displayName", default_name)
+    order_parameters_v2["displayName"] = params.get("displayName", f"{data_product_id} order")
     aoi = params.pop("aoi", None) or params.pop("geometry", None)
-    feature_collection = {
+    order_parameters_v2["featureCollection"] = {
         "type": "FeatureCollection",
         "features": [
             {
@@ -60,7 +59,6 @@ def _translate_construct_parameters(order_parameters: OrderParams) -> OrderParam
             }
         ],
     }
-    order_parameters_v2["featureCollection"] = feature_collection
     return order_parameters_v2
 
 
