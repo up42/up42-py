@@ -1,12 +1,12 @@
 import pathlib
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 import pystac
 import pystac_client
+import requests
 import tenacity as tnc
 
-from up42 import auth as up42_auth
-from up42 import host, utils
+from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
 
@@ -32,9 +32,10 @@ class Asset:
     ```
     """
 
+    session = base.Session()
+
     def __init__(
         self,
-        auth: up42_auth.Auth,
         asset_id: Optional[str] = None,
         asset_info: Optional[dict] = None,
     ):
@@ -43,9 +44,7 @@ class Asset:
         if asset_id is None and asset_info is None:
             raise ValueError("Either asset_id or asset_info should be provided in the constructor.")
 
-        self.auth = auth
         self.info = self._get_info(asset_id) if asset_id is not None else asset_info
-        self.results: Union[List[str], None] = None
 
     def __repr__(self):
         return self.info.__repr__()
@@ -56,10 +55,10 @@ class Asset:
 
     def _get_info(self, asset_id: str):
         url = host.endpoint(f"/v2/assets/{asset_id}/metadata")
-        return self.auth.request(request_type="GET", url=url)
+        return self.session.get(url=url).json()
 
     def _stac_search(self) -> Tuple[pystac_client.Client, pystac_client.ItemSearch]:
-        stac_client = utils.stac_client(self.auth.client.auth)
+        stac_client = utils.stac_client(cast(requests.auth.AuthBase, self.session.auth))
         stac_search_parameters = {
             "max_items": MAX_ITEM,
             "limit": LIMIT,
@@ -118,16 +117,15 @@ class Asset:
         if tags != NOT_PROVIDED:
             payload.update(tags=tags)
         if payload:
-            self.info = self.auth.request(request_type="POST", url=url, data=payload)
+            self.info = self.session.post(url=url, json=payload).json()
         return self.info
 
-    def _get_download_url(self, stac_asset_id: Optional[str] = None, request_type: str = "POST") -> str:
+    def _get_download_url(self, stac_asset_id: Optional[str] = None) -> str:
         if stac_asset_id is None:
             url = host.endpoint(f"/v2/assets/{self.asset_id}/download-url")
         else:
             url = host.endpoint(f"/v2/assets/{stac_asset_id}/download-url")
-        response_json = self.auth.request(request_type=request_type, url=url)
-        return response_json["url"]
+        return self.session.post(url=url).json()["url"]
 
     def get_stac_asset_url(self, stac_asset: pystac.Asset):
         """
@@ -139,7 +137,6 @@ class Asset:
             Signed URL for the STAC Asset.
         """
         stac_asset_id = stac_asset.href.split("/")[-1]
-        # so we can utilize all functionalities of Auth class
         return self._get_download_url(stac_asset_id=stac_asset_id)
 
     def download(
@@ -169,12 +166,10 @@ class Asset:
 
         download_url = self._get_download_url()
         download = utils.download_archive if unpacking else utils.download_file
-        out_filepaths = download(
+        return download(
             download_url=download_url,
             output_directory=output_directory,
         )
-        self.results = out_filepaths
-        return out_filepaths
 
     def download_stac_asset(
         self,
@@ -205,7 +200,4 @@ class Asset:
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", output_directory)
         download_url = self.get_stac_asset_url(stac_asset=stac_asset)
-        file_name = utils.get_filename(download_url, default_filename="stac_asset")
-        out_file_path = output_directory / file_name
-        utils.download_file(download_url, output_directory)
-        return out_file_path
+        return pathlib.Path(utils.download_file(download_url, output_directory)[0])

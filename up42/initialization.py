@@ -45,6 +45,6 @@ def initialize_asset(asset_id: str) -> asset.Asset:
     Args:
         asset_id: The UP42 asset_id
     """
-    up42_asset = asset.Asset(auth=base.workspace.auth, asset_id=asset_id)
+    up42_asset = asset.Asset(asset_id=asset_id)
     logger.info(INITIALIZED_MSG, up42_asset)
     return up42_asset
