@@ -95,7 +95,7 @@ class Catalog(CatalogBase):
         super().__init__(auth, workspace_id)
         self.type: glossary.CollectionType = glossary.CollectionType.ARCHIVE
 
-    def estimate_order(self, order_parameters: Optional[Dict]) -> int:
+    def estimate_order(self, order_parameters: order.OrderParams) -> int:
         """
         Estimate the cost of an order.
 
