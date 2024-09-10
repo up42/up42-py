@@ -181,7 +181,9 @@ class Order:
                 response = self.session.get(host.endpoint(endpoint), params=params).json()
 
         if current_info["status"] != "FULFILLED" and current_info["status"] != "BEING_FULFILLED":
-            raise UnfulfilledOrder(f"Order {self.order_id} is not valid. Current status is {current_info['status']}")
+            raise UnfulfilledOrder(
+                f"""Order {self.order_id} is not valid. Current status is {current_info["status"]}"""
+            )
         params = {"search": self.order_id, "page": 0}
         order_assets = []
         for page in get_pages("/v2/assets", params):
