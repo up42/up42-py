@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 **Sep 11, 2024**
 - `Order.get_assets` now allows to get assets from orders in `BEING_FULFILLED` state.
-- Switch `Orders` class to use `session` and `workspace_id` descriptors.
+- Switch `Orders` class to use `session` descriptor.
 - Set `OrderParams` as input type for `CatalogBase::place` and `Catalog::estimate` from `Optional[dict]`.
 - Add `OrderParamsV2` as output type for `_translate_construct_parameters` in order module.
 - Switch `Order::status` from `str` to `Literal`.
