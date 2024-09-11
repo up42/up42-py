@@ -2,9 +2,7 @@ import copy
 import time
 from typing import Any, Dict, List, Literal, Optional, TypedDict, cast
 
-from up42 import asset
-from up42 import auth as up42_auth
-from up42 import base, host, utils
+from up42 import asset, base, host, utils
 
 logger = utils.get_logger(__name__)
 
@@ -14,7 +12,7 @@ LIMIT = 200
 
 class OrderParams(TypedDict, total=False):
     """
-    Represents the stucture data format for the order parameters.
+    Represents the stucture data schema for the order parameters.
     dataProduct: The dataProduct id for the specific product configuration.
     params: Order parameters for each product. \
         They are different from product to product depending on product schema.
@@ -28,7 +26,7 @@ class OrderParams(TypedDict, total=False):
 
 class OrderParamsV2(TypedDict, total=False):
     """
-    Represents the stucture data format for the order parameters for the V2 endpoint.
+    Represents the stucture data schema for the order parameters for the V2 endpoint.
     dataProduct: The dataProduct id for the specific product configuration.
     displayName: The default name that will be identifying the order.
     featureCollection: The AOI of the order.
@@ -73,14 +71,6 @@ OrderStatus = Literal[
     "FULFILLED",
     "FAILED",
     "FAILED_PERMANENTLY",
-]
-
-OrderSubtatus = Literal[
-    "FEASIBILITY_WAITING_UPLOAD",
-    "FEASIBILITY_WAITING_RESPONSE",
-    "QUOTATION_WAITING_UPLOAD",
-    "QUOTATION_WAITING_RESPONSE",
-    "QUOTATION_ACCEPTED",
 ]
 
 
@@ -169,24 +159,20 @@ class Order:
         Gets the Order assets or results.
         """
         current_info = copy.deepcopy(self._info)
+        params: dict[str, Any] = {"search": self.order_id, "page": 0}
 
-        def get_pages(endpoint: str, params: dict[str, Any]):
-            response = self.session.get(host.endpoint(endpoint), params=params).json()
-            total_pages = response["totalPages"]
+        def get_pages(endpoint: str):
             while True:
+                response = self.session.get(host.endpoint(endpoint), params=params).json()
                 yield response["content"]
                 params["page"] += 1
-                if params["page"] == total_pages:
+                if params["page"] == response["totalPages"]:
                     break
-                response = self.session.get(host.endpoint(endpoint), params=params).json()
 
-        if current_info["status"] != "FULFILLED" and current_info["status"] != "BEING_FULFILLED":
-            raise UnfulfilledOrder(
-                f"""Order {self.order_id} is not valid. Current status is {current_info["status"]}"""
-            )
-        params = {"search": self.order_id, "page": 0}
+        if (status := current_info["status"]) not in ["FULFILLED", "BEING_FULFILLED"]:
+            raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {status}""")
         order_assets = []
-        for page in get_pages("/v2/assets", params):
+        for page in get_pages("/v2/assets"):
             for asset_info in page:
                 order_assets.append(asset.Asset(asset_info=asset_info))
         return order_assets
@@ -213,8 +199,8 @@ class Order:
         logger.info("Order %s is now %s.", order.order_id, order.status)
         return order
 
-    @staticmethod
-    def estimate(auth: up42_auth.Auth, order_parameters: OrderParams) -> int:
+    @classmethod
+    def estimate(cls, order_parameters: OrderParams) -> int:
         """
         Returns an estimation of the cost of an order.
 
@@ -227,11 +213,10 @@ class Order:
         """
 
         url = host.endpoint("/v2/orders/estimate")
-        response_json = auth.request(
-            request_type="POST",
+        response_json = cls.session.post(
             url=url,
-            data=cast(Dict[Any, Any], _translate_construct_parameters(order_parameters)),
-        )
+            json=_translate_construct_parameters(order_parameters),
+        ).json()
         estimated_credits: int = response_json["summary"]["totalCredits"]
         logger.info(
             "Order is estimated to cost %s UP42 credits (order_parameters: %s)",

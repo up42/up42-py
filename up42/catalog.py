@@ -107,7 +107,7 @@ class Catalog(CatalogBase):
             int: An estimated cost for the order in UP42 credits.
         """
 
-        return order.Order.estimate(self.auth, order_parameters)  # type: ignore
+        return order.Order.estimate(order_parameters)
 
     @staticmethod
     def construct_search_parameters(

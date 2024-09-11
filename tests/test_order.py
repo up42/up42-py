@@ -111,9 +111,9 @@ class TestOrder:
         }
         requests_mock.get(url=url_asset_info, json=asset_info)
         order_obj = order.Order(order_id=constants.ORDER_ID)
-        asset_obj = order_obj.get_assets()[0]
-        assert isinstance(asset_obj, asset.Asset)
-        assert asset_obj.asset_id == constants.ASSET_ORDER_ID
+        assets = order_obj.get_assets()
+        assert all(isinstance(asset_obj, asset.Asset) for asset_obj in assets)
+        assert assets[0].asset_id == constants.ASSET_ORDER_ID
 
     @pytest.mark.parametrize(
         "status",
@@ -141,7 +141,6 @@ class TestOrder:
         ids=["ARCHIVE", "TASKING"],
     )
     def test_should_track_order_status_until_fulfilled(self, requests_mock: req_mock.Mocker, info: dict):
-        responses = []
         statuses = ["PLACED", "BEING_FULFILLED", "FULFILLED"]
         responses = [{"json": {"status": status, **info}} for status in statuses]
         requests_mock.get(ORDER_URL, responses)
@@ -159,7 +158,7 @@ class TestOrder:
         with pytest.raises(order.FailedOrder):
             order_obj.track_status()
 
-    def test_should_estimate(self, auth_mock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams):
+    def test_should_estimate(self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams):
         order_estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
         expected_credits = 100
         requests_mock.post(
@@ -169,7 +168,7 @@ class TestOrder:
                 "errors": [],
             },
         )
-        assert order.Order.estimate(auth_mock, order_parameters) == expected_credits
+        assert order.Order.estimate(order_parameters) == expected_credits
 
     def test_should_place_order(self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams):
         info = {"status": "SOME STATUS"}
