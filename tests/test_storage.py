@@ -273,7 +273,6 @@ def test_get_orders_v2_endpoint_params(auth_mock, requests_mock, params, expecte
     if not params["return_json"]:
         expected_results = [
             order.Order(
-                auth=auth_mock,
                 order_id=output["id"],
                 order_info=output,
             )

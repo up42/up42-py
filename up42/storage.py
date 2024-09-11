@@ -168,6 +168,4 @@ class Storage:
         if return_json:
             return orders_json
         else:
-            return [
-                order.Order(self.auth, order_id=order_json["id"], order_info=order_json) for order_json in orders_json
-            ]
+            return [order.Order(order_id=order_json["id"], order_info=order_json) for order_json in orders_json]

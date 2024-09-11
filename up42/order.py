@@ -1,10 +1,8 @@
 import copy
 import time
-from typing import Any, Dict, List, Optional, TypedDict
+from typing import Any, Dict, List, Literal, Optional, TypedDict, cast
 
-from up42 import asset, asset_searcher
-from up42 import auth as up42_auth
-from up42 import host, utils
+from up42 import asset, base, host, utils
 
 logger = utils.get_logger(__name__)
 
@@ -12,14 +10,45 @@ MAX_ITEM = 200
 LIMIT = 200
 
 
-def _translate_construct_parameters(order_parameters):
-    order_parameters_v2 = copy.deepcopy(order_parameters)
+class OrderParams(TypedDict, total=False):
+    """
+    Represents the schema for the order parameters.
+    dataProduct: The dataProduct id for the specific product configuration.
+    params: Order parameters for each product. \
+        They are different from product to product depending on product schema.
+    tags: User tags to helping to identify the order.
+    """
+
+    dataProduct: str  # pylint: disable=invalid-name
+    params: Dict[str, Any]
+    tags: List[str]
+
+
+class OrderParamsV2(TypedDict, total=False):
+    """
+    Represents the schema for the order parameters for the V2 endpoint.
+    dataProduct: The dataProduct id for the specific product configuration.
+    displayName: The default name that will be identifying the order.
+    featureCollection: The AOI of the order.
+    params: Order parameters for each product.
+    tags: User tags to helping to identify the order.
+    """
+
+    # pylint: disable=invalid-name
+    dataProduct: str
+    displayName: str
+    params: Dict[str, Any]
+    featureCollection: Dict[str, Any]
+    tags: List[str]
+
+
+def _translate_construct_parameters(order_parameters: OrderParams) -> OrderParamsV2:
+    order_parameters_v2 = cast(OrderParamsV2, copy.deepcopy(order_parameters))
     params = order_parameters_v2["params"]
     data_product_id = order_parameters_v2["dataProduct"]
-    default_name = f"{data_product_id} order"
-    order_parameters_v2["displayName"] = params.get("displayName", default_name)
+    order_parameters_v2["displayName"] = params.get("displayName", f"{data_product_id} order")
     aoi = params.pop("aoi", None) or params.pop("geometry", None)
-    feature_collection = {
+    order_parameters_v2["featureCollection"] = {
         "type": "FeatureCollection",
         "features": [
             {
@@ -28,8 +57,21 @@ def _translate_construct_parameters(order_parameters):
             }
         ],
     }
-    order_parameters_v2["featureCollection"] = feature_collection
     return order_parameters_v2
+
+
+OrderStatus = Literal[
+    "CREATED",
+    "BEING_PLACED",
+    "PLACED",
+    "BEING_FULFILLED",
+    "DELIVERY_INITIALIZATION_FAILED",
+    "DOWNLOAD_FAILED",
+    "DOWNLOADED",
+    "FULFILLED",
+    "FAILED",
+    "FAILED_PERMANENTLY",
+]
 
 
 class UnfulfilledOrder(ValueError):
@@ -44,20 +86,6 @@ class FailedOrderPlacement(ValueError):
     pass
 
 
-class OrderParams(TypedDict, total=False):
-    """
-    Represents the stucture data format for the order parameters.
-    dataProduct: The dataProduct id for the specific product configuration.
-    params: Order parameters for each product. \
-        They are different from product to product depending on product schema.
-    tags: User tags to helping to identify the order.
-    """
-
-    dataProduct: str  # pylint: disable=invalid-name
-    params: Dict[str, Any]
-    tags: List[str]
-
-
 class Order:
     """
     The Order class enables you to place, inspect and get information on orders.
@@ -68,13 +96,13 @@ class Order:
     ```
     """
 
+    session = base.Session()
+
     def __init__(
         self,
-        auth: up42_auth.Auth,
         order_id: str,
         order_info: Optional[dict] = None,
     ):
-        self.auth = auth
         self.order_id = order_id
         if order_info is not None:
             self._info = order_info
@@ -96,12 +124,11 @@ class Order:
         Gets and updates the order information.
         """
         url = host.endpoint(f"/v2/orders/{self.order_id}")
-        response_json = self.auth.request(request_type="GET", url=url)
-        self._info = response_json
+        self._info = self.session.get(url=url).json()
         return self._info
 
     @property
-    def status(self) -> str:
+    def status(self) -> OrderStatus:
         """
         Gets the Order status. One of `PLACED`, `FAILED`, `FULFILLED`, `BEING_FULFILLED`, `FAILED_PERMANENTLY`.
         """
@@ -131,14 +158,23 @@ class Order:
         """
         Gets the Order assets or results.
         """
-        if self.is_fulfilled:
-            params: asset_searcher.AssetSearchParams = {"search": self.order_id}
-            assets_response = asset_searcher.search_assets(self.auth, params=params)
-            return [asset.Asset(asset_info=asset_info) for asset_info in assets_response]
-        raise UnfulfilledOrder(f"Order {self.order_id} is not FULFILLED! Current status is {self.status}")
+        current_info = copy.deepcopy(self._info)
+        params: dict[str, Any] = {"search": self.order_id, "page": 0}
+
+        def get_pages(endpoint: str):
+            while True:
+                response = self.session.get(host.endpoint(endpoint), params=params).json()
+                yield response["content"]
+                params["page"] += 1
+                if params["page"] == response["totalPages"]:
+                    break
+
+        if (status := current_info["status"]) not in ["FULFILLED", "BEING_FULFILLED"]:
+            raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {status}""")
+        return [asset.Asset(asset_info=asset_info) for page in get_pages("/v2/assets") for asset_info in page]
 
     @classmethod
-    def place(cls, auth: up42_auth.Auth, order_parameters: OrderParams, workspace_id: str) -> "Order":
+    def place(cls, order_parameters: OrderParams, workspace_id: str) -> "Order":
         """
         Places an order.
 
@@ -150,21 +186,17 @@ class Order:
             Order: The placed order.
         """
         url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
-        response_json = auth.request(
-            request_type="POST",
-            url=url,
-            data=_translate_construct_parameters(order_parameters),
-        )
+        response_json = cls.session.post(url=url, json=_translate_construct_parameters(order_parameters)).json()
         if response_json["errors"]:
             message = response_json["errors"][0]["message"]
             raise FailedOrderPlacement(f"Order was not placed: {message}")
         order_id = response_json["results"][0]["id"]
-        order = cls(auth=auth, order_id=order_id)
+        order = cls(order_id=order_id)
         logger.info("Order %s is now %s.", order.order_id, order.status)
         return order
 
-    @staticmethod
-    def estimate(auth: up42_auth.Auth, order_parameters: OrderParams) -> int:
+    @classmethod
+    def estimate(cls, order_parameters: OrderParams) -> int:
         """
         Returns an estimation of the cost of an order.
 
@@ -177,11 +209,10 @@ class Order:
         """
 
         url = host.endpoint("/v2/orders/estimate")
-        response_json = auth.request(
-            request_type="POST",
+        response_json = cls.session.post(
             url=url,
-            data=_translate_construct_parameters(order_parameters),
-        )
+            json=_translate_construct_parameters(order_parameters),
+        ).json()
         estimated_credits: int = response_json["summary"]["totalCredits"]
         logger.info(
             "Order is estimated to cost %s UP42 credits (order_parameters: %s)",

@@ -24,6 +24,7 @@ JSON_ORDER_ASSET = {
     "geospatialMetadataExtraction": "SUCCESSFUL",
     "title": "string",
     "tags": ["string"],
+    "status": "CREATED",
 }
 
 JSON_GET_ASSETS_RESPONSE = {
@@ -57,11 +58,10 @@ def read_test_order_info() -> dict:
 
 
 @pytest.fixture
-def order_mock(auth_mock, requests_mock):
+def order_mock(requests_mock):
     url_order_info = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
     requests_mock.get(url=url_order_info, json=read_test_order_info())
-
-    return order.Order(auth=auth_mock, order_id=constants.ORDER_ID)
+    return order.Order(order_id=constants.ORDER_ID)
 
 
 @pytest.fixture(name="catalog_order_parameters")

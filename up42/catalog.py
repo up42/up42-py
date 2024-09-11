@@ -43,7 +43,7 @@ class CatalogBase:
 
     def place_order(
         self,
-        order_parameters: Optional[Dict],
+        order_parameters: order.OrderParams,
         track_status: bool = False,
         report_time: int = 120,
     ) -> order.Order:
@@ -71,7 +71,7 @@ class CatalogBase:
         Returns:
             Order class object of the placed order.
         """
-        placed_order = order.Order.place(self.auth, order_parameters, self.workspace_id)  # type: ignore
+        placed_order = order.Order.place(order_parameters, self.workspace_id)
         if track_status:
             placed_order.track_status(report_time)
         return placed_order
@@ -95,7 +95,7 @@ class Catalog(CatalogBase):
         super().__init__(auth, workspace_id)
         self.type: glossary.CollectionType = glossary.CollectionType.ARCHIVE
 
-    def estimate_order(self, order_parameters: Optional[Dict]) -> int:
+    def estimate_order(self, order_parameters: order.OrderParams) -> int:
         """
         Estimate the cost of an order.
 
@@ -107,7 +107,7 @@ class Catalog(CatalogBase):
             int: An estimated cost for the order in UP42 credits.
         """
 
-        return order.Order.estimate(self.auth, order_parameters)  # type: ignore
+        return order.Order.estimate(order_parameters)
 
     @staticmethod
     def construct_search_parameters(
