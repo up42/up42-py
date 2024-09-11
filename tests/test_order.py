@@ -97,7 +97,7 @@ class TestOrder:
             "BEING_FULFILLED",
         ],
     )
-    def test_should_get_assets_if_fulfilled(self, requests_mock: req_mock.Mocker, status: str):
+    def test_should_get_assets_if_valid(self, requests_mock: req_mock.Mocker, status: str):
         info = {"id": constants.ORDER_ID, "status": status}
         requests_mock.get(url=ORDER_URL, json=info)
         url_asset_info = f"{constants.API_HOST}/v2/assets?search={constants.ORDER_ID}"
@@ -107,8 +107,7 @@ class TestOrder:
                     "id": constants.ASSET_ORDER_ID,
                 }
             ],
-            "totalPages": 1,
-            "totalElements": 1,
+            "totalPages": 2,
         }
         requests_mock.get(url=url_asset_info, json=asset_info)
         order_obj = order.Order(order_id=constants.ORDER_ID)
