@@ -107,13 +107,13 @@ class TestOrder:
                     "id": constants.ASSET_ORDER_ID,
                 }
             ],
-            "totalPages": 2,
+            "totalPages": 1,
         }
         requests_mock.get(url=url_asset_info, json=asset_info)
         order_obj = order.Order(order_id=constants.ORDER_ID)
-        assets = order_obj.get_assets()
-        assert all(isinstance(asset_obj, asset.Asset) for asset_obj in assets)
-        assert assets[0].asset_id == constants.ASSET_ORDER_ID
+        (asset_obj,) = order_obj.get_assets()
+        assert isinstance(asset_obj, asset.Asset)
+        assert asset_obj.asset_id == constants.ASSET_ORDER_ID
 
     @pytest.mark.parametrize(
         "status",

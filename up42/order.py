@@ -12,7 +12,7 @@ LIMIT = 200
 
 class OrderParams(TypedDict, total=False):
     """
-    Represents the stucture data schema for the order parameters.
+    Represents the schema for the order parameters.
     dataProduct: The dataProduct id for the specific product configuration.
     params: Order parameters for each product. \
         They are different from product to product depending on product schema.
@@ -26,7 +26,7 @@ class OrderParams(TypedDict, total=False):
 
 class OrderParamsV2(TypedDict, total=False):
     """
-    Represents the stucture data schema for the order parameters for the V2 endpoint.
+    Represents the schema for the order parameters for the V2 endpoint.
     dataProduct: The dataProduct id for the specific product configuration.
     displayName: The default name that will be identifying the order.
     featureCollection: The AOI of the order.
@@ -171,11 +171,7 @@ class Order:
 
         if (status := current_info["status"]) not in ["FULFILLED", "BEING_FULFILLED"]:
             raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {status}""")
-        order_assets = []
-        for page in get_pages("/v2/assets"):
-            for asset_info in page:
-                order_assets.append(asset.Asset(asset_info=asset_info))
-        return order_assets
+        return [asset.Asset(asset_info=asset_info) for page in get_pages("/v2/assets") for asset_info in page]
 
     @classmethod
     def place(cls, order_parameters: OrderParams, workspace_id: str) -> "Order":
