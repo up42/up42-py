@@ -1,4 +1,3 @@
-import json
 import pathlib
 
 import geopandas as gpd  # type: ignore
@@ -8,22 +7,21 @@ import requests
 import requests_mock as req_mock
 import shapely  # type: ignore
 
-from up42 import catalog, glossary, order
+from up42 import catalog, glossary, order, utils
 
 from . import helpers
 from .fixtures import fixtures_globals as constants
 
 PHR = "phr"
 SIMPLE_BOX = shapely.box(0, 0, 1, 1).__geo_interface__
+START_DATE = "2014-01-01"
+END_DATE = "2022-12-31"
+DATE_RANGE = f"{utils.format_time(START_DATE)}/{utils.format_time(END_DATE, set_end_of_day=True)}"
 SEARCH_PARAMETERS = {
-    "datetime": "2014-01-01T00:00:00Z/2022-12-31T23:59:59Z",
+    "datetime": DATE_RANGE,
     "intersects": SIMPLE_BOX,
     "collections": [PHR],
-    "limit": 4,
-    "query": {
-        "cloudCoverage": {"lte": 20},
-        "up42:usageType": {"in": ["DATA", "ANALYTICS"]},
-    },
+    "limit": 10,
 }
 
 
@@ -47,6 +45,56 @@ def test_get_data_product_schema(catalog_mock):
     data_product_schema = catalog_mock.get_data_product_schema(constants.DATA_PRODUCT_ID)
     assert isinstance(data_product_schema, dict)
     assert data_product_schema["properties"]
+
+
+class TestCatalogBase:
+    def test_should_get_data_product_schema(self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker):
+        data_product_schema = {"schema": "some-schema"}
+        url = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
+        requests_mock.get(url=url, json=data_product_schema)
+        catalog_mock = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID)
+        assert catalog_mock.get_data_product_schema(constants.DATA_PRODUCT_ID) == data_product_schema
+
+    def test_should_place_order_from_catalog_base(
+        self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
+    ):
+        info = {"status": "SOME STATUS"}
+        requests_mock.get(
+            url=f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}",
+            json=info,
+        )
+        requests_mock.post(
+            url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
+            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
+        )
+        order_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID).place_order(
+            order_parameters=order_parameters
+        )
+        assert isinstance(order_obj, order.Order)
+        assert order_obj.order_id == constants.ORDER_ID
+
+    @pytest.mark.parametrize(
+        "info",
+        [{"type": "ARCHIVE"}, {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}}],
+        ids=["ARCHIVE", "TASKING"],
+    )
+    def test_should_track_order_status_from_catalog_base(
+        self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker, info: dict, order_parameters: order.OrderParams
+    ):
+        requests_mock.post(
+            url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
+            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
+        )
+        statuses = ["INITIAL STATUS", "PLACED", "BEING_FULFILLED", "FULFILLED"]
+        responses = [{"json": {"status": status, **info}} for status in statuses]
+        requests_mock.get(f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}", responses)
+        order_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID).place_order(
+            order_parameters=order_parameters,
+            track_status=True,
+            report_time=0.1,
+        )
+        assert isinstance(order_obj, order.Order)
+        assert order_obj.track_status(report_time=0.1) == "FULFILLED"
 
 
 class TestCatalog:
@@ -180,50 +228,63 @@ class TestCatalog:
         )
         assert out_paths == [str(tmp_path / f"quicklook_{image_id}.jpg")]
 
-
-def test_construct_search_parameters(catalog_mock):
-    assert (
-        catalog_mock.construct_search_parameters(
-            geometry=SIMPLE_BOX,
-            collections=[PHR],
-            start_date="2014-01-01",
-            end_date="2022-12-31",
-            usage_type=["DATA", "ANALYTICS"],
-            limit=4,
-            max_cloudcover=20,
-        )
-        == SEARCH_PARAMETERS
+    @pytest.mark.parametrize(
+        "usage_type",
+        [
+            {"usage_type": ["DATA"]},
+            {"usage_type": ["ANALYTICS"]},
+            {"usage_type": ["DATA", "ANALYTICS"]},
+            {},
+        ],
     )
-
-
-def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
-    with open(
-        pathlib.Path(__file__).resolve().parent / "mock_data/search_footprints.geojson",
-        encoding="utf-8",
-    ) as file:
-        fc = json.load(file)
-
-    with pytest.raises(ValueError) as e:
-        catalog_mock.construct_search_parameters(
-            geometry=fc,
-            start_date="2020-01-01",
-            end_date="2020-08-10",
-            collections=[PHR],
-            limit=10,
-            max_cloudcover=15,
-        )
-    assert str(e.value) == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
-
-
-def test_construct_order_parameters(catalog_mock):
-    order_parameters = catalog_mock.construct_order_parameters(
-        data_product_id=constants.DATA_PRODUCT_ID,
-        image_id="123",
-        aoi=SIMPLE_BOX,
+    @pytest.mark.parametrize(
+        "max_cloudcover",
+        [
+            {"max_cloudcover": 100},
+            {},
+        ],
     )
-    assert isinstance(order_parameters, dict)
-    assert list(order_parameters.keys()) == ["dataProduct", "params"]
-    assert order_parameters["params"]["acquisitionMode"] is None
+    def test_should_construct_search_parameters(self, usage_type: dict, max_cloudcover: dict):
+        params = {
+            "geometry": SIMPLE_BOX,
+            "collections": [PHR],
+            "start_date": START_DATE,
+            "end_date": END_DATE,
+            **usage_type,
+            **max_cloudcover,
+        }
+        response = {**SEARCH_PARAMETERS}
+        optional_response: dict = {"query": {}}
+        if "max_cloudcover" in max_cloudcover:
+            optional_response["query"]["cloudCoverage"] = {"lte": max_cloudcover["max_cloudcover"]}
+        if "usage_type" in usage_type:
+            optional_response["query"]["up42:usageType"] = {"in": usage_type["usage_type"]}
+        response = {**response, **optional_response}
+        assert self.catalog.construct_search_parameters(**params) == response
+
+    def test_should_fail_construct_search_parameters_with_wrong_data_usage(self):
+        usage_type = ["WRONG_TYPE"]
+        error_msg = r"""usage_type only allows \["DATA"\], \["ANALYTICS"\] or \["DATA", "ANALYTICS"\]"""
+        with pytest.raises(catalog.UsageTypeError, match=error_msg):
+            self.catalog.construct_search_parameters(
+                geometry=SIMPLE_BOX, collections=[PHR], start_date=START_DATE, end_date=END_DATE, usage_type=usage_type
+            )
+
+    def test_should_construct_order_parameters(self, requests_mock: req_mock.Mocker):
+        url_schema = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
+        requests_mock.get(
+            url_schema,
+            json={
+                "required": ["additional_requirement"],
+            },
+        )
+        order_parameters: order.OrderParams = self.catalog.construct_order_parameters(
+            data_product_id=constants.DATA_PRODUCT_ID,
+            image_id="123",
+            aoi=SIMPLE_BOX,
+            tags=None,
+        )
+        assert "additional_requirement" in order_parameters
 
 
 def test_search_usagetype(catalog_mock):
@@ -277,47 +338,3 @@ def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, au
     estimation = catalog_instance.estimate_order(catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
-
-
-def test_order_from_catalog(
-    order_parameters,
-    order_mock,  # pylint: disable=unused-argument
-    catalog_mock,
-    requests_mock,
-):
-    requests_mock.post(
-        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-        json={
-            "results": [{"index": 0, "id": constants.ORDER_ID}],
-            "errors": [],
-        },
-    )
-    placed_order = catalog_mock.place_order(order_parameters=order_parameters)
-    assert isinstance(placed_order, order.Order)
-    assert placed_order.order_id == constants.ORDER_ID
-
-
-def test_order_from_catalog_track_status(catalog_order_parameters, order_mock, catalog_mock, requests_mock):
-    requests_mock.post(
-        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-        json={
-            "results": [{"index": 0, "id": constants.ORDER_ID}],
-            "errors": [],
-        },
-    )
-    url_order_info = f"{constants.API_HOST}/v2/orders/{order_mock.order_id}"
-    requests_mock.get(
-        url_order_info,
-        [
-            {"json": {"status": "PLACED", "type": "ARCHIVE"}},
-            {"json": {"status": "BEING_FULFILLED", "type": "ARCHIVE"}},
-            {"json": {"status": "FULFILLED", "type": "ARCHIVE"}},
-        ],
-    )
-    placed_order = catalog_mock.place_order(
-        order_parameters=catalog_order_parameters,
-        track_status=True,
-        report_time=0.1,
-    )
-    assert isinstance(placed_order, order.Order)
-    assert placed_order.order_id == constants.ORDER_ID

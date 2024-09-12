@@ -3,7 +3,7 @@ Catalog search functionality
 """
 
 import pathlib
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
@@ -14,6 +14,10 @@ from up42 import auth as up42_auth
 from up42 import base, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
+
+
+class UsageTypeError(ValueError):
+    pass
 
 
 class CatalogBase:
@@ -45,7 +49,7 @@ class CatalogBase:
         self,
         order_parameters: order.OrderParams,
         track_status: bool = False,
-        report_time: int = 120,
+        report_time: float = 120,
     ) -> order.Order:
         """
         Place an order.
@@ -90,6 +94,8 @@ class Catalog(CatalogBase):
     This class also inherits functions from the
     [CatalogBase](catalogbase-reference.md) class.
     """
+
+    session = base.Session()
 
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         super().__init__(auth, workspace_id)
@@ -177,7 +183,7 @@ class Catalog(CatalogBase):
             elif usage_type == ["DATA", "ANALYTICS"]:
                 query_filters["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
             else:
-                raise ValueError("Select correct `usage_type`")
+                raise UsageTypeError("""usage_type only allows ["DATA"], ["ANALYTICS"] or ["DATA", "ANALYTICS"]""")
 
         return {
             "datetime": time_period,
@@ -273,7 +279,7 @@ class Catalog(CatalogBase):
             geom.Polygon,
         ] = None,
         tags: Optional[List[str]] = None,
-    ):
+    ) -> order.OrderParams:
         """
         Helps constructing the parameters dictionary required
         for the catalog order. Some collections have
@@ -324,7 +330,7 @@ class Catalog(CatalogBase):
             aoi = utils.fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
             order_parameters["params"]["aoi"] = aoi  # type: ignore
 
-        return order_parameters
+        return cast(order.OrderParams, order_parameters)
 
     def download_quicklooks(
         self,
