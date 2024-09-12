@@ -41,19 +41,13 @@ def set_status_raising_session():
     catalog.CatalogBase.session = session  # type: ignore
 
 
-def test_get_data_product_schema(catalog_mock):
-    data_product_schema = catalog_mock.get_data_product_schema(constants.DATA_PRODUCT_ID)
-    assert isinstance(data_product_schema, dict)
-    assert data_product_schema["properties"]
-
-
 class TestCatalogBase:
     def test_should_get_data_product_schema(self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker):
         data_product_schema = {"schema": "some-schema"}
         url = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
         requests_mock.get(url=url, json=data_product_schema)
-        catalog_mock = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID)
-        assert catalog_mock.get_data_product_schema(constants.DATA_PRODUCT_ID) == data_product_schema
+        catalog_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID)
+        assert catalog_obj.get_data_product_schema(constants.DATA_PRODUCT_ID) == data_product_schema
 
     def test_should_place_order_from_catalog_base(
         self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
@@ -270,21 +264,25 @@ class TestCatalog:
                 geometry=SIMPLE_BOX, collections=[PHR], start_date=START_DATE, end_date=END_DATE, usage_type=usage_type
             )
 
-    def test_should_construct_order_parameters(self, requests_mock: req_mock.Mocker):
+    def test_should_construct_order_parameters(self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker):
         url_schema = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
         requests_mock.get(
             url_schema,
             json={
-                "required": ["additional_requirement"],
+                "required": ["additional"],
+                "properties": {"additional": {"type": "string", "title": "string", "format": "string"}},
+                "definitions": {},
             },
         )
-        order_parameters: order.OrderParams = self.catalog.construct_order_parameters(
+        order_parameters: order.OrderParams = catalog.Catalog(
+            auth_mock, constants.WORKSPACE_ID
+        ).construct_order_parameters(
             data_product_id=constants.DATA_PRODUCT_ID,
             image_id="123",
-            aoi=SIMPLE_BOX,
+            aoi=None,
             tags=None,
         )
-        assert "additional_requirement" in order_parameters
+        assert "additional" in order_parameters["params"]
 
 
 def test_search_usagetype(catalog_mock):
