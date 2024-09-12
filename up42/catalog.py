@@ -363,6 +363,7 @@ class Catalog(CatalogBase):
             try:
                 url = host.endpoint(f"/catalog/{product_host}/image/{image_id}/quicklook")
                 response = self.session.get(url)
+                response.raise_for_status()
                 # TODO: should detect extensions based on response content type
                 # TODO: to be simplified using utils.download_file
                 out_path = str(output_directory / f"quicklook_{image_id}.jpg")
