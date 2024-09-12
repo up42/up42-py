@@ -332,6 +332,24 @@ class TestCatalog:
         if aoi is not None:
             assert order_parameters["params"]["aoi"] == aoi
 
+    def test_estimate_order_from_catalog(
+        self,
+        auth_mock: mock.MagicMock,
+        requests_mock: req_mock.Mocker,
+        catalog_order_parameters: order.OrderParams,
+    ):
+        order_estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
+        expected_credits = 100
+        requests_mock.post(
+            url=order_estimate_url,
+            json={
+                "summary": {"totalCredits": expected_credits},
+                "errors": [],
+            },
+        )
+        catalog_obj = catalog.Catalog(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
+        assert catalog_obj.estimate_order(catalog_order_parameters) == expected_credits
+
 
 def test_search_usagetype(catalog_mock):
     """
@@ -370,17 +388,3 @@ def test_search_usagetype(catalog_mock):
             "collections": [PHR],
             "query": {"up42:usageType": {"in": params["usage_type"]}},
         }
-
-
-def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, auth_mock):
-    catalog_instance = catalog.Catalog(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
-    expected_payload = {
-        "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
-        "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
-        "errors": [],
-    }
-    url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
-    requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = catalog_instance.estimate_order(catalog_order_parameters)
-    assert isinstance(estimation, int)
-    assert estimation == 100
