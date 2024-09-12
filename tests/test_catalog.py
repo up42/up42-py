@@ -212,7 +212,7 @@ class TestCatalog:
         missing_image_id = "missing-image-id"
         image_id = "image-id"
         missing_quicklook_url = f"{constants.API_HOST}/catalog/{self.host}/image/{missing_image_id}/quicklook"
-        requests_mock.get(missing_quicklook_url, status_code=404)
+        requests_mock.get(missing_quicklook_url, exc=requests.exceptions.RequestException)
 
         quicklook_url = f"{constants.API_HOST}/catalog/{self.host}/image/{image_id}/quicklook"
         quicklook_file = pathlib.Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
