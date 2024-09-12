@@ -15,6 +15,15 @@ from up42 import base, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
 
+Geometries = Union[
+    dict,
+    geojson.Feature,
+    geojson.FeatureCollection,
+    list,
+    geopandas.GeoDataFrame,
+    geom.Polygon,
+]
+
 
 class UsageTypeError(ValueError):
     pass
@@ -117,14 +126,7 @@ class Catalog(CatalogBase):
 
     @staticmethod
     def construct_search_parameters(
-        geometry: Union[
-            geojson.FeatureCollection,
-            geojson.Feature,
-            dict,
-            list,
-            geopandas.GeoDataFrame,
-            geom.Polygon,
-        ],
+        geometry: Geometries,
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
@@ -270,14 +272,7 @@ class Catalog(CatalogBase):
         self,
         data_product_id: str,
         image_id: str,
-        aoi: Union[
-            dict,
-            geojson.Feature,
-            geojson.FeatureCollection,
-            list,
-            geopandas.GeoDataFrame,
-            geom.Polygon,
-        ] = None,
+        aoi: Optional[Geometries] = None,
         tags: Optional[List[str]] = None,
     ) -> order.OrderParams:
         """

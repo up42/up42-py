@@ -1,4 +1,6 @@
 import pathlib
+import uuid
+from typing import List, Optional
 
 import geopandas as gpd  # type: ignore
 import mock
@@ -23,6 +25,7 @@ SEARCH_PARAMETERS = {
     "collections": [PHR],
     "limit": 10,
 }
+Geometries = catalog.Geometries
 
 
 @pytest.fixture(autouse=True)
@@ -230,12 +233,22 @@ class TestCatalog:
             {"usage_type": ["DATA", "ANALYTICS"]},
             {},
         ],
+        ids=[
+            "usage_type:DATA",
+            "usage_type:ANALYTICS",
+            "usage_type:DATA, ANALYTICS",
+            "usage_type:None",
+        ],
     )
     @pytest.mark.parametrize(
         "max_cloudcover",
         [
             {"max_cloudcover": 100},
             {},
+        ],
+        ids=[
+            "max_cloudcover:100",
+            "max_cloudcover:None",
         ],
     )
     def test_should_construct_search_parameters(self, usage_type: dict, max_cloudcover: dict):
@@ -264,25 +277,60 @@ class TestCatalog:
                 geometry=SIMPLE_BOX, collections=[PHR], start_date=START_DATE, end_date=END_DATE, usage_type=usage_type
             )
 
-    def test_should_construct_order_parameters(self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker):
+    @pytest.mark.parametrize(
+        "aoi",
+        [
+            SIMPLE_BOX,
+            None,
+        ],
+        ids=[
+            "aoi:SIMPLE_BOX",
+            "aoi:None",
+        ],
+    )
+    @pytest.mark.parametrize(
+        "tags",
+        [
+            ["tag"],
+            None,
+        ],
+        ids=[
+            "tags:Value",
+            "tags:None",
+        ],
+    )
+    def test_should_construct_order_parameters(
+        self,
+        auth_mock: mock.MagicMock,
+        requests_mock: req_mock.Mocker,
+        aoi: Optional[Geometries],
+        tags: Optional[List[str]],
+    ):
+        schema_property = "any-property"
+        image_id = str(uuid.uuid4())
         url_schema = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
         requests_mock.get(
             url_schema,
             json={
-                "required": ["additional"],
-                "properties": {"additional": {"type": "string", "title": "string", "format": "string"}},
-                "definitions": {},
+                "required": [schema_property],
+                "properties": {schema_property: {"type": "string", "title": "string", "format": "string"}},
             },
         )
         order_parameters: order.OrderParams = catalog.Catalog(
             auth_mock, constants.WORKSPACE_ID
         ).construct_order_parameters(
             data_product_id=constants.DATA_PRODUCT_ID,
-            image_id="123",
-            aoi=None,
-            tags=None,
+            image_id=image_id,
+            aoi=aoi,
+            tags=tags,
         )
-        assert "additional" in order_parameters["params"]
+        assert schema_property in order_parameters["params"]
+        assert order_parameters["params"]["id"] == image_id
+        assert order_parameters["dataProduct"] == constants.DATA_PRODUCT_ID
+        if tags is not None:
+            assert order_parameters["tags"] == tags
+        if aoi is not None:
+            assert order_parameters["params"]["aoi"] == aoi
 
 
 def test_search_usagetype(catalog_mock):
