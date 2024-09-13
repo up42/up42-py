@@ -141,7 +141,7 @@ class TestCatalog:
 
     @pytest.mark.usefixtures("product_glossary")
     def test_search_fails_if_host_is_not_found(self):
-        with pytest.raises(ValueError, match=r"Selected collections \['unknown'\] are not valid.*"):
+        with pytest.raises(catalog.InvalidCollections, match=r"Selected collections \['unknown'\] are not valid.*"):
             self.catalog.search({"collections": ["unknown"]})
 
     def test_search_fails_if_collections_hosted_by_different_hosts(self, requests_mock: req_mock.Mocker):
@@ -171,7 +171,7 @@ class TestCatalog:
                 "totalPages": 1,
             },
         )
-        with pytest.raises(ValueError):
+        with pytest.raises(catalog.MultipleHosts):
             self.catalog.search({"collections": ["collection1", "collection2"]})
 
     @pytest.mark.parametrize(

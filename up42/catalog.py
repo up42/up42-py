@@ -29,6 +29,14 @@ class UsageTypeError(ValueError):
     pass
 
 
+class InvalidCollections(ValueError):
+    pass
+
+
+class MultipleHosts(ValueError):
+    pass
+
+
 class CatalogBase:
     """
     The base for Catalog and Tasking class, shared functionality.
@@ -206,11 +214,11 @@ class Catalog(CatalogBase):
         }
 
         if not hosts:
-            raise ValueError(
+            raise InvalidCollections(
                 f"Selected collections {collection_names} are not valid. See ProductGlossary.get_collections."
             )
         if len(hosts) > 1:
-            raise ValueError("Only collections with the same host can be searched at the same time.")
+            raise MultipleHosts("Only collections with the same host can be searched at the same time.")
         return hosts.pop()
 
     def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[geopandas.GeoDataFrame, dict]:
