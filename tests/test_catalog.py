@@ -1,9 +1,12 @@
 import pathlib
 import uuid
-from typing import List, Optional
+from typing import List, Optional, cast
 
+import geojson  # type: ignore
 import geopandas as gpd  # type: ignore
 import mock
+import numpy as np
+import pandas as pd
 import pytest
 import requests
 import requests_mock as req_mock
@@ -25,6 +28,12 @@ SEARCH_PARAMETERS = {
     "collections": [PHR],
     "limit": 10,
 }
+FEATURE = {
+    "type": "Feature",
+    "properties": {"some": "data"},
+    "geometry": {"type": "Point", "coordinates": (1.0, 2.0)},
+}
+POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
 Geometries = catalog.Geometries
 
 
@@ -98,6 +107,10 @@ class TestCatalog:
     host = "oneatlas"
     catalog = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID)
 
+    @pytest.fixture(params=["output_dir", "no_output_dir"])
+    def output_directory(self, request, tmp_path) -> Optional[str]:
+        return tmp_path if request.param == "output_dir" else None
+
     @pytest.fixture
     def product_glossary(self, requests_mock: req_mock.Mocker):
         collections_url = f"{constants.API_HOST}/v2/collections"
@@ -161,21 +174,42 @@ class TestCatalog:
         with pytest.raises(ValueError):
             self.catalog.search({"collections": ["collection1", "collection2"]})
 
+    @pytest.mark.parametrize(
+        "feature, expected_geom",
+        [
+            (
+                FEATURE,
+                gpd.GeoDataFrame.from_features(
+                    geojson.FeatureCollection(
+                        features=[
+                            {**FEATURE, "id": "0", "bbox": POINT_BBOX},
+                            {**FEATURE, "id": "1", "bbox": POINT_BBOX},
+                        ]
+                    ),
+                    crs="EPSG:4326",
+                ),
+            ),
+            (None, gpd.GeoDataFrame(columns=["geometry"], geometry="geometry")),
+        ],
+        ids=["with_features", "without_features"],
+    )
+    @pytest.mark.parametrize(
+        "as_dataframe",
+        [True, False],
+        ids=["as_dataframe", "as_dict"],
+    )
     @pytest.mark.usefixtures("product_glossary")
-    def test_should_search(self, requests_mock: req_mock.Mocker):
+    def test_should_search(
+        self, requests_mock: req_mock.Mocker, feature: dict, expected_geom: gpd.GeoDataFrame, as_dataframe: bool
+    ):
         search_url = f"{constants.API_HOST}/catalog/hosts/{self.host}/stac/search"
         next_page_url = f"{search_url}/next"
-        bbox = (1.0, 2.0, 1.0, 2.0)
-        feature = {
-            "type": "Feature",
-            "properties": {
-                "some": "data",
-            },
-            "geometry": {"type": "Point", "coordinates": (1.0, 2.0)},
-        }
+        features = []
+        if feature:
+            features.append(feature)
         first_page = {
             "type": "FeatureCollection",
-            "features": [feature],
+            "features": features,
             "links": [
                 {
                     "rel": "next",
@@ -194,21 +228,32 @@ class TestCatalog:
             json=second_page,
             additional_matcher=helpers.match_request_body(SEARCH_PARAMETERS),
         )
-
-        results = self.catalog.search(SEARCH_PARAMETERS)
-
-        assert isinstance(results, gpd.GeoDataFrame)
-        assert results.__geo_interface__ == {
-            "type": "FeatureCollection",
-            "features": [
-                {**feature, "id": "0", "bbox": bbox},
-                {**feature, "id": "1", "bbox": bbox},
-            ],
-            "bbox": bbox,
-        }
+        results = self.catalog.search(SEARCH_PARAMETERS, as_dataframe=as_dataframe)
+        if as_dataframe:
+            results = cast(gpd.GeoDataFrame, results)
+            pd.testing.assert_frame_equal(results.drop(columns="geometry"), expected_geom.drop(columns="geometry"))
+            assert results.geometry.equals(expected_geom.geometry)
+            assert results.crs == expected_geom.crs
+        else:
+            bbox = results.pop("bbox")
+            assert results == {
+                "type": "FeatureCollection",
+                "features": [
+                    {**FEATURE, "id": "0", "bbox": POINT_BBOX},
+                    {**FEATURE, "id": "1", "bbox": POINT_BBOX},
+                ]
+                if feature
+                else [],
+            }
+            if feature:
+                assert bbox == POINT_BBOX
+            else:
+                assert all(np.isnan(coor) for coor in bbox)
 
     @pytest.mark.usefixtures("product_glossary")
-    def test_should_download_available_quicklooks(self, requests_mock: req_mock.Mocker, tmp_path):
+    def test_should_download_available_quicklooks(
+        self, requests_mock: req_mock.Mocker, output_directory: Optional[str]
+    ):
         missing_image_id = "missing-image-id"
         image_id = "image-id"
         missing_quicklook_url = f"{constants.API_HOST}/catalog/{self.host}/image/{missing_image_id}/quicklook"
@@ -221,9 +266,12 @@ class TestCatalog:
         out_paths = self.catalog.download_quicklooks(
             image_ids=[image_id, missing_image_id],
             collection=PHR,
-            output_directory=tmp_path,
+            output_directory=output_directory,
         )
-        assert out_paths == [str(tmp_path / f"quicklook_{image_id}.jpg")]
+        download_folder: pathlib.Path = (
+            pathlib.Path(output_directory) if output_directory else pathlib.Path.cwd() / "catalog"
+        )
+        assert out_paths == [str(download_folder / f"quicklook_{image_id}.jpg")]
 
     @pytest.mark.parametrize(
         "usage_type",
