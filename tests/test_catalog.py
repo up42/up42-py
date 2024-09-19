@@ -12,16 +12,18 @@ import requests
 import requests_mock as req_mock
 import shapely  # type: ignore
 
-from up42 import catalog, glossary, order, utils
+from up42 import catalog, glossary, order
 
 from . import helpers
 from .fixtures import fixtures_globals as constants
+
+Geometry = catalog.Geometry
 
 PHR = "phr"
 SIMPLE_BOX = shapely.box(0, 0, 1, 1).__geo_interface__
 START_DATE = "2014-01-01"
 END_DATE = "2022-12-31"
-DATE_RANGE = f"{utils.format_time(START_DATE)}/{utils.format_time(END_DATE, set_end_of_day=True)}"
+DATE_RANGE = "2014-01-01T00:00:00Z/2022-12-31T23:59:59Z"
 SEARCH_PARAMETERS = {
     "datetime": DATE_RANGE,
     "intersects": SIMPLE_BOX,
@@ -34,7 +36,6 @@ FEATURE = {
     "geometry": {"type": "Point", "coordinates": (1.0, 2.0)},
 }
 POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
-Geometries = catalog.Geometries
 
 
 @pytest.fixture(autouse=True)
@@ -61,7 +62,7 @@ class TestCatalogBase:
         catalog_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID)
         assert catalog_obj.get_data_product_schema(constants.DATA_PRODUCT_ID) == data_product_schema
 
-    def test_should_place_order_from_catalog_base(
+    def test_should_place_order(
         self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
     ):
         info = {"status": "SOME STATUS"}
@@ -84,7 +85,7 @@ class TestCatalogBase:
         [{"type": "ARCHIVE"}, {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}}],
         ids=["ARCHIVE", "TASKING"],
     )
-    def test_should_track_order_status_from_catalog_base(
+    def test_should_track_order_status(
         self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker, info: dict, order_parameters: order.OrderParams
     ):
         requests_mock.post(
@@ -99,8 +100,8 @@ class TestCatalogBase:
             track_status=True,
             report_time=0.1,
         )
-        assert isinstance(order_obj, order.Order)
-        assert order_obj.track_status(report_time=0.1) == "FULFILLED"
+        assert order_obj.order_id == constants.ORDER_ID
+        assert order_obj.status == "FULFILLED"
 
 
 class TestCatalog:
@@ -108,7 +109,7 @@ class TestCatalog:
     catalog = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID)
 
     @pytest.fixture(params=["output_dir", "no_output_dir"])
-    def output_directory(self, request, tmp_path) -> Optional[str]:
+    def output_directory(self, request, tmp_path) -> Optional[pathlib.Path]:
         return tmp_path if request.param == "output_dir" else None
 
     @pytest.fixture
@@ -252,7 +253,7 @@ class TestCatalog:
 
     @pytest.mark.usefixtures("product_glossary")
     def test_should_download_available_quicklooks(
-        self, requests_mock: req_mock.Mocker, output_directory: Optional[str]
+        self, requests_mock: req_mock.Mocker, output_directory: Optional[pathlib.Path]
     ):
         missing_image_id = "missing-image-id"
         image_id = "image-id"
@@ -268,9 +269,7 @@ class TestCatalog:
             collection=PHR,
             output_directory=output_directory,
         )
-        download_folder: pathlib.Path = (
-            pathlib.Path(output_directory) if output_directory else pathlib.Path.cwd() / "catalog"
-        )
+        download_folder: pathlib.Path = output_directory if output_directory else pathlib.Path.cwd() / "catalog"
         assert out_paths == [str(download_folder / f"quicklook_{image_id}.jpg")]
 
     @pytest.mark.parametrize(
@@ -318,11 +317,13 @@ class TestCatalog:
         assert self.catalog.construct_search_parameters(**params) == response
 
     def test_should_fail_construct_search_parameters_with_wrong_data_usage(self):
-        usage_type = ["WRONG_TYPE"]
-        error_msg = r"""usage_type only allows \["DATA"\], \["ANALYTICS"\] or \["DATA", "ANALYTICS"\]"""
-        with pytest.raises(catalog.UsageTypeError, match=error_msg):
+        with pytest.raises(catalog.InvalidUsageType, match="usage_type is invalid"):
             self.catalog.construct_search_parameters(
-                geometry=SIMPLE_BOX, collections=[PHR], start_date=START_DATE, end_date=END_DATE, usage_type=usage_type
+                geometry=SIMPLE_BOX,
+                collections=[PHR],
+                start_date=START_DATE,
+                end_date=END_DATE,
+                usage_type=["WRONG_TYPE"],  # type: ignore
             )
 
     @pytest.mark.parametrize(
@@ -351,7 +352,7 @@ class TestCatalog:
         self,
         auth_mock: mock.MagicMock,
         requests_mock: req_mock.Mocker,
-        aoi: Optional[Geometries],
+        aoi: Optional[Geometry],
         tags: Optional[List[str]],
     ):
         schema_property = "any-property"

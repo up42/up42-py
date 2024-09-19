@@ -3,7 +3,7 @@ Catalog search functionality
 """
 
 import pathlib
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Literal, Optional, Union, cast
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
@@ -15,7 +15,7 @@ from up42 import base, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
 
-Geometries = Union[
+Geometry = Union[
     dict,
     geojson.Feature,
     geojson.FeatureCollection,
@@ -25,7 +25,7 @@ Geometries = Union[
 ]
 
 
-class UsageTypeError(ValueError):
+class InvalidUsageType(ValueError):
     pass
 
 
@@ -112,8 +112,6 @@ class Catalog(CatalogBase):
     [CatalogBase](catalogbase-reference.md) class.
     """
 
-    session = base.Session()
-
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         super().__init__(auth, workspace_id)
         self.type: glossary.CollectionType = glossary.CollectionType.ARCHIVE
@@ -134,11 +132,11 @@ class Catalog(CatalogBase):
 
     @staticmethod
     def construct_search_parameters(
-        geometry: Geometries,
+        geometry: Geometry,
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
-        usage_type: Optional[List[str]] = None,
+        usage_type: Optional[List[Literal["DATA", "ANALYTICS"]]] = None,
         limit: int = 10,
         max_cloudcover: Optional[int] = None,
     ) -> dict:
@@ -193,7 +191,7 @@ class Catalog(CatalogBase):
             elif usage_type == ["DATA", "ANALYTICS"]:
                 query_filters["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
             else:
-                raise UsageTypeError("""usage_type only allows ["DATA"], ["ANALYTICS"] or ["DATA", "ANALYTICS"]""")
+                raise InvalidUsageType("usage_type is invalid")
 
         return {
             "datetime": time_period,
@@ -280,7 +278,7 @@ class Catalog(CatalogBase):
         self,
         data_product_id: str,
         image_id: str,
-        aoi: Optional[Geometries] = None,
+        aoi: Optional[Geometry] = None,
         tags: Optional[List[str]] = None,
     ) -> order.OrderParams:
         """
@@ -371,7 +369,6 @@ class Catalog(CatalogBase):
             try:
                 url = host.endpoint(f"/catalog/{product_host}/image/{image_id}/quicklook")
                 response = self.session.get(url)
-                response.raise_for_status()
                 # TODO: should detect extensions based on response content type
                 # TODO: to be simplified using utils.download_file
                 out_path = str(output_directory / f"quicklook_{image_id}.jpg")
