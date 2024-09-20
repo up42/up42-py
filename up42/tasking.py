@@ -93,8 +93,8 @@ class Tasking(catalog.CatalogBase):
 
         schema = self.get_data_product_schema(data_product_id)
         logger.info("See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options.")
-        missing_params = {param for param in schema["required"] if param not in order_parameters["params"]}
-        order_parameters["params"].update({param: None for param in missing_params})
+        missing_params = {param: order_parameters["params"].get(param) for param in schema["required"]}
+        order_parameters["params"].update(missing_params)
 
         geometry = utils.any_vector_to_fc(vector=geometry)
         assert isinstance(order_parameters["params"], dict)
