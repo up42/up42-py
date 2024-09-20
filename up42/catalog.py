@@ -314,14 +314,15 @@ class Catalog(CatalogBase):
                   (13.375966, 52.515068)),)})
             ```
         """
-        order_parameters = {
+        order_parameters: order.OrderParams = {
             "dataProduct": data_product_id,
             "params": {"id": image_id},
         }
         if tags is not None:
             order_parameters["tags"] = tags
         schema = self.get_data_product_schema(data_product_id)
-        order_parameters = utils.autocomplete_order_parameters(order_parameters, schema)
+        missing_params = {param: order_parameters["params"].get(param) for param in schema["required"]}
+        order_parameters["params"].update(missing_params)
 
         # Some catalog orders, e.g. Capella don't require AOI (full image order)
         # Handled on API level, don't manipulate in SDK,
