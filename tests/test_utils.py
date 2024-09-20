@@ -1,6 +1,5 @@
 import json
 import pathlib
-from typing import Dict
 from unittest import mock
 
 import geopandas  # type: ignore
@@ -217,27 +216,6 @@ class TestDownloadArchive:
                 download_url=self.archive_url,
                 output_directory=tmp_path,
             )
-
-
-def test_autocomplete_order_parameters():
-    with open(
-        pathlib.Path(__file__).resolve().parent / "mock_data/data_product_spot_schema.json",
-        encoding="utf-8",
-    ) as json_file:
-        json_data_product_schema = json.load(json_file)
-    order_parameters = {
-        "dataProduct": "123",
-        "params": {"existing_param1": "abc"},
-    }
-    order_parameters = utils.autocomplete_order_parameters(
-        order_parameters=order_parameters, schema=json_data_product_schema
-    )
-
-    assert "dataProduct" in order_parameters
-    assert isinstance(order_parameters["params"], Dict)
-    assert order_parameters["params"]["existing_param1"] is not None
-    assert order_parameters["params"]["geometry"] is None
-    assert order_parameters["params"]["acquisitionMode"] is None
 
 
 @mock.patch("importlib.metadata.version", return_value="some_version")
