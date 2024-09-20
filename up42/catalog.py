@@ -3,7 +3,7 @@ Catalog search functionality
 """
 
 import pathlib
-from typing import Any, Dict, List, Literal, Optional, Union, cast
+from typing import Any, Dict, List, Literal, Optional, Union
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
@@ -332,7 +332,7 @@ class Catalog(CatalogBase):
             aoi = utils.fc_to_query_geometry(fc=aoi, geometry_operation="intersects")
             order_parameters["params"]["aoi"] = aoi  # type: ignore
 
-        return cast(order.OrderParams, order_parameters)
+        return order_parameters
 
     def download_quicklooks(
         self,

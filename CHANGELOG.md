@@ -29,9 +29,9 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
-## 2.1.0a5
+## 2.1.0a6
 
-**Sep 12, 2024**
+**Sep TBD, 2024**
 - Fix test coverage for `Catalog` class.
 
 ## ## 2.1.0a5
