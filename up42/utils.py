@@ -336,39 +336,6 @@ def fc_to_query_geometry(fc: Union[dict, geojson.FeatureCollection], geometry_op
     return query_geometry
 
 
-def autocomplete_order_parameters(order_parameters: dict, schema: dict):
-    """
-    Adds missing required catalog/tasking order parameters and logs parameter suggestions.
-
-    Args:
-        order_parameters: The initial order_parameters, in format
-            {"dataProduct": data_product_id, "params" : {...}}
-        schema: The data product parameter schema from .get_data_product_schema
-        The existing order parameter params
-
-    Returns:
-        The order parameters with complete params
-    """
-    additional_params = {param: None for param in schema["required"] if param not in order_parameters["params"]}
-    order_parameters["params"] = dict(order_parameters["params"], **additional_params)
-
-    # Log message help for parameter selection
-    try:
-        for param in additional_params.keys():
-            if param in ["aoi", "geometry"]:
-                continue
-            elif "allOf" in schema["properties"][param]:  # has further definitions key
-                potential_values = [x["const"] for x in schema["definitions"][param]["anyOf"]]
-                logger.info("As `%s` select one of %s", param, potential_values)
-            else:
-                # Full information for simple parameters
-                del schema["properties"][param]["title"]
-                logger.info("As `%s` select `%s`", param, schema["properties"][param])
-    except KeyError as exc:
-        raise KeyError("Please reach out to UP42 Support (support@up42.com)") from exc
-    return order_parameters
-
-
 def replace_page_query(url: str, new_page: int) -> str:
     """
     Handle pagination replacement in an encoded url

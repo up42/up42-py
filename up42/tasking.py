@@ -10,7 +10,7 @@ import geopandas  # type: ignore
 from shapely import geometry as shp_geometry  # type: ignore
 
 from up42 import auth as up42_auth
-from up42 import catalog, glossary, host, utils
+from up42 import catalog, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -80,7 +80,7 @@ class Tasking(catalog.CatalogBase):
                 )
             ```
         """
-        order_parameters = {
+        order_parameters: order.OrderParams = {
             "dataProduct": data_product_id,
             "params": {
                 "displayName": name,
@@ -93,7 +93,8 @@ class Tasking(catalog.CatalogBase):
 
         schema = self.get_data_product_schema(data_product_id)
         logger.info("See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options.")
-        order_parameters = utils.autocomplete_order_parameters(order_parameters, schema)
+        missing_params = {param for param in schema["required"] if param not in order_parameters["params"]}
+        order_parameters["params"].update({param: None for param in missing_params})
 
         geometry = utils.any_vector_to_fc(vector=geometry)
         assert isinstance(order_parameters["params"], dict)
