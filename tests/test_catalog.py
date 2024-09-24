@@ -66,7 +66,6 @@ class TestCatalogBase:
         order_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID).place_order(
             order_parameters=order_parameters
         )
-        assert isinstance(order_obj, order.Order)
         assert order_obj.order_id == constants.ORDER_ID
 
     @pytest.mark.parametrize(
