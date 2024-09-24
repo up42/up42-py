@@ -44,69 +44,22 @@ def set_status_raising_session():
 
 
 @pytest.fixture(name="catalog_order_parameters")
-def _catalog_order_parameters():
+def _catalog_order_parameters() -> order.OrderParams:
+    geometry_key = "aoi"
     return {
-        "dataProduct": "4f1b2f62-98df-4c74-81f4-5dce45deee99",
-        "params": {
-            "id": "aa1b5abf-8864-4092-9b65-35f8d0d413bb",
-            "aoi": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [13.357031, 52.52361],
-                        [13.350981, 52.524362],
-                        [13.351544, 52.526326],
-                        [13.355284, 52.526765],
-                        [13.356944, 52.525067],
-                        [13.357257, 52.524409],
-                        [13.357031, 52.52361],
-                    ]
-                ],
-            },
-        },
-        "tags": ["Test", "SDK"],
+        "dataProduct": "some-data-product",
+        "params": {geometry_key: {"some": "shape"}},
     }
 
 
 class TestCatalogBase:
-    @pytest.fixture()
-    def tasking_order_parameters(self):
+    @pytest.fixture(scope="class", params=["catalog", "tasking"])
+    def order_parameters(self, request) -> order.OrderParams:
+        geometry_key = "aoi" if request.param == "catalog" else "geometry"
         return {
-            "dataProduct": "47dadb27-9532-4552-93a5-48f70a83eaef",
-            "params": {
-                "displayName": "my_tasking_order",
-                "acquisitionStart": "2022-11-01T00:00:00Z",
-                "acquisitionEnd": "2022-11-10T23:59:59Z",
-                "geometry": {
-                    "type": "Polygon",
-                    "coordinates": (
-                        (
-                            (13.152222, 52.638054),
-                            (13.152222, 52.387978),
-                            (13.588728, 52.387978),
-                            (13.588728, 52.638054),
-                            (13.152222, 52.638054),
-                        ),
-                    ),
-                },
-                "acquisitionMode": None,
-                "cloudCoverage": None,
-                "incidenceAngle": None,
-                "geometricProcessing": None,
-                "spectralProcessing": None,
-                "pixelCoding": None,
-                "radiometricProcessing": None,
-                "deliveredAs": None,
-            },
+            "dataProduct": "some-data-product",
+            "params": {geometry_key: {"some": "shape"}},
         }
-
-    @pytest.fixture(params=["catalog", "tasking"])
-    def order_parameters(self, request, catalog_order_parameters, tasking_order_parameters):
-        mocks = {
-            "catalog": catalog_order_parameters,
-            "tasking": tasking_order_parameters,
-        }
-        return mocks[request.param]
 
     def test_should_get_data_product_schema(self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker):
         data_product_schema = {"schema": "some-schema"}
