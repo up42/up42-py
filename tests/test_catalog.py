@@ -192,7 +192,7 @@ class TestCatalog:
             ),
             (None, gpd.GeoDataFrame(columns=["geometry"], geometry="geometry")),
         ],
-        ids=["with_features", "without_features"],
+        ids=["response_with_features", "response_without_features"],
     )
     @pytest.mark.parametrize(
         "as_dataframe",
