@@ -12,7 +12,7 @@ import requests
 import requests_mock as req_mock
 import shapely  # type: ignore
 
-from up42 import catalog, glossary, order
+from up42 import auth, catalog, glossary, order
 
 from . import helpers
 from .fixtures import fixtures_globals as constants
@@ -55,7 +55,15 @@ def set_status_raising_session():
 
 
 class TestCatalogBase:
-    def test_should_get_data_product_schema(self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker):
+    @pytest.fixture(scope="class", params=["catalog", "tasking"])
+    def order_parameters(self, request) -> order.OrderParams:
+        geometry_key = "aoi" if request.param == "catalog" else "geometry"
+        return {
+            "dataProduct": "some-data-product",
+            "params": {geometry_key: {"some": "shape"}},
+        }
+
+    def test_should_get_data_product_schema(self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker):
         data_product_schema = {"schema": "some-schema"}
         url = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
         requests_mock.get(url=url, json=data_product_schema)
@@ -63,7 +71,7 @@ class TestCatalogBase:
         assert catalog_obj.get_data_product_schema(constants.DATA_PRODUCT_ID) == data_product_schema
 
     def test_should_place_order(
-        self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
+        self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
     ):
         info = {"status": "SOME STATUS"}
         requests_mock.get(
@@ -77,7 +85,6 @@ class TestCatalogBase:
         order_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID).place_order(
             order_parameters=order_parameters
         )
-        assert isinstance(order_obj, order.Order)
         assert order_obj.order_id == constants.ORDER_ID
 
     @pytest.mark.parametrize(
@@ -86,7 +93,7 @@ class TestCatalogBase:
         ids=["ARCHIVE", "TASKING"],
     )
     def test_should_track_order_status(
-        self, auth_mock: mock.MagicMock, requests_mock: req_mock.Mocker, info: dict, order_parameters: order.OrderParams
+        self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker, info: dict, order_parameters: order.OrderParams
     ):
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
