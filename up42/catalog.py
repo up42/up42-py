@@ -3,7 +3,7 @@ Catalog search functionality
 """
 
 import pathlib
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
@@ -14,6 +14,19 @@ from up42 import auth as up42_auth
 from up42 import base, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
+
+Geometry = Union[
+    dict,
+    geojson.Feature,
+    geojson.FeatureCollection,
+    list,
+    geopandas.GeoDataFrame,
+    geom.Polygon,
+]
+
+
+class InvalidUsageType(ValueError):
+    pass
 
 
 class CatalogBase:
@@ -111,18 +124,11 @@ class Catalog(CatalogBase):
 
     @staticmethod
     def construct_search_parameters(
-        geometry: Union[
-            geojson.FeatureCollection,
-            geojson.Feature,
-            dict,
-            list,
-            geopandas.GeoDataFrame,
-            geom.Polygon,
-        ],
+        geometry: Geometry,
         collections: List[str],
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
-        usage_type: Optional[List[str]] = None,
+        usage_type: Optional[List[Literal["DATA", "ANALYTICS"]]] = None,
         limit: int = 10,
         max_cloudcover: Optional[int] = None,
     ) -> dict:
@@ -167,17 +173,13 @@ class Catalog(CatalogBase):
 
         query_filters: Dict[Any, Any] = {}
         if max_cloudcover is not None:
-            query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
+            query_filters["cloudCoverage"] = {"lte": max_cloudcover}
 
         if usage_type is not None:
-            if usage_type == ["DATA"]:
-                query_filters["up42:usageType"] = {"in": ["DATA"]}
-            elif usage_type == ["ANALYTICS"]:
-                query_filters["up42:usageType"] = {"in": ["ANALYTICS"]}
-            elif usage_type == ["DATA", "ANALYTICS"]:
-                query_filters["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
+            if set(usage_type) <= {"DATA", "ANALYTICS"}:
+                query_filters["up42:usageType"] = {"in": usage_type}
             else:
-                raise ValueError("Select correct `usage_type`")
+                raise InvalidUsageType("usage_type is invalid")
 
         return {
             "datetime": time_period,
