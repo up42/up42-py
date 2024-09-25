@@ -34,6 +34,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Sep TBD, 2024**
 - Fix test coverage for `Catalog` class.
 
+## 2.1.0a7
+
+**Sep 25, 2024**
+- Fix test coverage for `Catalog::construct_search_parameters`.
+
 ## 2.1.0a6
 
 **Sep 25, 2024**
