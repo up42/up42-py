@@ -8,7 +8,7 @@ import requests
 import requests_mock as req_mock
 import shapely  # type: ignore
 
-from up42 import catalog, glossary, order
+from up42 import auth, catalog, glossary, order
 
 from . import helpers
 from .fixtures import fixtures_globals as constants
@@ -43,10 +43,61 @@ def set_status_raising_session():
     catalog.CatalogBase.session = session  # type: ignore
 
 
-def test_get_data_product_schema(catalog_mock):
-    data_product_schema = catalog_mock.get_data_product_schema(constants.DATA_PRODUCT_ID)
-    assert isinstance(data_product_schema, dict)
-    assert data_product_schema["properties"]
+class TestCatalogBase:
+    @pytest.fixture(scope="class", params=["catalog", "tasking"])
+    def order_parameters(self, request) -> order.OrderParams:
+        geometry_key = "aoi" if request.param == "catalog" else "geometry"
+        return {
+            "dataProduct": "some-data-product",
+            "params": {geometry_key: {"some": "shape"}},
+        }
+
+    def test_should_get_data_product_schema(self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker):
+        data_product_schema = {"schema": "some-schema"}
+        url = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
+        requests_mock.get(url=url, json=data_product_schema)
+        catalog_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID)
+        assert catalog_obj.get_data_product_schema(constants.DATA_PRODUCT_ID) == data_product_schema
+
+    def test_should_place_order(
+        self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
+    ):
+        info = {"status": "SOME STATUS"}
+        requests_mock.get(
+            url=f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}",
+            json=info,
+        )
+        requests_mock.post(
+            url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
+            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
+        )
+        order_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID).place_order(
+            order_parameters=order_parameters
+        )
+        assert order_obj.order_id == constants.ORDER_ID
+
+    @pytest.mark.parametrize(
+        "info",
+        [{"type": "ARCHIVE"}, {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}}],
+        ids=["ARCHIVE", "TASKING"],
+    )
+    def test_should_track_order_status(
+        self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker, info: dict, order_parameters: order.OrderParams
+    ):
+        requests_mock.post(
+            url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
+            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
+        )
+        statuses = ["INITIAL STATUS", "PLACED", "BEING_FULFILLED", "FULFILLED"]
+        responses = [{"json": {"status": status, **info}} for status in statuses]
+        requests_mock.get(f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}", responses)
+        order_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID).place_order(
+            order_parameters=order_parameters,
+            track_status=True,
+            report_time=0.1,
+        )
+        assert order_obj.order_id == constants.ORDER_ID
+        assert order_obj.status == "FULFILLED"
 
 
 class TestCatalog:
@@ -265,7 +316,11 @@ def test_search_usagetype(catalog_mock):
         }
 
 
-def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, auth_mock):
+def test_estimate_order_from_catalog(requests_mock, auth_mock):
+    catalog_order_parameters: order.OrderParams = {
+        "dataProduct": "some-data-product",
+        "params": {"aoi": {"some": "shape"}},
+    }
     catalog_instance = catalog.Catalog(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
     expected_payload = {
         "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
@@ -277,47 +332,3 @@ def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, au
     estimation = catalog_instance.estimate_order(catalog_order_parameters)
     assert isinstance(estimation, int)
     assert estimation == 100
-
-
-def test_order_from_catalog(
-    order_parameters,
-    order_mock,  # pylint: disable=unused-argument
-    catalog_mock,
-    requests_mock,
-):
-    requests_mock.post(
-        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-        json={
-            "results": [{"index": 0, "id": constants.ORDER_ID}],
-            "errors": [],
-        },
-    )
-    placed_order = catalog_mock.place_order(order_parameters=order_parameters)
-    assert isinstance(placed_order, order.Order)
-    assert placed_order.order_id == constants.ORDER_ID
-
-
-def test_order_from_catalog_track_status(catalog_order_parameters, order_mock, catalog_mock, requests_mock):
-    requests_mock.post(
-        url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-        json={
-            "results": [{"index": 0, "id": constants.ORDER_ID}],
-            "errors": [],
-        },
-    )
-    url_order_info = f"{constants.API_HOST}/v2/orders/{order_mock.order_id}"
-    requests_mock.get(
-        url_order_info,
-        [
-            {"json": {"status": "PLACED", "type": "ARCHIVE"}},
-            {"json": {"status": "BEING_FULFILLED", "type": "ARCHIVE"}},
-            {"json": {"status": "FULFILLED", "type": "ARCHIVE"}},
-        ],
-    )
-    placed_order = catalog_mock.place_order(
-        order_parameters=catalog_order_parameters,
-        track_status=True,
-        report_time=0.1,
-    )
-    assert isinstance(placed_order, order.Order)
-    assert placed_order.order_id == constants.ORDER_ID

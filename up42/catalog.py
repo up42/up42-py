@@ -45,7 +45,7 @@ class CatalogBase:
         self,
         order_parameters: order.OrderParams,
         track_status: bool = False,
-        report_time: int = 120,
+        report_time: float = 120,
     ) -> order.Order:
         """
         Place an order.
