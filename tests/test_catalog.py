@@ -1,4 +1,3 @@
-import json
 import pathlib
 
 import geopandas as gpd  # type: ignore
@@ -15,16 +14,17 @@ from .fixtures import fixtures_globals as constants
 
 PHR = "phr"
 SIMPLE_BOX = shapely.box(0, 0, 1, 1).__geo_interface__
+START_DATE = "2014-01-01"
+END_DATE = "2022-12-31"
+DATE_RANGE = "2014-01-01T00:00:00Z/2022-12-31T23:59:59Z"
 SEARCH_PARAMETERS = {
-    "datetime": "2014-01-01T00:00:00Z/2022-12-31T23:59:59Z",
+    "datetime": DATE_RANGE,
     "intersects": SIMPLE_BOX,
     "collections": [PHR],
-    "limit": 4,
-    "query": {
-        "cloudCoverage": {"lte": 20},
-        "up42:usageType": {"in": ["DATA", "ANALYTICS"]},
-    },
+    "limit": 10,
 }
+
+Geometry = catalog.Geometry
 
 
 @pytest.fixture(autouse=True)
@@ -231,39 +231,59 @@ class TestCatalog:
         )
         assert out_paths == [str(tmp_path / f"quicklook_{image_id}.jpg")]
 
-
-def test_construct_search_parameters(catalog_mock):
-    assert (
-        catalog_mock.construct_search_parameters(
-            geometry=SIMPLE_BOX,
-            collections=[PHR],
-            start_date="2014-01-01",
-            end_date="2022-12-31",
-            usage_type=["DATA", "ANALYTICS"],
-            limit=4,
-            max_cloudcover=20,
-        )
-        == SEARCH_PARAMETERS
+    @pytest.mark.parametrize(
+        "usage_type",
+        [
+            {"usage_type": ["DATA"]},
+            {"usage_type": ["ANALYTICS"]},
+            {"usage_type": ["DATA", "ANALYTICS"]},
+            {},
+        ],
+        ids=[
+            "usage_type:DATA",
+            "usage_type:ANALYTICS",
+            "usage_type:DATA, ANALYTICS",
+            "usage_type:None",
+        ],
     )
+    @pytest.mark.parametrize(
+        "max_cloudcover",
+        [
+            {"max_cloudcover": 100},
+            {},
+        ],
+        ids=[
+            "max_cloudcover:100",
+            "max_cloudcover:None",
+        ],
+    )
+    def test_should_construct_search_parameters(self, usage_type: dict, max_cloudcover: dict):
+        params = {
+            "geometry": SIMPLE_BOX,
+            "collections": [PHR],
+            "start_date": START_DATE,
+            "end_date": END_DATE,
+            **usage_type,
+            **max_cloudcover,
+        }
+        response = {**SEARCH_PARAMETERS}
+        optional_response: dict = {"query": {}}
+        if "max_cloudcover" in max_cloudcover:
+            optional_response["query"]["cloudCoverage"] = {"lte": max_cloudcover["max_cloudcover"]}
+        if "usage_type" in usage_type:
+            optional_response["query"]["up42:usageType"] = {"in": usage_type["usage_type"]}
+        response = {**response, **optional_response}
+        assert self.catalog.construct_search_parameters(**params) == response
 
-
-def test_construct_search_parameters_fc_multiple_features_raises(catalog_mock):
-    with open(
-        pathlib.Path(__file__).resolve().parent / "mock_data/search_footprints.geojson",
-        encoding="utf-8",
-    ) as file:
-        fc = json.load(file)
-
-    with pytest.raises(ValueError) as e:
-        catalog_mock.construct_search_parameters(
-            geometry=fc,
-            start_date="2020-01-01",
-            end_date="2020-08-10",
-            collections=[PHR],
-            limit=10,
-            max_cloudcover=15,
-        )
-    assert str(e.value) == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
+    def test_should_fail_construct_search_parameters_with_wrong_data_usage(self):
+        with pytest.raises(catalog.InvalidUsageType, match="usage_type is invalid"):
+            self.catalog.construct_search_parameters(
+                geometry=SIMPLE_BOX,
+                collections=[PHR],
+                start_date=START_DATE,
+                end_date=END_DATE,
+                usage_type=["WRONG_TYPE"],  # type: ignore
+            )
 
 
 def test_construct_order_parameters(catalog_mock):
@@ -275,45 +295,6 @@ def test_construct_order_parameters(catalog_mock):
     assert isinstance(order_parameters, dict)
     assert list(order_parameters.keys()) == ["dataProduct", "params"]
     assert order_parameters["params"]["acquisitionMode"] is None
-
-
-def test_search_usagetype(catalog_mock):
-    """
-    Result & Result2 are one of the combinations of
-    "DATA" and "ANALYTICS". Result2 can be None.
-
-    The result assertion needs to allow multiple combinations,
-    e.g. when searching for ["DATA", "ANALYTICS"],
-    the result can be ["DATA"], ["ANALYTICS"]
-    or ["DATA", "ANALYTICS"].
-    """
-    params1 = {"usage_type": ["DATA"], "result1": "DATA", "result2": ""}
-    params2 = {
-        "usage_type": ["ANALYTICS"],
-        "result1": "ANALYTICS",
-        "result2": "",
-    }
-    params3 = {
-        "usage_type": ["DATA", "ANALYTICS"],
-        "result1": "DATA",
-        "result2": "ANALYTICS",
-    }
-
-    for params in [params1, params2, params3]:
-        assert catalog_mock.construct_search_parameters(
-            start_date="2014-01-01T00:00:00",
-            end_date="2020-12-31T23:59:59",
-            collections=[PHR],
-            limit=1,
-            usage_type=params["usage_type"],
-            geometry=SIMPLE_BOX,
-        ) == {
-            "datetime": "2014-01-01T00:00:00Z/2020-12-31T23:59:59Z",
-            "intersects": SIMPLE_BOX,
-            "limit": 1,
-            "collections": [PHR],
-            "query": {"up42:usageType": {"in": params["usage_type"]}},
-        }
 
 
 def test_estimate_order_from_catalog(requests_mock, auth_mock):
