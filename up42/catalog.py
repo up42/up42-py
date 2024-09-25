@@ -173,15 +173,11 @@ class Catalog(CatalogBase):
 
         query_filters: Dict[Any, Any] = {}
         if max_cloudcover is not None:
-            query_filters["cloudCoverage"] = {"lte": max_cloudcover}  # type: ignore
+            query_filters["cloudCoverage"] = {"lte": max_cloudcover}
 
         if usage_type is not None:
-            if usage_type == ["DATA"]:
-                query_filters["up42:usageType"] = {"in": ["DATA"]}
-            elif usage_type == ["ANALYTICS"]:
-                query_filters["up42:usageType"] = {"in": ["ANALYTICS"]}
-            elif usage_type == ["DATA", "ANALYTICS"]:
-                query_filters["up42:usageType"] = {"in": ["DATA", "ANALYTICS"]}
+            if set(usage_type) <= {"DATA", "ANALYTICS"}:
+                query_filters["up42:usageType"] = {"in": usage_type}
             else:
                 raise InvalidUsageType("usage_type is invalid")
 

@@ -268,14 +268,14 @@ class TestCatalog:
         }
         response = {**SEARCH_PARAMETERS}
         optional_response: dict = {"query": {}}
-        if "max_cloudcover" in max_cloudcover:
+        if max_cloudcover:
             optional_response["query"]["cloudCoverage"] = {"lte": max_cloudcover["max_cloudcover"]}
-        if "usage_type" in usage_type:
+        if usage_type:
             optional_response["query"]["up42:usageType"] = {"in": usage_type["usage_type"]}
-        response = {**response, **optional_response}
+        response = {**SEARCH_PARAMETERS, **optional_response}
         assert self.catalog.construct_search_parameters(**params) == response
 
-    def test_should_fail_construct_search_parameters_with_wrong_data_usage(self):
+    def test_fails_to_construct_search_parameters_with_wrong_data_usage(self):
         with pytest.raises(catalog.InvalidUsageType, match="usage_type is invalid"):
             self.catalog.construct_search_parameters(
                 geometry=SIMPLE_BOX,
