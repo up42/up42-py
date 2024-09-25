@@ -24,8 +24,6 @@ SEARCH_PARAMETERS = {
     "limit": 10,
 }
 
-Geometry = catalog.Geometry
-
 
 @pytest.fixture(autouse=True)
 def workspace():
@@ -266,7 +264,6 @@ class TestCatalog:
             **usage_type,
             **max_cloudcover,
         }
-        response = {**SEARCH_PARAMETERS}
         optional_response: dict = {"query": {}}
         if max_cloudcover:
             optional_response["query"]["cloudCoverage"] = {"lte": max_cloudcover["max_cloudcover"]}
