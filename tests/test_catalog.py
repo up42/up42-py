@@ -43,15 +43,6 @@ def set_status_raising_session():
     catalog.CatalogBase.session = session  # type: ignore
 
 
-@pytest.fixture(name="catalog_order_parameters")
-def _catalog_order_parameters() -> order.OrderParams:
-    geometry_key = "aoi"
-    return {
-        "dataProduct": "some-data-product",
-        "params": {geometry_key: {"some": "shape"}},
-    }
-
-
 class TestCatalogBase:
     @pytest.fixture(scope="class", params=["catalog", "tasking"])
     def order_parameters(self, request) -> order.OrderParams:
@@ -325,7 +316,11 @@ def test_search_usagetype(catalog_mock):
         }
 
 
-def test_estimate_order_from_catalog(catalog_order_parameters, requests_mock, auth_mock):
+def test_estimate_order_from_catalog(requests_mock, auth_mock):
+    catalog_order_parameters: order.OrderParams = {
+        "dataProduct": "some-data-product",
+        "params": {"aoi": {"some": "shape"}},
+    }
     catalog_instance = catalog.Catalog(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
     expected_payload = {
         "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
