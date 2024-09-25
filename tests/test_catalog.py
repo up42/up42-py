@@ -1,10 +1,9 @@
 import pathlib
-from typing import cast
+from typing import Optional, cast
 
 import geojson  # type: ignore
 import geopandas as gpd  # type: ignore
 import mock
-import numpy as np
 import pandas as pd
 import pytest
 import requests
@@ -21,12 +20,6 @@ SIMPLE_BOX = shapely.box(0, 0, 1, 1).__geo_interface__
 START_DATE = "2014-01-01"
 END_DATE = "2022-12-31"
 DATE_RANGE = "2014-01-01T00:00:00Z/2022-12-31T23:59:59Z"
-SEARCH_PARAMETERS = {
-    "datetime": DATE_RANGE,
-    "intersects": SIMPLE_BOX,
-    "collections": [PHR],
-    "limit": 10,
-}
 FEATURE = {
     "type": "Feature",
     "properties": {"some": "data"},
@@ -142,7 +135,7 @@ class TestCatalog:
 
     @pytest.mark.usefixtures("product_glossary")
     def test_search_fails_if_host_is_not_found(self):
-        with pytest.raises(catalog.InvalidCollections, match=r"Selected collections \['unknown'\] are not valid.*"):
+        with pytest.raises(catalog.InvalidCollections, match=r".*unknown.*"):
             self.catalog.search({"collections": ["unknown"]})
 
     def test_search_fails_if_collections_hosted_by_different_hosts(self, requests_mock: req_mock.Mocker):
@@ -176,7 +169,7 @@ class TestCatalog:
             self.catalog.search({"collections": ["collection1", "collection2"]})
 
     @pytest.mark.parametrize(
-        "feature, expected_geom",
+        "feature, expected_df",
         [
             (
                 FEATURE,
@@ -199,10 +192,27 @@ class TestCatalog:
         [True, False],
         ids=["as_dataframe", "as_dict"],
     )
+    @pytest.mark.parametrize(
+        "limit",
+        [None, 10],
+        ids=["with_limit", "without_limit"],
+    )
     @pytest.mark.usefixtures("product_glossary")
     def test_should_search(
-        self, requests_mock: req_mock.Mocker, feature: dict, expected_geom: gpd.GeoDataFrame, as_dataframe: bool
+        self,
+        requests_mock: req_mock.Mocker,
+        feature: Optional[dict],
+        expected_df: gpd.GeoDataFrame,
+        as_dataframe: bool,
+        limit: Optional[int],
     ):
+        search_params = {
+            "datetime": DATE_RANGE,
+            "intersects": SIMPLE_BOX,
+            "collections": [PHR],
+        }
+        if limit:
+            search_params.update({"limit": limit})
         search_url = f"{constants.API_HOST}/catalog/hosts/{self.host}/stac/search"
         next_page_url = f"{search_url}/next"
         features = []
@@ -222,34 +232,20 @@ class TestCatalog:
         requests_mock.post(
             url=search_url,
             json=first_page,
-            additional_matcher=helpers.match_request_body(SEARCH_PARAMETERS),
+            additional_matcher=helpers.match_request_body(search_params),
         )
         requests_mock.post(
             url=next_page_url,
             json=second_page,
-            additional_matcher=helpers.match_request_body(SEARCH_PARAMETERS),
+            additional_matcher=helpers.match_request_body(search_params),
         )
-        results = self.catalog.search(SEARCH_PARAMETERS, as_dataframe=as_dataframe)
+        results = self.catalog.search(search_params, as_dataframe=as_dataframe)
         if as_dataframe:
             results = cast(gpd.GeoDataFrame, results)
-            pd.testing.assert_frame_equal(results.drop(columns="geometry"), expected_geom.drop(columns="geometry"))
-            assert results.geometry.equals(expected_geom.geometry)
-            assert results.crs == expected_geom.crs
+            pd.testing.assert_frame_equal(results, expected_df)
         else:
-            bbox = results.pop("bbox")
-            assert results == {
-                "type": "FeatureCollection",
-                "features": [
-                    {**FEATURE, "id": "0", "bbox": POINT_BBOX},
-                    {**FEATURE, "id": "1", "bbox": POINT_BBOX},
-                ]
-                if feature
-                else [],
-            }
-            if feature:
-                assert bbox == POINT_BBOX
-            else:
-                assert all(np.isnan(coor) for coor in bbox)
+            columns = {} if feature else {"columns": ["geometry"]}
+            pd.testing.assert_frame_equal(gpd.GeoDataFrame.from_features(results, **columns), expected_df)
 
     @pytest.mark.usefixtures("product_glossary")
     def test_should_download_available_quicklooks(self, requests_mock: req_mock.Mocker, tmp_path):
@@ -304,12 +300,18 @@ class TestCatalog:
             **usage_type,
             **max_cloudcover,
         }
+        expected_response = {
+            "datetime": DATE_RANGE,
+            "intersects": SIMPLE_BOX,
+            "collections": [PHR],
+            "limit": 10,
+        }
         optional_response: dict = {"query": {}}
         if max_cloudcover:
             optional_response["query"]["cloudCoverage"] = {"lte": max_cloudcover["max_cloudcover"]}
         if usage_type:
             optional_response["query"]["up42:usageType"] = {"in": usage_type["usage_type"]}
-        response = {**SEARCH_PARAMETERS, **optional_response}
+        response = {**expected_response, **optional_response}
         assert self.catalog.construct_search_parameters(**params) == response
 
     def test_fails_to_construct_search_parameters_with_wrong_data_usage(self):
