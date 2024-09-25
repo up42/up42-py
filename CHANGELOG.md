@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 2.1.0a6
 
-**Sep 24, 2024**
+**Sep 25, 2024**
 - Fix test coverage for `CatalogBase` class.
 
 ## ## 2.1.0a5
