@@ -61,7 +61,10 @@ class TestCatalogBase:
         assert catalog_obj.get_data_product_schema(constants.DATA_PRODUCT_ID) == data_product_schema
 
     def test_should_place_order(
-        self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
+        self,
+        auth_mock: auth.Auth,
+        requests_mock: req_mock.Mocker,
+        order_parameters: order.OrderParams,
     ):
         info = {"status": "SOME STATUS"}
         requests_mock.get(
@@ -79,11 +82,18 @@ class TestCatalogBase:
 
     @pytest.mark.parametrize(
         "info",
-        [{"type": "ARCHIVE"}, {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}}],
+        [
+            {"type": "ARCHIVE"},
+            {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}},
+        ],
         ids=["ARCHIVE", "TASKING"],
     )
     def test_should_track_order_status(
-        self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker, info: dict, order_parameters: order.OrderParams
+        self,
+        auth_mock: auth.Auth,
+        requests_mock: req_mock.Mocker,
+        info: dict,
+        order_parameters: order.OrderParams,
     ):
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
@@ -195,7 +205,7 @@ class TestCatalog:
     )
     @pytest.mark.parametrize(
         "limit",
-        [None, 10],
+        [{}, {"limit": 10}],
         ids=["with_limit", "without_limit"],
     )
     @pytest.mark.usefixtures("product_glossary")
@@ -205,15 +215,14 @@ class TestCatalog:
         feature: Optional[dict],
         expected_df: gpd.GeoDataFrame,
         as_dataframe: bool,
-        limit: Optional[int],
+        limit: dict,
     ):
         search_params = {
             "datetime": DATE_RANGE,
             "intersects": SIMPLE_BOX,
             "collections": [PHR],
         }
-        if limit:
-            search_params.update({"limit": limit})
+        search_params.update(limit)
         search_url = f"{constants.API_HOST}/catalog/hosts/{self.host}/stac/search"
         next_page_url = f"{search_url}/next"
         features = []
@@ -301,18 +310,18 @@ class TestCatalog:
             **usage_type,
             **max_cloudcover,
         }
-        output = {
+        query = {}
+        if max_cloudcover:
+            query["cloudCoverage"] = {"lte": max_cloudcover["max_cloudcover"]}
+        if usage_type:
+            query["up42:usageType"] = {"in": usage_type["usage_type"]}
+        expected_params = {
             "datetime": DATE_RANGE,
             "intersects": SIMPLE_BOX,
             "collections": [PHR],
             "limit": 10,
+            "query": query,
         }
-        optional_output: dict = {"query": {}}
-        if max_cloudcover:
-            optional_output["query"]["cloudCoverage"] = {"lte": max_cloudcover["max_cloudcover"]}
-        if usage_type:
-            optional_output["query"]["up42:usageType"] = {"in": usage_type["usage_type"]}
-        expected_params = {**output, **optional_output}
         assert self.catalog.construct_search_parameters(**params) == expected_params
 
     def test_fails_to_construct_search_parameters_with_wrong_data_usage(self):
@@ -325,6 +334,21 @@ class TestCatalog:
                 usage_type=["WRONG_TYPE"],  # type: ignore
             )
 
+    def test_should_estimate_order(self, requests_mock: req_mock.Mocker, auth_mock: auth.Auth):
+        order_parameters: order.OrderParams = {
+            "dataProduct": "some-data-product",
+            "params": {"aoi": {"some": "shape"}},
+        }
+        catalog_obj = catalog.Catalog(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
+        expected_payload = {
+            "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
+            "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
+            "errors": [],
+        }
+        url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
+        requests_mock.post(url=url_order_estimation, json=expected_payload)
+        assert catalog_obj.estimate_order(order_parameters) == 100
+
 
 def test_construct_order_parameters(catalog_mock):
     order_parameters = catalog_mock.construct_order_parameters(
@@ -335,21 +359,3 @@ def test_construct_order_parameters(catalog_mock):
     assert isinstance(order_parameters, dict)
     assert list(order_parameters.keys()) == ["dataProduct", "params"]
     assert order_parameters["params"]["acquisitionMode"] is None
-
-
-def test_estimate_order_from_catalog(requests_mock, auth_mock):
-    catalog_order_parameters: order.OrderParams = {
-        "dataProduct": "some-data-product",
-        "params": {"aoi": {"some": "shape"}},
-    }
-    catalog_instance = catalog.Catalog(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
-    expected_payload = {
-        "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
-        "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
-        "errors": [],
-    }
-    url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
-    requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = catalog_instance.estimate_order(catalog_order_parameters)
-    assert isinstance(estimation, int)
-    assert estimation == 100
