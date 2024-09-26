@@ -28,8 +28,6 @@ FEATURE = {
 }
 POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
 
-Geometry = catalog.Geometry
-
 
 @pytest.fixture(autouse=True)
 def workspace():
@@ -116,7 +114,7 @@ class TestCatalogBase:
 
 class TestCatalog:
     host = "oneatlas"
-    catalog = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID)
+    catalog_obj = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID)
 
     @pytest.fixture
     def product_glossary(self, requests_mock: req_mock.Mocker):
@@ -150,7 +148,7 @@ class TestCatalog:
     def test_search_fails_if_host_is_not_found(self):
         collection_name = "unknown"
         with pytest.raises(catalog.InvalidCollections, match=rf".*{collection_name}.*"):
-            self.catalog.search({"collections": [collection_name]})
+            self.catalog_obj.search({"collections": [collection_name]})
 
     def test_search_fails_if_collections_hosted_by_different_hosts(self, requests_mock: req_mock.Mocker):
         collections_url = f"{constants.API_HOST}/v2/collections"
@@ -180,7 +178,7 @@ class TestCatalog:
             },
         )
         with pytest.raises(catalog.MultipleHosts):
-            self.catalog.search({"collections": ["collection1", "collection2"]})
+            self.catalog_obj.search({"collections": ["collection1", "collection2"]})
 
     @pytest.mark.parametrize(
         "feature, expected_df",
@@ -252,7 +250,7 @@ class TestCatalog:
             json=second_page,
             additional_matcher=helpers.match_request_body(search_params),
         )
-        results = self.catalog.search(search_params, as_dataframe=as_dataframe)
+        results = self.catalog_obj.search(search_params, as_dataframe=as_dataframe)
         if as_dataframe:
             results = cast(gpd.GeoDataFrame, results)
             pd.testing.assert_frame_equal(results, expected_df)
@@ -271,7 +269,7 @@ class TestCatalog:
         quicklook_file = pathlib.Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
         requests_mock.get(quicklook_url, content=quicklook_file.read_bytes())
 
-        out_paths = self.catalog.download_quicklooks(
+        out_paths = self.catalog_obj.download_quicklooks(
             image_ids=[image_id, missing_image_id],
             collection=PHR,
             output_directory=tmp_path,
@@ -325,11 +323,11 @@ class TestCatalog:
             "limit": 10,
             "query": query,
         }
-        assert self.catalog.construct_search_parameters(**params) == expected_params
+        assert self.catalog_obj.construct_search_parameters(**params) == expected_params
 
     def test_fails_to_construct_search_parameters_with_wrong_data_usage(self):
         with pytest.raises(catalog.InvalidUsageType, match="usage_type is invalid"):
-            self.catalog.construct_search_parameters(
+            self.catalog_obj.construct_search_parameters(
                 geometry=SIMPLE_BOX,
                 collections=[PHR],
                 start_date=START_DATE,
@@ -378,7 +376,7 @@ class TestCatalog:
         self,
         auth_mock: mock.MagicMock,
         requests_mock: req_mock.Mocker,
-        aoi: Optional[Geometry],
+        aoi: Optional[catalog.Geometry],
         tags: Optional[List[str]],
     ):
         schema_property = "any-property"
