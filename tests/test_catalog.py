@@ -1,7 +1,10 @@
 import pathlib
+from typing import Optional, cast
 
+import geojson  # type: ignore
 import geopandas as gpd  # type: ignore
 import mock
+import pandas as pd
 import pytest
 import requests
 import requests_mock as req_mock
@@ -17,12 +20,12 @@ SIMPLE_BOX = shapely.box(0, 0, 1, 1).__geo_interface__
 START_DATE = "2014-01-01"
 END_DATE = "2022-12-31"
 DATE_RANGE = "2014-01-01T00:00:00Z/2022-12-31T23:59:59Z"
-SEARCH_PARAMETERS = {
-    "datetime": DATE_RANGE,
-    "intersects": SIMPLE_BOX,
-    "collections": [PHR],
-    "limit": 10,
+FEATURE = {
+    "type": "Feature",
+    "properties": {"some": "data"},
+    "geometry": {"type": "Point", "coordinates": (1.0, 2.0)},
 }
+POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
 
 
 @pytest.fixture(autouse=True)
@@ -58,7 +61,10 @@ class TestCatalogBase:
         assert catalog_obj.get_data_product_schema(constants.DATA_PRODUCT_ID) == data_product_schema
 
     def test_should_place_order(
-        self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
+        self,
+        auth_mock: auth.Auth,
+        requests_mock: req_mock.Mocker,
+        order_parameters: order.OrderParams,
     ):
         info = {"status": "SOME STATUS"}
         requests_mock.get(
@@ -76,11 +82,18 @@ class TestCatalogBase:
 
     @pytest.mark.parametrize(
         "info",
-        [{"type": "ARCHIVE"}, {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}}],
+        [
+            {"type": "ARCHIVE"},
+            {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}},
+        ],
         ids=["ARCHIVE", "TASKING"],
     )
     def test_should_track_order_status(
-        self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker, info: dict, order_parameters: order.OrderParams
+        self,
+        auth_mock: auth.Auth,
+        requests_mock: req_mock.Mocker,
+        info: dict,
+        order_parameters: order.OrderParams,
     ):
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
@@ -132,8 +145,9 @@ class TestCatalog:
 
     @pytest.mark.usefixtures("product_glossary")
     def test_search_fails_if_host_is_not_found(self):
-        with pytest.raises(ValueError, match=r"Selected collections \['unknown'\] are not valid.*"):
-            self.catalog.search({"collections": ["unknown"]})
+        collection_name = "unknown"
+        with pytest.raises(catalog.InvalidCollections, match=rf".*{collection_name}.*"):
+            self.catalog.search({"collections": [collection_name]})
 
     def test_search_fails_if_collections_hosted_by_different_hosts(self, requests_mock: req_mock.Mocker):
         collections_url = f"{constants.API_HOST}/v2/collections"
@@ -162,24 +176,61 @@ class TestCatalog:
                 "totalPages": 1,
             },
         )
-        with pytest.raises(ValueError):
+        with pytest.raises(catalog.MultipleHosts):
             self.catalog.search({"collections": ["collection1", "collection2"]})
 
+    @pytest.mark.parametrize(
+        "feature, expected_df",
+        [
+            (
+                FEATURE,
+                gpd.GeoDataFrame.from_features(
+                    geojson.FeatureCollection(
+                        features=[
+                            {**FEATURE, "id": "0", "bbox": POINT_BBOX},
+                            {**FEATURE, "id": "1", "bbox": POINT_BBOX},
+                        ]
+                    ),
+                    crs="EPSG:4326",
+                ),
+            ),
+            (None, gpd.GeoDataFrame(columns=["geometry"], geometry="geometry")),
+        ],
+        ids=["response_with_features", "response_without_features"],
+    )
+    @pytest.mark.parametrize(
+        "as_dataframe",
+        [True, False],
+        ids=["as_dataframe", "as_dict"],
+    )
+    @pytest.mark.parametrize(
+        "limit",
+        [{}, {"limit": 10}],
+        ids=["with_limit", "without_limit"],
+    )
     @pytest.mark.usefixtures("product_glossary")
-    def test_should_search(self, requests_mock: req_mock.Mocker):
+    def test_should_search(
+        self,
+        requests_mock: req_mock.Mocker,
+        feature: Optional[dict],
+        expected_df: gpd.GeoDataFrame,
+        as_dataframe: bool,
+        limit: dict,
+    ):
+        search_params = {
+            "datetime": DATE_RANGE,
+            "intersects": SIMPLE_BOX,
+            "collections": [PHR],
+        }
+        search_params.update(limit)
         search_url = f"{constants.API_HOST}/catalog/hosts/{self.host}/stac/search"
         next_page_url = f"{search_url}/next"
-        bbox = (1.0, 2.0, 1.0, 2.0)
-        feature = {
-            "type": "Feature",
-            "properties": {
-                "some": "data",
-            },
-            "geometry": {"type": "Point", "coordinates": (1.0, 2.0)},
-        }
+        features = []
+        if feature:
+            features.append(feature)
         first_page = {
             "type": "FeatureCollection",
-            "features": [feature],
+            "features": features,
             "links": [
                 {
                     "rel": "next",
@@ -191,25 +242,20 @@ class TestCatalog:
         requests_mock.post(
             url=search_url,
             json=first_page,
-            additional_matcher=helpers.match_request_body(SEARCH_PARAMETERS),
+            additional_matcher=helpers.match_request_body(search_params),
         )
         requests_mock.post(
             url=next_page_url,
             json=second_page,
-            additional_matcher=helpers.match_request_body(SEARCH_PARAMETERS),
+            additional_matcher=helpers.match_request_body(search_params),
         )
-
-        results = self.catalog.search(SEARCH_PARAMETERS)
-
-        assert isinstance(results, gpd.GeoDataFrame)
-        assert results.__geo_interface__ == {
-            "type": "FeatureCollection",
-            "features": [
-                {**feature, "id": "0", "bbox": bbox},
-                {**feature, "id": "1", "bbox": bbox},
-            ],
-            "bbox": bbox,
-        }
+        results = self.catalog.search(search_params, as_dataframe=as_dataframe)
+        if as_dataframe:
+            results = cast(gpd.GeoDataFrame, results)
+            pd.testing.assert_frame_equal(results, expected_df)
+        else:
+            columns = {} if feature else {"columns": ["geometry"]}
+            pd.testing.assert_frame_equal(gpd.GeoDataFrame.from_features(results, **columns), expected_df)
 
     @pytest.mark.usefixtures("product_glossary")
     def test_should_download_available_quicklooks(self, requests_mock: req_mock.Mocker, tmp_path):
@@ -264,13 +310,19 @@ class TestCatalog:
             **usage_type,
             **max_cloudcover,
         }
-        optional_response: dict = {"query": {}}
+        query = {}
         if max_cloudcover:
-            optional_response["query"]["cloudCoverage"] = {"lte": max_cloudcover["max_cloudcover"]}
+            query["cloudCoverage"] = {"lte": max_cloudcover["max_cloudcover"]}
         if usage_type:
-            optional_response["query"]["up42:usageType"] = {"in": usage_type["usage_type"]}
-        response = {**SEARCH_PARAMETERS, **optional_response}
-        assert self.catalog.construct_search_parameters(**params) == response
+            query["up42:usageType"] = {"in": usage_type["usage_type"]}
+        expected_params = {
+            "datetime": DATE_RANGE,
+            "intersects": SIMPLE_BOX,
+            "collections": [PHR],
+            "limit": 10,
+            "query": query,
+        }
+        assert self.catalog.construct_search_parameters(**params) == expected_params
 
     def test_fails_to_construct_search_parameters_with_wrong_data_usage(self):
         with pytest.raises(catalog.InvalidUsageType, match="usage_type is invalid"):
@@ -282,6 +334,21 @@ class TestCatalog:
                 usage_type=["WRONG_TYPE"],  # type: ignore
             )
 
+    def test_should_estimate_order(self, requests_mock: req_mock.Mocker, auth_mock: auth.Auth):
+        order_parameters: order.OrderParams = {
+            "dataProduct": "some-data-product",
+            "params": {"aoi": {"some": "shape"}},
+        }
+        catalog_obj = catalog.Catalog(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
+        expected_payload = {
+            "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
+            "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
+            "errors": [],
+        }
+        url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
+        requests_mock.post(url=url_order_estimation, json=expected_payload)
+        assert catalog_obj.estimate_order(order_parameters) == 100
+
 
 def test_construct_order_parameters(catalog_mock):
     order_parameters = catalog_mock.construct_order_parameters(
@@ -292,21 +359,3 @@ def test_construct_order_parameters(catalog_mock):
     assert isinstance(order_parameters, dict)
     assert list(order_parameters.keys()) == ["dataProduct", "params"]
     assert order_parameters["params"]["acquisitionMode"] is None
-
-
-def test_estimate_order_from_catalog(requests_mock, auth_mock):
-    catalog_order_parameters: order.OrderParams = {
-        "dataProduct": "some-data-product",
-        "params": {"aoi": {"some": "shape"}},
-    }
-    catalog_instance = catalog.Catalog(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
-    expected_payload = {
-        "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
-        "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
-        "errors": [],
-    }
-    url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
-    requests_mock.post(url=url_order_estimation, json=expected_payload)
-    estimation = catalog_instance.estimate_order(catalog_order_parameters)
-    assert isinstance(estimation, int)
-    assert estimation == 100
