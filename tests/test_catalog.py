@@ -135,8 +135,9 @@ class TestCatalog:
 
     @pytest.mark.usefixtures("product_glossary")
     def test_search_fails_if_host_is_not_found(self):
-        with pytest.raises(catalog.InvalidCollections, match=r".*unknown.*"):
-            self.catalog.search({"collections": ["unknown"]})
+        collection_name = "unknown"
+        with pytest.raises(catalog.InvalidCollections, match=rf".*{collection_name}.*"):
+            self.catalog.search({"collections": [collection_name]})
 
     def test_search_fails_if_collections_hosted_by_different_hosts(self, requests_mock: req_mock.Mocker):
         collections_url = f"{constants.API_HOST}/v2/collections"
