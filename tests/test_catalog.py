@@ -300,19 +300,19 @@ class TestCatalog:
             **usage_type,
             **max_cloudcover,
         }
-        expected_response = {
+        output = {
             "datetime": DATE_RANGE,
             "intersects": SIMPLE_BOX,
             "collections": [PHR],
             "limit": 10,
         }
-        optional_response: dict = {"query": {}}
+        optional_output: dict = {"query": {}}
         if max_cloudcover:
-            optional_response["query"]["cloudCoverage"] = {"lte": max_cloudcover["max_cloudcover"]}
+            optional_output["query"]["cloudCoverage"] = {"lte": max_cloudcover["max_cloudcover"]}
         if usage_type:
-            optional_response["query"]["up42:usageType"] = {"in": usage_type["usage_type"]}
-        response = {**expected_response, **optional_response}
-        assert self.catalog.construct_search_parameters(**params) == response
+            optional_output["query"]["up42:usageType"] = {"in": usage_type["usage_type"]}
+        expected_params = {**output, **optional_output}
+        assert self.catalog.construct_search_parameters(**params) == expected_params
 
     def test_fails_to_construct_search_parameters_with_wrong_data_usage(self):
         with pytest.raises(catalog.InvalidUsageType, match="usage_type is invalid"):
