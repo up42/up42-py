@@ -1,5 +1,6 @@
 import pathlib
-from typing import Optional, cast
+import uuid
+from typing import List, Optional, cast
 
 import geojson  # type: ignore
 import geopandas as gpd  # type: ignore
@@ -26,6 +27,8 @@ FEATURE = {
     "geometry": {"type": "Point", "coordinates": (1.0, 2.0)},
 }
 POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
+
+Geometry = catalog.Geometry
 
 
 @pytest.fixture(autouse=True)
@@ -349,13 +352,57 @@ class TestCatalog:
         requests_mock.post(url=url_order_estimation, json=expected_payload)
         assert catalog_obj.estimate_order(order_parameters) == 100
 
-
-def test_construct_order_parameters(catalog_mock):
-    order_parameters = catalog_mock.construct_order_parameters(
-        data_product_id=constants.DATA_PRODUCT_ID,
-        image_id="123",
-        aoi=SIMPLE_BOX,
+    @pytest.mark.parametrize(
+        "aoi",
+        [
+            SIMPLE_BOX,
+            None,
+        ],
+        ids=[
+            "aoi:SIMPLE_BOX",
+            "aoi:None",
+        ],
     )
-    assert isinstance(order_parameters, dict)
-    assert list(order_parameters.keys()) == ["dataProduct", "params"]
-    assert order_parameters["params"]["acquisitionMode"] is None
+    @pytest.mark.parametrize(
+        "tags",
+        [
+            ["tag"],
+            None,
+        ],
+        ids=[
+            "tags:Value",
+            "tags:None",
+        ],
+    )
+    def test_should_construct_order_parameters(
+        self,
+        auth_mock: mock.MagicMock,
+        requests_mock: req_mock.Mocker,
+        aoi: Optional[Geometry],
+        tags: Optional[List[str]],
+    ):
+        schema_property = "any-property"
+        image_id = str(uuid.uuid4())
+        url_schema = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
+        requests_mock.get(
+            url_schema,
+            json={
+                "required": [schema_property],
+                "properties": {schema_property: {"type": "string", "title": "string", "format": "string"}},
+            },
+        )
+        order_parameters: order.OrderParams = catalog.Catalog(
+            auth_mock, constants.WORKSPACE_ID
+        ).construct_order_parameters(
+            data_product_id=constants.DATA_PRODUCT_ID,
+            image_id=image_id,
+            aoi=aoi,
+            tags=tags,
+        )
+        assert schema_property in order_parameters["params"]
+        assert order_parameters["params"]["id"] == image_id
+        assert order_parameters["dataProduct"] == constants.DATA_PRODUCT_ID
+        if tags is not None:
+            assert order_parameters["tags"] == tags
+        if aoi is not None:
+            assert order_parameters["params"]["aoi"] == aoi

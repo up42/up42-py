@@ -274,14 +274,7 @@ class Catalog(CatalogBase):
         self,
         data_product_id: str,
         image_id: str,
-        aoi: Union[
-            dict,
-            geojson.Feature,
-            geojson.FeatureCollection,
-            list,
-            geopandas.GeoDataFrame,
-            geom.Polygon,
-        ] = None,
+        aoi: Optional[Geometry] = None,
         tags: Optional[List[str]] = None,
     ) -> order.OrderParams:
         """
