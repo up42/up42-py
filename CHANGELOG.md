@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 2.1.0a9
 
-**Sep 26, 2024**
+**Sep 27, 2024**
 - Fix test coverage for `Catalog::construct_order_parameters`.
 
 ## 2.1.0a8
