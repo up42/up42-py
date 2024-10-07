@@ -116,7 +116,7 @@ class TestCatalogBase:
 
 class TestCatalog:
     host = "oneatlas"
-    catalog = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID)
+    catalog_obj = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID)
 
     @pytest.fixture(params=["output_dir", "no_output_dir"])
     def output_directory(self, request, tmp_path) -> Optional[pathlib.Path]:
@@ -154,7 +154,7 @@ class TestCatalog:
     def test_search_fails_if_host_is_not_found(self):
         collection_name = "unknown"
         with pytest.raises(catalog.InvalidCollections, match=rf".*{collection_name}.*"):
-            self.catalog.search({"collections": [collection_name]})
+            self.catalog_obj.search({"collections": [collection_name]})
 
     def test_search_fails_if_collections_hosted_by_different_hosts(self, requests_mock: req_mock.Mocker):
         collections_url = f"{constants.API_HOST}/v2/collections"
@@ -184,7 +184,7 @@ class TestCatalog:
             },
         )
         with pytest.raises(catalog.MultipleHosts):
-            self.catalog.search({"collections": ["collection1", "collection2"]})
+            self.catalog_obj.search({"collections": ["collection1", "collection2"]})
 
     @pytest.mark.parametrize(
         "feature, expected_df",
@@ -256,7 +256,7 @@ class TestCatalog:
             json=second_page,
             additional_matcher=helpers.match_request_body(search_params),
         )
-        results = self.catalog.search(search_params, as_dataframe=as_dataframe)
+        results = self.catalog_obj.search(search_params, as_dataframe=as_dataframe)
         if as_dataframe:
             results = cast(gpd.GeoDataFrame, results)
             pd.testing.assert_frame_equal(results, expected_df)
@@ -277,7 +277,7 @@ class TestCatalog:
         quicklook_file = pathlib.Path(__file__).resolve().parent / "mock_data/a_quicklook.png"
         requests_mock.get(quicklook_url, content=quicklook_file.read_bytes())
 
-        out_paths = self.catalog.download_quicklooks(
+        out_paths = self.catalog_obj.download_quicklooks(
             image_ids=[image_id, missing_image_id],
             collection=PHR,
             output_directory=output_directory,
@@ -332,11 +332,11 @@ class TestCatalog:
             "limit": 10,
             "query": query,
         }
-        assert self.catalog.construct_search_parameters(**params) == expected_params
+        assert self.catalog_obj.construct_search_parameters(**params) == expected_params
 
     def test_fails_to_construct_search_parameters_with_wrong_data_usage(self):
         with pytest.raises(catalog.InvalidUsageType, match="usage_type is invalid"):
-            self.catalog.construct_search_parameters(
+            self.catalog_obj.construct_search_parameters(
                 geometry=SIMPLE_BOX,
                 collections=[PHR],
                 start_date=START_DATE,
@@ -385,31 +385,32 @@ class TestCatalog:
         self,
         auth_mock: mock.MagicMock,
         requests_mock: req_mock.Mocker,
-        aoi: Optional[Geometry],
+        aoi: Optional[catalog.Geometry],
         tags: Optional[List[str]],
     ):
-        schema_property = "any-property"
+        required_property = "any-property"
         image_id = str(uuid.uuid4())
         url_schema = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
         requests_mock.get(
             url_schema,
             json={
-                "required": [schema_property],
-                "properties": {schema_property: {"type": "string", "title": "string", "format": "string"}},
+                "required": [required_property],
+                "properties": {required_property: {"type": "string", "title": "string", "format": "string"}},
             },
         )
-        order_parameters: order.OrderParams = catalog.Catalog(
-            auth_mock, constants.WORKSPACE_ID
-        ).construct_order_parameters(
+        order_parameters = catalog.Catalog(auth_mock, constants.WORKSPACE_ID).construct_order_parameters(
             data_product_id=constants.DATA_PRODUCT_ID,
             image_id=image_id,
             aoi=aoi,
             tags=tags,
         )
-        assert schema_property in order_parameters["params"]
-        assert order_parameters["params"]["id"] == image_id
-        assert order_parameters["dataProduct"] == constants.DATA_PRODUCT_ID
-        if tags is not None:
-            assert order_parameters["tags"] == tags
-        if aoi is not None:
-            assert order_parameters["params"]["aoi"] == aoi
+        expected = {
+            "params": {
+                "id": image_id,
+                required_property: None,
+                **({"aoi": aoi} if aoi else {}),
+            },
+            "dataProduct": constants.DATA_PRODUCT_ID,
+            **({"tags": tags} if tags else {}),
+        }
+        assert order_parameters == expected
