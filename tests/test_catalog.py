@@ -280,7 +280,7 @@ class TestCatalog:
             collection=PHR,
             output_directory=output_directory,
         )
-        download_folder: pathlib.Path = output_directory if output_directory else pathlib.Path.cwd() / "catalog"
+        download_folder = output_directory if output_directory else pathlib.Path.cwd() / "catalog"
         assert out_paths == [str(download_folder / f"quicklook_{image_id}.jpg")]
 
     @pytest.mark.parametrize(
