@@ -16,8 +16,6 @@ from up42 import auth, catalog, glossary, order
 from . import helpers
 from .fixtures import fixtures_globals as constants
 
-Geometry = catalog.Geometry
-
 PHR = "phr"
 SIMPLE_BOX = shapely.box(0, 0, 1, 1).__geo_interface__
 START_DATE = "2014-01-01"
