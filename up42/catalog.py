@@ -274,14 +274,7 @@ class Catalog(CatalogBase):
         self,
         data_product_id: str,
         image_id: str,
-        aoi: Union[
-            dict,
-            geojson.Feature,
-            geojson.FeatureCollection,
-            list,
-            geopandas.GeoDataFrame,
-            geom.Polygon,
-        ] = None,
+        aoi: Optional[Geometry] = None,
         tags: Optional[List[str]] = None,
     ) -> order.OrderParams:
         """
@@ -317,15 +310,12 @@ class Catalog(CatalogBase):
                   (13.375966, 52.515068)),)})
             ```
         """
-        order_parameters: order.OrderParams = {
-            "dataProduct": data_product_id,
-            "params": {"id": image_id},
-        }
+        schema = self.get_data_product_schema(data_product_id)
+        params: dict[str, Any] = {param: None for param in schema["required"]}
+        params["id"] = image_id
+        order_parameters: order.OrderParams = {"dataProduct": data_product_id, "params": params}
         if tags is not None:
             order_parameters["tags"] = tags
-        schema = self.get_data_product_schema(data_product_id)
-        missing_params = {param: order_parameters["params"].get(param) for param in schema["required"]}
-        order_parameters["params"].update(missing_params)
 
         # Some catalog orders, e.g. Capella don't require AOI (full image order)
         # Handled on API level, don't manipulate in SDK,
