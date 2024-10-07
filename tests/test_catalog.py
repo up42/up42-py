@@ -379,28 +379,29 @@ class TestCatalog:
         aoi: Optional[catalog.Geometry],
         tags: Optional[List[str]],
     ):
-        schema_property = "any-property"
+        required_property = "any-property"
         image_id = str(uuid.uuid4())
         url_schema = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
         requests_mock.get(
             url_schema,
             json={
-                "required": [schema_property],
-                "properties": {schema_property: {"type": "string", "title": "string", "format": "string"}},
+                "required": [required_property],
+                "properties": {required_property: {"type": "string", "title": "string", "format": "string"}},
             },
         )
-        order_parameters: order.OrderParams = catalog.Catalog(
-            auth_mock, constants.WORKSPACE_ID
-        ).construct_order_parameters(
+        order_parameters = catalog.Catalog(auth_mock, constants.WORKSPACE_ID).construct_order_parameters(
             data_product_id=constants.DATA_PRODUCT_ID,
             image_id=image_id,
             aoi=aoi,
             tags=tags,
         )
-        assert schema_property in order_parameters["params"]
-        assert order_parameters["params"]["id"] == image_id
-        assert order_parameters["dataProduct"] == constants.DATA_PRODUCT_ID
-        if tags is not None:
-            assert order_parameters["tags"] == tags
-        if aoi is not None:
-            assert order_parameters["params"]["aoi"] == aoi
+        expected = {
+            "params": {
+                "id": image_id,
+                required_property: None,
+                **({"aoi": aoi} if aoi else {}),
+            },
+            "dataProduct": constants.DATA_PRODUCT_ID,
+            **({"tags": tags} if tags else {}),
+        }
+        assert order_parameters == expected
