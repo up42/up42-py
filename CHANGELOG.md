@@ -29,6 +29,28 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.1.0
+
+**Oct 8, 2024**
+### Added
+- Moving `estimate_order` method to `CatalogBase` class.
+- `Order.get_assets` now allows to get assets from orders in `BEING_FULFILLED` state.
+
+### Fixed
+- Fix test coverage for `Catalog`, `Order`, and `Asset` classes.
+
+### Changed
+- Switch to `workspace_id` descriptor in `CatalogBase`.
+- Switch `Asset` and `Order` classes to use `session` descriptor.
+- Remove `utils::autocomplete_order_parameters` and inline to `Catalog::construct_order_parameters` and `Tasking::construct_order_parameters`.
+- Make `CatalogBase::type` mandatory.
+- Drop `CatalogBase::auth` and introduce `Tasking::auth` for backwards compatibility.
+- Drop `Tasking::__repr__`.
+- Switch `OrderParamsV2` as output type for `_translate_construct_parameters` in order module.
+- Switch `OrderParams` as input type for `CatalogBase::place` and `Catalog::estimate` from `Optional[dict]`.
+- Changed `Order::status` type from `str` to `Literal`.
+- Changed `Order::track_status` report_time input type to float.
+
 ## 2.1.0a12
 
 **Oct 8, 2024**
