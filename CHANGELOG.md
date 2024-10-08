@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 2.1.0a11
 
 **Oct 8, 2024**
-- Moving `estimate_order` method to `Catalog_Base` class.
+- Moving `estimate_order` method to `CatalogBase` class.
 
 ## 2.1.0a10
 
