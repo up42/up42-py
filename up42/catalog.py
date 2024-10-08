@@ -62,6 +62,20 @@ class CatalogBase:
         url = host.endpoint(f"/orders/schema/{data_product_id}")
         return self.auth.request("GET", url)
 
+    def estimate_order(self, order_parameters: order.OrderParams) -> int:
+        """
+        Estimate the cost of an order.
+
+        Args:
+            order_parameters: A dictionary like
+            {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
+
+        Returns:
+            int: An estimated cost for the order in UP42 credits.
+        """
+
+        return order.Order.estimate(order_parameters)
+
     def place_order(
         self,
         order_parameters: order.OrderParams,
@@ -115,20 +129,6 @@ class Catalog(CatalogBase):
     def __init__(self, auth: up42_auth.Auth, workspace_id: str):
         super().__init__(auth, workspace_id)
         self.type: glossary.CollectionType = glossary.CollectionType.ARCHIVE
-
-    def estimate_order(self, order_parameters: order.OrderParams) -> int:
-        """
-        Estimate the cost of an order.
-
-        Args:
-            order_parameters: A dictionary like
-            {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
-
-        Returns:
-            int: An estimated cost for the order in UP42 credits.
-        """
-
-        return order.Order.estimate(order_parameters)
 
     @staticmethod
     def construct_search_parameters(
