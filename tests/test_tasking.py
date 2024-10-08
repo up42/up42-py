@@ -12,6 +12,7 @@ with open(
 ) as json_file:
     mock_search_parameters = json.load(json_file)
 
+
 @pytest.fixture(autouse=True)
 def workspace():
     with mock.patch("up42.base.workspace") as workspace_mock:
