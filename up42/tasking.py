@@ -25,9 +25,9 @@ class Tasking(catalog.CatalogBase):
     ```
     """
 
-    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
-        super().__init__(auth, workspace_id)
-        self.type = glossary.CollectionType.TASKING
+    def __init__(self, auth: up42_auth.Auth):
+        super().__init__(glossary.CollectionType.TASKING)
+        self.auth = auth
 
     def construct_order_parameters(
         self,
@@ -246,6 +246,3 @@ class Tasking(catalog.CatalogBase):
         accepted_option_payload = {"acceptedOptionId": accepted_option_id}
         response_json = self.auth.request(request_type="PATCH", url=url, data=accepted_option_payload)
         return response_json
-
-    def __repr__(self):
-        return f"Tasking(auth={self.auth})"
