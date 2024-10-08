@@ -116,6 +116,10 @@ class TestCatalog:
     host = "oneatlas"
     catalog_obj = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID)
 
+    @pytest.fixture(params=["output_dir", "no_output_dir"])
+    def output_directory(self, request, tmp_path) -> Optional[pathlib.Path]:
+        return tmp_path if request.param == "output_dir" else None
+
     @pytest.fixture
     def product_glossary(self, requests_mock: req_mock.Mocker):
         collections_url = f"{constants.API_HOST}/v2/collections"
@@ -259,7 +263,9 @@ class TestCatalog:
             pd.testing.assert_frame_equal(gpd.GeoDataFrame.from_features(results, **columns), expected_df)
 
     @pytest.mark.usefixtures("product_glossary")
-    def test_should_download_available_quicklooks(self, requests_mock: req_mock.Mocker, tmp_path):
+    def test_should_download_available_quicklooks(
+        self, requests_mock: req_mock.Mocker, output_directory: Optional[pathlib.Path]
+    ):
         missing_image_id = "missing-image-id"
         image_id = "image-id"
         missing_quicklook_url = f"{constants.API_HOST}/catalog/{self.host}/image/{missing_image_id}/quicklook"
@@ -272,9 +278,10 @@ class TestCatalog:
         out_paths = self.catalog_obj.download_quicklooks(
             image_ids=[image_id, missing_image_id],
             collection=PHR,
-            output_directory=tmp_path,
+            output_directory=output_directory,
         )
-        assert out_paths == [str(tmp_path / f"quicklook_{image_id}.jpg")]
+        download_folder = output_directory or pathlib.Path.cwd() / "catalog"
+        assert out_paths == [str(download_folder / f"quicklook_{image_id}.jpg")]
 
     @pytest.mark.parametrize(
         "usage_type",
