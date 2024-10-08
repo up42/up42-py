@@ -11,14 +11,14 @@ def initialize_catalog() -> catalog.Catalog:
     """
     Returns a Catalog object for using the catalog search.
     """
-    return catalog.Catalog(auth=base.workspace.auth, workspace_id=base.workspace.id)
+    return catalog.Catalog()
 
 
 def initialize_tasking() -> tasking.Tasking:
     """
     Returns a Tasking object for creating satellite tasking orders.
     """
-    return tasking.Tasking(auth=base.workspace.auth, workspace_id=base.workspace.id)
+    return tasking.Tasking(auth=base.workspace.auth)
 
 
 def initialize_storage() -> storage.Storage:

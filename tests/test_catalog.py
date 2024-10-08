@@ -11,7 +11,7 @@ import requests
 import requests_mock as req_mock
 import shapely  # type: ignore
 
-from up42 import auth, catalog, glossary, order
+from up42 import catalog, glossary, order
 
 from . import helpers
 from .fixtures import fixtures_globals as constants
@@ -54,17 +54,26 @@ class TestCatalogBase:
             "params": {geometry_key: {"some": "shape"}},
         }
 
-    def test_should_get_data_product_schema(self, auth_mock: auth.Auth, requests_mock: req_mock.Mocker):
+    @pytest.mark.parametrize("collection_type", list(glossary.CollectionType))
+    def test_should_get_data_product_schema(
+        self,
+        requests_mock: req_mock.Mocker,
+        collection_type: glossary.CollectionType,
+    ) -> None:
         data_product_schema = {"schema": "some-schema"}
         url = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
         requests_mock.get(url=url, json=data_product_schema)
-        catalog_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID)
+        catalog_obj = catalog.CatalogBase(collection_type)
         assert catalog_obj.get_data_product_schema(constants.DATA_PRODUCT_ID) == data_product_schema
 
+    @pytest.mark.parametrize("collection_type", list(glossary.CollectionType))
     def test_should_estimate_order(
-        self, requests_mock: req_mock.Mocker, auth_mock: auth.Auth, order_parameters: order.OrderParams
+        self,
+        requests_mock: req_mock.Mocker,
+        order_parameters: order.OrderParams,
+        collection_type: glossary.CollectionType,
     ):
-        catalog_obj = catalog.CatalogBase(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
+        catalog_obj = catalog.CatalogBase(collection_type)
         expected_payload = {
             "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
             "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
@@ -74,11 +83,12 @@ class TestCatalogBase:
         requests_mock.post(url=url_order_estimation, json=expected_payload)
         assert catalog_obj.estimate_order(order_parameters) == 100
 
+    @pytest.mark.parametrize("collection_type", list(glossary.CollectionType))
     def test_should_place_order(
         self,
-        auth_mock: auth.Auth,
         requests_mock: req_mock.Mocker,
         order_parameters: order.OrderParams,
+        collection_type: glossary.CollectionType,
     ):
         info = {"status": "SOME STATUS"}
         requests_mock.get(
@@ -89,9 +99,7 @@ class TestCatalogBase:
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
             json={"results": [{"id": constants.ORDER_ID}], "errors": []},
         )
-        order_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID).place_order(
-            order_parameters=order_parameters
-        )
+        order_obj = catalog.CatalogBase(collection_type).place_order(order_parameters=order_parameters)
         assert order_obj.order_id == constants.ORDER_ID
 
     @pytest.mark.parametrize(
@@ -102,12 +110,13 @@ class TestCatalogBase:
         ],
         ids=["ARCHIVE", "TASKING"],
     )
+    @pytest.mark.parametrize("collection_type", list(glossary.CollectionType))
     def test_should_track_order_status(
         self,
-        auth_mock: auth.Auth,
         requests_mock: req_mock.Mocker,
         info: dict,
         order_parameters: order.OrderParams,
+        collection_type: glossary.CollectionType,
     ):
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
@@ -116,7 +125,7 @@ class TestCatalogBase:
         statuses = ["INITIAL STATUS", "PLACED", "BEING_FULFILLED", "FULFILLED"]
         responses = [{"json": {"status": status, **info}} for status in statuses]
         requests_mock.get(f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}", responses)
-        order_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID).place_order(
+        order_obj = catalog.CatalogBase(collection_type).place_order(
             order_parameters=order_parameters,
             track_status=True,
             report_time=0.1,
@@ -127,7 +136,7 @@ class TestCatalogBase:
 
 class TestCatalog:
     host = "oneatlas"
-    catalog_obj = catalog.Catalog(auth=mock.MagicMock(), workspace_id=constants.WORKSPACE_ID)
+    catalog_obj = catalog.Catalog()
 
     @pytest.fixture(params=["output_dir", "no_output_dir"])
     def output_directory(self, request, tmp_path) -> Optional[pathlib.Path]:
@@ -379,7 +388,6 @@ class TestCatalog:
     )
     def test_should_construct_order_parameters(
         self,
-        auth_mock: mock.MagicMock,
         requests_mock: req_mock.Mocker,
         aoi: Optional[catalog.Geometry],
         tags: Optional[List[str]],
@@ -391,10 +399,16 @@ class TestCatalog:
             url_schema,
             json={
                 "required": [required_property],
-                "properties": {required_property: {"type": "string", "title": "string", "format": "string"}},
+                "properties": {
+                    required_property: {
+                        "type": "string",
+                        "title": "string",
+                        "format": "string",
+                    }
+                },
             },
         )
-        order_parameters = catalog.Catalog(auth_mock, constants.WORKSPACE_ID).construct_order_parameters(
+        order_parameters = catalog.Catalog().construct_order_parameters(
             data_product_id=constants.DATA_PRODUCT_ID,
             image_id=image_id,
             aoi=aoi,

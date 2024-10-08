@@ -10,7 +10,6 @@ import geopandas  # type: ignore
 import tqdm
 from shapely import geometry as geom  # type: ignore
 
-from up42 import auth as up42_auth
 from up42 import base, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
@@ -43,12 +42,10 @@ class CatalogBase:
     """
 
     session = base.Session()
+    workspace_id = base.WorkspaceId()
 
-    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
-        self.auth = auth
-        self.workspace_id = workspace_id
-        # FIXME: cannot be optional
-        self.type: Optional[glossary.CollectionType] = None
+    def __init__(self, collection_type: glossary.CollectionType):
+        self.type = collection_type
 
     def get_data_product_schema(self, data_product_id: str) -> dict:
         """
@@ -60,7 +57,7 @@ class CatalogBase:
             data_product_id: The id of a catalog/tasking data product.
         """
         url = host.endpoint(f"/orders/schema/{data_product_id}")
-        return self.auth.request("GET", url)
+        return self.session.get(url).json()
 
     def estimate_order(self, order_parameters: order.OrderParams) -> int:
         """
@@ -126,9 +123,8 @@ class Catalog(CatalogBase):
     [CatalogBase](catalogbase-reference.md) class.
     """
 
-    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
-        super().__init__(auth, workspace_id)
-        self.type: glossary.CollectionType = glossary.CollectionType.ARCHIVE
+    def __init__(self):
+        super().__init__(glossary.CollectionType.ARCHIVE)
 
     @staticmethod
     def construct_search_parameters(

@@ -1,5 +1,6 @@
 import json
 import pathlib
+from unittest import mock
 
 import pytest
 import requests
@@ -10,6 +11,13 @@ with open(
     pathlib.Path(__file__).resolve().parent / "mock_data/search_params_simple.json", encoding="utf-8"
 ) as json_file:
     mock_search_parameters = json.load(json_file)
+
+@pytest.fixture(autouse=True)
+def workspace():
+    with mock.patch("up42.base.workspace") as workspace_mock:
+        workspace_mock.auth.session = requests.session()
+        workspace_mock.id = constants.WORKSPACE_ID
+        yield
 
 
 def test_construct_order_parameters(tasking_mock):
