@@ -61,6 +61,19 @@ class TestCatalogBase:
         catalog_obj = catalog.CatalogBase(auth_mock, constants.WORKSPACE_ID)
         assert catalog_obj.get_data_product_schema(constants.DATA_PRODUCT_ID) == data_product_schema
 
+    def test_should_estimate_order(
+        self, requests_mock: req_mock.Mocker, auth_mock: auth.Auth, order_parameters: order.OrderParams
+    ):
+        catalog_obj = catalog.CatalogBase(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
+        expected_payload = {
+            "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
+            "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
+            "errors": [],
+        }
+        url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
+        requests_mock.post(url=url_order_estimation, json=expected_payload)
+        assert catalog_obj.estimate_order(order_parameters) == 100
+
     def test_should_place_order(
         self,
         auth_mock: auth.Auth,
@@ -341,21 +354,6 @@ class TestCatalog:
                 end_date=END_DATE,
                 usage_type=["WRONG_TYPE"],  # type: ignore
             )
-
-    def test_should_estimate_order(self, requests_mock: req_mock.Mocker, auth_mock: auth.Auth):
-        order_parameters: order.OrderParams = {
-            "dataProduct": "some-data-product",
-            "params": {"aoi": {"some": "shape"}},
-        }
-        catalog_obj = catalog.Catalog(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
-        expected_payload = {
-            "summary": {"totalCredits": 100, "totalSize": 0.1, "unit": "SQ_KM"},
-            "results": [{"index": 0, "credits": 100, "unit": "SQ_KM", "size": 0.1}],
-            "errors": [],
-        }
-        url_order_estimation = f"{constants.API_HOST}/v2/orders/estimate"
-        requests_mock.post(url=url_order_estimation, json=expected_payload)
-        assert catalog_obj.estimate_order(order_parameters) == 100
 
     @pytest.mark.parametrize(
         "aoi",
