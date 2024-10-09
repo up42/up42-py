@@ -29,6 +29,11 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a1
+
+**TBD**
+- Fix test coverage for `Tasking::construct_order_parameters`.
+
 ## 2.1.0a12
 
 **Oct 8, 2024**

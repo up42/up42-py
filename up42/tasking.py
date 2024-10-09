@@ -14,6 +14,16 @@ from up42 import catalog, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
 
+Geometry = Union[
+    geojson.FeatureCollection,
+    geojson.Feature,
+    dict,
+    list,
+    geopandas.GeoDataFrame,
+    shp_geometry.Polygon,
+    shp_geometry.Point,
+]
+
 
 class Tasking(catalog.CatalogBase):
     """
@@ -35,17 +45,9 @@ class Tasking(catalog.CatalogBase):
         name: str,
         acquisition_start: Union[str, datetime.datetime],
         acquisition_end: Union[str, datetime.datetime],
-        geometry: Union[
-            geojson.FeatureCollection,
-            geojson.Feature,
-            dict,
-            list,
-            geopandas.GeoDataFrame,
-            shp_geometry.Polygon,
-            shp_geometry.Point,
-        ],
+        geometry: Geometry,
         tags: Optional[List[str]] = None,
-    ):
+    ) -> order.OrderParams:
         """
         Helps constructing the parameters dictionary required for the tasking order. Each sensor has additional
         parameters that are added to the output dictionary with value None. The potential values for to select from

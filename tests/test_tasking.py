@@ -1,9 +1,14 @@
 import json
 import pathlib
+from typing import List, Optional
 from unittest import mock
 
 import pytest
 import requests
+import requests_mock as req_mock
+
+from up42 import auth as up42_auth
+from up42 import tasking
 
 from .fixtures import fixtures_globals as constants
 
@@ -11,6 +16,24 @@ with open(
     pathlib.Path(__file__).resolve().parent / "mock_data/search_params_simple.json", encoding="utf-8"
 ) as json_file:
     mock_search_parameters = json.load(json_file)
+
+
+POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
+START_DATE = "2014-01-01"
+END_DATE = "2022-12-31"
+POINT_GEOM = {"type": "Point", "coordinates": (1.0, 2.0)}
+POLY_GEOM = {
+    "type": "Polygon",
+    "coordinates": (
+        (
+            (1.0, 1.0),
+            (2.0, 1.0),
+            (2.0, 2.0),
+            (1.0, 2.0),
+            (1.0, 1.0),
+        ),
+    ),
+}
 
 
 @pytest.fixture(autouse=True)
@@ -21,17 +44,72 @@ def workspace():
         yield
 
 
-def test_construct_order_parameters(tasking_mock):
-    order_parameters = tasking_mock.construct_order_parameters(
-        data_product_id=constants.DATA_PRODUCT_ID,
-        name="my_tasking_order",
-        acquisition_start="2022-11-01",
-        acquisition_end="2022-11-10",
-        geometry=mock_search_parameters["intersects"],
+class TestTasking:
+    @pytest.fixture(autouse=True)
+    def tasking_obj(self, auth_mock: up42_auth.Auth) -> tasking.Tasking:
+        return tasking.Tasking(auth=auth_mock)
+
+    @pytest.mark.parametrize(
+        "input_geometry",
+        [
+            (POINT_GEOM),
+            (POLY_GEOM),
+        ],
+        ids=["point_aoi", "feature_aoi"],
     )
-    assert isinstance(order_parameters, dict)
-    assert list(order_parameters.keys()) == ["dataProduct", "params"]
-    assert order_parameters["params"]["acquisitionMode"] is None
+    @pytest.mark.parametrize(
+        "tags",
+        [
+            ["tag"],
+            None,
+        ],
+        ids=[
+            "tags:Value",
+            "tags:None",
+        ],
+    )
+    def test_construct_order_parameters(
+        self,
+        requests_mock: req_mock.Mocker,
+        tasking_obj: tasking.Tasking,
+        input_geometry: Optional[tasking.Geometry],
+        tags: Optional[List[str]],
+    ):
+        required_property = "any-property"
+        url_schema = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
+        requests_mock.get(
+            url_schema,
+            json={
+                "required": [required_property],
+                "properties": {
+                    required_property: {
+                        "type": "string",
+                        "title": "string",
+                        "format": "string",
+                    }
+                },
+            },
+        )
+        order_parameters = tasking_obj.construct_order_parameters(
+            data_product_id=constants.DATA_PRODUCT_ID,
+            name="some-name",
+            acquisition_start=START_DATE,
+            acquisition_end=END_DATE,
+            geometry=input_geometry,
+            tags=tags,
+        )
+        expected = {
+            "params": {
+                "displayName": "some-name",
+                "acquisitionStart": "2014-01-01T00:00:00Z",
+                "acquisitionEnd": "2022-12-31T23:59:59Z",
+                "geometry": input_geometry,
+                required_property: None,
+            },
+            "dataProduct": constants.DATA_PRODUCT_ID,
+            **({"tags": tags} if tags else {}),
+        }
+        assert order_parameters == expected
 
 
 def test_get_quotations(tasking_mock):
