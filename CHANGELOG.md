@@ -31,7 +31,7 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 ## 2.1.0
 
-**Oct 8, 2024**
+**Oct 9, 2024**
 ### Added
 - Moving `estimate_order` method to `CatalogBase` class.
 - `Order.get_assets` now allows to get assets from orders in `BEING_FULFILLED` state.
