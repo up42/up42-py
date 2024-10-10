@@ -3,7 +3,7 @@ Tasking functionality
 """
 
 import datetime
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import geojson  # type: ignore
 import geopandas  # type: ignore
@@ -82,31 +82,21 @@ class Tasking(catalog.CatalogBase):
                 )
             ```
         """
-        order_parameters: order.OrderParams = {
-            "dataProduct": data_product_id,
-            "params": {
-                "displayName": name,
-                "acquisitionStart": utils.format_time(acquisition_start),
-                "acquisitionEnd": utils.format_time(acquisition_end, set_end_of_day=True),
-            },
-        }
+        schema = self.get_data_product_schema(data_product_id)
+        params: dict[str, Any] = {param: None for param in schema["required"]}
+        params["displayName"] = name
+        params["acquisitionStart"] = utils.format_time(acquisition_start)
+        params["acquisitionEnd"] = utils.format_time(acquisition_end, set_end_of_day=True)
+        order_parameters: order.OrderParams = {"dataProduct": data_product_id, "params": params}
         if tags is not None:
             order_parameters["tags"] = tags
-
-        schema = self.get_data_product_schema(data_product_id)
-        logger.info("See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options.")
-        missing_params = {param: order_parameters["params"].get(param) for param in schema["required"]}
-        order_parameters["params"].update(missing_params)
-
         geometry = utils.any_vector_to_fc(vector=geometry)
         assert isinstance(order_parameters["params"], dict)
         if geometry["features"][0]["geometry"]["type"] == "Point":
-            # Tasking (e.g. Blacksky) can require Point geometry.
             order_parameters["params"]["geometry"] = geometry["features"][0]["geometry"]
         else:
             geometry = utils.fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
             order_parameters["params"]["geometry"] = geometry
-
         return order_parameters
 
     def _query_paginated_output(self, url: str):
