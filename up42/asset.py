@@ -44,7 +44,7 @@ class Asset:
         if asset_id is None and asset_info is None:
             raise ValueError("Either asset_id or asset_info should be provided in the constructor.")
 
-        self.info = self._get_info(asset_id) if asset_id is not None else asset_info
+        self.info: dict = self._get_info(asset_id) if asset_id is not None else asset_info
 
     def __repr__(self):
         return self.info.__repr__()
