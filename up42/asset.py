@@ -50,7 +50,7 @@ class Asset:
         return self.info.__repr__()
 
     @property
-    def asset_id(self) -> dict:
+    def asset_id(self) -> str:
         return self.info.get("id")
 
     def _get_info(self, asset_id: str):
