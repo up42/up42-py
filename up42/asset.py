@@ -44,14 +44,14 @@ class Asset:
         if asset_id is None and asset_info is None:
             raise ValueError("Either asset_id or asset_info should be provided in the constructor.")
 
-        self.info: dict = self._get_info(asset_id) if asset_id is not None else asset_info
+        self.info = self._get_info(asset_id) if asset_id is not None else asset_info
 
     def __repr__(self):
         return self.info.__repr__()
 
     @property
-    def asset_id(self) -> dict:
-        return self.info["id"]
+    def asset_id(self):
+        return self.info.get("id")
 
     def _get_info(self, asset_id: str):
         url = host.endpoint(f"/v2/assets/{asset_id}/metadata")
