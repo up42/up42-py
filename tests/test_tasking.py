@@ -19,8 +19,8 @@ with open(
 
 
 POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
-ACQ_START = "2014-01-01T00:00:00Z"
-ACQ_END = "2022-12-31T23:59:59Z"
+ACQ_START = "2014-01-01T00:00:00"
+ACQ_END = "2022-12-31T23:59:59"
 ORDER_NAME = "order-name"
 POINT_GEOM = {"type": "Point", "coordinates": (1.0, 2.0)}
 POLY_GEOM = {
@@ -102,8 +102,8 @@ class TestTasking:
         expected = {
             "params": {
                 "displayName": ORDER_NAME,
-                "acquisitionStart": ACQ_START,
-                "acquisitionEnd": ACQ_END,
+                "acquisitionStart": ACQ_START + "Z",
+                "acquisitionEnd": ACQ_END + "Z",
                 "geometry": input_geometry,
                 required_property: None,
             },
