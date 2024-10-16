@@ -19,8 +19,9 @@ with open(
 
 
 POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
-START_DATE = "2014-01-01"
-END_DATE = "2022-12-31"
+ACQ_START = "2014-01-01T00:00:00Z"
+ACQ_END = "2022-12-31T23:59:59Z"
+ORDER_NAME = "order-name"
 POINT_GEOM = {"type": "Point", "coordinates": (1.0, 2.0)}
 POLY_GEOM = {
     "type": "Polygon",
@@ -45,7 +46,7 @@ def workspace():
 
 
 class TestTasking:
-    @pytest.fixture(autouse=True)
+    @pytest.fixture()
     def tasking_obj(self, auth_mock: up42_auth.Auth) -> tasking.Tasking:
         return tasking.Tasking(auth=auth_mock)
 
@@ -68,11 +69,11 @@ class TestTasking:
             "tags:None",
         ],
     )
-    def test_construct_order_parameters(
+    def test_should_construct_order_parameters(
         self,
         requests_mock: req_mock.Mocker,
         tasking_obj: tasking.Tasking,
-        input_geometry: Optional[tasking.Geometry],
+        input_geometry: tasking.Geometry,
         tags: Optional[List[str]],
     ):
         required_property = "any-property"
@@ -92,17 +93,17 @@ class TestTasking:
         )
         order_parameters = tasking_obj.construct_order_parameters(
             data_product_id=constants.DATA_PRODUCT_ID,
-            name="some-name",
-            acquisition_start=START_DATE,
-            acquisition_end=END_DATE,
+            name=ORDER_NAME,
+            acquisition_start=ACQ_START,
+            acquisition_end=ACQ_END,
             geometry=input_geometry,
             tags=tags,
         )
         expected = {
             "params": {
-                "displayName": "some-name",
-                "acquisitionStart": "2014-01-01T00:00:00Z",
-                "acquisitionEnd": "2022-12-31T23:59:59Z",
+                "displayName": ORDER_NAME,
+                "acquisitionStart": ACQ_START,
+                "acquisitionEnd": ACQ_END,
                 "geometry": input_geometry,
                 required_property: None,
             },
