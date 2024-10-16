@@ -84,15 +84,17 @@ class Tasking(catalog.CatalogBase):
         """
         schema = self.get_data_product_schema(data_product_id)
         params: dict[str, Any] = {param: None for param in schema["required"]}
-        params["displayName"] = name
-        params["acquisitionStart"] = utils.format_time(acquisition_start)
-        params["acquisitionEnd"] = utils.format_time(acquisition_end, set_end_of_day=True)
+        params |= {
+            "displayName": name,
+            "acquisitionStart": utils.format_time(acquisition_start),
+            "acquisitionEnd": utils.format_time(acquisition_end, set_end_of_day=True),
+        }
         order_parameters: order.OrderParams = {"dataProduct": data_product_id, "params": params}
         if tags is not None:
             order_parameters["tags"] = tags
         geometry = utils.any_vector_to_fc(vector=geometry)
-        assert isinstance(order_parameters["params"], dict)
         if geometry["features"][0]["geometry"]["type"] == "Point":
+            # Tasking (e.g. Blacksky) can require Point geometry.
             order_parameters["params"]["geometry"] = geometry["features"][0]["geometry"]
         else:
             geometry = utils.fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
