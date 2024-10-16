@@ -51,7 +51,7 @@ class Asset:
 
     @property
     def asset_id(self) -> dict:
-        return self.info.get("id")
+        return self.info["id"]
 
     def _get_info(self, asset_id: str):
         url = host.endpoint(f"/v2/assets/{asset_id}/metadata")
