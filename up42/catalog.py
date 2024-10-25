@@ -133,7 +133,7 @@ class Catalog(CatalogBase):
         start_date: str = "2020-01-01",
         end_date: str = "2020-01-30",
         usage_type: Optional[List[Literal["DATA", "ANALYTICS"]]] = None,
-        limit: int = 10,
+        limit: int = 10,  # used for performance tuning and testing only
         max_cloudcover: Optional[int] = None,
     ) -> dict:
         """
@@ -158,7 +158,8 @@ class Catalog(CatalogBase):
                 ["DATA", "ANALYTICS"] (can be any combination).
                 The filter is inclusive, using ["DATA"] can
                 also result in results with ["DATA", "ANALYTICS"].
-            limit: The maximum number of search results to return (1-max.500).
+            limit: Page size in the requests calls
+            (used for performance tuning and testing only).
             max_cloudcover: Optional. Maximum cloud coverage percent.
                 e.g. 100 will return all scenes,
                 8.4 will return all scenes with 8.4 or less cloud coverage.
