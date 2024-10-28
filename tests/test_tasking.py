@@ -9,7 +9,6 @@ import requests_mock as req_mock
 
 from up42 import auth as up42_auth
 from up42 import tasking
-
 from .fixtures import fixtures_globals as constants
 
 with open(
@@ -22,7 +21,6 @@ ACQ_START = "2014-01-01T00:00:00"
 ACQ_END = "2022-12-31T23:59:59"
 ORDER_NAME = "order-name"
 POINT = {"type": "Point", "coordinates": (1.0, 2.0)}
-# POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
 POLYGON = {
     "type": "Polygon",
     "coordinates": (
