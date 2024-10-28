@@ -39,12 +39,16 @@ class Asset:
         asset_id: Optional[str] = None,
         asset_info: Optional[dict] = None,
     ):
-        if asset_id is not None and asset_info is not None:
-            raise ValueError("asset_id and asset_info cannot be provided simultaneously.")
-        if asset_id is None and asset_info is None:
-            raise ValueError("Either asset_id or asset_info should be provided in the constructor.")
-
-        self.info = self._get_info(asset_id) if asset_id is not None else asset_info or {}
+        if asset_id is not None:
+            if asset_info is not None:
+                raise ValueError("asset_id and asset_info cannot be provided simultaneously.")
+            else:
+                self.info = self._get_info(asset_id)
+        if asset_info is not None:
+            self.info = asset_info
+        else:
+            if asset_id is None:
+                raise ValueError("Either asset_id or asset_info should be provided in the constructor.")
 
     def __repr__(self):
         return self.info.__repr__()
