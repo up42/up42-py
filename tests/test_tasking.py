@@ -18,12 +18,12 @@ with open(
     mock_search_parameters = json.load(json_file)
 
 
-POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
 ACQ_START = "2014-01-01T00:00:00"
 ACQ_END = "2022-12-31T23:59:59"
 ORDER_NAME = "order-name"
-POINT_GEOM = {"type": "Point", "coordinates": (1.0, 2.0)}
-POLY_GEOM = {
+POINT = {"type": "Point", "coordinates": (1.0, 2.0)}
+# POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
+POLYGON = {
     "type": "Polygon",
     "coordinates": (
         (
@@ -51,12 +51,12 @@ class TestTasking:
         return tasking.Tasking(auth=auth_mock)
 
     @pytest.mark.parametrize(
-        "input_geometry",
+        "geometry",
         [
-            (POINT_GEOM),
-            (POLY_GEOM),
+            POINT,
+            POLYGON,
         ],
-        ids=["point_aoi", "feature_aoi"],
+        ids=["point_aoi", "polygon_aoi"],
     )
     @pytest.mark.parametrize(
         "tags",
@@ -73,7 +73,7 @@ class TestTasking:
         self,
         requests_mock: req_mock.Mocker,
         tasking_obj: tasking.Tasking,
-        input_geometry: tasking.Geometry,
+        geometry: tasking.Geometry,
         tags: Optional[List[str]],
     ):
         required_property = "any-property"
@@ -96,7 +96,7 @@ class TestTasking:
             name=ORDER_NAME,
             acquisition_start=ACQ_START,
             acquisition_end=ACQ_END,
-            geometry=input_geometry,
+            geometry=geometry,
             tags=tags,
         )
         expected = {
@@ -104,12 +104,11 @@ class TestTasking:
                 "displayName": ORDER_NAME,
                 "acquisitionStart": ACQ_START + "Z",
                 "acquisitionEnd": ACQ_END + "Z",
-                "geometry": input_geometry,
+                "geometry": geometry,
                 required_property: None,
             },
             "dataProduct": constants.DATA_PRODUCT_ID,
-            **({"tags": tags} if tags else {}),
-        }
+        } | ({"tags": tags} if tags else {})
         assert order_parameters == expected
 
 
