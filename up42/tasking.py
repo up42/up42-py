@@ -3,16 +3,16 @@ Tasking functionality
 """
 
 import datetime
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
-import geojson  # type: ignore
-import geopandas  # type: ignore
-from shapely import geometry as shp_geometry  # type: ignore
+from shapely import geometry as geom  # type: ignore
 
 from up42 import auth as up42_auth
 from up42 import catalog, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
+
+Geometry = Union[catalog.Geometry, geom.Point]
 
 
 class Tasking(catalog.CatalogBase):
@@ -35,17 +35,9 @@ class Tasking(catalog.CatalogBase):
         name: str,
         acquisition_start: Union[str, datetime.datetime],
         acquisition_end: Union[str, datetime.datetime],
-        geometry: Union[
-            geojson.FeatureCollection,
-            geojson.Feature,
-            dict,
-            list,
-            geopandas.GeoDataFrame,
-            shp_geometry.Polygon,
-            shp_geometry.Point,
-        ],
+        geometry: Geometry,
         tags: Optional[List[str]] = None,
-    ):
+    ) -> order.OrderParams:
         """
         Helps constructing the parameters dictionary required for the tasking order. Each sensor has additional
         parameters that are added to the output dictionary with value None. The potential values for to select from
@@ -80,31 +72,26 @@ class Tasking(catalog.CatalogBase):
                 )
             ```
         """
+        schema = self.get_data_product_schema(data_product_id)
+        params: Dict[str, Any] = {param: None for param in schema["required"]}
+        params |= {
+            "displayName": name,
+            "acquisitionStart": utils.format_time(acquisition_start),
+            "acquisitionEnd": utils.format_time(acquisition_end, set_end_of_day=True),
+        }
         order_parameters: order.OrderParams = {
             "dataProduct": data_product_id,
-            "params": {
-                "displayName": name,
-                "acquisitionStart": utils.format_time(acquisition_start),
-                "acquisitionEnd": utils.format_time(acquisition_end, set_end_of_day=True),
-            },
+            "params": params,
         }
         if tags is not None:
             order_parameters["tags"] = tags
-
-        schema = self.get_data_product_schema(data_product_id)
-        logger.info("See `tasking.get_data_product_schema(data_product_id)` for more detail on the parameter options.")
-        missing_params = {param: order_parameters["params"].get(param) for param in schema["required"]}
-        order_parameters["params"].update(missing_params)
-
         geometry = utils.any_vector_to_fc(vector=geometry)
-        assert isinstance(order_parameters["params"], dict)
         if geometry["features"][0]["geometry"]["type"] == "Point":
             # Tasking (e.g. Blacksky) can require Point geometry.
             order_parameters["params"]["geometry"] = geometry["features"][0]["geometry"]
         else:
             geometry = utils.fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
             order_parameters["params"]["geometry"] = geometry
-
         return order_parameters
 
     def _query_paginated_output(self, url: str):
