@@ -34,6 +34,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Oct, 28**
 - Fix test coverage for `Tasking::construct_order_parameters`.
 
+## 2.1.1a1
+
+**Oct 28, 2024**
+- Fix types of `Asset::asset_id` and `Asset::_get_info`.
+
 ## 2.1.0
 
 **Oct 9, 2024**
