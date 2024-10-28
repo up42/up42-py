@@ -158,7 +158,7 @@ class Catalog(CatalogBase):
                 ["DATA", "ANALYTICS"] (can be any combination).
                 The filter is inclusive, using ["DATA"] can
                 also result in results with ["DATA", "ANALYTICS"].
-            limit: Page size in the requests calls
+            limit: Page size in the API calls
             (used for performance tuning and testing only).
             max_cloudcover: Optional. Maximum cloud coverage percent.
                 e.g. 100 will return all scenes,
