@@ -9,6 +9,7 @@ import requests_mock as req_mock
 
 from up42 import auth as up42_auth
 from up42 import tasking
+
 from .fixtures import fixtures_globals as constants
 
 with open(
