@@ -46,7 +46,7 @@ def workspace():
 
 
 class TestTasking:
-    @pytest.fixture()
+    @pytest.fixture
     def tasking_obj(self, auth_mock: up42_auth.Auth) -> tasking.Tasking:
         return tasking.Tasking(auth=auth_mock)
 

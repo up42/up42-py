@@ -3,26 +3,16 @@ Tasking functionality
 """
 
 import datetime
-from typing import Any, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
-import geojson  # type: ignore
-import geopandas  # type: ignore
-from shapely import geometry as shp_geometry  # type: ignore
+from shapely import geometry as geom  # type: ignore
 
 from up42 import auth as up42_auth
 from up42 import catalog, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
 
-Geometry = Union[
-    geojson.FeatureCollection,
-    geojson.Feature,
-    dict,
-    list,
-    geopandas.GeoDataFrame,
-    shp_geometry.Polygon,
-    shp_geometry.Point,
-]
+Geometry = Union[catalog.Geometry, geom.Point]
 
 
 class Tasking(catalog.CatalogBase):
@@ -83,13 +73,16 @@ class Tasking(catalog.CatalogBase):
             ```
         """
         schema = self.get_data_product_schema(data_product_id)
-        params: dict[str, Any] = {param: None for param in schema["required"]}
+        params: Dict[str, Any] = {param: None for param in schema["required"]}
         params |= {
             "displayName": name,
             "acquisitionStart": utils.format_time(acquisition_start),
             "acquisitionEnd": utils.format_time(acquisition_end, set_end_of_day=True),
         }
-        order_parameters: order.OrderParams = {"dataProduct": data_product_id, "params": params}
+        order_parameters: order.OrderParams = {
+            "dataProduct": data_product_id,
+            "params": params,
+        }
         if tags is not None:
             order_parameters["tags"] = tags
         geometry = utils.any_vector_to_fc(vector=geometry)
