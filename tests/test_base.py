@@ -38,7 +38,7 @@ class TestWorkspace:
     def test_should_get_credits_balance(self, requests_mock: req_mock.Mocker, timestamp: Optional[str]):
         balance_url = f"{constants.API_HOST}/v2/payments/balances"
         if timestamp:
-            balance_url += "?" + f"balanceAt={timestamp}T00%3A00%3A00Z"
+            balance_url += f"?balanceAt={timestamp}T00%3A00%3A00Z"
         balance = 10693
         requests_mock.get(
             url=balance_url,
