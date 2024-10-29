@@ -64,7 +64,9 @@ class _Workspace:
         Display the overall credits available in your account.
 
         Args:
-            timestamp: The timestamp of the balance calculation. The default value is the current timestamp.
+            timestamp:  The timestamp of the balance calculation.
+                        The default value is the current timestamp.
+                        Datetime or isoformat string e.g. "2022-11-01"
 
         Returns:
             A dict with the balance of credits available in your account.
