@@ -59,24 +59,15 @@ class _Workspace:
         url = host.endpoint("/users/me")
         self._id = self.auth.session.get(url).json()["data"]["id"]
 
-    def get_credits_balance(self, timestamp: Optional[str] = None) -> dict:
+    def get_credits_balance(self) -> dict:
         """
         Display the overall credits available in your account.
-
-        Args:
-            timestamp:  The timestamp of the balance calculation.
-                        The default value is the current timestamp.
-                        Datetime or isoformat string e.g. "2022-11-01"
 
         Returns:
             A dict with the balance of credits available in your account.
         """
         url = host.endpoint("/v2/payments/balances")
-        if timestamp:
-            query_params: dict[str, Any] = {"balanceAt": utils.format_time(timestamp)}
-            balance = self.auth.session.get(url=url, params=query_params).json()["available"]["amount"]
-        else:
-            balance = self.auth.session.get(url).json()["available"]["amount"]
+        balance = self.auth.session.get(url).json()["available"]["amount"]
         return {"balance": balance}
 
 

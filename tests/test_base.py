@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Optional, Union
+from typing import Union
 from unittest import mock
 
 import pystac_client
@@ -27,28 +27,14 @@ class TestWorkspace:
         base.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
         assert base.workspace.id == constants.WORKSPACE_ID
 
-    @pytest.mark.parametrize(
-        "timestamp",
-        [
-            None,
-            "2022-12-31",
-        ],
-        ids=["without timestamp", "with timestamp"],
-    )
-    def test_should_get_credits_balance(self, requests_mock: req_mock.Mocker, timestamp: Optional[str]):
+    def test_should_get_credits_balance(self, requests_mock: req_mock.Mocker):
         balance_url = f"{constants.API_HOST}/v2/payments/balances"
-        if timestamp:
-            balance_url += f"?balanceAt={timestamp}T00%3A00%3A00Z"
         balance = 10693
         requests_mock.get(
             url=balance_url,
             json={"available": {"amount": balance, "unit": "CREDIT"}},
         )
-        assert base.workspace.get_credits_balance(timestamp=timestamp) == {"balance": balance}
-
-    def test_should_fail_balance_if_timestamp_error(self):
-        with pytest.raises(ValueError, match="Invalid isoformat string"):
-            base.workspace.get_credits_balance(timestamp="some-error-data")
+        assert base.workspace.get_credits_balance() == {"balance": balance}
 
 
 @dataclasses.dataclass(eq=True)

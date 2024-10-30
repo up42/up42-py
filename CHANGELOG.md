@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 2.1.1a4
 
 **Oct 29, 2024**
-- Updating endpoint for `base::get_credits_balance` and adding `timestamp` as an optional parameter.
+- Updating endpoint for `base::get_credits_balance`.
 
 ## 2.1.1a3
 
