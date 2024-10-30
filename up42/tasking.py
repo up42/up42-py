@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Union
 from shapely import geometry as geom  # type: ignore
 
 from up42 import auth as up42_auth
-from up42 import catalog, glossary, host, order, utils
+from up42 import base, catalog, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -24,6 +24,9 @@ class Tasking(catalog.CatalogBase):
     tasking = up42.initialize_tasking()
     ```
     """
+
+    session = base.Session()
+    workspace_id = base.WorkspaceId()
 
     def __init__(self, auth: up42_auth.Auth):
         super().__init__(glossary.CollectionType.TASKING)
@@ -130,26 +133,32 @@ class Tasking(catalog.CatalogBase):
         Returns:
             JSON: The json representation with the quotations resulted from the search.
         """
-        sort = f"""{sortby},{"desc" if descending else "asc"}"""
-        url = host.endpoint(f"/v2/tasking/quotation?page=0&sort={sort}")
-        if quotation_id is not None:
-            url += f"&id={quotation_id}"
-        if workspace_id is not None:
-            url += f"&workspaceId={workspace_id}"
-        if order_id is not None:
-            url += f"&orderId={order_id}"
-        if decision is not None:
-            decisions_validation = (
-                single_decision in ["NOT_DECIDED", "ACCEPTED", "REJECTED"] for single_decision in decision
-            )
-            if all(decisions_validation):
-                for single_decision in decision:
-                    url += f"&decision={single_decision}"
-            else:
-                logger.warning(
-                    "decision values are NOT_DECIDED, ACCEPTED, REJECTED, otherwise decision filter values ignored."
-                )
-        return self._query_paginated_output(url)
+        sort_order = ",desc" if descending else ",asc"
+        query_params = {
+            key: str(value)
+            for key, value in {
+                "workspaceId": workspace_id,
+                "id": quotation_id,
+                "orderId": order_id,
+                "decision": {decision} if decision else None,
+                "sort": sortby,
+            }.items()
+            if value
+        }
+        if "sort" in query_params:
+            query_params["sort"] += sort_order
+
+        quotations = []
+        current_page = 0
+        while True:
+            query_params["page"] = str(current_page)
+            page = self.session.get(host.endpoint("/v2/tasking/quotation"), params=query_params).json()
+            total_pages = page["totalPages"]
+            quotations.extend(page["content"])
+            current_page += 1
+            if current_page == total_pages:
+                break
+        return quotations
 
     def decide_quotation(self, quotation_id: str, decision: str) -> dict:
         """Accept or reject a quotation for a tasking order.

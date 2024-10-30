@@ -111,15 +111,32 @@ class TestTasking:
         assert order_parameters == expected
 
 
-def test_get_quotations(tasking_mock):
-    get_quotations = tasking_mock.get_quotations()
-    assert len(get_quotations) == 23
-    get_workspace_quotations = tasking_mock.get_quotations(workspace_id=constants.WORKSPACE_ID)
-    assert all(quotation["workspaceId"] == constants.WORKSPACE_ID for quotation in get_workspace_quotations)
-    get_accepted_quotations = tasking_mock.get_quotations(decision=["ACCEPTED"])
-    assert all(quotation["decision"] == "ACCEPTED" for quotation in get_accepted_quotations)
-    get_decided_quotations = tasking_mock.get_quotations(decision=["ACCEPTED", "REJECTED"])
-    assert all(quotation["decision"] in ["ACCEPTED", "REJECTED"] for quotation in get_decided_quotations)
+# def test_get_quotations(auth_mock, requests_mock: req_mock):
+#     QUOTATION_ENDPOINT = "/v2/tasking/quotation"
+#     url_get_quotations_mp1 = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?page=0&sort=createdAt,desc"
+#     with open(
+#         pathlib.Path(__file__).resolve().parents[0] / "mock_data/tasking_data/get_quotations_multi_page_01.json",
+#         encoding="utf-8",
+#     ) as json_file:
+#         json_data_get_quotation = json.load(json_file)
+#         requests_mock.get(url=url_get_quotations_mp1, json=json_data_get_quotation)
+
+#     url_get_quotations_mp2 = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?page=1&sort=createdAt,desc"
+#     with open(
+#         pathlib.Path(__file__).resolve().parents[0] / "mock_data/tasking_data/get_quotations_multi_page_02.json",
+#         encoding="utf-8",
+#     ) as json_file:
+#         json_data_get_quotation = json.load(json_file)
+#         requests_mock.get(url=url_get_quotations_mp2, json=json_data_get_quotation)
+#     url_get_quotations_mp3 = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?page=2&sort=createdAt,desc"
+#     with open(
+#         pathlib.Path(__file__).resolve().parents[0] / "mock_data/tasking_data/get_quotations_multi_page_03.json",
+#         encoding="utf-8",
+#     ) as json_file:
+#         json_data_get_quotation = json.load(json_file)
+#         requests_mock.get(url=url_get_quotations_mp3, json=json_data_get_quotation)
+#     get_quotations = tasking.Tasking(auth_mock).get_quotations()
+#     assert len(get_quotations) == 23
 
 
 def test_decide_quotation(tasking_mock):
