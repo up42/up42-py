@@ -140,14 +140,11 @@ class Tasking(catalog.CatalogBase):
                 "workspaceId": workspace_id,
                 "id": quotation_id,
                 "orderId": order_id,
-                "decision": {decision} if decision else None,
-                "sort": sortby,
+                "decision": set(decision) if decision else None,
+                "sort": sortby + sort_order,
             }.items()
             if value
         }
-        if "sort" in query_params:
-            query_params["sort"] += sort_order
-
         quotations = []
         current_page = 0
         while True:

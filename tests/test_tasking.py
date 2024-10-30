@@ -1,6 +1,8 @@
 import json
 import pathlib
-from typing import List, Optional
+import urllib.parse
+import uuid
+from typing import Any, List, Optional
 from unittest import mock
 
 import pytest
@@ -34,6 +36,8 @@ POLYGON = {
         ),
     ),
 }
+QUOTATION_ID = str("some-quotation-id")
+ORDER_ID = str("some-order-id")
 
 
 @pytest.fixture(autouse=True)
@@ -110,33 +114,56 @@ class TestTasking:
         } | ({"tags": tags} if tags else {})
         assert order_parameters == expected
 
+    @pytest.mark.parametrize("quotation_id", [None, QUOTATION_ID])
+    @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
+    @pytest.mark.parametrize("order_id", [None, ORDER_ID])
+    @pytest.mark.parametrize("decision", [None, ["NOT_DECIDED", "ACCEPTED", "REJECTED"]])
+    @pytest.mark.parametrize("sort_by", ["updatedAt"])
+    @pytest.mark.parametrize("descending", [False, True])
+    def test_should_get_quotations(
+        self,
+        requests_mock: req_mock.Mocker,
+        tasking_obj: tasking.Tasking,
+        quotation_id: Optional[str],
+        workspace_id: Optional[str],
+        order_id: Optional[str],
+        decision: Optional[List[str]],
+        sort_by: str,
+        descending: bool,
+    ):
+        total_pages = 4
+        query_params: dict[str, Any] = {}
+        sort_order = ",desc" if descending else ",asc"
+        if quotation_id:
+            query_params["id"] = quotation_id
+        if workspace_id:
+            query_params["workspaceId"] = workspace_id
+        if order_id:
+            query_params["orderId"] = order_id
+        if decision:
+            query_params["decision"] = set(decision)
+        if sort_by:
+            query_params["sort"] = sort_by + sort_order
 
-# def test_get_quotations(auth_mock, requests_mock: req_mock):
-#     QUOTATION_ENDPOINT = "/v2/tasking/quotation"
-#     url_get_quotations_mp1 = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?page=0&sort=createdAt,desc"
-#     with open(
-#         pathlib.Path(__file__).resolve().parents[0] / "mock_data/tasking_data/get_quotations_multi_page_01.json",
-#         encoding="utf-8",
-#     ) as json_file:
-#         json_data_get_quotation = json.load(json_file)
-#         requests_mock.get(url=url_get_quotations_mp1, json=json_data_get_quotation)
-
-#     url_get_quotations_mp2 = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?page=1&sort=createdAt,desc"
-#     with open(
-#         pathlib.Path(__file__).resolve().parents[0] / "mock_data/tasking_data/get_quotations_multi_page_02.json",
-#         encoding="utf-8",
-#     ) as json_file:
-#         json_data_get_quotation = json.load(json_file)
-#         requests_mock.get(url=url_get_quotations_mp2, json=json_data_get_quotation)
-#     url_get_quotations_mp3 = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?page=2&sort=createdAt,desc"
-#     with open(
-#         pathlib.Path(__file__).resolve().parents[0] / "mock_data/tasking_data/get_quotations_multi_page_03.json",
-#         encoding="utf-8",
-#     ) as json_file:
-#         json_data_get_quotation = json.load(json_file)
-#         requests_mock.get(url=url_get_quotations_mp3, json=json_data_get_quotation)
-#     get_quotations = tasking.Tasking(auth_mock).get_quotations()
-#     assert len(get_quotations) == 23
+        for page in range(total_pages):
+            url = f"{constants.API_HOST}/v2/tasking/quotation"
+            query_params["page"] = page
+            query = urllib.parse.urlencode(query_params)
+            url += query and f"?{query}"
+            response = {
+                "content": [{"id": str(uuid.uuid4())} for _ in range(10)],
+                "totalPages": total_pages,
+            }
+            requests_mock.get(url=url, json=response)
+        get_quotations = tasking_obj.get_quotations(
+            quotation_id=quotation_id,
+            workspace_id=workspace_id,
+            order_id=order_id,
+            decision=decision,
+            sortby=sort_by,
+            descending=descending,
+        )
+        assert len(get_quotations) == 10 * total_pages
 
 
 def test_decide_quotation(tasking_mock):
