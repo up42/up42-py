@@ -19,69 +19,6 @@ def tasking_mock(auth_mock, requests_mock):
     ) as json_file:
         json_data_product_schema = json.load(json_file)
         requests_mock.get(url=url_data_product_schema, json=json_data_product_schema)
-
-    url_get_quotations_mp1 = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?page=0&sort=createdAt,desc"
-    with open(
-        pathlib.Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_quotations_multi_page_01.json",
-        encoding="utf-8",
-    ) as json_file:
-        json_data_get_quotation = json.load(json_file)
-        requests_mock.get(url=url_get_quotations_mp1, json=json_data_get_quotation)
-
-    url_get_quotations_mp2 = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?page=1&sort=createdAt,desc"
-    with open(
-        pathlib.Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_quotations_multi_page_02.json",
-        encoding="utf-8",
-    ) as json_file:
-        json_data_get_quotation = json.load(json_file)
-        requests_mock.get(url=url_get_quotations_mp2, json=json_data_get_quotation)
-
-    url_get_quotations_mp3 = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?page=2&sort=createdAt,desc"
-    with open(
-        pathlib.Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_quotations_multi_page_03.json",
-        encoding="utf-8",
-    ) as json_file:
-        json_data_get_quotation = json.load(json_file)
-        requests_mock.get(url=url_get_quotations_mp3, json=json_data_get_quotation)
-
-    sorting = "page=0&sort=createdAt,desc"
-    url_get_quotations_workspace_filtered = (
-        f"{constants.API_HOST}{QUOTATION_ENDPOINT}?{sorting}&workspaceId={constants.WORKSPACE_ID}"
-    )
-    with open(
-        pathlib.Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_quotations_workspace_id.json",
-        encoding="utf-8",
-    ) as json_file:
-        json_data_get_quotation = json.load(json_file)
-        requests_mock.get(
-            url=url_get_quotations_workspace_filtered,
-            json=json_data_get_quotation,
-        )
-
-    url_get_quotations_decision_filtered = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?{sorting}&decision=ACCEPTED"
-    with open(
-        pathlib.Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_quotations_decision_ACCEPTED.json",
-        encoding="utf-8",
-    ) as json_file:
-        json_data_get_quotation = json.load(json_file)
-        requests_mock.get(
-            url=url_get_quotations_decision_filtered,
-            json=json_data_get_quotation,
-        )
-        url_get_quotations_decision_filtered = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?{sorting}&decision=ACCEPTED"
-
-    decision_filter = "&decision=ACCEPTED&decision=REJECTED"
-    url_get_quotations_decision_filtered = f"{constants.API_HOST}{QUOTATION_ENDPOINT}?{sorting}{decision_filter}"
-    with open(
-        pathlib.Path(__file__).resolve().parents[1] / "mock_data/tasking_data/get_quotations_decision_ACCEPTED.json",
-        encoding="utf-8",
-    ) as json_file:
-        json_data_get_quotation = json.load(json_file)
-        requests_mock.get(
-            url=url_get_quotations_decision_filtered,
-            json=json_data_get_quotation,
-        )
-
     wrong_id_response_json = {
         "status": 404,
         "title": "Resource does not exist.",
