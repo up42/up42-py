@@ -3,12 +3,12 @@ Tasking functionality
 """
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from shapely import geometry as geom  # type: ignore
 
 from up42 import auth as up42_auth
-from up42 import base, catalog, glossary, host, order, utils
+from up42 import catalog, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -24,9 +24,6 @@ class Tasking(catalog.CatalogBase):
     tasking = up42.initialize_tasking()
     ```
     """
-
-    session = base.Session()
-    workspace_id = base.WorkspaceId()
 
     def __init__(self, auth: up42_auth.Auth):
         super().__init__(glossary.CollectionType.TASKING)
@@ -115,7 +112,7 @@ class Tasking(catalog.CatalogBase):
         quotation_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
-        decision: Optional[List[str]] = None,
+        decision: Optional[List[Literal["NOT_DECIDED", "ACCEPTED", "REJECTED"]]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
     ) -> list:
@@ -133,29 +130,28 @@ class Tasking(catalog.CatalogBase):
         Returns:
             JSON: The json representation with the quotations resulted from the search.
         """
-        sort_order = ",desc" if descending else ",asc"
-        query_params = {
+        params: Dict[str, Any] = {
             key: str(value)
             for key, value in {
                 "workspaceId": workspace_id,
                 "id": quotation_id,
                 "orderId": order_id,
-                "decision": set(decision) if decision else None,
-                "sort": sortby + sort_order,
+                "decision": decision,
+                "sort": utils.SortingField(sortby, not descending),
             }.items()
             if value
         }
-        quotations = []
-        current_page = 0
-        while True:
-            query_params["page"] = str(current_page)
-            page = self.session.get(host.endpoint("/v2/tasking/quotation"), params=query_params).json()
-            total_pages = page["totalPages"]
-            quotations.extend(page["content"])
-            current_page += 1
-            if current_page == total_pages:
-                break
-        return quotations
+        params["page"] = 0
+
+        def get_pages(endpoint: str):
+            while True:
+                response = self.session.get(host.endpoint(endpoint), params=params).json()
+                yield response["content"]
+                params["page"] += 1
+                if params["page"] == response["totalPages"]:
+                    break
+
+        return [quotation_info for page in get_pages("/v2/tasking/quotation") for quotation_info in page]
 
     def decide_quotation(self, quotation_id: str, decision: str) -> dict:
         """Accept or reject a quotation for a tasking order.

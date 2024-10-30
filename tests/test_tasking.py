@@ -1,8 +1,7 @@
 import json
 import pathlib
 import urllib.parse
-import uuid
-from typing import Any, List, Optional
+from typing import Any, List, Literal, Optional
 from unittest import mock
 
 import pytest
@@ -36,15 +35,12 @@ POLYGON = {
         ),
     ),
 }
-QUOTATION_ID = str("some-quotation-id")
-ORDER_ID = str("some-order-id")
 
 
 @pytest.fixture(autouse=True)
 def workspace():
     with mock.patch("up42.base.workspace") as workspace_mock:
         workspace_mock.auth.session = requests.session()
-        workspace_mock.id = constants.WORKSPACE_ID
         yield
 
 
@@ -114,11 +110,10 @@ class TestTasking:
         } | ({"tags": tags} if tags else {})
         assert order_parameters == expected
 
-    @pytest.mark.parametrize("quotation_id", [None, QUOTATION_ID])
+    @pytest.mark.parametrize("quotation_id", [None, constants.QUOTATION_ID])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
-    @pytest.mark.parametrize("order_id", [None, ORDER_ID])
-    @pytest.mark.parametrize("decision", [None, ["NOT_DECIDED", "ACCEPTED", "REJECTED"]])
-    @pytest.mark.parametrize("sort_by", ["updatedAt"])
+    @pytest.mark.parametrize("order_id", [None, constants.ORDER_ID])
+    @pytest.mark.parametrize("decision", [None, ["ACCEPTED", "REJECTED", "NOT_DECIDED"], ["ACCEPTED"]])
     @pytest.mark.parametrize("descending", [False, True])
     def test_should_get_quotations(
         self,
@@ -127,13 +122,10 @@ class TestTasking:
         quotation_id: Optional[str],
         workspace_id: Optional[str],
         order_id: Optional[str],
-        decision: Optional[List[str]],
-        sort_by: str,
+        decision: Optional[List[Literal["NOT_DECIDED", "ACCEPTED", "REJECTED"]]],
         descending: bool,
     ):
-        total_pages = 4
-        query_params: dict[str, Any] = {}
-        sort_order = ",desc" if descending else ",asc"
+        query_params: dict[str, Any] = {"sort": "createdAt,desc" if descending else "createdAt,asc", "page": 0}
         if quotation_id:
             query_params["id"] = quotation_id
         if workspace_id:
@@ -141,29 +133,38 @@ class TestTasking:
         if order_id:
             query_params["orderId"] = order_id
         if decision:
-            query_params["decision"] = set(decision)
-        if sort_by:
-            query_params["sort"] = sort_by + sort_order
+            query_params["decision"] = decision
+        base_url = f"{constants.API_HOST}/v2/tasking/quotation"
 
-        for page in range(total_pages):
-            url = f"{constants.API_HOST}/v2/tasking/quotation"
-            query_params["page"] = page
-            query = urllib.parse.urlencode(query_params)
-            url += query and f"?{query}"
-            response = {
-                "content": [{"id": str(uuid.uuid4())} for _ in range(10)],
-                "totalPages": total_pages,
-            }
-            requests_mock.get(url=url, json=response)
-        get_quotations = tasking_obj.get_quotations(
+        query = urllib.parse.urlencode(query_params, doseq=True, safe="")
+        url = base_url + (query and f"?{query}")
+
+        response = {
+            "content": [{"id": f"id{idx}"} for idx in [1, 2]],
+            "totalPages": 2,
+        }
+        requests_mock.get(url=url, json=response)
+
+        next_response = {
+            "content": [{"id": f"id{idx}"} for idx in [3, 4]],
+            "totalPages": 2,
+        }
+        query_params["page"] += 1
+        query = urllib.parse.urlencode(query_params, doseq=True, safe="")
+        next_url = base_url + (query and f"?{query}")
+        requests_mock.get(url=next_url, json=next_response)
+
+        expected = [{"id": f"id{idx}"} for idx in [1, 2, 3, 4]]
+
+        quotations = tasking_obj.get_quotations(
             quotation_id=quotation_id,
             workspace_id=workspace_id,
             order_id=order_id,
             decision=decision,
-            sortby=sort_by,
             descending=descending,
         )
-        assert len(get_quotations) == 10 * total_pages
+        assert len(quotations) == 4
+        assert quotations == expected
 
 
 def test_decide_quotation(tasking_mock):
