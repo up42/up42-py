@@ -131,7 +131,7 @@ class Tasking(catalog.CatalogBase):
             JSON: The json representation with the quotations resulted from the search.
         """
         params: Dict[str, Any] = {
-            key: str(value)
+            key: value
             for key, value in {
                 "workspaceId": workspace_id,
                 "id": quotation_id,
