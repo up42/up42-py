@@ -14,11 +14,11 @@ logger = utils.get_logger(__name__)
 
 Geometry = Union[catalog.Geometry, geom.Point]
 
-TaskingDesicion = Literal[
+QuotationDecision = Literal[
     "NOT_DECIDED",
     "REJECTED",
 ]
-TaskingDecisionStatus = Union[TaskingDesicion, Literal["NOT_DECIDED"]]
+TaskingStatuses = Union[QuotationDecision, Literal["NOT_DECIDED",]]
 
 
 class InvalidDesicion(ValueError):
@@ -122,7 +122,7 @@ class Tasking(catalog.CatalogBase):
         quotation_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
-        decision: Optional[List[Literal["NOT_DECIDED", "ACCEPTED", "REJECTED"]]] = None,
+        decision: Optional[List[TaskingStatuses]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
     ) -> list:
