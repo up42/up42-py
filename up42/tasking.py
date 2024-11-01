@@ -14,6 +14,16 @@ logger = utils.get_logger(__name__)
 
 Geometry = Union[catalog.Geometry, geom.Point]
 
+TaskingDesicion = Literal[
+    "NOT_DECIDED",
+    "REJECTED",
+]
+TaskingDecisionStatus = Union[TaskingDesicion, Literal["NOT_DECIDED"]]
+
+
+class InvalidDesicion(ValueError):
+    pass
+
 
 class Tasking(catalog.CatalogBase):
     """
@@ -165,15 +175,10 @@ class Tasking(catalog.CatalogBase):
             dict: The confirmation to the decided quotation plus metadata.
         """
         if decision not in ["ACCEPTED", "REJECTED"]:
-            raise ValueError("Possible desicions are only ACCEPTED or REJECTED.")
-
+            raise InvalidDesicion("Possible desicions are only ACCEPTED or REJECTED.")
         url = host.endpoint(f"/v2/tasking/quotation/{quotation_id}")
-
         decision_payload = {"decision": decision}
-
-        response_json = self.auth.request(request_type="PATCH", url=url, data=decision_payload)
-
-        return response_json
+        return self.session.put(host.endpoint(url), json=decision_payload).json()
 
     def get_feasibility(
         self,
