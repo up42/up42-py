@@ -14,6 +14,8 @@ logger = utils.get_logger(__name__)
 
 Geometry = Union[catalog.Geometry, geom.Point]
 
+TaskingStatuses = Literal["NOT_DECIDED", "ACCEPTED", "REJECTED"]
+
 
 class Tasking(catalog.CatalogBase):
     """
@@ -112,7 +114,7 @@ class Tasking(catalog.CatalogBase):
         quotation_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
-        decision: Optional[List[Literal["NOT_DECIDED", "ACCEPTED", "REJECTED"]]] = None,
+        decision: Optional[List[TaskingStatuses]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
     ) -> list:

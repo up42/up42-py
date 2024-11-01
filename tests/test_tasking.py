@@ -1,7 +1,7 @@
 import json
 import pathlib
 import urllib.parse
-from typing import Any, List, Literal, Optional
+from typing import Any, List, Optional
 from unittest import mock
 
 import pytest
@@ -122,7 +122,7 @@ class TestTasking:
         quotation_id: Optional[str],
         workspace_id: Optional[str],
         order_id: Optional[str],
-        decision: Optional[List[Literal["NOT_DECIDED", "ACCEPTED", "REJECTED"]]],
+        decision: Optional[List[tasking.TaskingStatuses]],
         descending: bool,
     ):
         query_params: dict[str, Any] = {"sort": "createdAt,desc" if descending else "createdAt,asc", "page": 0}
