@@ -122,7 +122,7 @@ class TestTasking:
         quotation_id: Optional[str],
         workspace_id: Optional[str],
         order_id: Optional[str],
-        decision: Optional[List[tasking.TaskingStatuses]],
+        decision: Optional[List[tasking.QuotationStatuses]],
         descending: bool,
     ):
         query_params: dict[str, Any] = {"sort": "createdAt,desc" if descending else "createdAt,asc", "page": 0}
