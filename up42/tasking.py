@@ -15,10 +15,11 @@ logger = utils.get_logger(__name__)
 Geometry = Union[catalog.Geometry, geom.Point]
 
 QuotationDecision = Literal[
-    "NOT_DECIDED",
+    "ACCEPTED",
     "REJECTED",
 ]
-TaskingStatuses = Union[QuotationDecision, Literal["NOT_DECIDED",]]
+
+QuotationStatuses = Union[QuotationDecision, Literal["NOT_DECIDED",]]
 
 
 class InvalidDesicion(ValueError):
@@ -122,7 +123,7 @@ class Tasking(catalog.CatalogBase):
         quotation_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
-        decision: Optional[List[TaskingStatuses]] = None,
+        decision: Optional[List[QuotationStatuses]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
     ) -> list:
@@ -163,7 +164,7 @@ class Tasking(catalog.CatalogBase):
 
         return [quotation_info for page in get_pages("/v2/tasking/quotation") for quotation_info in page]
 
-    def decide_quotation(self, quotation_id: str, decision: str) -> dict:
+    def decide_quotation(self, quotation_id: str, decision: QuotationDecision) -> dict:
         """Accept or reject a quotation for a tasking order.
         This operation is only allowed on quotations with the NOT_DECIDED status.
 
@@ -178,7 +179,7 @@ class Tasking(catalog.CatalogBase):
             raise InvalidDesicion("Possible desicions are only ACCEPTED or REJECTED.")
         url = host.endpoint(f"/v2/tasking/quotation/{quotation_id}")
         decision_payload = {"decision": decision}
-        return self.session.put(host.endpoint(url), json=decision_payload).json()
+        return self.session.put(url, json=decision_payload).json()
 
     def get_feasibility(
         self,

@@ -11,6 +11,7 @@ import requests_mock as req_mock
 from up42 import auth as up42_auth
 from up42 import tasking
 
+from . import helpers
 from .fixtures import fixtures_globals as constants
 
 with open(
@@ -122,7 +123,7 @@ class TestTasking:
         quotation_id: Optional[str],
         workspace_id: Optional[str],
         order_id: Optional[str],
-        decision: Optional[List[tasking.TaskingStatuses]],
+        decision: Optional[List[tasking.QuotationStatuses]],
         descending: bool,
     ):
         query_params: dict[str, Any] = {"sort": "createdAt,desc" if descending else "createdAt,asc", "page": 0}
@@ -166,19 +167,31 @@ class TestTasking:
         assert len(quotations) == 4
         assert quotations == expected
 
+    def test_should_decide_quotation(
+        self,
+        requests_mock: req_mock.Mocker,
+        tasking_obj: tasking.Tasking,
+    ):
+        decision: tasking.QuotationDecision = "ACCEPTED"
+        decision_payload = {"decision": decision}
+        url = f"{constants.API_HOST}/v2/tasking/quotation/{constants.QUOTATION_ID}"
+        expected = {
+            "id": constants.QUOTATION_ID,
+            "decision": decision,
+        }
+        requests_mock.put(
+            url=url,
+            json=expected,
+            additional_matcher=helpers.match_request_body(decision_payload),
+        )
+        assert tasking_obj.decide_quotation(quotation_id=constants.QUOTATION_ID, decision=decision) == expected
 
-def test_decide_quotation(tasking_mock):
-    with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_mock.decide_quotation(constants.QUOTATION_ID + "-01", "ACCEPTED")
-    response = json.loads(str(e.value))
-    assert isinstance(e.value, requests.exceptions.RequestException)
-    assert response["status"] == 404
-
-    with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_mock.decide_quotation(constants.QUOTATION_ID + "-02", "ACCEPTED")
-    response = json.loads(str(e.value))
-    assert isinstance(e.value, requests.exceptions.RequestException)
-    assert response["status"] == 405
+    def test_fails_decide_quotation_with_wrong_value(
+        self,
+        tasking_obj: tasking.Tasking,
+    ):
+        with pytest.raises(tasking.InvalidDesicion, match="Possible desicions are only ACCEPTED or REJECTED."):
+            tasking_obj.decide_quotation(constants.QUOTATION_ID, decision="ANYTHING")  # type: ignore
 
 
 def test_get_feasibility(tasking_get_feasibility_mock):
