@@ -3,6 +3,7 @@ import pathlib
 import warnings
 from typing import Any, Optional, Union
 
+import jwt
 import pystac_client
 import requests
 
@@ -56,8 +57,8 @@ class _Workspace:
             username=username,
             password=password,
         )
-        url = host.endpoint("/users/me")
-        self._id = self.auth.session.get(url).json()["data"]["id"]
+        token = self._auth.client.auth.token.access_token
+        self._id = jwt.decode(bytes(token, "utf-8"), options={"verify_signature": False})["account_id"]
 
     def get_credits_balance(self) -> dict:
         """

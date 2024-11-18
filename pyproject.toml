@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "up42-py"
-version = "2.1.1a3"
+version = "2.1.1a4"
 description = "Python SDK for UP42, the geospatial marketplace and developer platform."
 authors = ["UP42 GmbH <support@up42.com>"]
 license = "https://github.com/up42/up42-py/blob/master/LICENSE"
@@ -25,6 +25,7 @@ geopandas = "^0"
 pystac-client = "^0.7.2"
 pyproj = "^3.6.1"
 tenacity = "8.4.1"
+pyjwt = "^2.10.0"
 
 
 [tool.poetry.dev-dependencies]
@@ -63,6 +64,7 @@ mkdocs-redirects = ">=1.2.1"
 [tool.pytest.ini_options]
 pythonpath = "."
 addopts = "--cov --cov-report=html --cov-report=xml --junitxml=out/test_results/junit.xml"
+
 
 [tool.poetry.group.viz.dependencies]
 rasterio = "^1.3.8"

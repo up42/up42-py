@@ -2,6 +2,7 @@ import dataclasses
 from typing import Union
 from unittest import mock
 
+import jwt
 import pystac_client
 import pytest
 import requests_mock as req_mock
@@ -19,11 +20,8 @@ class TestWorkspace:
             _ = base.workspace.id
 
     def test_should_authenticate(self, requests_mock):
-        requests_mock.post(constants.TOKEN_ENDPOINT, json={"access_token": constants.TOKEN, "expires_in": 5 * 60})
-        requests_mock.get(
-            url="https://api.up42.com/users/me",
-            json={"data": {"id": constants.WORKSPACE_ID}},
-        )
+        token = jwt.encode({"account_id": constants.WORKSPACE_ID}, "")
+        requests_mock.post(constants.TOKEN_ENDPOINT, json={"access_token": token, "expires_in": 5 * 60})
         base.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
         assert base.workspace.id == constants.WORKSPACE_ID
 
