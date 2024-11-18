@@ -31,7 +31,7 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 ## 2.1.1a4
 
-**Nov 4, 2024**
+**Nov 18, 2024**
 - Updating endpoint for `base::get_credits_balance`.
 
 ## 2.1.1a3
