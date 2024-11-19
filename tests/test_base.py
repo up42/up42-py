@@ -27,14 +27,14 @@ class TestWorkspace:
         base.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
         assert base.workspace.id == constants.WORKSPACE_ID
 
-    def test_should_get_credits_balance(self, requests_mock):
-        balance_url = f"{constants.API_HOST}/accounts/me/credits/balance"
-        balance = {"balance": 10693}
+    def test_should_get_credits_balance(self, requests_mock: req_mock.Mocker):
+        balance_url = f"{constants.API_HOST}/v2/payments/balances"
+        balance = 10693
         requests_mock.get(
             url=balance_url,
-            json={"data": balance},
+            json={"available": {"amount": balance, "unit": "CREDIT"}},
         )
-        assert base.workspace.get_credits_balance() == balance
+        assert base.workspace.get_credits_balance() == {"balance": balance}
 
 
 @dataclasses.dataclass(eq=True)
