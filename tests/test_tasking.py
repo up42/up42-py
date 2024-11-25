@@ -143,7 +143,7 @@ class TestTasking:
             url = base_url + (query and f"?{query}")
             offset = page * 2
             response = {
-                "content": expected[offset : offset + 2],
+                "content": expected[offset : offset + 2],  # noqa: E203
                 "totalPages": 2,
             }
             requests_mock.get(url=url, json=response)
