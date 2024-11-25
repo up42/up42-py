@@ -39,7 +39,6 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Nov 18, 2024**
 - Updating endpoint for `base::get_credits_balance`.
 
-
 ## 2.1.1a3
 
 **Oct 29, 2024**

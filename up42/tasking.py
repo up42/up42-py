@@ -14,7 +14,7 @@ logger = utils.get_logger(__name__)
 
 Geometry = Union[catalog.Geometry, geom.Point]
 
-QuotationStatuses = Literal["NOT_DECIDED", "ACCEPTED", "REJECTED"]
+QuotationStatus = Literal["NOT_DECIDED", "ACCEPTED", "REJECTED"]
 
 
 class Tasking(catalog.CatalogBase):
@@ -114,7 +114,7 @@ class Tasking(catalog.CatalogBase):
         quotation_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
-        decision: Optional[List[QuotationStatuses]] = None,
+        decision: Optional[List[QuotationStatus]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
     ) -> list:
@@ -153,7 +153,7 @@ class Tasking(catalog.CatalogBase):
                 if params["page"] == response["totalPages"]:
                     break
 
-        return [quotation_info for page in get_pages("/v2/tasking/quotation") for quotation_info in page]
+        return [quotation for page in get_pages("/v2/tasking/quotation") for quotation in page]
 
     def decide_quotation(self, quotation_id: str, decision: str) -> dict:
         """Accept or reject a quotation for a tasking order.
