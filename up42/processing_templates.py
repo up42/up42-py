@@ -26,11 +26,6 @@ class DetectionTreesSpacept(WorkspaceIdSingleItemTemplate):
 
 
 @dataclasses.dataclass
-class DetectionTreesHeightsSpacept(WorkspaceIdSingleItemTemplate):
-    process_id = "detection-trees-heights-spacept"
-
-
-@dataclasses.dataclass
 class DetectionShadowsSpacept(WorkspaceIdSingleItemTemplate):
     process_id = "detection-shadows-spacept"
 
