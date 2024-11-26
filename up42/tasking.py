@@ -175,7 +175,7 @@ class Tasking(catalog.CatalogBase):
             dict: The confirmation to the decided quotation plus metadata.
         """
         if decision not in ["ACCEPTED", "REJECTED"]:
-            raise InvalidDecision("Possible desicions are only ACCEPTED or REJECTED.")
+            raise InvalidDecision("Possible decisions are only ACCEPTED or REJECTED.")
         url = host.endpoint(f"/v2/tasking/quotation/{quotation_id}")
         decision_payload = {"decision": decision}
         return self.session.patch(url, json=decision_payload).json()
