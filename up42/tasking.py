@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Literal, Optional, Union
 
 from shapely import geometry as geom  # type: ignore
 
-from up42 import auth as up42_auth
 from up42 import catalog, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
@@ -35,9 +34,8 @@ class Tasking(catalog.CatalogBase):
     ```
     """
 
-    def __init__(self, auth: up42_auth.Auth):
+    def __init__(self):
         super().__init__(glossary.CollectionType.TASKING)
-        self.auth = auth
 
     def construct_order_parameters(
         self,
@@ -104,18 +102,19 @@ class Tasking(catalog.CatalogBase):
             order_parameters["params"]["geometry"] = geometry
         return order_parameters
 
-    def _query_paginated_output(self, url: str):
-        page = 0
-        response = self.auth.request(request_type="GET", url=url)
-        json_results = response["content"]
-        not_last_page = not response["last"]
-        while not_last_page:
-            page += 1
-            url = utils.replace_page_query(url, page)
-            response = self.auth.request(request_type="GET", url=url)
-            json_results.extend(response["content"])
-            not_last_page = not response["last"]
-        return json_results
+    def _query(self, params: Dict[str, Any], endpoint: str):
+        params = {key: value for key, value in params.items() if value}
+        params["page"] = 0
+
+        def get_pages():
+            while True:
+                response = self.session.get(host.endpoint(endpoint), params=params).json()
+                yield response["content"]
+                params["page"] += 1
+                if params["page"] == response["totalPages"]:
+                    break
+
+        return [entry for page in get_pages() for entry in page]
 
     def get_quotations(
         self,
@@ -140,28 +139,14 @@ class Tasking(catalog.CatalogBase):
         Returns:
             JSON: The json representation with the quotations resulted from the search.
         """
-        params: Dict[str, Any] = {
-            key: value
-            for key, value in {
-                "workspaceId": workspace_id,
-                "id": quotation_id,
-                "orderId": order_id,
-                "decision": decision,
-                "sort": utils.SortingField(sortby, not descending),
-            }.items()
-            if value
+        params = {
+            "workspaceId": workspace_id,
+            "id": quotation_id,
+            "orderId": order_id,
+            "decision": decision,
+            "sort": utils.SortingField(sortby, not descending),
         }
-        params["page"] = 0
-
-        def get_pages(endpoint: str):
-            while True:
-                response = self.session.get(host.endpoint(endpoint), params=params).json()
-                yield response["content"]
-                params["page"] += 1
-                if params["page"] == response["totalPages"]:
-                    break
-
-        return [quotation for page in get_pages("/v2/tasking/quotation") for quotation in page]
+        return self._query(params, "/v2/tasking/quotation")
 
     def decide_quotation(self, quotation_id: str, decision: QuotationDecision) -> dict:
         """Accept or reject a quotation for a tasking order.
@@ -187,7 +172,7 @@ class Tasking(catalog.CatalogBase):
         decision: Optional[List[str]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
-    ) -> list:
+    ) -> list[dict]:
         """
         This function returns the list of feasibility studies for tasking orders.
 
@@ -204,25 +189,14 @@ class Tasking(catalog.CatalogBase):
         Returns:
             JSON: The json representation with the feasibility resulted from the search.
         """
-        sort = f"""{sortby},{"desc" if descending else "asc"}"""
-        url = host.endpoint(f"/v2/tasking/feasibility?page=0&sort={sort}")
-        if feasibility_id is not None:
-            url += f"&id={feasibility_id}"
-        if workspace_id is not None:
-            url += f"&workspaceId={workspace_id}"
-        if order_id is not None:
-            url += f"&orderId={order_id}"
-        if decision is not None:
-            decisions_validation = (single_decision in ["NOT_DECIDED", "ACCEPTED"] for single_decision in decision)
-            if all(decisions_validation):
-                for single_decision in decision:
-                    url += f"&decision={single_decision}"
-            else:
-                logger.warning(
-                    "decision values should be in NOT_DECIDED or ACCEPTED, "
-                    "otherwise decision filter values will be ignored."
-                )
-        return self._query_paginated_output(url)
+        params = {
+            "id": feasibility_id,
+            "workspaceId": workspace_id,
+            "orderId": order_id,
+            "decision": decision,
+            "sort": utils.SortingField(sortby, not descending),
+        }
+        return self._query(params, "/v2/tasking/feasibility")
 
     def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
         """Accept one of the proposed feasibility study options.

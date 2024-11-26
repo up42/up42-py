@@ -6,7 +6,6 @@ import pytest
 import requests
 import requests_mock as req_mock
 
-from up42 import auth as up42_auth
 from up42 import tasking
 
 from . import helpers
@@ -42,8 +41,8 @@ def workspace():
 
 class TestTasking:
     @pytest.fixture
-    def tasking_obj(self, auth_mock: up42_auth.Auth) -> tasking.Tasking:
-        return tasking.Tasking(auth=auth_mock)
+    def tasking_obj(self) -> tasking.Tasking:
+        return tasking.Tasking()
 
     @pytest.mark.parametrize(
         "geometry",
