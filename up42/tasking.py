@@ -177,8 +177,7 @@ class Tasking(catalog.CatalogBase):
         if decision not in ["ACCEPTED", "REJECTED"]:
             raise InvalidDecision("Possible decisions are only ACCEPTED or REJECTED.")
         url = host.endpoint(f"/v2/tasking/quotation/{quotation_id}")
-        decision_payload = {"decision": decision}
-        return self.session.patch(url, json=decision_payload).json()
+        return self.session.patch(url, json={"decision": decision}).json()
 
     def get_feasibility(
         self,
@@ -237,6 +236,4 @@ class Tasking(catalog.CatalogBase):
             dict: The confirmation to the decided quotation plus metadata.
         """
         url = host.endpoint(f"/v2/tasking/feasibility/{feasibility_id}")
-        accepted_option_payload = {"acceptedOptionId": accepted_option_id}
-        response_json = self.auth.request(request_type="PATCH", url=url, data=accepted_option_payload)
-        return response_json
+        return self.session.patch(url=url, json={"acceptedOptionId": accepted_option_id}).json()

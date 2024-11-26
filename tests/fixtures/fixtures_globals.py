@@ -2,13 +2,6 @@ TOKEN = "token_123"
 API_HOST = "https://api.up42.com"
 TOKEN_ENDPOINT = "https://auth.up42.com/realms/public/protocol/openid-connect/token"
 
-# tasking constants
-QUOTATION_ID = "805b1f27-1025-43d2-90d0-0bd3416238fb"
-WRONG_FEASIBILITY_ID = "296ef160-d890-430d-8d14-e9b579ab08ba"
-WRONG_OPTION_ID = "296ef160-7890-430d-8d14-e9b579ab08ba"
-TEST_FEASIBILITY_ID = "6f93f754-5594-42da-b6af-9064225b89e9"
-TEST_OPTION_ID = "cc3c869d-9215-4dcd-b535-b49aa28228fa"
-
 WORKSPACE_ID = "workspace_id_123"
 USER_ID = "1094497b-11d8-4fb8-9d6a-5e24a88aa825"
 USER_EMAIL = "user@up42.com"

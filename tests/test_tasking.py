@@ -1,5 +1,3 @@
-import json
-import pathlib
 import urllib.parse
 from typing import Any, List, Optional
 from unittest import mock
@@ -13,13 +11,6 @@ from up42 import tasking
 
 from . import helpers
 from .fixtures import fixtures_globals as constants
-
-with open(
-    pathlib.Path(__file__).resolve().parent / "mock_data/search_params_simple.json",
-    encoding="utf-8",
-) as json_file:
-    mock_search_parameters = json.load(json_file)
-
 
 ACQ_START = "2014-01-01T00:00:00"
 ACQ_END = "2022-12-31T23:59:59"
@@ -37,6 +28,9 @@ POLYGON = {
         ),
     ),
 }
+
+QUOTATION_ID = "805b1f27-1025-43d2-90d0-0bd3416238fb"
+FEASIBILITY_ID = "6f93f754-5594-42da-b6af-9064225b89e9"
 
 
 @pytest.fixture(autouse=True)
@@ -112,7 +106,7 @@ class TestTasking:
         } | ({"tags": tags} if tags else {})
         assert order_parameters == expected
 
-    @pytest.mark.parametrize("quotation_id", [None, constants.QUOTATION_ID])
+    @pytest.mark.parametrize("quotation_id", [None, QUOTATION_ID])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize("order_id", [None, constants.ORDER_ID])
     @pytest.mark.parametrize("decision", [None, ["ACCEPTED", "REJECTED", "NOT_DECIDED"], ["ACCEPTED"]])
@@ -186,25 +180,46 @@ class TestTasking:
         tasking_obj: tasking.Tasking,
         decision: tasking.QuotationDecision,
     ):
-        decision_payload = {"decision": decision}
-        url = f"{constants.API_HOST}/v2/tasking/quotation/{constants.QUOTATION_ID}"
+        payload = {"decision": decision}
+        url = f"{constants.API_HOST}/v2/tasking/quotation/{QUOTATION_ID}"
         expected = {
-            "id": constants.QUOTATION_ID,
+            "id": QUOTATION_ID,
             "decision": decision,
         }
         requests_mock.patch(
             url=url,
             json=expected,
-            additional_matcher=helpers.match_request_body(decision_payload),
+            additional_matcher=helpers.match_request_body(payload),
         )
-        assert tasking_obj.decide_quotation(quotation_id=constants.QUOTATION_ID, decision=decision) == expected
+        assert tasking_obj.decide_quotation(quotation_id=QUOTATION_ID, decision=decision) == expected
 
     def test_fails_to_decide_quotation_with_wrong_value(
         self,
         tasking_obj: tasking.Tasking,
     ):
         with pytest.raises(tasking.InvalidDecision):
-            tasking_obj.decide_quotation(constants.QUOTATION_ID, decision="ANYTHING")  # type: ignore
+            tasking_obj.decide_quotation(QUOTATION_ID, decision="ANYTHING")  # type: ignore
+
+    def test_should_choose_feasibility(self, requests_mock: req_mock.Mocker, tasking_obj: tasking.Tasking):
+        accepted_option_id = "accepted-option-id"
+        payload = {"acceptedOptionId": accepted_option_id}
+        url = f"{constants.API_HOST}/v2/tasking/feasibility/{FEASIBILITY_ID}"
+        expected = {
+            "id": FEASIBILITY_ID,
+            "acceptedOptionId": accepted_option_id,
+        }
+        requests_mock.patch(
+            url=url,
+            json=expected,
+            additional_matcher=helpers.match_request_body(payload),
+        )
+        assert (
+            tasking_obj.choose_feasibility(
+                feasibility_id=FEASIBILITY_ID,
+                accepted_option_id=accepted_option_id,
+            )
+            == expected
+        )
 
 
 def test_get_feasibility(tasking_get_feasibility_mock):
@@ -229,17 +244,3 @@ def test_get_feasibility(tasking_get_feasibility_mock):
     assert len(feasibility_studies) == 1
     feasibility_studies = tasking_get_feasibility_mock.get_feasibility(decision=["some_wrong_string"])
     assert len(feasibility_studies) == 26
-
-
-def test_choose_feasibility(tasking_choose_feasibility_mock):
-    with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_choose_feasibility_mock.choose_feasibility(constants.WRONG_FEASIBILITY_ID, constants.WRONG_OPTION_ID)
-    response = json.loads(str(e.value))
-    assert isinstance(e.value, requests.exceptions.RequestException)
-    assert response["status"] == 404
-
-    with pytest.raises(requests.exceptions.RequestException) as e:
-        tasking_choose_feasibility_mock.choose_feasibility(constants.TEST_FEASIBILITY_ID, constants.TEST_OPTION_ID)
-    response = json.loads(str(e.value))
-    assert isinstance(e.value, requests.exceptions.RequestException)
-    assert response["status"] == 405

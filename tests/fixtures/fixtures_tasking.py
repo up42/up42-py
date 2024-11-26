@@ -45,23 +45,3 @@ def tasking_get_feasibility_mock(auth_mock, requests_mock):
         requests_mock.get(url=get_feasibility_decision_param, json=json_data)
 
     return tasking.Tasking(auth=auth_mock)
-
-
-@pytest.fixture()
-def tasking_choose_feasibility_mock(auth_mock, requests_mock):
-    wrong_feasibility_url = f"{constants.API_HOST}/v2/tasking/feasibility/{constants.WRONG_FEASIBILITY_ID}"
-    response = {
-        "status": 404,
-        "title": "Resource (FeasibilityStudy) not found with Id='296ef160-7890-430d-8d14-e9b579ab08ba'.",
-        "detail": {},
-    }
-    requests_mock.patch(url=wrong_feasibility_url, status_code=404, json=response)
-
-    choose_feasibility_url = f"{constants.API_HOST}/v2/tasking/feasibility/{constants.TEST_FEASIBILITY_ID}"
-    response = {
-        "status": 405,
-        "title": "Resource (FeasibilityStudy) is write-protected.",
-        "detail": {},
-    }
-    requests_mock.patch(url=choose_feasibility_url, status_code=405, json=response)
-    return tasking.Tasking(auth=auth_mock)
