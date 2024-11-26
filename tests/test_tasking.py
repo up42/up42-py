@@ -178,6 +178,52 @@ class TestTasking:
         with pytest.raises(tasking.InvalidDecision):
             tasking_obj.decide_quotation(QUOTATION_ID, decision="ANYTHING")  # type: ignore
 
+    @pytest.mark.parametrize("feasibility_id", [None, QUOTATION_ID])
+    @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
+    @pytest.mark.parametrize("order_id", [None, constants.ORDER_ID])
+    @pytest.mark.parametrize("decision", [None, ["ACCEPTED", "NOT_DECIDED"], ["ACCEPTED"]])
+    @pytest.mark.parametrize("descending", [False, True])
+    def test_should_get_feasibility(
+        self,
+        requests_mock: req_mock.Mocker,
+        tasking_obj: tasking.Tasking,
+        feasibility_id: Optional[str],
+        workspace_id: Optional[str],
+        order_id: Optional[str],
+        decision: Optional[List[tasking.FeasibilityDecision]],
+        descending: bool,
+    ):
+        query_params: dict[str, Any] = {"sort": "createdAt,desc" if descending else "createdAt,asc"}
+        if feasibility_id:
+            query_params["id"] = feasibility_id
+        if workspace_id:
+            query_params["workspaceId"] = workspace_id
+        if order_id:
+            query_params["orderId"] = order_id
+        if decision:
+            query_params["decision"] = decision
+        base_url = f"{constants.API_HOST}/v2/tasking/feasibility"
+        expected = [{"id": f"id{idx}"} for idx in [1, 2, 3, 4]]
+        for page in [0, 1]:
+            query_params["page"] = page
+            query = urllib.parse.urlencode(query_params, doseq=True, safe="")
+            url = base_url + (query and f"?{query}")
+            offset = page * 2
+            response = {
+                "content": expected[offset : offset + 2],  # noqa: E203
+                "totalPages": 2,
+            }
+            requests_mock.get(url=url, json=response)
+
+        studies = tasking_obj.get_feasibility(
+            feasibility_id=feasibility_id,
+            workspace_id=workspace_id,
+            order_id=order_id,
+            decision=decision,
+            descending=descending,
+        )
+        assert studies == expected
+
     def test_should_choose_feasibility(self, requests_mock: req_mock.Mocker, tasking_obj: tasking.Tasking):
         accepted_option_id = "accepted-option-id"
         payload = {"acceptedOptionId": accepted_option_id}
@@ -198,27 +244,3 @@ class TestTasking:
             )
             == expected
         )
-
-
-def test_get_feasibility(tasking_get_feasibility_mock):
-    feasibility_studies = tasking_get_feasibility_mock.get_feasibility()
-    assert len(feasibility_studies) == 26
-    assert list(feasibility_studies[0].keys()) == [
-        "id",
-        "createdAt",
-        "updatedAt",
-        "accountId",
-        "workspaceId",
-        "orderId",
-        "type",
-        "options",
-        "decision",
-        "decisionById",
-        "decisionByType",
-        "decisionAt",
-        "decisionOption",
-    ]
-    feasibility_studies = tasking_get_feasibility_mock.get_feasibility(decision=["NOT_DECIDED"])
-    assert len(feasibility_studies) == 1
-    feasibility_studies = tasking_get_feasibility_mock.get_feasibility(decision=["some_wrong_string"])
-    assert len(feasibility_studies) == 26

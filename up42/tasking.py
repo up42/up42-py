@@ -18,6 +18,7 @@ QuotationDecision = Literal[
     "REJECTED",
 ]
 QuotationStatus = Union[Literal["NOT_DECIDED"], QuotationDecision]
+FeasibilityDecision = Literal["NOT_DECIDED", "ACCEPTED"]
 
 
 class InvalidDecision(ValueError):
@@ -124,7 +125,7 @@ class Tasking(catalog.CatalogBase):
         decision: Optional[List[QuotationStatus]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
-    ) -> list:
+    ) -> list[dict]:
         """
         This function returns the quotations for tasking by filtering and sorting by different parameters.
 
@@ -169,7 +170,7 @@ class Tasking(catalog.CatalogBase):
         feasibility_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
-        decision: Optional[List[str]] = None,
+        decision: Optional[FeasibilityDecision] = None,
         sortby: str = "createdAt",
         descending: bool = True,
     ) -> list[dict]:

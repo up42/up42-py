@@ -6,7 +6,6 @@ pytest_plugins = [
     "tests.fixtures.fixtures_auth",
     "tests.fixtures.fixtures_order",
     "tests.fixtures.fixtures_storage",
-    "tests.fixtures.fixtures_tasking",
 ]
 
 
