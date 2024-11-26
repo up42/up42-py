@@ -15,7 +15,8 @@ from . import helpers
 from .fixtures import fixtures_globals as constants
 
 with open(
-    pathlib.Path(__file__).resolve().parent / "mock_data/search_params_simple.json", encoding="utf-8"
+    pathlib.Path(__file__).resolve().parent / "mock_data/search_params_simple.json",
+    encoding="utf-8",
 ) as json_file:
     mock_search_parameters = json.load(json_file)
 
@@ -123,10 +124,10 @@ class TestTasking:
         quotation_id: Optional[str],
         workspace_id: Optional[str],
         order_id: Optional[str],
-        decision: Optional[List[tasking.QuotationStatuses]],
+        decision: Optional[List[tasking.QuotationStatus]],
         descending: bool,
     ):
-        query_params: dict[str, Any] = {"sort": "createdAt,desc" if descending else "createdAt,asc", "page": 0}
+        query_params: dict[str, Any] = {"sort": "createdAt,desc" if descending else "createdAt,asc"}
         if quotation_id:
             query_params["id"] = quotation_id
         if workspace_id:
@@ -136,15 +137,26 @@ class TestTasking:
         if decision:
             query_params["decision"] = decision
         base_url = f"{constants.API_HOST}/v2/tasking/quotation"
+        expected = [{"id": f"id{idx}"} for idx in [1, 2, 3, 4]]
+        for page in [0, 1]:
+            query_params["page"] = page
+            query = urllib.parse.urlencode(query_params, doseq=True, safe="")
+            url = base_url + (query and f"?{query}")
+            offset = page * 2
+            response = {
+                "content": expected[offset : offset + 2],  # noqa: E203
+                "totalPages": 2,
+            }
+            requests_mock.get(url=url, json=response)
 
-        query = urllib.parse.urlencode(query_params, doseq=True, safe="")
-        url = base_url + (query and f"?{query}")
-
-        response = {
-            "content": [{"id": f"id{idx}"} for idx in [1, 2]],
-            "totalPages": 2,
-        }
-        requests_mock.get(url=url, json=response)
+        quotations = tasking_obj.get_quotations(
+            quotation_id=quotation_id,
+            workspace_id=workspace_id,
+            order_id=order_id,
+            decision=decision,
+            descending=descending,
+        )
+        assert quotations == expected
 
         next_response = {
             "content": [{"id": f"id{idx}"} for idx in [3, 4]],
@@ -190,7 +202,7 @@ class TestTasking:
         self,
         tasking_obj: tasking.Tasking,
     ):
-        with pytest.raises(tasking.InvalidDesicion, match="Possible desicions are only ACCEPTED or REJECTED."):
+        with pytest.raises(tasking.InvalidDecision, match="Possible decisions are only ACCEPTED or REJECTED."):
             tasking_obj.decide_quotation(constants.QUOTATION_ID, decision="ANYTHING")  # type: ignore
 
 

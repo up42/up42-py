@@ -18,11 +18,10 @@ QuotationDecision = Literal[
     "ACCEPTED",
     "REJECTED",
 ]
+QuotationStatus = Literal["NOT_DECIDED", "ACCEPTED", "REJECTED"]
 
-QuotationStatuses = Union[QuotationDecision, Literal["NOT_DECIDED",]]
 
-
-class InvalidDesicion(ValueError):
+class InvalidDecision(ValueError):
     pass
 
 
@@ -123,7 +122,7 @@ class Tasking(catalog.CatalogBase):
         quotation_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
-        decision: Optional[List[QuotationStatuses]] = None,
+        decision: Optional[List[QuotationStatus]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
     ) -> list:
@@ -162,7 +161,7 @@ class Tasking(catalog.CatalogBase):
                 if params["page"] == response["totalPages"]:
                     break
 
-        return [quotation_info for page in get_pages("/v2/tasking/quotation") for quotation_info in page]
+        return [quotation for page in get_pages("/v2/tasking/quotation") for quotation in page]
 
     def decide_quotation(self, quotation_id: str, decision: QuotationDecision) -> dict:
         """Accept or reject a quotation for a tasking order.
@@ -176,7 +175,7 @@ class Tasking(catalog.CatalogBase):
             dict: The confirmation to the decided quotation plus metadata.
         """
         if decision not in ["ACCEPTED", "REJECTED"]:
-            raise InvalidDesicion("Possible desicions are only ACCEPTED or REJECTED.")
+            raise InvalidDecision("Possible desicions are only ACCEPTED or REJECTED.")
         url = host.endpoint(f"/v2/tasking/quotation/{quotation_id}")
         decision_payload = {"decision": decision}
         return self.session.put(url, json=decision_payload).json()

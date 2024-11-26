@@ -66,8 +66,9 @@ class _Workspace:
         Returns:
             A dict with the balance of credits available in your account.
         """
-        endpoint_url = host.endpoint("/accounts/me/credits/balance")
-        return self.auth.session.get(url=endpoint_url).json()["data"]
+        url = host.endpoint("/v2/payments/balances")
+        balance = self.auth.session.get(url).json()["available"]["amount"]
+        return {"balance": balance}
 
 
 workspace = _Workspace()
