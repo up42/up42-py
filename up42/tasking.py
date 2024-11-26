@@ -18,7 +18,7 @@ QuotationDecision = Literal[
     "ACCEPTED",
     "REJECTED",
 ]
-QuotationStatus = Literal["NOT_DECIDED", "ACCEPTED", "REJECTED"]
+QuotationStatus = Union[Literal["NOT_DECIDED"], QuotationDecision]
 
 
 class InvalidDecision(ValueError):
@@ -178,7 +178,7 @@ class Tasking(catalog.CatalogBase):
             raise InvalidDecision("Possible desicions are only ACCEPTED or REJECTED.")
         url = host.endpoint(f"/v2/tasking/quotation/{quotation_id}")
         decision_payload = {"decision": decision}
-        return self.session.put(url, json=decision_payload).json()
+        return self.session.patch(url, json=decision_payload).json()
 
     def get_feasibility(
         self,

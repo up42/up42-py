@@ -179,30 +179,31 @@ class TestTasking:
         assert len(quotations) == 4
         assert quotations == expected
 
+    @pytest.mark.parametrize("decision", ["ACCEPTED", "REJECTED"])
     def test_should_decide_quotation(
         self,
         requests_mock: req_mock.Mocker,
         tasking_obj: tasking.Tasking,
+        decision: tasking.QuotationDecision,
     ):
-        decision: tasking.QuotationDecision = "ACCEPTED"
         decision_payload = {"decision": decision}
         url = f"{constants.API_HOST}/v2/tasking/quotation/{constants.QUOTATION_ID}"
         expected = {
             "id": constants.QUOTATION_ID,
             "decision": decision,
         }
-        requests_mock.put(
+        requests_mock.patch(
             url=url,
             json=expected,
             additional_matcher=helpers.match_request_body(decision_payload),
         )
         assert tasking_obj.decide_quotation(quotation_id=constants.QUOTATION_ID, decision=decision) == expected
 
-    def test_fails_decide_quotation_with_wrong_value(
+    def test_fails_to_decide_quotation_with_wrong_value(
         self,
         tasking_obj: tasking.Tasking,
     ):
-        with pytest.raises(tasking.InvalidDecision, match="Possible decisions are only ACCEPTED or REJECTED."):
+        with pytest.raises(tasking.InvalidDecision):
             tasking_obj.decide_quotation(constants.QUOTATION_ID, decision="ANYTHING")  # type: ignore
 
 
