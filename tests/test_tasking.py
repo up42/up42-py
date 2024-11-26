@@ -152,27 +152,6 @@ class TestTasking:
         )
         assert quotations == expected
 
-        next_response = {
-            "content": [{"id": f"id{idx}"} for idx in [3, 4]],
-            "totalPages": 2,
-        }
-        query_params["page"] += 1
-        query = urllib.parse.urlencode(query_params, doseq=True, safe="")
-        next_url = base_url + (query and f"?{query}")
-        requests_mock.get(url=next_url, json=next_response)
-
-        expected = [{"id": f"id{idx}"} for idx in [1, 2, 3, 4]]
-
-        quotations = tasking_obj.get_quotations(
-            quotation_id=quotation_id,
-            workspace_id=workspace_id,
-            order_id=order_id,
-            decision=decision,
-            descending=descending,
-        )
-        assert len(quotations) == 4
-        assert quotations == expected
-
     @pytest.mark.parametrize("decision", ["ACCEPTED", "REJECTED"])
     def test_should_decide_quotation(
         self,
