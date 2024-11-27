@@ -32,6 +32,7 @@ def collect_credentials(
 
 
 class Auth:
+    # TODO: to be moved to base._Workspace.authenticate module
     def __init__(
         self,
         cfg_file: Union[str, pathlib.Path, None] = None,
@@ -55,6 +56,7 @@ class Auth:
         self.client = create_client(credential_sources, host.token_endpoint())
         logger.info("Authentication with UP42 successful!")
 
+    # TODO: to be moved to base._Workspace
     @property
     def session(self) -> requests.Session:
         return self.client.session
