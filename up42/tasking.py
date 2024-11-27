@@ -170,7 +170,7 @@ class Tasking(catalog.CatalogBase):
         feasibility_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
-        decision: Optional[FeasibilityDecision] = None,
+        decision: Optional[List[FeasibilityDecision]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
     ) -> list[dict]:

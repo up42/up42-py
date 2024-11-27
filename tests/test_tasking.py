@@ -193,7 +193,7 @@ class TestTasking:
         decision: Optional[List[tasking.FeasibilityDecision]],
         descending: bool,
     ):
-        query_params: dict[str, Any] = {"sort": "createdAt,desc" if descending else "createdAt,asc"}
+        query_params: dict[str, Any] = {"sort": "createdAt," + ("desc" if descending else "asc")}
         if feasibility_id:
             query_params["id"] = feasibility_id
         if workspace_id:
@@ -230,7 +230,9 @@ class TestTasking:
         url = f"{constants.API_HOST}/v2/tasking/feasibility/{FEASIBILITY_ID}"
         expected = {
             "id": FEASIBILITY_ID,
-            "acceptedOptionId": accepted_option_id,
+            "decisionOption": {
+                "id": accepted_option_id,
+            },
         }
         requests_mock.patch(
             url=url,
