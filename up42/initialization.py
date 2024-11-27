@@ -18,7 +18,7 @@ def initialize_tasking() -> tasking.Tasking:
     """
     Returns a Tasking object for creating satellite tasking orders.
     """
-    return tasking.Tasking(auth=base.workspace.auth)
+    return tasking.Tasking()
 
 
 def initialize_storage() -> storage.Storage:
