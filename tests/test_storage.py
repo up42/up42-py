@@ -1,7 +1,7 @@
 import pystac_client
 import pytest
 
-from up42 import asset, asset_searcher, order, storage
+from up42 import asset, order, storage
 
 from .fixtures import fixtures_globals as constants
 
@@ -14,84 +14,6 @@ def test_init(storage_mock):
 def test_pystac_client_property(storage_mock):
     up42_pystac_client = storage_mock.pystac_client
     isinstance(up42_pystac_client, pystac_client.Client)
-
-
-def _mock_one_page_reponse(page_nr, size, total_pages, total_elements):
-    return {
-        "data": {
-            "content": [{"something1": 1}] * size,
-            "totalPages": total_pages,
-            "totalElements": total_elements,
-            "number": page_nr,
-        },
-    }
-
-
-def test_paginate_one_page(auth_mock, requests_mock):
-    url = "http://some_url/assets"
-
-    limit = None
-    size = 50
-    total_pages = 1
-    total_elements = 30
-    expected = 30
-    requests_mock.get(
-        url + f"&size={size}",
-        json=_mock_one_page_reponse(0, expected, total_pages, total_elements),
-    )
-    res = asset_searcher.query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
-    assert len(res) == expected
-
-
-def test_paginate_multiple_pages(auth_mock, requests_mock):
-    url = "http://some_url/assets"
-
-    limit = 20
-    size = 3
-    total_pages = 4
-    total_elements = 12
-    expected = 12
-    requests_mock.get(
-        url + f"&size={size}",
-        json=_mock_one_page_reponse(0, size, total_pages, total_elements),
-    )
-    requests_mock.get(
-        url + f"&size={size}&page=1",
-        json=_mock_one_page_reponse(1, size, total_pages, total_elements),
-    )
-    requests_mock.get(
-        url + f"&size={size}&page=2",
-        json=_mock_one_page_reponse(2, size, total_pages, total_elements),
-    )
-    requests_mock.get(
-        url + f"&size={size}&page=3",
-        json=_mock_one_page_reponse(3, size, total_pages, total_elements),
-    )
-    res = asset_searcher.query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
-    assert len(res) == expected
-
-
-def test_paginate_with_limit_smaller_page_size(auth_mock, requests_mock):
-    """
-    Test pagination with limit <= pagination size.
-    """
-    url = "http://some_url/assets"
-
-    limit = 5
-    size = limit
-    total_pages = 2
-    total_elements = 12
-    expected = 5
-    requests_mock.get(
-        url + f"&size={limit}",
-        json=_mock_one_page_reponse(0, size, total_pages, total_elements),
-    )
-    requests_mock.get(
-        url + f"&size={limit}&page=1",
-        json=_mock_one_page_reponse(0, size, total_pages, total_elements),
-    )
-    res = asset_searcher.query_paginated_endpoints(auth_mock, url=url, limit=limit, size=size)
-    assert len(res) == expected
 
 
 def test_get_assets(storage_mock):
