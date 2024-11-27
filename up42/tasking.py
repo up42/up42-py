@@ -147,7 +147,7 @@ class Tasking(catalog.CatalogBase):
             "decision": decision,
             "sort": utils.SortingField(sortby, not descending),
         }
-        return self._query(params, "/v2/tasking/quotation")
+        return list(utils.query(params, "/v2/tasking/quotation", self.session))
 
     def decide_quotation(self, quotation_id: str, decision: QuotationDecision) -> dict:
         """Accept or reject a quotation for a tasking order.
@@ -197,7 +197,7 @@ class Tasking(catalog.CatalogBase):
             "decision": decision,
             "sort": utils.SortingField(sortby, not descending),
         }
-        return self._query(params, "/v2/tasking/feasibility")
+        return list(utils.query(params, "/v2/tasking/feasibility", self.session))
 
     def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
         """Accept one of the proposed feasibility study options.

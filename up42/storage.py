@@ -1,11 +1,10 @@
 import datetime
 import enum
 from typing import List, Optional, Union
-from urllib import parse
 
 from up42 import asset, asset_searcher
 from up42 import auth as up42_auth
-from up42 import host, order, utils
+from up42 import order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -91,13 +90,12 @@ class Storage:
             "tags": tags,
             "sources": sources,
             "search": search,
+            "sort": utils.SortingField(sortby, not descending),
         }
         assets_json = asset_searcher.search_assets(
             self.auth,
             params=params,
             limit=limit,
-            sortby=sortby,
-            descending=descending,
         )
 
         if return_json:
@@ -145,25 +143,16 @@ class Storage:
         }
         if sortby not in allowed_sorting_criteria:
             raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
-        sort = f"""{sortby},{"desc" if descending else "asc"}"""
-        base_url = host.endpoint("/v2/orders")
 
         params = {
-            "sort": sort,
+            "sort": utils.SortingField(sortby, not descending),
             "workspaceId": self.workspace_id if workspace_orders else None,
             "displayName": name,
             "type": order_type if order_type in ["TASKING", "ARCHIVE"] else None,
             "tags": tags,
             "status": set(statuses) & allowed_statuses if statuses else None,
         }
-        params = {k: v for k, v in params.items() if v is not None}
-        url = parse.urljoin(base_url, "?" + parse.urlencode(params, doseq=True, safe=""))
-
-        orders_json = asset_searcher.query_paginated_endpoints(auth=self.auth, url=url, limit=limit)
-        logger_message = f"Got {len(orders_json)} orders" + (
-            f" for workspace {self.workspace_id}." if workspace_orders else ""
-        )
-        logger.info(logger_message)
+        orders_json = list(utils.query(params, "/v2/orders", self.auth.session))[:limit]
 
         if return_json:
             return orders_json
