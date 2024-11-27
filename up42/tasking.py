@@ -103,20 +103,6 @@ class Tasking(catalog.CatalogBase):
             order_parameters["params"]["geometry"] = geometry
         return order_parameters
 
-    def _query(self, params: Dict[str, Any], endpoint: str):
-        params = {key: value for key, value in params.items() if value}
-        params["page"] = 0
-
-        def get_pages():
-            while True:
-                response = self.session.get(host.endpoint(endpoint), params=params).json()
-                yield response["content"]
-                params["page"] += 1
-                if params["page"] == response["totalPages"]:
-                    break
-
-        return [entry for page in get_pages() for entry in page]
-
     def get_quotations(
         self,
         quotation_id: Optional[str] = None,
