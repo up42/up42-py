@@ -5,8 +5,8 @@ from up42 import storage
 from . import fixtures_globals as constants
 
 
-@pytest.fixture()
-def storage_mock(auth_mock, requests_mock):
+@pytest.fixture
+def storage_mock(requests_mock):
     # pystac client authentication
     requests_mock.get(url=constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
 
@@ -39,4 +39,4 @@ def storage_mock(auth_mock, requests_mock):
     # orders info
     url_order_info = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
     requests_mock.get(url=url_order_info, json=constants.JSON_ORDER)
-    return storage.Storage(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
+    return storage.Storage()

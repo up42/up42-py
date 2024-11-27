@@ -1,10 +1,9 @@
-import datetime
+import datetime as dt
 import enum
-from typing import List, Optional, Union
+import itertools
+from typing import Any, List, Optional, TypedDict, Union, cast
 
-from up42 import asset, asset_searcher
-from up42 import auth as up42_auth
-from up42 import order, utils
+from up42 import asset, base, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -22,6 +21,18 @@ class AllowedStatuses(enum.Enum):
     FAILED_PERMANENTLY = "FAILED_PERMANENTLY"
 
 
+class AssetSearchParams(TypedDict, total=False):
+    createdAfter: Optional[Union[str, dt.datetime]]  # pylint: disable=invalid-name
+    createdBefore: Optional[Union[str, dt.datetime]]  # pylint: disable=invalid-name
+    workspaceId: Optional[str]  # pylint: disable=invalid-name
+    collectionNames: Optional[List[str]]  # pylint: disable=invalid-name
+    producerNames: Optional[List[str]]  # pylint: disable=invalid-name
+    tags: Optional[List[str]]
+    sources: Optional[List[str]]
+    search: Optional[str]
+    sort: utils.SortingField
+
+
 class Storage:
     """
     The Storage class enables access to the UP42 storage. You can list
@@ -33,21 +44,17 @@ class Storage:
     ```
     """
 
-    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
-        self.auth = auth
-        self.workspace_id = workspace_id
+    session = base.Session()
+    workspace_id = base.WorkspaceId()
+    pystac_client = base.StacClient()
 
-    def __repr__(self):
-        return f"Storage(workspace_id: {self.workspace_id})"
-
-    @property
-    def pystac_client(self):
-        return utils.stac_client(self.auth.client.auth)
+    def _query(self, params: dict[str, Any], endpoint: str, limit: Optional[int]):
+        return list(itertools.islice(utils.query(params, endpoint, self.session), limit))
 
     def get_assets(
         self,
-        created_after: Optional[Union[str, datetime.datetime]] = None,
-        created_before: Optional[Union[str, datetime.datetime]] = None,
+        created_after: Optional[Union[str, dt.datetime]] = None,
+        created_before: Optional[Union[str, dt.datetime]] = None,
         workspace_id: Optional[str] = None,
         collection_names: Optional[List[str]] = None,
         producer_names: Optional[List[str]] = None,
@@ -81,7 +88,7 @@ class Storage:
         Returns:
             A list of Asset objects.
         """
-        params: asset_searcher.AssetSearchParams = {
+        params: AssetSearchParams = {
             "createdAfter": created_after and utils.format_time(created_after),
             "createdBefore": created_before and utils.format_time(created_before),
             "workspaceId": workspace_id,
@@ -92,16 +99,12 @@ class Storage:
             "search": search,
             "sort": utils.SortingField(sortby, not descending),
         }
-        assets_json = asset_searcher.search_assets(
-            self.auth,
-            params=params,
-            limit=limit,
-        )
+        assets = self._query(cast(dict[str, Any], params), "/v2/assets", limit)
 
         if return_json:
-            return assets_json
+            return assets
         else:
-            return [asset.Asset(asset_info=asset_json) for asset_json in assets_json]
+            return [asset.Asset(asset_info=info) for info in assets]
 
     def get_orders(
         self,
@@ -152,9 +155,9 @@ class Storage:
             "tags": tags,
             "status": set(statuses) & allowed_statuses if statuses else None,
         }
-        orders_json = list(utils.query(params, "/v2/orders", self.auth.session))[:limit]
+        orders = self._query(params, "/v2/orders", limit)
 
         if return_json:
-            return orders_json
+            return orders
         else:
-            return [order.Order(order_id=order_json["id"], order_info=order_json) for order_json in orders_json]
+            return [order.Order(order_id=info["id"], order_info=info) for info in orders]

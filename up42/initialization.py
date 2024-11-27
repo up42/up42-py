@@ -1,6 +1,6 @@
 import logging
 
-from up42 import asset, base, catalog, order, storage, tasking, utils
+from up42 import asset, catalog, order, storage, tasking, utils
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
@@ -25,7 +25,7 @@ def initialize_storage() -> storage.Storage:
     """
     Returns a Storage object to list orders and assets.
     """
-    return storage.Storage(auth=base.workspace.auth, workspace_id=base.workspace.id)
+    return storage.Storage()
 
 
 def initialize_order(order_id: str) -> order.Order:

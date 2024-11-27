@@ -23,7 +23,7 @@ def test_get_assets(storage_mock):
     assert assets[0].asset_id == constants.ASSET_ID
 
 
-def test_get_assets_pagination(auth_mock, requests_mock):
+def test_get_assets_pagination(requests_mock):
     """
     SDK test account holds too few assets to query multiple pages via pagination,
     needs to be mocked.
@@ -55,7 +55,7 @@ def test_get_assets_pagination(auth_mock, requests_mock):
     url_storage_assets_paginated = f"{constants.API_HOST}/v2/assets?sort=createdAt,asc&size=50"
     requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
 
-    storage_results = storage.Storage(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
+    storage_results = storage.Storage()
     assets = storage_results.get_assets(limit=74, sortby="createdAt", descending=False)
     assert len(assets) == 74
     assert isinstance(assets[0], asset.Asset)
@@ -176,7 +176,7 @@ def test_get_orders(storage_mock):
         "Sc 7: statuses None, workspace_orders False, Return JSON True, name None",
     ],
 )
-def test_get_orders_v2_endpoint_params(auth_mock, requests_mock, params, expected_payload, expected_results):
+def test_get_orders_v2_endpoint_params(requests_mock, params, expected_payload, expected_results):
     allowed_statuses = {entry.value for entry in storage.AllowedStatuses}
     endpoint_statuses = set(params["statuses"]) & allowed_statuses if params["statuses"] else []
     url_params = "&".join(
@@ -200,7 +200,7 @@ def test_get_orders_v2_endpoint_params(auth_mock, requests_mock, params, expecte
             )
             for output in expected_results
         ]
-    storage_results = storage.Storage(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
+    storage_results = storage.Storage()
     orders = storage_results.get_orders(**params)
     assert orders == expected_results
 
@@ -210,7 +210,7 @@ def test_get_orders_raises_with_illegal_sorting_criteria(storage_mock):
         storage_mock.get_orders(sortby="notavailable")
 
 
-def test_get_orders_pagination(auth_mock, requests_mock):
+def test_get_orders_pagination(requests_mock):
     """
     Mock result holds 2 pages, each with 50 results.
     """
@@ -241,7 +241,7 @@ def test_get_orders_pagination(auth_mock, requests_mock):
     )
     requests_mock.get(url=url_storage_orders_paginated, json=json_orders_paginated)
 
-    storage_results = storage.Storage(auth=auth_mock, workspace_id=constants.WORKSPACE_ID)
+    storage_results = storage.Storage()
     orders = storage_results.get_orders(limit=74, sortby="createdAt", descending=False)
     assert len(orders) == 74
     assert isinstance(orders[0], order.Order)
