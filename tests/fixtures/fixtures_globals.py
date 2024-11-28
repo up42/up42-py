@@ -17,45 +17,6 @@ STAC_COLLECTION_ID = "e459db4c-3b9d-4aa1-8931-5df2517b49ba"
 URL_STAC_CATALOG = "https://api.up42.com/v2/assets/stac/"
 URL_STAC_SEARCH = "https://api.up42.com/v2/assets/stac/search"
 
-JSON_ASSET = {
-    "accountId": "69353acb-f942-423f-8f32-11d6d67caa77",
-    "createdAt": "2022-12-07T14:25:34.968Z",
-    "updatedAt": "2022-12-07T14:25:34.968Z",
-    "id": ASSET_ID,
-    "name": "string",
-    "size": 256248634,
-    "workspaceId": WORKSPACE_ID,
-    "order": {"id": "string", "status": "string", "hostId": "string"},
-    "source": "ARCHIVE",
-    "productId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "contentType": "string",
-    "producerName": "string",
-    "collectionName": "string",
-    "geospatialMetadataExtraction": "SUCCESSFUL",
-    "title": "string",
-    "tags": ["string"],
-}
-
-JSON_ASSETS = {
-    "content": [JSON_ASSET],
-    "pageable": {
-        "sort": {"sorted": True, "unsorted": False, "empty": False},
-        "pageNumber": 0,
-        "pageSize": 10,
-        "offset": 0,
-        "paged": True,
-        "unpaged": False,
-    },
-    "totalPages": 1,
-    "totalElements": 1,
-    "last": True,
-    "sort": {"sorted": True, "unsorted": False, "empty": False},
-    "numberOfElements": 1,
-    "first": True,
-    "size": 10,
-    "number": 0,
-    "empty": False,
-}
 
 STAC_SEARCH_RESPONSE = {
     "type": "FeatureCollection",
@@ -177,45 +138,4 @@ STAC_CATALOG_RESPONSE = {
     "stac_version": "1.0.0",
     "id": "up42-storage",
     "type": "Catalog",
-}
-
-
-JSON_ORDER = {
-    "data": {
-        "id": ORDER_ID,
-        "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-        "workspaceId": WORKSPACE_ID,
-        "dataProvider": "OneAtlas",
-        "status": "FULFILLED",
-        "createdAt": "2021-01-18T16:18:16.105851Z",
-        "updatedAt": "2021-01-18T16:21:31.966805Z",
-        "assets": [ASSET_ID],
-        "createdBy": {
-            "id": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-            "type": "USER",
-        },
-        "updatedBy": {"id": "system", "type": "INTERNAL"},
-    },
-    "error": None,
-}
-
-JSON_ORDERS = {
-    "content": [JSON_ORDER["data"]],
-    "pageable": {
-        "sort": {"sorted": True, "unsorted": False, "empty": False},
-        "pageNumber": 0,
-        "pageSize": 10,
-        "offset": 0,
-        "paged": True,
-        "unpaged": False,
-    },
-    "totalPages": 1,
-    "totalElements": 1,
-    "last": True,
-    "sort": {"sorted": True, "unsorted": False, "empty": False},
-    "numberOfElements": 1,
-    "first": True,
-    "size": 10,
-    "number": 0,
-    "empty": False,
 }

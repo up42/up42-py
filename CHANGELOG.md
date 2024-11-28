@@ -29,6 +29,20 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.1.1a8
+
+**Nov 28, 2024**
+- Dropped legacy fixtures for storage test coverage.
+- Unified paging between `Order`, `Tasking` and `Storage` classes.
+- Fixed paging bug for case of empty response.
+- Dropped `asset_searcher.py` module.
+- Switched to base descriptors in `Storage` class and drop the dependencies from `auth.py` module.
+- Dropped unused `Auth::request` and the corresponding test coverage.
+- Dropped unneeded `Storage::__repr__`.
+- Dropped limiting false statuses in `Storage::get_orders` since the type hinting is enabled.
+- Fixed bug with passing enum entries instead of values in `Storage::get_orders`.
+- Dropped failing wrong `sortby` value in `Storage::get_orders` since the type hinting is enabled.
+
 ## 2.1.1a7
 
 **Nov 28, 2024**

@@ -103,20 +103,6 @@ class Tasking(catalog.CatalogBase):
             order_parameters["params"]["geometry"] = geometry
         return order_parameters
 
-    def _query(self, params: Dict[str, Any], endpoint: str):
-        params = {key: value for key, value in params.items() if value}
-        params["page"] = 0
-
-        def get_pages():
-            while True:
-                response = self.session.get(host.endpoint(endpoint), params=params).json()
-                yield response["content"]
-                params["page"] += 1
-                if params["page"] == response["totalPages"]:
-                    break
-
-        return [entry for page in get_pages() for entry in page]
-
     def get_quotations(
         self,
         quotation_id: Optional[str] = None,
@@ -147,7 +133,7 @@ class Tasking(catalog.CatalogBase):
             "decision": decision,
             "sort": utils.SortingField(sortby, not descending),
         }
-        return self._query(params, "/v2/tasking/quotation")
+        return list(utils.paged_query(params, "/v2/tasking/quotation", self.session))
 
     def decide_quotation(self, quotation_id: str, decision: QuotationDecision) -> dict:
         """Accept or reject a quotation for a tasking order.
@@ -197,7 +183,7 @@ class Tasking(catalog.CatalogBase):
             "decision": decision,
             "sort": utils.SortingField(sortby, not descending),
         }
-        return self._query(params, "/v2/tasking/feasibility")
+        return list(utils.paged_query(params, "/v2/tasking/feasibility", self.session))
 
     def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
         """Accept one of the proposed feasibility study options.
