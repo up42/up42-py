@@ -8,6 +8,7 @@ import requests
 
 from up42 import auth as up42_auth
 from up42 import host, utils
+from up42.http import oauth
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
@@ -25,16 +26,21 @@ def _authenticated(value: Any):
 
 
 class _Workspace:
-    _auth: Optional[up42_auth.Auth] = None
     _id: Optional[str] = None
-
-    @property
-    def auth(self):
-        return _authenticated(self._auth)
+    _session: Optional[requests.Session] = None
+    _auth: Optional[oauth.Up42Auth] = None
 
     @property
     def id(self):
         return _authenticated(self._id)
+
+    @property
+    def session(self):
+        return _authenticated(self._session)
+
+    @property
+    def auth(self):
+        return _authenticated(self._auth)
 
     def authenticate(
         self,
@@ -51,13 +57,15 @@ class _Workspace:
             username: The username for the UP42 account (email UP42 console).
             password: Password for the UP42 console login.
         """
-        self._auth = up42_auth.Auth(
+        auth = up42_auth.Auth(
             cfg_file=cfg_file,
             username=username,
             password=password,
         )
         url = host.endpoint("/users/me")
-        self._id = self.auth.session.get(url).json()["data"]["id"]
+        self._session = auth.client.session
+        self._id = self.session.get(url).json()["data"]["id"]
+        self._auth = auth.client.auth
 
     def get_credits_balance(self) -> dict:
         """
@@ -67,7 +75,7 @@ class _Workspace:
             A dict with the balance of credits available in your account.
         """
         url = host.endpoint("/v2/payments/balances")
-        balance = self.auth.session.get(url).json()["available"]["amount"]
+        balance = self.session.get(url).json()["available"]["amount"]
         return {"balance": balance}
 
 
@@ -79,7 +87,7 @@ get_credits_balance = workspace.get_credits_balance
 
 class Session:
     def __get__(self, obj, obj_type=None) -> requests.Session:
-        return workspace.auth.session
+        return workspace.session
 
 
 class WorkspaceId:
@@ -96,4 +104,4 @@ class WorkspaceId:
 
 class StacClient:
     def __get__(self, obj, obj_type=None) -> pystac_client.Client:
-        return utils.stac_client(workspace.auth.client.auth)
+        return utils.stac_client(workspace.auth)

@@ -16,7 +16,7 @@ from .fixtures import fixtures_globals as constants
 @pytest.fixture(autouse=True)
 def workspace():
     with mock.patch("up42.base.workspace") as workspace_mock:
-        workspace_mock.auth.session = requests.session()
+        workspace_mock.session = requests.session()
         workspace_mock.id = constants.WORKSPACE_ID
         yield
 

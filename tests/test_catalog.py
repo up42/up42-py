@@ -32,7 +32,7 @@ POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
 @pytest.fixture(autouse=True)
 def workspace():
     with mock.patch("up42.base.workspace") as workspace_mock:
-        workspace_mock.auth.session = requests.session()
+        workspace_mock.session = requests.session()
         workspace_mock.id = constants.WORKSPACE_ID
         yield
 

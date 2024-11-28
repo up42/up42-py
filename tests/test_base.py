@@ -17,9 +17,14 @@ class TestWorkspace:
             _ = base.workspace.auth
         with pytest.raises(base.UserNotAuthenticated):
             _ = base.workspace.id
+        with pytest.raises(base.UserNotAuthenticated):
+            _ = base.workspace.session
 
     def test_should_authenticate(self, requests_mock):
-        requests_mock.post(constants.TOKEN_ENDPOINT, json={"access_token": constants.TOKEN, "expires_in": 5 * 60})
+        requests_mock.post(
+            constants.TOKEN_ENDPOINT,
+            json={"access_token": constants.TOKEN, "expires_in": 5 * 60},
+        )
         requests_mock.get(
             url="https://api.up42.com/users/me",
             json={"data": {"id": constants.WORKSPACE_ID}},
@@ -49,13 +54,14 @@ class TestDescriptors:
     @pytest.fixture(autouse=True)
     def workspace(self, auth_mock):
         with mock.patch("up42.base.workspace") as workspace_mock:
-            workspace_mock.auth = auth_mock
+            workspace_mock.session = auth_mock.session
+            workspace_mock.auth = auth_mock.client.auth
             workspace_mock.id = constants.WORKSPACE_ID
             yield
 
     def test_should_provide_session(self):
         record = ActiveRecord()
-        assert record.session == base.workspace.auth.session
+        assert record.session == base.workspace.session
 
     def test_session_should_not_be_represented(self):
         assert "session" not in repr(ActiveRecord())
