@@ -161,17 +161,11 @@ class Order:
         current_info = copy.deepcopy(self._info)
         params: dict[str, Any] = {"search": self.order_id, "page": 0}
 
-        def get_pages(endpoint: str):
-            while True:
-                response = self.session.get(host.endpoint(endpoint), params=params).json()
-                yield response["content"]
-                params["page"] += 1
-                if params["page"] == response["totalPages"]:
-                    break
-
         if (status := current_info["status"]) not in ["FULFILLED", "BEING_FULFILLED"]:
             raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {status}""")
-        return [asset.Asset(asset_info=asset_info) for page in get_pages("/v2/assets") for asset_info in page]
+        return [
+            asset.Asset(asset_info=asset_info) for asset_info in utils.paged_query(params, "/v2/assets", self.session)
+        ]
 
     @classmethod
     def place(cls, order_parameters: OrderParams, workspace_id: str) -> "Order":

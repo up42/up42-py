@@ -1,11 +1,9 @@
-import datetime
+import datetime as dt
 import enum
-from typing import List, Optional, Union
-from urllib import parse
+import itertools
+from typing import Any, List, Literal, Optional, Union
 
-from up42 import asset, asset_searcher
-from up42 import auth as up42_auth
-from up42 import host, order, utils
+from up42 import asset, base, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -23,6 +21,10 @@ class AllowedStatuses(enum.Enum):
     FAILED_PERMANENTLY = "FAILED_PERMANENTLY"
 
 
+OrderSortBy = Literal["createdAt", "updatedAt", "dataProvider", "type", "status"]
+OrderType = Literal["TASKING", "ARCHIVE"]
+
+
 class Storage:
     """
     The Storage class enables access to the UP42 storage. You can list
@@ -34,21 +36,17 @@ class Storage:
     ```
     """
 
-    def __init__(self, auth: up42_auth.Auth, workspace_id: str):
-        self.auth = auth
-        self.workspace_id = workspace_id
+    session = base.Session()
+    workspace_id = base.WorkspaceId()
+    pystac_client = base.StacClient()
 
-    def __repr__(self):
-        return f"Storage(workspace_id: {self.workspace_id})"
-
-    @property
-    def pystac_client(self):
-        return utils.stac_client(self.auth.client.auth)
+    def _query(self, params: dict[str, Any], endpoint: str, limit: Optional[int]):
+        return list(itertools.islice(utils.paged_query(params, endpoint, self.session), limit))
 
     def get_assets(
         self,
-        created_after: Optional[Union[str, datetime.datetime]] = None,
-        created_before: Optional[Union[str, datetime.datetime]] = None,
+        created_after: Optional[Union[str, dt.datetime]] = None,
+        created_before: Optional[Union[str, dt.datetime]] = None,
         workspace_id: Optional[str] = None,
         collection_names: Optional[List[str]] = None,
         producer_names: Optional[List[str]] = None,
@@ -82,7 +80,7 @@ class Storage:
         Returns:
             A list of Asset objects.
         """
-        params: asset_searcher.AssetSearchParams = {
+        params = {
             "createdAfter": created_after and utils.format_time(created_after),
             "createdBefore": created_before and utils.format_time(created_before),
             "workspaceId": workspace_id,
@@ -91,28 +89,23 @@ class Storage:
             "tags": tags,
             "sources": sources,
             "search": search,
+            "sort": utils.SortingField(sortby, not descending),
         }
-        assets_json = asset_searcher.search_assets(
-            self.auth,
-            params=params,
-            limit=limit,
-            sortby=sortby,
-            descending=descending,
-        )
+        assets = self._query(params, "/v2/assets", limit)
 
         if return_json:
-            return assets_json
+            return assets
         else:
-            return [asset.Asset(asset_info=asset_json) for asset_json in assets_json]
+            return [asset.Asset(asset_info=info) for info in assets]
 
     def get_orders(
         self,
         workspace_orders: bool = True,
         return_json: bool = False,
         limit: Optional[int] = None,
-        sortby: str = "createdAt",
+        sortby: OrderSortBy = "createdAt",
         descending: bool = True,
-        order_type: Optional[str] = None,
+        order_type: Optional[OrderType] = None,
         statuses: Optional[List[AllowedStatuses]] = None,
         name: Optional[str] = None,
         tags: Optional[List[str]] = None,
@@ -135,37 +128,18 @@ class Storage:
         Returns:
             Order objects in the workspace or alternatively JSON info of the orders.
         """
-        allowed_statuses = {entry.value for entry in AllowedStatuses}
-
-        allowed_sorting_criteria = {
-            "createdAt",
-            "updatedAt",
-            "type",
-            "status",
-        }
-        if sortby not in allowed_sorting_criteria:
-            raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
-        sort = f"""{sortby},{"desc" if descending else "asc"}"""
-        base_url = host.endpoint("/v2/orders")
 
         params = {
-            "sort": sort,
+            "sort": utils.SortingField(sortby, not descending),
             "workspaceId": self.workspace_id if workspace_orders else None,
             "displayName": name,
-            "type": order_type if order_type in ["TASKING", "ARCHIVE"] else None,
+            "type": order_type,
             "tags": tags,
-            "status": set(statuses) & allowed_statuses if statuses else None,
+            "status": [status.value for status in statuses] if statuses else None,
         }
-        params = {k: v for k, v in params.items() if v is not None}
-        url = parse.urljoin(base_url, "?" + parse.urlencode(params, doseq=True, safe=""))
-
-        orders_json = asset_searcher.query_paginated_endpoints(auth=self.auth, url=url, limit=limit)
-        logger_message = f"Got {len(orders_json)} orders" + (
-            f" for workspace {self.workspace_id}." if workspace_orders else ""
-        )
-        logger.info(logger_message)
+        orders = self._query(params, "/v2/orders", limit)
 
         if return_json:
-            return orders_json
+            return orders
         else:
-            return [order.Order(order_id=order_json["id"], order_info=order_json) for order_json in orders_json]
+            return [order.Order(order_id=info["id"], order_info=info) for info in orders]
