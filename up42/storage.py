@@ -1,7 +1,7 @@
 import datetime as dt
 import enum
 import itertools
-from typing import Any, List, Optional, TypedDict, Union, cast
+from typing import Any, List, Literal, Optional, TypedDict, Union, cast
 
 from up42 import asset, base, order, utils
 
@@ -31,6 +31,10 @@ class AssetSearchParams(TypedDict, total=False):
     sources: Optional[List[str]]
     search: Optional[str]
     sort: utils.SortingField
+
+
+OrderSortBy = Literal["createdAt", "updatedAt", "dataProvider", "type", "status"]
+OrderType = Literal["TASKING", "ARCHIVE"]
 
 
 class Storage:
@@ -111,9 +115,9 @@ class Storage:
         workspace_orders: bool = True,
         return_json: bool = False,
         limit: Optional[int] = None,
-        sortby: str = "createdAt",
+        sortby: OrderSortBy = "createdAt",
         descending: bool = True,
-        order_type: Optional[str] = None,
+        order_type: Optional[OrderType] = None,
         statuses: Optional[List[AllowedStatuses]] = None,
         name: Optional[str] = None,
         tags: Optional[List[str]] = None,
@@ -136,24 +140,14 @@ class Storage:
         Returns:
             Order objects in the workspace or alternatively JSON info of the orders.
         """
-        allowed_statuses = {entry.value for entry in AllowedStatuses}
-
-        allowed_sorting_criteria = {
-            "createdAt",
-            "updatedAt",
-            "type",
-            "status",
-        }
-        if sortby not in allowed_sorting_criteria:
-            raise ValueError(f"sortby parameter must be one of {allowed_sorting_criteria}!")
 
         params = {
             "sort": utils.SortingField(sortby, not descending),
             "workspaceId": self.workspace_id if workspace_orders else None,
             "displayName": name,
-            "type": order_type if order_type in ["TASKING", "ARCHIVE"] else None,
+            "type": order_type,
             "tags": tags,
-            "status": set(statuses) & allowed_statuses if statuses else None,
+            "status": [status.value for status in statuses] if statuses else None,
         }
         orders = self._query(params, "/v2/orders", limit)
 
