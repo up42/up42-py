@@ -418,7 +418,7 @@ def paged_query(params: dict[str, Any], endpoint: str, session: requests.Session
             response = session.get(host.endpoint(endpoint), params=params).json()
             yield response["content"]
             params["page"] += 1
-            if params["page"] == response["totalPages"]:
+            if params["page"] >= response["totalPages"]:
                 break
 
     return (entry for page in get_pages() for entry in page)

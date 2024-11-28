@@ -1,7 +1,7 @@
 import datetime as dt
 import enum
 import itertools
-from typing import Any, List, Literal, Optional, TypedDict, Union, cast
+from typing import Any, List, Literal, Optional, Union
 
 from up42 import asset, base, order, utils
 
@@ -19,18 +19,6 @@ class AllowedStatuses(enum.Enum):
     DOWNLOADED = "DOWNLOADED"
     FULFILLED = "FULFILLED"
     FAILED_PERMANENTLY = "FAILED_PERMANENTLY"
-
-
-class AssetSearchParams(TypedDict, total=False):
-    createdAfter: Optional[Union[str, dt.datetime]]  # pylint: disable=invalid-name
-    createdBefore: Optional[Union[str, dt.datetime]]  # pylint: disable=invalid-name
-    workspaceId: Optional[str]  # pylint: disable=invalid-name
-    collectionNames: Optional[List[str]]  # pylint: disable=invalid-name
-    producerNames: Optional[List[str]]  # pylint: disable=invalid-name
-    tags: Optional[List[str]]
-    sources: Optional[List[str]]
-    search: Optional[str]
-    sort: utils.SortingField
 
 
 OrderSortBy = Literal["createdAt", "updatedAt", "dataProvider", "type", "status"]
@@ -92,7 +80,7 @@ class Storage:
         Returns:
             A list of Asset objects.
         """
-        params: AssetSearchParams = {
+        params = {
             "createdAfter": created_after and utils.format_time(created_after),
             "createdBefore": created_before and utils.format_time(created_before),
             "workspaceId": workspace_id,
@@ -103,7 +91,7 @@ class Storage:
             "search": search,
             "sort": utils.SortingField(sortby, not descending),
         }
-        assets = self._query(cast(dict[str, Any], params), "/v2/assets", limit)
+        assets = self._query(params, "/v2/assets", limit)
 
         if return_json:
             return assets

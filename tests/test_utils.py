@@ -287,6 +287,11 @@ class TestPagedQuery:
             requests_mock.get(url=self.base_url + f"&page={page}", json=response)
         assert list(self.query()) == self.content * 2
 
+    def test_should_query_empty_pages(self, requests_mock: req_mock.Mocker):
+        response = {"content": [], "totalPages": 0}
+        requests_mock.get(url=self.base_url + "&page=0", json=response)
+        assert not list(self.query())
+
     def test_should_lazily_query_pages(self, requests_mock: req_mock.Mocker):
         response = {"content": self.content, "totalPages": 2}
         requests_mock.get(url=self.base_url + "&page=0", json=response)
