@@ -2,10 +2,7 @@ import pytest
 
 from up42 import host
 
-pytest_plugins = [
-    "tests.fixtures.fixtures_auth",
-    "tests.fixtures.fixtures_storage",
-]
+pytest_plugins = ["tests.fixtures.fixtures_auth"]
 
 
 @pytest.fixture(autouse=True)
