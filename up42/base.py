@@ -56,8 +56,8 @@ class _Workspace:
             username=username,
             password=password,
         )
-        url = host.endpoint("/users/me")
-        self._id = self.auth.session.get(url).json()["data"]["id"]
+        user_info = self.auth.session.get(host.user_info_endpoint()).json()
+        self._id = user_info["sub"]
 
     def get_credits_balance(self) -> dict:
         """
