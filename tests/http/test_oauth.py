@@ -42,7 +42,7 @@ def match_account_authentication_request_body(request):
         f"username={ACCOUNT_CREDENTIALS.username}&"
         f"password={ACCOUNT_CREDENTIALS.password}&"
         f"client_id={oauth.CLIENT_ID}&"
-        f"scope=openid"
+        "scope=openid"
     )
 
 
