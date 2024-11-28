@@ -1,11 +1,9 @@
 import datetime
 import pathlib
 from typing import List, Optional
-from unittest import mock
 
 import pystac
 import pytest
-import requests
 import requests_mock as req_mock
 
 from up42 import asset
@@ -17,13 +15,6 @@ DOWNLOAD_URL = f"{constants.API_HOST}/abcdef.tgz"
 STAC_FILE = "stac_file.tiff"
 STAC_ASSET_URL = "https://example.com/some-random-path"
 STAC_ASSET_HREF = f"{constants.API_HOST}/v2/assets/stac-id"
-
-
-@pytest.fixture(autouse=True)
-def workspace():
-    with mock.patch("up42.base.workspace") as workspace_mock:
-        workspace_mock.session = requests.session()
-        yield
 
 
 class TestAsset:

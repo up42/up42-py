@@ -5,8 +5,6 @@ UP42 authentication mechanism and base requests functionality
 import pathlib
 from typing import Callable, Dict, List, Optional, Union
 
-import requests
-
 from up42 import host, utils
 from up42.http import client
 
@@ -55,8 +53,3 @@ class Auth:
         credential_sources = get_credential_sources(cfg_file, username, password)
         self.client = create_client(credential_sources, host.token_endpoint())
         logger.info("Authentication with UP42 successful!")
-
-    # TODO: to be moved to base._Workspace
-    @property
-    def session(self) -> requests.Session:
-        return self.client.session

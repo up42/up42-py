@@ -1,6 +1,5 @@
 import dataclasses
 from typing import Union
-from unittest import mock
 
 import pystac_client
 import pytest
@@ -12,6 +11,7 @@ from .fixtures import fixtures_globals as constants
 
 
 class TestWorkspace:
+    @pytest.mark.no_workspace
     def test_fails_to_provide_properties_if_not_authenticated(self):
         with pytest.raises(base.UserNotAuthenticated):
             _ = base.workspace.auth
@@ -20,6 +20,7 @@ class TestWorkspace:
         with pytest.raises(base.UserNotAuthenticated):
             _ = base.workspace.session
 
+    @pytest.mark.no_workspace
     def test_should_authenticate(self, requests_mock):
         requests_mock.post(
             constants.TOKEN_ENDPOINT,
@@ -32,6 +33,7 @@ class TestWorkspace:
         base.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
         assert base.workspace.id == constants.WORKSPACE_ID
 
+    @pytest.mark.no_workspace
     def test_should_get_credits_balance(self, requests_mock: req_mock.Mocker):
         balance_url = f"{constants.API_HOST}/v2/payments/balances"
         balance = 10693
@@ -51,14 +53,6 @@ class ActiveRecord:
 
 
 class TestDescriptors:
-    @pytest.fixture(autouse=True)
-    def workspace(self, auth_mock):
-        with mock.patch("up42.base.workspace") as workspace_mock:
-            workspace_mock.session = auth_mock.session
-            workspace_mock.auth = auth_mock.client.auth
-            workspace_mock.id = constants.WORKSPACE_ID
-            yield
-
     def test_should_provide_session(self):
         record = ActiveRecord()
         assert record.session == base.workspace.session

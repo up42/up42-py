@@ -2,23 +2,13 @@ import datetime as dt
 import random
 import urllib
 from typing import Optional, cast
-from unittest import mock
 
 import pytest
-import requests
 import requests_mock as req_mock
 
 from up42 import asset, order, storage, utils
 
 from .fixtures import fixtures_globals as constants
-
-
-@pytest.fixture(autouse=True)
-def workspace():
-    with mock.patch("up42.base.workspace") as workspace_mock:
-        workspace_mock.session = requests.session()
-        workspace_mock.id = constants.WORKSPACE_ID
-        yield
 
 
 class TestStorage:

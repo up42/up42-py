@@ -60,6 +60,3 @@ class TestAuth:
             constants.PASSWORD,
         )
         create_client.assert_called_once_with(credential_sources, constants.TOKEN_ENDPOINT)
-
-    def test_should_authenticate_when_created(self):
-        assert self.auth.session == session

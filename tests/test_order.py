@@ -1,7 +1,4 @@
-from unittest import mock
-
 import pytest
-import requests
 import requests_mock as req_mock
 
 from up42 import asset, order
@@ -10,13 +7,6 @@ from .fixtures import fixtures_globals as constants
 
 ORDER_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
 ORDER_PLACEMENT_URL = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
-
-
-@pytest.fixture(autouse=True)
-def workspace():
-    with mock.patch("up42.base.workspace") as workspace_mock:
-        workspace_mock.session = requests.session()
-        yield
 
 
 class TestOrder:
@@ -137,7 +127,10 @@ class TestOrder:
 
     @pytest.mark.parametrize(
         "info",
-        [{"type": "ARCHIVE"}, {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}}],
+        [
+            {"type": "ARCHIVE"},
+            {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}},
+        ],
         ids=["ARCHIVE", "TASKING"],
     )
     def test_should_track_order_status_until_fulfilled(self, requests_mock: req_mock.Mocker, info: dict):
