@@ -6,7 +6,6 @@ import geojson  # type: ignore
 import geopandas as gpd  # type: ignore
 import pandas as pd
 import pytest
-import requests
 import requests_mock as req_mock
 import shapely  # type: ignore
 
@@ -26,14 +25,6 @@ FEATURE = {
     "geometry": {"type": "Point", "coordinates": (1.0, 2.0)},
 }
 POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
-
-
-@pytest.fixture(autouse=True)
-def set_status_raising_session():
-    session = requests.Session()
-    session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
-    glossary.ProductGlossary.session = session  # type: ignore
-    catalog.CatalogBase.session = session  # type: ignore
 
 
 class TestCatalogBase:

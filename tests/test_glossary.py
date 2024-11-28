@@ -2,7 +2,6 @@ import dataclasses
 from typing import List, Optional
 
 import pytest
-import requests
 import requests_mock as req_mock
 
 from tests.fixtures import fixtures_globals as constants
@@ -50,13 +49,6 @@ COLLECTION = glossary.Collection(
     data_products=[DATA_PRODUCT],
     metadata=COLLECTION_METADATA,
 )
-
-
-@pytest.fixture(autouse=True)
-def set_status_raising_session():
-    session = requests.Session()
-    session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
-    glossary.ProductGlossary.session = session  # type: ignore
 
 
 class TestProductGlossary:
