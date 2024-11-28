@@ -1,65 +1,75 @@
-import pystac_client
-import pytest
+import datetime as dt
+import urllib
+from typing import cast
+from unittest import mock
 
-from up42 import asset, order, storage
+import pytest
+import requests
+import requests_mock as req_mock
+
+from up42 import asset, order, storage, utils
 
 from .fixtures import fixtures_globals as constants
 
 
-def test_init(storage_mock):
-    assert isinstance(storage_mock, storage.Storage)
-    assert storage_mock.workspace_id == constants.WORKSPACE_ID
+@pytest.fixture(autouse=True)
+def workspace():
+    with mock.patch("up42.base.workspace") as workspace_mock:
+        workspace_mock.auth.session = requests.session()
+        yield
 
 
-def test_pystac_client_property(storage_mock):
-    up42_pystac_client = storage_mock.pystac_client
-    isinstance(up42_pystac_client, pystac_client.Client)
-
-
-def test_get_assets(storage_mock):
-    assets = storage_mock.get_assets()
-    assert len(assets) == 1
-    assert isinstance(assets[0], asset.Asset)
-    assert assets[0].asset_id == constants.ASSET_ID
-
-
-def test_get_assets_pagination(requests_mock):
-    """
-    SDK test account holds too few assets to query multiple pages via pagination,
-    needs to be mocked.
-
-    Mock result holds 2 pages, each with 50 results.
-    """
-    json_assets_paginated = {
-        "content": [constants.JSON_ASSET] * 50,
-        "pageable": {
-            "sort": {"sorted": True, "unsorted": False, "empty": False},
-            "pageNumber": 0,
-            "pageSize": 50,
-            "offset": 0,
-            "paged": True,
-            "unpaged": False,
-        },
-        "totalPages": 2,
-        "totalElements": 100,
-        "last": True,
-        "sort": {"sorted": True, "unsorted": False, "empty": False},
-        "numberOfElements": 100,
-        "first": True,
-        "size": 50,
-        "number": 0,
-        "empty": False,
-    }
-
-    # assets pages
-    url_storage_assets_paginated = f"{constants.API_HOST}/v2/assets?sort=createdAt,asc&size=50"
-    requests_mock.get(url=url_storage_assets_paginated, json=json_assets_paginated)
-
-    storage_results = storage.Storage()
-    assets = storage_results.get_assets(limit=74, sortby="createdAt", descending=False)
-    assert len(assets) == 74
-    assert isinstance(assets[0], asset.Asset)
-    assert assets[0].asset_id == constants.ASSET_ID
+class TestStorage:
+    @pytest.mark.parametrize("limit", [10, None])
+    @pytest.mark.parametrize("descending", [False, True])
+    @pytest.mark.parametrize("return_json", [False, True])
+    def test_should_get_assets(self, limit, descending, return_json, requests_mock: req_mock.Mocker):
+        created_after = dt.datetime.now() - dt.timedelta(days=1)
+        created_before = dt.datetime.now() + dt.timedelta(days=1)
+        collection_names = ["collection", "names"]
+        producer_names = ["producer", "names"]
+        tags = ["producer", "names"]
+        sources = ["some", "sources"]
+        search = "search"
+        sortby = "updatedAt"
+        query = urllib.parse.urlencode(
+            {
+                "createdAfter": utils.format_time(created_after),
+                "createdBefore": utils.format_time(created_before),
+                "workspaceId": constants.WORKSPACE_ID,
+                "collectionNames": collection_names,
+                "producerNames": producer_names,
+                "tags": tags,
+                "sources": sources,
+                "search": search,
+                "sort": utils.SortingField(sortby, not descending),
+                "page": 0,
+            },
+            doseq=True,
+        )
+        expected = [{"asset": "info"}] * 20
+        requests_mock.get(
+            f"{constants.API_HOST}/v2/assets?{query}",
+            json={"content": expected, "page": 0, "totalPages": 1},
+        )
+        assets = storage.Storage().get_assets(
+            created_after=created_after,
+            created_before=created_before,
+            workspace_id=constants.WORKSPACE_ID,
+            collection_names=collection_names,
+            producer_names=producer_names,
+            tags=tags,
+            sources=sources,
+            search=search,
+            limit=limit,
+            sortby=sortby,
+            descending=descending,
+            return_json=return_json,
+        )
+        if return_json:
+            assert assets == expected[:limit]
+        else:
+            assert [cast(asset.Asset, asset_obj).info for asset_obj in assets] == expected[:limit]
 
 
 def test_get_orders(storage_mock):

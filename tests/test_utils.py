@@ -1,3 +1,4 @@
+import itertools
 import json
 import pathlib
 from unittest import mock
@@ -5,11 +6,14 @@ from unittest import mock
 import geopandas  # type: ignore
 import pandas
 import pytest
+import requests
 import requests_mock as req_mock
 from dateutil import parser
 from shapely import geometry  # type: ignore
 
 from up42 import utils
+
+from .fixtures import fixtures_globals as constants
 
 POLY = geometry.Polygon([(0, 0), (1, 1), (1, 0)])
 
@@ -266,3 +270,24 @@ class TestSortingField:
         field = utils.SortingField(name="name")
         assert str(field.asc) == "name,asc"
         assert str(field.desc) == "name,desc"
+
+
+class TestPagedQuery:
+    params = {"param": "value"}
+    endpoint = "/some-end-point"
+    base_url = constants.API_HOST + endpoint + "?param=value"
+    content = [{"id": f"id{idx}"} for idx in [1, 2]]
+
+    def query(self):
+        return utils.paged_query(self.params | {"ignored": None}, self.endpoint, requests.Session())
+
+    def test_should_query_all_pages(self, requests_mock: req_mock.Mocker):
+        for page in [0, 1]:
+            response = {"content": self.content, "totalPages": 2}
+            requests_mock.get(url=self.base_url + f"&page={page}", json=response)
+        assert list(self.query()) == self.content * 2
+
+    def test_should_lazily_query_pages(self, requests_mock: req_mock.Mocker):
+        response = {"content": self.content, "totalPages": 2}
+        requests_mock.get(url=self.base_url + "&page=0", json=response)
+        assert list(itertools.islice(self.query(), 2)) == self.content

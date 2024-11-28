@@ -49,7 +49,7 @@ class Storage:
     pystac_client = base.StacClient()
 
     def _query(self, params: dict[str, Any], endpoint: str, limit: Optional[int]):
-        return list(itertools.islice(utils.query(params, endpoint, self.session), limit))
+        return list(itertools.islice(utils.paged_query(params, endpoint, self.session), limit))
 
     def get_assets(
         self,

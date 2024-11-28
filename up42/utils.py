@@ -409,8 +409,8 @@ class SortingField:
         return f"{self.name},{order}"
 
 
-def query(params: dict[str, Any], endpoint: str, session: requests.Session):
-    params = {key: value for key, value in params.items() if value}
+def paged_query(params: dict[str, Any], endpoint: str, session: requests.Session):
+    params = {key: value for key, value in params.items() if value is not None}
     params["page"] = 0
 
     def get_pages():
