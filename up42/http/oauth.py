@@ -39,6 +39,7 @@ class AccountTokenRetriever:
             "username": self.username,
             "password": self.password,
             "client_id": CLIENT_ID,
+            "scope": "openid",
         }
         response = session.post(
             url=settings.token_url,
