@@ -190,7 +190,7 @@ class TestTasking:
         feasibility_id: Optional[str],
         workspace_id: Optional[str],
         order_id: Optional[str],
-        decision: Optional[List[tasking.FeasibilityDecision]],
+        decision: Optional[List[tasking.FeasibilityStatus]],
         descending: bool,
     ):
         query_params: dict[str, Any] = {"sort": "createdAt," + ("desc" if descending else "asc")}
