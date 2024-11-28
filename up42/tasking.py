@@ -18,7 +18,7 @@ QuotationDecision = Literal[
     "REJECTED",
 ]
 QuotationStatus = Union[Literal["NOT_DECIDED"], QuotationDecision]
-FeasibilityDecision = Literal["NOT_DECIDED", "ACCEPTED"]
+FeasibilityStatus = Literal["NOT_DECIDED", "ACCEPTED"]
 
 
 class InvalidDecision(ValueError):
@@ -156,7 +156,7 @@ class Tasking(catalog.CatalogBase):
         feasibility_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
-        decision: Optional[List[FeasibilityDecision]] = None,
+        decision: Optional[List[FeasibilityStatus]] = None,
         sortby: str = "createdAt",
         descending: bool = True,
     ) -> list[dict]:
