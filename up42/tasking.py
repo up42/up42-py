@@ -2,6 +2,7 @@
 Tasking functionality
 """
 
+import dataclasses
 import datetime
 from typing import Any, Dict, List, Literal, Optional, Union
 
@@ -198,3 +199,49 @@ class Tasking(catalog.CatalogBase):
         """
         url = host.endpoint(f"/v2/tasking/feasibility/{feasibility_id}")
         return self.session.patch(url=url, json={"acceptedOptionId": accepted_option_id}).json()
+
+
+@dataclasses.dataclass
+class FeasibilityOption:
+    id: str
+    feasibility_id: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    description: str
+
+
+DecisionStatusType = Literal["NOT_DECIDED", "ACCEPTED"]
+
+
+class FeasibilityStudySorting:
+    created_at = utils.SortingField("created_at")
+
+
+@dataclasses.dataclass
+class FeasibilityStudy:
+    id: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    decided_at: datetime.datetime
+    account_id: str
+    workspace_id: str
+    order_id: str  # Do we need to link order here?
+    decision_status: Literal["NOT_DECIDED", "ACCEPTED"]
+    options: list[FeasibilityOption]
+    decision_type: Optional[Literal["USER", "ADMIN", "API", "SYSTEM"]]
+    type: Literal["AUTO", "MANUAL"]
+    decision_option: Optional[FeasibilityOption]
+
+    def save(self):
+        # save if decision_option is set
+        ...
+
+    @classmethod
+    def all(
+        cls,
+        workspace_id: Optional[str],
+        order_id: Optional[str] = None,
+        decision_status: Optional[List[DecisionStatusType]] = None,
+        sort_by: utils.SortingField = FeasibilityStudySorting.created_at.desc,
+    ):
+        pass
