@@ -106,7 +106,8 @@ class Storage:
         sortby: OrderSortBy = "createdAt",
         descending: bool = True,
         order_type: Optional[OrderType] = None,
-        statuses: Optional[List[AllowedStatuses]] = None,
+        # FIXME: should be AllowedStatuses instead of str
+        statuses: Optional[List[str]] = None,
         name: Optional[str] = None,
         tags: Optional[List[str]] = None,
     ) -> Union[List[order.Order], List[dict]]:
@@ -135,7 +136,7 @@ class Storage:
             "displayName": name,
             "type": order_type,
             "tags": tags,
-            "status": [status.value for status in statuses] if statuses else None,
+            "status": statuses,
         }
         orders = self._query(params, "/v2/orders", limit)
 
