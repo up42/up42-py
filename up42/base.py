@@ -6,9 +6,8 @@ from typing import Any, Optional, Union
 import pystac_client
 import requests
 
-from up42 import auth as up42_auth
 from up42 import host, utils
-from up42.http import oauth
+from up42.http import client, oauth
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
@@ -57,15 +56,13 @@ class _Workspace:
             username: The username for the UP42 account (email UP42 console).
             password: Password for the UP42 console login.
         """
-        auth = up42_auth.Auth(
-            cfg_file=cfg_file,
-            username=username,
-            password=password,
-        )
+        credential_sources = client.collect_credentials(cfg_file, username, password)
+        up42_client = client.create(credential_sources, host.token_endpoint())
+        logger.info("Authentication with UP42 successful!")
         url = host.endpoint("/users/me")
-        self._session = auth.client.session
+        self._session = up42_client.session
         self._id = self.session.get(url).json()["data"]["id"]
-        self._auth = auth.client.auth
+        self._auth = up42_client.auth
 
     def get_credits_balance(self) -> dict:
         """
