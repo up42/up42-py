@@ -98,7 +98,8 @@ class TestStorage:
         tags = ["some", "tags"]
         name = "name"
         workspace_params = {"workspaceId": constants.WORKSPACE_ID} if workspace_orders else {}
-        status_params = {"status": [status.value for status in statuses]} if statuses else {}
+        status = [status.value for status in statuses] if statuses else None
+        status_params = {"status": status} if status else {}
         query = urllib.parse.urlencode(
             {
                 "sort": utils.SortingField(sortby, not descending),
@@ -123,7 +124,7 @@ class TestStorage:
             sortby=sortby,
             descending=descending,
             order_type=order_type,
-            statuses=statuses,
+            statuses=status,
             name=name,
             tags=tags,
         )
