@@ -210,9 +210,6 @@ class FeasibilityOption:
     description: str
 
 
-DecisionStatusType = Literal["NOT_DECIDED", "ACCEPTED"]
-
-
 class FeasibilityStudySorting:
     created_at = utils.SortingField("created_at")
 
@@ -226,7 +223,7 @@ class FeasibilityStudy:
     account_id: str
     workspace_id: str
     order_id: str  # Do we need to link order here?
-    decision_status: Literal["NOT_DECIDED", "ACCEPTED"]
+    decision_status: FeasibilityStatus
     options: list[FeasibilityOption]
     decision_type: Optional[Literal["USER", "ADMIN", "API", "SYSTEM"]]
     type: Literal["AUTO", "MANUAL"]
@@ -239,9 +236,48 @@ class FeasibilityStudy:
     @classmethod
     def all(
         cls,
-        workspace_id: Optional[str],
+        id: Optional[str] = None,
+        workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
-        decision_status: Optional[List[DecisionStatusType]] = None,
+        decision_status: Optional[List[FeasibilityStatus]] = None,
         sort_by: utils.SortingField = FeasibilityStudySorting.created_at.desc,
     ):
         pass
+
+
+class QuotationSorting:
+    created_at = utils.SortingField("createdAt")
+
+
+@dataclasses.dataclass
+class Quotation:
+    id: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    decided_at: datetime.datetime
+    decision_type: Optional[Literal["USER", "ADMIN", "API", "SYSTEM"]]
+    account_id: str
+    workspace_id: str
+    order_id: str  # Do we need to link order here?
+    credits_price: int
+    decision_status: QuotationStatus
+
+    def accept(self):
+        self.decision_status = "ACCEPTED"
+
+    def reject(self):
+        self.decision_status = "REJECTED"
+
+    def save(self):
+        ...
+
+    @classmethod
+    def all(
+        cls,
+        id: Optional[str] = None,
+        workspace_id: Optional[str] = None,
+        order_id: Optional[str] = None,
+        decision_status: Optional[List[QuotationStatus]] = None,
+        sort_by: utils.SortingField = QuotationSorting.created_at.desc,
+    ):
+        ...
