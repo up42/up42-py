@@ -38,6 +38,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Dissolve `auth.Auth` in `_Workspace::authenticate`.
 - Drop legacy `auth.py`.
 
+## 2.1.1a9
+
+**Nov 29, 2024**
+- Restore accepting string instead of enum in `Storage::get_orders`.
+
 ## 2.1.1a8
 
 **Nov 28, 2024**
