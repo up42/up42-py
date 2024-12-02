@@ -11,8 +11,7 @@ import pytest
 import requests
 import requests_mock as req_mock
 
-from tests import helpers
-from tests.fixtures import fixtures_globals as constants
+from tests import constants, helpers
 from up42 import processing, utils
 
 PROCESS_ID = "process-id"

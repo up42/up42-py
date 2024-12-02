@@ -9,10 +9,8 @@ import pytest
 import requests_mock as req_mock
 import shapely  # type: ignore
 
+from tests import constants, helpers
 from up42 import catalog, glossary, order
-
-from . import helpers
-from .fixtures import fixtures_globals as constants
 
 PHR = "phr"
 SIMPLE_BOX = shapely.box(0, 0, 1, 1).__geo_interface__

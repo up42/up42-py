@@ -1,10 +1,10 @@
 import pytest
 import requests_mock as req_mock
 
+from tests import constants
 from up42 import asset, order
 
-from .fixtures import fixtures_globals as constants
-
+ASSET_ORDER_ID = "22d0b8e9-b649-4971-8adc-1a5eac1fa6f3"
 ORDER_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
 ORDER_PLACEMENT_URL = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
 
@@ -94,7 +94,7 @@ class TestOrder:
         asset_info = {
             "content": [
                 {
-                    "id": constants.ASSET_ORDER_ID,
+                    "id": ASSET_ORDER_ID,
                 }
             ],
             "totalPages": 1,
@@ -103,7 +103,7 @@ class TestOrder:
         order_obj = order.Order(order_id=constants.ORDER_ID)
         (asset_obj,) = order_obj.get_assets()
         assert isinstance(asset_obj, asset.Asset)
-        assert asset_obj.asset_id == constants.ASSET_ORDER_ID
+        assert asset_obj.asset_id == ASSET_ORDER_ID
 
     @pytest.mark.parametrize(
         "status",
