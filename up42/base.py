@@ -59,9 +59,9 @@ class _Workspace:
         credential_sources = client.collect_credentials(cfg_file, username, password)
         up42_client = client.create(credential_sources, host.token_endpoint())
         logger.info("Authentication with UP42 successful!")
-        url = host.endpoint("/users/me")
         self._session = up42_client.session
-        self._id = self.session.get(url).json()["data"]["id"]
+        user_info = self.session.get(host.user_info_endpoint()).json()
+        self._id = user_info["sub"]
         self._auth = up42_client.auth
 
     def get_credits_balance(self) -> dict:

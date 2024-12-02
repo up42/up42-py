@@ -9,6 +9,8 @@ from up42 import base
 
 from .fixtures import fixtures_globals as constants
 
+USER_INFO_ENDPOINT = "https://auth.up42.com/realms/public/protocol/openid-connect/userinfo"
+
 
 @pytest.mark.no_workspace
 class TestWorkspace:
@@ -26,8 +28,8 @@ class TestWorkspace:
             json={"access_token": constants.TOKEN, "expires_in": 5 * 60},
         )
         requests_mock.get(
-            url="https://api.up42.com/users/me",
-            json={"data": {"id": constants.WORKSPACE_ID}},
+            url=USER_INFO_ENDPOINT,
+            json={"sub": constants.WORKSPACE_ID},
         )
         base.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
         assert base.workspace.id == constants.WORKSPACE_ID
