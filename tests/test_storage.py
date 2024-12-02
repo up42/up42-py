@@ -2,23 +2,13 @@ import datetime as dt
 import random
 import urllib
 from typing import Optional, cast
-from unittest import mock
 
 import pytest
-import requests
 import requests_mock as req_mock
 
 from up42 import asset, order, storage, utils
 
 from .fixtures import fixtures_globals as constants
-
-
-@pytest.fixture(autouse=True)
-def workspace():
-    with mock.patch("up42.base.workspace") as workspace_mock:
-        workspace_mock.auth.session = requests.session()
-        workspace_mock.id = constants.WORKSPACE_ID
-        yield
 
 
 class TestStorage:
@@ -98,7 +88,8 @@ class TestStorage:
         tags = ["some", "tags"]
         name = "name"
         workspace_params = {"workspaceId": constants.WORKSPACE_ID} if workspace_orders else {}
-        status_params = {"status": [status.value for status in statuses]} if statuses else {}
+        status = [status.value for status in statuses] if statuses else None
+        status_params = {"status": status} if status else {}
         query = urllib.parse.urlencode(
             {
                 "sort": utils.SortingField(sortby, not descending),
@@ -123,7 +114,7 @@ class TestStorage:
             sortby=sortby,
             descending=descending,
             order_type=order_type,
-            statuses=statuses,
+            statuses=status,
             name=name,
             tags=tags,
         )

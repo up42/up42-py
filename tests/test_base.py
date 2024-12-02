@@ -1,6 +1,5 @@
 import dataclasses
 from typing import Union
-from unittest import mock
 
 import pystac_client
 import pytest
@@ -13,12 +12,15 @@ from .fixtures import fixtures_globals as constants
 USER_INFO_ENDPOINT = "https://auth.up42.com/realms/public/protocol/openid-connect/userinfo"
 
 
+@pytest.mark.no_workspace
 class TestWorkspace:
     def test_fails_to_provide_properties_if_not_authenticated(self):
         with pytest.raises(base.UserNotAuthenticated):
             _ = base.workspace.auth
         with pytest.raises(base.UserNotAuthenticated):
             _ = base.workspace.id
+        with pytest.raises(base.UserNotAuthenticated):
+            _ = base.workspace.session
 
     def test_should_authenticate(self, requests_mock):
         requests_mock.post(
@@ -51,16 +53,9 @@ class ActiveRecord:
 
 
 class TestDescriptors:
-    @pytest.fixture(autouse=True)
-    def workspace(self, auth_mock):
-        with mock.patch("up42.base.workspace") as workspace_mock:
-            workspace_mock.auth = auth_mock
-            workspace_mock.id = constants.WORKSPACE_ID
-            yield
-
     def test_should_provide_session(self):
         record = ActiveRecord()
-        assert record.session == base.workspace.auth.session
+        assert record.session == base.workspace.session
 
     def test_session_should_not_be_represented(self):
         assert "session" not in repr(ActiveRecord())
