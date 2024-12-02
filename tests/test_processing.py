@@ -105,14 +105,6 @@ def as_java_timestamp(value: datetime.datetime):
     return value.isoformat(timespec="milliseconds") + MICROSECONDS
 
 
-@pytest.fixture(autouse=True)
-def set_status_raising_session():
-    session = requests.Session()
-    session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
-    processing.Job.session = session  # type: ignore
-    processing.JobTemplate.session = session  # type: ignore
-
-
 class TestCost:
     @pytest.mark.parametrize("high_value", [11, 11.0, processing.Cost(strategy="strategy", credits=11)])
     @pytest.mark.parametrize("low_value", [9, 9.0, processing.Cost(strategy="strategy", credits=9)])

@@ -1,20 +1,9 @@
-from unittest import mock
-
-import pytest
 import requests_mock as req_mock
 
 import up42
 from up42 import catalog, storage, tasking
 
 from .fixtures import fixtures_globals as constants
-
-
-@pytest.fixture(autouse=True)
-def workspace(auth_mock):
-    with mock.patch("up42.base.workspace") as workspace_mock:
-        workspace_mock.auth = auth_mock
-        workspace_mock.id = constants.WORKSPACE_ID
-        yield
 
 
 def test_should_initialize_objects(requests_mock: req_mock.Mocker):
