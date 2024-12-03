@@ -10,7 +10,7 @@ import tarfile
 import tempfile
 import warnings
 import zipfile
-from typing import Callable, List, Optional, Union, cast
+from typing import Any, Callable, List, Optional, Union, cast
 from urllib import parse
 
 import geojson  # type: ignore
@@ -407,3 +407,18 @@ class SortingField:
     def __str__(self):
         order = "asc" if self.ascending else "desc"
         return f"{self.name},{order}"
+
+
+def paged_query(params: dict[str, Any], endpoint: str, session: requests.Session):
+    params = {key: value for key, value in params.items() if value is not None}
+    params["page"] = 0
+
+    def get_pages():
+        while True:
+            response = session.get(host.endpoint(endpoint), params=params).json()
+            yield response["content"]
+            params["page"] += 1
+            if params["page"] >= response["totalPages"]:
+                break
+
+    return (entry for page in get_pages() for entry in page)

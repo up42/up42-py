@@ -2,13 +2,6 @@ TOKEN = "token_123"
 API_HOST = "https://api.up42.com"
 TOKEN_ENDPOINT = "https://auth.up42.com/realms/public/protocol/openid-connect/token"
 
-# tasking constants
-QUOTATION_ID = "805b1f27-1025-43d2-90d0-0bd3416238fb"
-WRONG_FEASIBILITY_ID = "296ef160-d890-430d-8d14-e9b579ab08ba"
-WRONG_OPTION_ID = "296ef160-7890-430d-8d14-e9b579ab08ba"
-TEST_FEASIBILITY_ID = "6f93f754-5594-42da-b6af-9064225b89e9"
-TEST_OPTION_ID = "cc3c869d-9215-4dcd-b535-b49aa28228fa"
-
 WORKSPACE_ID = "workspace_id_123"
 USER_ID = "1094497b-11d8-4fb8-9d6a-5e24a88aa825"
 USER_EMAIL = "user@up42.com"
@@ -24,45 +17,6 @@ STAC_COLLECTION_ID = "e459db4c-3b9d-4aa1-8931-5df2517b49ba"
 URL_STAC_CATALOG = "https://api.up42.com/v2/assets/stac/"
 URL_STAC_SEARCH = "https://api.up42.com/v2/assets/stac/search"
 
-JSON_ASSET = {
-    "accountId": "69353acb-f942-423f-8f32-11d6d67caa77",
-    "createdAt": "2022-12-07T14:25:34.968Z",
-    "updatedAt": "2022-12-07T14:25:34.968Z",
-    "id": ASSET_ID,
-    "name": "string",
-    "size": 256248634,
-    "workspaceId": WORKSPACE_ID,
-    "order": {"id": "string", "status": "string", "hostId": "string"},
-    "source": "ARCHIVE",
-    "productId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "contentType": "string",
-    "producerName": "string",
-    "collectionName": "string",
-    "geospatialMetadataExtraction": "SUCCESSFUL",
-    "title": "string",
-    "tags": ["string"],
-}
-
-JSON_ASSETS = {
-    "content": [JSON_ASSET],
-    "pageable": {
-        "sort": {"sorted": True, "unsorted": False, "empty": False},
-        "pageNumber": 0,
-        "pageSize": 10,
-        "offset": 0,
-        "paged": True,
-        "unpaged": False,
-    },
-    "totalPages": 1,
-    "totalElements": 1,
-    "last": True,
-    "sort": {"sorted": True, "unsorted": False, "empty": False},
-    "numberOfElements": 1,
-    "first": True,
-    "size": 10,
-    "number": 0,
-    "empty": False,
-}
 
 STAC_SEARCH_RESPONSE = {
     "type": "FeatureCollection",
@@ -184,45 +138,4 @@ STAC_CATALOG_RESPONSE = {
     "stac_version": "1.0.0",
     "id": "up42-storage",
     "type": "Catalog",
-}
-
-
-JSON_ORDER = {
-    "data": {
-        "id": ORDER_ID,
-        "userId": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-        "workspaceId": WORKSPACE_ID,
-        "dataProvider": "OneAtlas",
-        "status": "FULFILLED",
-        "createdAt": "2021-01-18T16:18:16.105851Z",
-        "updatedAt": "2021-01-18T16:21:31.966805Z",
-        "assets": [ASSET_ID],
-        "createdBy": {
-            "id": "1094497b-11d8-4fb8-9d6a-5e24a88aa825",
-            "type": "USER",
-        },
-        "updatedBy": {"id": "system", "type": "INTERNAL"},
-    },
-    "error": None,
-}
-
-JSON_ORDERS = {
-    "content": [JSON_ORDER["data"]],
-    "pageable": {
-        "sort": {"sorted": True, "unsorted": False, "empty": False},
-        "pageNumber": 0,
-        "pageSize": 10,
-        "offset": 0,
-        "paged": True,
-        "unpaged": False,
-    },
-    "totalPages": 1,
-    "totalElements": 1,
-    "last": True,
-    "sort": {"sorted": True, "unsorted": False, "empty": False},
-    "numberOfElements": 1,
-    "first": True,
-    "size": 10,
-    "number": 0,
-    "empty": False,
 }

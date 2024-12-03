@@ -1,8 +1,10 @@
 import functools
-from typing import Callable, Dict, List, Optional
+import pathlib
+from typing import Callable, Dict, List, Optional, Union
 
 import requests
 
+from up42 import utils
 from up42.http import config, oauth
 from up42.http import session as http_session
 
@@ -43,6 +45,21 @@ def create(
         token_settings = config.TokenProviderSettings(token_url=token_url)
         return Client(create_auth(detect_retriever(settings), token_settings), create_session)
     raise MissingCredentials
+
+
+ConfigurationSource = Optional[Union[str, pathlib.Path]]
+ConfigurationReader = Callable[[ConfigurationSource], Optional[Dict]]
+
+
+def collect_credentials(
+    cfg_file: ConfigurationSource,
+    username: Optional[str],
+    password: Optional[str],
+    read_config: ConfigurationReader = utils.read_json,
+) -> List[Optional[Dict]]:
+    config_source = read_config(cfg_file)
+    account_credentials_source = {"username": username, "password": password}
+    return [config_source, account_credentials_source]
 
 
 class MissingCredentials(ValueError):

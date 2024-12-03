@@ -8,3 +8,7 @@ def endpoint(path: str):
 
 def token_endpoint():
     return f"https://auth.up42.{DOMAIN}/realms/public/protocol/openid-connect/token"
+
+
+def user_info_endpoint():
+    return f"https://auth.up42.{DOMAIN}/realms/public/protocol/openid-connect/userinfo"
