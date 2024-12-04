@@ -54,7 +54,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Fixed types of `Asset::asset_id` and `Asset::_get_info`.
 - Unified paging between `Order`, `Tasking` and `Storage` classes.
 
-## Removed
+### Removed
 - Drop process template `DetectionTreesHeightsSpacept`.
 - Dropped limiting false statuses in `Storage::get_orders` since the type hinting is enabled.
 - Dropped failing wrong `sortby` value in `Storage::get_orders` since the type hinting is enabled.
