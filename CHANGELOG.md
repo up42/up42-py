@@ -29,15 +29,20 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
-## 2.1.1a12
+## 2.1.1a13
 
-**Dec, 3, 2024**
+**Dec 4, 2024**
 - Move `tests/fixtures/fixtures_globals.py` to `tests/constants.py`.
 - Move constants used in a single test module to the corresponding module.
 
+## 2.1.1a12
+
+**Dec 3, 2024**
+- Drop process template `DetectionTreesHeightsSpacept`.
+
 ## 2.1.1a11
 
-**Dec, 2, 2024**
+**Dec 2, 2024**
 - Added requesting `openid` scope when retrieving token.
 - Switched workspace id retrieval from the deprecated endpoint to the user info endpoint.
 
