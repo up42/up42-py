@@ -3,9 +3,8 @@ from unittest import mock
 import pytest
 import requests
 
+from tests import constants
 from up42 import host
-
-from .fixtures import fixtures_globals as constants
 
 
 @pytest.fixture(autouse=True)

@@ -6,19 +6,90 @@ import pystac
 import pytest
 import requests_mock as req_mock
 
+from tests import constants, helpers
 from up42 import asset
 
-from . import helpers
-from .fixtures import fixtures_globals as constants
-
+ASSET_ID = "363f89c1-3586-4b14-9a49-03a890c3b593"
 DOWNLOAD_URL = f"{constants.API_HOST}/abcdef.tgz"
 STAC_FILE = "stac_file.tiff"
 STAC_ASSET_URL = "https://example.com/some-random-path"
 STAC_ASSET_HREF = f"{constants.API_HOST}/v2/assets/stac-id"
+STAC_COLLECTION_ID = "e459db4c-3b9d-4aa1-8931-5df2517b49ba"
+STAC_SEARCH_RESPONSE = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "assets": {"data": {"href": "https://api.up42.com/v2/assets/01ad657e-12f7-4046-a94c-abc90d86106a"}},
+            "links": [
+                {
+                    "href": "https://api.up42.com/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6/"
+                    "items/e986e18a-0392-4b82-93c9-7a0af15846d0",
+                    "rel": "self",
+                    "type": "application/geo+json",
+                },
+                {
+                    "href": "https://api.up42.com/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6",
+                    "rel": "parent",
+                    "type": "application/json",
+                },
+                {
+                    "href": "https://api.up42.com/v2/assets/stac/collections/69ce89b4-fa35-4a1a-bcd8-1c2e5bbd2ee6",
+                    "rel": "collection",
+                    "type": "application/json",
+                },
+                {
+                    "href": constants.URL_STAC_CATALOG,
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "UP42 Storage",
+                },
+            ],
+            "stac_extensions": [
+                "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+                "https://api.up42.com/stac-extensions/up42-product/v1.0.0/schema.json",
+            ],
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [52.4941111111112, 13.4025555555556],
+                        [52.4941111111112, 13.4111666666667],
+                        [52.4911111111112, 13.4111666666667],
+                        [52.4911111111112, 13.4025555555556],
+                        [52.4941111111112, 13.4025555555556],
+                        [52.4941111111112, 13.4025555555556],
+                    ]
+                ],
+            },
+            "bbox": [
+                52.4911111111112,
+                13.4025555555556,
+                52.4941111111112,
+                13.4111666666667,
+            ],
+            "properties": {
+                "up42-system:asset_id": ASSET_ID,
+                "gsd": 9.118863577837482,
+                "datetime": "2021-05-31T09:51:52.100000+00:00",
+                "platform": "SPOT-7",
+                "proj:epsg": 4326,
+                "end_datetime": "2021-05-31T09:51:52.100000+00:00",
+                "eo:cloud_cover": 0.0,
+                "start_datetime": "2021-05-31T09:51:52.100000+00:00",
+                "up42-system:workspace_id": "7d1cf222-1fa7-468c-a93a-3e3188875997",
+                "up42-product:collection_name": "Collection No 1",
+            },
+            "type": "Feature",
+            "stac_version": "1.0.0",
+            "id": "e986e18a-0392-4b82-93c9-7a0af15846d0",
+            "collection": STAC_COLLECTION_ID,
+        }
+    ],
+}
 
 
 class TestAsset:
-    asset_info = {"id": constants.ASSET_ID, "other": "data"}
+    asset_info = {"id": ASSET_ID, "other": "data"}
 
     @pytest.fixture(params=["output_dir", "no_output_dir"])
     def output_directory(self, request, tmp_path) -> Optional[str]:
@@ -45,9 +116,9 @@ class TestAsset:
         assert repr(asset.Asset(asset_info=self.asset_info)) == repr(self.asset_info)
 
     def test_should_initialize(self, requests_mock: req_mock.Mocker):
-        url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
+        url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
         requests_mock.get(url=url, json=self.asset_info)
-        assert asset.Asset(asset_id=constants.ASSET_ID).info == self.asset_info
+        assert asset.Asset(asset_id=ASSET_ID).info == self.asset_info
 
     def test_should_initialize_with_info_provided(self):
         assert asset.Asset(asset_info=self.asset_info).info == self.asset_info
@@ -61,8 +132,8 @@ class TestAsset:
                 "Either asset_id or asset_info should be provided in the constructor.",
             ),
             (
-                constants.ASSET_ID,
-                {"id": constants.ASSET_ID},
+                ASSET_ID,
+                {"id": ASSET_ID},
                 "asset_id and asset_info cannot be provided simultaneously.",
             ),
         ],
@@ -83,12 +154,12 @@ class TestAsset:
         output_directory: Optional[str],
         asset_files: set[str],
     ):
-        url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
+        url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
         unpacking = len(asset_files) > 1
         requests_mock.get(url=url, json=self.asset_info)
-        asset_obj = asset.Asset(asset_id=constants.ASSET_ID)
+        asset_obj = asset.Asset(asset_id=ASSET_ID)
         requests_mock.post(
-            url=f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/download-url",
+            url=f"{constants.API_HOST}/v2/assets/{ASSET_ID}/download-url",
             json={"url": DOWNLOAD_URL},
         )
         downloaded_files = asset_obj.download(output_directory, unpacking=unpacking)
@@ -97,9 +168,9 @@ class TestAsset:
         assert all(path.exists() for path in paths)
 
     def test_get_stac_download_url(self, requests_mock: req_mock.Mocker):
-        url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
+        url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
         requests_mock.get(url=url, json=self.asset_info)
-        asset_obj = asset.Asset(asset_id=constants.ASSET_ID)
+        asset_obj = asset.Asset(asset_id=ASSET_ID)
         requests_mock.post(
             url=f"{STAC_ASSET_HREF}/download-url",
             json={"url": STAC_ASSET_URL},
@@ -130,9 +201,9 @@ class TestAsset:
         stac_url: str,
         stac_file: str,
     ):
-        url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
+        url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
         requests_mock.get(url=url, json=self.asset_info)
-        asset_obj = asset.Asset(asset_id=constants.ASSET_ID)
+        asset_obj = asset.Asset(asset_id=ASSET_ID)
         content = b"some-content"
         requests_mock.get(url=stac_url, content=content)
         requests_mock.post(
@@ -149,16 +220,16 @@ class TestAsset:
             requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
             requests_mock.post(
                 constants.URL_STAC_SEARCH,
-                [{"status_code": 401}, {"json": constants.STAC_SEARCH_RESPONSE}],
+                [{"status_code": 401}, {"json": STAC_SEARCH_RESPONSE}],
             )
-            asset_obj = asset.Asset(asset_info={"id": constants.ASSET_ID})
-            expected = pystac.ItemCollection.from_dict(constants.STAC_SEARCH_RESPONSE)
+            asset_obj = asset.Asset(asset_info={"id": ASSET_ID})
+            expected = pystac.ItemCollection.from_dict(STAC_SEARCH_RESPONSE)
             assert asset_obj.stac_items.to_dict() == expected.to_dict()
 
         def test_fails_to_get_stac_items_after_retries(self, requests_mock: req_mock.Mocker):
             requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
             requests_mock.post(constants.URL_STAC_SEARCH, status_code=401)
-            asset_obj = asset.Asset(asset_info={"id": constants.ASSET_ID})
+            asset_obj = asset.Asset(asset_info={"id": ASSET_ID})
             with pytest.raises(ValueError):
                 _ = asset_obj.stac_items
 
@@ -166,12 +237,12 @@ class TestAsset:
             requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
             requests_mock.post(
                 constants.URL_STAC_SEARCH,
-                [{"status_code": 401}, {"json": constants.STAC_SEARCH_RESPONSE}],
+                [{"status_code": 401}, {"json": STAC_SEARCH_RESPONSE}],
             )
             expected = pystac.Collection(
                 id="up42-storage",
                 description="UP42 Storage STAC API",
-                extra_fields={"up42-system:asset_id": constants.ASSET_ID},
+                extra_fields={"up42-system:asset_id": ASSET_ID},
                 extent=pystac.Extent(
                     spatial=pystac.SpatialExtent(bboxes=[[1.0, 2.0, 3.0, 4.0]]),
                     temporal=pystac.TemporalExtent(intervals=[[datetime.datetime.now(), None]]),
@@ -186,10 +257,10 @@ class TestAsset:
                 )
             )
             requests_mock.get(
-                url=f"{constants.API_HOST}/v2/assets/stac/collections/{constants.STAC_COLLECTION_ID}",
+                url=f"{constants.API_HOST}/v2/assets/stac/collections/{STAC_COLLECTION_ID}",
                 json=expected.to_dict(),
             )
-            asset_obj = asset.Asset(asset_info={"id": constants.ASSET_ID})
+            asset_obj = asset.Asset(asset_info={"id": ASSET_ID})
             assert asset_obj.stac_info.to_dict() == expected.to_dict()
 
         @pytest.mark.parametrize(
@@ -202,13 +273,13 @@ class TestAsset:
         def test_fails_to_get_stac_info_after_retries(self, requests_mock: req_mock.Mocker, response: dict):
             requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
             requests_mock.post(constants.URL_STAC_SEARCH, [response])
-            asset_obj = asset.Asset(asset_info={"id": constants.ASSET_ID})
+            asset_obj = asset.Asset(asset_info={"id": ASSET_ID})
             with pytest.raises(Exception):
                 _ = asset_obj.stac_info
 
     class TestAssetUpdateMetadata:
-        asset_info = {"id": constants.ASSET_ID, "title": "title", "tags": ["tag1"]}
-        endpoint_url = f"{constants.API_HOST}/v2/assets/{constants.ASSET_ID}/metadata"
+        asset_info = {"id": ASSET_ID, "title": "title", "tags": ["tag1"]}
+        endpoint_url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
 
         @pytest.mark.parametrize("title", [None, "new-title"])
         @pytest.mark.parametrize("tags", [None, [], ["tag1", "tag2"]])

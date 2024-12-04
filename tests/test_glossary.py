@@ -4,7 +4,7 @@ from typing import List, Optional
 import pytest
 import requests_mock as req_mock
 
-from tests.fixtures import fixtures_globals as constants
+from tests import constants
 from up42 import glossary, utils
 
 DATA_PRODUCT = glossary.DataProduct(

@@ -5,7 +5,7 @@ from unittest import mock
 import pystac
 import pytest
 
-from tests.fixtures import fixtures_globals as constants
+from tests import constants
 from up42 import processing
 from up42 import processing_templates as templates
 

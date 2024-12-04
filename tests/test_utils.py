@@ -11,9 +11,8 @@ import requests_mock as req_mock
 from dateutil import parser
 from shapely import geometry  # type: ignore
 
+from tests import constants
 from up42 import utils
-
-from .fixtures import fixtures_globals as constants
 
 POLY = geometry.Polygon([(0, 0), (1, 1), (1, 0)])
 

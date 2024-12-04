@@ -6,9 +6,8 @@ from typing import Optional, cast
 import pytest
 import requests_mock as req_mock
 
+from tests import constants
 from up42 import asset, order, storage, utils
-
-from .fixtures import fixtures_globals as constants
 
 
 class TestStorage:

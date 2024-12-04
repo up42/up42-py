@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from tests.fixtures import fixtures_globals as constants
+from tests import constants
 from up42.http import client, config
 
 SETTINGS = {"some": "settings"}
