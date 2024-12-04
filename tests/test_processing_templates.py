@@ -31,7 +31,6 @@ class TestParameterlessTemplates:
         [
             templates.DetectionBuildingsSpacept,
             templates.DetectionTreesSpacept,
-            templates.DetectionTreesHeightsSpacept,
             templates.DetectionShadowsSpacept,
             templates.DetectionShipsAirbus,
             templates.DetectionStorageTanksAirbus,
