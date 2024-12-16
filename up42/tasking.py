@@ -100,7 +100,9 @@ class Tasking(catalog.CatalogBase):
             # Tasking (e.g. Blacksky) can require Point geometry.
             order_parameters["params"]["geometry"] = geometry["features"][0]["geometry"]
         else:
-            geometry = utils.fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
+            geometry = utils.fc_to_query_geometry(
+                fc=geometry, geometry_operation="intersects"
+            )
             order_parameters["params"]["geometry"] = geometry
         return order_parameters
 
@@ -198,7 +200,9 @@ class Tasking(catalog.CatalogBase):
             dict: The confirmation to the decided quotation plus metadata.
         """
         url = host.endpoint(f"/v2/tasking/feasibility/{feasibility_id}")
-        return self.session.patch(url=url, json={"acceptedOptionId": accepted_option_id}).json()
+        return self.session.patch(
+            url=url, json={"acceptedOptionId": accepted_option_id}
+        ).json()
 
 
 @dataclasses.dataclass
@@ -268,8 +272,7 @@ class Quotation:
     def reject(self):
         self.decision_status = "REJECTED"
 
-    def save(self):
-        ...
+    def save(self): ...
 
     @classmethod
     def all(
@@ -279,5 +282,17 @@ class Quotation:
         order_id: Optional[str] = None,
         decision_status: Optional[List[QuotationStatus]] = None,
         sort_by: utils.SortingField = QuotationSorting.created_at.desc,
-    ):
+    ): ...
+
+
+@dataclasses.dataclass
+class TaskingTemplate(order.OrderTemplate):
+    data_product_id: str
+    name: str
+    acquisition_start: Union[str, datetime.datetime]
+    acquisition_end: Union[str, datetime.datetime]
+    geometry: Geometry
+    tags: Optional[List[str]] = None
+
+    def prepare(self):
         ...

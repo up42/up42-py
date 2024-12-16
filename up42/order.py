@@ -1,6 +1,7 @@
 import copy
+import dataclasses
 import time
-from typing import Any, Dict, List, Literal, Optional, TypedDict, cast
+from typing import Any, Dict, List, Literal, Optional, TypedDict, cast, Self
 
 from up42 import asset, base, host, utils
 
@@ -46,7 +47,9 @@ def _translate_construct_parameters(order_parameters: OrderParams) -> OrderParam
     order_parameters_v2 = cast(OrderParamsV2, copy.deepcopy(order_parameters))
     params = order_parameters_v2["params"]
     data_product_id = order_parameters_v2["dataProduct"]
-    order_parameters_v2["displayName"] = params.get("displayName", f"{data_product_id} order")
+    order_parameters_v2["displayName"] = params.get(
+        "displayName", f"{data_product_id} order"
+    )
     aoi = params.pop("aoi", None) or params.pop("geometry", None)
     order_parameters_v2["featureCollection"] = {
         "type": "FeatureCollection",
@@ -162,9 +165,12 @@ class Order:
         params: dict[str, Any] = {"search": self.order_id, "page": 0}
 
         if (status := current_info["status"]) not in ["FULFILLED", "BEING_FULFILLED"]:
-            raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {status}""")
+            raise UnfulfilledOrder(
+                f"""Order {self.order_id} is not valid. Current status is {status}"""
+            )
         return [
-            asset.Asset(asset_info=asset_info) for asset_info in utils.paged_query(params, "/v2/assets", self.session)
+            asset.Asset(asset_info=asset_info)
+            for asset_info in utils.paged_query(params, "/v2/assets", self.session)
         ]
 
     @classmethod
@@ -180,7 +186,9 @@ class Order:
             Order: The placed order.
         """
         url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
-        response_json = cls.session.post(url=url, json=_translate_construct_parameters(order_parameters)).json()
+        response_json = cls.session.post(
+            url=url, json=_translate_construct_parameters(order_parameters)
+        ).json()
         if response_json["errors"]:
             message = response_json["errors"][0]["message"]
             raise FailedOrderPlacement(f"Order was not placed: {message}")
@@ -249,3 +257,35 @@ class Order:
 
         logger.info("Order is fulfilled successfully! - %s", self.order_id)
         return current_info["status"]
+
+
+@dataclasses.dataclass
+class Cost:
+
+    @classmethod
+    def from_dict(cls) -> Self: ...
+
+
+class OrderTemplate:
+    session = base.Session()
+
+    def prepare(self) -> dict: ...
+    def estimate(self) -> Cost:
+        url = host.endpoint("/v2/orders/estimate")
+        cost = self.session.post(
+            url=url,
+            json=self.prepare(),
+        ).json()
+        return Cost.from_dict(cost)
+
+    def place(self, workspace_id=None) -> Order:
+        url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
+        response_json = self.session.post(url=url, json=self.prepare()).json()
+        if response_json["errors"]:
+            message = response_json["errors"][0]["message"]
+            raise FailedOrderPlacement(f"Order was not placed: {message}")
+        # How many orders we make at once?
+        order_id = response_json["results"][0]["id"]
+        order = cls(order_id=order_id)
+        logger.info("Order %s is now %s.", order.order_id, order.status)
+        return order
