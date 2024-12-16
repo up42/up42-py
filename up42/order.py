@@ -1,7 +1,8 @@
 import copy
 import dataclasses
-import time
 from typing import Any, Dict, List, Literal, Optional, TypedDict, Union, cast
+
+import tenacity as tnc
 
 from up42 import asset, base, host, utils
 
@@ -140,6 +141,7 @@ class Order:
 
     @classmethod
     def from_dict(cls, data: dict) -> "Order":
+        details: Optional[OrderDetails] = None
         if "orderDetails" in data:
             order_details: dict = data["orderDetails"]
             if data["type"] == "TASKING":
@@ -152,8 +154,6 @@ class Order:
                 )
             else:
                 details = ArchiveOrderDetails(aoi=order_details["aoi"], image_id=order_details.get("imageId"))
-        else:
-            details = None
         return Order(
             id=data["id"],
             display_name=data["displayName"],
@@ -176,18 +176,18 @@ class Order:
     def order_id(self) -> str:
         return self.id
 
+    # @utils.deprecation("", "3.0.0")
     @property
-    @utils.deprecation("", "3.0.0")
     def info(self) -> dict:
         """
         Gets and updates the order information.
         """
         return dataclasses.asdict(self)
 
-    @utils.deprecation("Please use order.details instead.", "3.0.0")
+    # @utils.deprecation("Please use order.details instead.", "3.0.0")
     @property
     def order_details(self) -> dict:
-        return dataclasses.asdict(self.details)
+        return dataclasses.asdict(self.details)  # type: ignore
 
     @property
     def is_fulfilled(self) -> bool:
@@ -274,18 +274,20 @@ class Order:
             str: The final order status.
         """
         logger.info("Tracking order status, reporting every %s seconds...", report_time)
-        time_asleep: float = 0
-        current_info = copy.deepcopy(self._info)
-        while (status := current_info["status"]) != "FULFILLED":
-            sub_status = current_info.get("orderDetails", {}).get("subStatus")
-            status += f": {sub_status}" if sub_status is not None else ""
-            if time_asleep != 0 and time_asleep % report_time == 0:
-                logger.info("Order is %s! - %s", status, self.order_id)
-            if status in ["FAILED", "FAILED_PERMANENTLY"]:
+
+        @tnc.retry(
+            wait=tnc.wait_fixed(report_time),
+            retry=tnc.retry_if_exception_type(FailedOrder),
+            reraise=True,
+        )
+        def update():
+            order = Order.get(self.id)
+            for field in dataclasses.fields(order):
+                setattr(self, field.name, getattr(order, field.name))
+            if self.status in ["FAILED", "FAILED_PERMANENTLY"]:
                 raise FailedOrder("Order has failed!")
-            time.sleep(report_time)
-            time_asleep += report_time
-            current_info = copy.deepcopy(self.info)
+
+        update()
 
         logger.info("Order is fulfilled successfully! - %s", self.order_id)
-        return current_info["status"]
+        return self.status
