@@ -1,6 +1,7 @@
 import copy
+import dataclasses
 import time
-from typing import Any, Dict, List, Literal, Optional, TypedDict, cast
+from typing import Any, Dict, List, Literal, Optional, TypedDict, Union, cast
 
 from up42 import asset, base, host, utils
 
@@ -86,6 +87,36 @@ class FailedOrderPlacement(ValueError):
     pass
 
 
+OrderType = Literal["TASKING", "ARCHIVE"]
+TaskingOrderSubStatus = Literal[
+    "FEASIBILITY_WAITING_UPLOAD",
+    "FEASIBILITY_WAITING_RESPONSE",
+    "QUOTATION_WAITING_UPLOAD",
+    "QUOTATION_WAITING_RESPONSE",
+    "QUOTATION_ACCEPTED",
+    "QUOTATION_REJECTED",
+]
+
+
+@dataclasses.dataclass
+class ArchiveOrderDetails:
+    aoi: dict
+    image_id: Optional[str]
+
+
+@dataclasses.dataclass
+class TaskingOrderDetails:
+    acquisition_start: str
+    acquisition_end: str
+    geometry: dict
+    extra_description: Optional[str]
+    sub_status: Optional[TaskingOrderSubStatus]
+
+
+OrderDetails = Union[ArchiveOrderDetails, TaskingOrderDetails]
+
+
+@dataclasses.dataclass
 class Order:
     """
     The Order class enables you to place, inspect and get information on orders.
@@ -97,54 +128,66 @@ class Order:
     """
 
     session = base.Session()
+    id: str
+    display_name: str
+    status: OrderStatus
+    workspace_id: str
+    account_id: str
+    type: OrderType
+    details: Optional[OrderDetails]
+    data_product_id: Optional[str]
+    tags: Optional[list[str]]
 
-    def __init__(
-        self,
-        order_id: str,
-        order_info: Optional[dict] = None,
-    ):
-        self.order_id = order_id
-        if order_info is not None:
-            self._info = order_info
+    @classmethod
+    def from_dict(cls, data: dict) -> "Order":
+        if "orderDetails" in data:
+            order_details: dict = data["orderDetails"]
+            if data["type"] == "TASKING":
+                details = TaskingOrderDetails(
+                    acquisition_start=order_details["acquisitionStart"],
+                    acquisition_end=order_details["acquisitionEnd"],
+                    geometry=order_details["geometry"],
+                    extra_description=order_details.get("extraDescription"),
+                    sub_status=order_details.get("subStatus"),
+                )
+            else:
+                details = ArchiveOrderDetails(aoi=order_details["aoi"], image_id=order_details.get("imageId"))
         else:
-            self._info = self.info
-
-    def __repr__(self):
-        return (
-            f"""Order(order_id: {self.order_id}, status: {self._info["status"]},"""
-            f"""createdAt: {self._info["createdAt"]}, updatedAt: {self._info["updatedAt"]})"""
+            details = None
+        return Order(
+            id=data["id"],
+            display_name=data["displayName"],
+            status=data["status"],
+            workspace_id=data["workspaceId"],
+            account_id=data["accountId"],
+            type=data["type"],
+            details=details,
+            data_product_id=data.get("dataProductId"),
+            tags=data.get("tags"),
         )
 
-    def __eq__(self, other: Optional[object]):
-        return other and hasattr(other, "_info") and other._info == self._info
+    @classmethod
+    def get(cls, order_id: str) -> "Order":
+        url = host.endpoint(f"/v2/orders/{order_id}")
+        return cls.from_dict(cls.session.get(url=url).json())
 
     @property
+    @utils.deprecation("id", "3.0.0")
+    def order_id(self) -> str:
+        return self.id
+
+    @property
+    @utils.deprecation("", "3.0.0")
     def info(self) -> dict:
         """
         Gets and updates the order information.
         """
-        url = host.endpoint(f"/v2/orders/{self.order_id}")
-        self._info = self.session.get(url=url).json()
-        return self._info
+        return dataclasses.asdict(self)
 
-    @property
-    def status(self) -> OrderStatus:
-        """
-        Gets the Order status. One of `PLACED`, `FAILED`, `FULFILLED`, `BEING_FULFILLED`, `FAILED_PERMANENTLY`.
-        """
-        status = self.info["status"]
-        logger.info("Order is %s", status)
-        return status
-
+    @utils.deprecation("Please use order.details instead.", "3.0.0")
     @property
     def order_details(self) -> dict:
-        """
-        Gets the Order Details. Only for tasking type orders, archive types return empty.
-        """
-        if self.info["type"] == "TASKING":
-            return self.info["orderDetails"]
-        logger.info("Order is not TASKING type. Order details are not provided.")
-        return {}
+        return dataclasses.asdict(self.details)
 
     @property
     def is_fulfilled(self) -> bool:
@@ -158,13 +201,11 @@ class Order:
         """
         Gets the Order assets or results.
         """
-        current_info = copy.deepcopy(self._info)
-        params: dict[str, Any] = {"search": self.order_id, "page": 0}
-
-        if (status := current_info["status"]) not in ["FULFILLED", "BEING_FULFILLED"]:
-            raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {status}""")
+        if self.status not in ["FULFILLED", "BEING_FULFILLED"]:
+            raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {self.status}""")
         return [
-            asset.Asset(asset_info=asset_info) for asset_info in utils.paged_query(params, "/v2/assets", self.session)
+            asset.Asset(asset_info=asset_info)
+            for asset_info in utils.paged_query({"search": self.order_id}, "/v2/assets", self.session)
         ]
 
     @classmethod
@@ -173,7 +214,6 @@ class Order:
         Places an order.
 
         Args:
-            auth: An authentication object.
             order_parameters: A dictionary for the order configuration.
 
         Returns:
@@ -184,8 +224,8 @@ class Order:
         if response_json["errors"]:
             message = response_json["errors"][0]["message"]
             raise FailedOrderPlacement(f"Order was not placed: {message}")
-        order_id = response_json["results"][0]["id"]
-        order = cls(order_id=order_id)
+        order_info = response_json["results"][0]
+        order = cls.from_dict(order_info)
         logger.info("Order %s is now %s.", order.order_id, order.status)
         return order
 

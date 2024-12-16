@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pytest
 import requests_mock as req_mock
 
@@ -10,6 +12,81 @@ ORDER_PLACEMENT_URL = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WO
 
 
 class TestOrder:
+    aoi = {"some": "aoi"}
+    image_id = "some-image-id"
+    acquisition_start = "some-acquisition-start"
+    acquisition_end = "some-acquisition-end"
+    geometry = {"some": "geometry"}
+    extra_description = "extra-description"
+    sub_status = "some-sub-status"
+
+    @pytest.mark.parametrize(
+        "type, details, expected_details",
+        [
+            ("ARCHIVE", {}, None),
+            (
+                "ARCHIVE",
+                {"orderDetails": {"aoi": aoi, "imageId": image_id}},
+                order.ArchiveOrderDetails(aoi=aoi, image_id=image_id),
+            ),
+            ("TASKING", {}, None),
+            (
+                "TASKING",
+                {
+                    "orderDetails": {
+                        "acquisitionStart": acquisition_start,
+                        "acquisitionEnd": acquisition_end,
+                        "geometry": geometry,
+                        "extraDescription": extra_description,
+                        "subStatus": sub_status,
+                    }
+                },
+                order.TaskingOrderDetails(
+                    acquisition_start=acquisition_start,
+                    acquisition_end=acquisition_end,
+                    geometry=geometry,
+                    extra_description=extra_description,
+                    sub_status=sub_status,
+                ),
+            ),
+        ],
+    )
+    def test_should_get_tasking_order(
+        self,
+        requests_mock: req_mock.Mocker,
+        type: order.OrderType,
+        details: dict,
+        expected_details: Optional[order.OrderDetails],
+    ):
+        display_name = "display-name"
+        status: order.OrderStatus = "CREATED"
+        account_id = "some-account-id"
+        data_product_id = "some-data-product-id"
+        tags = ["some", "tags"]
+        info = {
+            "id": constants.ORDER_ID,
+            "displayName": display_name,
+            "workspaceId": constants.WORKSPACE_ID,
+            "accountId": account_id,
+            "status": status,
+            "type": type,
+            "dataProductId": data_product_id,
+            "tags": tags,
+        } | details
+        requests_mock.get(url=ORDER_URL, json=info)
+        order_obj = order.Order(
+            id=constants.ORDER_ID,
+            display_name=display_name,
+            workspace_id=constants.WORKSPACE_ID,
+            account_id=account_id,
+            status=status,
+            type=type,
+            data_product_id=data_product_id,
+            tags=tags,
+            details=expected_details,
+        )
+        assert order.Order.get(constants.ORDER_ID) == order_obj
+
     @pytest.fixture(scope="class", params=["catalog", "tasking"])
     def order_parameters(self, request) -> order.OrderParams:
         geometry_key = "aoi" if request.param == "catalog" else "geometry"
@@ -17,33 +94,6 @@ class TestOrder:
             "dataProduct": "some-data-product",
             "params": {geometry_key: {"some": "shape"}},
         }
-
-    def test_should_initialize_with_info_provided(self):
-        info = {"some": "data"}
-        order_obj = order.Order(constants.ORDER_ID, info)
-        assert order_obj.order_id == constants.ORDER_ID
-        assert order_obj._info == info  # pylint: disable=protected-access
-
-    def test_should_initialize(self, requests_mock: req_mock.Mocker):
-        info = {"some": "data"}
-        requests_mock.get(url=ORDER_URL, json=info)
-        order_obj = order.Order(constants.ORDER_ID)
-        assert order_obj.order_id == constants.ORDER_ID
-        assert order_obj.info == info
-
-    def test_should_provide_representation(self):
-        info = {
-            "id": constants.ORDER_ID,
-            "status": "PLACED",
-            "createdAt": "2023-01-01T12:00:00Z",
-            "updatedAt": "2023-01-01T12:30:00Z",
-        }
-        order_obj = order.Order(order_id=constants.ORDER_ID, order_info=info)
-        expected_repr = (
-            f"Order(order_id: {constants.ORDER_ID}, status: PLACED,"
-            "createdAt: 2023-01-01T12:00:00Z, updatedAt: 2023-01-01T12:30:00Z)"
-        )
-        assert repr(order_obj) == expected_repr
 
     def test_should_provide_status(self, requests_mock: req_mock.Mocker):
         info = {"status": "random"}
