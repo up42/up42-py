@@ -120,4 +120,4 @@ class TestStorage:
         if return_json:
             assert orders == expected[:limit]
         else:
-            assert orders == [order.Order(order_id=info["id"], order_info=info) for info in expected[:limit]]
+            assert orders == [order.Order(order_info=info) for info in expected[:limit]]

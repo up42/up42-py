@@ -34,7 +34,7 @@ def initialize_order(order_id: str) -> order.Order:
     Args:
         order_id: The UP42 order_id
     """
-    up42_order = order.Order(order_id=order_id)
+    up42_order = order.Order.get(order_id=order_id)
     logger.info(INITIALIZED_MSG, up42_order)
     return up42_order
 

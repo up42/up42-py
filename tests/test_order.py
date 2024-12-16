@@ -20,14 +20,14 @@ class TestOrder:
 
     def test_should_initialize_with_info_provided(self):
         info = {"some": "data"}
-        order_obj = order.Order(constants.ORDER_ID, info)
+        order_obj = order.Order(info)
         assert order_obj.order_id == constants.ORDER_ID
-        assert order_obj._info == info  # pylint: disable=protected-access
+        assert order_obj.info == info
 
     def test_should_initialize(self, requests_mock: req_mock.Mocker):
         info = {"some": "data"}
         requests_mock.get(url=ORDER_URL, json=info)
-        order_obj = order.Order(constants.ORDER_ID)
+        order_obj = order.Order.get(constants.ORDER_ID)
         assert order_obj.order_id == constants.ORDER_ID
         assert order_obj.info == info
 
@@ -38,7 +38,7 @@ class TestOrder:
             "createdAt": "2023-01-01T12:00:00Z",
             "updatedAt": "2023-01-01T12:30:00Z",
         }
-        order_obj = order.Order(order_id=constants.ORDER_ID, order_info=info)
+        order_obj = order.Order(order_info=info)
         expected_repr = (
             f"Order(order_id: {constants.ORDER_ID}, status: PLACED,"
             "createdAt: 2023-01-01T12:00:00Z, updatedAt: 2023-01-01T12:30:00Z)"
@@ -48,7 +48,7 @@ class TestOrder:
     def test_should_provide_status(self, requests_mock: req_mock.Mocker):
         info = {"status": "random"}
         requests_mock.get(url=ORDER_URL, json=info)
-        order_obj = order.Order(order_id=constants.ORDER_ID, order_info=info)
+        order_obj = order.Order(order_info=info)
         assert order_obj.status == info["status"]
 
     @pytest.mark.parametrize(
@@ -64,7 +64,7 @@ class TestOrder:
     )
     def test_should_provide_order_details(self, requests_mock: req_mock.Mocker, info: dict, expected: dict):
         requests_mock.get(url=ORDER_URL, json=info)
-        order_obj = order.Order(order_id=constants.ORDER_ID, order_info=info)
+        order_obj = order.Order(order_info=info)
         assert order_obj.order_details == expected
 
     @pytest.mark.parametrize(
@@ -77,7 +77,7 @@ class TestOrder:
     )
     def test_should_compute_is_fulfilled(self, requests_mock: req_mock.Mocker, info: dict, expected: bool):
         requests_mock.get(url=ORDER_URL, json=info)
-        order_obj = order.Order(order_id=constants.ORDER_ID, order_info=info)
+        order_obj = order.Order(order_info=info)
         assert order_obj.is_fulfilled == expected
 
     @pytest.mark.parametrize(
@@ -100,7 +100,7 @@ class TestOrder:
             "totalPages": 1,
         }
         requests_mock.get(url=url_asset_info, json=asset_info)
-        order_obj = order.Order(order_id=constants.ORDER_ID)
+        order_obj = order.Order.get(order_id=constants.ORDER_ID)
         (asset_obj,) = order_obj.get_assets()
         assert isinstance(asset_obj, asset.Asset)
         assert asset_obj.asset_id == ASSET_ORDER_ID
@@ -121,7 +121,7 @@ class TestOrder:
     def test_fails_to_get_assets_if_not_fulfilled(self, requests_mock: req_mock.Mocker, status: str):
         info = {"status": status}
         requests_mock.get(url=ORDER_URL, json=info)
-        order_obj = order.Order(order_id=constants.ORDER_ID, order_info=info)
+        order_obj = order.Order(order_info=info)
         with pytest.raises(order.UnfulfilledOrder, match=f".*{constants.ORDER_ID}.*{status}"):
             order_obj.get_assets()
 
@@ -137,7 +137,7 @@ class TestOrder:
         statuses = ["PLACED", "BEING_FULFILLED", "FULFILLED"]
         responses = [{"json": {"status": status, **info}} for status in statuses]
         requests_mock.get(ORDER_URL, responses)
-        order_obj = order.Order(order_id=constants.ORDER_ID)
+        order_obj = order.Order.get(order_id=constants.ORDER_ID)
         assert order_obj.track_status(report_time=0.1) == "FULFILLED"
 
     @pytest.mark.parametrize("status", ["FAILED", "FAILED_PERMANENTLY"])
@@ -147,7 +147,7 @@ class TestOrder:
             url=ORDER_URL,
             json=info,
         )
-        order_obj = order.Order(order_id=constants.ORDER_ID)
+        order_obj = order.Order.get(order_id=constants.ORDER_ID)
         with pytest.raises(order.FailedOrder):
             order_obj.track_status()
 
@@ -174,7 +174,7 @@ class TestOrder:
             json={"results": [{"id": constants.ORDER_ID}], "errors": []},
         )
         order_obj = order.Order.place(order_parameters, constants.WORKSPACE_ID)
-        assert order_obj == order.Order(order_id=constants.ORDER_ID, order_info=info)
+        assert order_obj == order.Order(order_info=info)
 
     def test_fails_to_place_order_if_response_contains_error(
         self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams

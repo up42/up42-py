@@ -143,4 +143,4 @@ class Storage:
         if return_json:
             return orders
         else:
-            return [order.Order(order_id=info["id"], order_info=info) for info in orders]
+            return [order.Order(order_info=info) for info in orders]

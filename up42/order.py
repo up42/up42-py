@@ -100,41 +100,26 @@ class Order:
 
     def __init__(
         self,
-        order_id: str,
-        order_info: Optional[dict] = None,
+        order_info: dict,
     ):
-        self.order_id = order_id
-        if order_info is not None:
-            self._info = order_info
-        else:
-            self._info = self.info
+        self.order_id = order_info["id"]
+        self.status = order_info["status"]
+        self.info = order_info
 
     def __repr__(self):
         return (
-            f"""Order(order_id: {self.order_id}, status: {self._info["status"]},"""
-            f"""createdAt: {self._info["createdAt"]}, updatedAt: {self._info["updatedAt"]})"""
+            f"""Order(order_id: {self.order_id}, status: {self.info["status"]},"""
+            f"""createdAt: {self.info["createdAt"]}, updatedAt: {self.info["updatedAt"]})"""
         )
 
     def __eq__(self, other: Optional[object]):
-        return other and hasattr(other, "_info") and other._info == self._info
+        return other and hasattr(other, "info") and other.info == self.info
 
-    @property
-    def info(self) -> dict:
-        """
-        Gets and updates the order information.
-        """
-        url = host.endpoint(f"/v2/orders/{self.order_id}")
-        self._info = self.session.get(url=url).json()
-        return self._info
-
-    @property
-    def status(self) -> OrderStatus:
-        """
-        Gets the Order status. One of `PLACED`, `FAILED`, `FULFILLED`, `BEING_FULFILLED`, `FAILED_PERMANENTLY`.
-        """
-        status = self.info["status"]
-        logger.info("Order is %s", status)
-        return status
+    @classmethod
+    def get(cls, order_id: str) -> "Order":
+        url = host.endpoint(f"/v2/orders/{order_id}")
+        info = cls.session.get(url=url).json()
+        return Order(order_info=info)
 
     @property
     def order_details(self) -> dict:
@@ -158,34 +143,23 @@ class Order:
         """
         Gets the Order assets or results.
         """
-        current_info = copy.deepcopy(self._info)
-        params: dict[str, Any] = {"search": self.order_id, "page": 0}
+        params: dict[str, Any] = {"search": self.order_id}
 
-        if (status := current_info["status"]) not in ["FULFILLED", "BEING_FULFILLED"]:
-            raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {status}""")
+        if self.status not in ["FULFILLED", "BEING_FULFILLED"]:
+            raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {self.status}""")
         return [
             asset.Asset(asset_info=asset_info) for asset_info in utils.paged_query(params, "/v2/assets", self.session)
         ]
 
     @classmethod
     def place(cls, order_parameters: OrderParams, workspace_id: str) -> "Order":
-        """
-        Places an order.
-
-        Args:
-            auth: An authentication object.
-            order_parameters: A dictionary for the order configuration.
-
-        Returns:
-            Order: The placed order.
-        """
         url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
         response_json = cls.session.post(url=url, json=_translate_construct_parameters(order_parameters)).json()
         if response_json["errors"]:
             message = response_json["errors"][0]["message"]
             raise FailedOrderPlacement(f"Order was not placed: {message}")
-        order_id = response_json["results"][0]["id"]
-        order = cls(order_id=order_id)
+        order_info = response_json["results"][0]
+        order = cls(order_info=order_info)
         logger.info("Order %s is now %s.", order.order_id, order.status)
         return order
 
@@ -235,7 +209,7 @@ class Order:
         """
         logger.info("Tracking order status, reporting every %s seconds...", report_time)
         time_asleep: float = 0
-        current_info = copy.deepcopy(self._info)
+        current_info = copy.deepcopy(self.info)
         while (status := current_info["status"]) != "FULFILLED":
             sub_status = current_info.get("orderDetails", {}).get("subStatus")
             status += f": {sub_status}" if sub_status is not None else ""
