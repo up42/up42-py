@@ -31,10 +31,12 @@ class TestOrder:
     def test_should_provide_status(self):
         assert order.Order(ORDER_INFO).status == ORDER_INFO["status"]
 
-    def test_should_provide_order_details(self):
-        order_details = {"order": "details"}
-        order_obj = order.Order(info=ORDER_INFO | {"orderDetails": order_details})
-        assert order_obj.order_details == order_details
+    @pytest.mark.parametrize(
+        "details, expected", [({"orderDetails": {"order": "details"}}, {"order": "details"}), ({}, {})]
+    )
+    def test_should_provide_order_details(self, details: dict, expected: dict):
+        order_obj = order.Order(info=ORDER_INFO | details)
+        assert order_obj.order_details == expected
 
     @pytest.mark.parametrize(
         "status, expected",
