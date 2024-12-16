@@ -56,12 +56,3 @@ STAC_CATALOG_RESPONSE = {
     "id": "up42-storage",
     "type": "Catalog",
 }
-
-ORDER = {
-    "id": ORDER_ID,
-    "displayName": "display-name",
-    "status": "some-status",
-    "workspaceId": WORKSPACE_ID,
-    "accountId": "account-id",
-    "type": "ARCHIVE",
-}

@@ -176,16 +176,16 @@ class Order:
     def order_id(self) -> str:
         return self.id
 
-    # @utils.deprecation("", "3.0.0")
     @property
+    @utils.deprecation("order itself", "3.0.0")
     def info(self) -> dict:
         """
         Gets and updates the order information.
         """
         return dataclasses.asdict(self)
 
-    # @utils.deprecation("Please use order.details instead.", "3.0.0")
     @property
+    @utils.deprecation("order.details", "3.0.0")
     def order_details(self) -> dict:
         return dataclasses.asdict(self.details)  # type: ignore
 
@@ -290,6 +290,4 @@ class Order:
                 raise UnfulfilledOrder
 
         update()
-
-        logger.info("Order is fulfilled successfully! - %s", self.order_id)
         return self.status

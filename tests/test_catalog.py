@@ -69,17 +69,18 @@ class TestCatalogBase:
         requests_mock: req_mock.Mocker,
         order_parameters: order.OrderParams,
         collection_type: glossary.CollectionType,
+        order_metadata: dict,
     ):
         requests_mock.get(
             url=f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}",
-            json=constants.ORDER,
+            json=order_metadata,
         )
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-            json={"results": [constants.ORDER], "errors": []},
+            json={"results": [order_metadata], "errors": []},
         )
         order_obj = catalog.CatalogBase(collection_type).place_order(order_parameters=order_parameters)
-        assert order_obj.order_id == constants.ORDER_ID
+        assert order_obj == order.Order.from_dict(order_metadata)
 
     @pytest.mark.parametrize("collection_type", list(glossary.CollectionType))
     def test_should_track_order_status(
@@ -87,13 +88,14 @@ class TestCatalogBase:
         requests_mock: req_mock.Mocker,
         order_parameters: order.OrderParams,
         collection_type: glossary.CollectionType,
+        order_metadata: dict,
     ):
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-            json={"results": [constants.ORDER], "errors": []},
+            json={"results": [order_metadata], "errors": []},
         )
         statuses = ["INITIAL STATUS", "PLACED", "BEING_FULFILLED", "FULFILLED"]
-        responses = [{"json": constants.ORDER | {"status": status}} for status in statuses]
+        responses = [{"json": order_metadata | {"status": status}} for status in statuses]
         requests_mock.get(f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}", responses)
         order_obj = catalog.CatalogBase(collection_type).place_order(
             order_parameters=order_parameters,

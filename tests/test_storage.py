@@ -81,6 +81,7 @@ class TestStorage:
         return_json: bool,
         statuses: Optional[list[storage.AllowedStatuses]],
         requests_mock: req_mock.Mocker,
+        order_metadata: dict,
     ):
         sortby: storage.OrderSortBy = "status"
         order_type: storage.OrderType = random.choice(["TASKING", "ARCHIVE"])
@@ -101,7 +102,7 @@ class TestStorage:
             },
             doseq=True,
         )
-        expected = [constants.ORDER] * 20
+        expected = [order_metadata] * 20
         requests_mock.get(
             f"{constants.API_HOST}/v2/orders?{query}",
             json={"content": expected, "page": 0, "totalPages": 1},

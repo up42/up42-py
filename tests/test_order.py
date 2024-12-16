@@ -96,15 +96,21 @@ class TestOrder:
         }
 
     @pytest.mark.parametrize(
-        "info, expected",
+        "status, expected",
         [
-            ({"status": "FULFILLED"}, True),
-            ({"status": "OTHER STATUS"}, False),
+            ("FULFILLED", True),
+            ("OTHER STATUS", False),
         ],
         ids=["FULFILLED", "OTHER STATUS"],
     )
-    def test_should_compute_is_fulfilled(self, requests_mock: req_mock.Mocker, info: dict, expected: bool):
-        requests_mock.get(url=ORDER_URL, json=info)
+    def test_should_compute_is_fulfilled(
+        self,
+        requests_mock: req_mock.Mocker,
+        status: str,
+        expected: bool,
+        order_metadata: dict,
+    ):
+        requests_mock.get(url=ORDER_URL, json=order_metadata | {"status": status})
         order_obj = order.Order.get(order_id=constants.ORDER_ID)
         assert order_obj.is_fulfilled == expected
 
@@ -115,9 +121,8 @@ class TestOrder:
             "BEING_FULFILLED",
         ],
     )
-    def test_should_get_assets_if_valid(self, requests_mock: req_mock.Mocker, status: str):
-        info = {"id": constants.ORDER_ID, "status": status}
-        requests_mock.get(url=ORDER_URL, json=info)
+    def test_should_get_assets_if_valid(self, requests_mock: req_mock.Mocker, status: str, order_metadata: dict):
+        requests_mock.get(url=ORDER_URL, json=order_metadata | {"status": status})
         url_asset_info = f"{constants.API_HOST}/v2/assets?search={constants.ORDER_ID}"
         asset_info = {
             "content": [
@@ -146,34 +151,28 @@ class TestOrder:
             "FAILED_PERMANENTLY",
         ],
     )
-    def test_fails_to_get_assets_if_not_fulfilled(self, requests_mock: req_mock.Mocker, status: str):
-        info = {"status": status}
-        requests_mock.get(url=ORDER_URL, json=info)
+    def test_fails_to_get_assets_if_not_fulfilled(
+        self, requests_mock: req_mock.Mocker, status: str, order_metadata: dict
+    ):
+        requests_mock.get(url=ORDER_URL, json=order_metadata | {"status": status})
         order_obj = order.Order.get(order_id=constants.ORDER_ID)
         with pytest.raises(order.UnfulfilledOrder, match=f".*{constants.ORDER_ID}.*{status}"):
             order_obj.get_assets()
 
-    @pytest.mark.parametrize(
-        "info",
-        [
-            {"type": "ARCHIVE"},
-            {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}},
-        ],
-        ids=["ARCHIVE", "TASKING"],
-    )
-    def test_should_track_order_status_until_fulfilled(self, requests_mock: req_mock.Mocker, info: dict):
+    def test_should_track_order_status_until_fulfilled(self, requests_mock: req_mock.Mocker, order_metadata: dict):
         statuses = ["PLACED", "BEING_FULFILLED", "FULFILLED"]
-        responses = [{"json": {"status": status, **info}} for status in statuses]
+        responses = [{"json": order_metadata | {"status": status}} for status in statuses]
         requests_mock.get(ORDER_URL, responses)
         order_obj = order.Order.get(order_id=constants.ORDER_ID)
         assert order_obj.track_status(report_time=0.1) == "FULFILLED"
 
     @pytest.mark.parametrize("status", ["FAILED", "FAILED_PERMANENTLY"])
-    def test_fails_to_track_order_if_status_not_valid(self, requests_mock: req_mock.Mocker, status: str):
-        info = {"status": status, "type": "ANY"}
+    def test_fails_to_track_order_if_status_not_valid(
+        self, requests_mock: req_mock.Mocker, status: str, order_metadata: dict
+    ):
         requests_mock.get(
             url=ORDER_URL,
-            json=info,
+            json=order_metadata | {"status": status},
         )
         order_obj = order.Order.get(order_id=constants.ORDER_ID)
         with pytest.raises(order.FailedOrder):
@@ -191,18 +190,23 @@ class TestOrder:
         )
         assert order.Order.estimate(order_parameters) == expected_credits
 
-    def test_should_place_order(self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams):
-        info = {"status": "SOME STATUS"}
-        requests_mock.get(
-            url=ORDER_URL,
-            json=info,
-        )
+    @pytest.mark.parametrize(
+        "order_metadata, data_order",
+        [("ARCHIVE", "ARCHIVE"), ("TASKING", "TASKING")],
+        indirect=True,
+    )
+    def test_should_place_order(
+        self,
+        requests_mock: req_mock.Mocker,
+        order_parameters: order.OrderParams,
+        order_metadata: dict,
+        data_order: order.Order,
+    ):
         requests_mock.post(
             url=ORDER_PLACEMENT_URL,
-            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
+            json={"results": [order_metadata], "errors": []},
         )
-        order_obj = order.Order.place(order_parameters, constants.WORKSPACE_ID)
-        assert order_obj == order.Order.get(order_id=constants.ORDER_ID)
+        assert order.Order.place(order_parameters, constants.WORKSPACE_ID) == data_order
 
     def test_fails_to_place_order_if_response_contains_error(
         self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams

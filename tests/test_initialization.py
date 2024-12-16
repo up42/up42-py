@@ -7,7 +7,7 @@ from tests import constants
 from up42 import catalog, order, storage, tasking
 
 
-def test_should_initialize_objects(requests_mock: req_mock.Mocker):
+def test_should_initialize_objects(requests_mock: req_mock.Mocker, order_metadata: dict):
     catalog_obj = up42.initialize_catalog()
     assert isinstance(catalog_obj, catalog.Catalog)
 
@@ -16,9 +16,9 @@ def test_should_initialize_objects(requests_mock: req_mock.Mocker):
     assert storage_obj.workspace_id == constants.WORKSPACE_ID
 
     order_url = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
-    requests_mock.get(url=order_url, json=constants.ORDER)
+    requests_mock.get(url=order_url, json=order_metadata)
     order_obj = up42.initialize_order(order_id=constants.ORDER_ID)
-    assert order_obj == order.Order.from_dict(constants.ORDER)
+    assert order_obj == order.Order.from_dict(order_metadata)
 
     asset_id = str(uuid.uuid4())
 
