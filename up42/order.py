@@ -1,6 +1,7 @@
 import copy
+import dataclasses
 import time
-from typing import Any, Dict, List, Literal, Optional, TypedDict, cast
+from typing import Any, Dict, List, Literal, TypedDict, cast
 
 from up42 import asset, base, host, utils
 
@@ -86,6 +87,7 @@ class FailedOrderPlacement(ValueError):
     pass
 
 
+@dataclasses.dataclass
 class Order:
     """
     The Order class enables you to place, inspect and get information on orders.
@@ -97,29 +99,13 @@ class Order:
     """
 
     session = base.Session()
-
-    def __init__(
-        self,
-        order_info: dict,
-    ):
-        self.order_id = order_info["id"]
-        self.status = order_info["status"]
-        self.info = order_info
-
-    def __repr__(self):
-        return (
-            f"""Order(order_id: {self.order_id}, status: {self.info["status"]},"""
-            f"""createdAt: {self.info["createdAt"]}, updatedAt: {self.info["updatedAt"]})"""
-        )
-
-    def __eq__(self, other: Optional[object]):
-        return other and hasattr(other, "info") and other.info == self.info
+    info: dict
 
     @classmethod
     def get(cls, order_id: str) -> "Order":
         url = host.endpoint(f"/v2/orders/{order_id}")
         info = cls.session.get(url=url).json()
-        return Order(order_info=info)
+        return Order(info=info)
 
     @property
     def order_details(self) -> dict:
@@ -127,6 +113,14 @@ class Order:
         Gets the Order Details. Only for tasking type orders, archive types return empty.
         """
         return self.info["orderDetails"]
+
+    @property
+    def order_id(self) -> str:
+        return self.info["id"]
+
+    @property
+    def status(self) -> str:
+        return self.info["status"]
 
     @property
     def is_fulfilled(self) -> bool:
@@ -156,7 +150,7 @@ class Order:
             message = response_json["errors"][0]["message"]
             raise FailedOrderPlacement(f"Order was not placed: {message}")
         order_info = response_json["results"][0]
-        order = cls(order_info=order_info)
+        order = cls(info=order_info)
         logger.info("Order %s is now %s.", order.order_id, order.status)
         return order
 
@@ -216,7 +210,6 @@ class Order:
             time.sleep(report_time)
             time_asleep += report_time
             order = self.get(self.order_id)
-            self.status = order.status
             self.info = order.info
 
         return self.status

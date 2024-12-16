@@ -71,10 +71,6 @@ class TestCatalogBase:
         collection_type: glossary.CollectionType,
     ):
         info = {"status": "SOME STATUS"}
-        requests_mock.get(
-            url=f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}",
-            json=info,
-        )
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
             json={"results": [{"id": constants.ORDER_ID} | info], "errors": []},
