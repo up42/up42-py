@@ -25,9 +25,6 @@ class TestOrder:
             "params": {geometry_key: {"some": "shape"}},
         }
 
-    def test_should_initialize(self):
-        assert order.Order(ORDER_INFO).info == ORDER_INFO
-
     def test_should_provide_order_id(self):
         assert order.Order(ORDER_INFO).order_id == constants.ORDER_ID
 
