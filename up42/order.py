@@ -126,10 +126,7 @@ class Order:
         """
         Gets the Order Details. Only for tasking type orders, archive types return empty.
         """
-        if self.info["type"] == "TASKING":
-            return self.info["orderDetails"]
-        logger.info("Order is not TASKING type. Order details are not provided.")
-        return {}
+        return self.info["orderDetails"]
 
     @property
     def is_fulfilled(self) -> bool:
@@ -209,17 +206,17 @@ class Order:
         """
         logger.info("Tracking order status, reporting every %s seconds...", report_time)
         time_asleep: float = 0
-        current_info = copy.deepcopy(self.info)
-        while (status := current_info["status"]) != "FULFILLED":
-            sub_status = current_info.get("orderDetails", {}).get("subStatus")
-            status += f": {sub_status}" if sub_status is not None else ""
+        while self.status != "FULFILLED":
+            sub_status = self.info.get("orderDetails", {}).get("subStatus")
+            sub_status_msg = f": {sub_status}" if sub_status is not None else ""
             if time_asleep != 0 and time_asleep % report_time == 0:
-                logger.info("Order is %s! - %s", status, self.order_id)
-            if status in ["FAILED", "FAILED_PERMANENTLY"]:
+                logger.info("Order is %s! - %s", self.status + sub_status_msg, self.order_id)
+            if self.status in ["FAILED", "FAILED_PERMANENTLY"]:
                 raise FailedOrder("Order has failed!")
             time.sleep(report_time)
             time_asleep += report_time
-            current_info = copy.deepcopy(self.info)
+            order = self.get(self.order_id)
+            self.status = order.status
+            self.info = order.info
 
-        logger.info("Order is fulfilled successfully! - %s", self.order_id)
-        return current_info["status"]
+        return self.status

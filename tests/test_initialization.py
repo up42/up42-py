@@ -16,7 +16,7 @@ def test_should_initialize_objects(requests_mock: req_mock.Mocker):
     assert storage_obj.workspace_id == constants.WORKSPACE_ID
 
     order_url = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
-    order_info = {"id": constants.ORDER_ID, "other": "data"}
+    order_info = {"id": constants.ORDER_ID, "status": "some-status"}
     requests_mock.get(url=order_url, json=order_info)
     order_obj = up42.initialize_order(order_id=constants.ORDER_ID)
     assert order_obj.info == order_info

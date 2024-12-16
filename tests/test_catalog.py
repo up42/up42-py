@@ -77,7 +77,7 @@ class TestCatalogBase:
         )
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
+            json={"results": [{"id": constants.ORDER_ID} | info], "errors": []},
         )
         order_obj = catalog.CatalogBase(collection_type).place_order(order_parameters=order_parameters)
         assert order_obj.order_id == constants.ORDER_ID
@@ -100,10 +100,10 @@ class TestCatalogBase:
     ):
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
+            json={"results": [{"id": constants.ORDER_ID, "status": "CREATED"}], "errors": []},
         )
         statuses = ["INITIAL STATUS", "PLACED", "BEING_FULFILLED", "FULFILLED"]
-        responses = [{"json": {"status": status, **info}} for status in statuses]
+        responses = [{"json": {"status": status, "id": constants.ORDER_ID, **info}} for status in statuses]
         requests_mock.get(f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}", responses)
         order_obj = catalog.CatalogBase(collection_type).place_order(
             order_parameters=order_parameters,
