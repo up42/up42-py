@@ -1,5 +1,3 @@
-from typing import Optional
-
 import pytest
 import requests_mock as req_mock
 
@@ -12,80 +10,18 @@ ORDER_PLACEMENT_URL = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WO
 
 
 class TestOrder:
-    aoi = {"some": "aoi"}
-    image_id = "some-image-id"
-    acquisition_start = "some-acquisition-start"
-    acquisition_end = "some-acquisition-end"
-    geometry = {"some": "geometry"}
-    extra_description = "extra-description"
-    sub_status: order.TaskingOrderSubStatus = "FEASIBILITY_WAITING_UPLOAD"
-
     @pytest.mark.parametrize(
-        "order_type, details, expected_details",
+        "order_metadata, data_order",
         [
-            ("ARCHIVE", {}, None),
-            (
-                "ARCHIVE",
-                {"orderDetails": {"aoi": aoi, "imageId": image_id}},
-                order.ArchiveOrderDetails(aoi=aoi, image_id=image_id),
-            ),
-            ("TASKING", {}, None),
-            (
-                "TASKING",
-                {
-                    "orderDetails": {
-                        "acquisitionStart": acquisition_start,
-                        "acquisitionEnd": acquisition_end,
-                        "geometry": geometry,
-                        "extraDescription": extra_description,
-                        "subStatus": sub_status,
-                    }
-                },
-                order.TaskingOrderDetails(
-                    acquisition_start=acquisition_start,
-                    acquisition_end=acquisition_end,
-                    geometry=geometry,
-                    extra_description=extra_description,
-                    sub_status=sub_status,
-                ),
-            ),
+            ("BASE", "BASE"),
+            ("ARCHIVE", "ARCHIVE"),
+            ("TASKING", "TASKING"),
         ],
+        indirect=True,
     )
-    def test_should_get_tasking_order(
-        self,
-        requests_mock: req_mock.Mocker,
-        order_type: order.OrderType,
-        details: dict,
-        expected_details: Optional[order.OrderDetails],
-    ):
-        display_name = "display-name"
-        status: order.OrderStatus = "CREATED"
-        account_id = "some-account-id"
-        data_product_id = "some-data-product-id"
-        tags = ["some", "tags"]
-        info = {
-            "id": constants.ORDER_ID,
-            "displayName": display_name,
-            "workspaceId": constants.WORKSPACE_ID,
-            "accountId": account_id,
-            "status": status,
-            "type": order_type,
-            "dataProductId": data_product_id,
-            "tags": tags,
-        } | details
-        requests_mock.get(url=ORDER_URL, json=info)
-        order_obj = order.Order(
-            id=constants.ORDER_ID,
-            display_name=display_name,
-            workspace_id=constants.WORKSPACE_ID,
-            account_id=account_id,
-            status=status,
-            type=order_type,
-            data_product_id=data_product_id,
-            tags=tags,
-            details=expected_details,
-        )
-        assert order.Order.get(constants.ORDER_ID) == order_obj
+    def test_should_get_tasking_order(self, requests_mock: req_mock.Mocker, order_metadata: dict, data_order: dict):
+        requests_mock.get(url=ORDER_URL, json=order_metadata)
+        assert order.Order.get(constants.ORDER_ID) == data_order
 
     @pytest.fixture(scope="class", params=["catalog", "tasking"])
     def order_parameters(self, request) -> order.OrderParams:
