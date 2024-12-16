@@ -277,7 +277,7 @@ class Order:
 
         @tnc.retry(
             wait=tnc.wait_fixed(report_time),
-            retry=tnc.retry_if_exception_type(FailedOrder),
+            retry=tnc.retry_if_exception_type(UnfulfilledOrder),
             reraise=True,
         )
         def update():
@@ -286,6 +286,8 @@ class Order:
                 setattr(self, field.name, getattr(order, field.name))
             if self.status in ["FAILED", "FAILED_PERMANENTLY"]:
                 raise FailedOrder("Order has failed!")
+            if self.status != "FULFILLED":
+                raise UnfulfilledOrder
 
         update()
 

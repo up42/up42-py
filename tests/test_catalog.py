@@ -70,40 +70,30 @@ class TestCatalogBase:
         order_parameters: order.OrderParams,
         collection_type: glossary.CollectionType,
     ):
-        info = {"status": "SOME STATUS"}
         requests_mock.get(
             url=f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}",
-            json=info,
+            json=constants.ORDER,
         )
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
+            json={"results": [constants.ORDER], "errors": []},
         )
         order_obj = catalog.CatalogBase(collection_type).place_order(order_parameters=order_parameters)
         assert order_obj.order_id == constants.ORDER_ID
 
-    @pytest.mark.parametrize(
-        "info",
-        [
-            {"type": "ARCHIVE"},
-            {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}},
-        ],
-        ids=["ARCHIVE", "TASKING"],
-    )
     @pytest.mark.parametrize("collection_type", list(glossary.CollectionType))
     def test_should_track_order_status(
         self,
         requests_mock: req_mock.Mocker,
-        info: dict,
         order_parameters: order.OrderParams,
         collection_type: glossary.CollectionType,
     ):
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
+            json={"results": [constants.ORDER], "errors": []},
         )
         statuses = ["INITIAL STATUS", "PLACED", "BEING_FULFILLED", "FULFILLED"]
-        responses = [{"json": {"status": status, **info}} for status in statuses]
+        responses = [{"json": constants.ORDER | {"status": status}} for status in statuses]
         requests_mock.get(f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}", responses)
         order_obj = catalog.CatalogBase(collection_type).place_order(
             order_parameters=order_parameters,
