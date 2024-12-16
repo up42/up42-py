@@ -3,12 +3,19 @@ from unittest import mock
 
 import pytest
 
+from tests import constants
 from up42.http import client, config
 
 SETTINGS = {"some": "settings"}
 ACCOUNT_CREDENTIALS = {"username": "some-user", "password": "some-pass"}
 EMPTY_ACCOUNT_CREDENTIALS = {"username": None, "password": None}
 TOKEN_URL = "some-token-url"
+CONFIG_FILE = "some-config-file"
+REQUEST_HEADERS = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {constants.TOKEN}",
+    "custom": "header",
+}
 
 
 class TestCreate:
@@ -78,3 +85,22 @@ class TestCreate:
             )
         detect_settings.assert_has_calls([mock.call(source) for source in sources])
         self.unreachable.assert_not_called()
+
+
+class TestCollectCredentials:
+    def test_should_collect_credentials(self):
+        config_credentials = {"some": "data"}
+        read_config = mock.MagicMock(return_value=config_credentials)
+        expected_sources = [
+            config_credentials,
+            {"username": constants.USER_EMAIL, "password": constants.PASSWORD},
+        ]
+        assert (
+            client.collect_credentials(
+                CONFIG_FILE,
+                constants.USER_EMAIL,
+                constants.PASSWORD,
+                read_config,
+            )
+            == expected_sources
+        )

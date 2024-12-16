@@ -11,8 +11,7 @@ import pytest
 import requests
 import requests_mock as req_mock
 
-from tests import helpers
-from tests.fixtures import fixtures_globals as constants
+from tests import constants, helpers
 from up42 import processing, utils
 
 PROCESS_ID = "process-id"
@@ -103,14 +102,6 @@ JOB = processing.Job(
 
 def as_java_timestamp(value: datetime.datetime):
     return value.isoformat(timespec="milliseconds") + MICROSECONDS
-
-
-@pytest.fixture(autouse=True)
-def set_status_raising_session():
-    session = requests.Session()
-    session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
-    processing.Job.session = session  # type: ignore
-    processing.JobTemplate.session = session  # type: ignore
 
 
 class TestCost:

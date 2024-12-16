@@ -29,6 +29,69 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.1.1
+**Dec 10, 2024**
+
+### Changed
+- Restore accepting string instead of enum in `Storage::get_orders`.
+- Improve coverage for `Tasking::decide_quotation`.
+- Improve coverage for `Tasking::get_feasibility`.
+- Improve coverage for `Tasking::choose_feasibility`.
+- Updating endpoint for `base::get_credits_balance`.
+- Switched workspace id retrieval from the deprecated endpoint to the user info endpoint.
+- Added requesting `openid` scope when retrieving token.
+- Move `tests/fixtures/fixtures_globals.py` to `tests/constants.py`.
+- Move `collection_credentials` from `auth.py` to `client.py`.
+- Switched to base descriptors in `Storage` class and drop the dependencies from `auth.py` module.
+
+### Fixed
+- Fixed bug with passing enum entries instead of values in `Storage::get_orders`.
+- Fixed `Catalog::construct_search_parameters` `limit` description in the documentation.
+- Fixed paging bug for case of empty response.
+- Fixed confusing name for type `FeasibilityDecision` to `FeasibilityStatus`.
+- Fixed test coverage for `Tasking::get_quotations`.
+- Fixed test coverage for `Tasking::construct_order_parameters`.
+- Fixed types of `Asset::asset_id` and `Asset::_get_info`.
+- Unified paging between `Order`, `Tasking` and `Storage` classes.
+
+### Removed
+- Drop process template `DetectionTreesHeightsSpacept`.
+- Dropped limiting false statuses in `Storage::get_orders` since the type hinting is enabled.
+- Dropped failing wrong `sortby` value in `Storage::get_orders` since the type hinting is enabled.
+- Dropped `Tasking::auth` property.
+- Dropped legacy `auth.py`.
+- Dropped legacy fixtures for storage test coverage.
+- Dropped `asset_searcher.py` module.
+- Dropped unused `Auth::request` and the corresponding test coverage.
+- Dropped unneeded `Storage::__repr__`.
+- Dissolve `auth.Auth` in `_Workspace::authenticate`.
+
+## 2.1.1a13
+
+**Dec 4, 2024**
+- Move `tests/fixtures/fixtures_globals.py` to `tests/constants.py`.
+- Move constants used in a single test module to the corresponding module.
+
+## 2.1.1a12
+
+**Dec 3, 2024**
+- Drop process template `DetectionTreesHeightsSpacept`.
+
+## 2.1.1a11
+
+**Dec 2, 2024**
+- Added requesting `openid` scope when retrieving token.
+- Switched workspace id retrieval from the deprecated endpoint to the user info endpoint.
+
+## 2.1.1a10
+
+**Dec 2, 2024**
+- Remove duplication of workspace mocking in tests.
+- Remove duplication of setting raising session in tests.
+- Move `collection_credentials` from `auth.py` to `client.py`.
+- Dissolve `auth.Auth` in `_Workspace::authenticate`.
+- Drop legacy `auth.py`.
+
 ## 2.1.1a9
 
 **Nov 29, 2024**

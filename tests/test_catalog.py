@@ -4,17 +4,13 @@ from typing import List, Optional, cast
 
 import geojson  # type: ignore
 import geopandas as gpd  # type: ignore
-import mock
 import pandas as pd
 import pytest
-import requests
 import requests_mock as req_mock
 import shapely  # type: ignore
 
+from tests import constants, helpers
 from up42 import catalog, glossary, order
-
-from . import helpers
-from .fixtures import fixtures_globals as constants
 
 PHR = "phr"
 SIMPLE_BOX = shapely.box(0, 0, 1, 1).__geo_interface__
@@ -27,22 +23,6 @@ FEATURE = {
     "geometry": {"type": "Point", "coordinates": (1.0, 2.0)},
 }
 POINT_BBOX = (1.0, 2.0, 1.0, 2.0)
-
-
-@pytest.fixture(autouse=True)
-def workspace():
-    with mock.patch("up42.base.workspace") as workspace_mock:
-        workspace_mock.auth.session = requests.session()
-        workspace_mock.id = constants.WORKSPACE_ID
-        yield
-
-
-@pytest.fixture(autouse=True)
-def set_status_raising_session():
-    session = requests.Session()
-    session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
-    glossary.ProductGlossary.session = session  # type: ignore
-    catalog.CatalogBase.session = session  # type: ignore
 
 
 class TestCatalogBase:

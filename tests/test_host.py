@@ -13,3 +13,9 @@ def test_should_use_domain_in_endpoint_url(domain):
 def test_should_use_domain_in_token_endpoint_url(domain):
     host.DOMAIN = domain
     assert domain in host.token_endpoint()
+
+
+@pytest.mark.parametrize("domain", ["xyz", "abc"])
+def test_should_use_domain_in_user_info_endpoint_url(domain):
+    host.DOMAIN = domain
+    assert domain in host.user_info_endpoint()

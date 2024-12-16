@@ -2,27 +2,16 @@ import dataclasses
 import random
 import string
 import uuid
-from unittest import mock
 
 import pytest
-import requests
 import requests_mock as req_mock
 
+from tests import constants
 from up42 import webhooks
-
-from .fixtures import fixtures_globals as constants
 
 WEBHOOK_ID = str(uuid.uuid4())
 HOOKS_URL = f"{constants.API_HOST}/workspaces/{constants.WORKSPACE_ID}/webhooks"
 HOOK_URL = f"{HOOKS_URL}/{WEBHOOK_ID}"
-
-
-@pytest.fixture(autouse=True)
-def workspace():
-    with mock.patch("up42.base.workspace") as workspace_mock:
-        workspace_mock.auth.session = requests.session()
-        workspace_mock.id = constants.WORKSPACE_ID
-        yield
 
 
 def random_alphanumeric():

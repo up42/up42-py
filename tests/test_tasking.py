@@ -1,15 +1,11 @@
 import urllib.parse
 from typing import Any, List, Optional
-from unittest import mock
 
 import pytest
-import requests
 import requests_mock as req_mock
 
+from tests import constants, helpers
 from up42 import tasking
-
-from . import helpers
-from .fixtures import fixtures_globals as constants
 
 ACQ_START = "2014-01-01T00:00:00"
 ACQ_END = "2022-12-31T23:59:59"
@@ -30,13 +26,6 @@ POLYGON = {
 
 QUOTATION_ID = "805b1f27-1025-43d2-90d0-0bd3416238fb"
 FEASIBILITY_ID = "6f93f754-5594-42da-b6af-9064225b89e9"
-
-
-@pytest.fixture(autouse=True)
-def workspace():
-    with mock.patch("up42.base.workspace") as workspace_mock:
-        workspace_mock.auth.session = requests.session()
-        yield
 
 
 class TestTasking:
