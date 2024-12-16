@@ -101,7 +101,16 @@ class TestStorage:
             },
             doseq=True,
         )
-        expected = [{"order": "info", "id": constants.ORDER_ID}] * 20
+        expected = [
+            {
+                "id": constants.ORDER_ID,
+                "displayName": "display-name",
+                "status": "some-status",
+                "workspaceId": constants.WORKSPACE_ID,
+                "accountId": "account-id",
+                "type": "ARCHIVE",
+            }
+        ] * 20
         requests_mock.get(
             f"{constants.API_HOST}/v2/orders?{query}",
             json={"content": expected, "page": 0, "totalPages": 1},
