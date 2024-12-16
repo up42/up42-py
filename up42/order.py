@@ -147,8 +147,7 @@ class Order:
         if response_json["errors"]:
             message = response_json["errors"][0]["message"]
             raise FailedOrderPlacement(f"Order was not placed: {message}")
-        order_info = response_json["results"][0]
-        order = cls(info=order_info)
+        order = cls(info=response_json["results"][0])
         logger.info("Order %s is now %s.", order.order_id, order.status)
         return order
 
