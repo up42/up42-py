@@ -29,6 +29,15 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a1
+**Dec 17, 2024**
+- Converted `Order` to dataclass.
+- Dropped eager loading of `Order::info`.
+- Added `Order::get` class method as part of conversion to active record pattern.
+- Extended `Order::order_details` to cover archive orders as well.
+- Dropped `Order::__repr__` in favour of native dataclass implementation.
+- Added `Order::track` method and deprecated `Order::track_status` method.
+
 ## 2.1.1
 **Dec 10, 2024**
 
