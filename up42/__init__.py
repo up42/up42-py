@@ -32,6 +32,7 @@ from up42.initialization import (
     initialize_tasking,
 )
 from up42.order import Order, OrderSorting
+from up42.order_templates import ArchiveOrderTemplate, TaskingOrderTemplate
 from up42.processing import Job, JobSorting, JobStatus
 from up42.storage import Storage
 from up42.tasking import Tasking
@@ -68,5 +69,7 @@ __all__ = [
         CollectionSorting,
         CollectionType,
         ProductGlossary,
+        ArchiveOrderTemplate,
+        TaskingOrderTemplate,
     ]
 ]
