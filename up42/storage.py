@@ -98,6 +98,7 @@ class Storage:
         else:
             return [asset.Asset(asset_info=info) for info in assets]
 
+    @utils.deprecation("Order::all", "3.0.0")
     def get_orders(
         self,
         workspace_orders: bool = True,
@@ -130,17 +131,21 @@ class Storage:
             Order objects in the workspace or alternatively JSON info of the orders.
         """
 
-        params = {
-            "sort": utils.SortingField(sortby, not descending),
-            "workspaceId": self.workspace_id if workspace_orders else None,
-            "displayName": name,
-            "type": order_type,
-            "tags": tags,
-            "status": statuses,
-        }
-        orders = self._query(params, "/v2/orders", limit)
+        orders = list(
+            itertools.islice(
+                order.Order.all(
+                    workspace_id=self.workspace_id if workspace_orders else None,
+                    display_name=name,
+                    order_type=order_type,
+                    tags=tags,
+                    status=statuses,  # type: ignore
+                    sort_by=utils.SortingField(sortby, not descending),
+                ),
+                limit,
+            )
+        )
 
         if return_json:
-            return orders
+            return [o.info for o in orders]
         else:
-            return [order.Order(info=info) for info in orders]
+            return orders
