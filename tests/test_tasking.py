@@ -7,7 +7,7 @@ import pytest
 import requests_mock as req_mock
 
 from tests import constants, helpers
-from up42 import tasking
+from up42 import tasking, utils
 
 ACQ_START = "2014-01-01T00:00:00"
 ACQ_END = "2022-12-31T23:59:59"
@@ -241,41 +241,87 @@ class TestTasking:
 
 
 class TestQuotation:
+    metadata = {
+        "id": QUOTATION_ID,
+        "createdAt": "created-at",
+        "updatedAt": "updated-at",
+        "decisionAt": "decided-at",
+        "accountId": ACCOUNT_ID,
+        "workspaceId": constants.WORKSPACE_ID,
+        "orderId": constants.ORDER_ID,
+        "creditsPrice": 10,
+        "decision": "ACCEPTED",
+    }
+    quotation = tasking.Quotation(
+        id=QUOTATION_ID,
+        created_at="created-at",
+        updated_at="updated-at",
+        decided_at="decided-at",
+        account_id=ACCOUNT_ID,
+        workspace_id=constants.WORKSPACE_ID,
+        order_id=constants.ORDER_ID,
+        credits_price=10,
+        decision="ACCEPTED",
+    )
+
     @pytest.mark.parametrize("decision", ["ACCEPTED", "REJECTED"])
     def test_should_save(self, requests_mock: req_mock.Mocker, decision: tasking.QuotationDecision):
-        initial = tasking.Quotation(
-            id=QUOTATION_ID,
-            created_at="created-at",
-            updated_at="updated-at",
-            decided_at=None,
-            account_id=ACCOUNT_ID,
-            workspace_id=constants.WORKSPACE_ID,
-            order_id=constants.ORDER_ID,
-            credits_price=10,
-            decision="NOT_DECIDED",
-        )
-        payload = {"decision": decision}
+        undecided = dataclasses.replace(self.quotation, decision="NOT_DECIDED", decided_at=None)
+        patch = {"decision": decision}
         url = f"{constants.API_HOST}/v2/tasking/quotation/{QUOTATION_ID}"
-        decided_at = "decided-at"
-        expected = {
-            "id": QUOTATION_ID,
-            "createdAt": initial.created_at,
-            "updatedAt": initial.updated_at,
-            "decisionAt": decided_at,
-            "accountId": ACCOUNT_ID,
-            "workspaceId": constants.WORKSPACE_ID,
-            "orderId": constants.ORDER_ID,
-            "creditsPrice": 10,
-            "decision": decision,
-        }
         requests_mock.patch(
             url=url,
-            json=expected,
-            additional_matcher=helpers.match_request_body(payload),
+            json=self.metadata | patch,
+            additional_matcher=helpers.match_request_body(patch),
         )
-        quotation = dataclasses.replace(initial, decision=decision)
-        quotation.save()
-        assert quotation == dataclasses.replace(initial, decision=decision, decided_at=decided_at)
+        undecided.decision = decision
+        undecided.save()
+        assert undecided == dataclasses.replace(self.quotation, decision=decision)
 
-    def test_should_get_all(self):
-        ...
+    @pytest.mark.parametrize("quotation_id", [None, QUOTATION_ID])
+    @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
+    @pytest.mark.parametrize("order_id", [None, constants.ORDER_ID])
+    @pytest.mark.parametrize("decision", [None, ["ACCEPTED", "REJECTED", "NOT_DECIDED"], ["ACCEPTED"]])
+    @pytest.mark.parametrize("sort_by", [None, tasking.QuotationSorting.created_at.asc])
+    def test_should_get_all(
+        self,
+        requests_mock: req_mock.Mocker,
+        quotation_id: Optional[str],
+        workspace_id: Optional[str],
+        order_id: Optional[str],
+        decision: Optional[List[tasking.QuotationStatus]],
+        sort_by: Optional[utils.SortingField],
+    ):
+        query_params: dict[str, Any] = {}
+        if quotation_id:
+            query_params["id"] = quotation_id
+        if workspace_id:
+            query_params["workspaceId"] = workspace_id
+        if order_id:
+            query_params["orderId"] = order_id
+        if decision:
+            query_params["decision"] = decision
+        if sort_by:
+            query_params["sort"] = str(sort_by)
+
+        base_url = f"{constants.API_HOST}/v2/tasking/quotation"
+        expected = [self.metadata] * 4
+        for page in [0, 1]:
+            query_params["page"] = page
+            query = urllib.parse.urlencode(query_params, doseq=True, safe="")
+            url = base_url + (query and f"?{query}")
+            offset = page * 2
+            response = {
+                "content": expected[offset : offset + 2],  # noqa: E203
+                "totalPages": 2,
+            }
+            requests_mock.get(url=url, json=response)
+
+        quotations = tasking.Quotation.all(
+            quotation_id=quotation_id,
+            workspace_id=workspace_id,
+            order_id=order_id,
+            decision=decision,
+            sort_by=sort_by,
+        )
+        assert list(quotations) == [self.quotation] * 4
