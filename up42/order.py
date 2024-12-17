@@ -1,6 +1,8 @@
 import copy
-import time
-from typing import Any, Dict, List, Literal, Optional, TypedDict, cast
+import dataclasses
+from typing import Any, Dict, List, Literal, TypedDict, cast
+
+import tenacity as tnc
 
 from up42 import asset, base, host, utils
 
@@ -86,6 +88,7 @@ class FailedOrderPlacement(ValueError):
     pass
 
 
+@dataclasses.dataclass
 class Order:
     """
     The Order class enables you to place, inspect and get information on orders.
@@ -97,54 +100,25 @@ class Order:
     """
 
     session = base.Session()
+    info: dict
 
-    def __init__(
-        self,
-        order_id: str,
-        order_info: Optional[dict] = None,
-    ):
-        self.order_id = order_id
-        if order_info is not None:
-            self._info = order_info
-        else:
-            self._info = self.info
-
-    def __repr__(self):
-        return (
-            f"""Order(order_id: {self.order_id}, status: {self._info["status"]},"""
-            f"""createdAt: {self._info["createdAt"]}, updatedAt: {self._info["updatedAt"]})"""
-        )
-
-    def __eq__(self, other: Optional[object]):
-        return other and hasattr(other, "_info") and other._info == self._info
-
-    @property
-    def info(self) -> dict:
-        """
-        Gets and updates the order information.
-        """
-        url = host.endpoint(f"/v2/orders/{self.order_id}")
-        self._info = self.session.get(url=url).json()
-        return self._info
-
-    @property
-    def status(self) -> OrderStatus:
-        """
-        Gets the Order status. One of `PLACED`, `FAILED`, `FULFILLED`, `BEING_FULFILLED`, `FAILED_PERMANENTLY`.
-        """
-        status = self.info["status"]
-        logger.info("Order is %s", status)
-        return status
+    @classmethod
+    def get(cls, order_id: str) -> "Order":
+        url = host.endpoint(f"/v2/orders/{order_id}")
+        info = cls.session.get(url=url).json()
+        return Order(info=info)
 
     @property
     def order_details(self) -> dict:
-        """
-        Gets the Order Details. Only for tasking type orders, archive types return empty.
-        """
-        if self.info["type"] == "TASKING":
-            return self.info["orderDetails"]
-        logger.info("Order is not TASKING type. Order details are not provided.")
-        return {}
+        return self.info.get("orderDetails", {})
+
+    @property
+    def order_id(self) -> str:
+        return self.info["id"]
+
+    @property
+    def status(self) -> str:
+        return self.info["status"]
 
     @property
     def is_fulfilled(self) -> bool:
@@ -158,34 +132,22 @@ class Order:
         """
         Gets the Order assets or results.
         """
-        current_info = copy.deepcopy(self._info)
-        params: dict[str, Any] = {"search": self.order_id, "page": 0}
+        params: dict[str, Any] = {"search": self.order_id}
 
-        if (status := current_info["status"]) not in ["FULFILLED", "BEING_FULFILLED"]:
-            raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {status}""")
+        if self.status not in ["FULFILLED", "BEING_FULFILLED"]:
+            raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {self.status}""")
         return [
             asset.Asset(asset_info=asset_info) for asset_info in utils.paged_query(params, "/v2/assets", self.session)
         ]
 
     @classmethod
     def place(cls, order_parameters: OrderParams, workspace_id: str) -> "Order":
-        """
-        Places an order.
-
-        Args:
-            auth: An authentication object.
-            order_parameters: A dictionary for the order configuration.
-
-        Returns:
-            Order: The placed order.
-        """
         url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
         response_json = cls.session.post(url=url, json=_translate_construct_parameters(order_parameters)).json()
         if response_json["errors"]:
             message = response_json["errors"][0]["message"]
             raise FailedOrderPlacement(f"Order was not placed: {message}")
-        order_id = response_json["results"][0]["id"]
-        order = cls(order_id=order_id)
+        order = cls(info=response_json["results"][0])
         logger.info("Order %s is now %s.", order.order_id, order.status)
         return order
 
@@ -215,37 +177,29 @@ class Order:
         )
         return estimated_credits
 
-    def track_status(self, report_time: float = 120) -> str:
-        """
-        Continuously gets the order status until order is fulfilled or failed.
+    def track(self, report_time: float = 120):
+        logger.info("Tracking order updates, reporting every %s seconds...", report_time)
 
-        Internally checks every `report_time` (s) for the status and prints the log.
+        @tnc.retry(
+            wait=tnc.wait_fixed(report_time),
+            retry=tnc.retry_if_exception_type(UnfulfilledOrder),
+            reraise=True,
+        )
+        def update():
+            order = Order.get(self.order_id)
+            self.info = order.info
+            sub_status = self.order_details.get("subStatus")
+            sub_status_msg = f": {sub_status}" if sub_status is not None else ""
 
-        Warning:
-            When placing orders of items that are in archive or cold storage,
-            the order fulfillment can happen up to **24h after order placement**.
-            In such cases,
-            please make sure to set an appropriate `report_time`.
-
-        Args:
-            report_time: The interval (in seconds) when to get the order status.
-
-        Returns:
-            str: The final order status.
-        """
-        logger.info("Tracking order status, reporting every %s seconds...", report_time)
-        time_asleep: float = 0
-        current_info = copy.deepcopy(self._info)
-        while (status := current_info["status"]) != "FULFILLED":
-            sub_status = current_info.get("orderDetails", {}).get("subStatus")
-            status += f": {sub_status}" if sub_status is not None else ""
-            if time_asleep != 0 and time_asleep % report_time == 0:
-                logger.info("Order is %s! - %s", status, self.order_id)
-            if status in ["FAILED", "FAILED_PERMANENTLY"]:
+            logger.info("Order is %s! - %s", self.status + sub_status_msg, self.order_id)
+            if self.status in ["FAILED", "FAILED_PERMANENTLY"]:
                 raise FailedOrder("Order has failed!")
-            time.sleep(report_time)
-            time_asleep += report_time
-            current_info = copy.deepcopy(self.info)
+            if not self.is_fulfilled:
+                raise UnfulfilledOrder
 
-        logger.info("Order is fulfilled successfully! - %s", self.order_id)
-        return current_info["status"]
+        update()
+
+    @utils.deprecation("Order::track", "3.0.0")
+    def track_status(self, report_time: float = 120) -> str:
+        self.track(report_time)
+        return self.status

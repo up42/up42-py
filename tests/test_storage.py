@@ -101,7 +101,7 @@ class TestStorage:
             },
             doseq=True,
         )
-        expected = [{"order": "info", "id": constants.ORDER_ID}] * 20
+        expected = [{"order": "info", "id": constants.ORDER_ID, "status": "some-status"}] * 20
         requests_mock.get(
             f"{constants.API_HOST}/v2/orders?{query}",
             json={"content": expected, "page": 0, "totalPages": 1},
@@ -120,4 +120,4 @@ class TestStorage:
         if return_json:
             assert orders == expected[:limit]
         else:
-            assert orders == [order.Order(order_id=info["id"], order_info=info) for info in expected[:limit]]
+            assert orders == [order.Order(info=info) for info in expected[:limit]]
