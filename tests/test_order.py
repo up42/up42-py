@@ -117,7 +117,7 @@ def _tasking_order(base_order: order.Order, tasking_order_metadata: dict):
     )
 
 
-parameterize_with_orders = pytest.mark.parametrize(
+parameterize_with_order_data = pytest.mark.parametrize(
     "data_order, order_metadata",
     [("BASE", "BASE"), ("ARCHIVE", "ARCHIVE"), ("TASKING", "TASKING")],
     indirect=True,
@@ -146,7 +146,7 @@ class TestOrder:
     def test_should_provide_order_id(self, data_order: order.Order):
         assert data_order.order_id == constants.ORDER_ID
 
-    @parameterize_with_orders
+    @parameterize_with_order_data
     def test_should_provide_order_details(self, data_order: order.Order, order_metadata: dict):
         assert data_order.order_details == order_metadata.get("orderDetails", {})
 
@@ -157,7 +157,6 @@ class TestOrder:
             ("OTHER STATUS", False),
         ],
     )
-    @pytest.mark.skip(reason="temporary")
     def test_should_compute_is_fulfilled(self, data_order: order.Order, status: order.OrderStatus, expected: bool):
         assert dataclasses.replace(data_order, status=status).is_fulfilled == expected
 
@@ -168,7 +167,6 @@ class TestOrder:
             "BEING_FULFILLED",
         ],
     )
-    @pytest.mark.skip(reason="temporary")
     def test_should_get_assets_if_valid(
         self,
         requests_mock: req_mock.Mocker,
@@ -202,17 +200,11 @@ class TestOrder:
             "FAILED_PERMANENTLY",
         ],
     )
-    @pytest.mark.skip(reason="temporary")
     def test_fails_to_get_assets_if_not_fulfilled(self, status: order.OrderStatus, data_order: order.Order):
         with pytest.raises(order.UnfulfilledOrder, match=f".*{constants.ORDER_ID}.*{status}"):
             dataclasses.replace(data_order, status=status).get_assets()
 
-    @pytest.mark.parametrize(
-        "data_order, order_metadata",
-        [("BASE", "BASE"), ("ARCHIVE", "ARCHIVE"), ("TASKING", "TASKING")],
-        indirect=True,
-    )
-    @pytest.mark.skip(reason="temporary")
+    @parameterize_with_order_data
     def test_should_track_order_status_until_fulfilled(
         self,
         requests_mock: req_mock.Mocker,
@@ -225,12 +217,7 @@ class TestOrder:
         assert data_order.track_status(report_time=0.1) == "FULFILLED"
 
     @pytest.mark.parametrize("status", ["FAILED", "FAILED_PERMANENTLY"])
-    @pytest.mark.parametrize(
-        "data_order, order_metadata",
-        [("ARCHIVE", "ARCHIVE"), ("TASKING", "TASKING")],
-        indirect=True,
-    )
-    @pytest.mark.skip(reason="temporary")
+    @parameterize_with_order_data
     def test_fails_to_track_order_if_status_not_valid(
         self,
         requests_mock: req_mock.Mocker,
@@ -245,12 +232,7 @@ class TestOrder:
         with pytest.raises(order.FailedOrder):
             data_order.track_status()
 
-    @pytest.mark.parametrize(
-        "data_order, order_metadata",
-        [("BASE", "BASE"), ("ARCHIVE", "ARCHIVE"), ("TASKING", "TASKING")],
-        indirect=True,
-    )
-    @pytest.mark.skip(reason="temporary")
+    @parameterize_with_order_data
     def test_should_get(
         self,
         requests_mock: req_mock.Mocker,
@@ -260,7 +242,6 @@ class TestOrder:
         requests_mock.get(url=ORDER_URL, json=order_metadata)
         assert order.Order.get(constants.ORDER_ID) == data_order
 
-    @pytest.mark.skip(reason="temporary")
     def test_should_estimate(self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams):
         order_estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
         expected_credits = 100
@@ -273,12 +254,7 @@ class TestOrder:
         )
         assert order.Order.estimate(order_parameters) == expected_credits
 
-    @pytest.mark.parametrize(
-        "data_order, order_metadata",
-        [("BASE", "BASE"), ("ARCHIVE", "ARCHIVE"), ("TASKING", "TASKING")],
-        indirect=True,
-    )
-    @pytest.mark.skip(reason="temporary")
+    @parameterize_with_order_data
     def test_should_place_order(
         self,
         requests_mock: req_mock.Mocker,
@@ -296,7 +272,6 @@ class TestOrder:
         )
         assert order.Order.place(order_parameters, constants.WORKSPACE_ID) == data_order
 
-    @pytest.mark.skip(reason="temporary")
     def test_fails_to_place_order_if_response_contains_error(
         self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
     ):
@@ -316,12 +291,7 @@ class TestOrder:
     @pytest.mark.parametrize("display_name", [None, "display-name"])
     @pytest.mark.parametrize("tags", [None, ["some", "tags"]])
     @pytest.mark.parametrize("sort_by", [None, order.OrderSorting.created_at])
-    @pytest.mark.parametrize(
-        "data_order, order_metadata",
-        [("BASE", "BASE"), ("ARCHIVE", "ARCHIVE"), ("TASKING", "TASKING")],
-        indirect=True,
-    )
-    @pytest.mark.skip(reason="temporary")
+    @parameterize_with_order_data
     def test_should_get_all(
         self,
         workspace_id: Optional[str],

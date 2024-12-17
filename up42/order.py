@@ -125,15 +125,6 @@ OrderDetails = Union[ArchiveOrderDetails, TaskingOrderDetails]
 
 @dataclasses.dataclass
 class Order:
-    """
-    The Order class enables you to place, inspect and get information on orders.
-
-    Use an existing order:
-    ```python
-    order = up42.initialize_order(order_id="ea36dee9-fed6-457e-8400-2c20ebd30f44")
-    ```
-    """
-
     session = base.Session()
     id: str
     display_name: str
@@ -203,10 +194,12 @@ class Order:
         return map(cls._from_metadata, utils.paged_query(params, "/v2/orders", cls.session))
 
     @property
+    @utils.deprecation("Order.details", "3.0.0")
     def order_details(self) -> dict:
         return self.info.get("orderDetails", {})
 
     @property
+    @utils.deprecation("Order.id", "3.0.0")
     def order_id(self) -> str:
         return self.info["id"]
 
@@ -276,12 +269,14 @@ class Order:
             reraise=True,
         )
         def update():
-            order = Order.get(self.order_id)
-            self.info = order.info
+            order = Order.get(self.id)
+            for field in dataclasses.fields(order):
+                setattr(self, field.name, getattr(order, field.name))
             sub_status = self.order_details.get("subStatus")
             sub_status_msg = f": {sub_status}" if sub_status is not None else ""
 
             logger.info("Order is %s! - %s", self.status + sub_status_msg, self.order_id)
+
             if self.status in ["FAILED", "FAILED_PERMANENTLY"]:
                 raise FailedOrder("Order has failed!")
             if not self.is_fulfilled:
