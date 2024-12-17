@@ -29,6 +29,30 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a4
+**Dec 18, 2024**
+- Modified `Storage::get_orders` testing to eliminate dependency on order data.
+
+## 2.2.0a3
+**Dec 17, 2024**
+- Introduced `Order::all` method to filter and list orders.
+- Deprecated `Storage::get_orders` method.
+
+## 2.2.0a2
+**Dec 17, 2024**
+- Fixed `Order::place` method to retrieve order info via additional call and not from response.
+- Modified `up42::initialize_order` testing to eliminate dependency on order data.
+- Modified `CatalogBase::place_order` testing to eliminate dependency on order data.
+
+## 2.2.0a1
+**Dec 17, 2024**
+- Converted `Order` to dataclass.
+- Dropped eager loading of `Order::info`.
+- Added `Order::get` class method as part of conversion to active record pattern.
+- Extended `Order::order_details` to cover archive orders as well.
+- Dropped `Order::__repr__` in favour of native dataclass implementation.
+- Added `Order::track` method and deprecated `Order::track_status` method.
+
 ## 2.1.1
 **Dec 10, 2024**
 
