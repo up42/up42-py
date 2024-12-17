@@ -225,6 +225,7 @@ class Order:
         ]
 
     @classmethod
+    @utils.deprecation("OrderTemplate::place", "3.0.0")
     def place(cls, order_parameters: OrderParams, workspace_id: str) -> "Order":
         url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
         response_json = cls.session.post(url=url, json=_translate_construct_parameters(order_parameters)).json()
@@ -236,6 +237,7 @@ class Order:
         return order
 
     @classmethod
+    @utils.deprecation("OrderTemplate.cost", "3.0.0")
     def estimate(cls, order_parameters: OrderParams) -> int:
         """
         Returns an estimation of the cost of an order.

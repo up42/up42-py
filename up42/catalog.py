@@ -267,6 +267,7 @@ class Catalog(CatalogBase):
         else:
             return df.__geo_interface__
 
+    @utils.deprecation("ArchiveOrderTemplate", "3.0.0")
     def construct_order_parameters(
         self,
         data_product_id: str,
