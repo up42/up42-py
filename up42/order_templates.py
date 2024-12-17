@@ -47,6 +47,13 @@ class BatchOrder:
         ...
 
 
+def _get_items(data: dict, result_type):
+    results = [result_type(**result) for result in data["results"]]
+    errors = [OrderError(**error) for error in data["errors"]]
+    items = results + errors
+    return sorted(items, key=lambda x: x.index)
+
+
 class BatchOrderTemplate:
     session = base.Session()
     workspace_id = base.WorkspaceId()
@@ -98,15 +105,10 @@ class BatchOrderTemplate:
 
     def __estimate(self):
         url = host.endpoint("/v2/orders/estimate")
-        estimate = self.session.post(
-            url=url,
-            json=self._payload,
-        ).json()
-        costs = [OrderCost(**result) for result in estimate["results"]]
-        errors = [OrderError(**error) for error in estimate["errors"]]
+        estimate = self.session.post(url=url, json=self._payload).json()
         summary = estimate["summary"]
         self.cost = BatchCost(
-            items=sorted(costs + errors, key=lambda x: x.index),
+            items=_get_items(estimate, OrderCost),
             credits=summary["totalCredits"],
             size=summary["totalSize"],
             unit=summary["unit"],
@@ -115,9 +117,7 @@ class BatchOrderTemplate:
     def place(self) -> BatchOrder:
         url = host.endpoint(f"/v2/orders?workspaceId={self.workspace_id}")
         batch = self.session.post(url=url, json=self._payload).json()
-        costs = [OrderReference(**result) for result in batch["results"]]
-        errors = [OrderError(**error) for error in batch["errors"]]
-        return BatchOrder(items=sorted(costs + errors, key=lambda x: x.index))
+        return BatchOrder(items=_get_items(batch, OrderReference))
 
 
 @dataclasses.dataclass
