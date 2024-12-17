@@ -1,12 +1,10 @@
-import dataclasses
-from typing import cast
 from unittest import mock
 
 import pytest
 import requests
 
 from tests import constants
-from up42 import host, order
+from up42 import host
 
 
 @pytest.fixture(autouse=True)
@@ -29,106 +27,3 @@ def workspace(request):
             yield
     else:
         yield
-
-
-@pytest.fixture(name="base_order")
-def _base_order():
-    return order.Order(
-        id=constants.ORDER_ID,
-        display_name="archive-order",
-        workspace_id=constants.WORKSPACE_ID,
-        account_id="account-id",
-        status="CREATED",
-        type="ARCHIVE",
-        data_product_id=constants.DATA_PRODUCT_ID,
-        tags=["some", "tags"],
-        details=None,
-    )
-
-
-@pytest.fixture(name="archive_order")
-def _archive_order(base_order: order.Order):
-    return dataclasses.replace(
-        base_order,
-        details=order.ArchiveOrderDetails(aoi={"some": "aoi"}, image_id="image-id"),
-    )
-
-
-@pytest.fixture(name="tasking_order")
-def _tasking_order(base_order: order.Order):
-    return dataclasses.replace(
-        base_order,
-        display_name="tasking-order",
-        type="TASKING",
-        details=order.TaskingOrderDetails(
-            acquisition_start="acquisition-start",
-            acquisition_end="acquisition-end",
-            geometry={"some": "geometry"},
-            extra_description="extra-description",
-            sub_status="FEASIBILITY_WAITING_UPLOAD",
-        ),
-    )
-
-
-@pytest.fixture(params=["ARCHIVE", "TASKING"])
-def data_order(
-    base_order: order.Order,
-    archive_order: order.Order,
-    tasking_order: order.Order,
-    request,
-):
-    return {"BASE": base_order, "ARCHIVE": archive_order, "TASKING": tasking_order}[request.param]
-
-
-@pytest.fixture(name="base_order_metadata")
-def _base_order_metadata(base_order: order.Order):
-    return {
-        "id": constants.ORDER_ID,
-        "workspaceId": constants.WORKSPACE_ID,
-        "accountId": base_order.account_id,
-        "displayName": base_order.display_name,
-        "status": base_order.status,
-        "type": base_order.type,
-        "dataProductId": constants.DATA_PRODUCT_ID,
-        "tags": base_order.tags,
-    }
-
-
-@pytest.fixture(name="archive_order_metadata")
-def _archive_order_metadata(base_order_metadata: dict, archive_order: order.Order):
-    details = cast(order.ArchiveOrderDetails, archive_order.details)
-    return base_order_metadata | {
-        "displayName": archive_order.display_name,
-        "type": archive_order.type,
-        "orderDetails": {"aoi": details.aoi, "imageId": details.image_id},
-    }
-
-
-@pytest.fixture(name="tasking_order_metadata")
-def _tasking_order_metadata(base_order_metadata: dict, tasking_order: order.Order):
-    details = cast(order.TaskingOrderDetails, tasking_order.details)
-    return base_order_metadata | {
-        "displayName": tasking_order.display_name,
-        "type": tasking_order.type,
-        "orderDetails": {
-            "acquisitionStart": details.acquisition_start,
-            "acquisitionEnd": details.acquisition_end,
-            "geometry": details.geometry,
-            "extraDescription": details.extra_description,
-            "subStatus": details.sub_status,
-        },
-    }
-
-
-@pytest.fixture(params=["BASE", "ARCHIVE", "TASKING"])
-def order_metadata(
-    base_order_metadata,
-    archive_order_metadata: dict,
-    tasking_order_metadata: dict,
-    request,
-):
-    return {
-        "BASE": base_order_metadata,
-        "ARCHIVE": archive_order_metadata,
-        "TASKING": tasking_order_metadata,
-    }[request.param]

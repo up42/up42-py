@@ -149,8 +149,36 @@ class Order:
     @classmethod
     def get(cls, order_id: str) -> "Order":
         url = host.endpoint(f"/v2/orders/{order_id}")
-        info = cls.session.get(url=url).json()
-        return Order(info=info)
+        metadata = cls.session.get(url=url).json()
+        return Order._from_metadata(metadata)
+
+    @staticmethod
+    def _from_metadata(data: dict) -> "Order":
+        details: Optional[OrderDetails] = None
+        if "orderDetails" in data:
+            order_details: dict = data["orderDetails"]
+            if data["type"] == "TASKING":
+                details = TaskingOrderDetails(
+                    acquisition_start=order_details["acquisitionStart"],
+                    acquisition_end=order_details["acquisitionEnd"],
+                    geometry=order_details["geometry"],
+                    extra_description=order_details.get("extraDescription"),
+                    sub_status=order_details.get("subStatus"),
+                )
+            else:
+                details = ArchiveOrderDetails(aoi=order_details["aoi"], image_id=order_details.get("imageId"))
+        return Order(
+            id=data["id"],
+            display_name=data["displayName"],
+            status=data["status"],
+            workspace_id=data["workspaceId"],
+            account_id=data["accountId"],
+            type=data["type"],
+            details=details,
+            data_product_id=data.get("dataProductId"),
+            tags=data.get("tags"),
+            info=data,
+        )
 
     @classmethod
     def all(
@@ -172,7 +200,7 @@ class Order:
             "status": status,
             "subStatus": sub_status,
         }
-        return map(cls, utils.paged_query(params, "/v2/orders", cls.session))
+        return map(cls._from_metadata, utils.paged_query(params, "/v2/orders", cls.session))
 
     @property
     def order_details(self) -> dict:
@@ -181,10 +209,6 @@ class Order:
     @property
     def order_id(self) -> str:
         return self.info["id"]
-
-    @property
-    def status(self) -> str:
-        return self.info["status"]
 
     @property
     def is_fulfilled(self) -> bool:
