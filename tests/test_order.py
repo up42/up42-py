@@ -1,8 +1,11 @@
+import urllib
+from typing import Any, List, Optional
+
 import pytest
 import requests_mock as req_mock
 
 from tests import constants
-from up42 import asset, order
+from up42 import asset, order, utils
 
 ASSET_ORDER_ID = "22d0b8e9-b649-4971-8adc-1a5eac1fa6f3"
 ORDER_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
@@ -155,3 +158,61 @@ class TestOrder:
         )
         with pytest.raises(order.FailedOrderPlacement, match=error_msg):
             order.Order.place(order_parameters, constants.WORKSPACE_ID)
+
+    @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
+    @pytest.mark.parametrize("order_type", [None, "ARCHIVE", "TASKING"])
+    @pytest.mark.parametrize("status", [None, ["CREATED", "PLACED"]])
+    @pytest.mark.parametrize("sub_status", [None, ["FEASIBILITY_WAITING_UPLOAD", "QUOTATION_WAITING_UPLOAD"]])
+    @pytest.mark.parametrize("display_name", [None, "display-name"])
+    @pytest.mark.parametrize("tags", [None, ["some", "tags"]])
+    @pytest.mark.parametrize("sort_by", [None, order.OrderSorting.created_at])
+    def test_should_get_all(
+        self,
+        workspace_id: Optional[str],
+        order_type: Optional[order.OrderType],
+        status: Optional[List[order.OrderStatus]],
+        sub_status: Optional[List[order.OrderSubStatus]],
+        display_name: Optional[str],
+        tags: Optional[List[str]],
+        sort_by: Optional[utils.SortingField],
+        requests_mock: req_mock.Mocker,
+    ):
+        query_params: dict[str, Any] = {}
+        if workspace_id:
+            query_params["workspaceId"] = workspace_id
+        if order_type:
+            query_params["type"] = order_type
+        if status:
+            query_params["status"] = status
+        if sub_status:
+            query_params["subStatus"] = sub_status
+        if display_name:
+            query_params["displayName"] = display_name
+        if tags:
+            query_params["tags"] = tags
+        if sort_by:
+            query_params["sort"] = str(sort_by)
+
+        base_url = f"{constants.API_HOST}/v2/orders"
+        expected = [ORDER_INFO] * 4
+        for page in [0, 1]:
+            query_params["page"] = page
+            query = urllib.parse.urlencode(query_params, doseq=True, safe="")
+            url = base_url + (query and f"?{query}")
+            offset = page * 2
+            response = {
+                "content": expected[offset : offset + 2],  # noqa: E203
+                "totalPages": 2,
+            }
+            requests_mock.get(url=url, json=response)
+
+        orders = order.Order.all(
+            workspace_id=workspace_id,
+            order_type=order_type,
+            status=status,
+            sub_status=sub_status,
+            display_name=display_name,
+            tags=tags,
+            sort_by=sort_by,
+        )
+        assert list(orders) == [order.Order(info=ORDER_INFO)] * 4

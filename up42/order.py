@@ -1,6 +1,6 @@
 import copy
 import dataclasses
-from typing import Any, Dict, List, Literal, TypedDict, cast
+from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict, cast
 
 import tenacity as tnc
 
@@ -10,6 +10,8 @@ logger = utils.get_logger(__name__)
 
 MAX_ITEM = 200
 LIMIT = 200
+
+OrderType = Literal["TASKING", "ARCHIVE"]
 
 
 class OrderParams(TypedDict, total=False):
@@ -74,6 +76,14 @@ OrderStatus = Literal[
     "FAILED",
     "FAILED_PERMANENTLY",
 ]
+OrderSubStatus = Literal[
+    "FEASIBILITY_WAITING_UPLOAD",
+    "FEASIBILITY_WAITING_RESPONSE",
+    "QUOTATION_WAITING_UPLOAD",
+    "QUOTATION_WAITING_RESPONSE",
+    "QUOTATION_ACCEPTED",
+    "QUOTATION_REJECTED",
+]
 
 
 class UnfulfilledOrder(ValueError):
@@ -86,6 +96,13 @@ class FailedOrder(ValueError):
 
 class FailedOrderPlacement(ValueError):
     pass
+
+
+class OrderSorting:
+    created_at = utils.SortingField(name="createdAt")
+    updated_at = utils.SortingField(name="updatedAt")
+    type = utils.SortingField(name="type")
+    status = utils.SortingField(name="status")
 
 
 @dataclasses.dataclass
@@ -107,6 +124,28 @@ class Order:
         url = host.endpoint(f"/v2/orders/{order_id}")
         info = cls.session.get(url=url).json()
         return Order(info=info)
+
+    @classmethod
+    def all(
+        cls,
+        workspace_id: Optional[str] = None,
+        order_type: Optional[OrderType] = None,
+        status: Optional[List[OrderStatus]] = None,
+        sub_status: Optional[List[OrderSubStatus]] = None,
+        display_name: Optional[str] = None,
+        tags: Optional[List[str]] = None,
+        sort_by: Optional[utils.SortingField] = None,
+    ) -> Iterator["Order"]:
+        params = {
+            "sort": sort_by,
+            "workspaceId": workspace_id,
+            "displayName": display_name,
+            "type": order_type,
+            "tags": tags,
+            "status": status,
+            "subStatus": sub_status,
+        }
+        return map(cls, utils.paged_query(params, "/v2/orders", cls.session))
 
     @property
     def order_details(self) -> dict:
