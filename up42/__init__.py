@@ -34,7 +34,7 @@ from up42.initialization import (
 from up42.order import Order
 from up42.processing import Job, JobSorting, JobStatus
 from up42.storage import Storage
-from up42.tasking import Tasking
+from up42.tasking import Quotation, QuotationSorting, Tasking
 from up42.tools import get_example_aoi, read_vector_file
 from up42.utils import get_up42_py_version
 from up42.webhooks import Webhook
@@ -67,5 +67,7 @@ __all__ = [
         CollectionSorting,
         CollectionType,
         ProductGlossary,
+        Quotation,
+        QuotationSorting,
     ]
 ]
