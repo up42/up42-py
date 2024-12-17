@@ -109,6 +109,7 @@ class OrderSorting:
 class ArchiveOrderDetails:
     aoi: dict
     image_id: Optional[str]
+    sub_status = None
 
 
 @dataclasses.dataclass
@@ -272,11 +273,10 @@ class Order:
             order = Order.get(self.id)
             for field in dataclasses.fields(order):
                 setattr(self, field.name, getattr(order, field.name))
-            sub_status = self.order_details.get("subStatus")
+            sub_status = self.details and self.details.sub_status
             sub_status_msg = f": {sub_status}" if sub_status is not None else ""
 
             logger.info("Order is %s! - %s", self.status + sub_status_msg, self.order_id)
-
             if self.status in ["FAILED", "FAILED_PERMANENTLY"]:
                 raise FailedOrder("Order has failed!")
             if not self.is_fulfilled:
