@@ -29,8 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
-## 2.2.0a3
+## 2.2.0a4
 **Dec 18, 2024**
+- Modified `Storage::get_orders` testing to eliminate dependency on order data.
+
+## 2.2.0a3
+**Dec 17, 2024**
 - Introduced `Order::all` method to filter and list orders.
 - Deprecated `Storage::get_orders` method.
 

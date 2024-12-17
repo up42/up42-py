@@ -3,11 +3,12 @@ import random
 import urllib
 from typing import Optional, cast
 
+import mock
 import pytest
 import requests_mock as req_mock
 
 from tests import constants
-from up42 import asset, order, storage, utils
+from up42 import asset, storage, utils
 
 
 class TestStorage:
@@ -80,44 +81,36 @@ class TestStorage:
         workspace_orders: bool,
         return_json: bool,
         statuses: Optional[list[storage.AllowedStatuses]],
-        requests_mock: req_mock.Mocker,
     ):
         sortby: storage.OrderSortBy = "status"
         order_type: storage.OrderType = random.choice(["TASKING", "ARCHIVE"])
         tags = ["some", "tags"]
         name = "name"
-        workspace_params = {"workspaceId": constants.WORKSPACE_ID} if workspace_orders else {}
         status = [status.value for status in statuses] if statuses else None
-        status_params = {"status": status} if status else {}
-        query = urllib.parse.urlencode(
-            {
-                "sort": utils.SortingField(sortby, not descending),
-                **workspace_params,
-                "displayName": name,
-                "type": order_type,
-                "tags": tags,
-                **status_params,
-                "page": 0,
-            },
-            doseq=True,
-        )
-        expected = [{"order": "info", "id": constants.ORDER_ID, "status": "some-status"}] * 20
-        requests_mock.get(
-            f"{constants.API_HOST}/v2/orders?{query}",
-            json={"content": expected, "page": 0, "totalPages": 1},
-        )
-        orders = storage.Storage().get_orders(
-            workspace_orders=workspace_orders,
-            return_json=return_json,
-            limit=limit,
-            sortby=sortby,
-            descending=descending,
-            order_type=order_type,
-            statuses=status,
-            name=name,
-            tags=tags,
-        )
-        if return_json:
-            assert orders == expected[:limit]
-        else:
-            assert orders == [order.Order(info=info) for info in expected[:limit]]
+        with mock.patch("up42.order.Order.all") as get_orders:
+            if return_json:
+                order_obj = mock.MagicMock()
+                order_obj.info = mock.sentinel
+                get_orders.return_value = iter([order_obj] * 20)
+            else:
+                get_orders.return_value = iter([mock.sentinel] * 20)
+            orders = storage.Storage().get_orders(
+                workspace_orders=workspace_orders,
+                return_json=return_json,
+                limit=limit,
+                sortby=sortby,
+                descending=descending,
+                order_type=order_type,
+                statuses=status,
+                name=name,
+                tags=tags,
+            )
+            assert orders == ([mock.sentinel] * 20)[:limit]
+            get_orders.assert_called_with(
+                workspace_id=constants.WORKSPACE_ID if workspace_orders else None,
+                display_name=name,
+                order_type=order_type,
+                tags=tags,
+                status=status,  # type: ignore
+                sort_by=utils.SortingField(sortby, not descending),
+            )
