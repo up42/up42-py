@@ -1,4 +1,6 @@
+import dataclasses
 import urllib.parse
+import uuid
 from typing import Any, List, Optional
 
 import pytest
@@ -26,6 +28,7 @@ POLYGON = {
 
 QUOTATION_ID = "805b1f27-1025-43d2-90d0-0bd3416238fb"
 FEASIBILITY_ID = "6f93f754-5594-42da-b6af-9064225b89e9"
+ACCOUNT_ID = str(uuid.uuid4())
 
 
 class TestTasking:
@@ -235,3 +238,44 @@ class TestTasking:
             )
             == expected
         )
+
+
+class TestQuotation:
+    @pytest.mark.parametrize("decision", ["ACCEPTED", "REJECTED"])
+    def test_should_save(self, requests_mock: req_mock.Mocker, decision: tasking.QuotationDecision):
+        initial = tasking.Quotation(
+            id=QUOTATION_ID,
+            created_at="created-at",
+            updated_at="updated-at",
+            decided_at=None,
+            account_id=ACCOUNT_ID,
+            workspace_id=constants.WORKSPACE_ID,
+            order_id=constants.ORDER_ID,
+            credits_price=10,
+            decision="NOT_DECIDED",
+        )
+        payload = {"decision": decision}
+        url = f"{constants.API_HOST}/v2/tasking/quotation/{QUOTATION_ID}"
+        decided_at = "decided-at"
+        expected = {
+            "id": QUOTATION_ID,
+            "createdAt": initial.created_at,
+            "updatedAt": initial.updated_at,
+            "decisionAt": decided_at,
+            "accountId": ACCOUNT_ID,
+            "workspaceId": constants.WORKSPACE_ID,
+            "orderId": constants.ORDER_ID,
+            "creditsPrice": 10,
+            "decision": decision,
+        }
+        requests_mock.patch(
+            url=url,
+            json=expected,
+            additional_matcher=helpers.match_request_body(payload),
+        )
+        quotation = dataclasses.replace(initial, decision=decision)
+        quotation.save()
+        assert quotation == dataclasses.replace(initial, decision=decision, decided_at=decided_at)
+
+    def test_should_get_all(self):
+        ...
