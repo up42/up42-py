@@ -32,7 +32,8 @@ class TestOrder:
         assert order.Order(ORDER_INFO).status == ORDER_INFO["status"]
 
     @pytest.mark.parametrize(
-        "details, expected", [({"orderDetails": {"order": "details"}}, {"order": "details"}), ({}, {})]
+        "details, expected",
+        [({"orderDetails": {"order": "details"}}, {"order": "details"}), ({}, {})],
     )
     def test_should_provide_order_details(self, details: dict, expected: dict):
         order_obj = order.Order(info=ORDER_INFO | details)
@@ -134,7 +135,11 @@ class TestOrder:
     def test_should_place_order(self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams):
         requests_mock.post(
             url=ORDER_PLACEMENT_URL,
-            json={"results": [ORDER_INFO], "errors": []},
+            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
+        )
+        requests_mock.get(
+            url=ORDER_URL,
+            json=ORDER_INFO,
         )
         order_obj = order.Order.place(order_parameters, constants.WORKSPACE_ID)
         assert order_obj == order.Order(info=ORDER_INFO)

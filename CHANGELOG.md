@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a2
+**Dec 17, 2024**
+- Fixed `Order::place` method to retrieve order info via additional call and not from response.
+- Modified `up42::initialize_order` testing to eliminate dependency on order data.
+- Modified `CatalogBase::place_order` testing to eliminate dependency on order data.
+
 ## 2.2.0a1
 **Dec 17, 2024**
 - Converted `Order` to dataclass.

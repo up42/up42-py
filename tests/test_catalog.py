@@ -4,6 +4,7 @@ from typing import List, Optional, cast
 
 import geojson  # type: ignore
 import geopandas as gpd  # type: ignore
+import mock
 import pandas as pd
 import pytest
 import requests_mock as req_mock
@@ -66,48 +67,33 @@ class TestCatalogBase:
     @pytest.mark.parametrize("collection_type", list(glossary.CollectionType))
     def test_should_place_order(
         self,
-        requests_mock: req_mock.Mocker,
         order_parameters: order.OrderParams,
         collection_type: glossary.CollectionType,
     ):
-        info = {"status": "SOME STATUS"}
-        requests_mock.post(
-            url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-            json={"results": [{"id": constants.ORDER_ID} | info], "errors": []},
-        )
-        order_obj = catalog.CatalogBase(collection_type).place_order(order_parameters=order_parameters)
-        assert order_obj.order_id == constants.ORDER_ID
+        with mock.patch("up42.order.Order.place") as place_order:
+            place_order.return_value = mock.sentinel
+            assert catalog.CatalogBase(collection_type).place_order(order_parameters=order_parameters) == mock.sentinel
+            place_order.assert_called_with(order_parameters, constants.WORKSPACE_ID)
 
-    @pytest.mark.parametrize(
-        "info",
-        [
-            {"type": "ARCHIVE"},
-            {"type": "TASKING", "orderDetails": {"subStatus": "substatus"}},
-        ],
-        ids=["ARCHIVE", "TASKING"],
-    )
     @pytest.mark.parametrize("collection_type", list(glossary.CollectionType))
     def test_should_track_order_status(
         self,
-        requests_mock: req_mock.Mocker,
-        info: dict,
         order_parameters: order.OrderParams,
         collection_type: glossary.CollectionType,
     ):
-        requests_mock.post(
-            url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}",
-            json={"results": [{"id": constants.ORDER_ID, "status": "CREATED"}], "errors": []},
-        )
-        statuses = ["INITIAL STATUS", "PLACED", "BEING_FULFILLED", "FULFILLED"]
-        responses = [{"json": {"status": status, "id": constants.ORDER_ID, **info}} for status in statuses]
-        requests_mock.get(f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}", responses)
-        order_obj = catalog.CatalogBase(collection_type).place_order(
-            order_parameters=order_parameters,
-            track_status=True,
-            report_time=0.1,
-        )
-        assert order_obj.order_id == constants.ORDER_ID
-        assert order_obj.status == "FULFILLED"
+        order_obj = mock.MagicMock()
+        with mock.patch("up42.order.Order.place") as place_order:
+            place_order.return_value = order_obj
+            assert (
+                catalog.CatalogBase(collection_type).place_order(
+                    order_parameters=order_parameters,
+                    track_status=True,
+                    report_time=0.1,
+                )
+                == order_obj
+            )
+            place_order.assert_called_with(order_parameters, constants.WORKSPACE_ID)
+            order_obj.track_status.assert_called_with(0.1)
 
 
 class TestCatalog:
