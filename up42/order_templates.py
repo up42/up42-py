@@ -38,15 +38,6 @@ class BatchCost:
     unit: UnitType
 
 
-@dataclasses.dataclass
-class BatchOrder:
-    items: list[Union[OrderReference, OrderError]]
-
-    @property
-    def orders(self):
-        ...
-
-
 def _get_items(data: dict, result_type):
     results = [result_type(**result) for result in data["results"]]
     errors = [OrderError(**error) for error in data["errors"]]
@@ -114,10 +105,10 @@ class BatchOrderTemplate:
             unit=summary["unit"],
         )
 
-    def place(self) -> BatchOrder:
+    def place(self) -> list[Union[OrderReference, OrderError]]:
         url = host.endpoint(f"/v2/orders?workspaceId={self.workspace_id}")
         batch = self.session.post(url=url, json=self._payload).json()
-        return BatchOrder(items=_get_items(batch, OrderReference))
+        return _get_items(batch, OrderReference)
 
 
 @dataclasses.dataclass
