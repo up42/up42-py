@@ -47,6 +47,7 @@ class CatalogBase:
     def __init__(self, collection_type: glossary.CollectionType):
         self.type = collection_type
 
+    @utils.deprecation(None, "3.0.0")
     def get_data_product_schema(self, data_product_id: str) -> dict:
         """
         Gets the parameters schema of a data product to help
@@ -59,6 +60,7 @@ class CatalogBase:
         url = host.endpoint(f"/orders/schema/{data_product_id}")
         return self.session.get(url).json()
 
+    @utils.deprecation("BatchOrderTemplate.estimate", "3.0.0")
     def estimate_order(self, order_parameters: order.OrderParams) -> int:
         """
         Estimate the cost of an order.
@@ -73,6 +75,7 @@ class CatalogBase:
 
         return order.Order.estimate(order_parameters)
 
+    @utils.deprecation("BatchOrderTemplate::place", "3.0.0")
     def place_order(
         self,
         order_parameters: order.OrderParams,
@@ -267,6 +270,7 @@ class Catalog(CatalogBase):
         else:
             return df.__geo_interface__
 
+    @utils.deprecation("BatchOrderTemplate", "3.0.0")
     def construct_order_parameters(
         self,
         data_product_id: str,
@@ -310,7 +314,10 @@ class Catalog(CatalogBase):
         schema = self.get_data_product_schema(data_product_id)
         params: dict[str, Any] = {param: None for param in schema["required"]}
         params["id"] = image_id
-        order_parameters: order.OrderParams = {"dataProduct": data_product_id, "params": params}
+        order_parameters: order.OrderParams = {
+            "dataProduct": data_product_id,
+            "params": params,
+        }
         if tags is not None:
             order_parameters["tags"] = tags
 

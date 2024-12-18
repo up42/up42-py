@@ -29,8 +29,19 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
-## 2.2.0a5
+## 2.2.0a6
 **Dec 18, 2024**
+- Added `order_template` module with `BatchOrderTemplate` and supporting classes.
+- Deprecated `Tasking.construct_order_parameters` in favour of `BatchOrderTemplate`.
+- Deprecated `Catalog.construct_order_parameters` in favour of `BatchOrderTemplate`.
+- Deprecated `CatalogBase::estimate_order` in favour of `BatchOrderTemplate.estimate`.
+- Deprecated `CatalogBase::place_order` in favour of `BatchOrderTemplate::place`.
+- Deprecated `Order::estimate` in favour of `BatchOrderTemplate.estimate`.
+- Deprecated `Order::place` in favour of `BatchOrderTemplate::place`.
+- Deprecated `CatalogBase::get_data_product_schema`.
+
+## 2.2.0a5
+**Dec 17, 2024**
 - Deprecated `up42::initiliaze_order` in favour of `Order::get`.
 - Add missing properties to `Order` data class and auxiliary classes.
 - Deprecated `Order.order_id` in favour of `Order.id`.
