@@ -47,7 +47,7 @@ class CatalogBase:
     def __init__(self, collection_type: glossary.CollectionType):
         self.type = collection_type
 
-    @utils.deprecation(None, "3.0.0")
+    @utils.deprecation("DataProduct.schema", "3.0.0")
     def get_data_product_schema(self, data_product_id: str) -> dict:
         """
         Gets the parameters schema of a data product to help
