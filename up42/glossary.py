@@ -57,6 +57,7 @@ class Scene:
     resolution: Optional[float]
     delivery_time: Optional[Literal["MINUTES", "HOURS", "DAYS"]]
     producer: str
+    quicklook: utils.ImageFile
 
 
 class InvalidHost(ValueError):
@@ -113,10 +114,11 @@ class Provider:
 
     def _as_scene(self, feature: geojson.Feature) -> Scene:
         properties = feature["properties"]
+        scene_id = properties["id"]
         return Scene(
             bbox=feature.get("bbox"),
             geometry=feature["geometry"],
-            id=properties["id"],
+            id=scene_id,
             constellation=properties["constellation"],
             collection=properties["collection"],
             producer=properties["producer"],
@@ -126,6 +128,10 @@ class Provider:
             cloud_coverage=properties.get("cloudCoverage"),
             resolution=properties.get("resolution"),
             delivery_time=properties.get("deliveryTime"),
+            quicklook=utils.ImageFile(
+                url=host.endpoint(f"/catalog/{self.name}/image/{scene_id}/quicklook"),
+                file_name=f"quicklook_{scene_id}.jpg",
+            ),
         )
 
 

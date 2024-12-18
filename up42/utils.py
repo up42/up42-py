@@ -167,6 +167,29 @@ class UnsupportedArchive(ValueError):
     pass
 
 
+@dataclasses.dataclass
+class ImageFile:
+    url: str
+    file_name: str = "output"
+
+    def download(self, output_directory: Union[str, pathlib.Path]) -> pathlib.Path:
+        file_name = get_filename(self.url, default_filename=self.file_name)
+        path = pathlib.Path().joinpath(output_directory, file_name)
+        with open(path, "wb") as dst:
+            try:
+                r = requests.get(self.url, stream=True, timeout=TIMEOUT)
+                r.raise_for_status()
+                for chunk in tqdm.tqdm(r.iter_content(chunk_size=CHUNK_SIZE)):
+                    if chunk:  # filter out keep-alive new chunks
+                        dst.write(chunk)
+            except requests.exceptions.HTTPError as err:
+                logger.debug("Connection error, please try again! %s", err)
+                raise requests.exceptions.HTTPError(f"Connection error, please try again! {err}")
+
+            logger.info("Successfully downloaded the file at %s", path)
+            return path
+
+
 def download_file(download_url: str, output_directory: Union[str, pathlib.Path]) -> List[str]:
     """
     General download function for assets, job and jobtasks from cloud storage
@@ -177,22 +200,8 @@ def download_file(download_url: str, output_directory: Union[str, pathlib.Path])
         output_directory: The file output directory, defaults to the current working
             directory.
     """
-    file_name = get_filename(download_url, default_filename="output")
-    out_fp = pathlib.Path().joinpath(output_directory, file_name)
-    # Download
-    with open(out_fp, "wb") as dst:
-        try:
-            r = requests.get(download_url, stream=True, timeout=TIMEOUT)
-            r.raise_for_status()
-            for chunk in tqdm.tqdm(r.iter_content(chunk_size=CHUNK_SIZE)):
-                if chunk:  # filter out keep-alive new chunks
-                    dst.write(chunk)
-        except requests.exceptions.HTTPError as err:
-            logger.debug("Connection error, please try again! %s", err)
-            raise requests.exceptions.HTTPError(f"Connection error, please try again! {err}")
-
-        logger.info("Successfully downloaded the file at %s", out_fp)
-        return [str(out_fp)]
+    image = ImageFile(download_url)
+    return [str(image.download(output_directory))]
 
 
 def format_time(date: Optional[Union[str, datetime.datetime]], set_end_of_day=False):
