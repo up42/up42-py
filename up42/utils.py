@@ -336,36 +336,6 @@ def fc_to_query_geometry(fc: Union[dict, geojson.FeatureCollection], geometry_op
     return query_geometry
 
 
-def replace_page_query(url: str, new_page: int) -> str:
-    """
-    Handle pagination replacement in an encoded url
-    Args:
-        url (str): a url with query parameters including page
-        new_page (int): the desired page starting at 0 to include in the url
-
-    Returns:
-        str: the url with the new page parameter.
-    """
-    parsed_url = parse.urlparse(url)
-    query_params = parse.parse_qs(parsed_url.query)
-    query_params["page"] = [str(new_page)]
-
-    # Update the query string with the modified parameters
-    encoded_query = parse.urlencode(query_params, doseq=True)
-
-    # Reconstruct the modified URL
-    return parse.urlunparse(
-        (
-            parsed_url.scheme,
-            parsed_url.netloc,
-            parsed_url.path,
-            parsed_url.params,
-            encoded_query,
-            parsed_url.fragment,
-        )
-    )
-
-
 def get_up42_py_version():
     """Get the version of the up42-py package."""
     return importlib.metadata.version("up42-py")

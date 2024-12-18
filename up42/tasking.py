@@ -39,6 +39,7 @@ class Tasking(catalog.CatalogBase):
     def __init__(self):
         super().__init__(glossary.CollectionType.TASKING)
 
+    @utils.deprecation("BatchOrderTemplate", "3.0.0")
     def construct_order_parameters(
         self,
         data_product_id: str,

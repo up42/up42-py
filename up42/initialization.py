@@ -28,6 +28,7 @@ def initialize_storage() -> storage.Storage:
     return storage.Storage()
 
 
+@utils.deprecation("Order::get", "3.0.0")
 def initialize_order(order_id: str) -> order.Order:
     """
     Returns an Order object (has to exist on UP42).

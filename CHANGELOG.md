@@ -29,6 +29,39 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a6
+**Dec 18, 2024**
+- Added `order_template` module with `BatchOrderTemplate` and supporting classes.
+- Deprecated `Tasking.construct_order_parameters` in favour of `BatchOrderTemplate`.
+- Deprecated `Catalog.construct_order_parameters` in favour of `BatchOrderTemplate`.
+- Deprecated `CatalogBase::estimate_order` in favour of `BatchOrderTemplate.estimate`.
+- Deprecated `CatalogBase::place_order` in favour of `BatchOrderTemplate::place`.
+- Deprecated `Order::estimate` in favour of `BatchOrderTemplate.estimate`.
+- Deprecated `Order::place` in favour of `BatchOrderTemplate::place`.
+- Deprecated `CatalogBase::get_data_product_schema`.
+
+## 2.2.0a5
+**Dec 17, 2024**
+- Deprecated `up42::initiliaze_order` in favour of `Order::get`.
+- Add missing properties to `Order` data class and auxiliary classes.
+- Deprecated `Order.order_id` in favour of `Order.id`.
+- Deprecated `Order.order_details` in favour of `Order.details`.
+
+## 2.2.0a4
+**Dec 17, 2024**
+- Modified `Storage::get_orders` testing to eliminate dependency on order data.
+
+## 2.2.0a3
+**Dec 17, 2024**
+- Introduced `Order::all` method to filter and list orders.
+- Deprecated `Storage::get_orders` method.
+
+## 2.2.0a2
+**Dec 17, 2024**
+- Fixed `Order::place` method to retrieve order info via additional call and not from response.
+- Modified `up42::initialize_order` testing to eliminate dependency on order data.
+- Modified `CatalogBase::place_order` testing to eliminate dependency on order data.
+
 ## 2.2.0a1
 **Dec 17, 2024**
 - Converted `Order` to dataclass.

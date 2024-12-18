@@ -31,7 +31,8 @@ from up42.initialization import (
     initialize_storage,
     initialize_tasking,
 )
-from up42.order import Order
+from up42.order import Order, OrderSorting
+from up42.order_template import BatchOrderTemplate
 from up42.processing import Job, JobSorting, JobStatus
 from up42.storage import Storage
 from up42.tasking import Quotation, QuotationSorting, Tasking
@@ -49,6 +50,7 @@ __all__ = [
         Asset,
         Catalog,
         Order,
+        OrderSorting,
         Storage,
         Tasking,
         Webhook,
@@ -67,6 +69,7 @@ __all__ = [
         CollectionSorting,
         CollectionType,
         ProductGlossary,
+        BatchOrderTemplate,
         Quotation,
         QuotationSorting,
     ]
