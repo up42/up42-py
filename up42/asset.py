@@ -1,6 +1,7 @@
 import dataclasses
+import datetime as dt
 import pathlib
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union, cast
 
 import pystac
 import pystac_client
@@ -36,6 +37,32 @@ class Asset:
         url = host.endpoint(f"/v2/assets/{asset_id}/metadata")
         metadata = cls.session.get(url=url).json()
         return cls(info=metadata)
+
+    @classmethod
+    def all(
+        cls,
+        created_after: Optional[Union[str, dt.datetime]] = None,
+        created_before: Optional[Union[str, dt.datetime]] = None,
+        workspace_id: Optional[str] = None,
+        collection_names: Optional[List[str]] = None,
+        producer_names: Optional[List[str]] = None,
+        tags: Optional[List[str]] = None,
+        sources: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        sort_by: Optional[utils.SortingField] = None,
+    ) -> Iterator["Asset"]:
+        params = {
+            "createdAfter": created_after and utils.format_time(created_after),
+            "createdBefore": created_before and utils.format_time(created_before),
+            "workspaceId": workspace_id,
+            "collectionNames": collection_names,
+            "producerNames": producer_names,
+            "tags": tags,
+            "sources": sources,
+            "search": search,
+            "sort": sort_by,
+        }
+        return (Asset(info=metadata) for metadata in utils.paged_query(params, "/v2/assets", cls.session))
 
     def _stac_search(self) -> Tuple[pystac_client.Client, pystac_client.ItemSearch]:
         stac_client = utils.stac_client(cast(requests.auth.AuthBase, self.session.auth))

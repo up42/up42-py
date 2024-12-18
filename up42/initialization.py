@@ -21,6 +21,7 @@ def initialize_tasking() -> tasking.Tasking:
     return tasking.Tasking()
 
 
+@utils.deprecation(None, "3.0.0")
 def initialize_storage() -> storage.Storage:
     """
     Returns a Storage object to list orders and assets.
