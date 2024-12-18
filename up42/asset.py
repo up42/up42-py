@@ -62,7 +62,7 @@ class Asset:
             "search": search,
             "sort": sort_by,
         }
-        return (Asset(info=metadata) for metadata in utils.paged_query(params, "/v2/assets", cls.session))
+        return (cls(info=metadata) for metadata in utils.paged_query(params, "/v2/assets", cls.session))
 
     def _stac_search(self) -> Tuple[pystac_client.Client, pystac_client.ItemSearch]:
         stac_client = utils.stac_client(cast(requests.auth.AuthBase, self.session.auth))
