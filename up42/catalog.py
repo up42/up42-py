@@ -60,24 +60,25 @@ class CatalogBase:
         url = host.endpoint(f"/orders/schema/{data_product_id}")
         return self.session.get(url).json()
 
+    @staticmethod
     @utils.deprecation("BatchOrderTemplate.estimate", "3.0.0")
-    def estimate_order(self, order_parameters: order.OrderParams) -> int:
+    def estimate_order(order_parameters: order.OrderParams) -> int:
         """
         Estimate the cost of an order.
 
         Args:
             order_parameters: A dictionary like
             {dataProduct: ..., "params": {"id": ..., "aoi": ...}}
-
         Returns:
             int: An estimated cost for the order in UP42 credits.
         """
 
         return order.Order.estimate(order_parameters)
 
+    @classmethod
     @utils.deprecation("BatchOrderTemplate::place", "3.0.0")
     def place_order(
-        self,
+        cls,
         order_parameters: order.OrderParams,
         track_status: bool = False,
         report_time: float = 120,
@@ -106,7 +107,7 @@ class CatalogBase:
         Returns:
             Order class object of the placed order.
         """
-        placed_order = order.Order.place(order_parameters, self.workspace_id)
+        placed_order = order.Order.place(order_parameters, cls.workspace_id)
         if track_status:
             placed_order.track_status(report_time)
         return placed_order
@@ -130,6 +131,7 @@ class Catalog(CatalogBase):
         super().__init__(glossary.CollectionType.ARCHIVE)
 
     @staticmethod
+    @utils.deprecation("Provider.search", "3.0.0")
     def construct_search_parameters(
         geometry: Geometry,
         collections: List[str],
@@ -215,6 +217,7 @@ class Catalog(CatalogBase):
             raise MultipleHosts("Only collections with the same host can be searched at the same time.")
         return hosts.pop()
 
+    @utils.deprecation("Provider.search", "3.0.0")
     def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[geopandas.GeoDataFrame, dict]:
         """
         Searches the catalog  and returns the metadata of the matching scenes.
