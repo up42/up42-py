@@ -131,7 +131,7 @@ class Catalog(CatalogBase):
         super().__init__(glossary.CollectionType.ARCHIVE)
 
     @staticmethod
-    @utils.deprecation("Provider.search", "3.0.0")
+    @utils.deprecation("Provider::search", "3.0.0")
     def construct_search_parameters(
         geometry: Geometry,
         collections: List[str],
@@ -217,7 +217,7 @@ class Catalog(CatalogBase):
             raise MultipleHosts("Only collections with the same host can be searched at the same time.")
         return hosts.pop()
 
-    @utils.deprecation("Provider.search", "3.0.0")
+    @utils.deprecation("Provider::search", "3.0.0")
     def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[geopandas.GeoDataFrame, dict]:
         """
         Searches the catalog  and returns the metadata of the matching scenes.

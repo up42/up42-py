@@ -1,6 +1,6 @@
 import dataclasses
 import enum
-from typing import Any, Iterator, Literal, Optional
+from typing import Any, Iterator, Literal, Optional, Union
 
 import geojson  # type: ignore
 
@@ -40,10 +40,13 @@ class CollectionMetadata:
     resolution_value: Optional[ResolutionValue]
 
 
+BoundingBox = list[float]
+
+
 @dataclasses.dataclass
 class Scene:
-    bbox: Optional[tuple[float, float, float, float]]
-    geometry: geojson.Polygon
+    bbox: Optional[BoundingBox]
+    geometry: Union[geojson.Polygon, geojson.MultiPolygon]
     id: str
     datetime: Optional[str]
     start_datetime: Optional[str]
@@ -74,7 +77,7 @@ class Provider:
 
     def search(
         self,
-        bbox: Optional[tuple[float, float, float, float]] = None,
+        bbox: Optional[BoundingBox] = None,
         intersects: Optional[geojson.Polygon] = None,
         datetime: Optional[str] = None,
         query: Optional[dict] = None,
