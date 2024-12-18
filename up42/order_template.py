@@ -34,7 +34,7 @@ class OrderCost:
 
 
 @dataclasses.dataclass
-class BatchCost:
+class Estimate:
     items: list[Union[OrderCost, OrderError]]
     credits: float
     size: float
@@ -75,7 +75,7 @@ class BatchOrderTemplate:
         url = host.endpoint("/v2/orders/estimate")
         estimate = self.session.post(url=url, json=self._payload).json()
         summary = estimate["summary"]
-        self.cost = BatchCost(
+        self.estimate = Estimate(
             items=_get_items(estimate, OrderCost),
             credits=summary["totalCredits"],
             size=summary["totalSize"],

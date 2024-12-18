@@ -20,6 +20,7 @@ PAYLOAD = {
 ERROR = order_template.OrderError(index=1, message="Failed", details="Invalid geometry")
 COST = order_template.OrderCost(index=0, credits=10, size=50, unit="SQ_KM")
 ORDER_REFERENCE = order_template.OrderReference(index=0, id=constants.ORDER_ID)
+ESTIMATE = order_template.Estimate(items=[COST, ERROR], credits=COST.credits, size=COST.size, unit=COST.unit)
 ERRORS = {
     "errors": [
         {
@@ -29,7 +30,7 @@ ERRORS = {
         }
     ],
 }
-ESTIMATION = {
+ESTIMATE_PAYLOAD = {
     "summary": {
         "totalCredits": COST.credits,
         "totalSize": COST.size,
@@ -44,7 +45,7 @@ ESTIMATION = {
         }
     ],
 } | ERRORS
-PLACEMENT = {
+PLACEMENT_PAYLOAD = {
     "results": [
         {
             "index": ORDER_REFERENCE.index,
@@ -52,7 +53,6 @@ PLACEMENT = {
         }
     ]
 } | ERRORS
-BATCH_COST = order_template.BatchCost(items=[COST, ERROR], credits=COST.credits, size=COST.size, unit=COST.unit)
 
 
 class TestOrderReference:
@@ -66,9 +66,9 @@ class TestOrderReference:
 class TestBatchOrderTemplate:
     def test_should_place(self, requests_mock: req_mock.Mocker):
         estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
-        requests_mock.post(url=estimate_url, json=ESTIMATION)
+        requests_mock.post(url=estimate_url, json=ESTIMATE_PAYLOAD)
         placement_url = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
-        requests_mock.post(url=placement_url, json=PLACEMENT)
+        requests_mock.post(url=placement_url, json=PLACEMENT_PAYLOAD)
         template = order_template.BatchOrderTemplate(
             data_product_id=constants.DATA_PRODUCT_ID,
             display_name=DISPLAY_NAME,
@@ -76,5 +76,5 @@ class TestBatchOrderTemplate:
             features=FEATURES,
             params=PARAMS,
         )
-        assert template.cost == BATCH_COST
+        assert template.estimate == ESTIMATE
         assert template.place() == [ORDER_REFERENCE, ERROR]

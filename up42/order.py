@@ -237,7 +237,7 @@ class Order:
         return order
 
     @classmethod
-    @utils.deprecation("OrderTemplate.cost", "3.0.0")
+    @utils.deprecation("OrderTemplate.estimate", "3.0.0")
     def estimate(cls, order_parameters: OrderParams) -> int:
         """
         Returns an estimation of the cost of an order.

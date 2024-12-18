@@ -60,7 +60,7 @@ class CatalogBase:
         url = host.endpoint(f"/orders/schema/{data_product_id}")
         return self.session.get(url).json()
 
-    @utils.deprecation("BatchOrderTemplate", "3.0.0")
+    @utils.deprecation("BatchOrderTemplate.estimate", "3.0.0")
     def estimate_order(self, order_parameters: order.OrderParams) -> int:
         """
         Estimate the cost of an order.
