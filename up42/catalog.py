@@ -334,6 +334,7 @@ class Catalog(CatalogBase):
 
         return order_parameters
 
+    @utils.deprecation("Scene.quicklook::download", "3.0.0")
     def download_quicklooks(
         self,
         image_ids: List[str],
@@ -368,15 +369,11 @@ class Catalog(CatalogBase):
         out_paths: List[str] = []
         for image_id in tqdm.tqdm(image_ids):
             try:
-                url = host.endpoint(f"/catalog/{product_host}/image/{image_id}/quicklook")
-                response = self.session.get(url)
-                # TODO: should detect extensions based on response content type
-                # TODO: to be simplified using utils.download_file
-                out_path = str(output_directory / f"quicklook_{image_id}.jpg")
-                with open(out_path, "wb") as dst:
-                    for chunk in response:
-                        dst.write(chunk)
-                out_paths.append(out_path)
+                image_file = utils.ImageFile(
+                    host.endpoint(f"/catalog/{product_host}/image/{image_id}/quicklook"),
+                    f"quicklook_{image_id}.jpg",
+                )
+                out_paths.append(str(image_file.download(output_directory)))
             except IOError:
                 logger.warning(
                     "Image with id %s does not have quicklook available. Skipping ...",

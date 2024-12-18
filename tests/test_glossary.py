@@ -55,10 +55,12 @@ POLYGON = {
     "type": "Polygon",
     "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],
 }
+SCENE_ID = "scene-id"
+HOST_NAME = "host-name"
 SCENE = glossary.Scene(
     bbox=BBOX,
     geometry=POLYGON,
-    id="scene-id",
+    id=SCENE_ID,
     datetime="datetime",
     start_datetime="start-datetime",
     end_datetime="end-datetime",
@@ -68,6 +70,10 @@ SCENE = glossary.Scene(
     resolution=0.3,
     delivery_time="HOURS",
     producer="producer",
+    quicklook=utils.ImageFile(
+        url=f"{constants.API_HOST}/catalog/{HOST_NAME}/image/{SCENE_ID}/quicklook",
+        file_name=f"quicklook_{SCENE_ID}.jpg",
+    ),
 )
 SCENE_FEATURE = {
     "geometry": POLYGON,
@@ -108,7 +114,7 @@ class TestDataProduct:
 
 class TestProvider:
     provider = glossary.Provider(
-        name="name",
+        name=HOST_NAME,
         title="title",
         description="description",
         roles=["PRODUCER", "HOST"],
