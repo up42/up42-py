@@ -19,7 +19,7 @@ item.get_self_href.return_value = ITEM_URL
 @pytest.fixture(autouse=True)
 def template_post_init():
     def initialize(self):
-        self.estimate = COST
+        self.cost = COST
 
     with mock.patch.object(processing.JobTemplate, "__post_init__", initialize):
         yield
