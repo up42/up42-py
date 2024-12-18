@@ -220,9 +220,7 @@ class Order:
 
         if self.status not in ["FULFILLED", "BEING_FULFILLED"]:
             raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {self.status}""")
-        return [
-            asset.Asset(asset_info=asset_info) for asset_info in utils.paged_query(params, "/v2/assets", self.session)
-        ]
+        return [asset.Asset(info=asset_info) for asset_info in utils.paged_query(params, "/v2/assets", self.session)]
 
     @classmethod
     @utils.deprecation("OrderTemplate::place", "3.0.0")

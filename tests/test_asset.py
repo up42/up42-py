@@ -112,41 +112,10 @@ class TestAsset:
                 else {"output.tgz"}
             )
 
-    def test_should_delegate_repr_to_info(self):
-        assert repr(asset.Asset(asset_info=self.asset_info)) == repr(self.asset_info)
-
     def test_should_initialize(self, requests_mock: req_mock.Mocker):
         url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
         requests_mock.get(url=url, json=self.asset_info)
-        assert asset.Asset(asset_id=ASSET_ID).info == self.asset_info
-
-    def test_should_initialize_with_info_provided(self):
-        assert asset.Asset(asset_info=self.asset_info).info == self.asset_info
-
-    @pytest.mark.parametrize(
-        "asset_id, asset_info, expected_error",
-        [
-            (
-                None,
-                None,
-                "Either asset_id or asset_info should be provided in the constructor.",
-            ),
-            (
-                ASSET_ID,
-                {"id": ASSET_ID},
-                "asset_id and asset_info cannot be provided simultaneously.",
-            ),
-        ],
-        ids=[
-            "Both asset_id and asset_info provided",
-            "Neither asset_id and asset_info provided",
-        ],
-    )
-    def test_fails_to_initialize_with_concurrent_or_empty_info_id(
-        self, asset_id: Optional[str], asset_info: Optional[dict], expected_error: str
-    ):
-        with pytest.raises(ValueError, match=expected_error):
-            asset.Asset(asset_id=asset_id, asset_info=asset_info)
+        assert asset.Asset.get(asset_id=ASSET_ID).info == self.asset_info
 
     def test_should_download_expected_files(
         self,
@@ -157,7 +126,7 @@ class TestAsset:
         url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
         unpacking = len(asset_files) > 1
         requests_mock.get(url=url, json=self.asset_info)
-        asset_obj = asset.Asset(asset_id=ASSET_ID)
+        asset_obj = asset.Asset.get(asset_id=ASSET_ID)
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/assets/{ASSET_ID}/download-url",
             json={"url": DOWNLOAD_URL},
@@ -170,7 +139,7 @@ class TestAsset:
     def test_get_stac_download_url(self, requests_mock: req_mock.Mocker):
         url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
         requests_mock.get(url=url, json=self.asset_info)
-        asset_obj = asset.Asset(asset_id=ASSET_ID)
+        asset_obj = asset.Asset.get(asset_id=ASSET_ID)
         requests_mock.post(
             url=f"{STAC_ASSET_HREF}/download-url",
             json={"url": STAC_ASSET_URL},
@@ -203,7 +172,7 @@ class TestAsset:
     ):
         url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
         requests_mock.get(url=url, json=self.asset_info)
-        asset_obj = asset.Asset(asset_id=ASSET_ID)
+        asset_obj = asset.Asset.get(asset_id=ASSET_ID)
         content = b"some-content"
         requests_mock.get(url=stac_url, content=content)
         requests_mock.post(
@@ -222,14 +191,14 @@ class TestAsset:
                 constants.URL_STAC_SEARCH,
                 [{"status_code": 401}, {"json": STAC_SEARCH_RESPONSE}],
             )
-            asset_obj = asset.Asset(asset_info={"id": ASSET_ID})
+            asset_obj = asset.Asset(info={"id": ASSET_ID})
             expected = pystac.ItemCollection.from_dict(STAC_SEARCH_RESPONSE)
             assert asset_obj.stac_items.to_dict() == expected.to_dict()
 
         def test_fails_to_get_stac_items_after_retries(self, requests_mock: req_mock.Mocker):
             requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
             requests_mock.post(constants.URL_STAC_SEARCH, status_code=401)
-            asset_obj = asset.Asset(asset_info={"id": ASSET_ID})
+            asset_obj = asset.Asset(info={"id": ASSET_ID})
             with pytest.raises(ValueError):
                 _ = asset_obj.stac_items
 
@@ -260,7 +229,7 @@ class TestAsset:
                 url=f"{constants.API_HOST}/v2/assets/stac/collections/{STAC_COLLECTION_ID}",
                 json=expected.to_dict(),
             )
-            asset_obj = asset.Asset(asset_info={"id": ASSET_ID})
+            asset_obj = asset.Asset(info={"id": ASSET_ID})
             assert asset_obj.stac_info.to_dict() == expected.to_dict()
 
         @pytest.mark.parametrize(
@@ -273,7 +242,7 @@ class TestAsset:
         def test_fails_to_get_stac_info_after_retries(self, requests_mock: req_mock.Mocker, response: dict):
             requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
             requests_mock.post(constants.URL_STAC_SEARCH, [response])
-            asset_obj = asset.Asset(asset_info={"id": ASSET_ID})
+            asset_obj = asset.Asset(info={"id": ASSET_ID})
             with pytest.raises(Exception):
                 _ = asset_obj.stac_info
 
@@ -289,7 +258,7 @@ class TestAsset:
             title: Optional[str],
             tags: Optional[List[str]],
         ):
-            asset_obj = asset.Asset(asset_info=self.asset_info)
+            asset_obj = asset.Asset(info=self.asset_info)
             update_payload = {"title": title, "tags": tags}
             expected_info = {**self.asset_info, **update_payload}
             requests_mock.post(
@@ -300,7 +269,7 @@ class TestAsset:
             assert asset_obj.update_metadata(title=title, tags=tags) == expected_info
 
         def test_should_not_update_title_if_not_provided(self, requests_mock: req_mock.Mocker):
-            asset_obj = asset.Asset(asset_info=self.asset_info)
+            asset_obj = asset.Asset(info=self.asset_info)
             tags = ["tag1", "tag2"]
             update_payload = {"tags": tags}
             expected_info = {**self.asset_info, **update_payload}
@@ -312,7 +281,7 @@ class TestAsset:
             assert asset_obj.update_metadata(tags=tags) == expected_info
 
         def test_should_not_update_tags_if_not_provided(self, requests_mock: req_mock.Mocker):
-            asset_obj = asset.Asset(asset_info=self.asset_info)
+            asset_obj = asset.Asset(info=self.asset_info)
             title = "new-title"
             update_payload = {"title": title}
             expected_info = {**self.asset_info, **update_payload}

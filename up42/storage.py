@@ -96,7 +96,7 @@ class Storage:
         if return_json:
             return assets
         else:
-            return [asset.Asset(asset_info=info) for info in assets]
+            return [asset.Asset(info=info) for info in assets]
 
     @utils.deprecation("Order::all", "3.0.0")
     def get_orders(
