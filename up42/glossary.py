@@ -2,6 +2,8 @@ import dataclasses
 import enum
 from typing import Any, Iterator, Literal, Optional
 
+import geojson  # type: ignore
+
 from up42 import base, host, utils
 
 
@@ -76,6 +78,87 @@ class Collection:
     metadata: Optional[CollectionMetadata]
 
 
+@dataclasses.dataclass
+class Quicklook:
+    session = base.Session()
+    scene_id: str
+    host_name: str
+
+    def download(self):
+        pass
+
+
+@dataclasses.dataclass
+class Scene:
+    bbox: Optional[tuple[float, float, float, float]]
+    geometry: geojson.Polygon
+    id: str
+    datetime: Optional[str]
+    start_datetime: Optional[str]
+    end_datetime: Optional[str]
+    constellation: str
+    collection: str
+    cloud_coverage: Optional[float]
+    resolution: Optional[float]
+    delivery_time: Optional[Literal["MINUTES", "HOURS", "DAYS"]]
+    producer: str
+    quicklook: Quicklook
+
+
+@dataclasses.dataclass
+class Host:
+    session = base.Session()
+    name: str
+    title: str
+    description: str
+    collections: list[Collection]
+
+    def search(
+        self,
+        bbox: Optional[tuple[float, float, float, float]] = None,
+        intersects: Optional[geojson.Polygon] = None,
+        datetime: Optional[str] = None,
+        query: Optional[dict] = None,
+        collections: Optional[list[str]] = None,
+    ) -> list[Scene]:
+        payload = {
+            key: value
+            for key, value in {
+                "bbox": bbox,
+                "intersects": intersects,
+                "datetime": datetime,
+                "query": query,
+                "collections": collections,
+            }.items()
+            if value
+        }
+        url = host.endpoint(f"/catalog/hosts/{self.name}/stac/search")
+        features = []
+
+        while url:
+            page: dict = self.session.post(url, json=payload).json()
+            features += page["features"]
+            url = next((link["href"] for link in page["links"] if link["rel"] == "next"), None)
+        return [
+            Scene(
+                bbox=feature.get("bbox"),
+                geometry=feature["geometry"],
+                id=feature["properties"]["id"],
+                datetime=feature["properties"].get("datetime"),
+                start_datetime=feature["properties"].get("start_datetime"),
+                end_datetime=feature["properties"].get("end_datetime"),
+                constellation=feature["properties"]["constellation"],
+                collection=feature["properties"]["collection"],
+                cloud_coverage=feature["properties"].get("cloudCoverage"),
+                resolution=feature["properties"].get("resolution"),
+                delivery_time=feature["properties"].get("deliveryTime"),
+                producer=feature["properties"]["producer"],
+                quicklook=Quicklook(scene_id=feature["properties"]["id"], host_name=self.name),
+            )
+            for feature in features
+        ]
+
+
 class CollectionSorting:
     name = utils.SortingField("name")
     title = utils.SortingField("title")
@@ -134,3 +217,25 @@ class ProductGlossary:
                             and ResolutionValue(**metadata.get("resolutionValue")),
                         ),
                     )
+
+    @classmethod
+    def get_hosts(cls, collection_type: Optional[CollectionType] = None):
+        collections = list(cls.get_collections(collection_type=collection_type))
+        hosting_providers = [
+            provider for collection in collections for provider in collection.providers if "HOST" in provider.roles
+        ]
+        hosts = [
+            Host(
+                name=provider.name,
+                title=provider.title,
+                description=provider.description,
+                collections=[],
+            )
+            for provider in hosting_providers
+        ]
+        for host_, provider in zip(hosts, hosting_providers):
+            for collection in collections:
+                if provider in collection.providers:
+                    host_.collections.append(collection)
+
+        return hosts
