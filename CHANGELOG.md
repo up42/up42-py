@@ -32,6 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 2.2.0a7
 **Dec 18, 2024**
 - Added `Quotation` active record to `tasking` module.
+- Exported `Quotation` and `QuotationSorting` to `up42` namespace.
 - Deprecated `Tasking::get_quotations` in favour of `Quotation::all`.
 - Deprecated `Tasking::decide_quotation` in favour of `Quotation` class methods.
 

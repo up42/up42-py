@@ -255,7 +255,7 @@ class Quotation:
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
         decision: Optional[List[QuotationStatus]] = None,
-        sort_by: Optional[utils.SortingField] = QuotationSorting.created_at.desc,
+        sort_by: Optional[utils.SortingField] = None,
     ) -> Iterator["Quotation"]:
         params = {
             "workspaceId": workspace_id,
