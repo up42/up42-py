@@ -138,7 +138,7 @@ class Tasking(catalog.CatalogBase):
         }
         return list(utils.paged_query(params, "/v2/tasking/quotation", self.session))
 
-    @utils.deprecation("Quotation::save", "3.0.0")
+    @utils.deprecation("Quotation", "3.0.0")
     def decide_quotation(self, quotation_id: str, decision: QuotationDecision) -> dict:
         """Accept or reject a quotation for a tasking order.
         This operation is only allowed on quotations with the NOT_DECIDED status.

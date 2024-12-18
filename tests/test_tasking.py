@@ -264,6 +264,16 @@ class TestQuotation:
         decision="ACCEPTED",
     )
 
+    def test_should_accept(self):
+        undecided = dataclasses.replace(self.quotation, decision="NOT_DECIDED")
+        undecided.accept()
+        assert undecided == self.quotation
+
+    def test_should_reject(self):
+        undecided = dataclasses.replace(self.quotation, decision="NOT_DECIDED")
+        undecided.reject()
+        assert undecided == dataclasses.replace(self.quotation, decision="REJECTED")
+
     @pytest.mark.parametrize("decision", ["ACCEPTED", "REJECTED"])
     def test_should_save(self, requests_mock: req_mock.Mocker, decision: tasking.QuotationDecision):
         undecided = dataclasses.replace(self.quotation, decision="NOT_DECIDED", decided_at=None)

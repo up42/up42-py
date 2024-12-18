@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a7
+**Dec 18, 2024**
+- Added `Quotation` active record to `tasking` module.
+- Deprecated `Tasking::get_quotations` in favour of `Quotation::all`.
+- Deprecated `Tasking::decide_quotation` in favour of `Quotation` class methods.
+
 ## 2.2.0a6
 **Dec 18, 2024**
 - Added `order_template` module with `BatchOrderTemplate` and supporting classes.
