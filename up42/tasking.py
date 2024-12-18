@@ -2,12 +2,13 @@
 Tasking functionality
 """
 
+import dataclasses
 import datetime
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, Iterator, List, Literal, Optional, Union
 
 from shapely import geometry as geom  # type: ignore
 
-from up42 import catalog, glossary, host, order, utils
+from up42 import base, catalog, glossary, host, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -104,6 +105,7 @@ class Tasking(catalog.CatalogBase):
             order_parameters["params"]["geometry"] = geometry
         return order_parameters
 
+    @utils.deprecation("Quotation::all", "3.0.0")
     def get_quotations(
         self,
         quotation_id: Optional[str] = None,
@@ -136,6 +138,7 @@ class Tasking(catalog.CatalogBase):
         }
         return list(utils.paged_query(params, "/v2/tasking/quotation", self.session))
 
+    @utils.deprecation("Quotation", "3.0.0")
     def decide_quotation(self, quotation_id: str, decision: QuotationDecision) -> dict:
         """Accept or reject a quotation for a tasking order.
         This operation is only allowed on quotations with the NOT_DECIDED status.
@@ -199,3 +202,69 @@ class Tasking(catalog.CatalogBase):
         """
         url = host.endpoint(f"/v2/tasking/feasibility/{feasibility_id}")
         return self.session.patch(url=url, json={"acceptedOptionId": accepted_option_id}).json()
+
+
+class QuotationSorting:
+    created_at = utils.SortingField("createdAt")
+
+
+@dataclasses.dataclass
+class Quotation:
+    session = base.Session()
+    id: str
+    created_at: str
+    updated_at: str
+    decided_at: Optional[str]
+    account_id: str
+    workspace_id: str
+    order_id: str
+    credits_price: int
+    decision: QuotationStatus
+
+    def accept(self):
+        self.decision = "ACCEPTED"
+
+    def reject(self):
+        self.decision = "REJECTED"
+
+    def save(self):
+        url = host.endpoint(f"/v2/tasking/quotation/{self.id}")
+        metadata = self.session.patch(url, json={"decision": self.decision}).json()
+        quotation = self._from_metadata(metadata)
+        for field in dataclasses.fields(quotation):
+            setattr(self, field.name, getattr(quotation, field.name))
+
+    @staticmethod
+    def _from_metadata(metadata: dict) -> "Quotation":
+        return Quotation(
+            id=metadata["id"],
+            created_at=metadata["createdAt"],
+            updated_at=metadata["updatedAt"],
+            decided_at=metadata["decisionAt"],
+            account_id=metadata["accountId"],
+            workspace_id=metadata["workspaceId"],
+            order_id=metadata["orderId"],
+            credits_price=metadata["creditsPrice"],
+            decision=metadata["decision"],
+        )
+
+    @classmethod
+    def all(
+        cls,
+        quotation_id: Optional[str] = None,
+        workspace_id: Optional[str] = None,
+        order_id: Optional[str] = None,
+        decision: Optional[List[QuotationStatus]] = None,
+        sort_by: Optional[utils.SortingField] = None,
+    ) -> Iterator["Quotation"]:
+        params = {
+            "workspaceId": workspace_id,
+            "id": quotation_id,
+            "orderId": order_id,
+            "decision": decision,
+            "sort": sort_by,
+        }
+        return map(
+            cls._from_metadata,
+            utils.paged_query(params, "/v2/tasking/quotation", cls.session),
+        )
