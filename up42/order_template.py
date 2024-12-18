@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Literal, Union
+from typing import Literal, Optional, Union
 
 import geojson  # type: ignore
 
@@ -54,9 +54,9 @@ class BatchOrderTemplate:
     workspace_id = base.WorkspaceId()
     data_product_id: str
     display_name: str
-    tags: list[str]
     features: geojson.FeatureCollection
     params: dict
+    tags: Optional[list[str]] = None
 
     def __post_init__(self):
         self.__estimate()
