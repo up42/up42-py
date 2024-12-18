@@ -29,6 +29,15 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a9
+**Dec 18, 2024**
+- Added `is_host` property to `Provider` class.
+- Added `search` method to `Provider` class.
+- Deprecated `Catalog::construct_search_parameters` in favour of `Provider::search`.
+- Deprecated `Catalog::search` in favour of `Provider::search`.
+- Simplified `CatalogBase::estimate_order` to a static method.
+- Simplified `CatalogBase::place_order` to a class method.
+
 ## 2.2.0a8
 **Dec 18, 2024**
 - Added `schema` property to `DataProduct` class.

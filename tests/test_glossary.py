@@ -1,10 +1,11 @@
 import dataclasses
-from typing import List, Optional
+from typing import Any, List, Optional
 
+import geojson  # type: ignore
 import pytest
 import requests_mock as req_mock
 
-from tests import constants
+from tests import constants, helpers
 from up42 import glossary, utils
 
 DATA_PRODUCT = glossary.DataProduct(
@@ -49,6 +50,41 @@ COLLECTION = glossary.Collection(
     data_products=[DATA_PRODUCT],
     metadata=COLLECTION_METADATA,
 )
+BBOX = [0.0] * 4
+POLYGON = {
+    "type": "Polygon",
+    "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],
+}
+SCENE = glossary.Scene(
+    bbox=BBOX,
+    geometry=POLYGON,
+    id="scene-id",
+    datetime="datetime",
+    start_datetime="start-datetime",
+    end_datetime="end-datetime",
+    constellation="constellation",
+    collection="collection",
+    cloud_coverage=0.5,
+    resolution=0.3,
+    delivery_time="HOURS",
+    producer="producer",
+)
+SCENE_FEATURE = {
+    "geometry": POLYGON,
+    "bbox": BBOX,
+    "properties": {
+        "id": SCENE.id,
+        "datetime": SCENE.datetime,
+        "start_datetime": SCENE.start_datetime,
+        "end_datetime": SCENE.end_datetime,
+        "constellation": SCENE.constellation,
+        "collection": SCENE.collection,
+        "cloudCoverage": SCENE.cloud_coverage,
+        "resolution": SCENE.resolution,
+        "deliveryTime": SCENE.delivery_time,
+        "producer": SCENE.producer,
+    },
+}
 
 
 class TestDataProduct:
@@ -68,6 +104,78 @@ class TestDataProduct:
         url = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
         requests_mock.get(url=url, json=schema)
         assert self.data_product.schema == schema
+
+
+class TestProvider:
+    provider = glossary.Provider(
+        name="name",
+        title="title",
+        description="description",
+        roles=["PRODUCER", "HOST"],
+    )
+
+    @pytest.mark.parametrize(
+        "provider, is_host",
+        [
+            (provider, True),
+            (dataclasses.replace(provider, roles=["PRODUCER"]), False),
+            (dataclasses.replace(provider, roles=["HOST"]), True),
+        ],
+    )
+    def test_should_compute_whether_provider_is_host(self, provider, is_host: bool) -> None:
+        assert provider.is_host == is_host
+
+    def test_fails_to_search_if_provider_is_not_host(self):
+        with pytest.raises(glossary.InvalidHost):
+            next(dataclasses.replace(self.provider, roles=["PRODUCER"]).search())
+
+    @pytest.mark.parametrize("bbox", [None, BBOX])
+    @pytest.mark.parametrize("intersects", [None, POLYGON])
+    @pytest.mark.parametrize("datetime", [None, "2030-01-01T00:00:00Z"])
+    @pytest.mark.parametrize("cql_query", [None, {"cql2": "query"}])
+    @pytest.mark.parametrize("collections", [None, ["phr", "bjn"]])
+    def test_should_search(
+        self,
+        bbox: Optional[glossary.BoundingBox],
+        intersects: Optional[geojson.Polygon],
+        datetime: Optional[str],
+        cql_query: Optional[dict],
+        collections: Optional[list[str]],
+        requests_mock: req_mock.Mocker,
+    ):
+        search_params: dict[str, Any] = {}
+        if bbox:
+            search_params["bbox"] = bbox
+        if intersects:
+            search_params["intersects"] = intersects
+        if datetime:
+            search_params["datetime"] = datetime
+        if cql_query:
+            search_params["query"] = cql_query
+        if collections:
+            search_params["collections"] = collections
+
+        search_url = f"{constants.API_HOST}/catalog/hosts/{self.provider.name}/stac/search"
+        next_page_url = f"{search_url}/next"
+        requests_mock.post(
+            url=search_url,
+            json={
+                "type": "FeatureCollection",
+                "features": [SCENE_FEATURE] * 3,
+                "links": [{"rel": "next", "href": next_page_url}],
+            },
+            additional_matcher=helpers.match_request_body(search_params),
+        )
+        requests_mock.post(
+            url=next_page_url,
+            json={
+                "type": "FeatureCollection",
+                "features": [SCENE_FEATURE] * 2,
+                "links": [],
+            },
+            additional_matcher=helpers.match_request_body(search_params),
+        )
+        assert list(self.provider.search(bbox, intersects, datetime, cql_query, collections)) == [SCENE] * 5
 
 
 class TestProductGlossary:

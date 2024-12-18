@@ -1,6 +1,8 @@
 import dataclasses
 import enum
-from typing import Any, Iterator, Literal, Optional
+from typing import Any, Iterator, Literal, Optional, Union
+
+import geojson  # type: ignore
 
 from up42 import base, host, utils
 
@@ -38,12 +40,93 @@ class CollectionMetadata:
     resolution_value: Optional[ResolutionValue]
 
 
+BoundingBox = list[float]
+
+
+@dataclasses.dataclass
+class Scene:
+    bbox: Optional[BoundingBox]
+    geometry: Union[geojson.Polygon, geojson.MultiPolygon]
+    id: str
+    datetime: Optional[str]
+    start_datetime: Optional[str]
+    end_datetime: Optional[str]
+    constellation: str
+    collection: str
+    cloud_coverage: Optional[float]
+    resolution: Optional[float]
+    delivery_time: Optional[Literal["MINUTES", "HOURS", "DAYS"]]
+    producer: str
+
+
+class InvalidHost(ValueError):
+    pass
+
+
 @dataclasses.dataclass
 class Provider:
+    session = base.Session()
     name: str
     title: str
     description: str
     roles: list[Literal["PRODUCER", "HOST"]]
+
+    @property
+    def is_host(self):
+        return "HOST" in self.roles
+
+    def search(
+        self,
+        bbox: Optional[BoundingBox] = None,
+        intersects: Optional[geojson.Polygon] = None,
+        datetime: Optional[str] = None,
+        query: Optional[dict] = None,
+        collections: Optional[list[str]] = None,
+    ) -> Iterator[Scene]:
+        if not self.is_host:
+            raise InvalidHost("Provider does not host collections")
+        payload = {
+            key: value
+            for key, value in {
+                "bbox": bbox,
+                "intersects": intersects,
+                "datetime": datetime,
+                "query": query,
+                "collections": collections,
+            }.items()
+            if value
+        }
+
+        def get_pages():
+            url = host.endpoint(f"/catalog/hosts/{self.name}/stac/search")
+            while url:
+                page: dict = self.session.post(url, json=payload).json()
+                yield page["features"]
+                url = next(
+                    (link["href"] for link in page["links"] if link["rel"] == "next"),
+                    None,
+                )
+
+        for page in get_pages():
+            for feature in page:
+                yield self._as_scene(feature)
+
+    def _as_scene(self, feature: geojson.Feature) -> Scene:
+        properties = feature["properties"]
+        return Scene(
+            bbox=feature.get("bbox"),
+            geometry=feature["geometry"],
+            id=properties["id"],
+            constellation=properties["constellation"],
+            collection=properties["collection"],
+            producer=properties["producer"],
+            datetime=properties.get("datetime"),
+            start_datetime=properties.get("start_datetime"),
+            end_datetime=properties.get("end_datetime"),
+            cloud_coverage=properties.get("cloudCoverage"),
+            resolution=properties.get("resolution"),
+            delivery_time=properties.get("deliveryTime"),
+        )
 
 
 @dataclasses.dataclass
