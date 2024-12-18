@@ -33,8 +33,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Dec 18, 2024**
 - Generalized downloadable images to `ImageFile` in `utils` module.
 - Added `quicklook` property to `Scene` class.
-- Deprecated `Catalog::construct_search_parameters` in favour of `Provider::search`.
-- Simplified `Catalog::construct_search_parameters` to use `ImageFile` class internally.
+- Deprecated `Catalog::download_quicklooks` in favour of `Provider::search`.
+- Simplified `Catalog::download_quicklooks` to use `ImageFile` class internally.
 
 ## 2.2.0a9
 **Dec 18, 2024**
