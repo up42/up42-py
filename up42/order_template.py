@@ -1,10 +1,9 @@
-import abc
 import dataclasses
 from typing import Literal, Union
 
 import geojson  # type: ignore
 
-from up42 import base, host
+from up42 import base, host, order
 
 UnitType = Literal["SQ_KM", "SCENE"]
 
@@ -20,6 +19,10 @@ class OrderError:
 class OrderReference:
     index: int
     id: str
+
+    @property
+    def order(self):
+        return order.Order.get(self.id)
 
 
 @dataclasses.dataclass
@@ -45,38 +48,17 @@ def _get_items(data: dict, result_type):
     return sorted(items, key=lambda x: x.index)
 
 
+@dataclasses.dataclass
 class BatchOrderTemplate:
     session = base.Session()
     workspace_id = base.WorkspaceId()
-
-    @property
-    @abc.abstractmethod
-    def data_product_id(self) -> str:
-        raise NotImplementedError
-
-    @property
-    @abc.abstractmethod
-    def display_name(self) -> str:
-        raise NotImplementedError
-
-    @property
-    @abc.abstractmethod
-    def tags(self) -> list[str]:
-        raise NotImplementedError
-
-    @property
-    @abc.abstractmethod
-    def features(self) -> geojson.FeatureCollection:
-        raise NotImplementedError
-
-    @property
-    @abc.abstractmethod
-    def params(self) -> dict:
-        raise NotImplementedError
+    data_product_id: str
+    display_name: str
+    tags: list[str]
+    features: geojson.FeatureCollection
+    params: dict
 
     def __post_init__(self):
-        self.__validate()
-        # we need to validate the schema first, then we estimate
         self.__estimate()
 
     @property
@@ -88,11 +70,6 @@ class BatchOrderTemplate:
             "params": self.params,
             "featureCollection": self.features,
         }
-
-    def __validate(self):
-        # validate the schema
-        # should we take schema from the data product?
-        raise NotImplementedError
 
     def __estimate(self):
         url = host.endpoint("/v2/orders/estimate")
@@ -109,13 +86,3 @@ class BatchOrderTemplate:
         url = host.endpoint(f"/v2/orders?workspaceId={self.workspace_id}")
         batch = self.session.post(url=url, json=self._payload).json()
         return _get_items(batch, OrderReference)
-
-
-@dataclasses.dataclass
-class ArchiveOrderTemplate(BatchOrderTemplate):
-    pass
-
-
-@dataclasses.dataclass
-class TaskingOrderTemplate(BatchOrderTemplate):
-    pass
