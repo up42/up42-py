@@ -128,11 +128,20 @@ class Provider:
 
 @dataclasses.dataclass
 class DataProduct:
+    session = base.Session()
     name: str
     title: str
     description: str
     id: Optional[str]
     eula_id: Optional[str]
+
+    @property
+    def schema(self) -> Optional[dict]:
+        if self.id:
+            url = host.endpoint(f"/orders/schema/{self.id}")
+            return self.session.get(url).json()
+        else:
+            return None
 
 
 @dataclasses.dataclass

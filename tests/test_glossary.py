@@ -51,6 +51,25 @@ COLLECTION = glossary.Collection(
 )
 
 
+class TestDataProduct:
+    data_product = glossary.DataProduct(
+        name="name",
+        title="title",
+        description="description",
+        id=constants.DATA_PRODUCT_ID,
+        eula_id="eula-id",
+    )
+
+    def test_should_provide_no_schema_if_missing_id(self):
+        assert not dataclasses.replace(self.data_product, id=None).schema
+
+    def test_should_provide_schema(self, requests_mock: req_mock.Mocker) -> None:
+        schema = {"schema": "some-schema"}
+        url = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
+        requests_mock.get(url=url, json=schema)
+        assert self.data_product.schema == schema
+
+
 class TestProductGlossary:
     @pytest.mark.parametrize(
         "collection_type",
