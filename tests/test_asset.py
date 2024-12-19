@@ -337,7 +337,9 @@ class TestAsset:
                 _ = ASSET.stac_info
 
     class TestAssetUpdateMetadata:
-        asset_info = {"id": ASSET_ID, "title": "title", "tags": ["tag1"]}
+        @pytest.fixture
+        def asset_obj(self):
+            return dataclasses.replace(ASSET, info=copy.deepcopy(ASSET_METADATA))
 
         @pytest.mark.parametrize("title", [None, "new-title"])
         @pytest.mark.parametrize("tags", [None, [], ["tag1", "tag2"]])
@@ -346,10 +348,10 @@ class TestAsset:
             requests_mock: req_mock.Mocker,
             title: Optional[str],
             tags: Optional[List[str]],
+            asset_obj: asset.Asset,
         ):
-            asset_obj = dataclasses.replace(ASSET, info=self.asset_info)
             update_payload = {"title": title, "tags": tags}
-            expected_info = self.asset_info | update_payload
+            expected_info = ASSET_METADATA | update_payload
             requests_mock.post(
                 url=METADATA_URL,
                 json=expected_info,
@@ -359,11 +361,10 @@ class TestAsset:
             assert asset_obj.title == title
             assert asset_obj.tags == tags
 
-        def test_should_not_update_title_if_not_provided(self, requests_mock: req_mock.Mocker):
-            asset_obj = dataclasses.replace(ASSET, info=self.asset_info)
+        def test_should_not_update_title_if_not_provided(self, requests_mock: req_mock.Mocker, asset_obj: asset.Asset):
             tags = ["tag1", "tag2"]
             update_payload = {"title": asset_obj.title, "tags": tags}
-            expected_info = self.asset_info | update_payload
+            expected_info = ASSET_METADATA | update_payload
             requests_mock.post(
                 url=METADATA_URL,
                 json=expected_info,
@@ -372,11 +373,10 @@ class TestAsset:
             assert asset_obj.update_metadata(tags=tags) == expected_info
             assert asset_obj.tags == tags
 
-        def test_should_not_update_tags_if_not_provided(self, requests_mock: req_mock.Mocker):
-            asset_obj = dataclasses.replace(ASSET, info=self.asset_info)
+        def test_should_not_update_tags_if_not_provided(self, requests_mock: req_mock.Mocker, asset_obj: asset.Asset):
             title = "new-title"
             update_payload = {"title": title, "tags": asset_obj.tags}
-            expected_info = self.asset_info | update_payload
+            expected_info = ASSET_METADATA | update_payload
             requests_mock.post(
                 url=METADATA_URL,
                 json=expected_info,
