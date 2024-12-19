@@ -33,6 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Dec 19, 2024**
 - Added coverage for `Asset::all` method.
 - Exported `AssetSorting` to `up42` namespace.
+- Reduced test dependencies on `Asset` structure. 
 
 ## 2.2.0a12
 **Dec 19, 2024**
