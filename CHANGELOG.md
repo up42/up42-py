@@ -29,7 +29,14 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
-## 2.2.0a15
+## 2.2.0a17
+**Dec 19, 2024**
+- Experiment `stac` module with `FileProvider` descriptor for `pystac::Asset`.
+- Added STAC object dynamic extension on `up42` import.
+- Deprecated `Asset::download_stac_asset`.
+- Deprecated `Asset::get_stac_asset_url`.
+
+## 2.2.0a16
 **Dec 19, 2024**
 - Made `BatchOrderTemplate::tags` optional.
 - Deprecated `up42::initialize_tasking`.
