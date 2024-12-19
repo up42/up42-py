@@ -32,6 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 2.2.0a17
 **Dec 19, 2024**
 - Experiment `stac` module with `FileProvider` descriptor for `pystac::Asset`.
+- Added STAC object dynamic extension on `up42` import.
 - Deprecated `Asset::download_stac_asset`.
 - Deprecated `Asset::get_stac_asset_url`.
 

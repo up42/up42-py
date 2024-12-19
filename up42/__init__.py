@@ -34,11 +34,14 @@ from up42.initialization import (
 from up42.order import Order, OrderSorting
 from up42.order_template import BatchOrderTemplate
 from up42.processing import Job, JobSorting, JobStatus
+from up42.stac import extend as stac_extend
 from up42.storage import Storage
 from up42.tasking import Quotation, QuotationSorting, Tasking
 from up42.tools import get_example_aoi, read_vector_file
 from up42.utils import get_up42_py_version
 from up42.webhooks import Webhook
+
+stac_extend()
 
 __version__ = get_up42_py_version()
 __all__ = [
