@@ -166,12 +166,13 @@ class Asset:
         for field in dataclasses.fields(asset):
             setattr(self, field.name, getattr(asset, field.name))
 
-    def _get_download_url(self, stac_asset_id: Optional[str] = None) -> str:
-        if stac_asset_id is None:
-            url = host.endpoint(f"/v2/assets/{self.asset_id}/download-url")
-        else:
-            url = host.endpoint(f"/v2/assets/{stac_asset_id}/download-url")
+    def _get_download_url(self, asset_id: str) -> str:
+        url = host.endpoint(f"/v2/assets/{asset_id}/download-url")
         return self.session.post(url=url).json()["url"]
+
+    @property
+    def file(self) -> utils.ImageFile:
+        return utils.ImageFile(url=self._get_download_url(self.asset_id))
 
     @utils.deprecation("pystac::Asset.file.url", "3.0.0")
     def get_stac_asset_url(self, stac_asset: pystac.Asset):
@@ -184,8 +185,9 @@ class Asset:
             Signed URL for the STAC Asset.
         """
         stac_asset_id = stac_asset.href.split("/")[-1]
-        return self._get_download_url(stac_asset_id=stac_asset_id)
+        return self._get_download_url(asset_id=stac_asset_id)
 
+    @utils.deprecation("Asset.file::download", "3.0.0")
     def download(
         self,
         output_directory: Union[str, pathlib.Path, None] = None,
@@ -211,7 +213,7 @@ class Asset:
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", output_directory)
 
-        download_url = self._get_download_url()
+        download_url = self._get_download_url(asset_id=self.asset_id)
         download = utils.download_archive if unpacking else utils.download_file
         return download(
             download_url=download_url,
