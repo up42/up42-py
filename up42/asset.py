@@ -1,7 +1,7 @@
 import dataclasses
 import datetime as dt
 import pathlib
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, Iterator, List, Literal, Optional, Tuple, Union, cast
 
 import pystac
 import pystac_client
@@ -30,17 +30,55 @@ class AssetSorting:
 @dataclasses.dataclass
 class Asset:
     session = base.Session()
+    id: str
+    account_id: str
+    created_at: str
+    name: Optional[str]
+    size: int
+    updated_at: str
+    workspace_id: str
+    order_id: Optional[str]
+    source: Optional[Literal["ARCHIVE", "TASKING", "PROCESSING"]]
+    product_id: Optional[str]
+    content_type: str
+    producer_name: Optional[str]
+    collection_name: Optional[str]
+    geospatial_metadata_extraction_status: Optional[Literal["SUCCESSFUL", "FAILED", "IN_PROGRESS", "NOT_PROCESSED"]]
+    title: Optional[str]
+    tags: Optional[list[str]]
     info: dict
 
     @property
+    @utils.deprecation("Asset.id", "3.0.0")
     def asset_id(self) -> str:
         return self.info["id"]
+
+    @staticmethod
+    def _from_metadata(metadata: dict) -> "Asset":
+        return Asset(
+            id=metadata["id"],
+            account_id=metadata["accountId"],
+            created_at=metadata["createdAt"],
+            name=metadata.get("name"),
+            size=metadata["size"],
+            updated_at=metadata["updatedAt"],
+            workspace_id=metadata["workspaceId"],
+            order_id=metadata.get("orderId"),
+            source=metadata.get("source"),
+            product_id=metadata.get("productId"),
+            content_type=metadata["contentType"],
+            producer_name=metadata.get("producerName"),
+            collection_name=metadata.get("collectionName"),
+            geospatial_metadata_extraction_status=metadata.get("geospatialMetadataExtractionStatus"),
+            title=metadata.get("title"),
+            tags=metadata.get("tags"),
+            info=metadata,
+        )
 
     @classmethod
     def get(cls, asset_id: str) -> "Asset":
         url = host.endpoint(f"/v2/assets/{asset_id}/metadata")
-        metadata = cls.session.get(url=url).json()
-        return cls(info=metadata)
+        return cls._from_metadata(cls.session.get(url=url).json())
 
     @classmethod
     def all(
@@ -66,7 +104,7 @@ class Asset:
             "search": search,
             "sort": sort_by,
         }
-        return (cls(info=metadata) for metadata in utils.paged_query(params, "/v2/assets", cls.session))
+        return map(cls._from_metadata, utils.paged_query(params, "/v2/assets", cls.session))
 
     def _stac_search(self) -> Tuple[pystac_client.Client, pystac_client.ItemSearch]:
         stac_client = utils.stac_client(cast(requests.auth.AuthBase, self.session.auth))
