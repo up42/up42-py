@@ -170,8 +170,9 @@ class Asset:
     def save(self):
         url = host.endpoint(f"/v2/assets/{self.asset_id}/metadata")
         payload = {"title": self.title, "tags": self.tags}
-        self.info.update(payload)
-        self.session.post(url=url, json=payload).json()
+        asset = self._from_metadata(self.session.post(url=url, json=payload).json())
+        for field in dataclasses.fields(asset):
+            setattr(self, field.name, getattr(asset, field.name))
 
     def _get_download_url(self, stac_asset_id: Optional[str] = None) -> str:
         if stac_asset_id is None:

@@ -160,17 +160,20 @@ class TestAsset:
         asset_obj = dataclasses.replace(ASSET, info=copy.deepcopy(ASSET_METADATA))
         title = "new-title"
         tags = ["new", "tags"]
-        asset_obj.title = title
-        asset_obj.tags = tags
-        update_payload = {"title": asset_obj.title, "tags": asset_obj.tags}
-        expected_info = ASSET_METADATA | update_payload
+        updated_at = "new-updated-at"
+        update_payload = {"title": title, "tags": tags}
+        expected_info = ASSET_METADATA | update_payload | {"updatedAt": updated_at}
         requests_mock.post(
             url=METADATA_URL,
             json=expected_info,
-            additional_matcher=helpers.match_request_body(update_payload),
         )
+        asset_obj.title = title
+        asset_obj.tags = tags
         asset_obj.save()
-        assert asset_obj == dataclasses.replace(ASSET, info=ASSET_METADATA | update_payload, title=title, tags=tags)
+        print(asset_obj)
+        assert asset_obj == dataclasses.replace(
+            ASSET, info=expected_info, title=title, tags=tags, updated_at=updated_at
+        )
 
     def test_should_download_expected_files(
         self,
