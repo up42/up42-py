@@ -29,6 +29,13 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a19
+**Dec 20, 2024**
+- Switched to using stac client descriptor in `Asset` class and reduced duplication.
+- Publish `stac_client` function to `up42` namespace.
+- Added `file` property to `Asset` class to unify with `pystac::Asset` experience.
+- Deprecated `Asset::download` method in favour of `Asset.file::download`.
+
 ## 2.2.0a18
 **Dec 19, 2024**
 - Use unauthenticated session for signed url image file in `FileProvider` module with `FileProvider` class.

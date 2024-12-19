@@ -174,6 +174,13 @@ class TestAsset:
             ASSET, info=expected_info, title=title, tags=tags, updated_at=updated_at
         )
 
+    def test_should_provide_file(self, requests_mock: req_mock.Mocker):
+        requests_mock.post(
+            url=f"{constants.API_HOST}/v2/assets/{ASSET_ID}/download-url",
+            json={"url": DOWNLOAD_URL},
+        )
+        assert ASSET.file == utils.ImageFile(DOWNLOAD_URL)
+
     def test_should_download_expected_files(
         self,
         requests_mock: req_mock.Mocker,

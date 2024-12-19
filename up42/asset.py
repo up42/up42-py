@@ -1,11 +1,10 @@
 import dataclasses
 import datetime as dt
 import pathlib
-from typing import Iterator, List, Literal, Optional, Tuple, Union, cast
+from typing import Iterator, List, Literal, Optional, Union, cast
 
 import pystac
 import pystac_client
-import requests
 import tenacity as tnc
 
 from up42 import base, host, utils
@@ -30,6 +29,7 @@ class AssetSorting:
 @dataclasses.dataclass
 class Asset:
     session = base.Session()
+    stac_client = base.StacClient()
     id: str
     account_id: str
     created_at: str
@@ -106,20 +106,26 @@ class Asset:
         }
         return map(cls._from_metadata, utils.paged_query(params, "/v2/assets", cls.session))
 
-    def _stac_search(self) -> Tuple[pystac_client.Client, pystac_client.ItemSearch]:
-        stac_client = utils.stac_client(cast(requests.auth.AuthBase, self.session.auth))
-        stac_search_parameters = {
-            "max_items": MAX_ITEM,
-            "limit": LIMIT,
-            "filter": {
-                "op": "=",
-                "args": [
-                    {"property": "asset_id"},
-                    self.asset_id,
-                ],
-            },
-        }
-        return stac_client, stac_client.search(filter=stac_search_parameters)
+    @property
+    @_retry
+    def stac_items(self) -> pystac.ItemCollection:
+        """Returns the stac items from an UP42 asset STAC representation."""
+        try:
+            filter_by_asset_id = {
+                "max_items": MAX_ITEM,
+                "limit": LIMIT,
+                "filter": {
+                    "op": "=",
+                    "args": [
+                        {"property": "asset_id"},
+                        self.asset_id,
+                    ],
+                },
+            }
+            stac_search = self.stac_client.search(filter=filter_by_asset_id)
+            return stac_search.item_collection()
+        except Exception as exc:
+            raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}") from exc
 
     @property
     @_retry
@@ -128,21 +134,7 @@ class Asset:
         Gets the storage STAC information for the asset as a FeatureCollection.
         One asset can contain multiple STAC items (e.g. the PAN and multispectral images).
         """
-        stac_client, stac_search = self._stac_search()
-        items = stac_search.item_collection()
-        if not items:
-            raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}")
-        return stac_client.get_collection(items[0].collection_id)
-
-    @property
-    @_retry
-    def stac_items(self) -> pystac.ItemCollection:
-        """Returns the stac items from an UP42 asset STAC representation."""
-        try:
-            _, stac_search = self._stac_search()
-            return stac_search.item_collection()
-        except Exception as exc:
-            raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}") from exc
+        return self.stac_client.get_collection(self.stac_items[0].collection_id)
 
     @utils.deprecation("Asset::save", "3.0.0")
     def update_metadata(
@@ -174,12 +166,13 @@ class Asset:
         for field in dataclasses.fields(asset):
             setattr(self, field.name, getattr(asset, field.name))
 
-    def _get_download_url(self, stac_asset_id: Optional[str] = None) -> str:
-        if stac_asset_id is None:
-            url = host.endpoint(f"/v2/assets/{self.asset_id}/download-url")
-        else:
-            url = host.endpoint(f"/v2/assets/{stac_asset_id}/download-url")
+    def _get_download_url(self, asset_id: str) -> str:
+        url = host.endpoint(f"/v2/assets/{asset_id}/download-url")
         return self.session.post(url=url).json()["url"]
+
+    @property
+    def file(self) -> utils.ImageFile:
+        return utils.ImageFile(url=self._get_download_url(self.asset_id))
 
     @utils.deprecation("pystac::Asset.file.url", "3.0.0")
     def get_stac_asset_url(self, stac_asset: pystac.Asset):
@@ -192,8 +185,9 @@ class Asset:
             Signed URL for the STAC Asset.
         """
         stac_asset_id = stac_asset.href.split("/")[-1]
-        return self._get_download_url(stac_asset_id=stac_asset_id)
+        return self._get_download_url(asset_id=stac_asset_id)
 
+    @utils.deprecation("Asset.file::download", "3.0.0")
     def download(
         self,
         output_directory: Union[str, pathlib.Path, None] = None,
@@ -219,7 +213,7 @@ class Asset:
         output_directory.mkdir(parents=True, exist_ok=True)
         logger.info("Download directory: %s", output_directory)
 
-        download_url = self._get_download_url()
+        download_url = self._get_download_url(asset_id=self.asset_id)
         download = utils.download_archive if unpacking else utils.download_file
         return download(
             download_url=download_url,
