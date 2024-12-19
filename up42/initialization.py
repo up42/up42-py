@@ -15,6 +15,7 @@ def initialize_catalog() -> catalog.Catalog:
     return catalog.Catalog()
 
 
+@utils.deprecation(None, "3.0.0")
 def initialize_tasking() -> tasking.Tasking:
     """
     Returns a Tasking object for creating satellite tasking orders.

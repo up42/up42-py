@@ -155,6 +155,7 @@ class Tasking(catalog.CatalogBase):
         url = host.endpoint(f"/v2/tasking/quotation/{quotation_id}")
         return self.session.patch(url, json={"decision": decision}).json()
 
+    @utils.deprecation(None, "3.0.0")
     def get_feasibility(
         self,
         feasibility_id: Optional[str] = None,
@@ -189,6 +190,7 @@ class Tasking(catalog.CatalogBase):
         }
         return list(utils.paged_query(params, "/v2/tasking/feasibility", self.session))
 
+    @utils.deprecation(None, "3.0.0")
     def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
         """Accept one of the proposed feasibility study options.
         This operation is only allowed on feasibility studies with the NOT_DECIDED status.
