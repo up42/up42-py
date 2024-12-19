@@ -181,6 +181,7 @@ class Asset:
             url = host.endpoint(f"/v2/assets/{stac_asset_id}/download-url")
         return self.session.post(url=url).json()["url"]
 
+    @utils.deprecation("pystac::Asset.file", "3.0.0")
     def get_stac_asset_url(self, stac_asset: pystac.Asset):
         """
         Returns the signed URL for the STAC Asset.
@@ -225,6 +226,7 @@ class Asset:
             output_directory=output_directory,
         )
 
+    @utils.deprecation("pystac::Asset.file::download", "3.0.0")
     def download_stac_asset(
         self,
         stac_asset: pystac.Asset,

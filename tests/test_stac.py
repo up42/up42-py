@@ -30,7 +30,6 @@ class TestFileProvider:
             url=f"{STAC_ASSET_HREF}/download-url",
             json={"url": DOWNLOAD_URL},
         )
-        title = "some-title"
-        asset = pystac.Asset(href=STAC_ASSET_HREF, title=title)
-        expected = utils.ImageFile(url=DOWNLOAD_URL, file_name=title)
+        asset = pystac.Asset(href=STAC_ASSET_HREF)
+        expected = utils.ImageFile(url=DOWNLOAD_URL)
         assert asset.file == expected  # type: ignore

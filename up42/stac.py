@@ -12,16 +12,12 @@ class InvalidUp42Asset(ValueError):
 class FileProvider:
     session = base.Session()
 
-    def __get__(
-        self, obj: Optional[pystac.Asset], obj_type=None
-    ) -> Optional[utils.ImageFile]:
+    def __get__(self, obj: Optional[pystac.Asset], obj_type=None) -> Optional[utils.ImageFile]:
         if obj:
             if obj.href.startswith("https://api.up42"):
                 url = obj.href + "/download-url"
                 signed_url = self.session.post(url=url).json()["url"]
-                return utils.ImageFile(
-                    url=signed_url, file_name=obj.title, session=self.session
-                )
+                return utils.ImageFile(url=signed_url, session=self.session)
             else:
                 return None
         else:
@@ -29,4 +25,4 @@ class FileProvider:
 
 
 def extend():
-    pystac.Asset.file = FileProvider()
+    pystac.Asset.file = FileProvider()  # type: ignore
