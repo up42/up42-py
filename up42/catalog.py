@@ -372,6 +372,7 @@ class Catalog(CatalogBase):
                 image_file = utils.ImageFile(
                     host.endpoint(f"/catalog/{product_host}/image/{image_id}/quicklook"),
                     f"quicklook_{image_id}.jpg",
+                    session=self.session,
                 )
                 out_paths.append(str(image_file.download(output_directory)))
             except IOError:
