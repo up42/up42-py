@@ -29,6 +29,11 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a15
+**Dec 19, 2024**
+- Added `Asset::save` method.
+- Deprecated `Asset::update_metadata` in favour of `Asset::save`.
+
 ## 2.2.0a14
 **Dec 19, 2024**
 - Added model fields to `Asset` class.
