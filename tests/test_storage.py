@@ -1,14 +1,23 @@
 import datetime as dt
 import random
-import urllib
-from typing import Optional, cast
+from typing import Optional
 
 import mock
 import pytest
-import requests_mock as req_mock
 
 from tests import constants
-from up42 import asset, storage, utils
+from up42 import storage, utils
+
+SENTINELS = [mock.sentinel] * 20
+
+
+def mock_items(get_items: mock.MagicMock, return_json: bool):
+    if return_json:
+        item = mock.MagicMock()
+        item.info = mock.sentinel
+        get_items.return_value = iter([item] * 20)
+    else:
+        get_items.return_value = iter(SENTINELS)
 
 
 class TestStorage:
@@ -20,7 +29,6 @@ class TestStorage:
         limit: Optional[int],
         descending: bool,
         return_json: bool,
-        requests_mock: req_mock.Mocker,
     ):
         created_after = dt.datetime.now() - dt.timedelta(days=1)
         created_before = dt.datetime.now() + dt.timedelta(days=1)
@@ -30,44 +38,34 @@ class TestStorage:
         sources = ["some", "sources"]
         search = "search"
         sortby = "updatedAt"
-        query = urllib.parse.urlencode(
-            {
-                "createdAfter": utils.format_time(created_after),
-                "createdBefore": utils.format_time(created_before),
-                "workspaceId": constants.WORKSPACE_ID,
-                "collectionNames": collection_names,
-                "producerNames": producer_names,
-                "tags": tags,
-                "sources": sources,
-                "search": search,
-                "sort": utils.SortingField(sortby, not descending),
-                "page": 0,
-            },
-            doseq=True,
-        )
-        expected = [{"asset": "info"}] * 20
-        requests_mock.get(
-            f"{constants.API_HOST}/v2/assets?{query}",
-            json={"content": expected, "page": 0, "totalPages": 1},
-        )
-        assets = storage.Storage().get_assets(
-            created_after=created_after,
-            created_before=created_before,
-            workspace_id=constants.WORKSPACE_ID,
-            collection_names=collection_names,
-            producer_names=producer_names,
-            tags=tags,
-            sources=sources,
-            search=search,
-            limit=limit,
-            sortby=sortby,
-            descending=descending,
-            return_json=return_json,
-        )
-        if return_json:
-            assert assets == expected[:limit]
-        else:
-            assert [cast(asset.Asset, asset_obj).info for asset_obj in assets] == expected[:limit]
+        with mock.patch("up42.asset.Asset.all") as get_assets:
+            mock_items(get_assets, return_json)
+            assets = storage.Storage().get_assets(
+                created_after=created_after,
+                created_before=created_before,
+                workspace_id=constants.WORKSPACE_ID,
+                collection_names=collection_names,
+                producer_names=producer_names,
+                tags=tags,
+                sources=sources,
+                search=search,
+                limit=limit,
+                sortby=sortby,
+                descending=descending,
+                return_json=return_json,
+            )
+            assert assets == SENTINELS[:limit]
+            get_assets.assert_called_with(
+                created_after=created_after,
+                created_before=created_before,
+                workspace_id=constants.WORKSPACE_ID,
+                collection_names=collection_names,
+                producer_names=producer_names,
+                tags=tags,
+                sources=sources,
+                search=search,
+                sort_by=utils.SortingField(sortby, not descending),
+            )
 
     @pytest.mark.parametrize("limit", [10, None])
     @pytest.mark.parametrize("descending", [False, True])
@@ -88,12 +86,7 @@ class TestStorage:
         name = "name"
         status = [status.value for status in statuses] if statuses else None
         with mock.patch("up42.order.Order.all") as get_orders:
-            if return_json:
-                order_obj = mock.MagicMock()
-                order_obj.info = mock.sentinel
-                get_orders.return_value = iter([order_obj] * 20)
-            else:
-                get_orders.return_value = iter([mock.sentinel] * 20)
+            mock_items(get_orders, return_json)
             orders = storage.Storage().get_orders(
                 workspace_orders=workspace_orders,
                 return_json=return_json,
@@ -105,7 +98,7 @@ class TestStorage:
                 name=name,
                 tags=tags,
             )
-            assert orders == ([mock.sentinel] * 20)[:limit]
+            assert orders == SENTINELS[:limit]
             get_orders.assert_called_with(
                 workspace_id=constants.WORKSPACE_ID if workspace_orders else None,
                 display_name=name,

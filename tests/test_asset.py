@@ -1,5 +1,6 @@
-import datetime
+import datetime as dt
 import pathlib
+import urllib
 from typing import List, Optional
 
 import pystac
@@ -7,7 +8,7 @@ import pytest
 import requests_mock as req_mock
 
 from tests import constants, helpers
-from up42 import asset
+from up42 import asset, utils
 
 ASSET_ID = "363f89c1-3586-4b14-9a49-03a890c3b593"
 DOWNLOAD_URL = f"{constants.API_HOST}/abcdef.tgz"
@@ -184,6 +185,49 @@ class TestAsset:
         assert out_path.name == stac_file
         assert out_path.read_bytes() == content
 
+    def test_should_get_all(self, requests_mock: req_mock.Mocker):
+        created_after = dt.datetime.now() - dt.timedelta(days=1)
+        created_before = dt.datetime.now() + dt.timedelta(days=1)
+        collection_names = ["collection", "names"]
+        producer_names = ["producer", "names"]
+        tags = ["producer", "names"]
+        sources = ["some", "sources"]
+        search = "search"
+        sort_by = asset.AssetSorting.created_at
+        query = urllib.parse.urlencode(
+            {
+                "createdAfter": utils.format_time(created_after),
+                "createdBefore": utils.format_time(created_before),
+                "workspaceId": constants.WORKSPACE_ID,
+                "collectionNames": collection_names,
+                "producerNames": producer_names,
+                "tags": tags,
+                "sources": sources,
+                "search": search,
+                "sort": sort_by,
+                "page": 0,
+            },
+            doseq=True,
+        )
+        expected = [{"asset": "info"}] * 20
+        requests_mock.get(
+            f"{constants.API_HOST}/v2/assets?{query}",
+            json={"content": expected, "page": 0, "totalPages": 1},
+        )
+        assert list(
+            asset.Asset.all(
+                created_after=created_after,
+                created_before=created_before,
+                workspace_id=constants.WORKSPACE_ID,
+                collection_names=collection_names,
+                producer_names=producer_names,
+                tags=tags,
+                sources=sources,
+                search=search,
+                sort_by=sort_by,
+            )
+        ) == list(map(asset.Asset, expected))
+
     class TestStacMetadata:
         def test_should_get_stac_items_with_retries(self, requests_mock: req_mock.Mocker):
             requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
@@ -214,7 +258,7 @@ class TestAsset:
                 extra_fields={"up42-system:asset_id": ASSET_ID},
                 extent=pystac.Extent(
                     spatial=pystac.SpatialExtent(bboxes=[[1.0, 2.0, 3.0, 4.0]]),
-                    temporal=pystac.TemporalExtent(intervals=[[datetime.datetime.now(), None]]),
+                    temporal=pystac.TemporalExtent(intervals=[[dt.datetime.now(), None]]),
                 ),
             )
             expected.add_link(

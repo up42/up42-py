@@ -1,14 +1,13 @@
 import uuid
 
 import mock
-import requests_mock as req_mock
 
 import up42
 from tests import constants
 from up42 import catalog, storage, tasking
 
 
-def test_should_initialize_objects(requests_mock: req_mock.Mocker):
+def test_should_initialize_objects():
     catalog_obj = up42.initialize_catalog()
     assert isinstance(catalog_obj, catalog.Catalog)
 
@@ -19,15 +18,13 @@ def test_should_initialize_objects(requests_mock: req_mock.Mocker):
     with mock.patch("up42.order.Order.get") as get_order:
         get_order.return_value = mock.sentinel
         assert up42.initialize_order(order_id=constants.ORDER_ID) == mock.sentinel
-        get_order.assert_called_with(order_id=constants.ORDER_ID)
+        get_order.assert_called_with(constants.ORDER_ID)
 
     asset_id = str(uuid.uuid4())
-
-    asset_url = f"{constants.API_HOST}/v2/assets/{asset_id}/metadata"
-    asset_info = {"id": asset_id, "other": "data"}
-    requests_mock.get(url=asset_url, json=asset_info)
-    asset_obj = up42.initialize_asset(asset_id=asset_id)
-    assert asset_obj.info == asset_info
+    with mock.patch("up42.asset.Asset.get") as get_asset:
+        get_asset.return_value = mock.sentinel
+        assert up42.initialize_asset(asset_id=asset_id) == mock.sentinel
+        get_asset.assert_called_with(asset_id)
 
     result = up42.initialize_tasking()
     assert isinstance(result, tasking.Tasking)

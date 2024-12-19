@@ -2,14 +2,14 @@ import dataclasses
 import urllib
 import uuid
 from typing import Any, List, Optional
+from unittest import mock
 
 import pytest
 import requests_mock as req_mock
 
 from tests import constants
-from up42 import asset, order, utils
+from up42 import order, utils
 
-ASSET_ORDER_ID = "22d0b8e9-b649-4971-8adc-1a5eac1fa6f3"
 ACCOUNT_ID = str(uuid.uuid4())
 ORDER_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
 ORDER_PLACEMENT_URL = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
@@ -169,23 +169,13 @@ class TestOrder:
     )
     def test_should_get_assets_if_valid(
         self,
-        requests_mock: req_mock.Mocker,
         status: order.OrderStatus,
         data_order: order.Order,
     ):
-        url_asset_info = f"{constants.API_HOST}/v2/assets?search={constants.ORDER_ID}"
-        asset_info = {
-            "content": [
-                {
-                    "id": ASSET_ORDER_ID,
-                }
-            ],
-            "totalPages": 1,
-        }
-        requests_mock.get(url=url_asset_info, json=asset_info)
-        (asset_obj,) = dataclasses.replace(data_order, status=status).get_assets()
-        assert isinstance(asset_obj, asset.Asset)
-        assert asset_obj.asset_id == ASSET_ORDER_ID
+        with mock.patch("up42.asset.Asset.all") as get_assets:
+            get_assets.return_value = iter([mock.sentinel])
+            assert dataclasses.replace(data_order, status=status).get_assets() == [mock.sentinel]
+            get_assets.assert_called_with(search=constants.ORDER_ID)
 
     @pytest.mark.parametrize(
         "status",
