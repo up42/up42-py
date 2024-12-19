@@ -17,7 +17,7 @@ class FileProvider:
             if obj.href.startswith("https://api.up42"):
                 url = obj.href + "/download-url"
                 signed_url = self.session.post(url=url).json()["url"]
-                return utils.ImageFile(url=signed_url, session=self.session)
+                return utils.ImageFile(url=signed_url)
             else:
                 return None
         else:
