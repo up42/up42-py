@@ -43,9 +43,7 @@ class Asset:
     content_type: str
     producer_name: Optional[str]
     collection_name: Optional[str]
-    geospatial_metadata_extraction_status: Optional[
-        Literal["SUCCESSFUL", "FAILED", "IN_PROGRESS", "NOT_PROCESSED"]
-    ]
+    geospatial_metadata_extraction_status: Optional[Literal["SUCCESSFUL", "FAILED", "IN_PROGRESS", "NOT_PROCESSED"]]
     title: Optional[str]
     tags: Optional[list[str]]
     info: dict
@@ -71,9 +69,7 @@ class Asset:
             content_type=metadata["contentType"],
             producer_name=metadata.get("producerName"),
             collection_name=metadata.get("collectionName"),
-            geospatial_metadata_extraction_status=metadata.get(
-                "geospatialMetadataExtractionStatus"
-            ),
+            geospatial_metadata_extraction_status=metadata.get("geospatialMetadataExtractionStatus"),
             title=metadata.get("title"),
             tags=metadata.get("tags"),
             info=metadata,
@@ -108,9 +104,7 @@ class Asset:
             "search": search,
             "sort": sort_by,
         }
-        return map(
-            cls._from_metadata, utils.paged_query(params, "/v2/assets", cls.session)
-        )
+        return map(cls._from_metadata, utils.paged_query(params, "/v2/assets", cls.session))
 
     def _stac_search(self) -> Tuple[pystac_client.Client, pystac_client.ItemSearch]:
         stac_client = utils.stac_client(cast(requests.auth.AuthBase, self.session.auth))
@@ -137,9 +131,7 @@ class Asset:
         stac_client, stac_search = self._stac_search()
         items = stac_search.item_collection()
         if not items:
-            raise ValueError(
-                f"No STAC metadata information available for this asset {self.asset_id}"
-            )
+            raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}")
         return stac_client.get_collection(items[0].collection_id)
 
     @property
@@ -150,9 +142,7 @@ class Asset:
             _, stac_search = self._stac_search()
             return stac_search.item_collection()
         except Exception as exc:
-            raise ValueError(
-                f"No STAC metadata information available for this asset {self.asset_id}"
-            ) from exc
+            raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}") from exc
 
     @utils.deprecation("Asset::save", "3.0.0")
     def update_metadata(
@@ -171,9 +161,9 @@ class Asset:
             The updated asset metadata information
         """
         if title != NOT_PROVIDED:
-            self.title = title
+            self.title = cast(Optional[str], title)
         if tags != NOT_PROVIDED:
-            self.tags = tags
+            self.tags = cast(Optional[list[str]], tags)
         self.save()
         return self.info
 
@@ -257,9 +247,7 @@ class Asset:
         """
         logger.info("Downloading STAC asset %s", stac_asset.title)
         if output_directory is None:
-            output_directory = (
-                pathlib.Path.cwd() / f"asset_{self.asset_id}/{stac_asset.title}"
-            )
+            output_directory = pathlib.Path.cwd() / f"asset_{self.asset_id}/{stac_asset.title}"
         else:
             output_directory = pathlib.Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
