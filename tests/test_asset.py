@@ -170,7 +170,6 @@ class TestAsset:
         asset_obj.title = title
         asset_obj.tags = tags
         asset_obj.save()
-        print(asset_obj)
         assert asset_obj == dataclasses.replace(
             ASSET, info=expected_info, title=title, tags=tags, updated_at=updated_at
         )
