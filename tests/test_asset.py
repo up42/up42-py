@@ -1,3 +1,4 @@
+import dataclasses
 import datetime as dt
 import pathlib
 import urllib
@@ -88,10 +89,46 @@ STAC_SEARCH_RESPONSE = {
     ],
 }
 
+ASSET_METADATA = {
+    "id": ASSET_ID,
+    "accountId": "account-id",
+    "createdAt": "created-at",
+    "name": "asset-name",
+    "size": 300,
+    "updatedAt": "updated-at",
+    "workspaceId": "workspace-id",
+    "orderId": "order-id",
+    "source": "PROCESSING",
+    "productId": "product-id",
+    "contentType": "geotiff",
+    "producerName": "producer-name",
+    "collectionName": "collection-name",
+    "geospatialMetadataExtractionStatus": "NOT_PROCESSED",
+    "title": "title",
+    "tags": ["some", "tags"],
+}
+ASSET = asset.Asset(
+    id=ASSET_ID,
+    account_id="account-id",
+    created_at="created-at",
+    name="asset-name",
+    size=300,
+    updated_at="updated-at",
+    workspace_id="workspace-id",
+    order_id="order-id",
+    source="PROCESSING",
+    product_id="product-id",
+    content_type="geotiff",
+    producer_name="producer-name",
+    collection_name="collection-name",
+    geospatial_metadata_extraction_status="NOT_PROCESSED",
+    title="title",
+    tags=["some", "tags"],
+    info=ASSET_METADATA,
+)
+
 
 class TestAsset:
-    asset_info = {"id": ASSET_ID, "other": "data"}
-
     @pytest.fixture(params=["output_dir", "no_output_dir"])
     def output_directory(self, request, tmp_path) -> Optional[str]:
         return tmp_path if request.param == "output_dir" else None
@@ -115,8 +152,8 @@ class TestAsset:
 
     def test_should_initialize(self, requests_mock: req_mock.Mocker):
         url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
-        requests_mock.get(url=url, json=self.asset_info)
-        assert asset.Asset.get(asset_id=ASSET_ID).info == self.asset_info
+        requests_mock.get(url=url, json=ASSET_METADATA)
+        assert asset.Asset.get(asset_id=ASSET_ID) == ASSET
 
     def test_should_download_expected_files(
         self,
@@ -124,28 +161,22 @@ class TestAsset:
         output_directory: Optional[str],
         asset_files: set[str],
     ):
-        url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
         unpacking = len(asset_files) > 1
-        requests_mock.get(url=url, json=self.asset_info)
-        asset_obj = asset.Asset.get(asset_id=ASSET_ID)
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/assets/{ASSET_ID}/download-url",
             json={"url": DOWNLOAD_URL},
         )
-        downloaded_files = asset_obj.download(output_directory, unpacking=unpacking)
+        downloaded_files = ASSET.download(output_directory, unpacking=unpacking)
         paths = map(pathlib.Path, downloaded_files)
         assert set(path.name for path in paths) == asset_files
         assert all(path.exists() for path in paths)
 
     def test_get_stac_download_url(self, requests_mock: req_mock.Mocker):
-        url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
-        requests_mock.get(url=url, json=self.asset_info)
-        asset_obj = asset.Asset.get(asset_id=ASSET_ID)
         requests_mock.post(
             url=f"{STAC_ASSET_HREF}/download-url",
             json={"url": STAC_ASSET_URL},
         )
-        assert STAC_ASSET_URL == asset_obj.get_stac_asset_url(pystac.Asset(href=STAC_ASSET_HREF))
+        assert STAC_ASSET_URL == ASSET.get_stac_asset_url(pystac.Asset(href=STAC_ASSET_HREF))
 
     @pytest.mark.parametrize(
         "stac_url, stac_file",
@@ -171,16 +202,13 @@ class TestAsset:
         stac_url: str,
         stac_file: str,
     ):
-        url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
-        requests_mock.get(url=url, json=self.asset_info)
-        asset_obj = asset.Asset.get(asset_id=ASSET_ID)
         content = b"some-content"
         requests_mock.get(url=stac_url, content=content)
         requests_mock.post(
             url=f"{STAC_ASSET_HREF}/download-url",
             json={"url": stac_url},
         )
-        out_path = asset_obj.download_stac_asset(pystac.Asset(href=STAC_ASSET_HREF, title="stac"), output_directory)
+        out_path = ASSET.download_stac_asset(pystac.Asset(href=STAC_ASSET_HREF, title="stac"), output_directory)
         assert out_path.exists()
         assert out_path.name == stac_file
         assert out_path.read_bytes() == content
@@ -209,24 +237,27 @@ class TestAsset:
             },
             doseq=True,
         )
-        expected = [{"asset": "info"}] * 20
+        expected = [ASSET_METADATA] * 20
         requests_mock.get(
             f"{constants.API_HOST}/v2/assets?{query}",
             json={"content": expected, "page": 0, "totalPages": 1},
         )
-        assert list(
-            asset.Asset.all(
-                created_after=created_after,
-                created_before=created_before,
-                workspace_id=constants.WORKSPACE_ID,
-                collection_names=collection_names,
-                producer_names=producer_names,
-                tags=tags,
-                sources=sources,
-                search=search,
-                sort_by=sort_by,
+        assert (
+            list(
+                asset.Asset.all(
+                    created_after=created_after,
+                    created_before=created_before,
+                    workspace_id=constants.WORKSPACE_ID,
+                    collection_names=collection_names,
+                    producer_names=producer_names,
+                    tags=tags,
+                    sources=sources,
+                    search=search,
+                    sort_by=sort_by,
+                )
             )
-        ) == list(map(asset.Asset, expected))
+            == [ASSET] * 20
+        )
 
     class TestStacMetadata:
         def test_should_get_stac_items_with_retries(self, requests_mock: req_mock.Mocker):
@@ -235,16 +266,14 @@ class TestAsset:
                 constants.URL_STAC_SEARCH,
                 [{"status_code": 401}, {"json": STAC_SEARCH_RESPONSE}],
             )
-            asset_obj = asset.Asset(info={"id": ASSET_ID})
             expected = pystac.ItemCollection.from_dict(STAC_SEARCH_RESPONSE)
-            assert asset_obj.stac_items.to_dict() == expected.to_dict()
+            assert ASSET.stac_items.to_dict() == expected.to_dict()
 
         def test_fails_to_get_stac_items_after_retries(self, requests_mock: req_mock.Mocker):
             requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
             requests_mock.post(constants.URL_STAC_SEARCH, status_code=401)
-            asset_obj = asset.Asset(info={"id": ASSET_ID})
             with pytest.raises(ValueError):
-                _ = asset_obj.stac_items
+                _ = ASSET.stac_items
 
         def test_should_get_stac_info_with_retries(self, requests_mock: req_mock.Mocker):
             requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
@@ -273,8 +302,7 @@ class TestAsset:
                 url=f"{constants.API_HOST}/v2/assets/stac/collections/{STAC_COLLECTION_ID}",
                 json=expected.to_dict(),
             )
-            asset_obj = asset.Asset(info={"id": ASSET_ID})
-            assert asset_obj.stac_info.to_dict() == expected.to_dict()
+            assert ASSET.stac_info.to_dict() == expected.to_dict()
 
         @pytest.mark.parametrize(
             "response",
@@ -286,9 +314,8 @@ class TestAsset:
         def test_fails_to_get_stac_info_after_retries(self, requests_mock: req_mock.Mocker, response: dict):
             requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
             requests_mock.post(constants.URL_STAC_SEARCH, [response])
-            asset_obj = asset.Asset(info={"id": ASSET_ID})
             with pytest.raises(Exception):
-                _ = asset_obj.stac_info
+                _ = ASSET.stac_info
 
     class TestAssetUpdateMetadata:
         asset_info = {"id": ASSET_ID, "title": "title", "tags": ["tag1"]}
@@ -302,7 +329,7 @@ class TestAsset:
             title: Optional[str],
             tags: Optional[List[str]],
         ):
-            asset_obj = asset.Asset(info=self.asset_info)
+            asset_obj = dataclasses.replace(ASSET, info=self.asset_info)
             update_payload = {"title": title, "tags": tags}
             expected_info = {**self.asset_info, **update_payload}
             requests_mock.post(
@@ -313,7 +340,7 @@ class TestAsset:
             assert asset_obj.update_metadata(title=title, tags=tags) == expected_info
 
         def test_should_not_update_title_if_not_provided(self, requests_mock: req_mock.Mocker):
-            asset_obj = asset.Asset(info=self.asset_info)
+            asset_obj = dataclasses.replace(ASSET, info=self.asset_info)
             tags = ["tag1", "tag2"]
             update_payload = {"tags": tags}
             expected_info = {**self.asset_info, **update_payload}
@@ -325,7 +352,7 @@ class TestAsset:
             assert asset_obj.update_metadata(tags=tags) == expected_info
 
         def test_should_not_update_tags_if_not_provided(self, requests_mock: req_mock.Mocker):
-            asset_obj = asset.Asset(info=self.asset_info)
+            asset_obj = dataclasses.replace(ASSET, info=self.asset_info)
             title = "new-title"
             update_payload = {"title": title}
             expected_info = {**self.asset_info, **update_payload}
