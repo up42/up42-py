@@ -150,7 +150,7 @@ class TestAsset:
                 else {"output.tgz"}
             )
 
-    def test_should_initialize(self, requests_mock: req_mock.Mocker):
+    def test_should_get(self, requests_mock: req_mock.Mocker):
         url = f"{constants.API_HOST}/v2/assets/{ASSET_ID}/metadata"
         requests_mock.get(url=url, json=ASSET_METADATA)
         assert asset.Asset.get(asset_id=ASSET_ID) == ASSET

@@ -29,6 +29,12 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a14
+**Dec 19, 2024**
+- Added model fields to `Asset` class.
+- Deprecated `Asset.asset_id` in favour of `Asset.id`.
+- Deprecated `up42::initialize_catalog` since all `Catalog` and `CatalogBase` methods are deprecated.
+
 ## 2.2.0a13
 **Dec 19, 2024**
 - Added coverage for `Asset::all` method.
