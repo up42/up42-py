@@ -131,6 +131,7 @@ class Provider:
             quicklook=utils.ImageFile(
                 url=host.endpoint(f"/catalog/{self.name}/image/{scene_id}/quicklook"),
                 file_name=f"quicklook_{scene_id}.jpg",
+                session=self.session,
             ),
         )
 

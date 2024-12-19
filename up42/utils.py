@@ -171,13 +171,14 @@ class UnsupportedArchive(ValueError):
 class ImageFile:
     url: str
     file_name: str = "output"
+    session: requests.Session = dataclasses.field(default=requests.session(), repr=False, compare=False)
 
     def download(self, output_directory: Union[str, pathlib.Path]) -> pathlib.Path:
         file_name = get_filename(self.url, default_filename=self.file_name)
         path = pathlib.Path().joinpath(output_directory, file_name)
         with open(path, "wb") as dst:
             try:
-                r = requests.get(self.url, stream=True, timeout=TIMEOUT)
+                r = self.session.get(self.url, stream=True, timeout=TIMEOUT)
                 r.raise_for_status()
                 for chunk in tqdm.tqdm(r.iter_content(chunk_size=CHUNK_SIZE)):
                     if chunk:  # filter out keep-alive new chunks
