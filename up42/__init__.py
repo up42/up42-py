@@ -20,7 +20,7 @@
 from typing import Callable, Type, Union, cast
 
 # pylint: disable=only-importing-modules-is-allowed
-from up42.asset import Asset
+from up42.asset import Asset, AssetSorting
 from up42.base import authenticate, get_credits_balance
 from up42.catalog import Catalog
 from up42.glossary import CollectionSorting, CollectionType, ProductGlossary
@@ -48,6 +48,7 @@ __all__ = [
     ).__name__
     for obj in [
         Asset,
+        AssetSorting,
         Catalog,
         Order,
         OrderSorting,

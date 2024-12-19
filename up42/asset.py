@@ -23,6 +23,10 @@ _retry = tnc.retry(
 )
 
 
+class AssetSorting:
+    created_at = utils.SortingField("createdAt")
+
+
 @dataclasses.dataclass
 class Asset:
     session = base.Session()
