@@ -1,5 +1,7 @@
+import dataclasses
+import datetime as dt
 import pathlib
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union, cast
 
 import pystac
 import pystac_client
@@ -21,45 +23,46 @@ _retry = tnc.retry(
 )
 
 
+@dataclasses.dataclass
 class Asset:
-    """
-    The Asset class enables access to the UP42 assets in the storage. Assets are results
-    of orders or results of jobs with download blocks.
-
-    Use an existing asset:
-    ```python
-    asset = up42.initialize_asset(asset_id="8c2dfb4d-bd35-435f-8667-48aea0dce2da")
-    ```
-    """
-
     session = base.Session()
-
-    def __init__(
-        self,
-        asset_id: Optional[str] = None,
-        asset_info: Optional[dict] = None,
-    ):
-        if asset_id is not None:
-            if asset_info is not None:
-                raise ValueError("asset_id and asset_info cannot be provided simultaneously.")
-            else:
-                self.info = self._get_info(asset_id)
-        if asset_info is not None:
-            self.info = asset_info
-        else:
-            if asset_id is None:
-                raise ValueError("Either asset_id or asset_info should be provided in the constructor.")
-
-    def __repr__(self):
-        return self.info.__repr__()
+    info: dict
 
     @property
     def asset_id(self) -> str:
         return self.info["id"]
 
-    def _get_info(self, asset_id: str) -> Dict[str, Any]:
+    @classmethod
+    def get(cls, asset_id: str) -> "Asset":
         url = host.endpoint(f"/v2/assets/{asset_id}/metadata")
-        return self.session.get(url=url).json()
+        metadata = cls.session.get(url=url).json()
+        return cls(info=metadata)
+
+    @classmethod
+    def all(
+        cls,
+        created_after: Optional[Union[str, dt.datetime]] = None,
+        created_before: Optional[Union[str, dt.datetime]] = None,
+        workspace_id: Optional[str] = None,
+        collection_names: Optional[List[str]] = None,
+        producer_names: Optional[List[str]] = None,
+        tags: Optional[List[str]] = None,
+        sources: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        sort_by: Optional[utils.SortingField] = None,
+    ) -> Iterator["Asset"]:
+        params = {
+            "createdAfter": created_after and utils.format_time(created_after),
+            "createdBefore": created_before and utils.format_time(created_before),
+            "workspaceId": workspace_id,
+            "collectionNames": collection_names,
+            "producerNames": producer_names,
+            "tags": tags,
+            "sources": sources,
+            "search": search,
+            "sort": sort_by,
+        }
+        return (cls(info=metadata) for metadata in utils.paged_query(params, "/v2/assets", cls.session))
 
     def _stac_search(self) -> Tuple[pystac_client.Client, pystac_client.ItemSearch]:
         stac_client = utils.stac_client(cast(requests.auth.AuthBase, self.session.auth))

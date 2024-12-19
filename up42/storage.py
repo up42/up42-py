@@ -1,7 +1,7 @@
 import datetime as dt
 import enum
 import itertools
-from typing import Any, List, Literal, Optional, Union
+from typing import List, Literal, Optional, Union
 
 from up42 import asset, base, order, utils
 
@@ -40,9 +40,7 @@ class Storage:
     workspace_id = base.WorkspaceId()
     pystac_client = base.StacClient()
 
-    def _query(self, params: dict[str, Any], endpoint: str, limit: Optional[int]):
-        return list(itertools.islice(utils.paged_query(params, endpoint, self.session), limit))
-
+    @utils.deprecation("Asset::all", "3.0.0")
     def get_assets(
         self,
         created_after: Optional[Union[str, dt.datetime]] = None,
@@ -80,23 +78,26 @@ class Storage:
         Returns:
             A list of Asset objects.
         """
-        params = {
-            "createdAfter": created_after and utils.format_time(created_after),
-            "createdBefore": created_before and utils.format_time(created_before),
-            "workspaceId": workspace_id,
-            "collectionNames": collection_names,
-            "producerNames": producer_names,
-            "tags": tags,
-            "sources": sources,
-            "search": search,
-            "sort": utils.SortingField(sortby, not descending),
-        }
-        assets = self._query(params, "/v2/assets", limit)
-
+        assets = list(
+            itertools.islice(
+                asset.Asset.all(
+                    created_after=created_after,
+                    created_before=created_before,
+                    workspace_id=workspace_id,
+                    collection_names=collection_names,
+                    producer_names=producer_names,
+                    tags=tags,
+                    sources=sources,
+                    search=search,
+                    sort_by=utils.SortingField(sortby, not descending),
+                ),
+                limit,
+            )
+        )
         if return_json:
-            return assets
+            return [a.info for a in assets]
         else:
-            return [asset.Asset(asset_info=info) for info in assets]
+            return assets
 
     @utils.deprecation("Order::all", "3.0.0")
     def get_orders(

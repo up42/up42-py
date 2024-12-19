@@ -29,6 +29,14 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a12
+**Dec 19, 2024**
+- Converted `Asset` to a data class with `get` and `all` methods.
+- Fix authenticated download in `Catalog::download_quicklooks`.
+- Deprecated `Storage::get_assets` in favour of `Asset::all`.
+- Deprecated `up42::initialize_asset` in favour of `Asset::get`.
+- Deprecated `up42::initialize_storage`.
+
 ## 2.2.0a11
 **Dec 19, 2024**
 - Enabled access to authenticated image files via extraction session to a parameter.
