@@ -1,7 +1,7 @@
 import dataclasses
 import datetime as dt
 import pathlib
-from typing import Any, Dict, Iterator, List, Literal, Optional, Tuple, Union, cast
+from typing import Iterator, List, Literal, Optional, Tuple, Union, cast
 
 import pystac
 import pystac_client
@@ -144,6 +144,7 @@ class Asset:
         except Exception as exc:
             raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}") from exc
 
+    @utils.deprecation("Asset::save", "3.0.0")
     def update_metadata(
         self,
         title: Union[Optional[str], object] = NOT_PROVIDED,
@@ -159,15 +160,19 @@ class Asset:
         Returns:
             The updated asset metadata information
         """
-        url = host.endpoint(f"/v2/assets/{self.asset_id}/metadata")
-        payload: Dict[str, Any] = {}
         if title != NOT_PROVIDED:
-            payload.update(title=title)
+            self.title = cast(Optional[str], title)
         if tags != NOT_PROVIDED:
-            payload.update(tags=tags)
-        if payload:
-            self.info = self.session.post(url=url, json=payload).json()
+            self.tags = cast(Optional[list[str]], tags)
+        self.save()
         return self.info
+
+    def save(self):
+        url = host.endpoint(f"/v2/assets/{self.asset_id}/metadata")
+        payload = {"title": self.title, "tags": self.tags}
+        asset = self._from_metadata(self.session.post(url=url, json=payload).json())
+        for field in dataclasses.fields(asset):
+            setattr(self, field.name, getattr(asset, field.name))
 
     def _get_download_url(self, stac_asset_id: Optional[str] = None) -> str:
         if stac_asset_id is None:
