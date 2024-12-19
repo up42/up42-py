@@ -43,9 +43,7 @@ class Asset:
     content_type: str
     producer_name: Optional[str]
     collection_name: Optional[str]
-    geospatial_metadata_extraction_status: Optional[
-        Literal["SUCCESSFUL", "FAILED", "IN_PROGRESS", "NOT_PROCESSED"]
-    ]
+    geospatial_metadata_extraction_status: Optional[Literal["SUCCESSFUL", "FAILED", "IN_PROGRESS", "NOT_PROCESSED"]]
     title: Optional[str]
     tags: Optional[list[str]]
     info: dict
@@ -71,9 +69,7 @@ class Asset:
             content_type=metadata["contentType"],
             producer_name=metadata.get("producerName"),
             collection_name=metadata.get("collectionName"),
-            geospatial_metadata_extraction_status=metadata.get(
-                "geospatialMetadataExtractionStatus"
-            ),
+            geospatial_metadata_extraction_status=metadata.get("geospatialMetadataExtractionStatus"),
             title=metadata.get("title"),
             tags=metadata.get("tags"),
             info=metadata,
@@ -108,9 +104,7 @@ class Asset:
             "search": search,
             "sort": sort_by,
         }
-        return map(
-            cls._from_metadata, utils.paged_query(params, "/v2/assets", cls.session)
-        )
+        return map(cls._from_metadata, utils.paged_query(params, "/v2/assets", cls.session))
 
     @property
     @_retry
@@ -131,9 +125,7 @@ class Asset:
             stac_search = self.stac_client.search(filter=filter_by_asset_id)
             return stac_search.item_collection()
         except Exception as exc:
-            raise ValueError(
-                f"No STAC metadata information available for this asset {self.asset_id}"
-            ) from exc
+            raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}") from exc
 
     @property
     @_retry
@@ -250,9 +242,7 @@ class Asset:
         """
         logger.info("Downloading STAC asset %s", stac_asset.title)
         if output_directory is None:
-            output_directory = (
-                pathlib.Path.cwd() / f"asset_{self.asset_id}/{stac_asset.title}"
-            )
+            output_directory = pathlib.Path.cwd() / f"asset_{self.asset_id}/{stac_asset.title}"
         else:
             output_directory = pathlib.Path(output_directory)
         output_directory.mkdir(parents=True, exist_ok=True)
