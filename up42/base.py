@@ -82,6 +82,10 @@ authenticate = workspace.authenticate
 get_credits_balance = workspace.get_credits_balance
 
 
+def stac_client():
+    return utils.stac_client(workspace.auth)
+
+
 class Session:
     def __get__(self, obj, obj_type=None) -> requests.Session:
         return workspace.session
@@ -101,4 +105,4 @@ class WorkspaceId:
 
 class StacClient:
     def __get__(self, obj, obj_type=None) -> pystac_client.Client:
-        return utils.stac_client(workspace.auth)
+        return stac_client()

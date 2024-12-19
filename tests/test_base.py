@@ -72,3 +72,11 @@ class TestDescriptors:
         record = ActiveRecord()
         assert isinstance(record.stac_client, pystac_client.Client)
         assert requests_mock.called
+
+
+class TestStacClient:
+    def test_should_provide_stac_client(self, requests_mock: req_mock.Mocker):
+        requests_mock.get(constants.URL_STAC_CATALOG, json=constants.STAC_CATALOG_RESPONSE)
+        stac_client = base.stac_client()
+        assert isinstance(stac_client, pystac_client.Client)
+        assert requests_mock.called
