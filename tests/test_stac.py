@@ -1,3 +1,6 @@
+import datetime
+import uuid
+
 import pystac
 import pytest
 import requests_mock as req_mock
@@ -33,3 +36,18 @@ class TestFileProvider:
         asset = pystac.Asset(href=STAC_ASSET_HREF)
         expected = utils.ImageFile(url=DOWNLOAD_URL)
         assert asset.file == expected  # type: ignore
+
+
+class TestUpdateItem:
+    def test_should_update_item_metadata(self):
+        title = "title"
+        tags = ["tags"]
+        item = pystac.Item(
+            id=str(uuid.uuid4()),
+            collection=str(uuid.uuid4()),
+            geometry=None,
+            bbox=None,
+            datetime=datetime.datetime.now(),
+            properties={"up42-user:title": title, "up42-user:tags": tags},
+        )
+        item.update()  # type: ignore
