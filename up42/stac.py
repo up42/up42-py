@@ -27,18 +27,19 @@ class FileProvider:
 class UpdateItem:
     session = base.Session()
 
-    def __call__(self, instance):
-        url = host.endpoint(f"/v2/assets/stac/collections/{instance.collection_id}/items/{instance.id}")
-        response = self.session.patch(
-            url=url,
-            json={
-                "up42-user:title": instance.properties["up42-user:title"],
-                "up42-user:tags": instance.properties["up42-user:tags"],
-            },
-        ).json()
-        instance.properties.update(
-            {"up42-user:title": response["up42-user:title"], "up42-user:tags": response["up42-user:tags"]}
+    def __call__(self, item):
+        url = host.endpoint(f"/v2/assets/stac/collections/{item.collection_id}/items/{item.id}")
+        response = pystac.Item.from_dict(
+            self.session.patch(
+                url=url,
+                json={
+                    "up42-user:title": item.properties.get("up42-user:title"),
+                    "up42-user:tags": item.properties.get("up42-user:tags"),
+                },
+            ).json()
         )
+        for key, value in vars(response).items():
+            setattr(item, key, value)
 
 
 def extend():

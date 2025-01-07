@@ -5,7 +5,7 @@ import pystac
 import pytest
 import requests_mock as req_mock
 
-from tests import constants
+from tests import constants, helpers
 from up42 import stac, utils
 
 
@@ -39,15 +39,29 @@ class TestFileProvider:
 
 
 class TestUpdateItem:
-    def test_should_update_item_metadata(self):
-        title = "title"
-        tags = ["tags"]
+    def test_should_update_item_metadata(self, requests_mock: req_mock.Mocker):
         item = pystac.Item(
             id=str(uuid.uuid4()),
             collection=str(uuid.uuid4()),
             geometry=None,
             bbox=None,
             datetime=datetime.datetime.now(),
-            properties={"up42-user:title": title, "up42-user:tags": tags},
+            properties={"up42-user:title": "title", "up42-user:tags": ["tag"]},
         )
+        response = item.to_dict()
+        response["properties"] |= {"up42-user:title": "response-title", "up42-user:tags": ["response-tags"]}
+        requests_mock.patch(
+            url=f"/v2/assets/stac/collections/{item.collection_id}/items/{item.id}",
+            json=response,
+            additional_matcher=helpers.match_request_body(
+                {
+                    "up42-user:title": item.properties["up42-user:title"],
+                    "up42-user:tags": item.properties["up42-user:tags"],
+                }
+            ),
+        )
+
         item.update()  # type: ignore
+
+        assert item.properties["up42-user:title"] == response["properties"]["up42-user:title"]
+        assert item.properties["up42-user:tags"] == response["properties"]["up42-user:tags"]
