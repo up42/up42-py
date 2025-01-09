@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import pystac
 
@@ -74,7 +74,7 @@ class Up42Extension:
 
 
 class Up42ExtensionProvider:
-    def __get__(self, obj: Optional[pystac.Item | pystac.Collection], obj_type=None):
+    def __get__(self, obj: Optional[Union[pystac.Item, pystac.Collection]], obj_type=None):
         if obj:
             if obj_type == pystac.Item:
                 return Up42Extension(obj.properties)  # type: ignore
