@@ -1,4 +1,3 @@
-import dataclasses
 from typing import Optional
 
 import pystac
@@ -43,34 +42,35 @@ class UpdateItem:
             setattr(item, key, value)
 
 
-@dataclasses.dataclass
-class Up42Extension:
-    title: str | None
-    tags: list[str] | None
-    product_id: str | None
-    collection_name: str | None
-    modality: str | None
-    order_id: str | None
-    asset_id: str | None
-    account_id: str | None
-    workspace_id: str | None
-    job_id: str | None
-    source: str | None
-    metadata_version: str | None
+class Up42ExtensionProperty:
+    key: str
 
-    def __init__(self, properties: dict):
-        self.title = properties.get("up42-user:title")
-        self.tags = properties.get("up42-user:tags")
-        self.product_id = properties.get("up42-product:product_id")
-        self.collection_name = properties.get("up42-product:collection_name")
-        self.modality = properties.get("up42-product:modality")
-        self.order_id = properties.get("up42-order:order_id")
-        self.asset_id = properties.get("up42-system:asset_id")
-        self.account_id = properties.get("up42-system:account_id")
-        self.workspace_id = properties.get("up42-system:workspace_id")
-        self.job_id = properties.get("up42-system:job_id")
-        self.source = properties.get("up42-system:source")
-        self.metadata_version = properties.get("up42-system:metadata_version")
+    def __init__(self, key):
+        self.key = key
+
+    def __get__(self, obj, obj_type=None):
+        return obj._reference.get(self.key)
+
+    def __set__(self, obj, value):
+        obj._reference[self.key] = value
+
+
+class Up42Extension:
+    title = Up42ExtensionProperty("up42-user:title")
+    tags = Up42ExtensionProperty("up42-user:tags")
+    product_id = Up42ExtensionProperty("up42-product:product_id")
+    collection_name = Up42ExtensionProperty("up42-product:collection_name")
+    modality = Up42ExtensionProperty("up42-product:modality")
+    order_id = Up42ExtensionProperty("up42-order:order_id")
+    asset_id = Up42ExtensionProperty("up42-system:asset_id")
+    account_id = Up42ExtensionProperty("up42-system:account_id")
+    workspace_id = Up42ExtensionProperty("up42-system:workspace_id")
+    job_id = Up42ExtensionProperty("up42-system:job_id")
+    source = Up42ExtensionProperty("up42-system:source")
+    metadata_version = Up42ExtensionProperty("up42-system:metadata_version")
+
+    def __init__(self, reference: dict):
+        self._reference = reference
 
 
 class Up42ExtensionProvider:
