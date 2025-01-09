@@ -46,25 +46,29 @@ class TestUpdateItem:
             geometry=None,
             bbox=None,
             datetime=dt.datetime.now(),
-            properties={"up42-user:title": "title", "up42-user:tags": ["tag"]},
+            properties={stac.UP42_USER_TITLE_KEY: "title", stac.UP42_USER_TAGS_KEY: ["tag"]},
         )
         response = item.to_dict()
-        response["properties"] |= {"up42-user:title": "response-title", "up42-user:tags": ["response-tags"]}
+        response["properties"] |= {
+            stac.UP42_USER_TITLE_KEY: "response-title",
+            stac.UP42_USER_TAGS_KEY: ["response-tags"],
+        }
+
         requests_mock.patch(
             url=f"/v2/assets/stac/collections/{item.collection_id}/items/{item.id}",
             json=response,
             additional_matcher=helpers.match_request_body(
                 {
-                    "up42-user:title": item.properties["up42-user:title"],
-                    "up42-user:tags": item.properties["up42-user:tags"],
+                    stac.UP42_USER_TITLE_KEY: item.properties[stac.UP42_USER_TITLE_KEY],
+                    stac.UP42_USER_TAGS_KEY: item.properties[stac.UP42_USER_TAGS_KEY],
                 }
             ),
         )
 
         item.update()  # type: ignore
 
-        assert item.properties["up42-user:title"] == response["properties"]["up42-user:title"]
-        assert item.properties["up42-user:tags"] == response["properties"]["up42-user:tags"]
+        assert item.properties[stac.UP42_USER_TITLE_KEY] == response["properties"][stac.UP42_USER_TITLE_KEY]
+        assert item.properties[stac.UP42_USER_TAGS_KEY] == response["properties"][stac.UP42_USER_TAGS_KEY]
 
 
 extensions = {

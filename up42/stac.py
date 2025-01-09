@@ -24,6 +24,10 @@ class FileProvider:
             raise AttributeError
 
 
+UP42_USER_TITLE_KEY = "up42-user:title"
+UP42_USER_TAGS_KEY = "up42-user:tags"
+
+
 class UpdateItem:
     session = base.Session()
 
@@ -33,8 +37,8 @@ class UpdateItem:
             self.session.patch(
                 url=url,
                 json={
-                    "up42-user:title": item.properties.get("up42-user:title"),
-                    "up42-user:tags": item.properties.get("up42-user:tags"),
+                    UP42_USER_TITLE_KEY: item.properties.get(UP42_USER_TITLE_KEY),
+                    UP42_USER_TAGS_KEY: item.properties.get(UP42_USER_TAGS_KEY),
                 },
             ).json()
         )
@@ -86,7 +90,9 @@ class Up42ExtensionProvider:
 
 def extend():
     pystac.Asset.file = FileProvider()  # type: ignore
+
     update_item = UpdateItem()
     pystac.Item.update = lambda self: update_item(self)  # type: ignore # pylint: disable=unnecessary-lambda
+
     pystac.Item.up42 = Up42ExtensionProvider()  # type: ignore
     pystac.Collection.up42 = Up42ExtensionProvider()  # type: ignore
