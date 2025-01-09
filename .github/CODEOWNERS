@@ -1,4 +1,6 @@
 * @up42-eva @up42/sdk-team
+pyproject.toml @up42/user-sdk @up42/data-sdk @up42/processing-sdk
+CHANGELOG.md @up42/user-sdk @up42/data-sdk @up42/processing-sdk
 /up42/http @up42/user-sdk
 /up42/asset.py @up42/processing-sdk
 /up42/base.py @up42/user-sdk
