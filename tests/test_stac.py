@@ -103,67 +103,40 @@ MAPPING = [
 
 
 class TestUp42ExtensionProvider:
+    item = pystac.Item(
+        id=str(uuid.uuid4()),
+        collection=str(uuid.uuid4()),
+        geometry=None,
+        bbox=None,
+        datetime=dt.datetime.now(),
+        properties=extensions,
+    )
+    collection = pystac.Collection(
+        id=str(uuid.uuid4()),
+        description="",
+        extent=pystac.Extent(
+            spatial=pystac.SpatialExtent(bboxes=[[1.0, 2.0, 3.0, 4.0]]),
+            temporal=pystac.TemporalExtent(intervals=[[dt.datetime.now(), None]]),
+        ),
+        extra_fields=extensions,
+    )
+
     @pytest.mark.parametrize("entity_class", [pystac.Item, pystac.Collection])
     def test_fails_as_class_property(self, entity_class):
         with pytest.raises(AttributeError):
             _ = entity_class.up42  # type: ignore
 
-    @pytest.mark.parametrize(
-        "entity",
-        [
-            pystac.Item(
-                id=str(uuid.uuid4()),
-                collection=str(uuid.uuid4()),
-                geometry=None,
-                bbox=None,
-                datetime=dt.datetime.now(),
-                properties=extensions,
-            ),
-            pystac.Collection(
-                id=str(uuid.uuid4()),
-                description="",
-                extent=pystac.Extent(
-                    spatial=pystac.SpatialExtent(bboxes=[[1.0, 2.0, 3.0, 4.0]]),
-                    temporal=pystac.TemporalExtent(intervals=[[dt.datetime.now(), None]]),
-                ),
-                extra_fields=extensions,
-            ),
-        ],
-    )
-    @pytest.mark.parametrize("mapping", MAPPING)
-    def test_should_provide_up42_extensions(self, entity, mapping):
-        assert getattr(entity.up42, mapping[0]) == extensions[mapping[1]]  # type: ignore
+    @pytest.mark.parametrize("entity", [item, collection])
+    @pytest.mark.parametrize("attribute, key", MAPPING)
+    def test_should_provide_up42_extensions(self, entity, attribute, key):
+        assert getattr(entity.up42, attribute) == extensions[key]  # type: ignore
 
     @pytest.mark.parametrize(
-        "entity",
-        [
-            pystac.Item(
-                id=str(uuid.uuid4()),
-                collection=str(uuid.uuid4()),
-                geometry=None,
-                bbox=None,
-                datetime=dt.datetime.now(),
-                properties=extensions.copy(),
-            ),
-            pystac.Collection(
-                id=str(uuid.uuid4()),
-                description="",
-                extent=pystac.Extent(
-                    spatial=pystac.SpatialExtent(bboxes=[[1.0, 2.0, 3.0, 4.0]]),
-                    temporal=pystac.TemporalExtent(intervals=[[dt.datetime.now(), None]]),
-                ),
-                extra_fields=extensions.copy(),
-            ),
-        ],
+        "entity, entity_dict",
+        [(item, item.properties), (collection, collection.extra_fields)],
     )
-    @pytest.mark.parametrize("mapping", MAPPING)
-    def test_should_set_up42_extension(self, entity, mapping):
+    @pytest.mark.parametrize("attribute, key", MAPPING)
+    def test_should_set_up42_extension(self, entity, entity_dict, attribute, key):
         new_value = "new-value"
-        setattr(entity.up42, mapping[0], new_value)
-
-        if isinstance(entity, pystac.Item):
-            entity_dict = entity.properties
-        else:
-            entity_dict = entity.extra_fields
-
-        assert entity_dict[mapping[1]] == new_value
+        setattr(entity.up42, attribute, new_value)  # type: ignore
+        assert entity_dict[key] == new_value
