@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import pystac
 
@@ -46,7 +46,53 @@ class UpdateItem:
             setattr(item, key, value)
 
 
+class Up42ExtensionProperty:
+    key: str
+
+    def __init__(self, key):
+        self.key = key
+
+    def __get__(self, obj, obj_type=None):
+        return obj._reference.get(self.key)
+
+    def __set__(self, obj, value):
+        obj._reference[self.key] = value
+
+
+class Up42Extension:
+    title = Up42ExtensionProperty("up42-user:title")
+    tags = Up42ExtensionProperty("up42-user:tags")
+    product_id = Up42ExtensionProperty("up42-product:product_id")
+    collection_name = Up42ExtensionProperty("up42-product:collection_name")
+    modality = Up42ExtensionProperty("up42-product:modality")
+    order_id = Up42ExtensionProperty("up42-order:order_id")
+    asset_id = Up42ExtensionProperty("up42-system:asset_id")
+    account_id = Up42ExtensionProperty("up42-system:account_id")
+    workspace_id = Up42ExtensionProperty("up42-system:workspace_id")
+    job_id = Up42ExtensionProperty("up42-system:job_id")
+    source = Up42ExtensionProperty("up42-system:source")
+    metadata_version = Up42ExtensionProperty("up42-system:metadata_version")
+
+    def __init__(self, reference: dict):
+        self._reference = reference
+
+
+class Up42ExtensionProvider:
+    def __get__(self, obj: Optional[Union[pystac.Item, pystac.Collection]], obj_type=None):
+        if obj:
+            if obj_type == pystac.Item:
+                return Up42Extension(obj.properties)  # type: ignore
+            else:
+                return Up42Extension(obj.extra_fields)  # type: ignore
+        else:
+            raise AttributeError
+
+
 def extend():
     pystac.Asset.file = FileProvider()  # type: ignore
+
     update_item = UpdateItem()
     pystac.Item.update = lambda self: update_item(self)  # type: ignore # pylint: disable=unnecessary-lambda
+
+    pystac.Item.up42 = Up42ExtensionProvider()  # type: ignore
+    pystac.Collection.up42 = Up42ExtensionProvider()  # type: ignore
