@@ -71,7 +71,7 @@ class TestUpdateItem:
         assert item.properties[stac.UP42_USER_TAGS_KEY] == response["properties"][stac.UP42_USER_TAGS_KEY]
 
 
-extensions = {
+EXTENSIONS = {
     "up42-user:title": "title",
     "up42-user:tags": ["tag"],
     "up42-product:product_id": "product-id",
@@ -109,7 +109,7 @@ class TestUp42ExtensionProvider:
         geometry=None,
         bbox=None,
         datetime=dt.datetime.now(),
-        properties=extensions,
+        properties=EXTENSIONS,
     )
     collection = pystac.Collection(
         id=str(uuid.uuid4()),
@@ -118,7 +118,7 @@ class TestUp42ExtensionProvider:
             spatial=pystac.SpatialExtent(bboxes=[[1.0, 2.0, 3.0, 4.0]]),
             temporal=pystac.TemporalExtent(intervals=[[dt.datetime.now(), None]]),
         ),
-        extra_fields=extensions,
+        extra_fields=EXTENSIONS,
     )
 
     @pytest.mark.parametrize("entity_class", [pystac.Item, pystac.Collection])
@@ -129,7 +129,7 @@ class TestUp42ExtensionProvider:
     @pytest.mark.parametrize("entity", [item, collection])
     @pytest.mark.parametrize("attribute, key", MAPPING)
     def test_should_provide_up42_extensions(self, entity, attribute, key):
-        assert getattr(entity.up42, attribute) == extensions[key]  # type: ignore
+        assert getattr(entity.up42, attribute) == EXTENSIONS[key]  # type: ignore
 
     @pytest.mark.parametrize(
         "entity, entity_dict",
