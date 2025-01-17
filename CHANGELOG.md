@@ -29,6 +29,10 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a21
+**Jan 16, 2025**
+- Added `up42` property to `pystac::Item` and `pystac::Collection` to get and set UP42 STAC extensions data
+
 ## 2.2.0a20
 **Jan 9, 2025**
 - Added `update` extension method to `pystac::Item`
