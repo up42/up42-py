@@ -2,7 +2,7 @@
 SDK conveniance functionality that is made available on the up42 import object (in the init) and is not directly
 related to API calls.
 """
-
+import contextlib
 import logging
 import pathlib
 from typing import Dict, Union
@@ -35,7 +35,9 @@ def read_vector_file(filename: str = "aoi.geojson", as_dataframe: bool = False) 
 
     if suffix == ".kml":
         # pylint: disable=no-member
-        geopandas.io.file.fiona.drvsupport.supported_drivers["KML"] = "rw"
+        with contextlib.suppress(AttributeError):
+            # This is needed for geopandas < 1
+            geopandas.io.file.fiona.drvsupport.supported_drivers["KML"] = "rw"
         df = geopandas.read_file(filename, driver="KML")
     elif suffix == ".wkt":
         with open(filename, encoding="utf-8") as wkt_file:
