@@ -194,7 +194,7 @@ class TestTasking:
             query_params["orderId"] = order_id
         if decision:
             query_params["decision"] = decision
-        base_url = f"{constants.API_HOST}/v2/tasking/feasibility"
+        base_url = f"{constants.API_HOST}/v2/tasking/feasibility-studies"
         expected = [{"id": f"id{idx}"} for idx in [1, 2, 3, 4]]
         for page in [0, 1]:
             query_params["page"] = page
@@ -219,7 +219,7 @@ class TestTasking:
     def test_should_choose_feasibility(self, requests_mock: req_mock.Mocker, tasking_obj: tasking.Tasking):
         accepted_option_id = "accepted-option-id"
         payload = {"acceptedOptionId": accepted_option_id}
-        url = f"{constants.API_HOST}/v2/tasking/feasibility/{FEASIBILITY_ID}"
+        url = f"{constants.API_HOST}/v2/tasking/feasibility-studies/{FEASIBILITY_ID}"
         expected = {
             "id": FEASIBILITY_ID,
             "decisionOption": {
