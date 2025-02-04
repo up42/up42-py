@@ -31,7 +31,7 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 ## 2.2.0a23
 **Feb 3, 2025**
-- Updated `QuotationSorting`.
+- Added sorting fields to `QuotationSorting`.
 
 ## 2.2.0a22
 **Jan 17, 2025**

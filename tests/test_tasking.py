@@ -291,8 +291,18 @@ class TestQuotation:
     @pytest.mark.parametrize("quotation_id", [None, QUOTATION_ID])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize("order_id", [None, constants.ORDER_ID])
-    @pytest.mark.parametrize("decision", [None, ["ACCEPTED", "REJECTED", "NOT_DECIDED"], ["ACCEPTED"]])
-    @pytest.mark.parametrize("sort_by", [None, tasking.QuotationSorting.created_at.asc])
+    @pytest.mark.parametrize("decision", [None, ["ACCEPTED", "REJECTED", "NOT_DECIDED"], ["ACCEPTED"]], ids=str)
+    @pytest.mark.parametrize(
+        "sort_by",
+        [
+            None,
+            tasking.QuotationSorting.created_at.asc,
+            tasking.QuotationSorting.credits_price.asc,
+            tasking.QuotationSorting.decided_at.asc,
+            tasking.QuotationSorting.updated_at.asc,
+        ],
+        ids=str,
+    )
     def test_should_get_all(
         self,
         requests_mock: req_mock.Mocker,
