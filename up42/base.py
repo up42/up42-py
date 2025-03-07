@@ -1,7 +1,7 @@
 import logging
 import pathlib
 import warnings
-from typing import Any, Optional, Union, Literal
+from typing import Any, Literal, Optional, Union
 
 import pystac_client
 import requests
