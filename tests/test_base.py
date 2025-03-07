@@ -6,10 +6,12 @@ import pytest
 import requests_mock as req_mock
 
 from tests import constants
-from up42 import base
+from up42 import base, host
 
 TOKEN_ENDPOINT = "https://auth.up42.com/realms/public/protocol/openid-connect/token"
+SA_TOKEN_ENDPOINT = "https://auth.sa.up42.com/realms/public/protocol/openid-connect/token"
 USER_INFO_ENDPOINT = "https://auth.up42.com/realms/public/protocol/openid-connect/userinfo"
+SA_USER_INFO_ENDPOINT = "https://auth.sa.up42.com/realms/public/protocol/openid-connect/userinfo"
 
 
 @pytest.mark.no_workspace
@@ -26,6 +28,21 @@ class TestWorkspace:
         requests_mock.post(TOKEN_ENDPOINT, json={"access_token": constants.TOKEN, "expires_in": 5 * 60})
         requests_mock.get(url=USER_INFO_ENDPOINT, json={"sub": constants.WORKSPACE_ID})
         base.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD)
+        assert host.REGION == "eu"
+        assert base.workspace.id == constants.WORKSPACE_ID
+
+    def test_should_authenticate_with_region_eu(self, requests_mock):
+        requests_mock.post(TOKEN_ENDPOINT, json={"access_token": constants.TOKEN, "expires_in": 5 * 60})
+        requests_mock.get(url=USER_INFO_ENDPOINT, json={"sub": constants.WORKSPACE_ID})
+        base.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD, region="eu")
+        assert host.REGION == "eu"
+        assert base.workspace.id == constants.WORKSPACE_ID
+
+    def test_should_authenticate_with_region_sa(self, requests_mock):
+        requests_mock.post(SA_TOKEN_ENDPOINT, json={"access_token": constants.TOKEN, "expires_in": 5 * 60})
+        requests_mock.get(url=SA_USER_INFO_ENDPOINT, json={"sub": constants.WORKSPACE_ID})
+        base.workspace.authenticate(username=constants.USER_EMAIL, password=constants.PASSWORD, region="sa")
+        assert host.REGION == "sa"
         assert base.workspace.id == constants.WORKSPACE_ID
 
     def test_should_get_credits_balance(self, requests_mock: req_mock.Mocker):

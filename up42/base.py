@@ -1,7 +1,7 @@
 import logging
 import pathlib
 import warnings
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, Literal
 
 import pystac_client
 import requests
@@ -46,6 +46,7 @@ class _Workspace:
         cfg_file: Optional[Union[str, pathlib.Path]] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
+        region: Literal["eu", "sa"] = "eu",
     ):
         """
         Authenticate with UP42, either using account credentials or a config JSON file
@@ -56,6 +57,7 @@ class _Workspace:
             username: The username for the UP42 account (email UP42 console).
             password: Password for the UP42 console login.
         """
+        host.REGION = region
         credential_sources = client.collect_credentials(cfg_file, username, password)
         up42_client = client.create(credential_sources, host.token_endpoint())
         logger.info("Authentication with UP42 successful!")
