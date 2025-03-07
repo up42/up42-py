@@ -1,7 +1,6 @@
 import pytest
 
 from up42 import host
-from up42.host import UnsupportedRegion
 
 TOKEN_ENDPOINT = "https://auth.up42.com/realms/public/protocol/openid-connect/token"
 SA_TOKEN_ENDPOINT = "https://auth.sa.up42.com/realms/public/protocol/openid-connect/token"
@@ -45,7 +44,7 @@ def test_should_use_correct_token_endpoint_url_for_requested_region(region, expe
 @pytest.mark.parametrize("region", ["us", "jp"])
 def test_should_raise_an_error_when_retrieving_token_for_unknown_region(region):
     host.REGION = region
-    with pytest.raises(UnsupportedRegion):
+    with pytest.raises(host.UnsupportedRegion):
         host.token_endpoint()
 
 @pytest.mark.parametrize(
@@ -68,5 +67,5 @@ def test_should_use_correct_userinfo_endpoint_url_for_requested_region(region, e
 @pytest.mark.parametrize("region", ["us", "jp"])
 def test_should_raise_an_error_when_retrieving_userinfo_for_unknown_region(region):
     host.REGION = region
-    with pytest.raises(UnsupportedRegion):
+    with pytest.raises(host.UnsupportedRegion):
         host.user_info_endpoint()
