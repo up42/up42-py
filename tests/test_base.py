@@ -16,6 +16,12 @@ SA_USER_INFO_ENDPOINT = "https://auth.sa.up42.com/realms/public/protocol/openid-
 
 @pytest.mark.no_workspace
 class TestWorkspace:
+    @pytest.fixture(autouse=True)
+    def reset(self):
+        yield
+
+        host.REGION = "eu"
+
     def test_fails_to_provide_properties_if_not_authenticated(self):
         with pytest.raises(base.UserNotAuthenticated):
             _ = base.workspace.auth
