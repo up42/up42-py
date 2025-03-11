@@ -4,7 +4,12 @@ REGION = "eu"
 
 def endpoint(path: str):
     """Gets endpoint url based on its path."""
-    return f"https://api.up42.{DOMAIN}{path}"
+    if REGION == "eu":
+        return f"https://api.up42.{DOMAIN}{path}"
+    elif REGION == "sa":
+        return f"https://api.sa.up42.{DOMAIN}{path}"
+    raise UnsupportedRegion(f"Region {REGION} is not supported")
+
 
 
 def token_endpoint():
