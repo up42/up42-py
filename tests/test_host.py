@@ -27,6 +27,7 @@ def test_should_use_domain_in_user_info_endpoint_url(domain):
     host.DOMAIN = domain
     assert domain in host.user_info_endpoint()
 
+
 @pytest.mark.parametrize(
     "region, expected",
     [
@@ -50,6 +51,7 @@ def test_should_raise_an_error_when_retrieving_endpoint_for_unknown_region(regio
     host.REGION = region
     with pytest.raises(host.UnsupportedRegion):
         host.endpoint("/some-path")
+
 
 @pytest.mark.parametrize(
     "region, expected",

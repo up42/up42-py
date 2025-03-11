@@ -11,7 +11,6 @@ def endpoint(path: str):
     raise UnsupportedRegion(f"Region {REGION} is not supported")
 
 
-
 def token_endpoint():
     if REGION == "eu":
         return f"https://auth.up42.{DOMAIN}/realms/public/protocol/openid-connect/token"
