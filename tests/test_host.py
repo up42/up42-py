@@ -44,7 +44,7 @@ def test_should_use_correct_token_endpoint_url_for_requested_region(region, expe
     assert expected == host.token_endpoint()
 
 
-@pytest.mark.parametrize("region", ["us", "jp"])
+@pytest.mark.parametrize("region", ["xyz", "abc"])
 def test_should_raise_an_error_when_retrieving_token_for_unknown_region(region):
     host.REGION = region
     with pytest.raises(host.UnsupportedRegion):
@@ -69,7 +69,7 @@ def test_should_use_correct_userinfo_endpoint_url_for_requested_region(region, e
     assert expected == host.user_info_endpoint()
 
 
-@pytest.mark.parametrize("region", ["us", "jp"])
+@pytest.mark.parametrize("region", ["xyz", "abc"])
 def test_should_raise_an_error_when_retrieving_userinfo_for_unknown_region(region):
     host.REGION = region
     with pytest.raises(host.UnsupportedRegion):
