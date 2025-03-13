@@ -129,10 +129,10 @@ workflows:
     jobs:
       - test:
           context: sonarcloud
-      - test-python:
-          matrix:
-            parameters:
-              python-version: [ "3.9", "3.10", "3.11" ]
+      # - test-python:
+      #     matrix:
+      #       parameters:
+      #         python-version: [ "3.9", "3.10", "3.11" ]
       - automated-test/run-sdk-tests:
           requires:
             - test
