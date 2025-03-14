@@ -31,7 +31,7 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 ## 2.2.0a24
 **Mar 14, 2025**
-- Added `region` to `pybase::authenticate` as an optional input type with the possible values being `eu` & `sa`
+- Added `region` as an optional input type to `pybase::authenticate` with the possible values being `eu` & `sa`
 - When authenticating the region gets set globally and used accordingly for all Requests
 
 ## 2.2.0a23
