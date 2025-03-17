@@ -1,8 +1,9 @@
 import pytest
 
+from tests import constants
 from up42 import host
 
-ENDPOINT = "https://api.up42.com/path"
+ENDPOINT = f"{constants.API_HOST}/path"
 SA_ENDPOINT = "https://api.sa.up42.com/path"
 TOKEN_ENDPOINT = "https://auth.up42.com/realms/public/protocol/openid-connect/token"
 SA_TOKEN_ENDPOINT = "https://auth.sa.up42.com/realms/public/protocol/openid-connect/token"

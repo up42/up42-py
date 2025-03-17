@@ -56,6 +56,7 @@ class _Workspace:
             cfg_file: File path to the cfg.json with {username: "...", password: "..."}.
             username: The username for the UP42 account (email UP42 console).
             password: Password for the UP42 console login.
+            region: The desired region to use for all SDK operations.
         """
         host.REGION = region
         credential_sources = client.collect_credentials(cfg_file, username, password)
