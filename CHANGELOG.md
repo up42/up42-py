@@ -29,6 +29,11 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a24
+**Mar 14, 2025**
+- Added `region` as an optional input type to `base::authenticate` with the possible values being `eu` & `sa`
+- When authenticating the region gets set globally and used in `host::user_info_endpoint`, `host::token_endpoint`, `host::endpoint` accordingly
+
 ## 2.2.0a23
 **Mar 13, 2025**
 - Remove deprecated viz dependencies.
