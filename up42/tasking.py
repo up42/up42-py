@@ -207,7 +207,10 @@ class Tasking(catalog.CatalogBase):
 
 
 class QuotationSorting:
-    created_at = utils.SortingField("createdAt")
+    created_at = utils.SortingField(name="createdAt")
+    credits_price = utils.SortingField(name="creditsPrice")
+    decided_at = utils.SortingField(name="decisionAt")
+    updated_at = utils.SortingField(name="updatedAt")
 
 
 @dataclasses.dataclass
