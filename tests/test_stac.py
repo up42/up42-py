@@ -5,7 +5,7 @@ import pystac
 import pytest
 import requests_mock as req_mock
 
-from tests import constants, helpers
+from tests import helpers
 from up42 import stac, utils
 
 
@@ -38,7 +38,7 @@ class TestFileProvider:
     )
     def test_should_provide_image_file_with_signed_url(self, requests_mock: req_mock.Mocker, download_url, stac_href):
         requests_mock.post(
-            url=f"{STAC_ASSET_HREF}/download-url",
+            url=f"{stac_href}/download-url",
             json={"url": download_url},
         )
         asset = pystac.Asset(href=stac_href)
