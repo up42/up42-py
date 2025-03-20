@@ -1,6 +1,5 @@
 TOKEN = "token_123"
 API_HOST = "https://api.up42.com"
-SA_API_HOST = "https://api.sa.up42.com"
 WORKSPACE_ID = "workspace_id_123"
 USER_EMAIL = "user@up42.com"
 PASSWORD = "<PASSWORD>"

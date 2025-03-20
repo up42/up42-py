@@ -15,10 +15,7 @@ def extend_stac_objects():
 
 
 ASSET_ID = "asset-id"
-DOWNLOAD_URL = f"{constants.API_HOST}/abcdef.tgz"
-STAC_ASSET_HREF = f"{constants.API_HOST}/v2/assets/{ASSET_ID}"
-SA_DOWNLOAD_URL = f"{constants.SA_API_HOST}/abcdef.tgz"
-SA_STAC_ASSET_HREF = f"{constants.SA_API_HOST}/v2/assets/{ASSET_ID}"
+BASE_URLS = ["https://api.up42.com", "https://api.sa.up42.com"]
 
 
 class TestFileProvider:
@@ -34,13 +31,9 @@ class TestFileProvider:
         "download_url, stac_href",
         [
             [
-                DOWNLOAD_URL,
-                STAC_ASSET_HREF,
-            ],
-            [
-                SA_DOWNLOAD_URL,
-                SA_STAC_ASSET_HREF,
-            ],
+                (f"{base_url}/abcdef.tgz", f"{base_url}/v2/assets/{ASSET_ID}")
+                for base_url in BASE_URLS
+            ]
         ],
     )
     def test_should_provide_image_file_with_signed_url(self, requests_mock: req_mock.Mocker, download_url, stac_href):
