@@ -14,7 +14,7 @@ class FileProvider:
 
     def __get__(self, obj: Optional[pystac.Asset], obj_type=None) -> Optional[utils.ImageFile]:
         if obj:
-            if obj.href.startswith("https://api.up42"):
+            if obj.href.startswith(host.endpoint("")):
                 url = obj.href + "/download-url"
                 signed_url = self.session.post(url=url).json()["url"]
                 return utils.ImageFile(url=signed_url)
