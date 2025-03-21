@@ -36,7 +36,9 @@ class TestFileProvider:
             ]
         ],
     )
-    def test_should_provide_image_file_with_signed_url(self, requests_mock: req_mock.Mocker, download_url, stac_href):
+    def test_should_provide_image_file_with_signed_url(
+        self, requests_mock: req_mock.Mocker, download_url, stac_href
+    ):
         requests_mock.post(
             url=f"{stac_href}/download-url",
             json={"url": download_url},
@@ -54,7 +56,10 @@ class TestUpdateItem:
             geometry=None,
             bbox=None,
             datetime=dt.datetime.now(),
-            properties={stac.UP42_USER_TITLE_KEY: "title", stac.UP42_USER_TAGS_KEY: ["tag"]},
+            properties={
+                stac.UP42_USER_TITLE_KEY: "title",
+                stac.UP42_USER_TAGS_KEY: ["tag"],
+            },
         )
         response = item.to_dict()
         response["properties"] |= {
@@ -75,8 +80,14 @@ class TestUpdateItem:
 
         item.update()  # type: ignore
 
-        assert item.properties[stac.UP42_USER_TITLE_KEY] == response["properties"][stac.UP42_USER_TITLE_KEY]
-        assert item.properties[stac.UP42_USER_TAGS_KEY] == response["properties"][stac.UP42_USER_TAGS_KEY]
+        assert (
+            item.properties[stac.UP42_USER_TITLE_KEY]
+            == response["properties"][stac.UP42_USER_TITLE_KEY]
+        )
+        assert (
+            item.properties[stac.UP42_USER_TAGS_KEY]
+            == response["properties"][stac.UP42_USER_TAGS_KEY]
+        )
 
 
 EXTENSIONS = {
