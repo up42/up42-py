@@ -188,7 +188,7 @@ class Tasking(catalog.CatalogBase):
             "decision": decision,
             "sort": utils.SortingField(sortby, not descending),
         }
-        return list(utils.paged_query(params, "/v2/tasking/feasibility", self.session))
+        return list(utils.paged_query(params, "/v2/tasking/feasibility-studies", self.session))
 
     @utils.deprecation(None, "3.0.0")
     def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
@@ -202,7 +202,7 @@ class Tasking(catalog.CatalogBase):
         Returns:
             dict: The confirmation to the decided quotation plus metadata.
         """
-        url = host.endpoint(f"/v2/tasking/feasibility/{feasibility_id}")
+        url = host.endpoint(f"/v2/tasking/feasibility-studies/{feasibility_id}")
         return self.session.patch(url=url, json={"acceptedOptionId": accepted_option_id}).json()
 
 

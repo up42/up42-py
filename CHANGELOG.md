@@ -29,6 +29,11 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+
+## 2.2.0a26
+**Mar 20, 2025**
+- Updated feasibility endpoint URL.
+
 ## 2.2.0a25
 **Mar 19, 2025**
 - Added sorting fields to `QuotationSorting`.
