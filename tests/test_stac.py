@@ -29,7 +29,7 @@ class TestFileProvider:
 
     @pytest.mark.parametrize(
         "download_url, stac_href",
-        [[(f"{base_url}/abcdef.tgz", f"{base_url}/v2/assets/{ASSET_ID}") for base_url in BASE_URLS]],
+        [(f"{base_url}/abcdef.tgz", f"{base_url}/v2/assets/{ASSET_ID}") for base_url in BASE_URLS],
     )
     def test_should_provide_image_file_with_signed_url(self, requests_mock: req_mock.Mocker, download_url, stac_href):
         requests_mock.post(
