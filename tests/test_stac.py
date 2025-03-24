@@ -46,7 +46,10 @@ class TestUpdateItem:
             geometry=None,
             bbox=None,
             datetime=dt.datetime.now(),
-            properties={stac.UP42_USER_TITLE_KEY: "title", stac.UP42_USER_TAGS_KEY: ["tag"]},
+            properties={
+                stac.UP42_USER_TITLE_KEY: "title",
+                stac.UP42_USER_TAGS_KEY: ["tag"],
+            },
         )
         response = item.to_dict()
         response["properties"] |= {
