@@ -33,6 +33,10 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **Mar 20, 2025**
 - Adjust `FileProvider::_get_` to check href url that starts with the current region base api url.
 
+## 2.2.0a26
+**Mar 20, 2025**
+- Updated feasibility endpoint URL.
+
 ## 2.2.0a25
 **Mar 19, 2025**
 - Added sorting fields to `QuotationSorting`.
