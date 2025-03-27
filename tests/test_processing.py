@@ -135,6 +135,17 @@ def eula_accepted(requests_mock: req_mock.Mocker):
 
 
 class TestJobTemplate:
+
+    def test_should_be_invalid_if_process_not_found(self, requests_mock: req_mock.Mocker):
+        error = processing.ValidationError(
+            name="ProcessNotFound",
+            message=f"The process {PROCESS_ID} does not exist.",
+        )
+        requests_mock.get(PROCESS_URL, status_code=404)
+        template = SampleJobTemplate(title=TITLE)
+        assert not template.is_valid
+        assert template.errors == {error}
+
     def test_should_be_invalid_if_eula_not_accepted(self, requests_mock: req_mock.Mocker):
         error = processing.ValidationError(
             name="EulaNotAccepted",
