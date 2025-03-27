@@ -129,12 +129,24 @@ class SampleJobTemplate(processing.JobTemplate):
 
 
 @pytest.fixture
-def eula_accepted(requests_mock: req_mock.Mocker):
+def process_found_and_eula_accepted(requests_mock: req_mock.Mocker):
     requests_mock.get(PROCESS_URL, json=PROCESS_SUMMARY)
     requests_mock.get(EULA_URL, json={"isAccepted": True})
 
 
 class TestJobTemplate:
+    def test_should_fail_to_construct_if_getting_process_fails(self, requests_mock: req_mock.Mocker):
+        while (error_code := random.randint(400, 599)) == 404:
+            pass
+
+        requests_mock.get(
+            PROCESS_URL,
+            status_code=error_code,
+        )
+        with pytest.raises(requests.exceptions.HTTPError) as error:
+            _ = SampleJobTemplate(title=TITLE)
+        assert error.value.response.status_code == error_code
+
     def test_should_be_invalid_if_process_not_found(self, requests_mock: req_mock.Mocker):
         error = processing.ValidationError(
             name="ProcessNotFound",
@@ -156,7 +168,7 @@ class TestJobTemplate:
         assert not template.is_valid
         assert template.errors == {error}
 
-    @pytest.mark.usefixtures("eula_accepted")
+    @pytest.mark.usefixtures("process_found_and_eula_accepted")
     def test_fails_to_construct_if_validation_fails(self, requests_mock: req_mock.Mocker):
         error_code = random.randint(430, 599)
         requests_mock.post(
@@ -168,7 +180,7 @@ class TestJobTemplate:
             _ = SampleJobTemplate(title=TITLE)
         assert error.value.response.status_code == error_code
 
-    @pytest.mark.usefixtures("eula_accepted")
+    @pytest.mark.usefixtures("process_found_and_eula_accepted")
     def test_should_be_invalid_if_inputs_are_malformed(self, requests_mock: req_mock.Mocker):
         error = processing.ValidationError(name="InvalidSchema", message="data.inputs must contain ['item'] properties")
         requests_mock.post(
@@ -181,7 +193,7 @@ class TestJobTemplate:
         assert not template.is_valid
         assert template.errors == {error}
 
-    @pytest.mark.usefixtures("eula_accepted")
+    @pytest.mark.usefixtures("process_found_and_eula_accepted")
     def test_should_be_invalid_if_inputs_are_invalid(self, requests_mock: req_mock.Mocker):
         requests_mock.post(
             VALIDATION_URL,
@@ -197,7 +209,7 @@ class TestJobTemplate:
         assert not template.is_valid
         assert template.errors == {INVALID_TITLE_ERROR}
 
-    @pytest.mark.usefixtures("eula_accepted")
+    @pytest.mark.usefixtures("process_found_and_eula_accepted")
     def test_fails_to_construct_if_evaluation_fails(self, requests_mock: req_mock.Mocker):
         error_code = random.randint(400, 599)
         requests_mock.post(
@@ -222,7 +234,7 @@ class TestJobTemplate:
             processing.Cost(strategy="area", credits=1, size=5, unit="SKM"),
         ],
     )
-    @pytest.mark.usefixtures("eula_accepted")
+    @pytest.mark.usefixtures("process_found_and_eula_accepted")
     def test_should_construct(self, requests_mock: req_mock.Mocker, cost: processing.Cost):
         requests_mock.post(
             VALIDATION_URL,
@@ -250,7 +262,7 @@ class TestJobTemplate:
         assert not template.errors
         assert template.cost == cost
 
-    @pytest.mark.usefixtures("eula_accepted")
+    @pytest.mark.usefixtures("process_found_and_eula_accepted")
     def test_should_execute(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="none", credits=1)
         requests_mock.post(
@@ -283,7 +295,7 @@ class SampleSingleItemJobTemplate(processing.SingleItemJobTemplate):
 
 
 class TestSingleItemJobTemplate:
-    @pytest.mark.usefixtures("eula_accepted")
+    @pytest.mark.usefixtures("process_found_and_eula_accepted")
     def test_should_provide_inputs(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="discount", credits=-1)
         body_matcher = helpers.match_request_body({"inputs": {"title": TITLE, "item": ITEM_URL}})
@@ -313,7 +325,7 @@ class SampleMultiItemJobTemplate(processing.MultiItemJobTemplate):
 
 
 class TestMultiItemJobTemplate:
-    @pytest.mark.usefixtures("eula_accepted")
+    @pytest.mark.usefixtures("process_found_and_eula_accepted")
     def test_should_provide_inputs(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="discount", credits=-1)
         body_matcher = helpers.match_request_body({"inputs": {"title": TITLE, "items": [ITEM_URL]}})
