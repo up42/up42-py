@@ -250,8 +250,12 @@ class JobTemplate:
             self.process_description = self.session.get(process_url).json()
         except requests.HTTPError as err:
             if err.response.status_code == 404:
-                errors = err.response.json()["errors"]
-                return {ValidationError(**error) for error in errors}
+                return {
+                    ValidationError(
+                        name="ProcessNotFound",
+                        message=f"The process {self.process_id} does not exist.",
+                    )
+                }
             else:
                 raise err
         return set()
