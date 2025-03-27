@@ -29,6 +29,11 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 2.2.0a28
+**Mar 27, 2025**
+- Drop `Asset::save` method
+- Adjust deprecation message in `Asset::update_metadata` to indicate `pystac::Item.update`.
+
 ## 2.2.0a27
 **Mar 24, 2025**
 - Adjust `FileProvider::_get_` to check href url that starts with the current region base api url.
@@ -42,6 +47,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Added sorting fields to `QuotationSorting`.
 
 ## 2.2.0a24
+
 **Mar 14, 2025**
 - Added `region` as an optional input type to `base::authenticate` with the possible values being `eu` & `sa`
 - When authenticating the region gets set globally and used in `host::user_info_endpoint`, `host::token_endpoint`, `host::endpoint` accordingly
