@@ -135,7 +135,6 @@ def eula_accepted(requests_mock: req_mock.Mocker):
 
 
 class TestJobTemplate:
-
     def test_should_be_invalid_if_process_not_found(self, requests_mock: req_mock.Mocker):
         error = processing.ValidationError(
             name="ProcessNotFound",
