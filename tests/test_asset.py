@@ -156,24 +156,6 @@ class TestAsset:
         requests_mock.get(url=METADATA_URL, json=ASSET_METADATA)
         assert asset.Asset.get(asset_id=ASSET_ID) == ASSET
 
-    def test_should_save(self, requests_mock: req_mock.Mocker):
-        asset_obj = dataclasses.replace(ASSET, info=copy.deepcopy(ASSET_METADATA))
-        title = "new-title"
-        tags = ["new", "tags"]
-        updated_at = "new-updated-at"
-        update_payload = {"title": title, "tags": tags}
-        expected_info = ASSET_METADATA | update_payload | {"updatedAt": updated_at}
-        requests_mock.post(
-            url=METADATA_URL,
-            json=expected_info,
-        )
-        asset_obj.title = title
-        asset_obj.tags = tags
-        asset_obj.save()
-        assert asset_obj == dataclasses.replace(
-            ASSET, info=expected_info, title=title, tags=tags, updated_at=updated_at
-        )
-
     def test_should_provide_file(self, requests_mock: req_mock.Mocker):
         requests_mock.post(
             url=f"{constants.API_HOST}/v2/assets/{ASSET_ID}/download-url",

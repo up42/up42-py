@@ -136,7 +136,7 @@ class Asset:
         """
         return self.stac_client.get_collection(self.stac_items[0].collection_id)
 
-    @utils.deprecation("Asset::save", "3.0.0")
+    @utils.deprecation("pystac::Item.update", "3.0.0")
     def update_metadata(
         self,
         title: Union[Optional[str], object] = NOT_PROVIDED,
@@ -156,10 +156,10 @@ class Asset:
             self.title = cast(Optional[str], title)
         if tags != NOT_PROVIDED:
             self.tags = cast(Optional[list[str]], tags)
-        self.save()
+        self._save()
         return self.info
 
-    def save(self):
+    def _save(self):
         url = host.endpoint(f"/v2/assets/{self.asset_id}/metadata")
         payload = {"title": self.title, "tags": self.tags}
         asset = self._from_metadata(self.session.post(url=url, json=payload).json())
