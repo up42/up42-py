@@ -23,7 +23,14 @@ _retry = tnc.retry(
 
 
 class AssetSorting:
+    name = utils.SortingField("name")
+    title = utils.SortingField("title")
+    size = utils.SortingField("size")
     created_at = utils.SortingField("createdAt")
+    updated_at = utils.SortingField("updatedAt")
+    source = utils.SortingField("source")
+    collection_name = utils.SortingField("collectionName")
+    producer_name = utils.SortingField("producerName")
 
 
 @dataclasses.dataclass
