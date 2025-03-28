@@ -136,8 +136,7 @@ def process_found_and_eula_accepted(requests_mock: req_mock.Mocker):
 
 class TestJobTemplate:
     def test_should_fail_to_construct_if_getting_process_fails(self, requests_mock: req_mock.Mocker):
-        while (error_code := random.randint(400, 599)) == 404:
-            pass
+        error_code = random.choice([x for x in range(400, 599) if x != 404])
 
         requests_mock.get(
             PROCESS_URL,
