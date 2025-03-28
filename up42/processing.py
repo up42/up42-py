@@ -229,6 +229,7 @@ class JobTemplate:
     process_id: ClassVar[str]
     workspace_id: Union[str, base.WorkspaceId]
     errors: set[ValidationError] = set()
+    process_description: dict = {}
 
     @property
     @abc.abstractmethod
@@ -241,14 +242,28 @@ class JobTemplate:
             self.__evaluate()
 
     def __validate(self):
-        self.errors = self.__validate_eula() or self.__validate_inputs()
+        self.errors = self.__validate_process_exists() or self.__validate_eula() or self.__validate_inputs()
+
+    def __validate_process_exists(self) -> set[ValidationError]:
+        process_url = host.endpoint(f"/v2/processing/processes/{self.process_id}")
+        try:
+            self.process_description = self.session.get(process_url).json()
+        except requests.HTTPError as err:
+            if err.response.status_code == 404:
+                return {
+                    ValidationError(
+                        name="ProcessNotFound",
+                        message=f"The process {self.process_id} does not exist.",
+                    )
+                }
+            else:
+                raise err
+        return set()
 
     def __validate_eula(self) -> set[ValidationError]:
-        process_url = host.endpoint(f"/v2/processing/processes/{self.process_id}")
-        description = self.session.get(process_url).json()
         eula_id = next(
             parameter["value"][0]
-            for parameter in description["additionalParameters"]["parameters"]
+            for parameter in self.process_description["additionalParameters"]["parameters"]
             if parameter["name"] == "eula-id"
         )
         eula_url = host.endpoint(f"/v2/eulas/{eula_id}")
