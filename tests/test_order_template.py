@@ -6,7 +6,6 @@ import requests_mock as req_mock
 from tests import constants
 from up42 import order_template
 
-
 DISPLAY_NAME = "display-name"
 TAGS = ["some", "tags"]
 FEATURES = geojson.FeatureCollection(features=[geojson.Feature(geometry={"type": "Point", "coordinates": [0, 0]})])
