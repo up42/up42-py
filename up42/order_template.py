@@ -63,13 +63,15 @@ class BatchOrderTemplate:
 
     @property
     def _payload(self):
-        return {
+        payload = {
             "dataProduct": self.data_product_id,
             "displayName": self.display_name,
-            "tags": self.tags,
             "params": self.params,
             "featureCollection": self.features,
         }
+        if self.tags is not None:
+            payload["tags"] = self.tags
+        return payload
 
     def __estimate(self):
         url = host.endpoint("/v2/orders/estimate")
