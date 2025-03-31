@@ -83,7 +83,7 @@ class TestBatchOrderTemplate:
             "tags": TAGS,
             "featureCollection": FEATURES,
         }
-        assert template._payload == expected_payload
+        assert template._payload == expected_payload  # pylint: disable=protected-access
         assert template.estimate == ESTIMATE
         assert template.place() == [ORDER_REFERENCE, ERROR]
 
@@ -104,6 +104,6 @@ class TestBatchOrderTemplate:
             "params": PARAMS,
             "featureCollection": FEATURES,
         }
-        assert template._payload == expected_payload
+        assert template._payload == expected_payload  # pylint: disable=protected-access
         assert template.estimate == ESTIMATE
         assert template.place() == [ORDER_REFERENCE, ERROR]
