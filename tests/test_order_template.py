@@ -76,5 +76,34 @@ class TestBatchOrderTemplate:
             features=FEATURES,
             params=PARAMS,
         )
+        expected_payload = {
+            "dataProduct": constants.DATA_PRODUCT_ID,
+            "displayName": DISPLAY_NAME,
+            "params": PARAMS,
+            "tags": TAGS,
+            "featureCollection": FEATURES,
+        }
+        assert template._payload == expected_payload  # pylint: disable=protected-access
+        assert template.estimate == ESTIMATE
+        assert template.place() == [ORDER_REFERENCE, ERROR]
+
+    def test_should_place_without_tags(self, requests_mock: req_mock.Mocker):
+        estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
+        requests_mock.post(url=estimate_url, json=ESTIMATE_PAYLOAD)
+        placement_url = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
+        requests_mock.post(url=placement_url, json=PLACEMENT_PAYLOAD)
+        template = order_template.BatchOrderTemplate(
+            data_product_id=constants.DATA_PRODUCT_ID,
+            display_name=DISPLAY_NAME,
+            features=FEATURES,
+            params=PARAMS,
+        )
+        expected_payload = {
+            "dataProduct": constants.DATA_PRODUCT_ID,
+            "displayName": DISPLAY_NAME,
+            "params": PARAMS,
+            "featureCollection": FEATURES,
+        }
+        assert template._payload == expected_payload  # pylint: disable=protected-access
         assert template.estimate == ESTIMATE
         assert template.place() == [ORDER_REFERENCE, ERROR]
