@@ -262,6 +262,12 @@ class TestOrder:
         )
         assert order.Order.place(order_parameters, constants.WORKSPACE_ID) == data_order
 
+    def test_should_not_represent_order_info(
+        self,
+        data_order: order.Order,
+    ):
+        assert "info" not in repr(data_order)
+
     def test_fails_to_place_order_if_response_contains_error(
         self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
     ):

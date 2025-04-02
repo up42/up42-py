@@ -136,7 +136,7 @@ class Order:
     details: Optional[OrderDetails]
     data_product_id: Optional[str]
     tags: Optional[list[str]]
-    info: dict
+    info: dict = dataclasses.field(repr=False)
 
     @classmethod
     def get(cls, order_id: str) -> "Order":
