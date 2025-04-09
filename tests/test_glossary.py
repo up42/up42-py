@@ -164,10 +164,10 @@ class TestProvider:
         if start_date and end_date:
             import datetime as dt
 
-            dtStart = dt.datetime.strptime(start_date, "%Y-%m-%d")
-            dtEnd = dt.datetime.strptime(end_date, "%Y-%m-%d")
-            dtEnd = dtEnd.replace(hour=23, minute=59, second=59)
-            datetime_str = f"{dtStart.strftime('%Y-%m-%dT%H:%M:%SZ')}/{dtEnd.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            dt_start = dt.datetime.strptime(start_date, "%Y-%m-%d")
+            dt_end = dt.datetime.strptime(end_date, "%Y-%m-%d")
+            dt_end = dt_end.replace(hour=23, minute=59, second=59)
+            datetime_str = f"{dt_start.strftime('%Y-%m-%dT%H:%M:%SZ')}/{dt_end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
             search_params["datetime"] = datetime_str
         if cql_query:
             search_params["query"] = cql_query
