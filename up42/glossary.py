@@ -1,4 +1,5 @@
 import dataclasses
+import datetime as dt
 import enum
 from typing import Any, Iterator, Literal, Optional, Union
 
@@ -80,18 +81,26 @@ class Provider:
         self,
         bbox: Optional[BoundingBox] = None,
         intersects: Optional[geojson.Polygon] = None,
-        datetime: Optional[str] = None,
         query: Optional[dict] = None,
         collections: Optional[list[str]] = None,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
     ) -> Iterator[Scene]:
         if not self.is_host:
             raise InvalidHost("Provider does not host collections")
+        datetime_str = None
+        if start_date and end_date:
+            dtStart = dt.datetime.strptime(start_date, "%Y-%m-%d")
+            dtEnd = dt.datetime.strptime(end_date, "%Y-%m-%d")
+            # the expected result should be formatted to include entire end day
+            dtEnd = dtEnd.replace(hour=23, minute=59, second=59)
+            datetime_str = f"{dtStart.strftime('%Y-%m-%dT%H:%M:%SZ')}/{dtEnd.strftime('%Y-%m-%dT%H:%M:%SZ')}"
         payload = {
             key: value
             for key, value in {
                 "bbox": bbox,
                 "intersects": intersects,
-                "datetime": datetime,
+                "datetime": datetime_str,
                 "query": query,
                 "collections": collections,
             }.items()

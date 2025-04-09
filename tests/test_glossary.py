@@ -137,14 +137,21 @@ class TestProvider:
 
     @pytest.mark.parametrize("bbox", [None, BBOX])
     @pytest.mark.parametrize("intersects", [None, POLYGON])
-    @pytest.mark.parametrize("datetime", [None, "2030-01-01T00:00:00Z"])
+    @pytest.mark.parametrize(
+        "start_date,end_date",
+        [
+            (None, None),
+            ("2014-01-01", "2022-12-31"),
+        ],
+    )
     @pytest.mark.parametrize("cql_query", [None, {"cql2": "query"}])
     @pytest.mark.parametrize("collections", [None, ["phr", "bjn"]])
     def test_should_search(
         self,
         bbox: Optional[glossary.BoundingBox],
         intersects: Optional[geojson.Polygon],
-        datetime: Optional[str],
+        start_date: Optional[str],
+        end_date: Optional[str],
         cql_query: Optional[dict],
         collections: Optional[list[str]],
         requests_mock: req_mock.Mocker,
@@ -154,8 +161,14 @@ class TestProvider:
             search_params["bbox"] = bbox
         if intersects:
             search_params["intersects"] = intersects
-        if datetime:
-            search_params["datetime"] = datetime
+        if start_date and end_date:
+            import datetime as dt
+
+            dtStart = dt.datetime.strptime(start_date, "%Y-%m-%d")
+            dtEnd = dt.datetime.strptime(end_date, "%Y-%m-%d")
+            dtEnd = dtEnd.replace(hour=23, minute=59, second=59)
+            datetime_str = f"{dtStart.strftime('%Y-%m-%dT%H:%M:%SZ')}/{dtEnd.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            search_params["datetime"] = datetime_str
         if cql_query:
             search_params["query"] = cql_query
         if collections:
@@ -181,7 +194,7 @@ class TestProvider:
             },
             additional_matcher=helpers.match_request_body(search_params),
         )
-        assert list(self.provider.search(bbox, intersects, datetime, cql_query, collections)) == [SCENE] * 5
+        assert list(self.provider.search(bbox, intersects, cql_query, collections, start_date, end_date)) == [SCENE] * 5
 
 
 class TestProductGlossary:
