@@ -1,10 +1,10 @@
 import dataclasses
+import datetime as dt
 from typing import Any, List, Optional
 
 import geojson  # type: ignore
 import pytest
 import requests_mock as req_mock
-import datetime as dt
 
 from tests import constants, helpers
 from up42 import glossary, utils
@@ -166,7 +166,7 @@ class TestProvider:
             dt_start = dt.datetime.strptime(start_date, "%Y-%m-%d")
             dt_end = dt.datetime.strptime(end_date, "%Y-%m-%d")
             dt_end = dt_end.replace(hour=23, minute=59, second=59)
-            datetime_str = f"{dt_start.strftime("%Y-%m-%dT%H:%M:%SZ")}/{dt_end.strftime("%Y-%m-%dT%H:%M:%SZ")}"
+            datetime_str = dt_start.strftime("%Y-%m-%dT%H:%M:%SZ") + "/" + dt_end.strftime("%Y-%m-%dT%H:%M:%SZ")
             search_params["datetime"] = datetime_str
         if cql_query:
             search_params["query"] = cql_query

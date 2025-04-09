@@ -94,7 +94,7 @@ class Provider:
             dt_end = dt.datetime.strptime(end_date, "%Y-%m-%d")
             # the expected result should be formatted to include entire end day
             dt_end = dt_end.replace(hour=23, minute=59, second=59)
-            datetime_str = f"{dt_start.strftime('%Y-%m-%dT%H:%M:%SZ')}/{dt_end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            datetime_str = dt_start.strftime("%Y-%m-%dT%H:%M:%SZ") + "/" + dt_end.strftime("%Y-%m-%dT%H:%M:%SZ")
         payload = {
             key: value
             for key, value in {
