@@ -143,6 +143,8 @@ class TestProvider:
         [
             (None, None),
             ("2014-01-01", "2022-12-31"),
+            ("2014-01-01", None),
+            (None, "2022-12-31"),
         ],
     )
     @pytest.mark.parametrize("cql_query", [None, {"cql2": "query"}])
@@ -162,12 +164,19 @@ class TestProvider:
             search_params["bbox"] = bbox
         if intersects:
             search_params["intersects"] = intersects
-        if start_date and end_date:
-            dt_start = dt.datetime.strptime(start_date, "%Y-%m-%d")
-            dt_end = dt.datetime.strptime(end_date, "%Y-%m-%d")
-            dt_end = dt_end.replace(hour=23, minute=59, second=59)
-            datetime_str = dt_start.strftime("%Y-%m-%dT%H:%M:%SZ") + "/" + dt_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-            search_params["datetime"] = datetime_str
+        if start_date or end_date:
+            if start_date:
+                dt_start = dt.datetime.strptime(start_date, "%Y-%m-%d")
+                start_str = dt_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+            else:
+                start_str = ".."
+
+            if end_date:
+                dt_end = dt.datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
+                end_str = dt_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+            else:
+                end_str = ".."
+            search_params["datetime"] = f"{start_str}/{end_str}"
         if cql_query:
             search_params["query"] = cql_query
         if collections:
