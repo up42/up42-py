@@ -89,12 +89,21 @@ class Provider:
         if not self.is_host:
             raise InvalidHost("Provider does not host collections")
         datetime_str = None
-        if start_date and end_date:
-            dt_start = dt.datetime.strptime(start_date, "%Y-%m-%d")
-            dt_end = dt.datetime.strptime(end_date, "%Y-%m-%d")
-            # the expected result should be formatted to include entire end day
-            dt_end = dt_end.replace(hour=23, minute=59, second=59)
-            datetime_str = dt_start.strftime("%Y-%m-%dT%H:%M:%SZ") + "/" + dt_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+        if start_date or end_date:
+            if start_date:
+                dt_start = dt.datetime.strptime(start_date, "%Y-%m-%d")
+                start_str = dt_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+            else:
+                start_str = ".."
+            if end_date:
+                dt_end = dt.datetime.strptime(end_date, "%Y-%m-%d")
+                # the expected result should be formatted to include entire end day
+                dt_end = dt_end.replace(hour=23, minute=59, second=59)
+                end_str = dt_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+            else:
+                end_str = ".."
+            datetime_str = f"{start_str}/{end_str}"
+
         payload = {
             key: value
             for key, value in {
