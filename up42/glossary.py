@@ -90,19 +90,7 @@ class Provider:
             raise InvalidHost("Provider does not host collections")
         datetime_str = None
         if start_date or end_date:
-            if start_date:
-                dt_start = dt.datetime.strptime(start_date, "%Y-%m-%d")
-                start_str = dt_start.strftime("%Y-%m-%dT%H:%M:%SZ")
-            else:
-                start_str = ".."
-            if end_date:
-                dt_end = dt.datetime.strptime(end_date, "%Y-%m-%d")
-                # the expected result should be formatted to include entire end day
-                dt_end = dt_end.replace(hour=23, minute=59, second=59)
-                end_str = dt_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-            else:
-                end_str = ".."
-            datetime_str = f"{start_str}/{end_str}"
+            datetime_str = self._build_datetime_string(start_date, end_date)
 
         payload = {
             key: value
@@ -152,6 +140,33 @@ class Provider:
                 session=self.session,
             ),
         )
+
+    def _build_datetime_string(self, start_date: Optional[str], end_date: Optional[str]) -> str:
+        if start_date:
+            dt_start = dt.datetime.strptime(start_date, "%Y-%m-%d")
+        else:
+            dt_start = None
+
+        if end_date:
+            dt_end = dt.datetime.strptime(end_date, "%Y-%m-%d")
+            dt_end = dt_end.replace(hour=23, minute=59, second=59)
+        else:
+            dt_end = None
+
+        # validation: if both are provided, ensure start ≤ end
+        if dt_start and dt_end and dt_start > dt_end:
+            raise ValueError(f"start_date ({dt_start.date()}) must be on or before " f"end_date ({dt_end.date()})")
+        if dt_start:
+            start_str = dt_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+        else:
+            start_str = ".."
+
+        if dt_end:
+            end_str = dt_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+        else:
+            end_str = ".."
+
+        return f"{start_str}/{end_str}"
 
 
 @dataclasses.dataclass
