@@ -30,6 +30,100 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 2.2.0
+**Apr 29, 2025**
+### Added
+- Validate process exists after `JobTemplate` initialisation
+- Added sorting fields to `QuotationSorting`.
+- Added `region` as an optional input type to `base::authenticate` with the possible values being `eu` & `sa`
+- When authenticating the region gets set globally and used in `host::user_info_endpoint`, `host::token_endpoint`, `host::endpoint` accordingly
+- Added `up42` property to `pystac::Item` and `pystac::Collection` to get and set UP42 STAC extensions data.
+- Added `update` extension method to `pystac::Item`.
+- Publish `stac_client` function to `up42` namespace.
+- Added `file` property to `Asset` class to unify with `pystac::Asset` experience.
+- Use unauthenticated session for signed url image file in `FileProvider` module with `FileProvider` class.
+- Experiment `stac` module with `FileProvider` descriptor for `pystac::Asset`.
+- Added STAC object dynamic extension on `up42` import.
+- Added `Asset::save` method.
+- Added model fields to `Asset` class.
+- Added coverage for `Asset::all` method.
+- Exported `AssetSorting` to `up42` namespace.
+- Enabled access to authenticated image files via extraction session to a parameter.
+- Generalized downloadable images to `ImageFile` in `utils` module.
+- Added `quicklook` property to `Scene` class.
+- Added `is_host` property to `Provider` class.
+- Added `search` method to `Provider` class.
+- Added `schema` property to `DataProduct` class.
+- Added `Quotation` active record to `tasking` module.
+- Exported `Quotation` and `QuotationSorting` to `up42` namespace.
+- Added `order_template` module with `BatchOrderTemplate` and supporting classes.
+- Add missing properties to `Order` data class and auxiliary classes.
+- Introduced `Order::all` method to filter and list orders.
+- Added `Order::get` class method as part of conversion to active record pattern.
+- Added `Order::track` method and deprecated `Order::track_status` method.
+
+### Changed
+- Adjust Order representation to remove redundant fields.
+- Adjust BatchOrderTemplate to exclude tags from the payload when not provided, preventing 400 Bad Request errors from the API.
+- Update `AssetSorting` with possible sorting fields
+- Adjust deprecation message in `Asset::update_metadata` to indicate `pystac::Item.update`.
+- Adjust `FileProvider::_get_` to check href url that starts with the current region base api url.
+- Updated feasibility endpoint URL.
+- Relax dependency constraint to allow geopandas 1.0.1.
+- Switched to using stac client descriptor in `Asset` class and reduced duplication.
+- Made `BatchOrderTemplate::tags` optional.
+- Converted `Asset` to a data class with `get` and `all` methods.
+- Simplified `Catalog::download_quicklooks` to use `ImageFile` class internally.
+- Simplified `CatalogBase::estimate_order` to a static method.
+- Simplified `CatalogBase::place_order` to a class method.
+- Modified deprecation of `CatalogBase::get_data_product_schema` in favour of `DataProduct.schema`.
+- Modified `Storage::get_orders` testing to eliminate dependency on order data.
+- Modified `up42::initialize_order` testing to eliminate dependency on order data.
+- Modified `CatalogBase::place_order` testing to eliminate dependency on order data.
+- Converted `Order` to dataclass.
+- Extended `Order::order_details` to cover archive orders as well.
+
+### Deprecated
+- Deprecated `Asset::download` method in favour of `Asset.file::download`.
+- Deprecated `Asset::download_stac_asset` in favour of `pystac::Asset.file::download`.
+- Deprecated `Asset::get_stac_asset_url` in favour of `pystac::Asset.file.url`.
+- Deprecated `up42::initialize_tasking`.
+- Deprecated `Tasking::get_feasibility`.
+- Deprecated `Tasking::choose_feasibility`.
+- Deprecated `Asset::update_metadata` in favour of `Asset::save`.
+- Deprecated `Asset.asset_id` in favour of `Asset.id`.
+- Deprecated `up42::initialize_catalog` since all `Catalog` and `CatalogBase` methods are deprecated.
+- Deprecated `Storage::get_assets` in favour of `Asset::all`.
+- Deprecated `up42::initialize_asset` in favour of `Asset::get`.
+- Deprecated `up42::initialize_storage`.
+- Deprecated `Catalog::download_quicklooks` in favour of `Provider::search`.
+- Deprecated `Catalog::construct_search_parameters` in favour of `Provider::search`.
+- Deprecated `Catalog::search` in favour of `Provider::search`.
+- Deprecated `Tasking::get_quotations` in favour of `Quotation::all`.
+- Deprecated `Tasking::decide_quotation` in favour of `Quotation` class methods.
+- Deprecated `Tasking.construct_order_parameters` in favour of `BatchOrderTemplate`.
+- Deprecated `Catalog.construct_order_parameters` in favour of `BatchOrderTemplate`.
+- Deprecated `CatalogBase::estimate_order` in favour of `BatchOrderTemplate.estimate`.
+- Deprecated `CatalogBase::place_order` in favour of `BatchOrderTemplate::place`.
+- Deprecated `Order::estimate` in favour of `BatchOrderTemplate.estimate`.
+- Deprecated `Order::place` in favour of `BatchOrderTemplate::place`.
+- Deprecated `CatalogBase::get_data_product_schema`.
+- Deprecated `up42::initiliaze_order` in favour of `Order::get`.
+- Deprecated `Order.order_id` in favour of `Order.id`.
+- Deprecated `Order.order_details` in favour of `Order.details`.
+- Deprecated `Storage::get_orders` method.
+
+### Removed
+- Drop `Asset::save` method
+- Remove deprecated viz dependencies.
+- Reduced test dependencies on `Asset` structure.
+- Dropped eager loading of `Order::info`.
+- Dropped `Order::__repr__` in favour of native dataclass implementation.
+
+### Fixed
+- Fix authenticated download in `Catalog::download_quicklooks`.
+- Fixed `Order::place` method to retrieve order info via additional call and not from response.
+
 ## 2.2.0a32
 **Apr 2, 2025**
 - Adjust Order representation to remove redundant fields.
