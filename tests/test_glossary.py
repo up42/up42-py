@@ -1,5 +1,4 @@
 import dataclasses
-import datetime as dt
 from typing import Any, List, Optional
 
 import geojson  # type: ignore
@@ -165,18 +164,9 @@ class TestProvider:
         if intersects:
             search_params["intersects"] = intersects
         if start_date or end_date:
-            if start_date:
-                dt_start = dt.datetime.strptime(start_date, "%Y-%m-%d")
-                start_str = dt_start.strftime("%Y-%m-%dT%H:%M:%SZ")
-            else:
-                start_str = ".."
-
-            if end_date:
-                dt_end = dt.datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
-                end_str = dt_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-            else:
-                end_str = ".."
-            search_params["datetime"] = f"{start_str}/{end_str}"
+            start_datetime = utils.format_time(start_date) if start_date else ".."
+            end_datetime = utils.format_time(end_date, set_end_of_day=True) if end_date else ".."
+            search_params["datetime"] = f"{start_datetime}/{end_datetime}"
         if cql_query:
             search_params["query"] = cql_query
         if collections:
