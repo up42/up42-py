@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 2.2.0a33
 **Apr 9, 2025**
-- Adjust `Provider::search` to allow `start_date` and `end_date`, combine them and add to payload as `datetime`, adjust test
+- Adjust `Provider::search` to allow `start_date` and `end_date`, combine them and add to payload as `datetime`
 
 ## 2.2.0a32
 **Apr 2, 2025**

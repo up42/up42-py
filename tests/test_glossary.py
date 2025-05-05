@@ -138,12 +138,12 @@ class TestProvider:
     @pytest.mark.parametrize("bbox", [None, BBOX])
     @pytest.mark.parametrize("intersects", [None, POLYGON])
     @pytest.mark.parametrize(
-        "start_date,end_date",
+        "start_date,end_date,expected_start_datetime,expected_end_datetime",
         [
-            (None, None),
-            ("2014-01-01", "2022-12-31"),
-            ("2014-01-01", None),
-            (None, "2022-12-31"),
+            (None, None, "..", ".."),
+            ("2023-01-01", None, "2023-01-01T00:00:00Z", ".."),
+            (None, "2023-12-31", "..", "2023-12-31T23:59:59Z"),
+            ("2023-01-01", "2023-12-31", "2023-01-01T00:00:00Z", "2023-12-31T23:59:59Z"),
         ],
     )
     @pytest.mark.parametrize("cql_query", [None, {"cql2": "query"}])
@@ -154,6 +154,8 @@ class TestProvider:
         intersects: Optional[geojson.Polygon],
         start_date: Optional[str],
         end_date: Optional[str],
+        expected_start_datetime: str,
+        expected_end_datetime: str,
         cql_query: Optional[dict],
         collections: Optional[list[str]],
         requests_mock: req_mock.Mocker,
@@ -164,9 +166,7 @@ class TestProvider:
         if intersects:
             search_params["intersects"] = intersects
         if start_date or end_date:
-            start_datetime = utils.format_time(start_date) if start_date else ".."
-            end_datetime = utils.format_time(end_date, set_end_of_day=True) if end_date else ".."
-            search_params["datetime"] = f"{start_datetime}/{end_datetime}"
+            search_params["datetime"] = f"{expected_start_datetime}/{expected_end_datetime}"
         if cql_query:
             search_params["query"] = cql_query
         if collections:
