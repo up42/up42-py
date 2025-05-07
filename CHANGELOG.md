@@ -130,7 +130,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 2.2.0a31
 **Apr 1, 2025**
-- Adjust BatchOrderTemplate to exclude tags from the payload when not provided, preventing 400 Bad Request errors from the API.
+- Adjust `BatchOrderTemplate` to exclude tags from the payload when not provided, preventing 400 Bad Request errors from the API.
 
 ## 2.2.0a30
 **Mar 28, 2025**
