@@ -35,7 +35,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### Added
 - Validate process exists after `JobTemplate` initialisation
 - Added sorting fields to `QuotationSorting`.
-- Added `region` as an optional input type to `base::authenticate` with the possible values being `eu` & `sa`
+- Added `region` as an optional input type to `base::authenticate` with the possible values being `eu` and `sa`
 - When authenticating the region gets set globally and used in `host::user_info_endpoint`, `host::token_endpoint`, `host::endpoint` accordingly
 - Added `up42` property to `pystac::Item` and `pystac::Collection` to get and set UP42 STAC extensions data.
 - Added `update` extension method to `pystac::Item`.
@@ -60,13 +60,14 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Add missing properties to `Order` data class and auxiliary classes.
 - Introduced `Order::all` method to filter and list orders.
 - Added `Order::get` class method as part of conversion to active record pattern.
-- Added `Order::track` method and deprecated `Order::track_status` method.
+- Added `Order::track` method.
 
 ### Changed
-- Adjust Order representation to remove redundant fields.
-- Adjust BatchOrderTemplate to exclude tags from the payload when not provided, preventing 400 Bad Request errors from the API.
+
+- Adjust `Provider::search` to allow `start_date` and `end_date`, combine them and add to payload as datetime
+- Adjust `Order` representation to remove redundant fields.
+- Adjust `BatchOrderTemplate` to exclude tags from the payload when not provided, preventing `400 Bad Request` errors from the API.
 - Update `AssetSorting` with possible sorting fields
-- Adjust deprecation message in `Asset::update_metadata` to indicate `pystac::Item.update`.
 - Adjust `FileProvider::_get_` to check href url that starts with the current region base api url.
 - Updated feasibility endpoint URL.
 - Relax dependency constraint to allow geopandas 1.0.1.
@@ -76,7 +77,6 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Simplified `Catalog::download_quicklooks` to use `ImageFile` class internally.
 - Simplified `CatalogBase::estimate_order` to a static method.
 - Simplified `CatalogBase::place_order` to a class method.
-- Modified deprecation of `CatalogBase::get_data_product_schema` in favour of `DataProduct.schema`.
 - Modified `Storage::get_orders` testing to eliminate dependency on order data.
 - Modified `up42::initialize_order` testing to eliminate dependency on order data.
 - Modified `CatalogBase::place_order` testing to eliminate dependency on order data.
@@ -90,7 +90,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Deprecated `up42::initialize_tasking`.
 - Deprecated `Tasking::get_feasibility`.
 - Deprecated `Tasking::choose_feasibility`.
-- Deprecated `Asset::update_metadata` in favour of `Asset::save`.
+- Deprecated `Asset::update_metadata` in favour of `pystac::Item.update`.
 - Deprecated `Asset.asset_id` in favour of `Asset.id`.
 - Deprecated `up42::initialize_catalog` since all `Catalog` and `CatalogBase` methods are deprecated.
 - Deprecated `Storage::get_assets` in favour of `Asset::all`.
@@ -107,14 +107,14 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Deprecated `CatalogBase::place_order` in favour of `BatchOrderTemplate::place`.
 - Deprecated `Order::estimate` in favour of `BatchOrderTemplate.estimate`.
 - Deprecated `Order::place` in favour of `BatchOrderTemplate::place`.
-- Deprecated `CatalogBase::get_data_product_schema`.
+- Deprecated `CatalogBase::get_data_product_schema` in favour of `DataProduct.schema`.
 - Deprecated `up42::initiliaze_order` in favour of `Order::get`.
 - Deprecated `Order.order_id` in favour of `Order.id`.
 - Deprecated `Order.order_details` in favour of `Order.details`.
 - Deprecated `Storage::get_orders` method.
+- Deprecated `Order::track_status` method.
 
 ### Removed
-- Drop `Asset::save` method
 - Remove deprecated viz dependencies.
 - Reduced test dependencies on `Asset` structure.
 - Dropped eager loading of `Order::info`.
