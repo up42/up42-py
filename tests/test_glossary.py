@@ -137,14 +137,25 @@ class TestProvider:
 
     @pytest.mark.parametrize("bbox", [None, BBOX])
     @pytest.mark.parametrize("intersects", [None, POLYGON])
-    @pytest.mark.parametrize("datetime", [None, "2030-01-01T00:00:00Z"])
+    @pytest.mark.parametrize(
+        "start_date,end_date,expected_start_datetime,expected_end_datetime",
+        [
+            (None, None, "..", ".."),
+            ("2023-01-01", None, "2023-01-01T00:00:00Z", ".."),
+            (None, "2023-12-31", "..", "2023-12-31T23:59:59Z"),
+            ("2023-01-01", "2023-12-31", "2023-01-01T00:00:00Z", "2023-12-31T23:59:59Z"),
+        ],
+    )
     @pytest.mark.parametrize("cql_query", [None, {"cql2": "query"}])
     @pytest.mark.parametrize("collections", [None, ["phr", "bjn"]])
     def test_should_search(
         self,
         bbox: Optional[glossary.BoundingBox],
         intersects: Optional[geojson.Polygon],
-        datetime: Optional[str],
+        start_date: Optional[str],
+        end_date: Optional[str],
+        expected_start_datetime: str,
+        expected_end_datetime: str,
         cql_query: Optional[dict],
         collections: Optional[list[str]],
         requests_mock: req_mock.Mocker,
@@ -154,8 +165,8 @@ class TestProvider:
             search_params["bbox"] = bbox
         if intersects:
             search_params["intersects"] = intersects
-        if datetime:
-            search_params["datetime"] = datetime
+        if start_date or end_date:
+            search_params["datetime"] = f"{expected_start_datetime}/{expected_end_datetime}"
         if cql_query:
             search_params["query"] = cql_query
         if collections:
@@ -181,7 +192,7 @@ class TestProvider:
             },
             additional_matcher=helpers.match_request_body(search_params),
         )
-        assert list(self.provider.search(bbox, intersects, datetime, cql_query, collections)) == [SCENE] * 5
+        assert list(self.provider.search(bbox, intersects, cql_query, collections, start_date, end_date)) == [SCENE] * 5
 
 
 class TestProductGlossary:

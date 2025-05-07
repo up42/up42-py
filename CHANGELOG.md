@@ -30,13 +30,17 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 2.2.0a33
+**Apr 9, 2025**
+- Adjust `Provider::search` to allow `start_date` and `end_date`, combine them and add to payload as `datetime`
+
 ## 2.2.0a32
 **Apr 2, 2025**
 - Adjust Order representation to remove redundant fields.
 
 ## 2.2.0a31
 **Apr 1, 2025**
-- Adjust BatchOrderTemplate to exclude tags from the payload when not provided, preventing 400 Bad Request errors from the API.
+- Adjust `BatchOrderTemplate` to exclude tags from the payload when not provided, preventing 400 Bad Request errors from the API.
 
 ## 2.2.0a30
 **Mar 28, 2025**

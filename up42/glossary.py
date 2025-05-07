@@ -80,18 +80,25 @@ class Provider:
         self,
         bbox: Optional[BoundingBox] = None,
         intersects: Optional[geojson.Polygon] = None,
-        datetime: Optional[str] = None,
         query: Optional[dict] = None,
         collections: Optional[list[str]] = None,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
     ) -> Iterator[Scene]:
         if not self.is_host:
             raise InvalidHost("Provider does not host collections")
+        datetime_str = None
+        if start_date or end_date:
+            start_datetime = utils.format_time(start_date) if start_date else ".."
+            end_datetime = utils.format_time(end_date, set_end_of_day=True) if end_date else ".."
+            datetime_str = f"{start_datetime}/{end_datetime}"
+
         payload = {
             key: value
             for key, value in {
                 "bbox": bbox,
                 "intersects": intersects,
-                "datetime": datetime,
+                "datetime": datetime_str,
                 "query": query,
                 "collections": collections,
             }.items()
