@@ -124,6 +124,10 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Fix authenticated download in `Catalog::download_quicklooks`.
 - Fixed `Order::place` method to retrieve order info via additional call and not from response.
 
+## 2.2.0a33
+**Apr 9, 2025**
+- Adjust `Provider::search` to allow `start_date` and `end_date`, combine them and add to payload as `datetime`
+
 ## 2.2.0a32
 **Apr 2, 2025**
 - Adjust Order representation to remove redundant fields.
