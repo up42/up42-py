@@ -1,12 +1,12 @@
 * @up42-eva @up42/sdk-team
-pyproject.toml @up42/user-sdk @up42/data-sdk @up42/processing-sdk
-CHANGELOG.md @up42/user-sdk @up42/data-sdk @up42/processing-sdk
+pyproject.toml @up42/user-sdk @up42/data-sdk @up42/processing-sdk @up42/catalog-sdk
+CHANGELOG.md @up42/user-sdk @up42/data-sdk @up42/processing-sdk @up42/catalog-sdk
 /up42/http @up42/user-sdk
 /up42/asset.py @up42/processing-sdk
 /up42/base.py @up42/user-sdk
 /up42/host.py @up42/user-sdk
-/up42/catalog.py @up42/data-sdk
-/up42/glossary.py @up42/data-sdk
+/up42/catalog.py @up42/data-sdk @up42/catalog-sdk
+/up42/glossary.py @up42/data-sdk @up42/catalog-sdk
 /up42/order.py @up42/data-sdk
 /up42/order_template.py @up42/data-sdk
 /up42/processing.py @up42/processing-sdk
@@ -16,11 +16,11 @@ CHANGELOG.md @up42/user-sdk @up42/data-sdk @up42/processing-sdk
 /up42/tasking.py @up42/data-sdk
 /up42/webhooks.py @up42/user-sdk
 /tests/http @up42/user-sdk
-/tests/helpers.py @up42/user-sdk @up42/data-sdk @up42/processing-sdk
+/tests/helpers.py @up42/user-sdk @up42/data-sdk @up42/processing-sdk @up42/catalog-sdk
 /tests/test_asset.py @up42/processing-sdk
 /tests/test_base.py @up42/user-sdk
-/tests/test_catalog.py @up42/data-sdk
-/tests/test_glossary.py @up42/data-sdk
+/tests/test_catalog.py @up42/data-sdk @up42/catalog-sdk
+/tests/test_glossary.py @up42/data-sdk @up42/catalog-sdk
 /tests/test_host.py @up42/user-sdk
 /tests/test_order.py @up42/data-sdk
 /tests/test_order_template.py @up42/data-sdk
