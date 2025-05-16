@@ -358,7 +358,9 @@ class TestCoregistrationJobTemplate:
     @pytest.mark.usefixtures("process_found_and_eula_accepted")
     def test_should_provide_inputs(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="discount", credits=-1)
-        body_matcher = helpers.match_request_body({"inputs": {"title": TITLE, "sourceItem": ITEM_URL, "referenceItem": SECOND_ITEM_URL}})
+        body_matcher = helpers.match_request_body(
+            {"inputs": {"title": TITLE, "sourceItem": ITEM_URL, "referenceItem": SECOND_ITEM_URL}}
+        )
         requests_mock.post(
             VALIDATION_URL,
             status_code=200,

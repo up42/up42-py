@@ -353,5 +353,5 @@ class CoregistrationJobTemplate(JobTemplate):
         return {
             "title": self.title,
             "sourceItem": self.source_item.get_self_href(),
-            "referenceItem": self.reference_item.get_self_href()
+            "referenceItem": self.reference_item.get_self_href(),
         }
