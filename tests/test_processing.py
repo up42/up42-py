@@ -379,7 +379,7 @@ class TestCoregistrationJobTemplate:
         )
         assert template.is_valid
         assert template.cost == cost
-        assert template.inputs == {"title": TITLE, "items": ITEM_URL, "referenceItem": SECOND_ITEM_URL}
+        assert template.inputs == {"title": TITLE, "sourceItem": ITEM_URL, "referenceItem": SECOND_ITEM_URL}
 
 
 class TestJob:
