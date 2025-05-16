@@ -36,6 +36,7 @@ TITLE = "title"
 COLLECTION_ID = str(uuid.uuid4())
 COLLECTION_URL = f"https://collections/{COLLECTION_ID}"
 ITEM_URL = "https://item-url/"
+SECOND_ITEM_URL = "https://item-url/"
 ITEM = pystac.Item.from_dict(
     {
         "type": "Feature",
@@ -346,6 +347,37 @@ class TestMultiItemJobTemplate:
         assert template.is_valid
         assert template.cost == cost
         assert template.inputs == {"title": TITLE, "items": [ITEM_URL]}
+
+
+@dataclasses.dataclass
+class SampleCoregistrationJobTemplate(processing.CoregistrationJobTemplate):
+    process_id = PROCESS_ID
+
+
+class TestCoregistrationJobTemplate:
+    @pytest.mark.usefixtures("process_found_and_eula_accepted")
+    def test_should_provide_inputs(self, requests_mock: req_mock.Mocker):
+        cost = processing.Cost(strategy="discount", credits=-1)
+        body_matcher = helpers.match_request_body({"inputs": {"title": TITLE, "sourceItem": ITEM_URL, "referenceItem": SECOND_ITEM_URL}})
+        requests_mock.post(
+            VALIDATION_URL,
+            status_code=200,
+            additional_matcher=body_matcher,
+        )
+        requests_mock.post(
+            COST_URL,
+            status_code=200,
+            json={"pricingStrategy": cost.strategy, "totalCredits": cost.credits},
+            additional_matcher=body_matcher,
+        )
+        template = SampleCoregistrationJobTemplate(
+            source_item=ITEM,
+            reference_item=ITEM,
+            title=TITLE,
+        )
+        assert template.is_valid
+        assert template.cost == cost
+        assert template.inputs == {"title": TITLE, "items": ITEM_URL, "referenceItem": SECOND_ITEM_URL}
 
 
 class TestJob:

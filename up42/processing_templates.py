@@ -16,6 +16,11 @@ class WorkspaceIdMultiItemTemplate(processing.MultiItemJobTemplate):
 
 
 @dataclasses.dataclass
+class WorkspaceIdCoregistrationTemplate(processing.CoregistrationJobTemplate):
+    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+
+
+@dataclasses.dataclass
 class DetectionBuildingsSpacept(WorkspaceIdSingleItemTemplate):
     process_id = "detection-buildings-spacept"
 
@@ -73,6 +78,11 @@ class DetectionChangePleiadesHyperverge(WorkspaceIdMultiItemTemplate):
 @dataclasses.dataclass
 class DetectionChangeSPOTHyperverge(WorkspaceIdMultiItemTemplate):
     process_id = "detection-change-spot-hyperverge"
+
+
+@dataclasses.dataclass
+class CoregistationSimularity(WorkspaceIdMultiItemTemplate):
+    process_id = "coregistration-simularity"
 
 
 @dataclasses.dataclass

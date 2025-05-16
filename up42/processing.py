@@ -340,3 +340,18 @@ class MultiItemJobTemplate(JobTemplate):
             "title": self.title,
             "items": [item.get_self_href() for item in self.items],
         }
+
+
+@dataclasses.dataclass
+class CoregistrationJobTemplate(JobTemplate):
+    title: str
+    source_item: pystac.Item
+    reference_item: pystac.Item
+
+    @property
+    def inputs(self) -> dict:
+        return {
+            "title": self.title,
+            "sourceItem": self.source_item.get_self_href(),
+            "referenceItem": self.reference_item.get_self_href()
+        }
