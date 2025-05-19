@@ -30,7 +30,7 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-## 2.2.1a1
+## 2.3.0a1
 **May 16, 2025**
 - Add `CoregistrationJobTemplate` process template to allow running coregistration-simularity
 
