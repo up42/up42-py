@@ -81,7 +81,7 @@ class DetectionChangeSPOTHyperverge(WorkspaceIdMultiItemTemplate):
 
 
 @dataclasses.dataclass
-class CoregistationSimularity(WorkspaceIdMultiItemTemplate):
+class CoregistationSimularity(WorkspaceIdCoregistrationTemplate):
     process_id = "coregistration-simularity"
 
 

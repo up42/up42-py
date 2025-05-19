@@ -36,7 +36,7 @@ TITLE = "title"
 COLLECTION_ID = str(uuid.uuid4())
 COLLECTION_URL = f"https://collections/{COLLECTION_ID}"
 ITEM_URL = "https://item-url/"
-SECOND_ITEM_URL = "https://item-url/"
+SECOND_ITEM_URL = "https://item2-url/"
 ITEM = pystac.Item.from_dict(
     {
         "type": "Feature",
