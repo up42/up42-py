@@ -50,6 +50,19 @@ ITEM = pystac.Item.from_dict(
         "stac_extensions": [],
     }
 )
+SECOND_ITEM = pystac.Item.from_dict(
+    {
+        "type": "Feature",
+        "stac_version": "1.0.0",
+        "id": "id",
+        "properties": {"datetime": "2025-01-01T00:00:00.000000Z"},
+        "geometry": {"type": "Point", "coordinates": (0, 0)},
+        "links": [{"rel": "self", "href": SECOND_ITEM_URL}],
+        "assets": {},
+        "bbox": [0, 0, 0, 0],
+        "stac_extensions": [],
+    }
+)
 
 JOB_ID = str(uuid.uuid4())
 JOBS_URL = f"{constants.API_HOST}/v2/processing/jobs"
@@ -374,7 +387,7 @@ class TestCoregistrationJobTemplate:
         )
         template = SampleCoregistrationJobTemplate(
             source_item=ITEM,
-            reference_item=ITEM,
+            reference_item=SECOND_ITEM,
             title=TITLE,
         )
         assert template.is_valid
