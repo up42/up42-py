@@ -1,6 +1,8 @@
 import dataclasses
 from typing import List, Optional, Union
 
+import pystac
+
 from up42 import base, processing
 
 
@@ -73,6 +75,23 @@ class DetectionChangePleiadesHyperverge(WorkspaceIdMultiItemTemplate):
 @dataclasses.dataclass
 class DetectionChangeSPOTHyperverge(WorkspaceIdMultiItemTemplate):
     process_id = "detection-change-spot-hyperverge"
+
+
+@dataclasses.dataclass
+class CoregistationSimularity(processing.JobTemplate):
+    title: str
+    source_item: pystac.Item
+    reference_item: pystac.Item
+    process_id = "coregistration-simularity"
+    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+
+    @property
+    def inputs(self) -> dict:
+        return {
+            "title": self.title,
+            "sourceItem": self.source_item.get_self_href(),
+            "referenceItem": self.reference_item.get_self_href(),
+        }
 
 
 @dataclasses.dataclass
