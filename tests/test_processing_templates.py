@@ -11,9 +11,12 @@ from up42 import processing_templates as templates
 
 TITLE = "title"
 ITEM_URL = "https://item-url"
+SECOND_ITEM_URL = "https://second-item-url"
 COST = processing.Cost(strategy="discount", credits=-1)
 item = mock.MagicMock(spec=pystac.Item)
+second_item = mock.MagicMock(spec=pystac.Item)
 item.get_self_href.return_value = ITEM_URL
+second_item.get_self_href.return_value = SECOND_ITEM_URL
 
 
 @pytest.fixture(autouse=True)
@@ -92,3 +95,19 @@ class TestPansharpening:
         )
         assert template.is_valid and template.cost == COST
         assert template.inputs == {"title": TITLE, "item": ITEM_URL, **grey_weights}
+
+
+class TestCoregistrationSimularity:
+    def test_should_construct_template(self):
+        template = templates.CoregistationSimularity(
+            title=TITLE,
+            source_item=item,
+            reference_item=second_item,
+            workspace_id=constants.WORKSPACE_ID,
+        )
+        assert template.is_valid and template.cost == COST
+        assert template.inputs == {
+            "title": TITLE,
+            "sourceItem": ITEM_URL,
+            "referenceItem": SECOND_ITEM_URL,
+        }
