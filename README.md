@@ -70,10 +70,21 @@ order_parameters = catalog.construct_order_parameters(
 catalog.estimate_order(order_parameters)
 order = catalog.place_order(order_parameters, track_status=True)
 
+# Find the order in UP42 storage using our stac client
+stac_client = up42.stac_client()
+filter = {
+    "op": "=",
+    "args": [
+        {"property": "order_id"},
+        order.id,
+    ],
+}
+stac_items_search = stac_client.search(filter=filter)
+item = next(stac_items_search.items())
+
 # Stream cloud-native files directly for your use case
-asset = up42.initialize_order(order_id=order.order_id).get_assets()[0]
-stac_items = asset.stac_items
-asset.get_stac_asset_url(stac_asset=stac_items[0].assets.get("b02.tiff"))
+asset = item.assets.get("b02.tiff")
+asset.file
 ```
 
 ## Support
