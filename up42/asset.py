@@ -56,7 +56,7 @@ class Asset:
     info: dict
 
     @property
-    @utils.deprecation("Asset.id", "3.0.0")
+    @utils.deprecation(None, "3.0.0")
     def asset_id(self) -> str:
         return self.info["id"]
 
@@ -83,11 +83,13 @@ class Asset:
         )
 
     @classmethod
+    @utils.deprecation(None, "3.0.0")
     def get(cls, asset_id: str) -> "Asset":
         url = host.endpoint(f"/v2/assets/{asset_id}/metadata")
         return cls._from_metadata(cls.session.get(url=url).json())
 
     @classmethod
+    @utils.deprecation(None, "3.0.0")
     def all(
         cls,
         created_after: Optional[Union[str, dt.datetime]] = None,
@@ -114,6 +116,7 @@ class Asset:
         return map(cls._from_metadata, utils.paged_query(params, "/v2/assets", cls.session))
 
     @property
+    @utils.deprecation("pystac::Client.get_items", "3.0.0")
     @_retry
     def stac_items(self) -> pystac.ItemCollection:
         """Returns the stac items from an UP42 asset STAC representation."""
@@ -135,6 +138,7 @@ class Asset:
             raise ValueError(f"No STAC metadata information available for this asset {self.asset_id}") from exc
 
     @property
+    @utils.deprecation(None, "3.0.0")
     @_retry
     def stac_info(self) -> Union[pystac.Collection, pystac_client.CollectionClient]:
         """
@@ -178,6 +182,7 @@ class Asset:
         return self.session.post(url=url).json()["url"]
 
     @property
+    @utils.deprecation("pystac::Asset.file", "3.0.0")
     def file(self) -> utils.ImageFile:
         return utils.ImageFile(url=self._get_download_url(self.asset_id))
 
@@ -194,7 +199,7 @@ class Asset:
         stac_asset_id = stac_asset.href.split("/")[-1]
         return self._get_download_url(asset_id=stac_asset_id)
 
-    @utils.deprecation("Asset.file::download", "3.0.0")
+    @utils.deprecation("pystac::Asset.file::download", "3.0.0")
     def download(
         self,
         output_directory: Union[str, pathlib.Path, None] = None,
