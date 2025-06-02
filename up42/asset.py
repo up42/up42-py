@@ -56,7 +56,7 @@ class Asset:
     info: dict
 
     @property
-    @utils.deprecation("Asset.id", "3.0.0")
+    @utils.deprecation(None, "3.0.0")
     def asset_id(self) -> str:
         return self.info["id"]
 
@@ -116,7 +116,7 @@ class Asset:
         return map(cls._from_metadata, utils.paged_query(params, "/v2/assets", cls.session))
 
     @property
-    @utils.deprecation(None, "3.0.0")
+    @utils.deprecation("pystac::Client.get_items", "3.0.0")
     @_retry
     def stac_items(self) -> pystac.ItemCollection:
         """Returns the stac items from an UP42 asset STAC representation."""

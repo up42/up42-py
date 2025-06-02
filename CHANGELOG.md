@@ -32,12 +32,12 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 2.3.0a2
 **May 27, 2025**
-- Deprecated `Asset::get`
-- Deprecated `Asset::all`
-- Deprecated `Asset::stac_items`
-- Deprecated `Asset::stac_info`
-- Deprecated `Asset::file` in favour of `pystac::Asset.file`
-- Deprecated `Asset::download` in favour of `pystac::Asset.file::download`
+- Deprecated `Asset.get`
+- Deprecated `Asset.all`
+- Deprecated `Asset.stac_items` in favour of `pystac::Client.get_items`
+- Deprecated `Asset.stac_info`
+- Deprecated `Asset.file` in favour of `pystac::Asset.file`
+- Deprecated `Asset.download` in favour of `pystac::Asset.file.download`
 
 ## 2.3.0a1
 **May 16, 2025**
