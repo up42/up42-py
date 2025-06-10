@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "up42-py"
-version = "2.3.0a2"
+version = "2.2.0+build1"
 description = "Python SDK for UP42, the geospatial marketplace and developer platform."
 authors = ["UP42 GmbH <support@up42.com>"]
 license = "https://github.com/up42/up42-py/blob/master/LICENSE"
