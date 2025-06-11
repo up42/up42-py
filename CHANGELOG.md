@@ -32,6 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ## 2.3.0
 **June 10, 2025**
+
 ### Added
 - Added `CoregistrationJobTemplate` process template to allow running coregistration-simularity
 
