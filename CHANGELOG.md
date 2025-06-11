@@ -30,16 +30,19 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-### May 27, 2025 [minor]
+## 2.3.0
+**June 10, 2025**
+
+### Added
+- Added `CoregistrationJobTemplate` process template to allow running coregistration-simularity
+
+### Deprecated
 - Deprecated `Asset.get`
 - Deprecated `Asset.all`
 - Deprecated `Asset.stac_items` in favour of `pystac::Client.get_items`
 - Deprecated `Asset.stac_info`
 - Deprecated `Asset.file` in favour of `pystac::Asset.file`
 - Deprecated `Asset.download` in favour of `pystac::Asset.file.download`
-
-### May 16, 2025 [minor]
-- Add `CoregistrationJobTemplate` process template to allow running coregistration-simularity
 
 ## 2.2.0
 **Apr 29, 2025**
