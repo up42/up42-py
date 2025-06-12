@@ -30,6 +30,10 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### June 11, 2025 [patch]
+- Update requests dependency to 2.32.4
+- Update tornado dependency to 6.5.1
+
 ## 2.3.0
 **June 10, 2025**
 
