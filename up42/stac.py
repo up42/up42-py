@@ -65,7 +65,7 @@ class Up42Extension:
     product_id = Up42ExtensionProperty("up42-product:product_id")
     collection_name = Up42ExtensionProperty("up42-product:collection_name")
     modality = Up42ExtensionProperty("up42-product:modality")
-    order_id = Up42ExtensionProperty("up42-order:order_id")
+    order_id = Up42ExtensionProperty("up42-order:id")
     asset_id = Up42ExtensionProperty("up42-system:asset_id")
     account_id = Up42ExtensionProperty("up42-system:account_id")
     workspace_id = Up42ExtensionProperty("up42-system:workspace_id")
