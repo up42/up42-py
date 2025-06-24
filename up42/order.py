@@ -212,6 +212,7 @@ class Order:
         """
         return self.status == "FULFILLED"
 
+    @utils.deprecation(None, "3.0.0")
     def get_assets(self) -> List[asset.Asset]:
         """
         Gets the Order assets or results.
