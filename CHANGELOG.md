@@ -30,6 +30,9 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### June 24, 2025 [patch]
+- Deprecated `Order.get_assets`
+
 ### June 16, 2025 [patch]
 - Fixed `Up42ExtensionProperty` for order id
 
