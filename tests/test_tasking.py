@@ -345,3 +345,97 @@ class TestQuotation:
             sort_by=sort_by,
         )
         assert list(quotations) == [self.quotation] * 4
+
+
+class TestFeasibility:
+    FEASIBILITY_ID: str = FEASIBILITY_ID
+    ACCOUNT_ID: str = ACCOUNT_ID
+    WORKSPACE_ID: str = "workspace-id"
+    ORDER_ID: str = "test-order-id"
+    OPTION_ID: str = "option-123"
+
+    metadata: dict = {
+        "id": FEASIBILITY_ID,
+        "createdAt": "created-at",
+        "updatedAt": "updated-at",
+        "accountId": ACCOUNT_ID,
+        "workspaceId": WORKSPACE_ID,
+        "orderId": ORDER_ID,
+        "decision": "NOT_DECIDED",
+        "options": [{"id": OPTION_ID}],
+    }
+    feasibility = tasking.FeasibilityStudy(
+        id=FEASIBILITY_ID,
+        created_at="created-at",
+        updated_at="updated-at",
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        order_id=ORDER_ID,
+        decision="NOT_DECIDED",
+        options=[{"id": OPTION_ID}],
+    )
+
+    @pytest.fixture
+    def feasibility_obj(self):
+        return dataclasses.replace(self.feasibility)
+
+    def test_should_accept_feasibility_option(self, requests_mock: req_mock.Mocker, feasibility_obj):
+        url = f"{constants.API_HOST}/v2/tasking/feasibility-studies/{self.FEASIBILITY_ID}"
+        payload = {"acceptedOptionId": self.OPTION_ID}
+        expected = {"id": self.FEASIBILITY_ID, "decisionOption": {"id": self.OPTION_ID}}
+        requests_mock.patch(url=url, json=expected, additional_matcher=helpers.match_request_body(payload))
+        result = feasibility_obj.accept_feasibility_option(self.OPTION_ID)
+        assert result == expected
+
+    @pytest.mark.parametrize("feasibility_id", [None, FEASIBILITY_ID])
+    @pytest.mark.parametrize("workspace_id", [None, WORKSPACE_ID])
+    @pytest.mark.parametrize("order_id", [None, ORDER_ID])
+    @pytest.mark.parametrize("decision", [None, ["NOT_DECIDED, ACCEPTED"], ["ACCEPTED"]])
+    @pytest.mark.parametrize(
+        "sort_by",
+        [
+            None,
+            tasking.FeasibilityStudySorting.created_at.asc,
+            tasking.FeasibilityStudySorting.updated_at.asc,
+        ],
+        ids=str,
+    )
+    def test_should_get_all(
+        self,
+        requests_mock: req_mock.Mocker,
+        feasibility_id: Optional[str],
+        workspace_id: Optional[str],
+        order_id: Optional[str],
+        decision: Optional[List[tasking.FeasibilityStatus]],
+        sort_by: Optional[utils.SortingField],
+        feasibility_obj,
+    ):
+        query_params: dict[str, Any] = {}
+        if feasibility_id:
+            query_params["id"] = feasibility_id
+        if workspace_id:
+            query_params["workspaceId"] = workspace_id
+        if order_id:
+            query_params["orderId"] = order_id
+        if decision:
+            query_params["decision"] = decision
+        base_url = f"{constants.API_HOST}/v2/tasking/feasibility-studies"
+        expected = [self.metadata] * 4
+        for page in [0, 1]:
+            query_params["page"] = page
+            query = urllib.parse.urlencode(query_params, doseq=True, safe="")
+            url = base_url + (query and f"?{query}")
+            offset = page * 2
+            response = {
+                "content": expected[offset : offset + 2],  # noqa: E203
+                "totalPages": 2,
+            }
+            requests_mock.get(url=url, json=response)
+        feasibilities = tasking.FeasibilityStudy.all(
+            feasibility_id=feasibility_id,
+            workspace_id=workspace_id,
+            order_id=order_id,
+            decision=decision,
+            sort_by=sort_by,
+        )
+        assert list(feasibilities) == [feasibility_obj] * 4

@@ -155,7 +155,7 @@ class Tasking(catalog.CatalogBase):
         url = host.endpoint(f"/v2/tasking/quotation/{quotation_id}")
         return self.session.patch(url, json={"decision": decision}).json()
 
-    @utils.deprecation(None, "3.0.0")
+    @utils.deprecation("FeasibilityStudy::all", "3.0.0")
     def get_feasibility(
         self,
         feasibility_id: Optional[str] = None,
@@ -190,7 +190,7 @@ class Tasking(catalog.CatalogBase):
         }
         return list(utils.paged_query(params, "/v2/tasking/feasibility-studies", self.session))
 
-    @utils.deprecation(None, "3.0.0")
+    @utils.deprecation("FeasibilityStudy::accept_feasibility_option", "3.0.0")
     def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
         """Accept one of the proposed feasibility study options.
         This operation is only allowed on feasibility studies with the NOT_DECIDED status.
@@ -273,3 +273,59 @@ class Quotation:
             cls._from_metadata,
             utils.paged_query(params, "/v2/tasking/quotation", cls.session),
         )
+
+
+class FeasibilityStudySorting:
+    created_at = utils.SortingField(name="createdAt")
+    updated_at = utils.SortingField(name="updatedAt")
+
+
+@dataclasses.dataclass
+class FeasibilityStudy:
+    session = base.Session()
+    id: str
+    created_at: str
+    updated_at: str
+    account_id: str
+    workspace_id: str
+    order_id: str
+    decision: FeasibilityStatus
+    options: List[dict]
+
+    @classmethod
+    def all(
+        cls,
+        feasibility_id: Optional[str] = None,
+        workspace_id: Optional[str] = None,
+        order_id: Optional[str] = None,
+        decision: Optional[List[FeasibilityStatus]] = None,
+        sort_by: Optional[utils.SortingField] = None,
+    ) -> Iterator["FeasibilityStudy"]:
+        params = {
+            "id": feasibility_id,
+            "workspaceId": workspace_id,
+            "orderId": order_id,
+            "decision": decision,
+            "sort": sort_by,
+        }
+        return map(
+            cls._from_metadata,
+            utils.paged_query(params, "/v2/tasking/feasibility-studies", cls.session),
+        )
+
+    @staticmethod
+    def _from_metadata(metadata: dict) -> "FeasibilityStudy":
+        return FeasibilityStudy(
+            id=metadata["id"],
+            created_at=metadata["createdAt"],
+            updated_at=metadata["updatedAt"],
+            account_id=metadata["accountId"],
+            workspace_id=metadata["workspaceId"],
+            order_id=metadata["orderId"],
+            decision=metadata["decision"],
+            options=metadata.get("options", []),
+        )
+
+    def accept_feasibility_option(self, accepted_option_id: str) -> dict:
+        url = host.endpoint(f"/v2/tasking/feasibility-studies/{self.id}")
+        return self.session.patch(url, json={"acceptedOptionId": accepted_option_id}).json()
