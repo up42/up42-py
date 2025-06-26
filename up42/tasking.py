@@ -190,7 +190,7 @@ class Tasking(catalog.CatalogBase):
         }
         return list(utils.paged_query(params, "/v2/tasking/feasibility-studies", self.session))
 
-    @utils.deprecation("FeasibilityStudy::accept_feasibility_option", "3.0.0")
+    @utils.deprecation("FeasibilityStudy", "3.0.0")
     def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
         """Accept one of the proposed feasibility study options.
         This operation is only allowed on feasibility studies with the NOT_DECIDED status.
