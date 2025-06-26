@@ -222,7 +222,7 @@ class TestTasking:
         url = f"{constants.API_HOST}/v2/tasking/feasibility-studies/{FEASIBILITY_ID}"
         expected = {
             "id": FEASIBILITY_ID,
-            "decisionOption": {
+            "decision_option": {
                 "id": accepted_option_id,
             },
         }
@@ -373,19 +373,12 @@ class TestFeasibility:
         order_id=ORDER_ID,
         decision="NOT_DECIDED",
         options=[{"id": OPTION_ID}],
+        decision_option=None,
     )
 
     @pytest.fixture
     def feasibility_obj(self):
         return dataclasses.replace(self.feasibility)
-
-    def test_should_accept_feasibility_option(self, requests_mock: req_mock.Mocker, feasibility_obj):
-        url = f"{constants.API_HOST}/v2/tasking/feasibility-studies/{self.FEASIBILITY_ID}"
-        payload = {"acceptedOptionId": self.OPTION_ID}
-        expected = {"id": self.FEASIBILITY_ID, "decisionOption": {"id": self.OPTION_ID}}
-        requests_mock.patch(url=url, json=expected, additional_matcher=helpers.match_request_body(payload))
-        result = feasibility_obj.accept_feasibility_option(self.OPTION_ID)
-        assert result == expected
 
     @pytest.mark.parametrize("feasibility_id", [None, FEASIBILITY_ID])
     @pytest.mark.parametrize("workspace_id", [None, WORKSPACE_ID])
@@ -419,6 +412,8 @@ class TestFeasibility:
             query_params["orderId"] = order_id
         if decision:
             query_params["decision"] = decision
+        if sort_by:
+            query_params["sort"] = str(sort_by)
         base_url = f"{constants.API_HOST}/v2/tasking/feasibility-studies"
         expected = [self.metadata] * 4
         for page in [0, 1]:
@@ -439,3 +434,27 @@ class TestFeasibility:
             sort_by=sort_by,
         )
         assert list(feasibilities) == [feasibility_obj] * 4
+
+    def test_should_choose_feasibility_option(self):
+        feasibility_study = dataclasses.replace(self.feasibility, decision_option=None)
+        feasibility_study.choose_feasibility_option(self.OPTION_ID)
+        assert feasibility_study.decision_option.id == self.OPTION_ID  # type: ignore[union-attr]
+
+    def test_should_save(self, requests_mock: req_mock.Mocker):
+        feasibility_study = dataclasses.replace(self.feasibility, decision_option=None)
+        feasibility_study.choose_feasibility_option(self.OPTION_ID)
+        patch = {"acceptedOptionId": self.OPTION_ID}
+        url = f"{constants.API_HOST}/v2/tasking/feasibility-studies/{self.FEASIBILITY_ID}"
+        expected_json = self.metadata | {"decision_option": {"id": self.OPTION_ID}}
+        requests_mock.patch(
+            url=url,
+            json=expected_json,
+            additional_matcher=helpers.match_request_body(patch),
+        )
+        feasibility_study.save()
+        assert feasibility_study.decision_option.id == self.OPTION_ID  # type: ignore[union-attr]
+
+    def test_should_raise_if_no_decision_option_on_save(self):
+        feasibility_study = dataclasses.replace(self.feasibility, decision_option=None)
+        with pytest.raises(ValueError, match="No decision option set for this feasibility study."):
+            feasibility_study.save()

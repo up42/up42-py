@@ -281,6 +281,11 @@ class FeasibilityStudySorting:
 
 
 @dataclasses.dataclass
+class FeasibilityDecisionOption:
+    id: str
+
+
+@dataclasses.dataclass
 class FeasibilityStudy:
     session = base.Session()
     id: str
@@ -291,6 +296,7 @@ class FeasibilityStudy:
     order_id: str
     decision: FeasibilityStatus
     options: List[dict]
+    decision_option: Optional[FeasibilityDecisionOption] = None
 
     @classmethod
     def all(
@@ -315,6 +321,9 @@ class FeasibilityStudy:
 
     @staticmethod
     def _from_metadata(metadata: dict) -> "FeasibilityStudy":
+        decision_option = metadata.get("decision_option")
+        if decision_option is not None:
+            decision_option = FeasibilityDecisionOption(decision_option["id"])
         return FeasibilityStudy(
             id=metadata["id"],
             created_at=metadata["createdAt"],
@@ -324,8 +333,17 @@ class FeasibilityStudy:
             order_id=metadata["orderId"],
             decision=metadata["decision"],
             options=metadata.get("options", []),
+            decision_option=decision_option,
         )
 
-    def accept_feasibility_option(self, accepted_option_id: str) -> dict:
+    def choose_feasibility_option(self, feasibility_option_id: str):
+        self.decision_option = FeasibilityDecisionOption(feasibility_option_id)
+
+    def save(self):
         url = host.endpoint(f"/v2/tasking/feasibility-studies/{self.id}")
-        return self.session.patch(url, json={"acceptedOptionId": accepted_option_id}).json()
+        if self.decision_option is None:
+            raise ValueError("No decision option set for this feasibility study.")
+        metadata = self.session.patch(url, json={"acceptedOptionId": self.decision_option.id}).json()
+        feasibility = self._from_metadata(metadata)
+        for field in dataclasses.fields(feasibility):
+            setattr(self, field.name, getattr(feasibility, field.name))
