@@ -342,7 +342,10 @@ class FeasibilityStudy:
     def save(self):
         url = host.endpoint(f"/v2/tasking/feasibility-studies/{self.id}")
         if self.decision_option is None:
-            raise ValueError("No decision option set for this feasibility study.")
+            raise ValueError(
+                "No decision option chosen for this feasibility study. "
+                "Please call 'choose_feasibility_option' with a valid option ID before saving."
+            )
         metadata = self.session.patch(url, json={"acceptedOptionId": self.decision_option.id}).json()
         feasibility = self._from_metadata(metadata)
         for field in dataclasses.fields(feasibility):

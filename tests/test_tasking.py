@@ -456,5 +456,5 @@ class TestFeasibility:
 
     def test_should_raise_if_no_decision_option_on_save(self):
         feasibility_study = dataclasses.replace(self.feasibility, decision_option=None)
-        with pytest.raises(ValueError, match="No decision option set for this feasibility study."):
+        with pytest.raises(ValueError, match="No decision option chosen for this feasibility study."):
             feasibility_study.save()
