@@ -321,7 +321,7 @@ class FeasibilityStudy:
 
     @staticmethod
     def _from_metadata(metadata: dict) -> "FeasibilityStudy":
-        decision_option = metadata.get("decision_option")
+        decision_option = metadata.get("decisionOption")
         if decision_option is not None:
             decision_option = FeasibilityDecisionOption(decision_option["id"])
         return FeasibilityStudy(

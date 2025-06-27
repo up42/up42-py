@@ -222,7 +222,7 @@ class TestTasking:
         url = f"{constants.API_HOST}/v2/tasking/feasibility-studies/{FEASIBILITY_ID}"
         expected = {
             "id": FEASIBILITY_ID,
-            "decision_option": {
+            "decisionOption": {
                 "id": accepted_option_id,
             },
         }
@@ -445,7 +445,7 @@ class TestFeasibility:
         feasibility_study.choose_feasibility_option(self.OPTION_ID)
         patch = {"acceptedOptionId": self.OPTION_ID}
         url = f"{constants.API_HOST}/v2/tasking/feasibility-studies/{self.FEASIBILITY_ID}"
-        expected_json = self.metadata | {"decision_option": {"id": self.OPTION_ID}}
+        expected_json = self.metadata | {"decisionOption": {"id": self.OPTION_ID}}
         requests_mock.patch(
             url=url,
             json=expected_json,
