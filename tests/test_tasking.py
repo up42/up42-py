@@ -438,14 +438,14 @@ class TestFeasibility:
         )
         assert list(feasibility_studies) == [feasibility_study_obj] * 4
 
-    def test_should_choose_feasibility_option(self):
+    def test_should_choose_choose_feasibility_study_option(self):
         feasibility_study = dataclasses.replace(self.feasibility_study, decision_option=None)
-        feasibility_study.choose_feasibility_option(self.OPTION_ID)
+        feasibility_study.choose_feasibility_study_option(self.OPTION_ID)
         assert feasibility_study.decision_option.id == self.OPTION_ID  # type: ignore[union-attr]
 
     def test_should_save(self, requests_mock: req_mock.Mocker):
         feasibility_study = dataclasses.replace(self.feasibility_study, decision_option=None)
-        feasibility_study.choose_feasibility_option(self.OPTION_ID)
+        feasibility_study.choose_feasibility_study_option(self.OPTION_ID)
         patch = {"acceptedOptionId": self.OPTION_ID}
         url = f"{constants.API_HOST}/v2/tasking/feasibility-studies/{self.FEASIBILITY_ID}"
         expected_description = "description"

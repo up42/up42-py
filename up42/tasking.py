@@ -340,7 +340,7 @@ class FeasibilityStudy:
             decision_option=decision_option,
         )
 
-    def choose_feasibility_option(self, feasibility_study_option_id: str):
+    def choose_feasibility_study_option(self, feasibility_study_option_id: str):
         self.decision_option = FeasibilityDecisionOption(feasibility_study_option_id)
 
     def save(self):
