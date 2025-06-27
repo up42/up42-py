@@ -340,15 +340,15 @@ class FeasibilityStudy:
             decision_option=decision_option,
         )
 
-    def choose_feasibility_study_option(self, feasibility_study_option_id: str):
-        self.decision_option = FeasibilityDecisionOption(feasibility_study_option_id)
+    def accept(self, option_id: str):
+        self.decision_option = FeasibilityDecisionOption(option_id)
 
     def save(self):
         url = host.endpoint(f"/v2/tasking/feasibility-studies/{self.id}")
         if self.decision_option is None:
             raise ValueError(
                 "No decision option chosen for this feasibility study. "
-                "Please call 'choose_feasibility_option' with a valid option ID before saving."
+                "Please call 'accept' with a valid option ID before saving."
             )
         metadata = self.session.patch(url, json={"acceptedOptionId": self.decision_option.id}).json()
         feasibility_study = self._from_metadata(metadata)
