@@ -278,6 +278,7 @@ class Quotation:
 class FeasibilityStudySorting:
     created_at = utils.SortingField(name="createdAt")
     updated_at = utils.SortingField(name="updatedAt")
+    decided_at = utils.SortingField(name="decisionAt")
 
 
 @dataclasses.dataclass
@@ -297,6 +298,7 @@ class FeasibilityStudy:
     order_id: str
     decision: FeasibilityStatus
     options: List[dict]
+    decided_at: Optional[str] = None
     decision_option: Optional[FeasibilityDecisionOption] = None
 
     @classmethod
@@ -334,6 +336,7 @@ class FeasibilityStudy:
             order_id=metadata["orderId"],
             decision=metadata["decision"],
             options=metadata.get("options", []),
+            decided_at=metadata.get("decisionAt"),
             decision_option=decision_option,
         )
 

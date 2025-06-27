@@ -363,6 +363,7 @@ class TestFeasibility:
         "orderId": ORDER_ID,
         "decision": "NOT_DECIDED",
         "options": [{"id": OPTION_ID}],
+        "decisionAt": "decided-at",
     }
     feasibility_study = tasking.FeasibilityStudy(
         id=FEASIBILITY_ID,
@@ -373,6 +374,7 @@ class TestFeasibility:
         order_id=ORDER_ID,
         decision="NOT_DECIDED",
         options=[{"id": OPTION_ID}],
+        decided_at="decided-at",
         decision_option=None,
     )
 
@@ -390,6 +392,7 @@ class TestFeasibility:
             None,
             tasking.FeasibilityStudySorting.created_at.asc,
             tasking.FeasibilityStudySorting.updated_at.asc,
+            tasking.FeasibilityStudySorting.decided_at.asc,
         ],
         ids=str,
     )
