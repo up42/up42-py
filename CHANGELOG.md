@@ -30,18 +30,24 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-### June 25, 2025 [minor]
+### June 27, 2025 [minor]
 - Added `FeasibilityStudy` active record class to `tasking` module.
 
 ### June 24, 2025 [patch]
 - Deprecated `Order.get_assets`
+- 
+## 2.3.1
+**June 26, 2025**
 
-### June 16, 2025 [patch]
-- Fixed `Up42ExtensionProperty` for order id
+### Fixed
+- `Up42ExtensionProperty` for order id
 
-### June 11, 2025 [patch]
+### Security
 - Updated requests dependency to 2.32.4
 - Updated tornado dependency to 6.5.1
+
+### Deprecated
+- `Order.get_assets`
 
 ## 2.3.0
 **June 10, 2025**
