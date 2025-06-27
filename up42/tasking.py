@@ -283,6 +283,7 @@ class FeasibilityStudySorting:
 @dataclasses.dataclass
 class FeasibilityDecisionOption:
     id: str
+    description: Optional[str] = None
 
 
 @dataclasses.dataclass
@@ -301,14 +302,14 @@ class FeasibilityStudy:
     @classmethod
     def all(
         cls,
-        feasibility_id: Optional[str] = None,
+        feasibility_study_id: Optional[str] = None,
         workspace_id: Optional[str] = None,
         order_id: Optional[str] = None,
         decision: Optional[List[FeasibilityStatus]] = None,
         sort_by: Optional[utils.SortingField] = None,
     ) -> Iterator["FeasibilityStudy"]:
         params = {
-            "id": feasibility_id,
+            "id": feasibility_study_id,
             "workspaceId": workspace_id,
             "orderId": order_id,
             "decision": decision,
@@ -323,7 +324,7 @@ class FeasibilityStudy:
     def _from_metadata(metadata: dict) -> "FeasibilityStudy":
         decision_option = metadata.get("decisionOption")
         if decision_option is not None:
-            decision_option = FeasibilityDecisionOption(decision_option["id"])
+            decision_option = FeasibilityDecisionOption(decision_option["id"], decision_option["description"])
         return FeasibilityStudy(
             id=metadata["id"],
             created_at=metadata["createdAt"],
@@ -336,8 +337,8 @@ class FeasibilityStudy:
             decision_option=decision_option,
         )
 
-    def choose_feasibility_option(self, feasibility_option_id: str):
-        self.decision_option = FeasibilityDecisionOption(feasibility_option_id)
+    def choose_feasibility_option(self, feasibility_study_option_id: str):
+        self.decision_option = FeasibilityDecisionOption(feasibility_study_option_id)
 
     def save(self):
         url = host.endpoint(f"/v2/tasking/feasibility-studies/{self.id}")
@@ -347,6 +348,6 @@ class FeasibilityStudy:
                 "Please call 'choose_feasibility_option' with a valid option ID before saving."
             )
         metadata = self.session.patch(url, json={"acceptedOptionId": self.decision_option.id}).json()
-        feasibility = self._from_metadata(metadata)
-        for field in dataclasses.fields(feasibility):
-            setattr(self, field.name, getattr(feasibility, field.name))
+        feasibility_study = self._from_metadata(metadata)
+        for field in dataclasses.fields(feasibility_study):
+            setattr(self, field.name, getattr(feasibility_study, field.name))
