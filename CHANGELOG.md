@@ -32,10 +32,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ### June 27, 2025 [minor]
 - Added `FeasibilityStudy` active record class to `tasking` module.
+- Exported `FeasibilityStudy` and `FeasibilityStudySorting` to `up42` namespace.
 
-### June 24, 2025 [patch]
-- Deprecated `Order.get_assets`
-- 
 ## 2.3.1
 **June 26, 2025**
 
