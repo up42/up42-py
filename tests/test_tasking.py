@@ -383,7 +383,7 @@ class TestFeasibility:
     @pytest.mark.parametrize("feasibility_id", [None, FEASIBILITY_ID])
     @pytest.mark.parametrize("workspace_id", [None, WORKSPACE_ID])
     @pytest.mark.parametrize("order_id", [None, ORDER_ID])
-    @pytest.mark.parametrize("decision", [None, ["NOT_DECIDED, ACCEPTED"], ["ACCEPTED"]])
+    @pytest.mark.parametrize("decision", [None, ["NOT_DECIDED", "ACCEPTED"], ["ACCEPTED"]])
     @pytest.mark.parametrize(
         "sort_by",
         [
