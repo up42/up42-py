@@ -11,7 +11,7 @@ orbs:
 workspace: &workspace-dir /tmp/workspace
 
 # E2E Tests
-slack-channel-id-qa-alert: &slack-channel-id-qa-alert 'C04QXJP2RCZ'
+slack-channel-id-qa-alert: &slack-channel-id-qa-alert 'C06P4MXGY23'
 
 jobs:
   test:
