@@ -347,7 +347,7 @@ class TestQuotation:
         assert list(quotations) == [self.quotation] * 4
 
 
-class TestFeasibility:
+class TestFeasibilityStudy:
     FEASIBILITY_ID: str = FEASIBILITY_ID
     ACCOUNT_ID: str = ACCOUNT_ID
     WORKSPACE_ID: str = "workspace-id"
@@ -461,5 +461,7 @@ class TestFeasibility:
 
     def test_should_raise_if_no_decision_option_on_save(self):
         feasibility_study = dataclasses.replace(self.feasibility_study, decision_option=None)
-        with pytest.raises(ValueError, match="No decision option chosen for this feasibility study."):
+        with pytest.raises(
+            feasibility_study.NoDecisionOptionChosen, match="No decision option chosen for this feasibility study."
+        ):
             feasibility_study.save()

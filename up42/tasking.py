@@ -282,7 +282,7 @@ class FeasibilityStudySorting:
 
 
 @dataclasses.dataclass
-class FeasibilityDecisionOption:
+class FeasibilityStudyDecisionOption:
     id: str
     description: Optional[str] = None
 
@@ -299,7 +299,10 @@ class FeasibilityStudy:
     decision: FeasibilityStatus
     options: List[dict]
     decided_at: Optional[str] = None
-    decision_option: Optional[FeasibilityDecisionOption] = None
+    decision_option: Optional[FeasibilityStudyDecisionOption] = None
+
+    class NoDecisionOptionChosen(Exception):
+        """Raised when trying to save a FeasibilityStudy without a chosen decision option."""
 
     @classmethod
     def all(
@@ -326,7 +329,7 @@ class FeasibilityStudy:
     def _from_metadata(metadata: dict) -> "FeasibilityStudy":
         decision_option = metadata.get("decisionOption")
         if decision_option is not None:
-            decision_option = FeasibilityDecisionOption(decision_option["id"], decision_option["description"])
+            decision_option = FeasibilityStudyDecisionOption(decision_option["id"], decision_option["description"])
         return FeasibilityStudy(
             id=metadata["id"],
             created_at=metadata["createdAt"],
@@ -341,12 +344,12 @@ class FeasibilityStudy:
         )
 
     def accept(self, option_id: str):
-        self.decision_option = FeasibilityDecisionOption(option_id)
+        self.decision_option = FeasibilityStudyDecisionOption(option_id)
 
     def save(self):
         url = host.endpoint(f"/v2/tasking/feasibility-studies/{self.id}")
         if self.decision_option is None:
-            raise ValueError(
+            raise FeasibilityStudy.NoDecisionOptionChosen(
                 "No decision option chosen for this feasibility study. "
                 "Please call 'accept' with a valid option ID before saving."
             )
