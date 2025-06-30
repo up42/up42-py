@@ -155,7 +155,7 @@ class Tasking(catalog.CatalogBase):
         url = host.endpoint(f"/v2/tasking/quotation/{quotation_id}")
         return self.session.patch(url, json={"decision": decision}).json()
 
-    @utils.deprecation(None, "3.0.0")
+    @utils.deprecation("FeasibilityStudy::all", "3.0.0")
     def get_feasibility(
         self,
         feasibility_id: Optional[str] = None,
@@ -190,7 +190,7 @@ class Tasking(catalog.CatalogBase):
         }
         return list(utils.paged_query(params, "/v2/tasking/feasibility-studies", self.session))
 
-    @utils.deprecation(None, "3.0.0")
+    @utils.deprecation("FeasibilityStudy", "3.0.0")
     def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
         """Accept one of the proposed feasibility study options.
         This operation is only allowed on feasibility studies with the NOT_DECIDED status.
@@ -273,3 +273,87 @@ class Quotation:
             cls._from_metadata,
             utils.paged_query(params, "/v2/tasking/quotation", cls.session),
         )
+
+
+class FeasibilityStudySorting:
+    created_at = utils.SortingField(name="createdAt")
+    updated_at = utils.SortingField(name="updatedAt")
+    decided_at = utils.SortingField(name="decisionAt")
+
+
+@dataclasses.dataclass
+class FeasibilityStudyDecisionOption:
+    id: str
+    description: Optional[str] = None
+
+
+@dataclasses.dataclass
+class FeasibilityStudy:
+    session = base.Session()
+    id: str
+    created_at: str
+    updated_at: str
+    account_id: str
+    workspace_id: str
+    order_id: str
+    decision: FeasibilityStatus
+    options: List[dict]
+    decided_at: Optional[str] = None
+    decision_option: Optional[FeasibilityStudyDecisionOption] = None
+
+    class NoDecisionOptionChosen(Exception):
+        """Raised when trying to save a FeasibilityStudy without a chosen decision option."""
+
+    @classmethod
+    def all(
+        cls,
+        feasibility_study_id: Optional[str] = None,
+        workspace_id: Optional[str] = None,
+        order_id: Optional[str] = None,
+        decision: Optional[List[FeasibilityStatus]] = None,
+        sort_by: Optional[utils.SortingField] = None,
+    ) -> Iterator["FeasibilityStudy"]:
+        params = {
+            "id": feasibility_study_id,
+            "workspaceId": workspace_id,
+            "orderId": order_id,
+            "decision": decision,
+            "sort": sort_by,
+        }
+        return map(
+            cls._from_metadata,
+            utils.paged_query(params, "/v2/tasking/feasibility-studies", cls.session),
+        )
+
+    @staticmethod
+    def _from_metadata(metadata: dict) -> "FeasibilityStudy":
+        decision_option = metadata.get("decisionOption")
+        if decision_option is not None:
+            decision_option = FeasibilityStudyDecisionOption(decision_option["id"], decision_option["description"])
+        return FeasibilityStudy(
+            id=metadata["id"],
+            created_at=metadata["createdAt"],
+            updated_at=metadata["updatedAt"],
+            account_id=metadata["accountId"],
+            workspace_id=metadata["workspaceId"],
+            order_id=metadata["orderId"],
+            decision=metadata["decision"],
+            options=metadata.get("options", []),
+            decided_at=metadata.get("decisionAt"),
+            decision_option=decision_option,
+        )
+
+    def accept(self, option_id: str):
+        self.decision_option = FeasibilityStudyDecisionOption(option_id)
+
+    def save(self):
+        url = host.endpoint(f"/v2/tasking/feasibility-studies/{self.id}")
+        if self.decision_option is None:
+            raise FeasibilityStudy.NoDecisionOptionChosen(
+                "No decision option chosen for this feasibility study. "
+                "Please call 'accept' with a valid option ID before saving."
+            )
+        metadata = self.session.patch(url, json={"acceptedOptionId": self.decision_option.id}).json()
+        feasibility_study = self._from_metadata(metadata)
+        for field in dataclasses.fields(feasibility_study):
+            setattr(self, field.name, getattr(feasibility_study, field.name))
