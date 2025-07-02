@@ -30,7 +30,8 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-### June 27, 2025 [minor]
+### 2.4.0a1
+**July 02, 2025**
 - Added `FeasibilityStudy` active record class to `tasking` module.
 - Exported `FeasibilityStudy` and `FeasibilityStudySorting` to `up42` namespace.
 
