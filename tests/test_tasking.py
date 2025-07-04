@@ -378,10 +378,6 @@ class TestFeasibilityStudy:
         decision_option=None,
     )
 
-    @pytest.fixture
-    def feasibility_study_obj(self):
-        return dataclasses.replace(self.feasibility_study)
-
     @pytest.mark.parametrize("feasibility_study_id", [None, FEASIBILITY_ID])
     @pytest.mark.parametrize("workspace_id", [None, WORKSPACE_ID])
     @pytest.mark.parametrize("order_id", [None, ORDER_ID])
@@ -404,7 +400,6 @@ class TestFeasibilityStudy:
         order_id: Optional[str],
         decision: Optional[List[tasking.FeasibilityStatus]],
         sort_by: Optional[utils.SortingField],
-        feasibility_study_obj,
     ):
         query_params: dict[str, Any] = {}
         if feasibility_study_id:
@@ -436,7 +431,7 @@ class TestFeasibilityStudy:
             decision=decision,
             sort_by=sort_by,
         )
-        assert list(feasibility_studies) == [feasibility_study_obj] * 4
+        assert list(feasibility_studies) == [self.feasibility_study] * 4
 
     def test_should_accept(self):
         feasibility_study = dataclasses.replace(self.feasibility_study, decision_option=None)
