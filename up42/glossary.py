@@ -58,6 +58,7 @@ class Scene:
     delivery_time: Optional[Literal["MINUTES", "HOURS", "DAYS"]]
     producer: str
     quicklook: utils.ImageFile
+    provider_properties: Optional[dict]
 
 
 class InvalidHost(ValueError):
@@ -140,6 +141,7 @@ class Provider:
                 file_name=f"quicklook_{scene_id}.jpg",
                 session=self.session,
             ),
+            provider_properties=properties.get("providerProperties"),
         )
 
 
