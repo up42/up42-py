@@ -74,6 +74,7 @@ SCENE = glossary.Scene(
         url=f"{constants.API_HOST}/catalog/{HOST_NAME}/image/{SCENE_ID}/quicklook",
         file_name=f"quicklook_{SCENE_ID}.jpg",
     ),
+    provider_properties={"some": "properties"},
 )
 SCENE_FEATURE = {
     "geometry": POLYGON,
@@ -89,6 +90,7 @@ SCENE_FEATURE = {
         "resolution": SCENE.resolution,
         "deliveryTime": SCENE.delivery_time,
         "producer": SCENE.producer,
+        "providerProperties": SCENE.provider_properties,
     },
 }
 
@@ -143,7 +145,12 @@ class TestProvider:
             (None, None, "..", ".."),
             ("2023-01-01", None, "2023-01-01T00:00:00Z", ".."),
             (None, "2023-12-31", "..", "2023-12-31T23:59:59Z"),
-            ("2023-01-01", "2023-12-31", "2023-01-01T00:00:00Z", "2023-12-31T23:59:59Z"),
+            (
+                "2023-01-01",
+                "2023-12-31",
+                "2023-01-01T00:00:00Z",
+                "2023-12-31T23:59:59Z",
+            ),
         ],
     )
     @pytest.mark.parametrize("cql_query", [None, {"cql2": "query"}])
