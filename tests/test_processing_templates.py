@@ -63,9 +63,10 @@ class TestParameterlessTemplates:
 
 
 class TestNSUpsampling:
-    def test_should_construct_template(self):
+    @pytest.mark.parametrize("cls", [templates.UpsamplingNS, templates.UpsamplingNSSentinel])
+    def test_should_construct_template(self, cls):
         ned, rgb = random.choices([True, False], k=2)
-        template = templates.UpsamplingNS(
+        template = cls(
             title=TITLE,
             item=item,
             ned=ned,
