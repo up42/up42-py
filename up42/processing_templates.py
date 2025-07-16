@@ -111,6 +111,11 @@ class UpsamplingNS(processing.SingleItemJobTemplate):
 
 
 @dataclasses.dataclass
+class UpsamplingNSSentinel(UpsamplingNS):
+    process_id = "upsampling-ns-sentinel"
+
+
+@dataclasses.dataclass
 class GreyWeight:
     band: str
     weight: float
