@@ -6,6 +6,7 @@ pre-commit-cache: &pre-commit-cache pre-commit-{{ checksum ".pre-commit-config.y
 orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
   automated-test: interstellar/automated-test@volatile
+  pact-cli: interstellar/pact-cli@dev:preview
 
 # variables
 workspace: &workspace-dir /tmp/workspace
@@ -149,6 +150,11 @@ workflows:
           filters:
             branches:
               only: master
+      - pact-cli/publish-pacts:
+          name: publish-contracts
+          context: pact-broker
+          requires:
+            - test
       - hold_before_deploy:
           type: approval
           requires:
@@ -163,3 +169,9 @@ workflows:
           filters:
             branches:
               only: master
+      - pact-cli/record-release:
+          name: record-release
+          components: SDK
+          context: pact-broker
+          requires:
+            - deploy
