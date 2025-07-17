@@ -130,6 +130,14 @@ workflows:
     jobs:
       - test:
           context: sonarcloud
+          post-steps:
+            - pact-cli/prepare:
+                version-command: echo "$(poetry version --short)+$(git rev-parse HEAD)"
+      - pact-cli/publish-pacts:
+          name: publish-contracts
+          context: pact-broker
+          requires:
+            - test
       - test-python:
           matrix:
             parameters:
@@ -150,11 +158,6 @@ workflows:
           filters:
             branches:
               only: master
-      - pact-cli/publish-pacts:
-          name: publish-contracts
-          context: pact-broker
-          requires:
-            - test
       - hold_before_deploy:
           type: approval
           requires:

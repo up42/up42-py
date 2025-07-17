@@ -38,14 +38,14 @@ def test_download_asset(monkeypatch):
 
 
 def test_update_item(monkeypatch):
-    pact_mock = pact.Pact(consumer="SDK", provider="STAC Items").with_specification("V4")
+    pact_mock = pact.Pact(consumer="SDK", provider="STAC").with_specification("V4")
 
     item = pystac.Item(
         id="3b1e07c1-ce7b-41be-ab4c-2bcc9e26575c",
         collection="61bed282-8dac-414c-a0b1-a2a7aee7a2a7",
         geometry=None,
         bbox=None,
-        datetime=dt.datetime.fromisoformat("2023-01-01T00:00:00Z"),
+        datetime=dt.datetime.fromisoformat("2025-07-18T14:26:45+00:00"),
         properties={
             stac.UP42_USER_TITLE_KEY: "title",
             stac.UP42_USER_TAGS_KEY: ["tag"],
