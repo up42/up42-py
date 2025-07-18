@@ -16,13 +16,13 @@ def build_outdated_version_message(installed_version, latest_version):
 
 
 def check_is_latest_version(
-    installed_version,
+    installed_version: str,
     warn=warnings.warn,
     build_warning_message=build_outdated_version_message,
 ):
     try:
         latest_version = _get_latest_version()
-        if installed_version < latest_version:
+        if version.Version(installed_version) < latest_version:
             warn(build_warning_message(installed_version, latest_version))
     except exceptions.HTTPError:
         pass

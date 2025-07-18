@@ -19,8 +19,6 @@
 
 from typing import Callable, Type, Union, cast
 
-from packaging import version
-
 # pylint: disable=only-importing-modules-is-allowed
 from up42.asset import Asset, AssetSorting
 from up42.base import authenticate, get_credits_balance, stac_client
@@ -47,7 +45,7 @@ from up42.webhooks import Webhook
 stac_extend()
 
 __version__ = get_up42_py_version()
-version_control.check_is_latest_version(version.Version(__version__))
+version_control.check_is_latest_version(__version__)
 
 __all__ = [
     cast(
