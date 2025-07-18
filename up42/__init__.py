@@ -17,13 +17,9 @@
     ```
 """
 
-import functools
-import warnings
 from typing import Callable, Type, Union, cast
 
-import requests
 from packaging import version
-from requests import exceptions
 
 # pylint: disable=only-importing-modules-is-allowed
 from up42.asset import Asset, AssetSorting
@@ -45,32 +41,13 @@ from up42.storage import Storage
 from up42.tasking import FeasibilityStudy, FeasibilityStudySorting, Quotation, QuotationSorting, Tasking
 from up42.tools import get_example_aoi, read_vector_file
 from up42.utils import get_up42_py_version
+from up42.version import version_control
 from up42.webhooks import Webhook
 
 stac_extend()
 
 __version__ = get_up42_py_version()
-
-
-@functools.lru_cache
-def _get_latest_version():
-    response = requests.get("https://pypi.org/pypi/up42-py/json", timeout=2)
-    response.raise_for_status()
-    return version.parse(response.json()["info"]["version"])
-
-
-def _check_version():
-    try:
-        installed_version = version.parse(__version__)
-        latest_version = _get_latest_version()
-        if installed_version < latest_version:
-            message = f"You're using an outdated version of the UP42 Python SDK: v{installed_version}. A newer version is available: v{latest_version}.\nPlease upgrade to the latest version using **pip install --upgrade up42-py** or conda **conda update -c conda-forge up42-py**."  # pylint: disable=line-too-long # noqa: E501
-            warnings.warn(message)
-    except exceptions.HTTPError:
-        pass
-
-
-_check_version()
+version_control.check_is_latest_version(version.Version(__version__))
 
 __all__ = [
     cast(
