@@ -4,8 +4,8 @@ from packaging import version
 
 from up42.version import version_control
 
-latest_version = "10.0.0"
-installed_version = "1.0.0"
+fake_latest_version = "10.0.0"
+fake_installed_version = "1.0.0"
 
 
 class TestBuildMessage:
