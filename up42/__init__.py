@@ -39,11 +39,14 @@ from up42.storage import Storage
 from up42.tasking import FeasibilityStudy, FeasibilityStudySorting, Quotation, QuotationSorting, Tasking
 from up42.tools import get_example_aoi, read_vector_file
 from up42.utils import get_up42_py_version
+from up42.version import version_control
 from up42.webhooks import Webhook
 
 stac_extend()
 
 __version__ = get_up42_py_version()
+version_control.check_is_latest_version(__version__)
+
 __all__ = [
     cast(
         Union[Type, Callable],
