@@ -30,9 +30,26 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+
+### 2.5.0a1
+**July 22, 2025**
+- Added `UpsamplingNSSentinel` process template to allow running upsampling-ns-sentinel
+
+## 2.4.0
+**July 21, 2025**
+
+### Deprecated
+- Deprecated the `webhooks` module and the `base::get_credits_balance` function.
+
+### Added
+- Added a warning when outdated versions are imported.
+- Added `provider_properties` data field to `glossary::Scene` active record class.
+- Added `FeasibilityStudy` active record class to `tasking` module.
+- Exported `FeasibilityStudy` and `FeasibilityStudySorting` to `up42` namespace.
+
 ### 2.4.0a4
 **July 16, 2025**
-- Added `UpsamplingNSSentinel` process template to allow running upsampling-ns-sentinel
+- Display warning when importing outdated versions
 
 ### 2.4.0a3
 **July 15, 2025**
