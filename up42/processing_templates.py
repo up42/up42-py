@@ -71,6 +71,7 @@ class UpsamplingNS(WorkspaceIdSingleItemTemplate):
 class UpsamplingNSSentinel(WorkspaceIdSingleItemTemplate):
     process_id = "upsampling-ns-sentinel"
 
+
 @dataclasses.dataclass
 class DetectionChangeSpacept(WorkspaceIdMultiItemTemplate):
     process_id = "detection-change-spacept"
