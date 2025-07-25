@@ -32,8 +32,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 
 ### 2.5.0a2
-**July 22, 2025**
-- Added `UpsamplingNSSentinel` process template to allow running upsampling-ns-sentinel
+**July 25, 2025**
+- Added a new processing job template: `UpsamplingNSSentinel`.
 
 ### 2.5.0a1
 **July 22, 2025**
