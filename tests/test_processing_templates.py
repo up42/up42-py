@@ -41,6 +41,7 @@ class TestParameterlessTemplates:
             templates.DetectionCarsOI,
             templates.DetectionAircraftOI,
             templates.DetectionTrucksOI,
+            templates.UpsamplingNS,
         ],
     )
     def test_should_construct_single_item_job_templates(self, template_class):
@@ -60,25 +61,6 @@ class TestParameterlessTemplates:
         template = template_class(title=TITLE, items=[item], workspace_id=constants.WORKSPACE_ID)
         assert template.is_valid and template.cost == COST
         assert template.inputs == {"title": TITLE, "items": [ITEM_URL]}
-
-
-class TestNSUpsampling:
-    def test_should_construct_template(self):
-        ned, rgb = random.choices([True, False], k=2)
-        template = templates.UpsamplingNS(
-            title=TITLE,
-            item=item,
-            ned=ned,
-            rgb=rgb,
-            workspace_id=constants.WORKSPACE_ID,
-        )
-        assert template.is_valid and template.cost == COST
-        assert template.inputs == {
-            "title": TITLE,
-            "item": ITEM_URL,
-            "NED": ned,
-            "RGB": rgb,
-        }
 
 
 class TestPansharpening:
