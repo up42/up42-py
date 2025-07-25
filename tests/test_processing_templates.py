@@ -42,6 +42,7 @@ class TestParameterlessTemplates:
             templates.DetectionAircraftOI,
             templates.DetectionTrucksOI,
             templates.UpsamplingNS,
+            templates.UpsamplingNSSentinel,
         ],
     )
     def test_should_construct_single_item_job_templates(self, template_class):
