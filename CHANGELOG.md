@@ -37,7 +37,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ### 2.5.0a1
 **July 22, 2025**
-- Remove `rgb` and `ned` params from `UpsamplingNS` job template
+- Removed `rgb` and `ned` parameters from the `UpsamplingNS` job template.
 
 ## 2.4.0
 **July 21, 2025**
