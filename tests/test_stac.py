@@ -210,3 +210,8 @@ class TestBulkDeletion:
             for collection, response in responses.items():
                 assert response.status_code == 204
                 assert collection not in bulk_deletion._collections  # pylint: disable=protected-access
+
+    def test_should_raise_if_no_items_staged(self):
+        bulk_deletion = stac.BulkDeletion()
+        with pytest.raises(ValueError):
+            bulk_deletion.submit()
