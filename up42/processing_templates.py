@@ -63,6 +63,16 @@ class DetectionAircraftOI(WorkspaceIdSingleItemTemplate):
 
 
 @dataclasses.dataclass
+class UpsamplingNS(WorkspaceIdSingleItemTemplate):
+    process_id = "upsampling-ns"
+
+
+@dataclasses.dataclass
+class UpsamplingNSSentinel(WorkspaceIdSingleItemTemplate):
+    process_id = "upsampling-ns-sentinel"
+
+
+@dataclasses.dataclass
 class DetectionChangeSpacept(WorkspaceIdMultiItemTemplate):
     process_id = "detection-change-spacept"
 
@@ -91,22 +101,6 @@ class CoregistationSimularity(processing.JobTemplate):
             "title": self.title,
             "sourceItem": self.source_item.get_self_href(),
             "referenceItem": self.reference_item.get_self_href(),
-        }
-
-
-@dataclasses.dataclass
-class UpsamplingNS(processing.SingleItemJobTemplate):
-    ned: bool = False
-    rgb: bool = True
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
-    process_id = "upsampling-ns"
-
-    @property
-    def inputs(self):
-        return {
-            **super().inputs,
-            "NED": self.ned,
-            "RGB": self.rgb,
         }
 
 
