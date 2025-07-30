@@ -111,7 +111,7 @@ class BulkDeletion:
     def __init__(self):
         self._collections: set[pystac.Collection] = set()
 
-    def validate_staged_items(self, item_ids: tuple[str, ...]) -> None | IncompleteCollectionDeletionError:
+    def validate_staged_items(self, item_ids: tuple[str, ...]) -> Optional[IncompleteCollectionDeletionError]:
         for collection in self._collections:
             staged_item_ids = {item_in_collection.id for item_in_collection in collection.get_items()}
             missing_items = staged_item_ids - set(item_ids)
