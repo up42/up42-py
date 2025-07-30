@@ -1,5 +1,6 @@
 import datetime as dt
 import uuid
+from unittest import mock
 
 import pystac
 import pytest
@@ -143,3 +144,69 @@ class TestUp42ExtensionProvider:
         new_value = "new-value"
         setattr(entity.up42, attribute, new_value)  # type: ignore
         assert entity_dict[key] == new_value
+
+
+class TestBulkDeletion:
+    items = [
+        pystac.Item(
+            id=f"item-id-{i}",
+            collection="collection-id",
+            geometry=None,
+            bbox=None,
+            datetime=dt.datetime.now(),
+            properties={},
+        )
+        for i in range(2)
+    ]
+    empty_collection = pystac.Collection(
+        id="collection-id",
+        description="",
+        extent=pystac.Extent(
+            spatial=pystac.SpatialExtent(bboxes=[[1.0, 2.0, 3.0, 4.0]]),
+            temporal=pystac.TemporalExtent(intervals=[[dt.datetime.now(), None]]),
+        ),
+        extra_fields={},
+    )
+    collection_with_all_items = empty_collection.clone()
+    collection_with_all_items.add_items(items)
+
+    def test_should_validate_collections_to_delete(self):
+        bulk_deletion = stac.BulkDeletion()
+        with mock.patch.object(
+            bulk_deletion, "_collections", new_callable=lambda: set([self.collection_with_all_items])
+        ):
+            assert bulk_deletion.validate_staged_items(item_ids=tuple(item.id for item in self.items)) is None
+
+    def test_should_not_validate_if_missing_items(self):
+        bulk_deletion = stac.BulkDeletion()
+        with mock.patch.object(
+            bulk_deletion, "_collections", new_callable=lambda: set([self.collection_with_all_items])
+        ):
+            assert isinstance(
+                bulk_deletion.validate_staged_items(item_ids=tuple(self.items[0].id)),
+                stac.IncompleteCollectionDeletionError,
+            )
+
+    def test_should_raise_if_missing_items_in_collection(self):
+        mock_stac_client = mock.Mock()
+        mock_stac_client.get_items.return_value = iter([self.items[0]])
+
+        bulk_deletion = stac.BulkDeletion()
+        bulk_deletion.stac_client = mock_stac_client
+
+        with pytest.raises(stac.IncompleteCollectionDeletionError):
+            bulk_deletion.add(self.items[0].id)
+            assert len(bulk_deletion._collections) == 0  # pylint: disable=protected-access
+            mock_stac_client.get_items.assert_called_once_with(tuple(["item-id-0"]))
+
+    def test_should_delete_staged_items(self, requests_mock: req_mock.Mocker):
+        requests_mock.delete(url=f"/v2/assets/stac/collections/{self.collection_with_all_items.id}", status_code=204)
+        bulk_deletion = stac.BulkDeletion()
+        with mock.patch.object(
+            bulk_deletion, "_collections", new_callable=lambda: set([self.collection_with_all_items])
+        ):
+            responses = bulk_deletion.submit()
+            assert len(bulk_deletion._collections) == 0  # pylint: disable=protected-access
+            for collection, response in responses.items():
+                assert response.status_code == 204
+                assert collection not in bulk_deletion._collections  # pylint: disable=protected-access
