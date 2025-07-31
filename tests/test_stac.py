@@ -158,7 +158,7 @@ class TestBulkDeletion:
         )
         for i in range(2)
     ]
-    empty_collection = pystac.Collection(
+    collection_with_all_items = pystac.Collection(
         id="collection-id",
         description="",
         extent=pystac.Extent(
@@ -167,7 +167,6 @@ class TestBulkDeletion:
         ),
         extra_fields={},
     )
-    collection_with_all_items = empty_collection.clone()
     collection_with_all_items.add_items(items)
 
     def test_should_validate_collections_to_delete(self):
