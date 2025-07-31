@@ -110,21 +110,7 @@ class BulkDeletion:
 
     def __init__(self):
         self._collections: set[pystac.Collection] = set()
-
-    def validate_staged_items(self, item_ids: tuple[str, ...]) -> Optional[IncompleteCollectionDeletionError]:
-        for collection in self._collections:
-            staged_item_ids = {item_in_collection.id for item_in_collection in collection.get_items()}
-            missing_items = staged_item_ids - set(item_ids)
-            if missing_items:
-                error_msg = (
-                    f"Collection '{collection.id}' cannot be deleted because the following items were not included "
-                    f"in the deletion request: {list(missing_items)}. "
-                    f"Collections are deleted as a whole, so all {len(staged_item_ids)} items in collection "
-                    f"'{collection.id}' must be explicitly added for deletion. "
-                    f"Please add the missing items to your deletion request."
-                )
-                return IncompleteCollectionDeletionError(error_msg)
-        return None
+        self._items: set[pystac.Item] = set()
 
     def add(self, *item_ids: str):
         """
@@ -139,12 +125,23 @@ class BulkDeletion:
         for item in items:
             collection = item.get_parent()
             if isinstance(collection, pystac.Collection):
+                self._items.add(item)
                 self._collections.add(collection)
 
-        validation_error = self.validate_staged_items(item_ids)
-        if validation_error:
-            self._collections.clear()
-            raise validation_error
+    def validate(self) -> Optional[IncompleteCollectionDeletionError]:
+        for collection in self._collections:
+            staged_item_ids = {item_in_collection.id for item_in_collection in collection.get_items()}
+            missing_items = staged_item_ids - set(item.id for item in self._items)
+            if missing_items:
+                error_msg = (
+                    f"Collection '{collection.id}' cannot be deleted because the following items were not included "
+                    f"in the deletion request: {list(missing_items)}. "
+                    f"Collections are deleted as a whole, so all {len(staged_item_ids)} items in collection "
+                    f"'{collection.id}' must be explicitly added for deletion. "
+                    f"Please add the missing items to your deletion request."
+                )
+                return IncompleteCollectionDeletionError(error_msg)
+        return None
 
     def submit(self):
         """
@@ -156,6 +153,10 @@ class BulkDeletion:
         if not self._collections:
             raise ValueError("No items to delete. Use add() to add item IDs before submitting.")
 
+        if validation_error := self.validate():
+            self._collections.clear()
+            raise validation_error
+
         responses = {}
         for collection in self._collections:
             url = host.endpoint(f"/v2/assets/stac/collections/{collection.id}")
@@ -163,4 +164,5 @@ class BulkDeletion:
             responses[collection.id] = response
 
         self._collections.clear()
+        self._items.clear()
         return responses
