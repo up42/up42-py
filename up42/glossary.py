@@ -1,6 +1,6 @@
 import dataclasses
 import enum
-from typing import Any, Iterator, Literal, Optional, Union
+from typing import Any, Iterator, Literal, Optional, Sequence, Union
 
 import geojson  # type: ignore
 
@@ -69,9 +69,9 @@ class InvalidHost(ValueError):
 class Provider:
     session = base.Session()
     name: str
-    title: str
-    description: str
-    roles: list[Literal["PRODUCER", "HOST"]]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    roles: Sequence[Literal["PRODUCER", "HOST"]] = ("HOST",)
 
     @property
     def is_host(self):
