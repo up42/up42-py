@@ -34,6 +34,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **July 30, 2025**
 - Added bulk deletion of items: `BulkDeletion`.
 
+### 2.5.0a3
+**Aug 4, 2025**
+- Added default property values for `Provider` class to simplify a host creation by name.
+- Exported `Provider` class to the global `up42` namespace.
+
 ### 2.5.0a2
 **July 25, 2025**
 - Added a new processing job template: `UpsamplingNSSentinel`.

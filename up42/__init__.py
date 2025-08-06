@@ -23,7 +23,7 @@ from typing import Callable, Type, Union, cast
 from up42.asset import Asset, AssetSorting
 from up42.base import authenticate, get_credits_balance, stac_client
 from up42.catalog import Catalog
-from up42.glossary import CollectionSorting, CollectionType, ProductGlossary
+from up42.glossary import CollectionSorting, CollectionType, ProductGlossary, Provider
 from up42.initialization import (
     initialize_asset,
     initialize_catalog,
@@ -78,6 +78,7 @@ __all__ = [
         CollectionSorting,
         CollectionType,
         ProductGlossary,
+        Provider,
         BatchOrderTemplate,
         Quotation,
         QuotationSorting,
