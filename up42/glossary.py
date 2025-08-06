@@ -69,9 +69,12 @@ class InvalidHost(ValueError):
 class Provider:
     session = base.Session()
     name: str
-    title: str
-    description: str
-    roles: list[Literal["PRODUCER", "HOST"]]
+    # TODO: switch to Optional[str] = None in 3.0.0
+    title: str = ""
+    # TODO: switch to Optional[str] = None in 3.0.0
+    description: str = ""
+    # TODO: switch Sequence[Literal["PRODUCER", "HOST"]] = ("HOST",) in 3.0.0
+    roles: list[Literal["PRODUCER", "HOST"]] = dataclasses.field(default_factory=lambda: ["HOST"])
 
     @property
     def is_host(self):
