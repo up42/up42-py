@@ -1,9 +1,11 @@
 import datetime as dt
+import random
 import uuid
 from unittest import mock
 
 import pystac
 import pytest
+import requests
 import requests_mock as req_mock
 
 from tests import constants, helpers
@@ -194,6 +196,24 @@ class TestBulkDeletion:
             bulk_deletion.delete()
             assert len(bulk_deletion._collections) == 0  # pylint: disable=protected-access
             assert len(bulk_deletion._items) == 0  # pylint: disable=protected-access
+            assert requests_mock.request_history[0].method == "DELETE"
+
+    def test_should_raise_http_error_if_collection_deletion_fails(self, requests_mock: req_mock.Mocker):
+        requests_mock.delete(
+            url=f"/v2/assets/stac/collections/{self.collection_with_all_items.id}",
+            status_code=random.randint(400, 430),
+        )
+        bulk_deletion = stac.BulkDeletion()
+        with mock.patch.object(
+            bulk_deletion,
+            "_collections",
+            new_callable=lambda: set([self.collection_with_all_items]),
+        ), mock.patch.object(bulk_deletion, "_items", new_callable=lambda: set(self.items)), pytest.raises(
+            requests.exceptions.HTTPError
+        ):
+            bulk_deletion.delete()
+            assert len(bulk_deletion._collections) > 0  # pylint: disable=protected-access
+            assert len(bulk_deletion._items) > 0  # pylint: disable=protected-access
             assert requests_mock.request_history[0].method == "DELETE"
 
     def test_should_raise_if_no_items_staged(self):
