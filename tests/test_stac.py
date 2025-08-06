@@ -194,6 +194,7 @@ class TestBulkDeletion:
             bulk_deletion.delete()
             assert len(bulk_deletion._collections) == 0  # pylint: disable=protected-access
             assert len(bulk_deletion._items) == 0  # pylint: disable=protected-access
+            assert requests_mock.request_history[0].method == "DELETE"
 
     def test_should_raise_if_no_items_staged(self):
         bulk_deletion = stac.BulkDeletion()
