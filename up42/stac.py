@@ -124,14 +124,19 @@ class BulkDeletion:
 
         for item in items:
             collection = item.get_parent()
-            if isinstance(collection, pystac.Collection):
-                self._items.add(item)
-                self._collections.add(collection)
+            self._items.add(item)
+            self._collections.add(collection)  # type: ignore
 
-    def validate(self) -> Optional[IncompleteCollectionDeletionError]:
+    def delete(self):
+        """
+        Submit the bulk deletion request. This will effectively delete all items in the collections in the stash.
+        """
+        if not self._collections:
+            raise ValueError("No items to delete. Use add() to add item IDs before submitting.")
+
         for collection in self._collections:
             staged_item_ids = {item_in_collection.id for item_in_collection in collection.get_items()}
-            missing_items = staged_item_ids - set(item.id for item in self._items)
+            missing_items = staged_item_ids - {item.id for item in self._items}
             if missing_items:
                 error_msg = (
                     f"Collection '{collection.id}' cannot be deleted because the following items were not included "
@@ -140,29 +145,11 @@ class BulkDeletion:
                     f"'{collection.id}' must be explicitly added for deletion. "
                     f"Please add the missing items to your deletion request."
                 )
-                return IncompleteCollectionDeletionError(error_msg)
-        return None
+                raise IncompleteCollectionDeletionError(error_msg)
 
-    def submit(self):
-        """
-        Submit the bulk deletion request. This will effectively delete all items in the collections in the stash.
-
-        Returns:
-            A dictionary mapping collection IDs to their corresponding DELETE responses.
-        """
-        if not self._collections:
-            raise ValueError("No items to delete. Use add() to add item IDs before submitting.")
-
-        if validation_error := self.validate():
-            self._collections.clear()
-            raise validation_error
-
-        responses = {}
         for collection in self._collections:
             url = host.endpoint(f"/v2/assets/stac/collections/{collection.id}")
-            response = self.session.delete(url=url)
-            responses[collection.id] = response
+            self.session.delete(url=url)
 
         self._collections.clear()
         self._items.clear()
-        return responses
