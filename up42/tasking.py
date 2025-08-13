@@ -26,8 +26,7 @@ class InvalidDecision(ValueError):
     pass
 
 
-@utils.deprecation(None, "3.0.0")
-class Tasking(catalog.CatalogBase):
+class Tasking(catalog.CatalogBase.__wrapped__):  # type: ignore[name-defined]
     """
     The Tasking class enables access to the UP42 tasking functionality.
 
@@ -205,6 +204,9 @@ class Tasking(catalog.CatalogBase):
         """
         url = host.endpoint(f"/v2/tasking/feasibility-studies/{feasibility_id}")
         return self.session.patch(url=url, json={"acceptedOptionId": accepted_option_id}).json()
+
+
+Tasking = utils.deprecation(None, "3.0.0")(Tasking)  # type: ignore[misc]
 
 
 class QuotationSorting:
