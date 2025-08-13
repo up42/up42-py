@@ -67,7 +67,7 @@ class _Workspace:
         self._id = user_info["sub"]
         self._auth = up42_client.auth
 
-    @utils.deprecation(replacement_name=None, version="3.0.0")
+    @utils.deprecation(None, "3.0.0")
     def get_credits_balance(self) -> dict:
         """
         Display the overall credits available in your account.

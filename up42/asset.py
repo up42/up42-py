@@ -21,7 +21,7 @@ _retry = tnc.retry(
     reraise=True,
 )
 
-
+@utils.deprecation(None, "3.0.0")
 class AssetSorting:
     name = utils.SortingField("name")
     title = utils.SortingField("title")
@@ -34,6 +34,7 @@ class AssetSorting:
 
 
 @dataclasses.dataclass
+@utils.deprecation(None, "3.0.0")
 class Asset:
     session = base.Session()
     stac_client = base.StacClient()
@@ -182,7 +183,7 @@ class Asset:
         return self.session.post(url=url).json()["url"]
 
     @property
-    @utils.deprecation("pystac::Asset.file", "3.0.0")
+    @utils.deprecation(None, "3.0.0")
     def file(self) -> utils.ImageFile:
         return utils.ImageFile(url=self._get_download_url(self.asset_id))
 

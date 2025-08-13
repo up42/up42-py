@@ -7,7 +7,7 @@ from up42 import asset, base, order, utils
 
 logger = utils.get_logger(__name__)
 
-
+@utils.deprecation(None, "3.0.0")
 class AllowedStatuses(enum.Enum):
     CREATED = "CREATED"
     BEING_PLACED = "BEING_PLACED"
@@ -20,11 +20,10 @@ class AllowedStatuses(enum.Enum):
     FULFILLED = "FULFILLED"
     FAILED_PERMANENTLY = "FAILED_PERMANENTLY"
 
-
 OrderSortBy = Literal["createdAt", "updatedAt", "dataProvider", "type", "status"]
 OrderType = Literal["TASKING", "ARCHIVE"]
 
-
+@utils.deprecation(None, "3.0.0")
 class Storage:
     """
     The Storage class enables access to the UP42 storage. You can list
@@ -40,7 +39,7 @@ class Storage:
     workspace_id = base.WorkspaceId()
     pystac_client = base.StacClient()
 
-    @utils.deprecation("Asset::all", "3.0.0")
+    @utils.deprecation("pystac::Client.search", "3.0.0")
     def get_assets(
         self,
         created_after: Optional[Union[str, dt.datetime]] = None,

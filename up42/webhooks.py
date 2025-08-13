@@ -5,7 +5,7 @@ from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
 
-
+@utils.deprecation(None, "3.0.0")
 @dataclasses.dataclass
 class Webhook:
     session = base.Session()
@@ -27,7 +27,7 @@ class Webhook:
     Also see the [full webhook documentation](https://docs.up42.com/account/webhooks).
     """
 
-    @utils.deprecation(replacement_name=None, version="3.0.0")
+    @utils.deprecation(None, "3.0.0")
     def save(self):
         payload = {
             "name": self.name,
@@ -50,7 +50,7 @@ class Webhook:
             logger.info("Created webhook %s", self)
 
     @staticmethod
-    @utils.deprecation(replacement_name=None, version="3.0.0")
+    @utils.deprecation(None, "3.0.0")
     def from_metadata(metadata: dict) -> "Webhook":
         return Webhook(
             id=metadata["id"],
@@ -64,13 +64,13 @@ class Webhook:
         )
 
     @classmethod
-    @utils.deprecation(replacement_name=None, version="3.0.0")
+    @utils.deprecation(None, "3.0.0")
     def get(cls, webhook_id: str) -> "Webhook":
         url = host.endpoint(f"/workspaces/{cls.workspace_id}/webhooks/{webhook_id}")
         metadata = cls.session.get(url).json()["data"]
         return cls.from_metadata(metadata)
 
-    @utils.deprecation(replacement_name=None, version="3.0.0")
+    @utils.deprecation(None, "3.0.0")
     def trigger_test_events(self) -> dict:
         """
         Triggers webhook test event to test your receiving side. The UP42 server will send test
@@ -82,7 +82,7 @@ class Webhook:
         url = host.endpoint(f"/workspaces/{self.workspace_id}/webhooks/{self.id}/tests")
         return self.session.post(url=url).json()["data"]
 
-    @utils.deprecation(replacement_name=None, version="3.0.0")
+    @utils.deprecation(None, "3.0.0")
     def delete(self) -> None:
         """
         Deletes a registered webhook.
@@ -92,7 +92,7 @@ class Webhook:
         logger.info("Successfully deleted Webhook: %s", self.id)
 
     @classmethod
-    @utils.deprecation(replacement_name=None, version="3.0.0")
+    @utils.deprecation(None, "3.0.0")
     def get_webhook_events(cls) -> list[dict]:
         """
         Gets all available webhook events.
@@ -104,7 +104,7 @@ class Webhook:
         return cls.session.get(url=url).json()["data"]
 
     @classmethod
-    @utils.deprecation(replacement_name=None, version="3.0.0")
+    @utils.deprecation(None, "3.0.0")
     def all(cls) -> List["Webhook"]:
         """
         Gets all registered webhooks for this workspace.

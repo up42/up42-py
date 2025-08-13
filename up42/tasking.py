@@ -25,7 +25,7 @@ FeasibilityStatus = Literal["NOT_DECIDED", "ACCEPTED"]
 class InvalidDecision(ValueError):
     pass
 
-
+@utils.deprecation(None, "3.0.0")
 class Tasking(catalog.CatalogBase):
     """
     The Tasking class enables access to the UP42 tasking functionality.
