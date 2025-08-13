@@ -181,9 +181,7 @@ class Catalog(CatalogBase):
         aoi_fc = utils.any_vector_to_fc(
             vector=geometry,
         )
-        aoi_geometry = utils.fc_to_query_geometry(
-            fc=aoi_fc, geometry_operation="intersects"
-        )
+        aoi_geometry = utils.fc_to_query_geometry(fc=aoi_fc, geometry_operation="intersects")
 
         query_filters: Dict[Any, Any] = {}
         if max_cloudcover is not None:
@@ -204,9 +202,7 @@ class Catalog(CatalogBase):
         }
 
     def _get_host(self, collection_names: list[str]) -> str:
-        collections = glossary.ProductGlossary.get_collections(
-            collection_type=self.type
-        )
+        collections = glossary.ProductGlossary.get_collections(collection_type=self.type)
         hosts = {
             provider.name
             for collection in collections
@@ -220,15 +216,11 @@ class Catalog(CatalogBase):
                 f"Selected collections {collection_names} are not valid. See ProductGlossary.get_collections."
             )
         if len(hosts) > 1:
-            raise MultipleHosts(
-                "Only collections with the same host can be searched at the same time."
-            )
+            raise MultipleHosts("Only collections with the same host can be searched at the same time.")
         return hosts.pop()
 
     @utils.deprecation("Provider::search", "3.0.0")
-    def search(
-        self, search_parameters: dict, as_dataframe: bool = True
-    ) -> Union[geopandas.GeoDataFrame, dict]:
+    def search(self, search_parameters: dict, as_dataframe: bool = True) -> Union[geopandas.GeoDataFrame, dict]:
         """
         Searches the catalog  and returns the metadata of the matching scenes.
 
@@ -270,16 +262,12 @@ class Catalog(CatalogBase):
         while url:
             page: dict = self.session.post(url, json=search_parameters).json()
             features += page["features"]
-            url = next(
-                (link["href"] for link in page["links"] if link["rel"] == "next"), None
-            )
+            url = next((link["href"] for link in page["links"] if link["rel"] == "next"), None)
 
         if not features:
             df = geopandas.GeoDataFrame(columns=["geometry"], geometry="geometry")
         else:
-            df = geopandas.GeoDataFrame.from_features(
-                geojson.FeatureCollection(features=features), crs="EPSG:4326"
-            )
+            df = geopandas.GeoDataFrame.from_features(geojson.FeatureCollection(features=features), crs="EPSG:4326")
 
         logger.info("%s results returned.", df.shape[0])
         if as_dataframe:
@@ -384,9 +372,7 @@ class Catalog(CatalogBase):
         for image_id in tqdm.tqdm(image_ids):
             try:
                 image_file = utils.ImageFile(
-                    host.endpoint(
-                        f"/catalog/{product_host}/image/{image_id}/quicklook"
-                    ),
+                    host.endpoint(f"/catalog/{product_host}/image/{image_id}/quicklook"),
                     f"quicklook_{image_id}.jpg",
                     session=self.session,
                 )
