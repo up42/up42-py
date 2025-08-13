@@ -114,7 +114,7 @@ class CatalogBase:
         return placed_order
 
 
-class Catalog(CatalogBase):
+class Catalog(CatalogBase.__wrapped__):  # type: ignore[name-defined]
     """
     The Catalog class enables access to the UP42 catalog
     functionality (data archive search & ordering).
