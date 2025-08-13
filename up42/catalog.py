@@ -383,4 +383,5 @@ class Catalog(CatalogBase):
                 )
         return out_paths
 
-Catalog = utils.deprecation(None, "3.0.0")(Catalog)
+
+Catalog = utils.deprecation(None, "3.0.0")(Catalog)  # type: ignore[misc]
