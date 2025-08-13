@@ -1,7 +1,7 @@
 import dataclasses
 import datetime as dt
 import pathlib
-from typing import Iterator, List, Literal, Optional, Union, cast, Type
+from typing import Iterator, List, Literal, Optional, Union, cast
 
 import pystac
 import pystac_client
