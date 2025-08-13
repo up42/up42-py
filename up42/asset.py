@@ -1,7 +1,7 @@
 import dataclasses
 import datetime as dt
 import pathlib
-from typing import Iterator, List, Literal, Optional, Union, cast
+from typing import Iterator, List, Literal, Optional, Union, cast, Type
 
 import pystac
 import pystac_client
@@ -33,7 +33,10 @@ class AssetSorting:
     producer_name = utils.SortingField("producerName")
 
 
-AssetSorting = utils.deprecation(None, "3.0.0")(AssetSorting) # type: ignore[misc]
+AssetSorting = cast(
+    Type[AssetSorting],
+    utils.deprecation(None, "3.0.0")(AssetSorting)
+)
 
 
 class Asset:
@@ -267,4 +270,7 @@ class Asset:
         return pathlib.Path(utils.download_file(download_url, output_directory)[0])
 
 
-Asset = utils.deprecation(None, "3.0.0")(dataclasses.dataclass(Asset)) # type: ignore[misc]
+Asset = cast(
+    Type[Asset],
+    utils.deprecation(None, "3.0.0")(dataclasses.dataclass(Asset))
+)
