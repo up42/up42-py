@@ -22,7 +22,6 @@ _retry = tnc.retry(
 )
 
 
-@utils.deprecation(None, "3.0.0")
 class AssetSorting:
     name = utils.SortingField("name")
     title = utils.SortingField("title")
@@ -34,8 +33,9 @@ class AssetSorting:
     producer_name = utils.SortingField("producerName")
 
 
-@utils.deprecation(None, "3.0.0")
-@dataclasses.dataclass
+AssetSorting = utils.deprecation(None, "3.0.0")(AssetSorting) # type: ignore[misc]
+
+
 class Asset:
     session = base.Session()
     stac_client = base.StacClient()
@@ -265,3 +265,6 @@ class Asset:
         logger.info("Download directory: %s", output_directory)
         download_url = self.get_stac_asset_url(stac_asset=stac_asset)
         return pathlib.Path(utils.download_file(download_url, output_directory)[0])
+
+
+Asset = utils.deprecation(None, "3.0.0")(dataclasses.dataclass(Asset)) # type: ignore[misc]
