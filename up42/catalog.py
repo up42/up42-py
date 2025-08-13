@@ -114,7 +114,6 @@ class CatalogBase:
         return placed_order
 
 
-@utils.deprecation(None, "3.0.0")
 class Catalog(CatalogBase):
     """
     The Catalog class enables access to the UP42 catalog
@@ -383,3 +382,5 @@ class Catalog(CatalogBase):
                     image_id,
                 )
         return out_paths
+
+Catalog = utils.deprecation(None, "3.0.0")(Catalog)
