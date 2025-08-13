@@ -25,6 +25,7 @@ FeasibilityStatus = Literal["NOT_DECIDED", "ACCEPTED"]
 class InvalidDecision(ValueError):
     pass
 
+
 @utils.deprecation(None, "3.0.0")
 class Tasking(catalog.CatalogBase):
     """
@@ -101,7 +102,9 @@ class Tasking(catalog.CatalogBase):
             # Tasking (e.g. Blacksky) can require Point geometry.
             order_parameters["params"]["geometry"] = geometry["features"][0]["geometry"]
         else:
-            geometry = utils.fc_to_query_geometry(fc=geometry, geometry_operation="intersects")
+            geometry = utils.fc_to_query_geometry(
+                fc=geometry, geometry_operation="intersects"
+            )
             order_parameters["params"]["geometry"] = geometry
         return order_parameters
 
@@ -188,7 +191,9 @@ class Tasking(catalog.CatalogBase):
             "decision": decision,
             "sort": utils.SortingField(sortby, not descending),
         }
-        return list(utils.paged_query(params, "/v2/tasking/feasibility-studies", self.session))
+        return list(
+            utils.paged_query(params, "/v2/tasking/feasibility-studies", self.session)
+        )
 
     @utils.deprecation("FeasibilityStudy", "3.0.0")
     def choose_feasibility(self, feasibility_id: str, accepted_option_id: str) -> dict:
@@ -203,7 +208,9 @@ class Tasking(catalog.CatalogBase):
             dict: The confirmation to the decided quotation plus metadata.
         """
         url = host.endpoint(f"/v2/tasking/feasibility-studies/{feasibility_id}")
-        return self.session.patch(url=url, json={"acceptedOptionId": accepted_option_id}).json()
+        return self.session.patch(
+            url=url, json={"acceptedOptionId": accepted_option_id}
+        ).json()
 
 
 class QuotationSorting:
@@ -329,7 +336,9 @@ class FeasibilityStudy:
     def _from_metadata(metadata: dict) -> "FeasibilityStudy":
         decision_option = metadata.get("decisionOption")
         if decision_option is not None:
-            decision_option = FeasibilityStudyDecisionOption(decision_option["id"], decision_option["description"])
+            decision_option = FeasibilityStudyDecisionOption(
+                decision_option["id"], decision_option["description"]
+            )
         return FeasibilityStudy(
             id=metadata["id"],
             created_at=metadata["createdAt"],
@@ -353,7 +362,9 @@ class FeasibilityStudy:
                 "No decision option chosen for this feasibility study. "
                 "Please call 'accept' with a valid option ID before saving."
             )
-        metadata = self.session.patch(url, json={"acceptedOptionId": self.decision_option.id}).json()
+        metadata = self.session.patch(
+            url, json={"acceptedOptionId": self.decision_option.id}
+        ).json()
         feasibility_study = self._from_metadata(metadata)
         for field in dataclasses.fields(feasibility_study):
             setattr(self, field.name, getattr(feasibility_study, field.name))

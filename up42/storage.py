@@ -7,6 +7,7 @@ from up42 import asset, base, order, utils
 
 logger = utils.get_logger(__name__)
 
+
 @utils.deprecation(None, "3.0.0")
 class AllowedStatuses(enum.Enum):
     CREATED = "CREATED"
@@ -20,8 +21,10 @@ class AllowedStatuses(enum.Enum):
     FULFILLED = "FULFILLED"
     FAILED_PERMANENTLY = "FAILED_PERMANENTLY"
 
+
 OrderSortBy = Literal["createdAt", "updatedAt", "dataProvider", "type", "status"]
 OrderType = Literal["TASKING", "ARCHIVE"]
+
 
 @utils.deprecation(None, "3.0.0")
 class Storage:

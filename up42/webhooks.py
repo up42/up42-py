@@ -5,6 +5,7 @@ from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
 
+
 @utils.deprecation(None, "3.0.0")
 @dataclasses.dataclass
 class Webhook:
