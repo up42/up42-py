@@ -110,46 +110,32 @@ class BulkDeletion:
 
     def __init__(self):
         self._collections: set[pystac.Collection] = set()
-        self._items: set[pystac.Item] = set()
+        self._item_ids: set[str] = set()
 
     def add(self, *item_ids: str):
-        """
-        Add item IDs to the collection deletion stash.
-        Collections are deleted as a whole: all items in any affected collection must be included.
-
-        Args:
-            *item_ids: Individual item IDs to add for deletion
-        """
         items = self.stac_client.get_items(*item_ids)
 
         for item in items:
             collection = item.get_parent()
-            self._items.add(item)
+            self._item_ids.add(item.id)
             self._collections.add(collection)  # type: ignore
 
     def delete(self):
-        """
-        Submit the bulk deletion request. This will effectively delete all items in the collections in the stash.
-        """
         if not self._collections:
-            raise ValueError("No items to delete. Use add() to add item IDs before submitting.")
+            raise ValueError("No items to delete. Use add() to add STAC items before deleting.")
 
         for collection in self._collections:
-            staged_item_ids = {item_in_collection.id for item_in_collection in collection.get_items()}
-            missing_items = staged_item_ids - {item.id for item in self._items}
+            collection_item_ids = {item_in_collection.id for item_in_collection in collection.get_items()}
+            missing_items = collection_item_ids - self._item_ids
             if missing_items:
                 error_msg = (
-                    f"Collection '{collection.id}' cannot be deleted because the following items were not included "
-                    f"in the deletion request: {list(missing_items)}. "
-                    f"Collections are deleted as a whole, so all {len(staged_item_ids)} items in collection "
-                    f"'{collection.id}' must be explicitly added for deletion. "
-                    f"Please add the missing items to your deletion request."
+                    f"The deletion request failed because the submitted items are part of a group that must be deleted "
+                    f"together. The submitted items belong to the following collection: '{collection.id}'. All items "
+                    f"from this collection must be deleted at once. To proceed, please add these missing item IDs "
+                    f"to your request: {list(missing_items)}."
                 )
                 raise IncompleteCollectionDeletionError(error_msg)
 
         for collection in self._collections:
             url = host.endpoint(f"/v2/assets/stac/collections/{collection.id}")
             self.session.delete(url=url)
-
-        self._collections.clear()
-        self._items.clear()

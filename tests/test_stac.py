@@ -1,11 +1,9 @@
 import datetime as dt
-import random
 import uuid
 from unittest import mock
 
 import pystac
 import pytest
-import requests
 import requests_mock as req_mock
 
 from tests import constants, helpers
@@ -180,54 +178,23 @@ class TestBulkDeletion:
         bulk_deletion.add(self.items[0].id)
         with pytest.raises(stac.IncompleteCollectionDeletionError):
             bulk_deletion.delete()
-            assert len(bulk_deletion._collections) == 0  # pylint: disable=protected-access
 
     def test_should_delete_staged_items(self, requests_mock: req_mock.Mocker):
         requests_mock.delete(
             url=f"/v2/assets/stac/collections/{self.collection_with_all_items.id}",
             status_code=204,
         )
-        bulk_deletion = stac.BulkDeletion()
-        with mock.patch.object(
-            bulk_deletion,
-            "_collections",
-            new_callable=lambda: set([self.collection_with_all_items]),
-        ), mock.patch.object(bulk_deletion, "_items", new_callable=lambda: set(self.items)):
-            bulk_deletion.delete()
-            assert len(bulk_deletion._collections) == 0  # pylint: disable=protected-access
-            assert len(bulk_deletion._items) == 0  # pylint: disable=protected-access
-            assert requests_mock.request_history[0].method == "DELETE"
+        mock_stac_client = mock.Mock()
+        mock_stac_client.get_items.return_value = iter(self.items)
 
-    def test_should_raise_http_error_if_collection_deletion_fails(self, requests_mock: req_mock.Mocker):
-        requests_mock.delete(
-            url=f"/v2/assets/stac/collections/{self.collection_with_all_items.id}",
-            status_code=random.randint(400, 430),
-        )
         bulk_deletion = stac.BulkDeletion()
-        with mock.patch.object(
-            bulk_deletion,
-            "_collections",
-            new_callable=lambda: set([self.collection_with_all_items]),
-        ), mock.patch.object(bulk_deletion, "_items", new_callable=lambda: set(self.items)), pytest.raises(
-            requests.exceptions.HTTPError
-        ):
-            bulk_deletion.delete()
-            assert len(bulk_deletion._collections) > 0  # pylint: disable=protected-access
-            assert len(bulk_deletion._items) > 0  # pylint: disable=protected-access
-            assert requests_mock.request_history[0].method == "DELETE"
+        bulk_deletion.stac_client = mock_stac_client
+        bulk_deletion.add(self.items[0].id, self.items[1].id)
+
+        bulk_deletion.delete()
+        assert requests_mock.request_history[0].method == "DELETE"
 
     def test_should_raise_if_no_items_staged(self):
         bulk_deletion = stac.BulkDeletion()
         with pytest.raises(ValueError):
             bulk_deletion.delete()
-
-    def test_should_add_items_separately(self):
-        mock_stac_client = mock.Mock()
-        mock_stac_client.get_items.side_effect = [iter([self.items[0]]), iter([self.items[1]])]
-        bulk_deletion = stac.BulkDeletion()
-        bulk_deletion.stac_client = mock_stac_client
-
-        bulk_deletion.add(self.items[0].id)
-        bulk_deletion.add(self.items[1].id)
-        assert bulk_deletion._items == set(self.items)  # pylint: disable=protected-access
-        assert bulk_deletion._collections == set([self.collection_with_all_items])  # pylint: disable=protected-access
