@@ -39,6 +39,7 @@ AssetSorting = cast(
 )
 
 
+@dataclasses.dataclass
 class Asset:
     session = base.Session()
     stac_client = base.StacClient()
@@ -270,7 +271,6 @@ class Asset:
         return pathlib.Path(utils.download_file(download_url, output_directory)[0])
 
 
-Asset = cast(
-    Type[Asset],
-    utils.deprecation(None, "3.0.0")(dataclasses.dataclass(Asset))
-)
+init_decorator = utils.deprecation(None, "3.0.0")
+Asset.__init__ = init_decorator(Asset.__init__)
+Asset.__init__.__name__ = "Asset"
