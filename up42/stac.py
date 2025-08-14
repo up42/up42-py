@@ -9,6 +9,12 @@ class InvalidUp42Asset(ValueError):
     pass
 
 
+class IncompleteCollectionDeletionError(ValueError):
+    """Raised when attempting to delete a collection but not all items in the collection are included."""
+
+    pass
+
+
 class FileProvider:
     session = base.Session()
 
@@ -96,3 +102,34 @@ def extend():
 
     pystac.Item.up42 = Up42ExtensionProvider()  # type: ignore
     pystac.Collection.up42 = Up42ExtensionProvider()  # type: ignore
+
+
+class BulkDeletion:
+    session = base.Session()
+    stac_client = base.StacClient()
+
+    def __init__(self, *item_ids: str):
+        self._item_ids = set(item_ids)
+
+    def delete(self):
+        items = self.stac_client.get_items(*self._item_ids)
+        collections: set[pystac.Collection] = set()
+        for item in items:
+            collection = item.get_parent()
+            collections.add(collection)  # type: ignore
+
+        for collection in collections:
+            collection_item_ids = {item_in_collection.id for item_in_collection in collection.get_items()}
+            missing_items = collection_item_ids - self._item_ids
+            if missing_items:
+                error_msg = (
+                    f"The deletion request failed because the submitted items are part of a group that must be deleted "
+                    f"together. The submitted items belong to the following collection: '{collection.id}'. All items "
+                    f"from this collection must be deleted at once. To proceed, please add these missing item IDs "
+                    f"to your request: {list(missing_items)}."
+                )
+                raise IncompleteCollectionDeletionError(error_msg)
+
+        for collection in collections:
+            url = host.endpoint(f"/v2/assets/stac/collections/{collection.id}")
+            self.session.delete(url=url)
