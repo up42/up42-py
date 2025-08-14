@@ -1,5 +1,6 @@
 import datetime as dt
 import uuid
+from unittest import mock
 
 import pystac
 import pytest
@@ -143,3 +144,49 @@ class TestUp42ExtensionProvider:
         new_value = "new-value"
         setattr(entity.up42, attribute, new_value)  # type: ignore
         assert entity_dict[key] == new_value
+
+
+class TestBulkDeletion:
+    items = [
+        pystac.Item(
+            id=f"item-id-{i}",
+            collection="collection-id",
+            geometry=None,
+            bbox=None,
+            datetime=dt.datetime.now(),
+            properties={},
+        )
+        for i in range(2)
+    ]
+    collection_with_all_items = pystac.Collection(
+        id="collection-id",
+        description="",
+        extent=pystac.Extent(
+            spatial=pystac.SpatialExtent(bboxes=[[1.0, 2.0, 3.0, 4.0]]),
+            temporal=pystac.TemporalExtent(intervals=[[dt.datetime.now(), None]]),
+        ),
+        extra_fields={},
+    )
+    collection_with_all_items.add_items(items)
+
+    def test_should_raise_and_not_submit_when_missing_items(self):
+        mock_stac_client = mock.Mock()
+        mock_stac_client.get_items.return_value = iter([self.items[0]])
+        bulk_deletion = stac.BulkDeletion(self.items[0].id)
+        bulk_deletion.stac_client = mock_stac_client
+        with pytest.raises(stac.IncompleteCollectionDeletionError):
+            bulk_deletion.delete()
+
+    def test_should_delete_staged_items(self, requests_mock: req_mock.Mocker):
+        requests_mock.delete(
+            url=f"/v2/assets/stac/collections/{self.collection_with_all_items.id}",
+            status_code=204,
+        )
+        mock_stac_client = mock.Mock()
+        mock_stac_client.get_items.return_value = iter(self.items)
+
+        bulk_deletion = stac.BulkDeletion(self.items[0].id, self.items[1].id)
+        bulk_deletion.stac_client = mock_stac_client
+
+        bulk_deletion.delete()
+        assert requests_mock.request_history[0].method == "DELETE"
