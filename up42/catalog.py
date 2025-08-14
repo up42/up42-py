@@ -381,4 +381,3 @@ class Catalog(CatalogBase):
                     image_id,
                 )
         return out_paths
-
