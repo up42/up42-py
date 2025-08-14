@@ -82,14 +82,13 @@ def deprecation(
     Args:
         replacement_name: Name of the replacement function.
         version: The breaking package version
-        extra_message: Optional message after default deprecation warning.
     """
 
     def actual_decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            replace_with = f", use `{replacement_name}` instead" if replacement_name else ""
-            message = f"`{func.__name__}` is deprecated and will be dropped in version {version}{replace_with}."
+            replace_with = f" Use `{replacement_name}` instead." if replacement_name else ""
+            message = f"`{func.__name__}` is deprecated and will be removed in version {version}{replace_with}."
             warnings.warn(message, DeprecationWarning, stacklevel=2)
             return func(*args, **kwargs)
 

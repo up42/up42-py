@@ -40,7 +40,7 @@ class Storage:
     workspace_id = base.WorkspaceId()
     pystac_client = base.StacClient()
 
-    @utils.deprecation("Asset::all", "3.0.0")
+    @utils.deprecation("pystac::Client.search", "3.0.0")
     def get_assets(
         self,
         created_after: Optional[Union[str, dt.datetime]] = None,
