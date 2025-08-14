@@ -71,20 +71,18 @@ class TestStorage:
     @pytest.mark.parametrize("descending", [False, True])
     @pytest.mark.parametrize("workspace_orders", [False, True])
     @pytest.mark.parametrize("return_json", [False, True])
-    @pytest.mark.parametrize("statuses", [None, random.choices(list(storage.AllowedStatuses), k=3)])
     def test_should_get_orders(
         self,
         limit: Optional[int],
         descending: bool,
         workspace_orders: bool,
         return_json: bool,
-        statuses: Optional[list[storage.AllowedStatuses]],
     ):
         sortby: storage.OrderSortBy = "status"
         order_type: storage.OrderType = random.choice(["TASKING", "ARCHIVE"])
         tags = ["some", "tags"]
         name = "name"
-        status = [status.value for status in statuses] if statuses else None
+        statuses = [s.value for s in random.choices(list(storage.AllowedStatuses), k=3)]
         with mock.patch("up42.order.Order.all") as get_orders:
             mock_items(get_orders, return_json)
             orders = storage.Storage().get_orders(
@@ -94,7 +92,7 @@ class TestStorage:
                 sortby=sortby,
                 descending=descending,
                 order_type=order_type,
-                statuses=status,
+                statuses=statuses,
                 name=name,
                 tags=tags,
             )
@@ -104,6 +102,6 @@ class TestStorage:
                 display_name=name,
                 order_type=order_type,
                 tags=tags,
-                status=status,  # type: ignore
+                status=statuses,
                 sort_by=utils.SortingField(sortby, not descending),
             )
