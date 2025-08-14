@@ -36,7 +36,6 @@ class MultipleHosts(ValueError):
     pass
 
 
-@utils.deprecation(None, "3.0.0")
 class CatalogBase:
     """
     The base for Catalog and Tasking class, shared functionality.
@@ -114,7 +113,7 @@ class CatalogBase:
         return placed_order
 
 
-class Catalog(CatalogBase.__wrapped__):  # type: ignore[name-defined]
+class Catalog(CatalogBase):
     """
     The Catalog class enables access to the UP42 catalog
     functionality (data archive search & ordering).
@@ -383,5 +382,3 @@ class Catalog(CatalogBase.__wrapped__):  # type: ignore[name-defined]
                 )
         return out_paths
 
-
-Catalog = utils.deprecation(None, "3.0.0")(Catalog)  # type: ignore[misc]

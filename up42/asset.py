@@ -22,7 +22,6 @@ _retry = tnc.retry(
 )
 
 
-@utils.deprecation(None, "3.0.0")
 class AssetSorting:
     name = utils.SortingField("name")
     title = utils.SortingField("title")
@@ -34,7 +33,6 @@ class AssetSorting:
     producer_name = utils.SortingField("producerName")
 
 
-@utils.deprecation(None, "3.0.0")
 @dataclasses.dataclass
 class Asset:
     session = base.Session()
