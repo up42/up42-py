@@ -108,22 +108,17 @@ class BulkDeletion:
     session = base.Session()
     stac_client = base.StacClient()
 
-    def __init__(self):
+    def __init__(self, *item_ids: str):
         self._collections: set[pystac.Collection] = set()
         self._item_ids: set[str] = set()
 
-    def add(self, *item_ids: str):
         items = self.stac_client.get_items(*item_ids)
-
         for item in items:
             collection = item.get_parent()
             self._item_ids.add(item.id)
             self._collections.add(collection)  # type: ignore
 
     def delete(self):
-        if not self._collections:
-            raise ValueError("No items to delete. Use add() to add STAC items before deleting.")
-
         for collection in self._collections:
             collection_item_ids = {item_in_collection.id for item_in_collection in collection.get_items()}
             missing_items = collection_item_ids - self._item_ids

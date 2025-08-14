@@ -173,9 +173,8 @@ class TestBulkDeletion:
         mock_stac_client = mock.Mock()
         mock_stac_client.get_items.return_value = iter([self.items[0]])
 
-        bulk_deletion = stac.BulkDeletion()
+        bulk_deletion = stac.BulkDeletion(self.items[0].id)
         bulk_deletion.stac_client = mock_stac_client
-        bulk_deletion.add(self.items[0].id)
         with pytest.raises(stac.IncompleteCollectionDeletionError):
             bulk_deletion.delete()
 
@@ -187,14 +186,8 @@ class TestBulkDeletion:
         mock_stac_client = mock.Mock()
         mock_stac_client.get_items.return_value = iter(self.items)
 
-        bulk_deletion = stac.BulkDeletion()
+        bulk_deletion = stac.BulkDeletion(self.items[0].id, self.items[1].id)
         bulk_deletion.stac_client = mock_stac_client
-        bulk_deletion.add(self.items[0].id, self.items[1].id)
 
         bulk_deletion.delete()
         assert requests_mock.request_history[0].method == "DELETE"
-
-    def test_should_raise_if_no_items_staged(self):
-        bulk_deletion = stac.BulkDeletion()
-        with pytest.raises(ValueError):
-            bulk_deletion.delete()
