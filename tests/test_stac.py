@@ -172,7 +172,6 @@ class TestBulkDeletion:
     def test_should_raise_and_not_submit_when_missing_items(self):
         mock_stac_client = mock.Mock()
         mock_stac_client.get_items.return_value = iter([self.items[0]])
-
         bulk_deletion = stac.BulkDeletion(self.items[0].id)
         bulk_deletion.stac_client = mock_stac_client
         with pytest.raises(stac.IncompleteCollectionDeletionError):
