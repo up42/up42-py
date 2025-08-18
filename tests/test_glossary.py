@@ -122,6 +122,7 @@ class TestProvider:
         description="description",
         roles=["PRODUCER", "HOST"],
     )
+    search_url = f"{constants.API_HOST}/catalog/hosts/{HOST_NAME}/stac/search"
 
     @pytest.mark.parametrize(
         "provider, is_host",
@@ -140,9 +141,8 @@ class TestProvider:
 
     def test_fails_to_search_if_search_request_is_invalid(self, requests_mock: req_mock.Mocker):
         error_message = "invalid request"
-        search_url = f"{constants.API_HOST}/catalog/hosts/{self.provider.name}/stac/search"
         requests_mock.post(
-            url=search_url,
+            url=self.search_url,
             status_code=422,
             json={
                 "data": {},
@@ -153,10 +153,9 @@ class TestProvider:
             next(self.provider.search())
 
     @pytest.mark.parametrize("error_code", [400, 401, 403, 500])
-    def test_fails_to_search_if_request_fails(self, error_code: int, requests_mock: req_mock.Mocker):
-        search_url = f"{constants.API_HOST}/catalog/hosts/{self.provider.name}/stac/search"
+    def test_should_propagate_search_failures(self, error_code: int, requests_mock: req_mock.Mocker):
         requests_mock.post(
-            url=search_url,
+            url=self.search_url,
             status_code=error_code,
         )
         with pytest.raises(requests.HTTPError):
@@ -204,10 +203,9 @@ class TestProvider:
         if collections:
             search_params["collections"] = collections
 
-        search_url = f"{constants.API_HOST}/catalog/hosts/{self.provider.name}/stac/search"
-        next_page_url = f"{search_url}/next"
+        next_page_url = f"{self.search_url}/next"
         requests_mock.post(
-            url=search_url,
+            url=self.search_url,
             json={
                 "type": "FeatureCollection",
                 "features": [SCENE_FEATURE] * 3,
