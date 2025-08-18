@@ -30,6 +30,10 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 2.5.0a7
+**August 18, 2025**
+- Drop `mkdocs`, its dependencies and other unused dependencies
+
 ### 2.5.0a6
 **August 18, 2025**
 - Propagate request error message with `InvalidSearchRequest` when `Producer::search` fails.

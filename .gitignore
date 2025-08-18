@@ -119,9 +119,6 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-# mkdocs documentation
-/site
-
 # mypy
 .mypy_cache/
 .dmypy.json
@@ -141,7 +138,6 @@ output/
 docs/examples
 docs/CHANGELOG.md
 /dev
-docs/mkdocs_macros
 /examples/project*
 project_*/
 quicklook_*
