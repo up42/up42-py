@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 
 ## 2.5.0
-**August 18, 2025**
+**August 25, 2025**
 
 ### Fixed
 - Fix how collection items are retrieved in `BulkDeletion`.
