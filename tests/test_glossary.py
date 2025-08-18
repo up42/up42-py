@@ -3,6 +3,7 @@ from typing import Any, List, Optional
 
 import geojson  # type: ignore
 import pytest
+import requests
 import requests_mock as req_mock
 
 from tests import constants, helpers
@@ -121,6 +122,7 @@ class TestProvider:
         description="description",
         roles=["PRODUCER", "HOST"],
     )
+    search_url = f"{constants.API_HOST}/catalog/hosts/{HOST_NAME}/stac/search"
 
     @pytest.mark.parametrize(
         "provider, is_host",
@@ -136,6 +138,28 @@ class TestProvider:
     def test_fails_to_search_if_provider_is_not_host(self):
         with pytest.raises(glossary.InvalidHost):
             next(dataclasses.replace(self.provider, roles=["PRODUCER"]).search())
+
+    def test_fails_to_search_if_search_request_is_invalid(self, requests_mock: req_mock.Mocker):
+        error_message = "invalid request"
+        requests_mock.post(
+            url=self.search_url,
+            status_code=422,
+            json={
+                "data": {},
+                "error": {"code": 422, "message": error_message, "details": "ignored"},
+            },
+        )
+        with pytest.raises(glossary.InvalidSearchRequest, match=error_message):
+            next(self.provider.search())
+
+    @pytest.mark.parametrize("error_code", [400, 401, 403, 500])
+    def test_should_propagate_search_failures(self, error_code: int, requests_mock: req_mock.Mocker):
+        requests_mock.post(
+            url=self.search_url,
+            status_code=error_code,
+        )
+        with pytest.raises(requests.HTTPError):
+            next(self.provider.search())
 
     @pytest.mark.parametrize("bbox", [None, BBOX])
     @pytest.mark.parametrize("intersects", [None, POLYGON])
@@ -179,10 +203,9 @@ class TestProvider:
         if collections:
             search_params["collections"] = collections
 
-        search_url = f"{constants.API_HOST}/catalog/hosts/{self.provider.name}/stac/search"
-        next_page_url = f"{search_url}/next"
+        next_page_url = f"{self.search_url}/next"
         requests_mock.post(
-            url=search_url,
+            url=self.search_url,
             json={
                 "type": "FeatureCollection",
                 "features": [SCENE_FEATURE] * 3,

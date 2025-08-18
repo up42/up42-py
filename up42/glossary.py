@@ -3,6 +3,7 @@ import enum
 from typing import Any, Iterator, Literal, Optional, Union
 
 import geojson  # type: ignore
+import requests
 
 from up42 import base, host, utils
 
@@ -65,6 +66,10 @@ class InvalidHost(ValueError):
     pass
 
 
+class InvalidSearchRequest(ValueError):
+    pass
+
+
 @dataclasses.dataclass
 class Provider:
     session = base.Session()
@@ -112,12 +117,18 @@ class Provider:
         def get_pages():
             url = host.endpoint(f"/catalog/hosts/{self.name}/stac/search")
             while url:
-                page: dict = self.session.post(url, json=payload).json()
-                yield page["features"]
-                url = next(
-                    (link["href"] for link in page["links"] if link["rel"] == "next"),
-                    None,
-                )
+                try:
+                    page: dict = self.session.post(url, json=payload).json()
+                    yield page["features"]
+                    url = next(
+                        (link["href"] for link in page["links"] if link["rel"] == "next"),
+                        None,
+                    )
+                except requests.HTTPError as http_error:
+                    if http_error.response.status_code == 422:
+                        error = http_error.response.json()["error"]
+                        raise InvalidSearchRequest(error["message"]) from http_error
+                    raise http_error
 
         for page in get_pages():
             for feature in page:
