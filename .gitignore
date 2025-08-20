@@ -145,3 +145,6 @@ asset_*/
 
 .DS_Store
 .vscode
+
+# Generated contracts
+pacts/

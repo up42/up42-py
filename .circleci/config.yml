@@ -6,6 +6,7 @@ pre-commit-cache: &pre-commit-cache pre-commit-{{ checksum ".pre-commit-config.y
 orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
   automated-test: interstellar/automated-test@volatile
+  pact-cli: interstellar/pact-cli@dev:preview
 
 # variables
 workspace: &workspace-dir /tmp/workspace
@@ -129,6 +130,14 @@ workflows:
     jobs:
       - test:
           context: sonarcloud
+          post-steps:
+            - pact-cli/prepare:
+                version-command: echo "$(poetry version --short)+$(git rev-parse HEAD)"
+      - pact-cli/publish-pacts:
+          name: publish-contracts
+          context: pact-broker
+          requires:
+            - test
       - test-python:
           matrix:
             parameters:
@@ -163,3 +172,9 @@ workflows:
           filters:
             branches:
               only: master
+      - pact-cli/record-release:
+          name: record-release
+          components: SDK
+          context: pact-broker
+          requires:
+            - deploy
