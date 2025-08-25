@@ -30,6 +30,24 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+
+## 2.5.0
+**August 25, 2025**
+
+### Fixed
+- Fix how collection items are retrieved in `BulkDeletion`.
+
+### Added
+- Added error message `InvalidSearchRequest` to request when `Producer::search` fails.
+- Added bulk deletion of items: `BulkDeletion`.
+- Added default property values for `Provider` class to simplify a host creation by name.
+- Exported `Provider` class to the global `up42` namespace.
+- Added a new processing job template: `UpsamplingNSSentinel`.
+
+### Changed
+- Removed `rgb` and `ned` parameters from the `UpsamplingNS` job template.
+- Removed `mkdocs`, its dependencies and other unused dependencies
+
 ### 2.5.0a7
 **August 18, 2025**
 - Drop `mkdocs`, its dependencies and other unused dependencies
