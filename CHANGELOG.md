@@ -46,6 +46,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ### Changed
 - Removed `rgb` and `ned` parameters from the `UpsamplingNS` job template.
+- Removed `mkdocs`, its dependencies and other unused dependencies
+
+### 2.5.0a7
+**August 18, 2025**
+- Drop `mkdocs`, its dependencies and other unused dependencies
 
 ### 2.5.0a6
 **August 18, 2025**
