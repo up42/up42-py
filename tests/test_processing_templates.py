@@ -80,9 +80,9 @@ class TestPansharpening:
         assert template.inputs == {"title": TITLE, "item": ITEM_URL, **grey_weights}
 
 
-class TestCoregistrationSimularity:
-    def test_should_construct_template(self):
-        template = templates.CoregistationSimularity(
+class TestSimularityProcesses:
+    def test_should_construct_Coregistration_template(self):
+        template = templates.CoregistrationSimularity(
             title=TITLE,
             source_item=item,
             reference_item=second_item,
@@ -93,4 +93,20 @@ class TestCoregistrationSimularity:
             "title": TITLE,
             "sourceItem": ITEM_URL,
             "referenceItem": SECOND_ITEM_URL,
+        }
+
+    def test_should_construct_DetectionChange_template(self):
+        template = templates.DetectionChangeSimularity(
+            title=TITLE,
+            source_item=item,
+            reference_item=second_item,
+            workspace_id=constants.WORKSPACE_ID,
+            sensitivity=5
+        )
+        assert template.is_valid and template.cost == COST
+        assert template.inputs == {
+            "title": TITLE,
+            "sourceItem": ITEM_URL,
+            "referenceItem": SECOND_ITEM_URL,
+            "sensitivity": 5
         }
