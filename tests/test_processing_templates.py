@@ -81,7 +81,7 @@ class TestPansharpening:
 
 
 class TestSimularityProcesses:
-    def test_should_construct_Coregistration_template(self):
+    def test_should_construct_coregistration_template(self):
         template = templates.CoregistrationSimularity(
             title=TITLE,
             source_item=item,
@@ -95,7 +95,7 @@ class TestSimularityProcesses:
             "referenceItem": SECOND_ITEM_URL,
         }
 
-    def test_should_construct_DetectionChange_template(self):
+    def test_should_construct_detection_change_template(self):
         template = templates.DetectionChangeSimularity(
             title=TITLE,
             source_item=item,
