@@ -102,6 +102,7 @@ class SimularityJobTemplate(processing.JobTemplate):
             "referenceItem": self.reference_item.get_self_href(),
         }
 
+
 @dataclasses.dataclass
 class CoregistrationSimularity(SimularityJobTemplate):
     process_id = "coregistration-simularity"
@@ -114,7 +115,7 @@ class DetectionChangeSimularity(SimularityJobTemplate):
 
     @property
     def inputs(self):
-        sensitivity = self.sensitivity
+        sensitivity = {"sensitivity": self.sensitivity}
         return {**super().inputs, **sensitivity}
 
 
