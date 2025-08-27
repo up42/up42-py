@@ -101,12 +101,12 @@ class TestSimularityProcesses:
             source_item=item,
             reference_item=second_item,
             workspace_id=constants.WORKSPACE_ID,
-            sensitivity=5
+            sensitivity=5,
         )
         assert template.is_valid and template.cost == COST
         assert template.inputs == {
             "title": TITLE,
             "sourceItem": ITEM_URL,
             "referenceItem": SECOND_ITEM_URL,
-            "sensitivity": 5
+            "sensitivity": 5,
         }
