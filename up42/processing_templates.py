@@ -88,11 +88,10 @@ class DetectionChangeSPOTHyperverge(WorkspaceIdMultiItemTemplate):
 
 
 @dataclasses.dataclass
-class CoregistationSimularity(processing.JobTemplate):
+class SimularityJobTemplate(processing.JobTemplate):
     title: str
     source_item: pystac.Item
     reference_item: pystac.Item
-    process_id = "coregistration-simularity"
     workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
 
     @property
@@ -102,6 +101,22 @@ class CoregistationSimularity(processing.JobTemplate):
             "sourceItem": self.source_item.get_self_href(),
             "referenceItem": self.reference_item.get_self_href(),
         }
+
+
+@dataclasses.dataclass
+class CoregistrationSimularity(SimularityJobTemplate):
+    process_id = "coregistration-simularity"
+
+
+@dataclasses.dataclass
+class DetectionChangeSimularity(SimularityJobTemplate):
+    process_id = "detection-change-simularity"
+    sensitivity: int = 2
+
+    @property
+    def inputs(self):
+        sensitivity = {"sensitivity": self.sensitivity}
+        return {**super().inputs, **sensitivity}
 
 
 @dataclasses.dataclass
