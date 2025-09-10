@@ -16,7 +16,7 @@ DATA_PRODUCT = glossary.DataProduct(
     id="data-product-id",
     eula_id="eula-id",
 )
-RESOLUTION_VALUE = glossary.ResolutionValue(minimum=0.0, maximum=1.0, description="resolution value")
+RESOLUTION_VALUE = glossary.ResolutionValue(minimum=0.0, maximum=1.0)
 INTEGRATION_VALUES: List[glossary.IntegrationValue] = [
     "ACCESS_APPROVAL_REQUIRED",
     "SAMPLE_DATA_AVAILABLE",

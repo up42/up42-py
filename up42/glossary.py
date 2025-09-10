@@ -30,7 +30,6 @@ IntegrationValue = Literal[
 @dataclasses.dataclass
 class ResolutionValue:
     minimum: float
-    description: Optional[str] = None
     maximum: Optional[float] = None
 
 
