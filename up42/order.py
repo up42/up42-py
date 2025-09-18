@@ -119,6 +119,21 @@ class TaskingOrderDetails:
     geometry: dict
     extra_description: Optional[str]
     sub_status: Optional[OrderSubStatus]
+    acquisition_mode: Optional[str] = None
+    max_cloud_cover: Optional[int] = None
+    max_incidence_angle: Optional[int] = None
+    geometric_processing: Optional[str] = None
+    projection: Optional[str] = None
+    pixel_coding: Optional[str] = None
+    radiometric_processing: Optional[str] = None
+    spectral_bands: Optional[str] = None
+    priority: Optional[str] = None
+    min_bh: Optional[int] = None
+    max_bh: Optional[int] = None
+    resolution: Optional[str] = None
+    polarization: Optional[str] = None
+    scene_size: Optional[str] = None
+    looks: Optional[str] = None
 
 
 OrderDetails = Union[ArchiveOrderDetails, TaskingOrderDetails]
@@ -156,6 +171,21 @@ class Order:
                     geometry=order_details["geometry"],
                     extra_description=order_details.get("extraDescription"),
                     sub_status=order_details.get("subStatus"),
+                    acquisition_mode=order_details.get("acquisitionMode"),
+                    max_cloud_cover=order_details.get("maxCloudCover"),
+                    max_incidence_angle=order_details.get("maxIncidenceAngle"),
+                    geometric_processing=order_details.get("geometricProcessing"),
+                    projection=order_details.get("projection"),
+                    pixel_coding=order_details.get("pixelCoding"),
+                    radiometric_processing=order_details.get("radiometricProcessing"),
+                    spectral_bands=order_details.get("spectralBands"),
+                    priority=order_details.get("priority"),
+                    min_bh=order_details.get("minBH"),
+                    max_bh=order_details.get("maxBH"),
+                    resolution=order_details.get("resolution"),
+                    polarization=order_details.get("polarization"),
+                    scene_size=order_details.get("sceneSize"),
+                    looks=order_details.get("looks"),
                 )
             else:
                 details = ArchiveOrderDetails(aoi=order_details["aoi"], image_id=order_details.get("imageId"))

@@ -30,6 +30,10 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 2.6.0a4
+**September 18, 2025**
+- Added missing properties to `TaskingOrderDetails` data class.
+
 ### 2.6.0a3
 **September 15, 2025**
 - Security: updated urllib3 to >=2.5.0.

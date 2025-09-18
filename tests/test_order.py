@@ -55,6 +55,21 @@ def _tasking_order_metadata(base_order_metadata: dict):
             "geometry": {"some": "geometry"},
             "extraDescription": "extra-description",
             "subStatus": "FEASIBILITY_WAITING_UPLOAD",
+            "acquisitionMode": "mono",
+            "maxCloudCover": 10,
+            "maxIncidenceAngle": 10,
+            "geometricProcessing": "orthorectified",
+            "projection": "4326",
+            "pixelCoding": "16bit",
+            "radiometricProcessing": "reflectance",
+            "spectralBands": "pansharpened_3_band_true_color",
+            "priority": "standard",
+            "minBH": 10,
+            "maxBH": 10,
+            "resolution": "0.50",
+            "polarization": "hh",
+            "sceneSize": "20x10",
+            "looks": "2",
         },
     }
 
@@ -112,6 +127,21 @@ def _tasking_order(base_order: order.Order, tasking_order_metadata: dict):
             geometry={"some": "geometry"},
             extra_description="extra-description",
             sub_status="FEASIBILITY_WAITING_UPLOAD",
+            acquisition_mode="mono",
+            max_cloud_cover=10,
+            max_incidence_angle=10,
+            geometric_processing="orthorectified",
+            projection="4326",
+            pixel_coding="16bit",
+            radiometric_processing="reflectance",
+            spectral_bands="pansharpened_3_band_true_color",
+            priority="standard",
+            min_bh=10,
+            max_bh=10,
+            resolution="0.50",
+            polarization="hh",
+            scene_size="20x10",
+            looks="2",
         ),
         info=tasking_order_metadata,
     )
@@ -339,4 +369,23 @@ class TestOrder:
             tags=tags,
             sort_by=sort_by,
         )
-        assert list(orders) == [data_order] * 4
+        orders_list = list(orders)
+        assert orders_list == [data_order] * 4
+
+        for order_item in orders_list:
+            if order_item.type == "TASKING":
+                assert hasattr(order_item.details, "acquisition_mode")
+                assert hasattr(order_item.details, "max_cloud_cover")
+                assert hasattr(order_item.details, "max_incidence_angle")
+                assert hasattr(order_item.details, "geometric_processing")
+                assert hasattr(order_item.details, "projection")
+                assert hasattr(order_item.details, "pixel_coding")
+                assert hasattr(order_item.details, "radiometric_processing")
+                assert hasattr(order_item.details, "spectral_bands")
+                assert hasattr(order_item.details, "priority")
+                assert hasattr(order_item.details, "min_bh")
+                assert hasattr(order_item.details, "max_bh")
+                assert hasattr(order_item.details, "resolution")
+                assert hasattr(order_item.details, "polarization")
+                assert hasattr(order_item.details, "scene_size")
+                assert hasattr(order_item.details, "looks")
