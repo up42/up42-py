@@ -295,3 +295,28 @@ class TestPagedQuery:
         response = {"content": self.content, "totalPages": 2}
         requests_mock.get(url=self.base_url + "&page=0", json=response)
         assert list(itertools.islice(self.query(), 2)) == self.content
+
+
+@utils.deprecation(replacement_name=None, version="2.0.0")
+def deprecated_function():
+    pass
+
+
+@utils.deprecation(replacement_name="NewClass", version="2.0.0")
+class DeprecatedClass:
+    pass
+
+
+class TestDeprecationDecorator:
+    def test_deprecation_warning_on_function(self):
+        with pytest.warns(
+            DeprecationWarning, match="`deprecated_function` is deprecated and will be removed in version 2.0.0."
+        ):
+            deprecated_function()
+
+    def test_deprecation_warning_on_class(self):
+        with pytest.warns(
+            DeprecationWarning,
+            match="`DeprecatedClass` is deprecated and will be removed in version 2.0.0 Use `NewClass` instead.",
+        ):
+            DeprecatedClass()
