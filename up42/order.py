@@ -225,16 +225,6 @@ class Order:
         return map(cls._from_metadata, utils.paged_query(params, "/v2/orders", cls.session))
 
     @property
-    @utils.deprecation("Order.details", "3.0.0")
-    def order_details(self) -> dict:
-        return self.info.get("orderDetails", {})
-
-    @property
-    @utils.deprecation("Order.id", "3.0.0")
-    def order_id(self) -> str:
-        return self.info["id"]
-
-    @property
     def is_fulfilled(self) -> bool:
         """
         Gets `True` if the order is fulfilled, `False` otherwise.
@@ -242,14 +232,6 @@ class Order:
         """
         return self.status == "FULFILLED"
 
-    @utils.deprecation("pystac::Client.search", "3.0.0")
-    def get_assets(self) -> List[asset.Asset]:
-        """
-        Gets the Order assets or results.
-        """
-        if self.status not in ["FULFILLED", "BEING_FULFILLED"]:
-            raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {self.status}""")
-        return list(asset.Asset.all(search=self.order_id))
 
     @classmethod
     @utils.deprecation("OrderTemplate::place", "3.0.0")
@@ -260,7 +242,7 @@ class Order:
             message = response_json["errors"][0]["message"]
             raise FailedOrderPlacement(f"Order was not placed: {message}")
         order = cls.get(response_json["results"][0]["id"])
-        logger.info("Order %s is now %s.", order.order_id, order.status)
+        logger.info("Order %s is now %s.", order.id, order.status)
         return order
 
     @classmethod
@@ -305,7 +287,7 @@ class Order:
             sub_status = self.details and self.details.sub_status
             sub_status_msg = f": {sub_status}" if sub_status is not None else ""
 
-            logger.info("Order is %s! - %s", self.status + sub_status_msg, self.order_id)
+            logger.info("Order is %s! - %s", self.status + sub_status_msg, self.id)
             if self.status in ["FAILED", "FAILED_PERMANENTLY"]:
                 raise FailedOrder("Order has failed!")
             if not self.is_fulfilled:

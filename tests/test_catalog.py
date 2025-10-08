@@ -93,7 +93,7 @@ class TestCatalogBase:
                 == order_obj
             )
             place_order.assert_called_with(order_parameters, constants.WORKSPACE_ID)
-            order_obj.track_status.assert_called_with(0.1)
+            order_obj.track.assert_called_with(0.1)
 
 
 class TestCatalog:

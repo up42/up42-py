@@ -109,7 +109,7 @@ class CatalogBase:
         """
         placed_order = order.Order.place(order_parameters, cls.workspace_id)
         if track_status:
-            placed_order.track_status(report_time)
+            placed_order.track(report_time)
         return placed_order
 
 

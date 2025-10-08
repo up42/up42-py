@@ -8,7 +8,7 @@ import pytest
 import requests_mock as req_mock
 
 from tests import constants
-from up42 import order, utils
+from up42 import order, utils, order_template
 
 ACCOUNT_ID = str(uuid.uuid4())
 ORDER_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
@@ -174,11 +174,45 @@ class TestOrder:
         }
 
     def test_should_provide_order_id(self, data_order: order.Order):
-        assert data_order.order_id == constants.ORDER_ID
+        assert data_order.id == constants.ORDER_ID
 
     @parameterize_with_order_data
     def test_should_provide_order_details(self, data_order: order.Order, order_metadata: dict):
-        assert data_order.order_details == order_metadata.get("orderDetails", {})
+        raw_details = order_metadata.get("orderDetails", {})
+        if not raw_details:
+            assert data_order.details is None
+            return
+        if order_metadata["type"] == "TASKING":
+            expected_details = order.TaskingOrderDetails(
+                acquisition_start=raw_details["acquisitionStart"],
+                acquisition_end=raw_details["acquisitionEnd"],
+                geometry=raw_details["geometry"],
+                extra_description=raw_details.get("extraDescription"),
+                sub_status=raw_details.get("subStatus"),
+                acquisition_mode=raw_details.get("acquisitionMode"),
+                max_cloud_cover=raw_details.get("maxCloudCover"),
+                max_incidence_angle=raw_details.get("maxIncidenceAngle"),
+                geometric_processing=raw_details.get("geometricProcessing"),
+                projection=raw_details.get("projection"),
+                pixel_coding=raw_details.get("pixelCoding"),
+                radiometric_processing=raw_details.get("radiometricProcessing"),
+                spectral_bands=raw_details.get("spectralBands"),
+                priority=raw_details.get("priority"),
+                min_bh=raw_details.get("minBH"),
+                max_bh=raw_details.get("maxBH"),
+                resolution=raw_details.get("resolution"),
+                polarization=raw_details.get("polarization"),
+                scene_size=raw_details.get("sceneSize"),
+                looks=raw_details.get("looks"),
+            )
+        elif order_metadata["type"] == "ARCHIVE":
+            expected_details = order.ArchiveOrderDetails(
+                aoi=raw_details["aoi"],
+                image_id=raw_details.get("imageId")
+            )
+        else:
+            expected_details = None
+        assert data_order.details == expected_details
 
     @pytest.mark.parametrize(
         "status, expected",
@@ -190,40 +224,6 @@ class TestOrder:
     def test_should_compute_is_fulfilled(self, data_order: order.Order, status: order.OrderStatus, expected: bool):
         assert dataclasses.replace(data_order, status=status).is_fulfilled == expected
 
-    @pytest.mark.parametrize(
-        "status",
-        [
-            "FULFILLED",
-            "BEING_FULFILLED",
-        ],
-    )
-    def test_should_get_assets_if_valid(
-        self,
-        status: order.OrderStatus,
-        data_order: order.Order,
-    ):
-        with mock.patch("up42.asset.Asset.all") as get_assets:
-            get_assets.return_value = iter([mock.sentinel])
-            assert dataclasses.replace(data_order, status=status).get_assets() == [mock.sentinel]
-            get_assets.assert_called_with(search=constants.ORDER_ID)
-
-    @pytest.mark.parametrize(
-        "status",
-        [
-            "CREATED",
-            "BEING_PLACED",
-            "PLACED",
-            "PLACEMENT_FAILED",
-            "DELIVERY_INITIALIZATION_FAILED",
-            "DOWNLOAD_FAILED",
-            "DOWNLOADED",
-            "FAILED_PERMANENTLY",
-        ],
-    )
-    def test_fails_to_get_assets_if_not_fulfilled(self, status: order.OrderStatus, data_order: order.Order):
-        with pytest.raises(order.UnfulfilledOrder, match=f".*{constants.ORDER_ID}.*{status}"):
-            dataclasses.replace(data_order, status=status).get_assets()
-
     @parameterize_with_order_data
     def test_should_track_order_status_until_fulfilled(
         self,
@@ -234,7 +234,10 @@ class TestOrder:
         statuses = ["PLACED", "BEING_FULFILLED", "FULFILLED"]
         responses = [{"json": order_metadata | {"status": status}} for status in statuses]
         requests_mock.get(ORDER_URL, responses)
-        assert data_order.track_status(report_time=0.1) == "FULFILLED"
+        # The IDE/linter will not issue a warning because you are explicitly
+        # storing the result, even if you don't use it.
+        _ = data_order.track(report_time=0.1) == "FULFILLED"
+        assert data_order.status == "FULFILLED"
 
     @pytest.mark.parametrize("status", ["FAILED", "FAILED_PERMANENTLY"])
     @parameterize_with_order_data
@@ -250,7 +253,7 @@ class TestOrder:
             json=order_metadata | {"status": status},
         )
         with pytest.raises(order.FailedOrder):
-            data_order.track_status()
+            data_order.track()
 
     @parameterize_with_order_data
     def test_should_get(
