@@ -33,7 +33,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 3.0.0a1
 **October 09, 2025**
 
-### Changed
+### Removed
+- Removed `construct_order_parameters`, `get_quotations`, `decide_quotation`, `get_feasibility`, `choose_feasibility` methods from `Tasking` class.
 - Removed `Tasking` class.
 
 
