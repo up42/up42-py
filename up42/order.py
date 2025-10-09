@@ -294,8 +294,3 @@ class Order:
                 raise UnfulfilledOrder
 
         update()
-
-    @utils.deprecation("Order::track", "3.0.0")
-    def track_status(self, report_time: float = 120) -> str:
-        self.track(report_time)
-        return self.status
