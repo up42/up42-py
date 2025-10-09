@@ -33,8 +33,8 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ## 3.0.0a1
 **October 09, 2025**
 
-### Deprecated
-- Deprecated `Tasking` class.
+### Changed
+- Removed `Tasking` class.
 
 
 ## 2.6.0
