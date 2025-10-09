@@ -5,13 +5,9 @@ Tasking functionality
 import dataclasses
 from typing import Iterator, List, Literal, Optional, Union
 
-from shapely import geometry as geom  # type: ignore
-
-from up42 import base, catalog, host, utils
+from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
-
-Geometry = Union[catalog.Geometry, geom.Point]
 
 QuotationDecision = Literal[
     "ACCEPTED",
@@ -19,10 +15,6 @@ QuotationDecision = Literal[
 ]
 QuotationStatus = Union[Literal["NOT_DECIDED"], QuotationDecision]
 FeasibilityStatus = Literal["NOT_DECIDED", "ACCEPTED"]
-
-
-class InvalidDecision(ValueError):
-    pass
 
 
 class QuotationSorting:
