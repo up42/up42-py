@@ -4,7 +4,7 @@ from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict, Unio
 
 import tenacity as tnc
 
-from up42 import asset, base, host, utils
+from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
 
@@ -231,7 +231,6 @@ class Order:
         Also see [status attribute](order-reference.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
-
 
     @classmethod
     @utils.deprecation("OrderTemplate::place", "3.0.0")

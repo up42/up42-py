@@ -2,13 +2,12 @@ import dataclasses
 import urllib
 import uuid
 from typing import Any, List, Optional
-from unittest import mock
 
 import pytest
 import requests_mock as req_mock
 
 from tests import constants
-from up42 import order, utils, order_template
+from up42 import order, utils
 
 ACCOUNT_ID = str(uuid.uuid4())
 ORDER_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
@@ -178,10 +177,13 @@ class TestOrder:
 
     @parameterize_with_order_data
     def test_should_provide_order_details(self, data_order: order.Order, order_metadata: dict):
+        expected_details: Optional[order.OrderDetails]
+
         raw_details = order_metadata.get("orderDetails", {})
         if not raw_details:
             assert data_order.details is None
             return
+
         if order_metadata["type"] == "TASKING":
             expected_details = order.TaskingOrderDetails(
                 acquisition_start=raw_details["acquisitionStart"],
@@ -206,12 +208,10 @@ class TestOrder:
                 looks=raw_details.get("looks"),
             )
         elif order_metadata["type"] == "ARCHIVE":
-            expected_details = order.ArchiveOrderDetails(
-                aoi=raw_details["aoi"],
-                image_id=raw_details.get("imageId")
-            )
+            expected_details = order.ArchiveOrderDetails(aoi=raw_details["aoi"], image_id=raw_details.get("imageId"))
         else:
             expected_details = None
+
         assert data_order.details == expected_details
 
     @pytest.mark.parametrize(
