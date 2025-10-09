@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **October 09, 2025**
 
 ### Deprecated
-- Deprecated `construct_order_parameters`, `get_quotations`, `decide_quotation`, `get_feasibility` and `choose_feasibility` methods on the `Tasking` class.
+- Deprecated `Tasking` class.
 
 
 ## 2.6.0
