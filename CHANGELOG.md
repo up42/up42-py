@@ -34,6 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **October 09, 2025**
 
 ### Removed
+- Removed `initialize_tasking` from `up42` global namespace.
 - Removed `construct_order_parameters`, `get_quotations`, `decide_quotation`, `get_feasibility`, `choose_feasibility` methods from `Tasking` class.
 - Removed `Tasking` class.
 
