@@ -30,6 +30,15 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 3.0.0a1
+**October 09, 2025**
+
+### Removed
+- Removed `initialize_tasking` from `up42` global namespace.
+- Removed `construct_order_parameters`, `get_quotations`, `decide_quotation`, `get_feasibility`, `choose_feasibility` methods from `Tasking` class.
+- Removed `Tasking` class.
+
+
 ## 2.6.0
 **September 29, 2025**
 

@@ -4,7 +4,7 @@ import mock
 
 import up42
 from tests import constants
-from up42 import catalog, storage, tasking
+from up42 import catalog, storage
 
 
 def test_should_initialize_objects():
@@ -25,6 +25,3 @@ def test_should_initialize_objects():
         get_asset.return_value = mock.sentinel
         assert up42.initialize_asset(asset_id=asset_id) == mock.sentinel
         get_asset.assert_called_with(asset_id)
-
-    result = up42.initialize_tasking()
-    assert isinstance(result, tasking.Tasking)
