@@ -3,8 +3,6 @@ import json
 import pathlib
 from unittest import mock
 
-import geopandas  # type: ignore
-import pandas
 import pytest
 import requests
 import requests_mock as req_mock
@@ -32,161 +30,6 @@ def test_format_time(date, set_end_of_day, result_time):
     formatted_time = utils.format_time(date=date, set_end_of_day=set_end_of_day)
     assert isinstance(formatted_time, str)
     assert formatted_time == result_time
-
-
-@pytest.mark.parametrize(
-    "len_fc, in_vector",
-    [
-        (1, POLY),
-        (
-            1,
-            geopandas.GeoDataFrame(
-                pandas.DataFrame([0], columns=["id"]),
-                crs={"init": "epsg:4326"},
-                geometry=[POLY],
-            ),
-        ),
-        (
-            2,
-            geopandas.GeoDataFrame(
-                pandas.DataFrame([0, 1], columns=["id"]),
-                crs={"init": "epsg:4326"},
-                geometry=[POLY, POLY],
-            ),
-        ),
-        (1, [0.0, 0.0, 1.0, 1.0]),
-        (
-            1,
-            {
-                "id": "0",
-                "type": "Feature",
-                "properties": {},
-                "geometry": {
-                    "type": "Polygon",
-                    "coordinates": (
-                        (
-                            (10.00001, 6.0),
-                            (10.0, 5.99),
-                            (10.1, 6.00),
-                            (10.00001, 6.0),
-                        ),
-                    ),
-                },
-            },
-        ),
-        (
-            1,
-            {
-                "type": "FeatureCollection",
-                "features": [
-                    {
-                        "id": "0",
-                        "type": "Feature",
-                        "properties": {},
-                        "geometry": {
-                            "type": "Polygon",
-                            "coordinates": (
-                                (
-                                    (10.00001, 6.0),
-                                    (10.0, 5.999),
-                                    (10.00, 6.0),
-                                    (10.00001, 6.0),
-                                ),
-                            ),
-                        },
-                    }
-                ],
-            },
-        ),
-        (
-            1,
-            {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [-97.324448, 37.72246],
-                        [-97.349682, 37.722732],
-                        [-97.349939, 37.708405],
-                        [-97.322989, 37.708202],
-                        [-97.320414, 37.708473],
-                        [-97.324448, 37.72246],
-                    ]
-                ],
-            },
-        ),
-    ],
-)
-def test_any_vector_to_fc(len_fc, in_vector):
-    fc = utils.any_vector_to_fc(in_vector)
-    assert isinstance(fc, dict)
-    assert fc["type"] == "FeatureCollection"
-    assert fc.get("bbox") is not None
-    assert fc["features"][0].get("bbox") is not None
-    assert len(fc["features"]) != 0
-    assert len(fc["features"]) == len_fc
-    assert fc["features"][0]["geometry"].get("coordinates") is not None
-
-    df = utils.any_vector_to_fc(in_vector, as_dataframe=True)
-    assert isinstance(df, geopandas.GeoDataFrame)
-    assert df.crs.to_string() == "EPSG:4326"
-
-
-def test_any_vector_to_fc_raises_with_unaccepted_geometry_type():
-    ring = geometry.LinearRing([(0, 0), (1, 1), (1, 0)])
-    with pytest.raises(ValueError):
-        utils.any_vector_to_fc(ring)
-
-
-def test_fc_to_query_geometry_single_intersects():
-    fp = pathlib.Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
-    with open(fp, encoding="utf-8") as json_file:
-        fc = json.load(json_file)
-    query_geometry = utils.fc_to_query_geometry(fc=fc, geometry_operation="intersects")
-    assert isinstance(query_geometry, dict)
-    assert query_geometry["type"] == "Polygon"
-    assert query_geometry["coordinates"] == [
-        [
-            [13.375966, 52.515068],
-            [13.375966, 52.516639],
-            [13.378314, 52.516639],
-            [13.378314, 52.515068],
-            [13.375966, 52.515068],
-        ]
-    ]
-
-
-def test_fc_to_query_geometry_single_bbox():
-    fp = pathlib.Path(__file__).resolve().parent / "mock_data/aoi_berlin.geojson"
-    with open(fp, encoding="utf-8") as json_file:
-        fc = json.load(json_file)
-    query_geometry = utils.fc_to_query_geometry(fc=fc, geometry_operation="bbox")
-    assert isinstance(query_geometry, list)
-    assert len(query_geometry) == 4
-    assert query_geometry == [13.375966, 52.515068, 13.378314, 52.516639]
-
-
-def test_fc_to_query_geometry_multiple_raises():
-    fp = pathlib.Path(__file__).resolve().parent / "mock_data/search_results_limited_columns.geojson"
-    with open(fp, encoding="utf-8") as json_file:
-        fc = json.load(json_file)
-
-    with pytest.raises(ValueError) as e:
-        utils.fc_to_query_geometry(fc=fc, geometry_operation="intersects")
-    assert str(e.value) == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
-
-    with pytest.raises(ValueError) as e:
-        utils.fc_to_query_geometry(fc=fc, geometry_operation="bbox")
-    assert str(e.value) == "UP42 only accepts single geometries, the provided geometry contains multiple geometries."
-
-
-def test_fc_to_query_geometry_multipolygon_raises():
-    fp = pathlib.Path(__file__).resolve().parent / "mock_data/multipolygon.geojson"
-    with open(fp, encoding="utf-8") as json_file:
-        fc = json.load(json_file)
-
-    with pytest.raises(ValueError) as e:
-        utils.fc_to_query_geometry(fc=fc, geometry_operation="intersects")
-    assert str(e.value) == "UP42 only accepts single geometries, the provided geometry is a MultiPolygon."
 
 
 class TestDownloadArchive:
@@ -310,7 +153,8 @@ class DeprecatedClass:
 class TestDeprecationDecorator:
     def test_deprecation_warning_on_function(self):
         with pytest.warns(
-            DeprecationWarning, match="`deprecated_function` is deprecated and will be removed in version 2.0.0."
+            DeprecationWarning,
+            match="`deprecated_function` is deprecated and will be removed in version 2.0.0.",
         ):
             deprecated_function()
 
