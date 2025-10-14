@@ -15,7 +15,6 @@ CHANGELOG.md @up42/user-sdk @up42/data-sdk @up42/processing-sdk @up42/catalog-sd
 /up42/stac.py @up42/processing-sdk
 /up42/storage.py @up42/processing-sdk
 /up42/tasking.py @up42/data-sdk
-/up42/webhooks.py @up42/user-sdk
 /tests/http @up42/user-sdk
 /tests/helpers.py @up42/user-sdk @up42/data-sdk @up42/processing-sdk @up42/catalog-sdk
 /tests/test_asset.py @up42/processing-sdk
@@ -30,4 +29,3 @@ CHANGELOG.md @up42/user-sdk @up42/data-sdk @up42/processing-sdk @up42/catalog-sd
 /tests/test_stac.py @up42/processing-sdk
 /tests/test_storage.py @up42/processing-sdk
 /tests/test_tasking.py @up42/data-sdk
-/tests/test_webhooks.py @up42/user-sdk
