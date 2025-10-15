@@ -67,23 +67,10 @@ class _Workspace:
         self._id = user_info["sub"]
         self._auth = up42_client.auth
 
-    @utils.deprecation(replacement_name=None, version="3.0.0")
-    def get_credits_balance(self) -> dict:
-        """
-        Display the overall credits available in your account.
-
-        Returns:
-            A dict with the balance of credits available in your account.
-        """
-        url = host.endpoint("/v2/payments/balances")
-        balance = self.session.get(url).json()["available"]["amount"]
-        return {"balance": balance}
-
 
 workspace = _Workspace()
 
 authenticate = workspace.authenticate
-get_credits_balance = workspace.get_credits_balance
 
 
 def stac_client():

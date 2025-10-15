@@ -1,26 +1,10 @@
 import logging
 
-from up42 import asset, catalog, order, storage, tasking, utils
+from up42 import asset, order, storage, utils
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
 INITIALIZED_MSG = "Initialized %s"
-
-
-@utils.deprecation(None, "3.0.0")
-def initialize_catalog() -> catalog.Catalog:
-    """
-    Returns a Catalog object for using the catalog search.
-    """
-    return catalog.Catalog()
-
-
-@utils.deprecation(None, "3.0.0")
-def initialize_tasking() -> tasking.Tasking:
-    """
-    Returns a Tasking object for creating satellite tasking orders.
-    """
-    return tasking.Tasking()
 
 
 @utils.deprecation(None, "3.0.0")
