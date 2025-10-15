@@ -7,12 +7,9 @@ import pytest
 import requests
 import requests_mock as req_mock
 from dateutil import parser
-from shapely import geometry  # type: ignore
 
 from tests import constants
 from up42 import utils
-
-POLY = geometry.Polygon([(0, 0), (1, 1), (1, 0)])
 
 
 @pytest.mark.parametrize(
