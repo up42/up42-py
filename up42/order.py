@@ -1,6 +1,5 @@
-import copy
 import dataclasses
-from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict, Union, cast
+from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict, Union
 
 import tenacity as tnc
 
@@ -44,24 +43,6 @@ class OrderParamsV2(TypedDict, total=False):
     params: Dict[str, Any]
     featureCollection: Dict[str, Any]
     tags: List[str]
-
-
-def _translate_construct_parameters(order_parameters: OrderParams) -> OrderParamsV2:
-    order_parameters_v2 = cast(OrderParamsV2, copy.deepcopy(order_parameters))
-    params = order_parameters_v2["params"]
-    data_product_id = order_parameters_v2["dataProduct"]
-    order_parameters_v2["displayName"] = params.get("displayName", f"{data_product_id} order")
-    aoi = params.pop("aoi", None) or params.pop("geometry", None)
-    order_parameters_v2["featureCollection"] = {
-        "type": "FeatureCollection",
-        "features": [
-            {
-                "type": "Feature",
-                "geometry": aoi,
-            }
-        ],
-    }
-    return order_parameters_v2
 
 
 OrderStatus = Literal[
@@ -231,45 +212,6 @@ class Order:
         Also see [status attribute](order-reference.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
-
-    @classmethod
-    @utils.deprecation("OrderTemplate::place", "3.0.0")
-    def place(cls, order_parameters: OrderParams, workspace_id: str) -> "Order":
-        url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
-        response_json = cls.session.post(url=url, json=_translate_construct_parameters(order_parameters)).json()
-        if response_json["errors"]:
-            message = response_json["errors"][0]["message"]
-            raise FailedOrderPlacement(f"Order was not placed: {message}")
-        order = cls.get(response_json["results"][0]["id"])
-        logger.info("Order %s is now %s.", order.id, order.status)
-        return order
-
-    @classmethod
-    @utils.deprecation("OrderTemplate.estimate", "3.0.0")
-    def estimate(cls, order_parameters: OrderParams) -> int:
-        """
-        Returns an estimation of the cost of an order.
-
-        Args:
-            auth: An authentication object.
-            order_parameters: A dictionary for the order configuration.
-
-        Returns:
-            int: The estimated cost of the order
-        """
-
-        url = host.endpoint("/v2/orders/estimate")
-        response_json = cls.session.post(
-            url=url,
-            json=_translate_construct_parameters(order_parameters),
-        ).json()
-        estimated_credits: int = response_json["summary"]["totalCredits"]
-        logger.info(
-            "Order is estimated to cost %s UP42 credits (order_parameters: %s)",
-            estimated_credits,
-            order_parameters,
-        )
-        return estimated_credits
 
     def track(self, report_time: float = 120):
         logger.info("Tracking order updates, reporting every %s seconds...", report_time)

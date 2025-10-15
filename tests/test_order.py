@@ -265,53 +265,11 @@ class TestOrder:
         requests_mock.get(url=ORDER_URL, json=order_metadata)
         assert order.Order.get(constants.ORDER_ID) == data_order
 
-    def test_should_estimate(self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams):
-        order_estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
-        expected_credits = 100
-        requests_mock.post(
-            url=order_estimate_url,
-            json={
-                "summary": {"totalCredits": expected_credits},
-                "errors": [],
-            },
-        )
-        assert order.Order.estimate(order_parameters) == expected_credits
-
-    @parameterize_with_order_data
-    def test_should_place_order(
-        self,
-        requests_mock: req_mock.Mocker,
-        order_parameters: order.OrderParams,
-        data_order: order.Order,
-        order_metadata: dict,
-    ):
-        requests_mock.post(
-            url=ORDER_PLACEMENT_URL,
-            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
-        )
-        requests_mock.get(
-            url=ORDER_URL,
-            json=order_metadata,
-        )
-        assert order.Order.place(order_parameters, constants.WORKSPACE_ID) == data_order
-
     def test_should_not_represent_order_info(
         self,
         data_order: order.Order,
     ):
         assert "info" not in repr(data_order)
-
-    def test_fails_to_place_order_if_response_contains_error(
-        self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
-    ):
-        error_msg = "test error"
-        order_response_with_error = {"results": [], "errors": [{"message": error_msg}]}
-        requests_mock.post(
-            url=ORDER_PLACEMENT_URL,
-            json=order_response_with_error,
-        )
-        with pytest.raises(order.FailedOrderPlacement, match=error_msg):
-            order.Order.place(order_parameters, constants.WORKSPACE_ID)
 
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize("order_type", [None, "ARCHIVE", "TASKING"])
