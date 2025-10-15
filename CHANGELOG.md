@@ -30,6 +30,12 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 3.0.0a2
+**October 14, 2025**
+
+### Removed
+- Removed `get_credits_balance` from `base` global namespace.
+
 ## 3.0.0a1
 **October 09, 2025**
 

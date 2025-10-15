@@ -21,7 +21,7 @@ from typing import Callable, Type, Union, cast
 
 # pylint: disable=only-importing-modules-is-allowed
 from up42.asset import Asset, AssetSorting
-from up42.base import authenticate, get_credits_balance, stac_client
+from up42.base import authenticate, stac_client
 from up42.catalog import Catalog
 from up42.glossary import CollectionSorting, CollectionType, ProductGlossary, Provider
 from up42.initialization import initialize_asset, initialize_catalog, initialize_order, initialize_storage
@@ -62,7 +62,6 @@ __all__ = [
         initialize_order,
         initialize_asset,
         authenticate,
-        get_credits_balance,
         stac_client,
         Job,
         JobSorting,
