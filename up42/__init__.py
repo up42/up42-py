@@ -32,7 +32,6 @@ from up42.stac import BulkDeletion
 from up42.stac import extend as stac_extend
 from up42.storage import Storage
 from up42.tasking import FeasibilityStudy, FeasibilityStudySorting, Quotation, QuotationSorting
-from up42.tools import get_example_aoi, read_vector_file
 from up42.utils import get_up42_py_version
 from up42.version import version_control
 from up42.webhooks import Webhook
@@ -55,8 +54,6 @@ __all__ = [
         OrderSorting,
         Storage,
         Webhook,
-        get_example_aoi,
-        read_vector_file,
         initialize_catalog,
         initialize_storage,
         initialize_order,
