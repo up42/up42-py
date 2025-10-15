@@ -30,14 +30,20 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-## 3.0.0a2
-**October 14, 2025**
+## 3.0.0a3
+**October 15, 2025**
 
 ### Removed
 - `catalog.py` module with `CatalogBase` and `Catalog` classes
 - `test_catalog.py` module
 - Unused functions `any_vector_to_fc` and `fc_to_query_geometry` from `utils.py` module
 - `initialize_catalog` from `up42` global namespace and its test coverage.
+
+## 3.0.0a2
+**October 14, 2025**
+
+### Removed
+- Removed `get_credits_balance` from `base` global namespace.
 
 ## 3.0.0a1
 **October 09, 2025**
