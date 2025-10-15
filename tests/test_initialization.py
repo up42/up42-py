@@ -4,13 +4,10 @@ import mock
 
 import up42
 from tests import constants
-from up42 import catalog, storage
+from up42 import storage
 
 
 def test_should_initialize_objects():
-    catalog_obj = up42.initialize_catalog()
-    assert isinstance(catalog_obj, catalog.Catalog)
-
     storage_obj = up42.initialize_storage()
     assert isinstance(storage_obj, storage.Storage)
     assert storage_obj.workspace_id == constants.WORKSPACE_ID
