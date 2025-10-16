@@ -48,7 +48,7 @@ class TestDownloadArchive:
         assert len(out_files) == 2
 
     def test_fail_to_download_non_archive_file(self, requests_mock, tmp_path):
-        source = pathlib.Path("tests/mock_data/aoi_berlin.geojson")
+        source = pathlib.Path("tests/mock_data/multipolygon.geojson")
 
         requests_mock.get(
             url=self.archive_url,
