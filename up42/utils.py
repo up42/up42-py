@@ -1,4 +1,3 @@
-import copy
 import dataclasses
 import datetime
 import functools
@@ -14,12 +13,9 @@ from typing import Any, Callable, List, Optional, Union, cast
 from urllib import parse
 
 import geojson  # type: ignore
-import geopandas  # type: ignore
 import pystac_client
 import requests
-import shapely  # type: ignore
 import tqdm
-from shapely import geometry  # type: ignore
 
 from up42 import host
 
@@ -226,82 +222,6 @@ def format_time(date: Optional[Union[str, datetime.datetime]], set_end_of_day=Fa
     return date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def any_vector_to_fc(
-    vector: Union[
-        geojson.FeatureCollection,
-        geojson.Feature,
-        dict,
-        list,
-        geopandas.GeoDataFrame,
-        geometry.Polygon,
-        geometry.Point,
-    ],
-    as_dataframe: bool = False,
-) -> Union[dict, geopandas.GeoDataFrame]:
-    """
-    Gets a uniform feature collection dictionary (with fc and f bboxes) from any input vector type.
-
-    Args:
-        vector: One of FeatureCollection, Feature, dict (geojson geometry), list (bounds coordinates),
-            GeoDataFrame, shapely.Polygon, shapely.Point. All assume EPSG 4326!
-        as_dataframe: GeoDataFrame output with as_dataframe=True.
-    """
-    if not isinstance(
-        vector,
-        (
-            geojson.FeatureCollection,
-            geojson.Feature,
-            dict,
-            list,
-            geopandas.GeoDataFrame,
-            geometry.Polygon,
-            geometry.Point,
-            geojson.Polygon,
-        ),
-    ):
-        raise ValueError(
-            "The provided geometry must be a FeatureCollection, Feature, dict (geojson geometry), geopandas "
-            "dataframe, shapely Polygon, Point or a list (bounds coordinates)."
-        )
-
-    vector = copy.deepcopy(vector)  # avoid altering input geometry
-    if isinstance(vector, (dict, geojson.FeatureCollection, geojson.Feature)):
-        try:
-            if vector["type"] == "FeatureCollection":
-                df = geopandas.GeoDataFrame.from_features(vector, crs=4326)
-            elif vector["type"] == "Feature":
-                df = geopandas.GeoDataFrame.from_features(geojson.FeatureCollection([vector]), crs=4326)
-            else:  # Only geometry dict of Feature
-                df = geopandas.GeoDataFrame.from_features(
-                    geojson.FeatureCollection([geojson.Feature(geometry=vector)]),
-                    crs=4326,
-                )
-        except KeyError as e:
-            raise ValueError("Provided geometry dictionary has to include a FeatureCollection or Feature.") from e
-    else:
-        if isinstance(vector, list):
-            if len(vector) == 4:
-                box_poly = shapely.geometry.box(*vector)
-                df = geopandas.GeoDataFrame({"geometry": [box_poly]}, crs=4326)
-            else:
-                raise ValueError("The list requires 4 bounds coordinates.")
-        elif isinstance(vector, (geometry.Polygon, geometry.Point)):
-            df = geopandas.GeoDataFrame({"geometry": [vector]}, crs=4326)
-        elif isinstance(vector, geopandas.GeoDataFrame):
-            df = vector
-            try:
-                if df.crs.to_string() != "EPSG:4326":
-                    df = df.to_crs(epsg=4326)
-            except AttributeError as e:
-                raise AttributeError("GeoDataFrame requires a CRS.") from e
-
-    if as_dataframe:
-        return df
-    else:
-        fc = df.__geo_interface__
-        return fc
-
-
 def validate_fc_up42_requirements(fc: Union[dict, geojson.FeatureCollection]):
     """
     Validate the feature collection if it fits UP42 geometry requirements.
@@ -313,36 +233,6 @@ def validate_fc_up42_requirements(fc: Union[dict, geojson.FeatureCollection]):
     fc_type = fc["features"][0]["geometry"]["type"]
     if fc_type != "Polygon":
         raise ValueError(geometry_error.format(f"is a {fc_type}"))
-
-
-def fc_to_query_geometry(fc: Union[dict, geojson.FeatureCollection], geometry_operation: str) -> Union[List, dict]:
-    """
-    From a feature collection with a single feature, depending on the geometry_operation,
-    returns the feature as a list of bounds coordinates or a GeoJSON Polygon (as dict).
-
-    Args:
-        fc: feature collection
-        geometry_operation: One of "bbox", "intersects", "contains".
-
-    Returns:
-        The feature as a list of bounds coordinates or a GeoJSON Polygon (as dict)
-    """
-    validate_fc_up42_requirements(fc)
-    feature = fc["features"][0]
-
-    if geometry_operation == "bbox":
-        try:
-            query_geometry = list(feature["bbox"])
-        except KeyError:
-            query_geometry = list(shapely.geometry.shape(feature["geometry"]).bounds)
-    elif geometry_operation in ["intersects", "contains"]:
-        query_geometry = feature["geometry"]
-    else:
-        raise ValueError(
-            "geometry_operation needs to be one of bbox, intersects or contains!",
-        )
-
-    return query_geometry
 
 
 def get_up42_py_version():
