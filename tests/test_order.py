@@ -176,39 +176,23 @@ class TestOrder:
         assert data_order.id == constants.ORDER_ID
 
     @parameterize_with_order_data
-    def test_should_provide_order_details(self, data_order: order.Order, order_metadata: dict):
-        expected_details: Optional[order.OrderDetails]
-
+    def test_should_provide_order_details(
+        self,
+        data_order: order.Order,
+        order_metadata: dict,
+        archive_order: order.Order,
+        tasking_order: order.Order,
+    ):
         raw_details = order_metadata.get("orderDetails", {})
         if not raw_details:
             assert data_order.details is None
             return
 
+        expected_details: Optional[order.OrderDetails]
         if order_metadata["type"] == "TASKING":
-            expected_details = order.TaskingOrderDetails(
-                acquisition_start=raw_details["acquisitionStart"],
-                acquisition_end=raw_details["acquisitionEnd"],
-                geometry=raw_details["geometry"],
-                extra_description=raw_details.get("extraDescription"),
-                sub_status=raw_details.get("subStatus"),
-                acquisition_mode=raw_details.get("acquisitionMode"),
-                max_cloud_cover=raw_details.get("maxCloudCover"),
-                max_incidence_angle=raw_details.get("maxIncidenceAngle"),
-                geometric_processing=raw_details.get("geometricProcessing"),
-                projection=raw_details.get("projection"),
-                pixel_coding=raw_details.get("pixelCoding"),
-                radiometric_processing=raw_details.get("radiometricProcessing"),
-                spectral_bands=raw_details.get("spectralBands"),
-                priority=raw_details.get("priority"),
-                min_bh=raw_details.get("minBH"),
-                max_bh=raw_details.get("maxBH"),
-                resolution=raw_details.get("resolution"),
-                polarization=raw_details.get("polarization"),
-                scene_size=raw_details.get("sceneSize"),
-                looks=raw_details.get("looks"),
-            )
+            expected_details = tasking_order.details
         elif order_metadata["type"] == "ARCHIVE":
-            expected_details = order.ArchiveOrderDetails(aoi=raw_details["aoi"], image_id=raw_details.get("imageId"))
+            expected_details = archive_order.details
         else:
             expected_details = None
 
