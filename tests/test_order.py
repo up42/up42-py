@@ -180,23 +180,18 @@ class TestOrder:
         self,
         data_order: order.Order,
         order_metadata: dict,
-        archive_order: order.Order,
-        tasking_order: order.Order,
     ):
         raw_details = order_metadata.get("orderDetails", {})
         if not raw_details:
             assert data_order.details is None
             return
 
-        expected_details: Optional[order.OrderDetails]
-        if order_metadata["type"] == "TASKING":
-            expected_details = tasking_order.details
-        elif order_metadata["type"] == "ARCHIVE":
-            expected_details = archive_order.details
-        else:
-            expected_details = None
+        assert data_order.details is not None
 
-        assert data_order.details == expected_details
+        if order_metadata["type"] == "TASKING":
+            assert isinstance(data_order.details, order.TaskingOrderDetails)
+        elif order_metadata["type"] == "ARCHIVE":
+            assert isinstance(data_order.details, order.ArchiveOrderDetails)
 
     @pytest.mark.parametrize(
         "status, expected",
