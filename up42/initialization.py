@@ -1,19 +1,10 @@
 import logging
 
-from up42 import asset, order, storage, utils
+from up42 import asset, order, utils
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
 INITIALIZED_MSG = "Initialized %s"
-
-
-@utils.deprecation(None, "3.0.0")
-def initialize_storage() -> storage.Storage:
-    """
-    Returns a Storage object to list orders and assets.
-    """
-    return storage.Storage()
-
 
 @utils.deprecation(None, "3.0.0")
 def initialize_order(order_id: str) -> order.Order:
