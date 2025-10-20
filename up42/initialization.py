@@ -6,6 +6,7 @@ logger = utils.get_logger(__name__, level=logging.INFO)
 
 INITIALIZED_MSG = "Initialized %s"
 
+
 @utils.deprecation(None, "3.0.0")
 def initialize_order(order_id: str) -> order.Order:
     """
