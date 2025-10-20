@@ -229,7 +229,6 @@ class TestAsset:
         tags = ["producer", "names"]
         sources = ["some", "sources"]
         search = "search"
-        sort_by = asset.AssetSorting.created_at
         query = urllib.parse.urlencode(
             {
                 "createdAfter": utils.format_time(created_after),
@@ -240,7 +239,6 @@ class TestAsset:
                 "tags": tags,
                 "sources": sources,
                 "search": search,
-                "sort": sort_by,
                 "page": 0,
             },
             doseq=True,
@@ -261,7 +259,6 @@ class TestAsset:
                     tags=tags,
                     sources=sources,
                     search=search,
-                    sort_by=sort_by,
                 )
             )
             == [ASSET] * 20
