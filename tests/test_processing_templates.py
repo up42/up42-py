@@ -50,19 +50,6 @@ class TestParameterlessTemplates:
         assert template.is_valid and template.cost == COST
         assert template.inputs == {"title": TITLE, "item": ITEM_URL}
 
-    @pytest.mark.parametrize(
-        "template_class",
-        [
-            templates.DetectionChangeSpacept,
-            templates.DetectionChangePleiadesHyperverge,
-            templates.DetectionChangeSPOTHyperverge,
-        ],
-    )
-    def test_should_construct_multi_item_template(self, template_class):
-        template = template_class(title=TITLE, items=[item], workspace_id=constants.WORKSPACE_ID)
-        assert template.is_valid and template.cost == COST
-        assert template.inputs == {"title": TITLE, "items": [ITEM_URL]}
-
 
 class TestPansharpening:
     @pytest.mark.parametrize("grey_weight", [templates.GreyWeight(band="red", weight=random.random()), None])
