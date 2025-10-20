@@ -30,6 +30,14 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 3.0.0a6
+**October 20, 2025**
+
+### Removed
+- Removed `initialize_order` from `up42` global namespace.
+- Removed `track_status`, `estimate`, `place`, `get_assets` and `_translate_construct_parameters` from `Order` class.
+- Removed `order_id`, `info` and `order_details` properties from `Order` class.
+
 ## 3.0.0a5
 **October 20, 2025**
 
