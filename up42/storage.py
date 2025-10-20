@@ -1,9 +1,8 @@
-import datetime as dt
 import enum
 import itertools
 from typing import List, Literal, Optional, Union
 
-from up42 import asset, base, order, utils
+from up42 import base, order, utils
 
 logger = utils.get_logger(__name__)
 
@@ -39,65 +38,6 @@ class Storage:
     session = base.Session()
     workspace_id = base.WorkspaceId()
     pystac_client = base.StacClient()
-
-    @utils.deprecation("pystac::Client.search", "3.0.0")
-    def get_assets(
-        self,
-        created_after: Optional[Union[str, dt.datetime]] = None,
-        created_before: Optional[Union[str, dt.datetime]] = None,
-        workspace_id: Optional[str] = None,
-        collection_names: Optional[List[str]] = None,
-        producer_names: Optional[List[str]] = None,
-        tags: Optional[List[str]] = None,
-        sources: Optional[List[str]] = None,
-        search: Optional[str] = None,
-        limit: Optional[int] = None,
-        sortby: str = "createdAt",
-        descending: bool = True,
-        return_json: bool = False,
-    ) -> Union[List[asset.Asset], List[dict]]:
-        """
-        Gets a list of assets in storage as [Asset](https://sdk.up42.com/structure/#asset) objects or in JSON format.
-
-        Args:
-            created_after: Search for assets created after the specified timestamp, in `"YYYY-MM-DD"` format.
-            created_before: Search for assets created before the specified timestamp, in `"YYYY-MM-DD"` format.
-            workspace_id: Search by the workspace ID.
-            collection_names: Search for assets from any of the provided geospatial collections.
-            producer_names: Search for assets from any of the provided producers.
-            tags: Search for assets with any of the provided tags.
-            sources: Search for assets from any of the provided sources.\
-                The allowed values: `"ARCHIVE"`, `"TASKING"`, `"USER"`.
-            search: Search for assets that contain the provided search query in their name, title, or order ID.
-            limit: The number of results on a results page.
-            sortby: The property to sort by.
-            descending: The sorting order: <ul><li>`true` — descending</li><li>`false` — ascending</li></ul>
-            return_json: If `true`, returns a JSON dictionary.\
-                If `false`, returns a list of [Asset](https://sdk.up42.com/structure/#functionality_1) objects.
-
-        Returns:
-            A list of Asset objects.
-        """
-        assets = list(
-            itertools.islice(
-                asset.Asset.all(
-                    created_after=created_after,
-                    created_before=created_before,
-                    workspace_id=workspace_id,
-                    collection_names=collection_names,
-                    producer_names=producer_names,
-                    tags=tags,
-                    sources=sources,
-                    search=search,
-                    sort_by=utils.SortingField(sortby, not descending),
-                ),
-                limit,
-            )
-        )
-        if return_json:
-            return [a.info for a in assets]
-        else:
-            return assets
 
     @utils.deprecation("Order::all", "3.0.0")
     def get_orders(

@@ -4,7 +4,7 @@ from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict, Unio
 
 import tenacity as tnc
 
-from up42 import asset, base, host, utils
+from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
 
@@ -241,15 +241,6 @@ class Order:
         Also see [status attribute](order-reference.md#up42.order.Order.status).
         """
         return self.status == "FULFILLED"
-
-    @utils.deprecation("pystac::Client.search", "3.0.0")
-    def get_assets(self) -> List[asset.Asset]:
-        """
-        Gets the Order assets or results.
-        """
-        if self.status not in ["FULFILLED", "BEING_FULFILLED"]:
-            raise UnfulfilledOrder(f"""Order {self.order_id} is not valid. Current status is {self.status}""")
-        return list(asset.Asset.all(search=self.order_id))
 
     @classmethod
     @utils.deprecation("OrderTemplate::place", "3.0.0")

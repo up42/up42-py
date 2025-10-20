@@ -20,10 +20,9 @@
 from typing import Callable, Type, Union, cast
 
 # pylint: disable=only-importing-modules-is-allowed
-from up42.asset import Asset
 from up42.base import authenticate, stac_client
 from up42.glossary import CollectionSorting, CollectionType, ProductGlossary, Provider
-from up42.initialization import initialize_asset, initialize_order, initialize_storage
+from up42.initialization import initialize_order, initialize_storage
 from up42.order import Order, OrderSorting
 from up42.order_template import BatchOrderTemplate
 from up42.processing import Job, JobSorting, JobStatus
@@ -46,7 +45,6 @@ __all__ = [
         obj,
     ).__name__
     for obj in [
-        Asset,
         Order,
         OrderSorting,
         Storage,
@@ -54,7 +52,6 @@ __all__ = [
         read_vector_file,
         initialize_storage,
         initialize_order,
-        initialize_asset,
         authenticate,
         stac_client,
         Job,
