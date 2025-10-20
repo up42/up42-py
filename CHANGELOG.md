@@ -43,6 +43,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ### Removed
 - Removed the deprecated processing templates: `detection-change-spacept`, `detection-change-spot-hyperverge`, `detection-change-pleiades-hyperverge`.
+
 ## 3.0.0a4
 **October 15, 2025**
 
