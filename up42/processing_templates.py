@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 
 import pystac
 
-from up42 import base, processing, utils
+from up42 import base, processing
 
 
 # TODO: drop these with Python 3.10 kw_only=True data classes
@@ -70,24 +70,6 @@ class UpsamplingNS(WorkspaceIdSingleItemTemplate):
 @dataclasses.dataclass
 class UpsamplingNSSentinel(WorkspaceIdSingleItemTemplate):
     process_id = "upsampling-ns-sentinel"
-
-
-@utils.deprecation(None, "3.0.0")
-@dataclasses.dataclass
-class DetectionChangeSpacept(WorkspaceIdMultiItemTemplate):
-    process_id = "detection-change-spacept"
-
-
-@utils.deprecation(None, "3.0.0")
-@dataclasses.dataclass
-class DetectionChangePleiadesHyperverge(WorkspaceIdMultiItemTemplate):
-    process_id = "detection-change-pleiades-hyperverge"
-
-
-@utils.deprecation(None, "3.0.0")
-@dataclasses.dataclass
-class DetectionChangeSPOTHyperverge(WorkspaceIdMultiItemTemplate):
-    process_id = "detection-change-spot-hyperverge"
 
 
 @dataclasses.dataclass
