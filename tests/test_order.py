@@ -165,7 +165,7 @@ def _data_order(
 
 class TestOrder:
     @pytest.fixture(scope="class", params=["catalog", "tasking"])
-    def order_parameters(self, request) -> order.OrderParams:
+    def order_parameters(self, request) -> order.OrderParamsV2:
         geometry_key = "aoi" if request.param == "catalog" else "geometry"
         return {
             "dataProduct": "some-data-product",

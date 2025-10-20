@@ -7,24 +7,7 @@ from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
 
-MAX_ITEM = 200
-LIMIT = 200
-
 OrderType = Literal["TASKING", "ARCHIVE"]
-
-
-class OrderParams(TypedDict, total=False):
-    """
-    Represents the schema for the order parameters.
-    dataProduct: The dataProduct id for the specific product configuration.
-    params: Order parameters for each product. \
-        They are different from product to product depending on product schema.
-    tags: User tags to helping to identify the order.
-    """
-
-    dataProduct: str  # pylint: disable=invalid-name
-    params: Dict[str, Any]
-    tags: List[str]
 
 
 class OrderParamsV2(TypedDict, total=False):
@@ -72,10 +55,6 @@ class UnfulfilledOrder(ValueError):
 
 
 class FailedOrder(ValueError):
-    pass
-
-
-class FailedOrderPlacement(ValueError):
     pass
 
 
