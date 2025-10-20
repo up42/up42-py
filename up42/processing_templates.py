@@ -71,25 +71,6 @@ class UpsamplingNS(WorkspaceIdSingleItemTemplate):
 class UpsamplingNSSentinel(WorkspaceIdSingleItemTemplate):
     process_id = "upsampling-ns-sentinel"
 
-
-@utils.deprecation(None, "3.0.0")
-@dataclasses.dataclass
-class DetectionChangeSpacept(WorkspaceIdMultiItemTemplate):
-    process_id = "detection-change-spacept"
-
-
-@utils.deprecation(None, "3.0.0")
-@dataclasses.dataclass
-class DetectionChangePleiadesHyperverge(WorkspaceIdMultiItemTemplate):
-    process_id = "detection-change-pleiades-hyperverge"
-
-
-@utils.deprecation(None, "3.0.0")
-@dataclasses.dataclass
-class DetectionChangeSPOTHyperverge(WorkspaceIdMultiItemTemplate):
-    process_id = "detection-change-spot-hyperverge"
-
-
 @dataclasses.dataclass
 class SimularityJobTemplate(processing.JobTemplate):
     title: str
