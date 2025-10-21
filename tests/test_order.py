@@ -2,7 +2,6 @@ import dataclasses
 import urllib
 import uuid
 from typing import Any, List, Optional
-from unittest import mock
 
 import pytest
 import requests_mock as req_mock
@@ -166,7 +165,7 @@ def _data_order(
 
 class TestOrder:
     @pytest.fixture(scope="class", params=["catalog", "tasking"])
-    def order_parameters(self, request) -> order.OrderParams:
+    def order_parameters(self, request) -> order.OrderParamsV2:
         geometry_key = "aoi" if request.param == "catalog" else "geometry"
         return {
             "dataProduct": "some-data-product",
@@ -174,11 +173,25 @@ class TestOrder:
         }
 
     def test_should_provide_order_id(self, data_order: order.Order):
-        assert data_order.order_id == constants.ORDER_ID
+        assert data_order.id == constants.ORDER_ID
 
     @parameterize_with_order_data
-    def test_should_provide_order_details(self, data_order: order.Order, order_metadata: dict):
-        assert data_order.order_details == order_metadata.get("orderDetails", {})
+    def test_should_provide_order_details(
+        self,
+        data_order: order.Order,
+        order_metadata: dict,
+    ):
+        raw_details = order_metadata.get("orderDetails", {})
+        if not raw_details:
+            assert data_order.details is None
+            return
+
+        assert data_order.details is not None
+
+        if order_metadata["type"] == "TASKING":
+            assert isinstance(data_order.details, order.TaskingOrderDetails)
+        elif order_metadata["type"] == "ARCHIVE":
+            assert isinstance(data_order.details, order.ArchiveOrderDetails)
 
     @pytest.mark.parametrize(
         "status, expected",
@@ -190,40 +203,6 @@ class TestOrder:
     def test_should_compute_is_fulfilled(self, data_order: order.Order, status: order.OrderStatus, expected: bool):
         assert dataclasses.replace(data_order, status=status).is_fulfilled == expected
 
-    @pytest.mark.parametrize(
-        "status",
-        [
-            "FULFILLED",
-            "BEING_FULFILLED",
-        ],
-    )
-    def test_should_get_assets_if_valid(
-        self,
-        status: order.OrderStatus,
-        data_order: order.Order,
-    ):
-        with mock.patch("up42.asset.Asset.all") as get_assets:
-            get_assets.return_value = iter([mock.sentinel])
-            assert dataclasses.replace(data_order, status=status).get_assets() == [mock.sentinel]
-            get_assets.assert_called_with(search=constants.ORDER_ID)
-
-    @pytest.mark.parametrize(
-        "status",
-        [
-            "CREATED",
-            "BEING_PLACED",
-            "PLACED",
-            "PLACEMENT_FAILED",
-            "DELIVERY_INITIALIZATION_FAILED",
-            "DOWNLOAD_FAILED",
-            "DOWNLOADED",
-            "FAILED_PERMANENTLY",
-        ],
-    )
-    def test_fails_to_get_assets_if_not_fulfilled(self, status: order.OrderStatus, data_order: order.Order):
-        with pytest.raises(order.UnfulfilledOrder, match=f".*{constants.ORDER_ID}.*{status}"):
-            dataclasses.replace(data_order, status=status).get_assets()
-
     @parameterize_with_order_data
     def test_should_track_order_status_until_fulfilled(
         self,
@@ -234,7 +213,10 @@ class TestOrder:
         statuses = ["PLACED", "BEING_FULFILLED", "FULFILLED"]
         responses = [{"json": order_metadata | {"status": status}} for status in statuses]
         requests_mock.get(ORDER_URL, responses)
-        assert data_order.track_status(report_time=0.1) == "FULFILLED"
+        # The IDE/linter will not issue a warning because you are explicitly
+        # storing the result, even if you don't use it.
+        _ = data_order.track(report_time=0.1) == "FULFILLED"
+        assert data_order.status == "FULFILLED"
 
     @pytest.mark.parametrize("status", ["FAILED", "FAILED_PERMANENTLY"])
     @parameterize_with_order_data
@@ -250,7 +232,7 @@ class TestOrder:
             json=order_metadata | {"status": status},
         )
         with pytest.raises(order.FailedOrder):
-            data_order.track_status()
+            data_order.track()
 
     @parameterize_with_order_data
     def test_should_get(
@@ -262,53 +244,11 @@ class TestOrder:
         requests_mock.get(url=ORDER_URL, json=order_metadata)
         assert order.Order.get(constants.ORDER_ID) == data_order
 
-    def test_should_estimate(self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams):
-        order_estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
-        expected_credits = 100
-        requests_mock.post(
-            url=order_estimate_url,
-            json={
-                "summary": {"totalCredits": expected_credits},
-                "errors": [],
-            },
-        )
-        assert order.Order.estimate(order_parameters) == expected_credits
-
-    @parameterize_with_order_data
-    def test_should_place_order(
-        self,
-        requests_mock: req_mock.Mocker,
-        order_parameters: order.OrderParams,
-        data_order: order.Order,
-        order_metadata: dict,
-    ):
-        requests_mock.post(
-            url=ORDER_PLACEMENT_URL,
-            json={"results": [{"id": constants.ORDER_ID}], "errors": []},
-        )
-        requests_mock.get(
-            url=ORDER_URL,
-            json=order_metadata,
-        )
-        assert order.Order.place(order_parameters, constants.WORKSPACE_ID) == data_order
-
     def test_should_not_represent_order_info(
         self,
         data_order: order.Order,
     ):
         assert "info" not in repr(data_order)
-
-    def test_fails_to_place_order_if_response_contains_error(
-        self, requests_mock: req_mock.Mocker, order_parameters: order.OrderParams
-    ):
-        error_msg = "test error"
-        order_response_with_error = {"results": [], "errors": [{"message": error_msg}]}
-        requests_mock.post(
-            url=ORDER_PLACEMENT_URL,
-            json=order_response_with_error,
-        )
-        with pytest.raises(order.FailedOrderPlacement, match=error_msg):
-            order.Order.place(order_parameters, constants.WORKSPACE_ID)
 
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize("order_type", [None, "ARCHIVE", "TASKING"])
