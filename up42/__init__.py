@@ -22,7 +22,6 @@ from typing import Callable, Type, Union, cast
 # pylint: disable=only-importing-modules-is-allowed
 from up42.base import authenticate, stac_client
 from up42.glossary import CollectionSorting, CollectionType, ProductGlossary, Provider
-from up42.initialization import initialize_order
 from up42.order import Order, OrderSorting
 from up42.order_template import BatchOrderTemplate
 from up42.processing import Job, JobSorting, JobStatus
@@ -45,7 +44,6 @@ __all__ = [
     for obj in [
         Order,
         OrderSorting,
-        initialize_order,
         authenticate,
         stac_client,
         Job,
