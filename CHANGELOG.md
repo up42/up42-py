@@ -35,7 +35,6 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 
 ### Removed
 - Removed `initialize_order` from `__init__.py` class.
-- Removed `test_initialization` class.
 
 ## 3.0.0a10
 **October 22, 2025**
