@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **October 22, 2025**
 
 ### Removed
-- Removed `initialize_order` from `__init__.py` class.
+- Removed `initialization.py` with remaining function `initialize_order`
 
 ## 3.0.0a10
 **October 22, 2025**
