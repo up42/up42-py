@@ -1,6 +1,6 @@
 import logging
 
-from up42 import asset, order, utils
+from up42 import order, utils
 
 logger = utils.get_logger(__name__, level=logging.INFO)
 
@@ -17,15 +17,3 @@ def initialize_order(order_id: str) -> order.Order:
     up42_order = order.Order.get(order_id)
     logger.info(INITIALIZED_MSG, up42_order)
     return up42_order
-
-
-@utils.deprecation(None, "3.0.0")
-def initialize_asset(asset_id: str) -> asset.Asset:
-    """
-    Returns an Asset object (has to exist on UP42).
-    Args:
-        asset_id: The UP42 asset_id
-    """
-    up42_asset = asset.Asset.get(asset_id)
-    logger.info(INITIALIZED_MSG, up42_asset)
-    return up42_asset

@@ -36,6 +36,12 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### Removed
 - Increased minimum Python version to 3.10
 
+## 3.0.0a8
+**October 22, 2025**
+
+### Removed
+- Removed deprecated `asset.py` module
+
 ## 3.0.0a7
 **October 20, 2025**
 
