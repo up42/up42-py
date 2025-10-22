@@ -31,12 +31,10 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
 ## 3.0.0a8
-**October 20, 2025**
+**October 22, 2025**
 
 ### Removed
 - Removed deprecated `asset.py` module
-
-**October 20, 2025**
 
 ## 3.0.0a7
 **October 20, 2025**
