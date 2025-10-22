@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "up42-py"
-version = "3.0.0a8"
+version = "3.0.0a10"
 description = "Python SDK for UP42, the geospatial marketplace and developer platform."
 authors = ["UP42 GmbH <support@up42.com>"]
 license = "https://github.com/up42/up42-py/blob/master/LICENSE"
@@ -21,7 +21,6 @@ python = ">=3.10, <4"
 requests = "^2.32.4"
 tqdm = "^4.66.0"
 geojson = "3.1.0"
-geopandas = "<2"
 pystac-client = "^0.7.2"
 tenacity = "8.4.1"
 urllib3 = "^2.5.0"
@@ -46,7 +45,6 @@ pytest-mypy = "^0.10.2"
 mock = "^4.0.3"
 pre-commit = "^3.5.0"
 types-tqdm = "^4.66.0.20240106"
-pandas-stubs = "^2.0.1.230501"
 pylint-google-style-guide-imports-enforcing = "^1.3.0"
 
 [tool.pytest.ini_options]

@@ -29,7 +29,6 @@ from up42.processing import Job, JobSorting, JobStatus
 from up42.stac import BulkDeletion
 from up42.stac import extend as stac_extend
 from up42.tasking import FeasibilityStudy, FeasibilityStudySorting, Quotation, QuotationSorting
-from up42.tools import get_example_aoi, read_vector_file
 from up42.utils import get_up42_py_version
 from up42.version import version_control
 
@@ -46,8 +45,6 @@ __all__ = [
     for obj in [
         Order,
         OrderSorting,
-        get_example_aoi,
-        read_vector_file,
         initialize_order,
         authenticate,
         stac_client,
