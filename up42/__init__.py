@@ -1,7 +1,7 @@
 """
     `up42` is the base library module imported to Python. It provides the elementary
     functionality that is not bound to a specific class of the UP42 structure.
-    From `up42` you can also initialize other classes, e.g. for using the catalog, storage etc.
+    From `up42` you can also initialize other classes, e.g. for using the catalog etc.
 
     To import the UP42 library:
     ```python
@@ -20,18 +20,15 @@
 from typing import Callable, Type, Union, cast
 
 # pylint: disable=only-importing-modules-is-allowed
-from up42.asset import Asset, AssetSorting
 from up42.base import authenticate, stac_client
 from up42.glossary import CollectionSorting, CollectionType, ProductGlossary, Provider
-from up42.initialization import initialize_asset, initialize_storage
+from up42.initialization import initialize_order
 from up42.order import Order, OrderSorting
 from up42.order_template import BatchOrderTemplate
 from up42.processing import Job, JobSorting, JobStatus
 from up42.stac import BulkDeletion
 from up42.stac import extend as stac_extend
-from up42.storage import Storage
 from up42.tasking import FeasibilityStudy, FeasibilityStudySorting, Quotation, QuotationSorting
-from up42.tools import get_example_aoi, read_vector_file
 from up42.utils import get_up42_py_version
 from up42.version import version_control
 
@@ -46,15 +43,9 @@ __all__ = [
         obj,
     ).__name__
     for obj in [
-        Asset,
-        AssetSorting,
         Order,
         OrderSorting,
-        Storage,
-        get_example_aoi,
-        read_vector_file,
-        initialize_storage,
-        initialize_asset,
+        initialize_order,
         authenticate,
         stac_client,
         Job,
