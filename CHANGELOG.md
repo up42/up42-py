@@ -30,6 +30,30 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 3.0.0
+**October 27, 2025**
+
+### Removed
+- Removed `initialization.py` with remaining function `initialize_order`
+- Removed unused `tools.py` module
+- Removed `geopandas` dependency
+- Increased minimum Python version to 3.10
+- Removed deprecated `asset.py` module
+- Removed deprecated `storage.py` module
+- Removed `initialize_order` from `up42` global namespace.
+- Removed `track_status`, `estimate`, `place`, `get_assets` and `_translate_construct_parameters` from `Order` class.
+- Removed `order_id`, `info` and `order_details` properties from `Order` class.
+- Removed the deprecated processing templates: `detection-change-spacept`, `detection-change-spot-hyperverge`, `detection-change-pleiades-hyperverge`.
+- Removed deprecated `webhook.py` module
+- `catalog.py` module with `CatalogBase` and `Catalog` classes
+- `test_catalog.py` module
+- Unused functions `any_vector_to_fc` and `fc_to_query_geometry` from `utils.py` module
+- `initialize_catalog` from `up42` global namespace and its test coverage.
+- Removed `get_credits_balance` from `base` global namespace.
+- Removed `initialize_tasking` from `up42` global namespace.
+- Removed `construct_order_parameters`, `get_quotations`, `decide_quotation`, `get_feasibility`, `choose_feasibility` methods from `Tasking` class.
+- Removed `Tasking` class.
+
 ## 3.0.0a11
 **October 22, 2025**
 
