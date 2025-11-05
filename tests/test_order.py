@@ -234,6 +234,22 @@ class TestOrder:
         with pytest.raises(order.FailedOrder):
             data_order.track()
 
+    @pytest.mark.parametrize("status", ["CANCELED"])
+    @parameterize_with_order_data
+    def test_fails_to_track_order_if_status_canceled(
+        self,
+        requests_mock: req_mock.Mocker,
+        status: str,
+        data_order: order.Order,
+        order_metadata: dict,
+    ):
+        requests_mock.get(
+            url=ORDER_URL,
+            json=order_metadata | {"status": status},
+        )
+        with pytest.raises(order.CanceledOrder):
+            data_order.track()
+
     @parameterize_with_order_data
     def test_should_get(
         self,
