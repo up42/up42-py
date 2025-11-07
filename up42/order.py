@@ -58,6 +58,10 @@ class FailedOrder(ValueError):
     pass
 
 
+class CanceledOrder(ValueError):
+    pass
+
+
 class OrderSorting:
     created_at = utils.SortingField(name="createdAt")
     updated_at = utils.SortingField(name="updatedAt")
@@ -210,6 +214,8 @@ class Order:
             logger.info("Order is %s! - %s", self.status + sub_status_msg, self.id)
             if self.status in ["FAILED", "FAILED_PERMANENTLY"]:
                 raise FailedOrder("Order has failed!")
+            if self.status == "CANCELED":
+                raise CanceledOrder("Order has been canceled!")
             if not self.is_fulfilled:
                 raise UnfulfilledOrder
 
