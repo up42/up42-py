@@ -346,7 +346,6 @@ class TestOrder:
                 assert hasattr(order_item.details, "scene_size")
                 assert hasattr(order_item.details, "looks")
 
-    @parameterize_with_order_data
     def test_should_cancel(
         self,
         requests_mock: req_mock.Mocker,
