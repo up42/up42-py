@@ -345,3 +345,18 @@ class TestOrder:
                 assert hasattr(order_item.details, "polarization")
                 assert hasattr(order_item.details, "scene_size")
                 assert hasattr(order_item.details, "looks")
+
+    @parameterize_with_order_data
+    def test_should_cancel(
+        self,
+        requests_mock: req_mock.Mocker,
+    ):
+        cancel_url = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}/cancellation"
+        cancel_response = {"orderId": constants.ORDER_ID, "status": "CANCELED"}
+        requests_mock.post(url=cancel_url, json=cancel_response)
+
+        result = order.Order.cancel(constants.ORDER_ID)
+
+        assert isinstance(result, order.CancelOrder)
+        assert result.order_id == constants.ORDER_ID
+        assert result.status == "CANCELED"

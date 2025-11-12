@@ -39,6 +39,7 @@ OrderStatus = Literal[
     "FULFILLED",
     "FAILED",
     "FAILED_PERMANENTLY",
+    "CANCELED",
 ]
 OrderSubStatus = Literal[
     "FEASIBILITY_WAITING_UPLOAD",
@@ -67,6 +68,12 @@ class OrderSorting:
     updated_at = utils.SortingField(name="updatedAt")
     type = utils.SortingField(name="type")
     status = utils.SortingField(name="status")
+
+
+@dataclasses.dataclass
+class CancelOrder:
+    order_id: str
+    status: OrderStatus
 
 
 @dataclasses.dataclass
@@ -187,6 +194,17 @@ class Order:
             "subStatus": sub_status,
         }
         return map(cls._from_metadata, utils.paged_query(params, "/v2/orders", cls.session))
+
+    @classmethod
+    def cancel(cls, order_id: str) -> CancelOrder:
+        """
+        Cancels an order and returns cancellation info.
+        """
+        url = host.endpoint(f"/v2/orders/{order_id}/cancellation")
+        metadata = cls.session.post(url=url).json()
+
+        # Expecting API response like: {"orderId": "...", "status": "CANCELED"}
+        return CancelOrder(order_id=metadata["orderId"], status=metadata["status"])
 
     @property
     def is_fulfilled(self) -> bool:
