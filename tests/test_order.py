@@ -346,16 +346,33 @@ class TestOrder:
                 assert hasattr(order_item.details, "scene_size")
                 assert hasattr(order_item.details, "looks")
 
-    def test_should_cancel(
-        self,
-        requests_mock: req_mock.Mocker,
+    @pytest.mark.parametrize(
+        "status, can_cancel",
+        [
+            ("CREATED", True),
+            ("PLACEMENT_FAILED", True),
+            ("FULFILLED", False),
+            ("PLACED", False),
+            ("FAILED", False),
+        ],
+    )
+    def test_cancel_behavior(
+        self, requests_mock: req_mock.Mocker, data_order: order.Order, status: order.OrderStatus, can_cancel: bool
     ):
-        cancel_url = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}/cancellation"
-        cancel_response = {"orderId": constants.ORDER_ID, "status": "CANCELED"}
-        requests_mock.post(url=cancel_url, json=cancel_response)
+        data_order = dataclasses.replace(data_order, status=status)
 
-        result = order.Order.cancel(constants.ORDER_ID)
+        if can_cancel:
+            cancel_response = {"orderId": data_order.id, "status": "CANCELED"}
+            requests_mock.post(
+                url=f"{constants.API_HOST}/v2/orders/{data_order.id}/cancellation",
+                json=cancel_response,
+            )
 
-        assert isinstance(result, order.CancelOrder)
-        assert result.order_id == constants.ORDER_ID
-        assert result.status == "CANCELED"
+            result = data_order.cancel()
+            assert isinstance(result, order.CancelOrder)
+            assert result.order_id == data_order.id
+            assert result.status == "CANCELED"
+        else:
+            with pytest.raises(order.OrderCannotBeCanceled) as exc_info:
+                data_order.cancel()
+            assert f"Order with id {data_order.id} cannot be canceled" in str(exc_info.value)

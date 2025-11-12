@@ -63,6 +63,10 @@ class CanceledOrder(ValueError):
     pass
 
 
+class OrderCannotBeCanceled(ValueError):
+    pass
+
+
 class OrderSorting:
     created_at = utils.SortingField(name="createdAt")
     updated_at = utils.SortingField(name="updatedAt")
@@ -195,15 +199,12 @@ class Order:
         }
         return map(cls._from_metadata, utils.paged_query(params, "/v2/orders", cls.session))
 
-    @classmethod
-    def cancel(cls, order_id: str) -> CancelOrder:
-        """
-        Cancels an order and returns cancellation info.
-        """
-        url = host.endpoint(f"/v2/orders/{order_id}/cancellation")
-        metadata = cls.session.post(url=url).json()
+    def cancel(self) -> CancelOrder:
+        if self.status not in ["CREATED", "PLACEMENT_FAILED"]:
+            raise OrderCannotBeCanceled(f"Order with id {self.id} cannot be canceled in its current status.")
 
-        # Expecting API response like: {"orderId": "...", "status": "CANCELED"}
+        url = host.endpoint(f"/v2/orders/{self.id}/cancellation")
+        metadata = self.session.post(url=url).json()
         return CancelOrder(order_id=metadata["orderId"], status=metadata["status"])
 
     @property
