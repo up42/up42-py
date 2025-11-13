@@ -218,7 +218,7 @@ class TestOrder:
         _ = data_order.track(report_time=0.1) == "FULFILLED"
         assert data_order.status == "FULFILLED"
 
-    @pytest.mark.parametrize("status", ["FAILED", "FAILED_PERMANENTLY"])
+    @pytest.mark.parametrize("status", ["FAILED_PERMANENTLY"])
     @parameterize_with_order_data
     def test_fails_to_track_order_if_status_not_valid(
         self,
@@ -353,7 +353,7 @@ class TestOrder:
             ("PLACEMENT_FAILED", True),
             ("FULFILLED", False),
             ("PLACED", False),
-            ("FAILED", False),
+            ("FAILED_PERMANENTLY", False),
         ],
     )
     def test_cancel_behavior(

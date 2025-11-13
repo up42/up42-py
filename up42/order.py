@@ -228,7 +228,7 @@ class Order:
             sub_status_msg = f": {sub_status}" if sub_status is not None else ""
 
             logger.info("Order is %s! - %s", self.status + sub_status_msg, self.id)
-            if self.status in ["FAILED", "FAILED_PERMANENTLY"]:
+            if self.status in ["FAILED_PERMANENTLY"]:
                 raise FailedOrder("Order has failed!")
             if self.status == "CANCELED":
                 raise CanceledOrder("Order has been canceled!")
