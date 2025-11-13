@@ -33,12 +33,10 @@ OrderStatus = Literal[
     "BEING_PLACED",
     "PLACED",
     "BEING_FULFILLED",
-    "DELIVERY_INITIALIZATION_FAILED",
-    "DOWNLOAD_FAILED",
-    "DOWNLOADED",
     "FULFILLED",
-    "FAILED",
     "FAILED_PERMANENTLY",
+    "CANCELED",
+    "PLACEMENT_FAILED",
 ]
 OrderSubStatus = Literal[
     "FEASIBILITY_WAITING_UPLOAD",
@@ -62,11 +60,21 @@ class CanceledOrder(ValueError):
     pass
 
 
+class OrderCannotBeCanceled(ValueError):
+    pass
+
+
 class OrderSorting:
     created_at = utils.SortingField(name="createdAt")
     updated_at = utils.SortingField(name="updatedAt")
     type = utils.SortingField(name="type")
     status = utils.SortingField(name="status")
+
+
+@dataclasses.dataclass
+class CancelOrder:
+    order_id: str
+    status: OrderStatus
 
 
 @dataclasses.dataclass
@@ -188,6 +196,14 @@ class Order:
         }
         return map(cls._from_metadata, utils.paged_query(params, "/v2/orders", cls.session))
 
+    def cancel(self) -> CancelOrder:
+        if self.status not in ["CREATED", "PLACEMENT_FAILED"]:
+            raise OrderCannotBeCanceled(f"Order with id {self.id} cannot be canceled in its current status.")
+
+        url = host.endpoint(f"/v2/orders/{self.id}/cancellation")
+        metadata = self.session.post(url=url).json()
+        return CancelOrder(order_id=metadata["orderId"], status=metadata["status"])
+
     @property
     def is_fulfilled(self) -> bool:
         """
@@ -212,7 +228,7 @@ class Order:
             sub_status_msg = f": {sub_status}" if sub_status is not None else ""
 
             logger.info("Order is %s! - %s", self.status + sub_status_msg, self.id)
-            if self.status in ["FAILED", "FAILED_PERMANENTLY"]:
+            if self.status in ["FAILED_PERMANENTLY"]:
                 raise FailedOrder("Order has failed!")
             if self.status == "CANCELED":
                 raise CanceledOrder("Order has been canceled!")

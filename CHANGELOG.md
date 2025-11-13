@@ -30,6 +30,12 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 3.1.0a2
+**November 12, 2025**
+### Added
+
+- Added order cancellation functionality to `order.py`
+
 ## 3.1.0a1
 **November 05, 2025**
 ### Added
