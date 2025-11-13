@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **November 12, 2025**
 ### Added
 
-- Added functionality to `order.py` to enable cancellation of orders.
+- Added order cancellation functionality to `order.py`
 
 ## 3.1.0a1
 **November 05, 2025**
