@@ -29,6 +29,10 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+## 3.1.0a3
+**November 12, 2025**
+### Added
+- Added functionality to `order.py` to allow order updates.
 
 ## 3.1.0a2
 **November 12, 2025**
