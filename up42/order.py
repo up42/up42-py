@@ -196,6 +196,14 @@ class Order:
         }
         return map(cls._from_metadata, utils.paged_query(params, "/v2/orders", cls.session))
 
+    def cancel(self) -> CancelOrder:
+        if self.status not in ["CREATED", "PLACEMENT_FAILED"]:
+            raise OrderCannotBeCanceled(f"Order with id {self.id} cannot be canceled in its current status.")
+
+        url = host.endpoint(f"/v2/orders/{self.id}/cancellation")
+        metadata = self.session.post(url=url).json()
+        return CancelOrder(order_id=metadata["orderId"], status=metadata["status"])
+
     @classmethod
     def update(
         cls,
