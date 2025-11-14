@@ -419,3 +419,46 @@ class TestOrder:
             with pytest.raises(order.OrderCannotBeCanceled) as exc_info:
                 data_order.cancel()
             assert f"Order with id {data_order.id} cannot be canceled" in str(exc_info.value)
+
+    @parameterize_with_order_data
+    def test_should_update(
+        self,
+        requests_mock: req_mock.Mocker,
+        data_order: order.Order,
+        order_metadata: dict,
+    ):
+        new_tag = ["new_tag"]
+        updated_metadata = order_metadata.copy()
+        updated_metadata["tags"] = new_tag
+        requests_mock.patch(
+            url=ORDER_URL, additional_matcher=helpers.match_request_body({"tags": new_tag}), json=updated_metadata
+        )
+        expected_order = dataclasses.replace(data_order, tags=new_tag, info=updated_metadata)
+        assert order.Order.update(constants.ORDER_ID, new_tag) == expected_order
+
+    def test_update_without_tags_makes_no_changes(
+        self, requests_mock: req_mock.Mocker, base_order_metadata: dict, base_order: order.Order
+    ):
+        requests_mock.patch(url=ORDER_URL, additional_matcher=helpers.match_request_body({}), json=base_order_metadata)
+        assert order.Order.update(constants.ORDER_ID) == base_order
+
+    def test_update_with_empty_tags_removes_existing(
+        self, requests_mock: req_mock.Mocker, base_order_metadata: dict, base_order: order.Order
+    ):
+        updated_metadata = base_order_metadata.copy()
+        updated_metadata["tags"] = []
+        requests_mock.patch(
+            url=ORDER_URL, additional_matcher=helpers.match_request_body({"tags": []}), json=updated_metadata
+        )
+        expected_order = dataclasses.replace(base_order, tags=[], info=updated_metadata)
+        assert order.Order.update(constants.ORDER_ID, []) == expected_order
+
+    def test_update_handles_error_response(self, requests_mock: req_mock.Mocker):
+        requests_mock.patch(url=ORDER_URL, status_code=500, json={"error": "Internal Server Error"})
+        with pytest.raises(Exception):
+            order.Order.update(constants.ORDER_ID, ["fail"])
+
+    def test_update_handles_malformed_response(self, requests_mock: req_mock.Mocker):
+        requests_mock.patch(url=ORDER_URL, json={"unexpected": "data"})
+        with pytest.raises(KeyError):
+            order.Order.update(constants.ORDER_ID, ["bad"])
