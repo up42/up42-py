@@ -162,6 +162,7 @@ class Job:
         min_duration: Optional[int] = None,
         max_duration: Optional[int] = None,
         sort_by: Optional[utils.SortingField] = None,
+        ids: Optional[List[str]] = None,
         *,
         # used for performance tuning and testing only
         page_size: Optional[int] = None,
@@ -176,6 +177,7 @@ class Job:
                 "maxDuration": max_duration,
                 "limit": page_size,
                 "sort": sort_by,
+                "ids": ",".join(ids) if ids else None,
             }.items()
             if value
         }
