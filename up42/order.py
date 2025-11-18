@@ -203,7 +203,7 @@ class Order:
         tags: Optional[List[str]] = None,
     ) -> "Order":
         url = host.endpoint(f"/v2/orders/{order_id}")
-        headers = {"content-type": "application/merge-patch+json"}
+        headers = {"Content-Type": "application/merge-patch+json"}
 
         body = {}
         if tags is not None:
