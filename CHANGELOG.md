@@ -30,6 +30,15 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+## 3.1.0
+**November 24, 2025**
+### Added
+- Improve check for latest version: better error handling and caching to avoid rerunning.
+- Added ids parameter to Job.all.
+- Added functionality to `order.py` to allow order updates.
+- Added order cancellation functionality to `order.py`
+- Added functionality to `order.py` to ensure that orders with CANCELED status are not tracked.
+
 ## 3.1.0a5
 **November 18, 2025**
 ### Added
