@@ -30,6 +30,10 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 3.1.1a2
+**December 22, 2025**
+- Added a new processing job template: `TrueColorConversion`.
+
 ### 3.1.1a1
 **December 17, 2025**
 - Security: updated urllib3 to >=2.6.0.
