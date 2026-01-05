@@ -26,7 +26,6 @@ tenacity = "8.4.1"
 urllib3 = "^2.6.0"
 
 [tool.poetry.dev-dependencies]
-nbconvert = "^7.16.2"
 black = "^24.3.0"
 requests-mock = "^1.9.3"
 pylint = "^3.0.3"
