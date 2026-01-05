@@ -30,7 +30,7 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-### 3.1.1a2
+### 3.2.0a1
 **December 22, 2025**
 - Added a new processing job template: `TrueColorConversion`.
 
