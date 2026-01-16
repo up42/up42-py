@@ -34,6 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### 3.2.0a3
 **January 16, 2026**
 - Security: updated urllib3 to >=2.6.3.
+- Security: updated filelock to >=3.20.3.
 
 ### 3.2.0a2
 **January 5, 2026**
