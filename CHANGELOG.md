@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+
+### 3.2.0a3
+**January 16, 2026**
+- Security: updated urllib3 to >=2.6.3.
+
 ### 3.2.0a2
 **January 5, 2026**
 - Removed nbconvert.
