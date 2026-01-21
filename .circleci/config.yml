@@ -138,7 +138,7 @@ workflows:
             - test
           machine-size: interstellar/gke-cpu-large
           name: sdk-e2e-tests
-          fingerprint: 'c5:5a:28:b3:5e:21:8d:9c:6c:b1:9b:a7:7b:f3:41:0c'
+          fingerprint: SHA256:manlqxkneq4hBJa9JOC3aIKIEon6G5I0x5DraEtfmL4
           run-command: make test-all
           context:
             - 'sdk-tests-staging-build'
