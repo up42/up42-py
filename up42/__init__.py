@@ -17,8 +17,8 @@
     ```
 """
 
-from typing import Type, cast
 from collections.abc import Callable
+from typing import cast
 
 # pylint: disable=only-importing-modules-is-allowed
 from up42.base import authenticate, stac_client

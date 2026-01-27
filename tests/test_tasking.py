@@ -1,7 +1,7 @@
 import dataclasses
 import urllib.parse
 import uuid
-from typing import Any, List, Optional
+from typing import Any
 
 import pytest
 import requests_mock as req_mock

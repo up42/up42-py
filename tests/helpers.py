@@ -1,5 +1,4 @@
 import json
-from typing import Dict
 
 
 def match_request_body(data: dict):

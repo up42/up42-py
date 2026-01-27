@@ -9,8 +9,8 @@ import tarfile
 import tempfile
 import warnings
 import zipfile
-from typing import Any, cast
 from collections.abc import Callable
+from typing import Any, cast
 from urllib import parse
 
 import geojson  # type: ignore

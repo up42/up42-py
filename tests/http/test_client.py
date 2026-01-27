@@ -1,4 +1,3 @@
-from typing import Dict, List, Optional, Type
 from unittest import mock
 
 import pytest

@@ -1,7 +1,7 @@
 import dataclasses
 import enum
-from typing import Any, Literal, TypeAlias
 from collections.abc import Iterator
+from typing import Any, Literal, TypeAlias
 
 import geojson  # type: ignore
 import requests

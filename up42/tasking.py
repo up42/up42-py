@@ -3,8 +3,8 @@ Tasking functionality
 """
 
 import dataclasses
-from typing import Literal, TypeAlias
 from collections.abc import Iterator
+from typing import Literal, TypeAlias
 
 from up42 import base, host, utils
 

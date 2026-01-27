@@ -1,6 +1,6 @@
 import dataclasses
-from typing import Any, Dict, List, Literal, TypedDict, TypeAlias
 from collections.abc import Iterator
+from typing import Any, Literal, TypeAlias, TypedDict
 
 import tenacity as tnc
 

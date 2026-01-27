@@ -1,7 +1,7 @@
 import dataclasses as dc
 import datetime as dt
 import threading
-from typing import Optional, Protocol
+from typing import Protocol
 
 import requests
 

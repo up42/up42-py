@@ -3,7 +3,7 @@ import datetime
 import random
 import urllib.parse
 import uuid
-from typing import Any, List, Optional
+from typing import Any
 from unittest import mock
 
 import pystac

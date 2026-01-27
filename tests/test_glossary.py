@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Any, List, Optional
+from typing import Any
 
 import geojson  # type: ignore
 import pytest

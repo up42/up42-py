@@ -1,5 +1,4 @@
 import random
-from typing import Optional
 from unittest import mock
 
 import pystac

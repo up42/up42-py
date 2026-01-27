@@ -2,8 +2,8 @@ import abc
 import dataclasses
 import datetime
 import enum
-from typing import ClassVar, TypedDict
 from collections.abc import Iterator
+from typing import ClassVar, TypedDict
 
 import pystac
 import requests
