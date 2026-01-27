@@ -1,6 +1,7 @@
 import functools
 import pathlib
-from typing import Callable, Dict, List, Optional, Union
+from collections.abc import Callable
+from typing import TypeAlias
 
 import requests
 
@@ -8,7 +9,7 @@ from up42 import utils
 from up42.http import config, oauth
 from up42.http import session as http_session
 
-SessionFactory = Callable[[oauth.Up42Auth], requests.Session]
+SessionFactory: TypeAlias = Callable[[oauth.Up42Auth], requests.Session]
 
 
 class Client:
@@ -18,21 +19,21 @@ class Client:
 
 
 def _merge(
-    left: Optional[config.CredentialsSettings],
-    right: Optional[config.CredentialsSettings],
+    left: config.CredentialsSettings | None,
+    right: config.CredentialsSettings | None,
 ):
     if all([left, right]):
         raise MultipleCredentialsSources("Multiple sources of credentials provided")
     return left or right
 
 
-SettingsDetector = Callable[[Optional[Dict]], Optional[config.CredentialsSettings]]
-RetrieverDetector = Callable[[config.CredentialsSettings], oauth.TokenRetriever]
-AuthFactory = Callable[[oauth.TokenRetriever, config.TokenProviderSettings], oauth.Up42Auth]
+SettingsDetector: TypeAlias = Callable[[dict | None], config.CredentialsSettings | None]
+RetrieverDetector: TypeAlias = Callable[[config.CredentialsSettings], oauth.TokenRetriever]
+AuthFactory: TypeAlias = Callable[[oauth.TokenRetriever, config.TokenProviderSettings], oauth.Up42Auth]
 
 
 def create(
-    credential_sources: List[Optional[Dict]],
+    credential_sources: list[dict | None],
     token_url: str,
     detect_settings: SettingsDetector = oauth.detect_settings,
     detect_retriever: RetrieverDetector = oauth.detect_retriever,
@@ -47,16 +48,16 @@ def create(
     raise MissingCredentials
 
 
-ConfigurationSource = Optional[Union[str, pathlib.Path]]
-ConfigurationReader = Callable[[ConfigurationSource], Optional[Dict]]
+ConfigurationSource: TypeAlias = str | pathlib.Path | None
+ConfigurationReader: TypeAlias = Callable[[ConfigurationSource], dict | None]
 
 
 def collect_credentials(
     cfg_file: ConfigurationSource,
-    username: Optional[str],
-    password: Optional[str],
+    username: str | None,
+    password: str | None,
     read_config: ConfigurationReader = utils.read_json,
-) -> List[Optional[Dict]]:
+) -> list[dict | None]:
     config_source = read_config(cfg_file)
     account_credentials_source = {"username": username, "password": password}
     return [config_source, account_credentials_source]

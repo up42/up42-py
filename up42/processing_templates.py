@@ -1,5 +1,4 @@
 import dataclasses
-from typing import List, Optional, Union
 
 import pystac
 
@@ -9,12 +8,12 @@ from up42 import base, processing
 # TODO: drop these with Python 3.10 kw_only=True data classes
 @dataclasses.dataclass
 class WorkspaceIdSingleItemTemplate(processing.SingleItemJobTemplate):
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
 
 
 @dataclasses.dataclass
 class WorkspaceIdMultiItemTemplate(processing.MultiItemJobTemplate):
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
 
 
 @dataclasses.dataclass
@@ -82,7 +81,7 @@ class SimularityJobTemplate(processing.JobTemplate):
     title: str
     source_item: pystac.Item
     reference_item: pystac.Item
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
 
     @property
     def inputs(self) -> dict:
@@ -117,8 +116,8 @@ class GreyWeight:
 
 @dataclasses.dataclass
 class Pansharpening(processing.SingleItemJobTemplate):
-    grey_weights: Optional[List[GreyWeight]] = None
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    grey_weights: list[GreyWeight] | None = None
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
     process_id = "pansharpening"
 
     @property

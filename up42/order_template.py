@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Literal, Optional, Union
+from typing import Literal
 
 import geojson  # type: ignore
 
@@ -35,7 +35,7 @@ class OrderCost:
 
 @dataclasses.dataclass
 class Estimate:
-    items: list[Union[OrderCost, OrderError]]
+    items: list[OrderCost | OrderError]
     credits: float
     size: float
     unit: UnitType
@@ -56,7 +56,7 @@ class BatchOrderTemplate:
     display_name: str
     features: geojson.FeatureCollection
     params: dict
-    tags: Optional[list[str]] = None
+    tags: list[str] | None = None
 
     def __post_init__(self):
         self.__estimate()
@@ -84,7 +84,7 @@ class BatchOrderTemplate:
             unit=summary["unit"],
         )
 
-    def place(self) -> list[Union[OrderReference, OrderError]]:
+    def place(self) -> list[OrderReference | OrderError]:
         url = host.endpoint(f"/v2/orders?workspaceId={self.workspace_id}")
         batch = self.session.post(url=url, json=self._payload).json()
         return _get_items(batch, OrderReference)

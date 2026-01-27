@@ -1,6 +1,6 @@
 import random
 
-import mock
+from unittest import mock
 import requests_mock as req_mock
 from packaging import version
 

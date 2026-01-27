@@ -4,7 +4,7 @@ import datetime
 import random
 import time
 
-import mock
+from unittest import mock
 import pytest
 import requests
 import requests_mock as req_mock

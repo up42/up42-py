@@ -2,7 +2,8 @@ import abc
 import dataclasses
 import datetime
 import enum
-from typing import ClassVar, Iterator, List, Optional, TypedDict, Union
+from typing import ClassVar, TypedDict
+from collections.abc import Iterator
 
 import pystac
 import requests
@@ -44,8 +45,8 @@ TERMINAL_STATUSES = [
 
 
 class JobResults(TypedDict, total=False):
-    collection: Optional[str]
-    errors: Optional[List[dict]]
+    collection: str | None
+    errors: list[dict] | None
 
 
 class JobMetadata(TypedDict):
@@ -53,14 +54,14 @@ class JobMetadata(TypedDict):
     processID: str
     jobID: str
     accountID: str
-    workspaceID: Optional[str]
+    workspaceID: str | None
     definition: dict
-    results: Optional[JobResults]
-    creditConsumption: Optional[dict]
+    results: JobResults | None
+    creditConsumption: dict | None
     status: str
     created: str
-    started: Optional[str]
-    finished: Optional[str]
+    started: str | None
+    finished: str | None
     updated: str
 
 
@@ -75,7 +76,7 @@ class JobSorting:
     credits = utils.SortingField("creditConsumption.credits", ascending=False)
 
 
-def _to_datetime(value: Optional[str]):
+def _to_datetime(value: str | None):
     return value and datetime.datetime.fromisoformat(value[:ISO_FORMAT_LENGTH])
 
 
@@ -86,19 +87,19 @@ class Job:
     process_id: str
     id: str
     account_id: str
-    workspace_id: Optional[str]
+    workspace_id: str | None
     definition: dict
     status: JobStatus
     created: datetime.datetime
     updated: datetime.datetime
-    collection_url: Optional[str] = None
-    errors: Optional[List[ValidationError]] = None
-    credits: Optional[int] = None
-    started: Optional[datetime.datetime] = None
-    finished: Optional[datetime.datetime] = None
+    collection_url: str | None = None
+    errors: list[ValidationError] | None = None
+    credits: int | None = None
+    started: datetime.datetime | None = None
+    finished: datetime.datetime | None = None
 
     @property
-    def collection(self) -> Optional[pystac.Collection]:
+    def collection(self) -> pystac.Collection | None:
         if self.collection_url is None:
             return None
         collection_id = self.collection_url.split("/")[-1]
@@ -156,16 +157,16 @@ class Job:
     @classmethod
     def all(
         cls,
-        process_id: Optional[List[str]] = None,
-        workspace_id: Optional[str] = None,
-        status: Optional[List[JobStatus]] = None,
-        min_duration: Optional[int] = None,
-        max_duration: Optional[int] = None,
-        sort_by: Optional[utils.SortingField] = None,
-        ids: Optional[List[str]] = None,
+        process_id: list[str] | None = None,
+        workspace_id: str | None = None,
+        status: list[JobStatus] | None = None,
+        min_duration: int | None = None,
+        max_duration: int | None = None,
+        sort_by: utils.SortingField | None = None,
+        ids: list[str] | None = None,
         *,
         # used for performance tuning and testing only
-        page_size: Optional[int] = None,
+        page_size: int | None = None,
     ) -> Iterator["Job"]:
         query_params = {
             key: str(value)
@@ -197,39 +198,39 @@ class Job:
                 yield Job.from_metadata(metadata)
 
 
-CostType = Union[int, float, "Cost"]
-
-
 @dataclasses.dataclass(frozen=True)
 class Cost:
     strategy: str
     credits: int
-    size: Optional[int] = None
-    unit: Optional[str] = None
+    size: int | None = None
+    unit: str | None = None
 
-    def __le__(self, other: CostType):
+    def __le__(self, other: "CostType"):
         if isinstance(other, Cost):
             return self.credits <= other.credits
         else:
             return self.credits <= other
 
-    def __lt__(self, other: CostType):
+    def __lt__(self, other: "CostType"):
         if isinstance(other, Cost):
             return self.credits < other.credits
         else:
             return self.credits < other
 
-    def __ge__(self, other: CostType):
+    def __ge__(self, other: "CostType"):
         return not self < other
 
-    def __gt__(self, other: CostType):
+    def __gt__(self, other: "CostType"):
         return not self <= other
+
+
+CostType = int | float | Cost
 
 
 class JobTemplate:
     session = base.Session()
     process_id: ClassVar[str]
-    workspace_id: Union[str, base.WorkspaceId]
+    workspace_id: str | base.WorkspaceId
     errors: set[ValidationError] = set()
     process_description: dict = {}
 
@@ -334,7 +335,7 @@ class SingleItemJobTemplate(JobTemplate):
 @dataclasses.dataclass
 class MultiItemJobTemplate(JobTemplate):
     title: str
-    items: List[pystac.Item]
+    items: list[pystac.Item]
 
     @property
     def inputs(self) -> dict:

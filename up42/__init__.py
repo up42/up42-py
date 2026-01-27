@@ -17,7 +17,8 @@
     ```
 """
 
-from typing import Callable, Type, Union, cast
+from typing import Type, cast
+from collections.abc import Callable
 
 # pylint: disable=only-importing-modules-is-allowed
 from up42.base import authenticate, stac_client
@@ -38,7 +39,7 @@ version_control.check_is_latest_version(__version__)
 
 __all__ = [
     cast(
-        Union[Type, Callable],
+        type | Callable,
         obj,
     ).__name__
     for obj in [
