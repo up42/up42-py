@@ -12,7 +12,7 @@ import requests
 import requests_mock as req_mock
 
 from tests import constants, helpers
-from up42 import processing, utils
+from up42 import processing, processing_templates, utils
 
 PROCESS_ID = "process-id"
 EULA_ID = str(uuid.uuid4())
@@ -118,7 +118,7 @@ class TestCost:
 
 
 @dataclasses.dataclass
-class SampleJobTemplate(processing.JobTemplate):
+class SampleJobTemplate(processing_templates.JobTemplate):
     title: str
     process_id = PROCESS_ID
     workspace_id = constants.WORKSPACE_ID
@@ -289,7 +289,7 @@ class TestJobTemplate:
 
 
 @dataclasses.dataclass
-class SampleSingleItemJobTemplate(processing.SingleItemJobTemplate):
+class SampleSingleItemJobTemplate(processing_templates.SingleItemJobTemplate):
     process_id = PROCESS_ID
 
 
@@ -319,7 +319,7 @@ class TestSingleItemJobTemplate:
 
 
 @dataclasses.dataclass
-class SampleMultiItemJobTemplate(processing.MultiItemJobTemplate):
+class SampleMultiItemJobTemplate(processing_templates.MultiItemJobTemplate):
     process_id = PROCESS_ID
 
 

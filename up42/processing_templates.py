@@ -193,6 +193,11 @@ class UpsamplingNSSentinel(WorkspaceIdSingleItemTemplate):
 
 
 @dataclasses.dataclass
+class TrueColorConversion(WorkspaceIdSingleItemTemplate):
+    process_id = "true-color-conversion"
+
+
+@dataclasses.dataclass
 class SimularityJobTemplate(JobTemplate):
     title: str
     source_item: pystac.Item

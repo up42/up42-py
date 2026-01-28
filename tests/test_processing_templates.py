@@ -24,7 +24,7 @@ def template_post_init():
     def initialize(self):
         self.cost = COST
 
-    with mock.patch.object(processing.JobTemplate, "__post_init__", initialize):
+    with mock.patch.object(templates.JobTemplate, "__post_init__", initialize):
         yield
 
 
@@ -43,6 +43,7 @@ class TestParameterlessTemplates:
             templates.DetectionTrucksOI,
             templates.UpsamplingNS,
             templates.UpsamplingNSSentinel,
+            templates.TrueColorConversion,
         ],
     )
     def test_should_construct_single_item_job_templates(self, template_class):

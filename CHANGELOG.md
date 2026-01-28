@@ -29,6 +29,38 @@ You can check your current version with the following command:
     ```
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
+
+### 3.2.0a4
+**January 28, 2026**
+### Changed
+- Move JobTemplate, SingleItemJobTemplate, MultiItemJobTemplate to processing_template
+
+### 3.2.0a3
+**January 16, 2026**
+- Security: updated urllib3 to >=2.6.3.
+- Security: updated filelock to >=3.20.3.
+
+### 3.2.0a2
+**January 5, 2026**
+- Removed nbconvert.
+
+### 3.2.0a1
+**January 5, 2026**
+- Added a new processing job template: `TrueColorConversion`.
+
+### 3.1.1a1
+**December 17, 2025**
+- Security: updated urllib3 to >=2.6.0.
+
+## 3.1.0
+**November 24, 2025**
+### Added
+- Improve check for latest version: better error handling and caching to avoid rerunning.
+- Added ids parameter to Job.all.
+- Added functionality to `order.py` to allow order updates.
+- Added order cancellation functionality to `order.py`
+- Added functionality to `order.py` to ensure that orders with CANCELED status are not tracked.
+
 ## 3.1.0a5
 **November 18, 2025**
 ### Added
