@@ -1,10 +1,17 @@
 import functools
 import logging
+import os
 import warnings
 
 import requests
 from packaging import version
 
+DISABLE_VERSION_CHECK_ENVIRONMENT_VARIABLE = "UP42_DISABLE_VERSION_CHECK"
+
+TRUE_VALUES = ('TRUE', 'True', 'true', 'T', 't', '1')
+
+def should_check_version():
+    return os.getenv(DISABLE_VERSION_CHECK_ENVIRONMENT_VARIABLE) not in TRUE_VALUES
 
 def _get_latest_version():
     response = requests.get("https://pypi.org/pypi/up42-py/json", timeout=2)
@@ -23,9 +30,10 @@ def check_is_latest_version(
     build_warning_message=build_outdated_version_message,
 ):
     try:
-        latest_version = _get_latest_version()
-        if version.Version(installed_version) < latest_version:
-            warn(build_warning_message(installed_version, latest_version))
+         if should_check_version():
+            latest_version = _get_latest_version()
+            if version.Version(installed_version) < latest_version:
+                warn(build_warning_message(installed_version, latest_version))
     except Exception as exc:  # pylint: disable=broad-exception-caught
         logging.error("Failed to check latest version", exc_info=exc)
         pass
