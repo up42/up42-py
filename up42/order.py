@@ -1,5 +1,6 @@
 import dataclasses
-from typing import Any, Dict, Iterator, List, Literal, Optional, TypedDict, Union
+from collections.abc import Iterator
+from typing import Any, Literal, TypeAlias, TypedDict
 
 import tenacity as tnc
 
@@ -7,7 +8,7 @@ from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
 
-OrderType = Literal["TASKING", "ARCHIVE"]
+OrderType: TypeAlias = Literal["TASKING", "ARCHIVE"]
 
 
 class OrderParamsV2(TypedDict, total=False):
@@ -23,12 +24,12 @@ class OrderParamsV2(TypedDict, total=False):
     # pylint: disable=invalid-name
     dataProduct: str
     displayName: str
-    params: Dict[str, Any]
-    featureCollection: Dict[str, Any]
-    tags: List[str]
+    params: dict[str, Any]
+    featureCollection: dict[str, Any]
+    tags: list[str]
 
 
-OrderStatus = Literal[
+OrderStatus: TypeAlias = Literal[
     "CREATED",
     "BEING_PLACED",
     "PLACED",
@@ -38,7 +39,7 @@ OrderStatus = Literal[
     "CANCELED",
     "PLACEMENT_FAILED",
 ]
-OrderSubStatus = Literal[
+OrderSubStatus: TypeAlias = Literal[
     "FEASIBILITY_WAITING_UPLOAD",
     "FEASIBILITY_WAITING_RESPONSE",
     "QUOTATION_WAITING_UPLOAD",
@@ -80,7 +81,7 @@ class CancelOrder:
 @dataclasses.dataclass
 class ArchiveOrderDetails:
     aoi: dict
-    image_id: Optional[str]
+    image_id: str | None
     sub_status = None
 
 
@@ -89,26 +90,26 @@ class TaskingOrderDetails:
     acquisition_start: str
     acquisition_end: str
     geometry: dict
-    extra_description: Optional[str]
-    sub_status: Optional[OrderSubStatus]
-    acquisition_mode: Optional[str] = None
-    max_cloud_cover: Optional[int] = None
-    max_incidence_angle: Optional[int] = None
-    geometric_processing: Optional[str] = None
-    projection: Optional[str] = None
-    pixel_coding: Optional[str] = None
-    radiometric_processing: Optional[str] = None
-    spectral_bands: Optional[str] = None
-    priority: Optional[str] = None
-    min_bh: Optional[int] = None
-    max_bh: Optional[int] = None
-    resolution: Optional[str] = None
-    polarization: Optional[str] = None
-    scene_size: Optional[str] = None
-    looks: Optional[str] = None
+    extra_description: str | None
+    sub_status: OrderSubStatus | None
+    acquisition_mode: str | None = None
+    max_cloud_cover: int | None = None
+    max_incidence_angle: int | None = None
+    geometric_processing: str | None = None
+    projection: str | None = None
+    pixel_coding: str | None = None
+    radiometric_processing: str | None = None
+    spectral_bands: str | None = None
+    priority: str | None = None
+    min_bh: int | None = None
+    max_bh: int | None = None
+    resolution: str | None = None
+    polarization: str | None = None
+    scene_size: str | None = None
+    looks: str | None = None
 
 
-OrderDetails = Union[ArchiveOrderDetails, TaskingOrderDetails]
+OrderDetails: TypeAlias = ArchiveOrderDetails | TaskingOrderDetails
 
 
 @dataclasses.dataclass
@@ -120,9 +121,9 @@ class Order:
     workspace_id: str
     account_id: str
     type: OrderType
-    details: Optional[OrderDetails]
-    data_product_id: Optional[str]
-    tags: Optional[list[str]]
+    details: OrderDetails | None
+    data_product_id: str | None
+    tags: list[str] | None
     info: dict = dataclasses.field(repr=False)
 
     @classmethod
@@ -133,7 +134,7 @@ class Order:
 
     @staticmethod
     def _from_metadata(data: dict) -> "Order":
-        details: Optional[OrderDetails] = None
+        details: OrderDetails | None = None
         if "orderDetails" in data:
             order_details: dict = data["orderDetails"]
             if data["type"] == "TASKING":
@@ -177,13 +178,13 @@ class Order:
     @classmethod
     def all(
         cls,
-        workspace_id: Optional[str] = None,
-        order_type: Optional[OrderType] = None,
-        status: Optional[List[OrderStatus]] = None,
-        sub_status: Optional[List[OrderSubStatus]] = None,
-        display_name: Optional[str] = None,
-        tags: Optional[List[str]] = None,
-        sort_by: Optional[utils.SortingField] = None,
+        workspace_id: str | None = None,
+        order_type: OrderType | None = None,
+        status: list[OrderStatus] | None = None,
+        sub_status: list[OrderSubStatus] | None = None,
+        display_name: str | None = None,
+        tags: list[str] | None = None,
+        sort_by: utils.SortingField | None = None,
     ) -> Iterator["Order"]:
         params = {
             "sort": sort_by,
@@ -200,7 +201,7 @@ class Order:
     def update(
         cls,
         order_id: str,
-        tags: Optional[List[str]] = None,
+        tags: list[str] | None = None,
     ) -> "Order":
         url = host.endpoint(f"/v2/orders/{order_id}")
         headers = {"Content-Type": "application/merge-patch+json"}

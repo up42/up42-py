@@ -16,7 +16,7 @@ def build_outdated_version_message(installed_version, latest_version):
     return f"You're using an outdated version of the UP42 Python SDK: v{installed_version}. A newer version is available: v{latest_version}.\nPlease upgrade to the latest version using **pip install --upgrade up42-py** or conda **conda update -c conda-forge up42-py**."  # pylint: disable=line-too-long # noqa: E501
 
 
-@functools.lru_cache()
+@functools.lru_cache
 def check_is_latest_version(
     installed_version: str,
     warn=warnings.warn,

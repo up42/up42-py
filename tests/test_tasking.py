@@ -1,7 +1,7 @@
 import dataclasses
 import urllib.parse
 import uuid
-from typing import Any, List, Optional
+from typing import Any
 
 import pytest
 import requests_mock as req_mock
@@ -97,11 +97,11 @@ class TestQuotation:
     def test_should_get_all(
         self,
         requests_mock: req_mock.Mocker,
-        quotation_id: Optional[str],
-        workspace_id: Optional[str],
-        order_id: Optional[str],
-        decision: Optional[List[tasking.QuotationStatus]],
-        sort_by: Optional[utils.SortingField],
+        quotation_id: str | None,
+        workspace_id: str | None,
+        order_id: str | None,
+        decision: list[tasking.QuotationStatus] | None,
+        sort_by: utils.SortingField | None,
     ):
         query_params: dict[str, Any] = {}
         if quotation_id:
@@ -186,11 +186,11 @@ class TestFeasibilityStudy:
     def test_should_get_all(
         self,
         requests_mock: req_mock.Mocker,
-        feasibility_study_id: Optional[str],
-        workspace_id: Optional[str],
-        order_id: Optional[str],
-        decision: Optional[List[tasking.FeasibilityStatus]],
-        sort_by: Optional[utils.SortingField],
+        feasibility_study_id: str | None,
+        workspace_id: str | None,
+        order_id: str | None,
+        decision: list[tasking.FeasibilityStatus] | None,
+        sort_by: utils.SortingField | None,
     ):
         query_params: dict[str, Any] = {}
         if feasibility_study_id:

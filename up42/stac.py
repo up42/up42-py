@@ -1,5 +1,3 @@
-from typing import Optional, Union
-
 import pystac
 
 from up42 import base, host, utils
@@ -18,7 +16,7 @@ class IncompleteCollectionDeletionError(ValueError):
 class FileProvider:
     session = base.Session()
 
-    def __get__(self, obj: Optional[pystac.Asset], obj_type=None) -> Optional[utils.ImageFile]:
+    def __get__(self, obj: pystac.Asset | None, obj_type=None) -> utils.ImageFile | None:
         if obj:
             if obj.href.startswith(host.endpoint("")):
                 url = obj.href + "/download-url"
@@ -84,7 +82,7 @@ class Up42Extension:
 
 
 class Up42ExtensionProvider:
-    def __get__(self, obj: Optional[Union[pystac.Item, pystac.Collection]], obj_type=None):
+    def __get__(self, obj: pystac.Item | pystac.Collection | None, obj_type=None):
         if obj:
             if obj_type == pystac.Item:
                 return Up42Extension(obj.properties)  # type: ignore

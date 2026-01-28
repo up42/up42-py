@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Any, List, Optional
+from typing import Any
 
 import geojson  # type: ignore
 import pytest
@@ -17,7 +17,7 @@ DATA_PRODUCT = glossary.DataProduct(
     eula_id="eula-id",
 )
 RESOLUTION_VALUE = glossary.ResolutionValue(minimum=0.0, maximum=1.0)
-INTEGRATION_VALUES: List[glossary.IntegrationValue] = [
+INTEGRATION_VALUES: list[glossary.IntegrationValue] = [
     "ACCESS_APPROVAL_REQUIRED",
     "SAMPLE_DATA_AVAILABLE",
     "MANUAL_REQUEST_REQUIRED",
@@ -181,14 +181,14 @@ class TestProvider:
     @pytest.mark.parametrize("collections", [None, ["phr", "bjn"]])
     def test_should_search(
         self,
-        bbox: Optional[glossary.BoundingBox],
-        intersects: Optional[geojson.Polygon],
-        start_date: Optional[str],
-        end_date: Optional[str],
+        bbox: glossary.BoundingBox | None,
+        intersects: geojson.Polygon | None,
+        start_date: str | None,
+        end_date: str | None,
         expected_start_datetime: str,
         expected_end_datetime: str,
-        cql_query: Optional[dict],
-        collections: Optional[list[str]],
+        cql_query: dict | None,
+        collections: list[str] | None,
         requests_mock: req_mock.Mocker,
     ):
         search_params: dict[str, Any] = {}
@@ -239,7 +239,7 @@ class TestProductGlossary:
         self,
         requests_mock: req_mock.Mocker,
         collection_type: glossary.CollectionType,
-        sort_by: Optional[utils.SortingField],
+        sort_by: utils.SortingField | None,
     ):
         collections = [
             {
