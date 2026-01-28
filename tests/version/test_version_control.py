@@ -1,3 +1,4 @@
+import os
 import random
 
 import mock
@@ -39,3 +40,9 @@ class TestCheckLatestVersion:
         unused = mock.MagicMock()
         version_control.check_is_latest_version(fake_installed_version, unused, unused)
         unused.assert_not_called()
+
+    def test_should_not_check_the_version_if_the_env_variable_is_set_to_true(self):
+        with mock.patch.dict(os.environ, {version_control.DISABLE_VERSION_CHECK_ENVIRONMENT_VARIABLE: "True"}):
+            warn = mock.MagicMock()
+            version_control.check_is_latest_version(fake_installed_version, warn)
+            warn.assert_not_called()
