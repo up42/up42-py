@@ -30,6 +30,10 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 3.2.0a4
+**January 28, 2026**
+### Changed
+- Move JobTemplate, SingleItemJobTemplate, MultiItemJobTemplate to processing_template
 
 ### 3.2.0a3
 **January 16, 2026**

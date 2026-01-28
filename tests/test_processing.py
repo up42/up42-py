@@ -12,7 +12,7 @@ import requests
 import requests_mock as req_mock
 
 from tests import constants, helpers
-from up42 import processing, utils
+from up42 import processing, processing_templates, utils
 
 PROCESS_ID = "process-id"
 EULA_ID = str(uuid.uuid4())
@@ -118,7 +118,7 @@ class TestCost:
 
 
 @dataclasses.dataclass
-class SampleJobTemplate(processing.JobTemplate):
+class SampleJobTemplate(processing_templates.JobTemplate):
     title: str
     process_id = PROCESS_ID
     workspace_id = constants.WORKSPACE_ID
@@ -289,7 +289,7 @@ class TestJobTemplate:
 
 
 @dataclasses.dataclass
-class SampleSingleItemJobTemplate(processing.SingleItemJobTemplate):
+class SampleSingleItemJobTemplate(processing_templates.SingleItemJobTemplate):
     process_id = PROCESS_ID
 
 
@@ -316,36 +316,6 @@ class TestSingleItemJobTemplate:
         assert template.is_valid
         assert template.cost == cost
         assert template.inputs == {"title": TITLE, "item": ITEM_URL}
-
-
-@dataclasses.dataclass
-class SampleMultiItemJobTemplate(processing.MultiItemJobTemplate):
-    process_id = PROCESS_ID
-
-
-class TestMultiItemJobTemplate:
-    @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_should_provide_inputs(self, requests_mock: req_mock.Mocker):
-        cost = processing.Cost(strategy="discount", credits=-1)
-        body_matcher = helpers.match_request_body({"inputs": {"title": TITLE, "items": [ITEM_URL]}})
-        requests_mock.post(
-            VALIDATION_URL,
-            status_code=200,
-            additional_matcher=body_matcher,
-        )
-        requests_mock.post(
-            COST_URL,
-            status_code=200,
-            json={"pricingStrategy": cost.strategy, "totalCredits": cost.credits},
-            additional_matcher=body_matcher,
-        )
-        template = SampleMultiItemJobTemplate(
-            items=[ITEM],
-            title=TITLE,
-        )
-        assert template.is_valid
-        assert template.cost == cost
-        assert template.inputs == {"title": TITLE, "items": [ITEM_URL]}
 
 
 class TestJob:
