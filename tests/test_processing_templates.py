@@ -1,3 +1,4 @@
+import dataclasses
 import random
 from typing import Optional
 from unittest import mock
@@ -17,6 +18,12 @@ item = mock.MagicMock(spec=pystac.Item)
 second_item = mock.MagicMock(spec=pystac.Item)
 item.get_self_href.return_value = ITEM_URL
 second_item.get_self_href.return_value = SECOND_ITEM_URL
+PROCESS_ID = "process-id"
+
+
+@dataclasses.dataclass
+class SampleMultiItemJobTemplate(templates.MultiItemJobTemplate):
+    process_id = PROCESS_ID
 
 
 @pytest.fixture(autouse=True)
@@ -98,3 +105,13 @@ class TestSimularityProcesses:
             "referenceItem": SECOND_ITEM_URL,
             "sensitivity": 5,
         }
+
+
+class TestMultiItemJobTemplate:
+    def test_should_provide_inputs(self):
+        template = SampleMultiItemJobTemplate(
+            items=[item],
+            title=TITLE,
+        )
+        assert template.is_valid and template.cost == COST
+        assert template.inputs == {"title": TITLE, "items": [ITEM_URL]}
