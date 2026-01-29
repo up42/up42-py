@@ -21,7 +21,6 @@ second_item.get_self_href.return_value = SECOND_ITEM_URL
 PROCESS_ID = "process-id"
 
 
-
 @pytest.fixture(autouse=True)
 def template_post_init():
     def initialize(self):
