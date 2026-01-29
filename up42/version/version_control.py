@@ -6,13 +6,7 @@ import warnings
 import requests
 from packaging import version
 
-DISABLE_VERSION_CHECK_ENVIRONMENT_VARIABLE = "UP42_DISABLE_VERSION_CHECK"
-
-TRUE_VALUES = ("TRUE", "True", "true", "T", "t", "1")
-
-
-def should_check_version():
-    return os.getenv(DISABLE_VERSION_CHECK_ENVIRONMENT_VARIABLE) not in TRUE_VALUES
+ENV_VAR_LATEST_VERSION_CHECK_ENABLED = "LATEST_VERSION_CHECK_ENABLED"
 
 
 def _get_latest_version():
@@ -25,14 +19,24 @@ def build_outdated_version_message(installed_version, latest_version):
     return f"You're using an outdated version of the UP42 Python SDK: v{installed_version}. A newer version is available: v{latest_version}.\nPlease upgrade to the latest version using **pip install --upgrade up42-py** or conda **conda update -c conda-forge up42-py**."  # pylint: disable=line-too-long # noqa: E501
 
 
+def is_latest_version_check_enabled(get_environment_variable=os.getenv) -> bool:
+    value = get_environment_variable(ENV_VAR_LATEST_VERSION_CHECK_ENABLED)
+    if value is None or value.lower() == "true":
+        return True
+    if value.lower() == "false":
+        return False
+    raise ValueError("LATEST_VERSION_CHECK_ENABLED must be a bool.")
+
+
 @functools.lru_cache
 def check_is_latest_version(
     installed_version: str,
     warn=warnings.warn,
     build_warning_message=build_outdated_version_message,
+    check_latest_version=is_latest_version_check_enabled,
 ):
     try:
-        if should_check_version():
+        if check_latest_version():
             latest_version = _get_latest_version()
             if version.Version(installed_version) < latest_version:
                 warn(build_warning_message(installed_version, latest_version))

@@ -1,7 +1,7 @@
-import os
 import random
 from unittest import mock
 
+import pytest
 import requests_mock as req_mock
 from packaging import version
 
@@ -42,7 +42,38 @@ class TestCheckLatestVersion:
         unused.assert_not_called()
 
     def test_should_not_check_the_version_if_the_env_variable_is_set_to_true(self):
-        with mock.patch.dict(os.environ, {version_control.DISABLE_VERSION_CHECK_ENVIRONMENT_VARIABLE: "True"}):
-            warn = mock.MagicMock()
-            version_control.check_is_latest_version(fake_installed_version, warn)
-            warn.assert_not_called()
+        warn = mock.MagicMock()
+        check_latest_version = mock.MagicMock(return_value=False)
+        version_control.check_is_latest_version(
+            fake_installed_version, warn=warn, check_latest_version=check_latest_version
+        )
+        warn.assert_not_called()
+
+
+class TestIsLatestVersionCheckEnabled:
+    @staticmethod
+    def _get_fake_getenv(value):
+        def _getenv(name):  # pylint: disable=unused-argument
+            return value
+
+        return _getenv
+
+    @pytest.mark.parametrize(
+        "env_value, expected_result",
+        [
+            (None, True),
+            ("true", True),
+            ("True", True),
+            ("TRUE", True),
+            ("false", False),
+            ("False", False),
+            ("FALSE", False),
+        ],
+    )
+    def test_should_return_correct_boolean_for_valid_values(self, env_value, expected_result):
+        assert version_control.is_latest_version_check_enabled(self._get_fake_getenv(env_value)) is expected_result
+
+    @pytest.mark.parametrize("env_value", ["1", "0", "yes", "no", "random", ""])
+    def test_should_raise_value_error_for_invalid_values(self, env_value):
+        with pytest.raises(ValueError, match="must be a bool"):
+            version_control.is_latest_version_check_enabled(self._get_fake_getenv(env_value))
