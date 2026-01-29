@@ -1,7 +1,7 @@
 import dataclasses
 import urllib
 import uuid
-from typing import Any, List, Optional
+from typing import Any
 
 import pytest
 import requests_mock as req_mock
@@ -276,13 +276,13 @@ class TestOrder:
     @parameterize_with_order_data
     def test_should_get_all(
         self,
-        workspace_id: Optional[str],
-        order_type: Optional[order.OrderType],
-        status: Optional[List[order.OrderStatus]],
-        sub_status: Optional[List[order.OrderSubStatus]],
-        display_name: Optional[str],
-        tags: Optional[List[str]],
-        sort_by: Optional[utils.SortingField],
+        workspace_id: str | None,
+        order_type: order.OrderType | None,
+        status: list[order.OrderStatus] | None,
+        sub_status: list[order.OrderSubStatus] | None,
+        display_name: str | None,
+        tags: list[str] | None,
+        sort_by: utils.SortingField | None,
         requests_mock: req_mock.Mocker,
         data_order: order.Order,
         order_metadata: dict,

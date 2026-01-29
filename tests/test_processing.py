@@ -3,7 +3,7 @@ import datetime
 import random
 import urllib.parse
 import uuid
-from typing import Any, List, Optional
+from typing import Any
 from unittest import mock
 
 import pystac
@@ -427,13 +427,13 @@ class TestJob:
     def test_should_get_all_jobs(
         self,
         requests_mock: req_mock.Mocker,
-        process_id: Optional[List[str]],
-        workspace_id: Optional[str],
-        status: Optional[List[processing.JobStatus]],
-        min_duration: Optional[int],
-        max_duration: Optional[int],
-        sort_by: Optional[utils.SortingField],
-        ids: Optional[List[str]],
+        process_id: list[str] | None,
+        workspace_id: str | None,
+        status: list[processing.JobStatus] | None,
+        min_duration: int | None,
+        max_duration: int | None,
+        sort_by: utils.SortingField | None,
+        ids: list[str] | None,
     ):
         query_params: dict[str, Any] = {}
         if process_id:
