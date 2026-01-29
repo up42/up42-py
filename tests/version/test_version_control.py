@@ -60,10 +60,10 @@ class TestIsLatestVersionCheckEnabled:
         ],
     )
     def test_should_return_correct_boolean_for_valid_values(self, env_var, expected_result):
-        mock_getenv = mock.MagicMock(return_value=env_var)
-        assert version_control.is_latest_version_check_disabled(get_environment_variable=mock_getenv) is expected_result
+        get_env_var = mock.MagicMock(return_value=env_var)
+        assert version_control.is_latest_version_check_disabled(get_environment_variable=get_env_var) is expected_result
 
     def test_should_raise_value_error_for_invalid_values(self):
-        mock_getenv = mock.MagicMock(return_value="no_boolean")
+        get_env_var = mock.MagicMock(return_value="no_boolean")
         with pytest.raises(ValueError, match="must be a bool"):
-            version_control.is_latest_version_check_disabled(get_environment_variable=mock_getenv)
+            version_control.is_latest_version_check_disabled(get_environment_variable=get_env_var)
