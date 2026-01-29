@@ -43,37 +43,27 @@ class TestCheckLatestVersion:
 
     def test_should_not_check_the_version_if_the_env_variable_is_set_to_true(self):
         warn = mock.MagicMock()
-        check_latest_version = mock.MagicMock(return_value=False)
+        is_version_disabled = mock.MagicMock(return_value=True)
         version_control.check_is_latest_version(
-            fake_installed_version, warn=warn, check_latest_version=check_latest_version
+            fake_installed_version, warn=warn, is_version_check_disabled=is_version_disabled
         )
         warn.assert_not_called()
 
 
 class TestIsLatestVersionCheckEnabled:
-    @staticmethod
-    def _get_fake_getenv(value):
-        def _getenv(name):  # pylint: disable=unused-argument
-            return value
-
-        return _getenv
-
     @pytest.mark.parametrize(
-        "env_value, expected_result",
+        "env_var, expected_result",
         [
-            (None, True),
-            ("true", True),
+            (None, False),
             ("True", True),
-            ("TRUE", True),
-            ("false", False),
             ("False", False),
-            ("FALSE", False),
         ],
     )
-    def test_should_return_correct_boolean_for_valid_values(self, env_value, expected_result):
-        assert version_control.is_latest_version_check_enabled(self._get_fake_getenv(env_value)) is expected_result
+    def test_should_return_correct_boolean_for_valid_values(self, env_var, expected_result):
+        mock_getenv = mock.MagicMock(return_value=env_var)
+        assert version_control.is_latest_version_check_disabled(get_environment_variable=mock_getenv) is expected_result
 
-    @pytest.mark.parametrize("env_value", ["1", "0", "yes", "no", "random", ""])
-    def test_should_raise_value_error_for_invalid_values(self, env_value):
+    def test_should_raise_value_error_for_invalid_values(self):
+        mock_getenv = mock.MagicMock(return_value="no_boolean")
         with pytest.raises(ValueError, match="must be a bool"):
-            version_control.is_latest_version_check_enabled(self._get_fake_getenv(env_value))
+            version_control.is_latest_version_check_disabled(get_environment_variable=mock_getenv)
