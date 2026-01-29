@@ -21,10 +21,6 @@ second_item.get_self_href.return_value = SECOND_ITEM_URL
 PROCESS_ID = "process-id"
 
 
-@dataclasses.dataclass
-class SampleMultiItemJobTemplate(templates.MultiItemJobTemplate):
-    process_id = PROCESS_ID
-
 
 @pytest.fixture(autouse=True)
 def template_post_init():
@@ -107,6 +103,11 @@ class TestSimularityProcesses:
         }
 
 
+@dataclasses.dataclass
+class SampleMultiItemJobTemplate(templates.MultiItemJobTemplate):
+    process_id = PROCESS_ID
+
+
 class TestMultiItemJobTemplate:
     def test_should_provide_inputs(self):
         template = SampleMultiItemJobTemplate(
@@ -115,3 +116,19 @@ class TestMultiItemJobTemplate:
         )
         assert template.is_valid and template.cost == COST
         assert template.inputs == {"title": TITLE, "items": [ITEM_URL]}
+
+
+@dataclasses.dataclass
+class SampleSingleItemJobTemplate(templates.SingleItemJobTemplate):
+    process_id = PROCESS_ID
+
+
+class TestSingleItemJobTemplate:
+    def test_should_provide_inputs(self):
+        template = SampleSingleItemJobTemplate(
+            item=item,
+            title=TITLE,
+        )
+        assert template.is_valid
+        assert template.cost == COST
+        assert template.inputs == {"title": TITLE, "item": ITEM_URL}
