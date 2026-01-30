@@ -28,7 +28,13 @@ class TestCheckLatestVersion:
         requests_mock.get(url="https://pypi.org/pypi/up42-py/json", json={"info": {"version": fake_latest_version}})
         message = "not latest version"
         build_warning_message = mock.MagicMock(return_value=message)
-        version_control.check_is_latest_version(fake_installed_version, warn, build_warning_message)
+        is_version_check_enabled = mock.MagicMock(return_value=True)
+        version_control.check_is_latest_version(
+            fake_installed_version,
+            warn=warn,
+            build_warning_message=build_warning_message,
+            is_version_check_enabled=is_version_check_enabled,
+        )
         build_warning_message.assert_called_with(fake_installed_version, version.Version(fake_latest_version))
         warn.assert_called_with(message)
 
@@ -38,32 +44,43 @@ class TestCheckLatestVersion:
     ):
         requests_mock.get(url="https://pypi.org/pypi/up42-py/json", status_code=random.randint(400, 599))
         unused = mock.MagicMock()
-        version_control.check_is_latest_version(fake_installed_version, unused, unused)
+        is_version_check_enabled = mock.MagicMock(return_value=True)
+        version_control.check_is_latest_version(
+            fake_installed_version,
+            warn=unused,
+            build_warning_message=unused,
+            is_version_check_enabled=is_version_check_enabled,
+        )
         unused.assert_not_called()
 
-    def test_should_not_check_the_version_if_the_env_variable_is_set_to_true(self):
-        warn = mock.MagicMock()
-        is_version_disabled = mock.MagicMock(return_value=True)
+    def test_should_not_check_the_version_if_latest_version_check_is_disabled(self):
+        unused = mock.MagicMock()
+        is_version_enabled = mock.MagicMock(return_value=False)
         version_control.check_is_latest_version(
-            fake_installed_version, warn=warn, is_version_check_disabled=is_version_disabled
+            fake_installed_version,
+            warn=unused,
+            build_warning_message=unused,
+            is_version_check_enabled=is_version_enabled,
         )
-        warn.assert_not_called()
+        unused.assert_not_called()
 
 
 class TestIsLatestVersionCheckEnabled:
     @pytest.mark.parametrize(
         "env_var, expected_result",
         [
-            (None, False),
-            ("True", True),
-            ("False", False),
+            (None, True),
+            ("False", True),
+            ("True", False),
         ],
     )
     def test_should_return_correct_boolean_for_valid_values(self, env_var, expected_result):
         get_env_var = mock.MagicMock(return_value=env_var)
-        assert version_control.is_latest_version_check_disabled(get_environment_variable=get_env_var) is expected_result
+        assert version_control.is_latest_version_check_enabled(get_environment_variable=get_env_var) is expected_result
 
     def test_should_raise_value_error_for_invalid_values(self):
         get_env_var = mock.MagicMock(return_value="no_boolean")
-        with pytest.raises(ValueError, match="must be a bool"):
-            version_control.is_latest_version_check_disabled(get_environment_variable=get_env_var)
+        with pytest.raises(
+            ValueError, match=f"UP42_DISABLE_VERSION_CHECK must be 'true' or 'false', got '{get_env_var()}'."
+        ):
+            version_control.is_latest_version_check_enabled(get_environment_variable=get_env_var)

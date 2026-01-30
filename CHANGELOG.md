@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### 3.2.0a5
 **January 28, 2026**
 ### Added
-- Add env var LATEST_VERSION_CHECK_ENABLED. Enable checking the latest SDK version based on its value.
+- Add env var UP42_DISABLE_VERSION_CHECK. Enable checking the latest SDK version based on its value.
 
 ### 3.2.0a4
 **January 28, 2026**

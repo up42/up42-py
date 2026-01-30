@@ -92,3 +92,8 @@ To run tests directly from the PyCharm interface:
 2. Select Run 'pytest in tests'.
 
 PyCharm will use the Poetry environment for running the tests and display the results in the run console.
+
+## Environment Variables
+| VARIABLE NAME               | DESCRIPTION                                                                                                                                                        |
+|-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| UP42_DISABLE_VERSION_CHECK  | Used by the SDK to determine if it should check if the latest version of the SDK is being used or not. This is a `boolean` variable so please either set it to `True` or `False` |
