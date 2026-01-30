@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### 3.2.0a5
 **January 28, 2026**
 ### Added
-- Add env var UP42_DISABLE_VERSION_CHECK. Disable checking the latest SDK version based on its value.
+- Check environment variable UP42_DISABLE_VERSION_CHECK to disable checking the latest SDK version based on its value.
 
 ### 3.2.0a4
 **January 28, 2026**
