@@ -1,6 +1,7 @@
 import dataclasses
 import enum
-from typing import Any, Iterator, Literal, Optional, Union
+from collections.abc import Iterator
+from typing import Any, Literal, TypeAlias
 
 import geojson  # type: ignore
 import requests
@@ -13,7 +14,7 @@ class CollectionType(enum.Enum):
     TASKING = "TASKING"
 
 
-IntegrationValue = Literal[
+IntegrationValue: TypeAlias = Literal[
     "ACCESS_APPROVAL_REQUIRED",
     "SAMPLE_DATA_AVAILABLE",
     "MANUAL_REQUEST_REQUIRED",
@@ -30,32 +31,32 @@ IntegrationValue = Literal[
 @dataclasses.dataclass
 class ResolutionValue:
     minimum: float
-    maximum: Optional[float] = None
+    maximum: float | None = None
 
 
 @dataclasses.dataclass
 class CollectionMetadata:
-    product_type: Optional[Literal["OPTICAL", "SAR", "ELEVATION"]]
-    resolution_class: Optional[Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]]
-    resolution_value: Optional[ResolutionValue]
+    product_type: Literal["OPTICAL", "SAR", "ELEVATION"] | None
+    resolution_class: Literal["VERY_HIGH", "HIGH", "MEDIUM", "LOW"] | None
+    resolution_value: ResolutionValue | None
 
 
-BoundingBox = list[float]
+BoundingBox: TypeAlias = list[float]
 
 
 @dataclasses.dataclass
 class Scene:
-    bbox: Optional[BoundingBox]
-    geometry: Union[geojson.Polygon, geojson.MultiPolygon]
+    bbox: BoundingBox | None
+    geometry: geojson.Polygon | geojson.MultiPolygon
     id: str
-    datetime: Optional[str]
-    start_datetime: Optional[str]
-    end_datetime: Optional[str]
+    datetime: str | None
+    start_datetime: str | None
+    end_datetime: str | None
     constellation: str
     collection: str
-    cloud_coverage: Optional[float]
-    resolution: Optional[float]
-    delivery_time: Optional[Literal["MINUTES", "HOURS", "DAYS"]]
+    cloud_coverage: float | None
+    resolution: float | None
+    delivery_time: Literal["MINUTES", "HOURS", "DAYS"] | None
     producer: str
     quicklook: utils.ImageFile
     provider_properties: dict
@@ -86,12 +87,12 @@ class Provider:
 
     def search(
         self,
-        bbox: Optional[BoundingBox] = None,
-        intersects: Optional[geojson.Polygon] = None,
-        query: Optional[dict] = None,
-        collections: Optional[list[str]] = None,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        bbox: BoundingBox | None = None,
+        intersects: geojson.Polygon | None = None,
+        query: dict | None = None,
+        collections: list[str] | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
     ) -> Iterator[Scene]:
         if not self.is_host:
             raise InvalidHost("Provider does not host collections")
@@ -164,11 +165,11 @@ class DataProduct:
     name: str
     title: str
     description: str
-    id: Optional[str]
-    eula_id: Optional[str]
+    id: str | None
+    eula_id: str | None
 
     @property
-    def schema(self) -> Optional[dict]:
+    def schema(self) -> dict | None:
         if self.id:
             url = host.endpoint(f"/orders/schema/{self.id}")
             return self.session.get(url).json()
@@ -185,7 +186,7 @@ class Collection:
     integrations: list[IntegrationValue]
     providers: list[Provider]
     data_products: list[DataProduct]
-    metadata: Optional[CollectionMetadata]
+    metadata: CollectionMetadata | None
 
 
 class CollectionSorting:
@@ -201,8 +202,8 @@ class ProductGlossary:
     @classmethod
     def get_collections(
         cls,
-        collection_type: Optional[CollectionType] = None,
-        sort_by: Optional[utils.SortingField] = None,
+        collection_type: CollectionType | None = None,
+        sort_by: utils.SortingField | None = None,
     ) -> Iterator[Collection]:
         query_params: dict[str, Any] = {"sort": sort_by} if sort_by else {}
 

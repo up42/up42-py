@@ -35,6 +35,10 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### Changed
 - Move JobTemplate, SingleItemJobTemplate, MultiItemJobTemplate to processing_templates.py
 
+### 3.2.0a4
+**January 28, 2026**
+- Updated the syntax to remove python 3.9 idiosyncrasies
+
 ### 3.2.0a3
 **January 16, 2026**
 - Security: updated urllib3 to >=2.6.3.

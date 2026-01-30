@@ -1,6 +1,6 @@
 import abc
 import dataclasses
-from typing import ClassVar, List, Optional, Union
+from typing import ClassVar
 
 import pystac
 import requests
@@ -11,7 +11,7 @@ from up42 import base, host, processing
 class JobTemplate:
     session = base.Session()
     process_id: ClassVar[str]
-    workspace_id: Union[str, base.WorkspaceId]
+    workspace_id: str | base.WorkspaceId
     errors: set[processing.ValidationError] = set()
     process_description: dict = {}
 
@@ -116,7 +116,7 @@ class SingleItemJobTemplate(JobTemplate):
 @dataclasses.dataclass
 class MultiItemJobTemplate(JobTemplate):
     title: str
-    items: List[pystac.Item]
+    items: list[pystac.Item]
 
     @property
     def inputs(self) -> dict:
@@ -129,12 +129,12 @@ class MultiItemJobTemplate(JobTemplate):
 # TODO: drop these with Python 3.10 kw_only=True data classes
 @dataclasses.dataclass
 class WorkspaceIdSingleItemTemplate(SingleItemJobTemplate):
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
 
 
 @dataclasses.dataclass
 class WorkspaceIdMultiItemTemplate(MultiItemJobTemplate):
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
 
 
 @dataclasses.dataclass
@@ -202,7 +202,7 @@ class SimularityJobTemplate(JobTemplate):
     title: str
     source_item: pystac.Item
     reference_item: pystac.Item
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
 
     @property
     def inputs(self) -> dict:
@@ -237,8 +237,8 @@ class GreyWeight:
 
 @dataclasses.dataclass
 class Pansharpening(SingleItemJobTemplate):
-    grey_weights: Optional[List[GreyWeight]] = None
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    grey_weights: list[GreyWeight] | None = None
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
     process_id = "pansharpening"
 
     @property

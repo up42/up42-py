@@ -9,7 +9,8 @@ import tarfile
 import tempfile
 import warnings
 import zipfile
-from typing import Any, Callable, List, Optional, Union, cast
+from collections.abc import Callable
+from typing import Any, cast
 from urllib import parse
 
 import geojson  # type: ignore
@@ -69,7 +70,7 @@ logger = get_logger(__name__)
 
 
 def deprecation(
-    replacement_name: Optional[str],
+    replacement_name: str | None,
     version: str,
 ):
     """
@@ -93,8 +94,8 @@ def deprecation(
     return actual_decorator
 
 
-def _unpack_tar_files(file_path: str, output_directory: Union[str, pathlib.Path]) -> List[pathlib.Path]:
-    out_filepaths: List[pathlib.Path] = []
+def _unpack_tar_files(file_path: str, output_directory: str | pathlib.Path) -> list[pathlib.Path]:
+    out_filepaths: list[pathlib.Path] = []
     if tarfile.is_tarfile(file_path):
         with tarfile.open(file_path) as tar_file:
             for tar_member in tar_file.getmembers():
@@ -106,8 +107,8 @@ def _unpack_tar_files(file_path: str, output_directory: Union[str, pathlib.Path]
     return out_filepaths
 
 
-def _unpack_zip_files(file_path: str, output_directory: Union[str, pathlib.Path]) -> List[pathlib.Path]:
-    out_filepaths: List[pathlib.Path] = []
+def _unpack_zip_files(file_path: str, output_directory: str | pathlib.Path) -> list[pathlib.Path]:
+    out_filepaths: list[pathlib.Path] = []
     if zipfile.is_zipfile(file_path):
         with zipfile.ZipFile(file_path) as zip_file:
             for zip_info in zip_file.infolist():
@@ -121,8 +122,8 @@ def _unpack_zip_files(file_path: str, output_directory: Union[str, pathlib.Path]
 
 def download_archive(
     download_url: str,
-    output_directory: Union[str, pathlib.Path],
-) -> List[str]:
+    output_directory: str | pathlib.Path,
+) -> list[str]:
     """
     General download function for results of storage assets, job & jobtask from cloud storage
     provider.
@@ -168,7 +169,7 @@ class ImageFile:
     file_name: str = "output"
     session: requests.Session = dataclasses.field(default=requests.session(), repr=False, compare=False)
 
-    def download(self, output_directory: Union[str, pathlib.Path]) -> pathlib.Path:
+    def download(self, output_directory: str | pathlib.Path) -> pathlib.Path:
         file_name = get_filename(self.url, default_filename=self.file_name)
         path = pathlib.Path().joinpath(output_directory, file_name)
         with open(path, "wb") as dst:
@@ -186,7 +187,7 @@ class ImageFile:
             return path
 
 
-def download_file(download_url: str, output_directory: Union[str, pathlib.Path]) -> List[str]:
+def download_file(download_url: str, output_directory: str | pathlib.Path) -> list[str]:
     """
     General download function for assets, job and jobtasks from cloud storage
     provider.
@@ -200,7 +201,7 @@ def download_file(download_url: str, output_directory: Union[str, pathlib.Path])
     return [str(image.download(output_directory))]
 
 
-def format_time(date: Optional[Union[str, datetime.datetime]], set_end_of_day=False):
+def format_time(date: str | datetime.datetime | None, set_end_of_day=False):
     """
     Formats date isostring to datetime string format
 
@@ -222,7 +223,7 @@ def format_time(date: Optional[Union[str, datetime.datetime]], set_end_of_day=Fa
     return date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def validate_fc_up42_requirements(fc: Union[dict, geojson.FeatureCollection]):
+def validate_fc_up42_requirements(fc: dict | geojson.FeatureCollection):
     """
     Validate the feature collection if it fits UP42 geometry requirements.
     """
@@ -240,20 +241,20 @@ def get_up42_py_version():
     return importlib.metadata.version("up42-py")
 
 
-def read_json(path_or_dict: Union[dict, str, pathlib.Path, None]) -> Optional[dict]:
+def read_json(path_or_dict: dict | str | pathlib.Path | None) -> dict | None:
     if path_or_dict and isinstance(path_or_dict, (str, pathlib.Path)):
         try:
             with open(path_or_dict, encoding="utf-8") as file:
                 return json.load(file)
         except FileNotFoundError as ex:
             raise ValueError(f"File {path_or_dict} does not exist!") from ex
-    return cast(Optional[dict], path_or_dict)
+    return cast(dict | None, path_or_dict)
 
 
 def stac_client(auth: requests.auth.AuthBase):
     # pystac client accepts both returning and non-returning request modifiers
     # requests.auth.AuthBase is a returning request modifier interface
-    request_modifier = cast(Callable[[requests.Request], Optional[requests.Request]], auth)
+    request_modifier = cast(Callable[[requests.Request], requests.Request | None], auth)
     return pystac_client.Client.open(
         url=host.endpoint("/v2/assets/stac/"),
         request_modifier=request_modifier,

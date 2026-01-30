@@ -1,7 +1,7 @@
 import logging
 import pathlib
 import warnings
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal
 
 import pystac_client
 import requests
@@ -25,9 +25,9 @@ def _authenticated(value: Any):
 
 
 class _Workspace:
-    _id: Optional[str] = None
-    _session: Optional[requests.Session] = None
-    _auth: Optional[oauth.Up42Auth] = None
+    _id: str | None = None
+    _session: requests.Session | None = None
+    _auth: oauth.Up42Auth | None = None
 
     @property
     def id(self):
@@ -43,9 +43,9 @@ class _Workspace:
 
     def authenticate(
         self,
-        cfg_file: Optional[Union[str, pathlib.Path]] = None,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
+        cfg_file: str | pathlib.Path | None = None,
+        username: str | None = None,
+        password: str | None = None,
         region: Literal["eu", "sa"] = "eu",
     ):
         """

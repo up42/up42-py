@@ -2,7 +2,6 @@ import dataclasses
 import datetime
 import random
 import uuid
-from typing import Optional
 from unittest import mock
 
 import pystac
@@ -150,7 +149,7 @@ class TestParameterlessTemplates:
 @pytest.mark.usefixtures("template_post_init")
 class TestPansharpening:
     @pytest.mark.parametrize("grey_weight", [templates.GreyWeight(band="red", weight=random.random()), None])
-    def test_should_construct_template(self, grey_weight: Optional[templates.GreyWeight]):
+    def test_should_construct_template(self, grey_weight: templates.GreyWeight | None):
         template = templates.Pansharpening(
             title=TITLE,
             item=item,
