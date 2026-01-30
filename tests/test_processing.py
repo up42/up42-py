@@ -11,8 +11,8 @@ import pytest
 import requests
 import requests_mock as req_mock
 
-from tests import constants, helpers
-from up42 import processing, processing_templates, utils
+from tests import constants
+from up42 import processing, utils
 
 PROCESS_ID = "process-id"
 EULA_ID = str(uuid.uuid4())
@@ -35,7 +35,7 @@ EXECUTION_URL = (
 TITLE = "title"
 COLLECTION_ID = str(uuid.uuid4())
 COLLECTION_URL = f"https://collections/{COLLECTION_ID}"
-ITEM_URL = "https://item-url/"
+ITEM_URL = "https://item-url"
 ITEM = pystac.Item.from_dict(
     {
         "type": "Feature",
@@ -115,177 +115,6 @@ class TestCost:
         cost = processing.Cost(strategy="strategy", credits=10)
         assert cost > low_value and cost >= low_value
         assert cost < high_value and cost <= high_value
-
-
-@dataclasses.dataclass
-class SampleJobTemplate(processing_templates.JobTemplate):
-    title: str
-    process_id = PROCESS_ID
-    workspace_id = constants.WORKSPACE_ID
-
-    @property
-    def inputs(self) -> dict:
-        return {"title": self.title}
-
-
-@pytest.fixture
-def process_found_and_eula_accepted(requests_mock: req_mock.Mocker):
-    requests_mock.get(PROCESS_URL, json=PROCESS_SUMMARY)
-    requests_mock.get(EULA_URL, json={"isAccepted": True})
-
-
-class TestJobTemplate:
-    def test_should_fail_to_construct_if_getting_process_fails(self, requests_mock: req_mock.Mocker):
-        error_code = random.choice([x for x in range(400, 599) if x != 404])
-
-        requests_mock.get(
-            PROCESS_URL,
-            status_code=error_code,
-        )
-        with pytest.raises(requests.exceptions.HTTPError) as error:
-            _ = SampleJobTemplate(title=TITLE)
-        assert error.value.response.status_code == error_code
-
-    def test_should_be_invalid_if_process_not_found(self, requests_mock: req_mock.Mocker):
-        error = processing.ValidationError(
-            name="ProcessNotFound",
-            message=f"The process {PROCESS_ID} does not exist.",
-        )
-        requests_mock.get(PROCESS_URL, status_code=404)
-        template = SampleJobTemplate(title=TITLE)
-        assert not template.is_valid
-        assert template.errors == {error}
-
-    def test_should_be_invalid_if_eula_not_accepted(self, requests_mock: req_mock.Mocker):
-        error = processing.ValidationError(
-            name="EulaNotAccepted",
-            message=f"EULA for the process {PROCESS_ID} not accepted.",
-        )
-        requests_mock.get(PROCESS_URL, json=PROCESS_SUMMARY)
-        requests_mock.get(EULA_URL, json={"isAccepted": False})
-        template = SampleJobTemplate(title=TITLE)
-        assert not template.is_valid
-        assert template.errors == {error}
-
-    @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_fails_to_construct_if_validation_fails(self, requests_mock: req_mock.Mocker):
-        error_code = random.randint(430, 599)
-        requests_mock.post(
-            VALIDATION_URL,
-            status_code=error_code,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
-        )
-        with pytest.raises(requests.exceptions.HTTPError) as error:
-            _ = SampleJobTemplate(title=TITLE)
-        assert error.value.response.status_code == error_code
-
-    @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_should_be_invalid_if_inputs_are_malformed(self, requests_mock: req_mock.Mocker):
-        error = processing.ValidationError(name="InvalidSchema", message="data.inputs must contain ['item'] properties")
-        requests_mock.post(
-            VALIDATION_URL,
-            status_code=400,
-            json={"title": "Bad Request", "status": 400, "schema-error": error.message},
-            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
-        )
-        template = SampleJobTemplate(title=TITLE)
-        assert not template.is_valid
-        assert template.errors == {error}
-
-    @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_should_be_invalid_if_inputs_are_invalid(self, requests_mock: req_mock.Mocker):
-        requests_mock.post(
-            VALIDATION_URL,
-            status_code=422,
-            json={
-                "title": "Unprocessable Entity",
-                "status": 422,
-                "errors": [dataclasses.asdict(INVALID_TITLE_ERROR)],
-            },
-            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
-        )
-        template = SampleJobTemplate(title=TITLE)
-        assert not template.is_valid
-        assert template.errors == {INVALID_TITLE_ERROR}
-
-    @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_fails_to_construct_if_evaluation_fails(self, requests_mock: req_mock.Mocker):
-        error_code = random.randint(400, 599)
-        requests_mock.post(
-            VALIDATION_URL,
-            status_code=200,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
-        )
-        requests_mock.post(
-            COST_URL,
-            status_code=error_code,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
-        )
-
-        with pytest.raises(requests.exceptions.HTTPError) as error:
-            _ = SampleJobTemplate(title=TITLE)
-        assert error.value.response.status_code == error_code
-
-    @pytest.mark.parametrize(
-        "cost",
-        [
-            processing.Cost(strategy="none", credits=1),
-            processing.Cost(strategy="area", credits=1, size=5, unit="SKM"),
-        ],
-    )
-    @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_should_construct(self, requests_mock: req_mock.Mocker, cost: processing.Cost):
-        requests_mock.post(
-            VALIDATION_URL,
-            status_code=200,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
-        )
-        cost_payload = {
-            key: value
-            for key, value in {
-                "pricingStrategy": cost.strategy,
-                "totalCredits": cost.credits,
-                "totalSize": cost.size,
-                "unit": cost.unit,
-            }.items()
-            if value
-        }
-        requests_mock.post(
-            COST_URL,
-            status_code=200,
-            json=cost_payload,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
-        )
-        template = SampleJobTemplate(title=TITLE)
-        assert template.is_valid
-        assert not template.errors
-        assert template.cost == cost
-
-    @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_should_execute(self, requests_mock: req_mock.Mocker):
-        cost = processing.Cost(strategy="none", credits=1)
-        requests_mock.post(
-            VALIDATION_URL,
-            status_code=200,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
-        )
-        cost_payload = {"pricingStrategy": cost.strategy, "totalCredits": cost.credits}
-        requests_mock.post(
-            COST_URL,
-            status_code=200,
-            json=cost_payload,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
-        )
-        requests_mock.post(
-            EXECUTION_URL,
-            status_code=200,
-            json=JOB_METADATA,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": TITLE}}),
-        )
-        template = SampleJobTemplate(title=TITLE)
-        assert template.execute() == JOB
-        assert template.is_valid and not template.errors
-        assert template.cost == cost
 
 
 class TestJob:
