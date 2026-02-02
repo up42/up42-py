@@ -40,7 +40,6 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Move JobTemplate, SingleItemJobTemplate, MultiItemJobTemplate to processing_templates.py
 - Check environment variable UP42_DISABLE_VERSION_CHECK to disable checking the latest SDK version based on its value.
 ### Security
-- Updated urllib3 to >=2.6.0.
 - Updated urllib3 to >=2.6.3.
 - Updated filelock to >=3.20.3.
 
