@@ -1,12 +1,10 @@
-import abc
 import dataclasses
 import datetime
 import enum
 from collections.abc import Iterator
-from typing import ClassVar, TypedDict
+from typing import TypedDict
 
 import pystac
-import requests
 import tenacity as tnc
 
 from up42 import base, host, utils
@@ -225,121 +223,3 @@ class Cost:
 
 
 CostType = int | float | Cost
-
-
-class JobTemplate:
-    session = base.Session()
-    process_id: ClassVar[str]
-    workspace_id: str | base.WorkspaceId
-    errors: set[ValidationError] = set()
-    process_description: dict = {}
-
-    @property
-    @abc.abstractmethod
-    def inputs(self) -> dict:
-        pass
-
-    def __post_init__(self):
-        self.__validate()
-        if self.is_valid:
-            self.__evaluate()
-
-    def __validate(self):
-        self.errors = self.__validate_process_exists() or self.__validate_eula() or self.__validate_inputs()
-
-    def __validate_process_exists(self) -> set[ValidationError]:
-        process_url = host.endpoint(f"/v2/processing/processes/{self.process_id}")
-        try:
-            self.process_description = self.session.get(process_url).json()
-        except requests.HTTPError as err:
-            if err.response.status_code == 404:
-                return {
-                    ValidationError(
-                        name="ProcessNotFound",
-                        message=f"The process {self.process_id} does not exist.",
-                    )
-                }
-            else:
-                raise err
-        return set()
-
-    def __validate_eula(self) -> set[ValidationError]:
-        eula_id = next(
-            parameter["value"][0]
-            for parameter in self.process_description["additionalParameters"]["parameters"]
-            if parameter["name"] == "eula-id"
-        )
-        eula_url = host.endpoint(f"/v2/eulas/{eula_id}")
-        eula = self.session.get(eula_url).json()
-        if not eula["isAccepted"]:
-            return {
-                ValidationError(
-                    name="EulaNotAccepted",
-                    message=f"EULA for the process {self.process_id} not accepted.",
-                )
-            }
-        return set()
-
-    def __validate_inputs(self) -> set[ValidationError]:
-        url = host.endpoint(f"/v2/processing/processes/{self.process_id}/validation")
-        try:
-            _ = self.session.post(url, json={"inputs": self.inputs})
-        except requests.HTTPError as err:
-            if (status_code := err.response.status_code) in (400, 422):
-                if status_code == 400:
-                    return {
-                        ValidationError(
-                            name="InvalidSchema",
-                            message=err.response.json()["schema-error"],
-                        )
-                    }
-                if status_code == 422:
-                    errors = err.response.json()["errors"]
-                    return {ValidationError(**error) for error in errors}
-            else:
-                raise err
-        return set()
-
-    def __evaluate(self):
-        url = host.endpoint(f"/v2/processing/processes/{self.process_id}/cost")
-        payload = self.session.post(url, json={"inputs": self.inputs}).json()
-        self.cost = Cost(
-            strategy=payload["pricingStrategy"],
-            credits=payload["totalCredits"],
-            size=payload.get("totalSize"),
-            unit=payload.get("unit"),
-        )
-
-    @property
-    def is_valid(self) -> bool:
-        return not self.errors
-
-    def execute(self) -> Job:
-        url = host.endpoint(f"/v2/processing/processes/{self.process_id}/execution")
-        job_metadata = self.session.post(
-            url, params={"workspaceId": self.workspace_id}, json={"inputs": self.inputs}
-        ).json()
-        return Job.from_metadata(job_metadata)
-
-
-@dataclasses.dataclass
-class SingleItemJobTemplate(JobTemplate):
-    title: str
-    item: pystac.Item
-
-    @property
-    def inputs(self) -> dict:
-        return {"title": self.title, "item": self.item.get_self_href()}
-
-
-@dataclasses.dataclass
-class MultiItemJobTemplate(JobTemplate):
-    title: str
-    items: list[pystac.Item]
-
-    @property
-    def inputs(self) -> dict:
-        return {
-            "title": self.title,
-            "items": [item.get_self_href() for item in self.items],
-        }
