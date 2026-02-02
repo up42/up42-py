@@ -25,7 +25,10 @@ def is_latest_version_check_enabled(get_environment_variable=os.getenv) -> bool:
         return True
     elif value.lower() == "true":
         return False
-    raise ValueError(f"UP42_DISABLE_VERSION_CHECK must be 'true' or 'false', got '{value}'.")
+    raise ValueError(
+        "UP42_DISABLE_VERSION_CHECK is a boolean environment variable, so it must be either "
+        + f"'True' or 'False', got '{value}'."
+    )
 
 
 @functools.lru_cache

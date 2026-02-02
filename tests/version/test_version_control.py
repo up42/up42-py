@@ -81,6 +81,8 @@ class TestIsLatestVersionCheckEnabled:
     def test_should_raise_value_error_for_invalid_values(self):
         get_env_var = mock.MagicMock(return_value="no_boolean")
         with pytest.raises(
-            ValueError, match=f"UP42_DISABLE_VERSION_CHECK must be 'true' or 'false', got '{get_env_var()}'."
+            ValueError,
+            match="UP42_DISABLE_VERSION_CHECK is a boolean environment variable, so it must be either "
+            + f"'True' or 'False', got '{get_env_var()}'.",
         ):
             version_control.is_latest_version_check_enabled(get_environment_variable=get_env_var)
