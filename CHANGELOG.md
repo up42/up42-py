@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 3.2.0a6
+**February 2, 2026**
+### Added
+- Check environment variable UP42_DISABLE_VERSION_CHECK to disable checking the latest SDK version based on its value.
+
 ### 3.2.0a5
 **January 28, 2026**
 ### Changed
