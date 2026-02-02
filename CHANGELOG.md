@@ -30,6 +30,20 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 3.2.0
+**February 2, 2026**
+### Added
+- Added a new processing job template: `TrueColorConversion`.
+### Changed
+- Removed nbconvert.
+- Updated the syntax to remove python 3.9 idiosyncrasies
+- Move JobTemplate, SingleItemJobTemplate, MultiItemJobTemplate to processing_templates.py
+- Check environment variable UP42_DISABLE_VERSION_CHECK to disable checking the latest SDK version based on its value.
+### Security
+- Updated urllib3 to >=2.6.0.
+- Updated urllib3 to >=2.6.3.
+- Updated filelock to >=3.20.3.
+
 ### 3.2.0a6
 **February 2, 2026**
 ### Added
