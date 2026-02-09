@@ -1,76 +1,40 @@
 import dataclasses
 from typing import Any
 
-from up42 import base, host
+from up42 import base, host, utils
 
-
-@dataclasses.dataclass
-class Geometry:
-    type: str
-    coordinates: list
-
-    @staticmethod
-    def from_dict(obj: dict) -> "Geometry":
-        return Geometry(type=obj["type"], coordinates=obj["coordinates"])
-
-
-@dataclasses.dataclass
-class Feature:
-    type: str
-    geometry: Geometry
-    properties: dict[str, Any] | None = None
-
-    @staticmethod
-    def from_dict(obj: dict) -> "Feature":
-        return Feature(type=obj["type"], geometry=Geometry.from_dict(obj["geometry"]), properties=obj.get("properties"))
-
-
-@dataclasses.dataclass
-class FeatureCollection:
-    type: str
-    features: list[Feature]
-
-    @staticmethod
-    def from_dict(obj: dict) -> "FeatureCollection":
-        return FeatureCollection(type=obj["type"], features=[Feature.from_dict(f) for f in obj["features"]])
+logger = utils.get_logger(__name__)
 
 
 @dataclasses.dataclass
 class GeometryMetrics:
     sq_km_area: float
     percentage: float
-    geometry: FeatureCollection
+    geometry: dict[str, Any]
 
     @staticmethod
-    def from_dict(obj: dict) -> "GeometryMetrics":
+    def from_metadata(data: dict[str, Any]) -> "GeometryMetrics":
         return GeometryMetrics(
-            sq_km_area=obj["sqKmArea"],
-            percentage=obj["percentage"],
-            geometry=FeatureCollection.from_dict(obj["geometry"]),
+            sq_km_area=data["sqKmArea"],
+            percentage=data["percentage"],
+            geometry=data["geometry"],
         )
 
 
 @dataclasses.dataclass
-class OrderDeliveryMetrics:
+class OrderCoverage:
+    session = base.Session()
     covered: GeometryMetrics
     remainder: GeometryMetrics
 
-    @staticmethod
-    def from_dict(obj: dict) -> "OrderDeliveryMetrics":
-        return OrderDeliveryMetrics(
-            covered=GeometryMetrics.from_dict(obj["covered"]), remainder=GeometryMetrics.from_dict(obj["remainder"])
-        )
-
-
-class Coverage:
-    session = base.Session()
-
-    def __init__(self, base_url: str, bearer_token: str):
-        self.base_url = base_url.rstrip("/")
-        self.headers = {"Authorization": f"Bearer {bearer_token}", "Accept": "application/json"}
-
     @classmethod
-    def get(cls, order_id: str) -> OrderDeliveryMetrics:
+    def get(cls, order_id: str) -> "OrderCoverage":
         url = host.endpoint(f"/v2/coverage/orders/{order_id}")
         metadata = cls.session.get(url=url).json()
-        return OrderDeliveryMetrics.from_dict(metadata)
+        return OrderCoverage._from_metadata(metadata)
+
+    @staticmethod
+    def _from_metadata(metadata: dict) -> "OrderCoverage":
+        covered = GeometryMetrics.from_metadata(metadata["covered"])
+        remainder = GeometryMetrics.from_metadata(metadata["remainder"])
+        return OrderCoverage(covered=covered, remainder=remainder)
