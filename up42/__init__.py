@@ -22,6 +22,7 @@ from typing import cast
 
 # pylint: disable=only-importing-modules-is-allowed
 from up42.base import authenticate, stac_client
+from up42.coverage import OrderCoverage
 from up42.glossary import CollectionSorting, CollectionType, ProductGlossary, Provider
 from up42.order import Order, OrderSorting
 from up42.order_template import BatchOrderTemplate
@@ -60,5 +61,6 @@ __all__ = [
         FeasibilityStudy,
         FeasibilityStudySorting,
         BulkDeletion,
+        OrderCoverage,
     ]
 ]
