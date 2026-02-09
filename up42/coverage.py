@@ -12,14 +12,6 @@ class GeometryMetrics:
     percentage: float
     geometry: dict[str, Any]
 
-    @staticmethod
-    def from_metadata(data: dict[str, Any]) -> "GeometryMetrics":
-        return GeometryMetrics(
-            sq_km_area=data["sqKmArea"],
-            percentage=data["percentage"],
-            geometry=data["geometry"],
-        )
-
 
 @dataclasses.dataclass
 class OrderCoverage:
@@ -35,6 +27,10 @@ class OrderCoverage:
 
     @staticmethod
     def _from_metadata(metadata: dict) -> "OrderCoverage":
-        covered = GeometryMetrics.from_metadata(metadata["covered"])
-        remainder = GeometryMetrics.from_metadata(metadata["remainder"])
+        covered = GeometryMetrics(
+            metadata["covered"]["sqKmArea"], metadata["covered"]["percentage"], metadata["covered"]["geometry"]
+        )
+        remainder = GeometryMetrics(
+            metadata["remainder"]["sqKmArea"], metadata["remainder"]["percentage"], metadata["remainder"]["geometry"]
+        )
         return OrderCoverage(covered=covered, remainder=remainder)
