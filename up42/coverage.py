@@ -1,3 +1,7 @@
+"""
+Coverage functionality for tasking orders.
+"""
+
 import dataclasses
 from typing import Any
 
@@ -27,10 +31,19 @@ class OrderCoverage:
 
     @staticmethod
     def _from_metadata(metadata: dict) -> "OrderCoverage":
+        covered_data = metadata["covered"]
+        remainder_data = metadata["remainder"]
+
         covered = GeometryMetrics(
-            metadata["covered"]["sqKmArea"], metadata["covered"]["percentage"], metadata["covered"]["geometry"]
+            sq_km_area=covered_data["sqKmArea"],
+            percentage=covered_data["percentage"],
+            geometry=covered_data["geometry"],
         )
+
         remainder = GeometryMetrics(
-            metadata["remainder"]["sqKmArea"], metadata["remainder"]["percentage"], metadata["remainder"]["geometry"]
+            sq_km_area=remainder_data["sqKmArea"],
+            percentage=remainder_data["percentage"],
+            geometry=remainder_data["geometry"],
         )
+
         return OrderCoverage(covered=covered, remainder=remainder)
