@@ -3,6 +3,7 @@ Tests for coverage module.
 """
 
 import pytest
+import requests
 import requests_mock as req_mock
 
 from tests import constants
@@ -56,6 +57,7 @@ class TestOrderCoverage:
         requests_mock.get(url=COVERAGE_URL, json=coverage_metadata)
         order_coverage = coverage.OrderCoverage.get(order_id=constants.ORDER_ID)
 
+        print(order_coverage)
         assert isinstance(order_coverage, coverage.OrderCoverage)
         assert isinstance(order_coverage.covered, coverage.GeometryMetrics)
         assert isinstance(order_coverage.remainder, coverage.GeometryMetrics)
@@ -71,3 +73,10 @@ class TestOrderCoverage:
         assert order_coverage.remainder.percentage == 15.0
         assert order_coverage.remainder.geometry["type"] == "FeatureCollection"
         assert len(order_coverage.remainder.geometry["features"]) == 1
+
+    @pytest.mark.parametrize("status_code", [400, 401, 403, 404, 500, 503])
+    def test_should_handle_http_errors(self, requests_mock: req_mock.Mocker, status_code: int):
+        requests_mock.get(url=COVERAGE_URL, status_code=status_code)
+        with pytest.raises(requests.HTTPError) as exc_info:
+            coverage.OrderCoverage.get(order_id=constants.ORDER_ID)
+        assert exc_info.value.response.status_code == status_code
