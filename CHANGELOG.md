@@ -32,7 +32,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### 3.3.0a1
 **February 10, 2026**
 ### Added
-- Added `coverage.py` with functionality to get order's coverage
+- Added functionality to `tasking.py` get order's coverage
 
 ### 3.2.0
 **February 2, 2026**
