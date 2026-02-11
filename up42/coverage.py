@@ -3,7 +3,8 @@ Coverage functionality for tasking orders.
 """
 
 import dataclasses
-from typing import Any
+
+import geojson  # type: ignore
 
 from up42 import base, host, utils
 
@@ -14,7 +15,7 @@ logger = utils.get_logger(__name__)
 class GeometryMetrics:
     sq_km_area: float
     percentage: float
-    geometry: dict[str, Any]
+    geometry: geojson.Polygon | geojson.MultiPolygon
 
 
 @dataclasses.dataclass
