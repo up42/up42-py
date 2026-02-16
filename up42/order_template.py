@@ -96,6 +96,6 @@ class BatchOrderTemplate:
             return _get_items(batch, OrderReference)
         except requests.HTTPError as e:
             if e.response.status_code == 451:
-                title = e.response.json().get("title", {})
+                title = e.response.json().get("title", "")
                 raise LegalReasonsError(title) from e
             raise e
