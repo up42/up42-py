@@ -9,18 +9,8 @@ from up42 import base, host, order
 UnitType = Literal["SQ_KM", "SCENE"]
 
 
-class EulaNotAcceptedError(Exception):
-    def __init__(self, message: str, eula_id: str | None = None):
-        super().__init__(message)
-        self.eula_id = eula_id
-
-
-class AccessRestrictedError(Exception):
-    """Raised when attempting to access a restricted collection without proper permissions."""
-
-    def __init__(self, message: str, collection: str | None = None):
-        super().__init__(message)
-        self.collection = collection
+class LegalReasonsError(ValueError):
+    pass
 
 
 @dataclasses.dataclass
@@ -106,38 +96,10 @@ class BatchOrderTemplate:
             return _get_items(batch, OrderReference)
         except requests.HTTPError as e:
             if e.response.status_code == 451:
-                self._handle_eula_errors(e)
+                self._raise_legal_reasons_error(e)
             raise e
 
     @staticmethod
-    def _handle_eula_errors(e: requests.exceptions.HTTPError):
-        try:
-            print(f"error: {e.response.json()}")
-            # error_body = e.response.json()
-            # title = error_body.get("title", "")
-            #
-            # # Check if it's a EULA error
-            # if "EULA" in title and "not accepted" in title:
-            #     # Extract EULA ID if present
-            #     eula_id = None
-            #     if "EULA " in title:
-            #         parts = title.split("EULA ", 1)
-            #         if len(parts) > 1:
-            #             eula_id = parts[1].split(" ", 1)[0]
-            #     raise EulaNotAcceptedError(title, eula_id) from e
-            #
-            # # Check if it's an access restriction error
-            # elif "Access to collection" in title and "is restricted" in title:
-            #     # Extract collection name if present
-            #     collection = None
-            #     if "collection " in title:
-            #         parts = title.split("collection ", 1)
-            #         if len(parts) > 1:
-            #             collection = parts[1].split(" ", 1)[0]
-            #     raise AccessRestrictedError(title, collection) from e
-            #
-            # # Generic 451 error
-            # raise EulaNotAcceptedError(title) from e
-        except (ValueError, KeyError) as ex:
-            # If we can't parse the error, re-raise the original
-            raise ex
+    def _raise_legal_reasons_error(e: requests.exceptions.HTTPError):
+        title = e.response.json().get("title", {})
+        raise LegalReasonsError(title) from e
