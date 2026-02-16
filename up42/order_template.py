@@ -96,10 +96,6 @@ class BatchOrderTemplate:
             return _get_items(batch, OrderReference)
         except requests.HTTPError as e:
             if e.response.status_code == 451:
-                self._raise_legal_reasons_error(e)
+                title = e.response.json().get("title", {})
+                raise LegalReasonsError(title) from e
             raise e
-
-    @staticmethod
-    def _raise_legal_reasons_error(e: requests.exceptions.HTTPError):
-        title = e.response.json().get("title", {})
-        raise LegalReasonsError(title) from e

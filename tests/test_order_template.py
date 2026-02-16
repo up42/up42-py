@@ -119,7 +119,6 @@ class TestBatchOrderTemplate:
         ],
     )
     def test_should_raise_legal_reasons_error(self, requests_mock: req_mock.Mocker, title: str):
-        """Test that EulaNotAcceptedError is raised with clear message when EULA is not accepted"""
         estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
         requests_mock.post(url=estimate_url, json=ESTIMATE_PAYLOAD)
         placement_url = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
