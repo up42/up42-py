@@ -3,18 +3,21 @@ Tasking functionality
 """
 
 import dataclasses
-from typing import Iterator, List, Literal, Optional, Union
+from collections.abc import Iterator
+from typing import Literal, TypeAlias
+
+import geojson  # type: ignore
 
 from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
 
-QuotationDecision = Literal[
+QuotationDecision: TypeAlias = Literal[
     "ACCEPTED",
     "REJECTED",
 ]
-QuotationStatus = Union[Literal["NOT_DECIDED"], QuotationDecision]
-FeasibilityStatus = Literal["NOT_DECIDED", "ACCEPTED"]
+QuotationStatus: TypeAlias = Literal["NOT_DECIDED"] | QuotationDecision
+FeasibilityStatus: TypeAlias = Literal["NOT_DECIDED", "ACCEPTED"]
 
 
 class QuotationSorting:
@@ -30,7 +33,7 @@ class Quotation:
     id: str
     created_at: str
     updated_at: str
-    decided_at: Optional[str]
+    decided_at: str | None
     account_id: str
     workspace_id: str
     order_id: str
@@ -67,11 +70,11 @@ class Quotation:
     @classmethod
     def all(
         cls,
-        quotation_id: Optional[str] = None,
-        workspace_id: Optional[str] = None,
-        order_id: Optional[str] = None,
-        decision: Optional[List[QuotationStatus]] = None,
-        sort_by: Optional[utils.SortingField] = None,
+        quotation_id: str | None = None,
+        workspace_id: str | None = None,
+        order_id: str | None = None,
+        decision: list[QuotationStatus] | None = None,
+        sort_by: utils.SortingField | None = None,
     ) -> Iterator["Quotation"]:
         params = {
             "workspaceId": workspace_id,
@@ -95,7 +98,7 @@ class FeasibilityStudySorting:
 @dataclasses.dataclass
 class FeasibilityStudyDecisionOption:
     id: str
-    description: Optional[str] = None
+    description: str | None = None
 
 
 @dataclasses.dataclass
@@ -108,9 +111,9 @@ class FeasibilityStudy:
     workspace_id: str
     order_id: str
     decision: FeasibilityStatus
-    options: List[dict]
-    decided_at: Optional[str] = None
-    decision_option: Optional[FeasibilityStudyDecisionOption] = None
+    options: list[dict]
+    decided_at: str | None = None
+    decision_option: FeasibilityStudyDecisionOption | None = None
 
     class NoDecisionOptionChosen(Exception):
         """Raised when trying to save a FeasibilityStudy without a chosen decision option."""
@@ -118,11 +121,11 @@ class FeasibilityStudy:
     @classmethod
     def all(
         cls,
-        feasibility_study_id: Optional[str] = None,
-        workspace_id: Optional[str] = None,
-        order_id: Optional[str] = None,
-        decision: Optional[List[FeasibilityStatus]] = None,
-        sort_by: Optional[utils.SortingField] = None,
+        feasibility_study_id: str | None = None,
+        workspace_id: str | None = None,
+        order_id: str | None = None,
+        decision: list[FeasibilityStatus] | None = None,
+        sort_by: utils.SortingField | None = None,
     ) -> Iterator["FeasibilityStudy"]:
         params = {
             "id": feasibility_study_id,
@@ -168,3 +171,42 @@ class FeasibilityStudy:
         feasibility_study = self._from_metadata(metadata)
         for field in dataclasses.fields(feasibility_study):
             setattr(self, field.name, getattr(feasibility_study, field.name))
+
+
+@dataclasses.dataclass
+class GeometryMetrics:
+    sq_km_area: float
+    percentage: float
+    geometry: geojson.Polygon | geojson.MultiPolygon
+
+
+@dataclasses.dataclass
+class OrderCoverage:
+    session = base.Session()
+    covered: GeometryMetrics
+    remainder: GeometryMetrics
+
+    @classmethod
+    def get(cls, order_id: str) -> "OrderCoverage":
+        url = host.endpoint(f"/v2/coverage/orders/{order_id}")
+        metadata = cls.session.get(url=url).json()
+        return OrderCoverage._from_metadata(metadata)
+
+    @staticmethod
+    def _from_metadata(metadata: dict) -> "OrderCoverage":
+        covered_data = metadata["covered"]
+        remainder_data = metadata["remainder"]
+
+        covered = GeometryMetrics(
+            sq_km_area=covered_data["sqKmArea"],
+            percentage=covered_data["percentage"],
+            geometry=covered_data["geometry"],
+        )
+
+        remainder = GeometryMetrics(
+            sq_km_area=remainder_data["sqKmArea"],
+            percentage=remainder_data["percentage"],
+            geometry=remainder_data["geometry"],
+        )
+
+        return OrderCoverage(covered=covered, remainder=remainder)

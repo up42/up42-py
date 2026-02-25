@@ -1,7 +1,7 @@
 import dataclasses as dc
 import datetime as dt
 import threading
-from typing import Optional, Protocol
+from typing import Protocol
 
 import requests
 
@@ -92,8 +92,8 @@ class Up42Auth(requests.auth.AuthBase):
 
 
 def detect_settings(
-    credentials: Optional[dict],
-) -> Optional[config.CredentialsSettings]:
+    credentials: dict | None,
+) -> config.CredentialsSettings | None:
     if credentials:
         if all(credentials.values()):
             if credentials.keys() == {"username", "password"}:

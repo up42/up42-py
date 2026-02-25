@@ -1,5 +1,4 @@
 import dataclasses
-from typing import Union
 
 import pystac_client
 import pytest
@@ -56,7 +55,7 @@ class TestWorkspace:
 class ActiveRecord:
     session = base.Session()
     class_workspace_id = base.WorkspaceId()
-    workspace_id: Union[str, base.WorkspaceId] = dataclasses.field(default=base.WorkspaceId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
     stac_client = base.StacClient()
 
 

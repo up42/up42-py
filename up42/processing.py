@@ -1,11 +1,10 @@
-import abc
 import dataclasses
 import datetime
 import enum
-from typing import ClassVar, Iterator, List, Optional, TypedDict, Union
+from collections.abc import Iterator
+from typing import TypedDict
 
 import pystac
-import requests
 import tenacity as tnc
 
 from up42 import base, host, utils
@@ -44,8 +43,8 @@ TERMINAL_STATUSES = [
 
 
 class JobResults(TypedDict, total=False):
-    collection: Optional[str]
-    errors: Optional[List[dict]]
+    collection: str | None
+    errors: list[dict] | None
 
 
 class JobMetadata(TypedDict):
@@ -53,14 +52,14 @@ class JobMetadata(TypedDict):
     processID: str
     jobID: str
     accountID: str
-    workspaceID: Optional[str]
+    workspaceID: str | None
     definition: dict
-    results: Optional[JobResults]
-    creditConsumption: Optional[dict]
+    results: JobResults | None
+    creditConsumption: dict | None
     status: str
     created: str
-    started: Optional[str]
-    finished: Optional[str]
+    started: str | None
+    finished: str | None
     updated: str
 
 
@@ -75,7 +74,7 @@ class JobSorting:
     credits = utils.SortingField("creditConsumption.credits", ascending=False)
 
 
-def _to_datetime(value: Optional[str]):
+def _to_datetime(value: str | None):
     return value and datetime.datetime.fromisoformat(value[:ISO_FORMAT_LENGTH])
 
 
@@ -86,19 +85,19 @@ class Job:
     process_id: str
     id: str
     account_id: str
-    workspace_id: Optional[str]
+    workspace_id: str | None
     definition: dict
     status: JobStatus
     created: datetime.datetime
     updated: datetime.datetime
-    collection_url: Optional[str] = None
-    errors: Optional[List[ValidationError]] = None
-    credits: Optional[int] = None
-    started: Optional[datetime.datetime] = None
-    finished: Optional[datetime.datetime] = None
+    collection_url: str | None = None
+    errors: list[ValidationError] | None = None
+    credits: int | None = None
+    started: datetime.datetime | None = None
+    finished: datetime.datetime | None = None
 
     @property
-    def collection(self) -> Optional[pystac.Collection]:
+    def collection(self) -> pystac.Collection | None:
         if self.collection_url is None:
             return None
         collection_id = self.collection_url.split("/")[-1]
@@ -156,16 +155,16 @@ class Job:
     @classmethod
     def all(
         cls,
-        process_id: Optional[List[str]] = None,
-        workspace_id: Optional[str] = None,
-        status: Optional[List[JobStatus]] = None,
-        min_duration: Optional[int] = None,
-        max_duration: Optional[int] = None,
-        sort_by: Optional[utils.SortingField] = None,
-        ids: Optional[List[str]] = None,
+        process_id: list[str] | None = None,
+        workspace_id: str | None = None,
+        status: list[JobStatus] | None = None,
+        min_duration: int | None = None,
+        max_duration: int | None = None,
+        sort_by: utils.SortingField | None = None,
+        ids: list[str] | None = None,
         *,
         # used for performance tuning and testing only
-        page_size: Optional[int] = None,
+        page_size: int | None = None,
     ) -> Iterator["Job"]:
         query_params = {
             key: str(value)
@@ -197,148 +196,30 @@ class Job:
                 yield Job.from_metadata(metadata)
 
 
-CostType = Union[int, float, "Cost"]
-
-
 @dataclasses.dataclass(frozen=True)
 class Cost:
     strategy: str
     credits: int
-    size: Optional[int] = None
-    unit: Optional[str] = None
+    size: int | None = None
+    unit: str | None = None
 
-    def __le__(self, other: CostType):
+    def __le__(self, other: "CostType"):
         if isinstance(other, Cost):
             return self.credits <= other.credits
         else:
             return self.credits <= other
 
-    def __lt__(self, other: CostType):
+    def __lt__(self, other: "CostType"):
         if isinstance(other, Cost):
             return self.credits < other.credits
         else:
             return self.credits < other
 
-    def __ge__(self, other: CostType):
+    def __ge__(self, other: "CostType"):
         return not self < other
 
-    def __gt__(self, other: CostType):
+    def __gt__(self, other: "CostType"):
         return not self <= other
 
 
-class JobTemplate:
-    session = base.Session()
-    process_id: ClassVar[str]
-    workspace_id: Union[str, base.WorkspaceId]
-    errors: set[ValidationError] = set()
-    process_description: dict = {}
-
-    @property
-    @abc.abstractmethod
-    def inputs(self) -> dict:
-        pass
-
-    def __post_init__(self):
-        self.__validate()
-        if self.is_valid:
-            self.__evaluate()
-
-    def __validate(self):
-        self.errors = self.__validate_process_exists() or self.__validate_eula() or self.__validate_inputs()
-
-    def __validate_process_exists(self) -> set[ValidationError]:
-        process_url = host.endpoint(f"/v2/processing/processes/{self.process_id}")
-        try:
-            self.process_description = self.session.get(process_url).json()
-        except requests.HTTPError as err:
-            if err.response.status_code == 404:
-                return {
-                    ValidationError(
-                        name="ProcessNotFound",
-                        message=f"The process {self.process_id} does not exist.",
-                    )
-                }
-            else:
-                raise err
-        return set()
-
-    def __validate_eula(self) -> set[ValidationError]:
-        eula_id = next(
-            parameter["value"][0]
-            for parameter in self.process_description["additionalParameters"]["parameters"]
-            if parameter["name"] == "eula-id"
-        )
-        eula_url = host.endpoint(f"/v2/eulas/{eula_id}")
-        eula = self.session.get(eula_url).json()
-        if not eula["isAccepted"]:
-            return {
-                ValidationError(
-                    name="EulaNotAccepted",
-                    message=f"EULA for the process {self.process_id} not accepted.",
-                )
-            }
-        return set()
-
-    def __validate_inputs(self) -> set[ValidationError]:
-        url = host.endpoint(f"/v2/processing/processes/{self.process_id}/validation")
-        try:
-            _ = self.session.post(url, json={"inputs": self.inputs})
-        except requests.HTTPError as err:
-            if (status_code := err.response.status_code) in (400, 422):
-                if status_code == 400:
-                    return {
-                        ValidationError(
-                            name="InvalidSchema",
-                            message=err.response.json()["schema-error"],
-                        )
-                    }
-                if status_code == 422:
-                    errors = err.response.json()["errors"]
-                    return {ValidationError(**error) for error in errors}
-            else:
-                raise err
-        return set()
-
-    def __evaluate(self):
-        url = host.endpoint(f"/v2/processing/processes/{self.process_id}/cost")
-        payload = self.session.post(url, json={"inputs": self.inputs}).json()
-        self.cost = Cost(
-            strategy=payload["pricingStrategy"],
-            credits=payload["totalCredits"],
-            size=payload.get("totalSize"),
-            unit=payload.get("unit"),
-        )
-
-    @property
-    def is_valid(self) -> bool:
-        return not self.errors
-
-    def execute(self) -> Job:
-        url = host.endpoint(f"/v2/processing/processes/{self.process_id}/execution")
-        job_metadata = self.session.post(
-            url, params={"workspaceId": self.workspace_id}, json={"inputs": self.inputs}
-        ).json()
-        return Job.from_metadata(job_metadata)
-
-
-@dataclasses.dataclass
-class SingleItemJobTemplate(JobTemplate):
-    title: str
-    item: pystac.Item
-
-    @property
-    def inputs(self) -> dict:
-        return {"title": self.title, "item": self.item.get_self_href()}
-
-
-@dataclasses.dataclass
-class MultiItemJobTemplate(JobTemplate):
-    title: str
-    items: List[pystac.Item]
-
-    @property
-    def inputs(self) -> dict:
-        return {
-            "title": self.title,
-            "items": [item.get_self_href() for item in self.items],
-        }
+CostType = int | float | Cost

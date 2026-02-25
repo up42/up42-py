@@ -17,7 +17,8 @@
     ```
 """
 
-from typing import Callable, Type, Union, cast
+from collections.abc import Callable
+from typing import cast
 
 # pylint: disable=only-importing-modules-is-allowed
 from up42.base import authenticate, stac_client
@@ -27,7 +28,7 @@ from up42.order_template import BatchOrderTemplate
 from up42.processing import Job, JobSorting, JobStatus
 from up42.stac import BulkDeletion
 from up42.stac import extend as stac_extend
-from up42.tasking import FeasibilityStudy, FeasibilityStudySorting, Quotation, QuotationSorting
+from up42.tasking import FeasibilityStudy, FeasibilityStudySorting, OrderCoverage, Quotation, QuotationSorting
 from up42.utils import get_up42_py_version
 from up42.version import version_control
 
@@ -38,7 +39,7 @@ version_control.check_is_latest_version(__version__)
 
 __all__ = [
     cast(
-        Union[Type, Callable],
+        type | Callable,
         obj,
     ).__name__
     for obj in [
@@ -59,5 +60,6 @@ __all__ = [
         FeasibilityStudy,
         FeasibilityStudySorting,
         BulkDeletion,
+        OrderCoverage,
     ]
 ]

@@ -1,9 +1,10 @@
 import dataclasses
 import urllib.parse
 import uuid
-from typing import Any, List, Optional
+from typing import Any
 
 import pytest
+import requests
 import requests_mock as req_mock
 
 from tests import constants, helpers
@@ -29,6 +30,8 @@ POLYGON = {
 QUOTATION_ID = "805b1f27-1025-43d2-90d0-0bd3416238fb"
 FEASIBILITY_ID = "6f93f754-5594-42da-b6af-9064225b89e9"
 ACCOUNT_ID = str(uuid.uuid4())
+
+COVERAGE_URL = f"{constants.API_HOST}/v2/coverage/orders/{constants.ORDER_ID}"
 
 
 class TestQuotation:
@@ -97,11 +100,11 @@ class TestQuotation:
     def test_should_get_all(
         self,
         requests_mock: req_mock.Mocker,
-        quotation_id: Optional[str],
-        workspace_id: Optional[str],
-        order_id: Optional[str],
-        decision: Optional[List[tasking.QuotationStatus]],
-        sort_by: Optional[utils.SortingField],
+        quotation_id: str | None,
+        workspace_id: str | None,
+        order_id: str | None,
+        decision: list[tasking.QuotationStatus] | None,
+        sort_by: utils.SortingField | None,
     ):
         query_params: dict[str, Any] = {}
         if quotation_id:
@@ -186,11 +189,11 @@ class TestFeasibilityStudy:
     def test_should_get_all(
         self,
         requests_mock: req_mock.Mocker,
-        feasibility_study_id: Optional[str],
-        workspace_id: Optional[str],
-        order_id: Optional[str],
-        decision: Optional[List[tasking.FeasibilityStatus]],
-        sort_by: Optional[utils.SortingField],
+        feasibility_study_id: str | None,
+        workspace_id: str | None,
+        order_id: str | None,
+        decision: list[tasking.FeasibilityStatus] | None,
+        sort_by: utils.SortingField | None,
     ):
         query_params: dict[str, Any] = {}
         if feasibility_study_id:
@@ -251,3 +254,73 @@ class TestFeasibilityStudy:
             feasibility_study.NoDecisionOptionChosen, match="No decision option chosen for this feasibility study."
         ):
             feasibility_study.save()
+
+
+@pytest.fixture(name="coverage_metadata")
+def _coverage_metadata():
+    return {
+        "covered": {
+            "sqKmArea": 78.5,
+            "percentage": 85.0,
+            "geometry": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [[[13.375966, 52.515068], [13.375966, 52.516068], [13.376966, 52.516068]]],
+                        },
+                        "properties": {},
+                    }
+                ],
+            },
+        },
+        "remainder": {
+            "sqKmArea": 13.8,
+            "percentage": 15.0,
+            "geometry": {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [[[13.376966, 52.515068], [13.376966, 52.516068], [13.377966, 52.516068]]],
+                        },
+                        "properties": {},
+                    }
+                ],
+            },
+        },
+    }
+
+
+class TestOrderCoverage:
+    def test_should_get_order_coverage(self, requests_mock: req_mock.Mocker, coverage_metadata: dict):
+        requests_mock.get(url=COVERAGE_URL, json=coverage_metadata)
+        order_coverage = tasking.OrderCoverage.get(order_id=constants.ORDER_ID)
+
+        print(order_coverage)
+        assert isinstance(order_coverage, tasking.OrderCoverage)
+        assert isinstance(order_coverage.covered, tasking.GeometryMetrics)
+        assert isinstance(order_coverage.remainder, tasking.GeometryMetrics)
+
+        # Assert covered metrics
+        assert order_coverage.covered.sq_km_area == 78.5
+        assert order_coverage.covered.percentage == 85.0
+        assert order_coverage.covered.geometry["type"] == "FeatureCollection"
+        assert len(order_coverage.covered.geometry["features"]) == 1
+
+        # Assert remainder metrics
+        assert order_coverage.remainder.sq_km_area == 13.8
+        assert order_coverage.remainder.percentage == 15.0
+        assert order_coverage.remainder.geometry["type"] == "FeatureCollection"
+        assert len(order_coverage.remainder.geometry["features"]) == 1
+
+    @pytest.mark.parametrize("status_code", [400, 401, 403, 404, 500, 503])
+    def test_should_handle_http_errors(self, requests_mock: req_mock.Mocker, status_code: int):
+        requests_mock.get(url=COVERAGE_URL, status_code=status_code)
+        with pytest.raises(requests.HTTPError) as exc_info:
+            tasking.OrderCoverage.get(order_id=constants.ORDER_ID)
+        assert exc_info.value.response.status_code == status_code

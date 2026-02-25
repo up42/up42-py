@@ -1,4 +1,5 @@
-from typing import Callable
+from collections.abc import Callable
+from typing import TypeAlias
 
 import requests
 
@@ -7,7 +8,7 @@ from up42.http import http_adapter
 
 SCHEMAS = ["http", "https"]
 REPOSITORY_URL = "https://github.com/up42/up42-py"
-HttpAdapterFactory = Callable[[], requests.adapters.HTTPAdapter]
+HttpAdapterFactory: TypeAlias = Callable[[], requests.adapters.HTTPAdapter]
 
 
 class StatusValidatingSession(requests.Session):

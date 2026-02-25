@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 
 from requests import adapters
 from urllib3 import util
