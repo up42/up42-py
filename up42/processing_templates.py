@@ -26,10 +26,16 @@ class JobTemplate:
             self.__evaluate()
 
     def __validate(self):
-        self.errors = self.__validate_process_exists() or self.__validate_eula() or self.__validate_inputs()
+        self.errors = (
+            self.__validate_process_exists()
+            or self.__validate_eula()
+            or self.__validate_inputs()
+        )
 
     def __validate_process_exists(self) -> set[processing.ValidationError]:
-        process_url = host.endpoint(f"/v2/processing/processes/{self.process_id}")
+        process_url = host.endpoint(
+            f"/v2/processing/processes/{self.process_id}"
+        )
         try:
             self.process_description = self.session.get(process_url).json()
         except requests.HTTPError as err:
@@ -47,7 +53,9 @@ class JobTemplate:
     def __validate_eula(self) -> set[processing.ValidationError]:
         eula_id = next(
             parameter["value"][0]
-            for parameter in self.process_description["additionalParameters"]["parameters"]
+            for parameter in self.process_description["additionalParameters"][
+                "parameters"
+            ]
             if parameter["name"] == "eula-id"
         )
         eula_url = host.endpoint(f"/v2/eulas/{eula_id}")
@@ -62,7 +70,9 @@ class JobTemplate:
         return set()
 
     def __validate_inputs(self) -> set[processing.ValidationError]:
-        url = host.endpoint(f"/v2/processing/processes/{self.process_id}/validation")
+        url = host.endpoint(
+            f"/v2/processing/processes/{self.process_id}/validation"
+        )
         try:
             _ = self.session.post(url, json={"inputs": self.inputs})
         except requests.HTTPError as err:
@@ -76,7 +86,9 @@ class JobTemplate:
                     }
                 if status_code == 422:
                     errors = err.response.json()["errors"]
-                    return {processing.ValidationError(**error) for error in errors}
+                    return {
+                        processing.ValidationError(**error) for error in errors
+                    }
             else:
                 raise err
         return set()
@@ -96,9 +108,13 @@ class JobTemplate:
         return not self.errors
 
     def execute(self) -> processing.Job:
-        url = host.endpoint(f"/v2/processing/processes/{self.process_id}/execution")
+        url = host.endpoint(
+            f"/v2/processing/processes/{self.process_id}/execution"
+        )
         job_metadata = self.session.post(
-            url, params={"workspaceId": self.workspace_id}, json={"inputs": self.inputs}
+            url,
+            params={"workspaceId": self.workspace_id},
+            json={"inputs": self.inputs},
         ).json()
         return processing.Job.from_metadata(job_metadata)
 
@@ -129,12 +145,16 @@ class MultiItemJobTemplate(JobTemplate):
 # TODO: drop these with Python 3.10 kw_only=True data classes
 @dataclasses.dataclass
 class WorkspaceIdSingleItemTemplate(SingleItemJobTemplate):
-    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(
+        default=base.WorkspaceId()
+    )
 
 
 @dataclasses.dataclass
 class WorkspaceIdMultiItemTemplate(MultiItemJobTemplate):
-    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(
+        default=base.WorkspaceId()
+    )
 
 
 @dataclasses.dataclass
@@ -202,7 +222,9 @@ class SimularityJobTemplate(JobTemplate):
     title: str
     source_item: pystac.Item
     reference_item: pystac.Item
-    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(
+        default=base.WorkspaceId()
+    )
 
     @property
     def inputs(self) -> dict:
@@ -238,12 +260,20 @@ class GreyWeight:
 @dataclasses.dataclass
 class Pansharpening(SingleItemJobTemplate):
     grey_weights: list[GreyWeight] | None = None
-    workspace_id: str | base.WorkspaceId = dataclasses.field(default=base.WorkspaceId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(
+        default=base.WorkspaceId()
+    )
     process_id = "pansharpening"
 
     @property
     def inputs(self):
         weights = (
-            {"greyWeights": [dataclasses.asdict(weight) for weight in self.grey_weights]} if self.grey_weights else {}
+            {
+                "greyWeights": [
+                    dataclasses.asdict(weight) for weight in self.grey_weights
+                ]
+            }
+            if self.grey_weights
+            else {}
         )
         return {**super().inputs, **weights}

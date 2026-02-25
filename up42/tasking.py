@@ -48,7 +48,9 @@ class Quotation:
 
     def save(self):
         url = host.endpoint(f"/v2/tasking/quotation/{self.id}")
-        metadata = self.session.patch(url, json={"decision": self.decision}).json()
+        metadata = self.session.patch(
+            url, json={"decision": self.decision}
+        ).json()
         quotation = self._from_metadata(metadata)
         for field in dataclasses.fields(quotation):
             setattr(self, field.name, getattr(quotation, field.name))
@@ -136,14 +138,18 @@ class FeasibilityStudy:
         }
         return map(
             cls._from_metadata,
-            utils.paged_query(params, "/v2/tasking/feasibility-studies", cls.session),
+            utils.paged_query(
+                params, "/v2/tasking/feasibility-studies", cls.session
+            ),
         )
 
     @staticmethod
     def _from_metadata(metadata: dict) -> "FeasibilityStudy":
         decision_option = metadata.get("decisionOption")
         if decision_option is not None:
-            decision_option = FeasibilityStudyDecisionOption(decision_option["id"], decision_option["description"])
+            decision_option = FeasibilityStudyDecisionOption(
+                decision_option["id"], decision_option["description"]
+            )
         return FeasibilityStudy(
             id=metadata["id"],
             created_at=metadata["createdAt"],
@@ -167,7 +173,9 @@ class FeasibilityStudy:
                 "No decision option chosen for this feasibility study. "
                 "Please call 'accept' with a valid option ID before saving."
             )
-        metadata = self.session.patch(url, json={"acceptedOptionId": self.decision_option.id}).json()
+        metadata = self.session.patch(
+            url, json={"acceptedOptionId": self.decision_option.id}
+        ).json()
         feasibility_study = self._from_metadata(metadata)
         for field in dataclasses.fields(feasibility_study):
             setattr(self, field.name, getattr(feasibility_study, field.name))

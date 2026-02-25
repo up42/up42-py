@@ -66,11 +66,19 @@ class TestQuotation:
     def test_should_reject(self):
         undecided = dataclasses.replace(self.quotation, decision="NOT_DECIDED")
         undecided.reject()
-        assert undecided == dataclasses.replace(self.quotation, decision="REJECTED")
+        assert undecided == dataclasses.replace(
+            self.quotation, decision="REJECTED"
+        )
 
     @pytest.mark.parametrize("decision", ["ACCEPTED", "REJECTED"])
-    def test_should_save(self, requests_mock: req_mock.Mocker, decision: tasking.QuotationDecision):
-        undecided = dataclasses.replace(self.quotation, decision="NOT_DECIDED", decided_at=None)
+    def test_should_save(
+        self,
+        requests_mock: req_mock.Mocker,
+        decision: tasking.QuotationDecision,
+    ):
+        undecided = dataclasses.replace(
+            self.quotation, decision="NOT_DECIDED", decided_at=None
+        )
         patch = {"decision": decision}
         url = f"{constants.API_HOST}/v2/tasking/quotation/{QUOTATION_ID}"
         requests_mock.patch(
@@ -80,12 +88,18 @@ class TestQuotation:
         )
         undecided.decision = decision
         undecided.save()
-        assert undecided == dataclasses.replace(self.quotation, decision=decision)
+        assert undecided == dataclasses.replace(
+            self.quotation, decision=decision
+        )
 
     @pytest.mark.parametrize("quotation_id", [None, QUOTATION_ID])
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize("order_id", [None, constants.ORDER_ID])
-    @pytest.mark.parametrize("decision", [None, ["ACCEPTED", "REJECTED", "NOT_DECIDED"], ["ACCEPTED"]], ids=str)
+    @pytest.mark.parametrize(
+        "decision",
+        [None, ["ACCEPTED", "REJECTED", "NOT_DECIDED"], ["ACCEPTED"]],
+        ids=str,
+    )
     @pytest.mark.parametrize(
         "sort_by",
         [
@@ -175,7 +189,9 @@ class TestFeasibilityStudy:
     @pytest.mark.parametrize("feasibility_study_id", [None, FEASIBILITY_ID])
     @pytest.mark.parametrize("workspace_id", [None, WORKSPACE_ID])
     @pytest.mark.parametrize("order_id", [None, ORDER_ID])
-    @pytest.mark.parametrize("decision", [None, ["NOT_DECIDED", "ACCEPTED"], ["ACCEPTED"]])
+    @pytest.mark.parametrize(
+        "decision", [None, ["NOT_DECIDED", "ACCEPTED"], ["ACCEPTED"]]
+    )
     @pytest.mark.parametrize(
         "sort_by",
         [
@@ -228,17 +244,26 @@ class TestFeasibilityStudy:
         assert list(feasibility_studies) == [self.feasibility_study] * 4
 
     def test_should_accept(self):
-        feasibility_study = dataclasses.replace(self.feasibility_study, decision_option=None)
+        feasibility_study = dataclasses.replace(
+            self.feasibility_study, decision_option=None
+        )
         feasibility_study.accept(self.OPTION_ID)
         assert feasibility_study.decision_option.id == self.OPTION_ID  # type: ignore[union-attr]
 
     def test_should_save(self, requests_mock: req_mock.Mocker):
-        feasibility_study = dataclasses.replace(self.feasibility_study, decision_option=None)
+        feasibility_study = dataclasses.replace(
+            self.feasibility_study, decision_option=None
+        )
         feasibility_study.accept(self.OPTION_ID)
         patch = {"acceptedOptionId": self.OPTION_ID}
         url = f"{constants.API_HOST}/v2/tasking/feasibility-studies/{self.FEASIBILITY_ID}"
         expected_description = "description"
-        expected_json = self.metadata | {"decisionOption": {"id": self.OPTION_ID, "description": expected_description}}
+        expected_json = self.metadata | {
+            "decisionOption": {
+                "id": self.OPTION_ID,
+                "description": expected_description,
+            }
+        }
         requests_mock.patch(
             url=url,
             json=expected_json,
@@ -249,9 +274,12 @@ class TestFeasibilityStudy:
         assert feasibility_study.decision_option.description == expected_description  # type: ignore[union-attr]
 
     def test_should_raise_if_no_decision_option_on_save(self):
-        feasibility_study = dataclasses.replace(self.feasibility_study, decision_option=None)
+        feasibility_study = dataclasses.replace(
+            self.feasibility_study, decision_option=None
+        )
         with pytest.raises(
-            feasibility_study.NoDecisionOptionChosen, match="No decision option chosen for this feasibility study."
+            feasibility_study.NoDecisionOptionChosen,
+            match="No decision option chosen for this feasibility study.",
         ):
             feasibility_study.save()
 
@@ -269,7 +297,13 @@ def _coverage_metadata():
                         "type": "Feature",
                         "geometry": {
                             "type": "Polygon",
-                            "coordinates": [[[13.375966, 52.515068], [13.375966, 52.516068], [13.376966, 52.516068]]],
+                            "coordinates": [
+                                [
+                                    [13.375966, 52.515068],
+                                    [13.375966, 52.516068],
+                                    [13.376966, 52.516068],
+                                ]
+                            ],
                         },
                         "properties": {},
                     }
@@ -286,7 +320,13 @@ def _coverage_metadata():
                         "type": "Feature",
                         "geometry": {
                             "type": "Polygon",
-                            "coordinates": [[[13.376966, 52.515068], [13.376966, 52.516068], [13.377966, 52.516068]]],
+                            "coordinates": [
+                                [
+                                    [13.376966, 52.515068],
+                                    [13.376966, 52.516068],
+                                    [13.377966, 52.516068],
+                                ]
+                            ],
                         },
                         "properties": {},
                     }
@@ -297,7 +337,9 @@ def _coverage_metadata():
 
 
 class TestOrderCoverage:
-    def test_should_get_order_coverage(self, requests_mock: req_mock.Mocker, coverage_metadata: dict):
+    def test_should_get_order_coverage(
+        self, requests_mock: req_mock.Mocker, coverage_metadata: dict
+    ):
         requests_mock.get(url=COVERAGE_URL, json=coverage_metadata)
         order_coverage = tasking.OrderCoverage.get(order_id=constants.ORDER_ID)
 
@@ -319,7 +361,9 @@ class TestOrderCoverage:
         assert len(order_coverage.remainder.geometry["features"]) == 1
 
     @pytest.mark.parametrize("status_code", [400, 401, 403, 404, 500, 503])
-    def test_should_handle_http_errors(self, requests_mock: req_mock.Mocker, status_code: int):
+    def test_should_handle_http_errors(
+        self, requests_mock: req_mock.Mocker, status_code: int
+    ):
         requests_mock.get(url=COVERAGE_URL, status_code=status_code)
         with pytest.raises(requests.HTTPError) as exc_info:
             tasking.OrderCoverage.get(order_id=constants.ORDER_ID)

@@ -31,7 +31,9 @@ def get_filename(signed_url: str, default_filename: str) -> str:
     parsed_url = parse.urlparse(signed_url)
     extension = pathlib.Path(parsed_url.path).suffix
     try:
-        file_name = parse.parse_qs(parsed_url.query)["response-content-disposition"][0].split("filename=")[1]
+        file_name = parse.parse_qs(parsed_url.query)[
+            "response-content-disposition"
+        ][0].split("filename=")[1]
         return f"{file_name}{extension}"
     except (IndexError, KeyError):
         warnings.warn(
@@ -84,7 +86,11 @@ def deprecation(
     def actual_decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            replace_with = f" Use `{replacement_name}` instead." if replacement_name else ""
+            replace_with = (
+                f" Use `{replacement_name}` instead."
+                if replacement_name
+                else ""
+            )
             message = f"`{func.__name__}` is deprecated and will be removed in version {version}{replace_with}."
             warnings.warn(message, DeprecationWarning, stacklevel=2)
             return func(*args, **kwargs)
@@ -94,7 +100,9 @@ def deprecation(
     return actual_decorator
 
 
-def _unpack_tar_files(file_path: str, output_directory: str | pathlib.Path) -> list[pathlib.Path]:
+def _unpack_tar_files(
+    file_path: str, output_directory: str | pathlib.Path
+) -> list[pathlib.Path]:
     out_filepaths: list[pathlib.Path] = []
     if tarfile.is_tarfile(file_path):
         with tarfile.open(file_path) as tar_file:
@@ -103,20 +111,28 @@ def _unpack_tar_files(file_path: str, output_directory: str | pathlib.Path) -> l
                     if "output/" in tar_member.name:
                         tar_member.name = tar_member.name.split("output/")[1]
                     tar_file.extract(tar_member, output_directory)
-                    out_filepaths.append(pathlib.Path(output_directory) / tar_member.name)
+                    out_filepaths.append(
+                        pathlib.Path(output_directory) / tar_member.name
+                    )
     return out_filepaths
 
 
-def _unpack_zip_files(file_path: str, output_directory: str | pathlib.Path) -> list[pathlib.Path]:
+def _unpack_zip_files(
+    file_path: str, output_directory: str | pathlib.Path
+) -> list[pathlib.Path]:
     out_filepaths: list[pathlib.Path] = []
     if zipfile.is_zipfile(file_path):
         with zipfile.ZipFile(file_path) as zip_file:
             for zip_info in zip_file.infolist():
                 if not zip_info.filename.endswith("/"):
                     if "output/" in zip_info.filename:
-                        zip_info.filename = zip_info.filename.split("output/")[1]
+                        zip_info.filename = zip_info.filename.split("output/")[
+                            1
+                        ]
                     zip_file.extract(zip_info, output_directory)
-                    out_filepaths.append(pathlib.Path(output_directory) / zip_info.filename)
+                    out_filepaths.append(
+                        pathlib.Path(output_directory) / zip_info.filename
+                    )
     return out_filepaths
 
 
@@ -147,10 +163,14 @@ def download_archive(
             logger.debug(error_message)
             raise requests.exceptions.HTTPError(error_message)
         # Order results are zip, job results are tgz(tar.gzipped)
-        out_filepaths = _unpack_tar_files(dst.name, output_directory) + _unpack_zip_files(dst.name, output_directory)
+        out_filepaths = _unpack_tar_files(
+            dst.name, output_directory
+        ) + _unpack_zip_files(dst.name, output_directory)
 
         if not out_filepaths:
-            raise UnsupportedArchive("Downloaded file is not a TGZ/TAR or ZIP archive.")
+            raise UnsupportedArchive(
+                "Downloaded file is not a TGZ/TAR or ZIP archive."
+            )
         logger.info(
             "Download successful of %s files to output_directory %s",
             len(out_filepaths),
@@ -167,7 +187,9 @@ class UnsupportedArchive(ValueError):
 class ImageFile:
     url: str
     file_name: str = "output"
-    session: requests.Session = dataclasses.field(default=requests.session(), repr=False, compare=False)
+    session: requests.Session = dataclasses.field(
+        default=requests.session(), repr=False, compare=False
+    )
 
     def download(self, output_directory: str | pathlib.Path) -> pathlib.Path:
         file_name = get_filename(self.url, default_filename=self.file_name)
@@ -181,13 +203,17 @@ class ImageFile:
                         dst.write(chunk)
             except requests.exceptions.HTTPError as err:
                 logger.debug("Connection error, please try again! %s", err)
-                raise requests.exceptions.HTTPError(f"Connection error, please try again! {err}")
+                raise requests.exceptions.HTTPError(
+                    f"Connection error, please try again! {err}"
+                )
 
             logger.info("Successfully downloaded the file at %s", path)
             return path
 
 
-def download_file(download_url: str, output_directory: str | pathlib.Path) -> list[str]:
+def download_file(
+    download_url: str, output_directory: str | pathlib.Path
+) -> list[str]:
     """
     General download function for assets, job and jobtasks from cloud storage
     provider.
@@ -214,11 +240,15 @@ def format_time(date: str | datetime.datetime | None, set_end_of_day=False):
         has_time_of_day = len(date) > 11
         date = datetime.datetime.fromisoformat(date)
         if not has_time_of_day and set_end_of_day:
-            date = datetime.datetime.combine(date.date(), datetime.time(23, 59, 59, 999999))
+            date = datetime.datetime.combine(
+                date.date(), datetime.time(23, 59, 59, 999999)
+            )
     elif isinstance(date, datetime.datetime):
         pass
     else:
-        raise ValueError("date needs to be of type datetime or isoformat date string!")
+        raise ValueError(
+            "date needs to be of type datetime or isoformat date string!"
+        )
 
     return date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -227,7 +257,9 @@ def validate_fc_up42_requirements(fc: dict | geojson.FeatureCollection):
     """
     Validate the feature collection if it fits UP42 geometry requirements.
     """
-    geometry_error = "UP42 only accepts single geometries, the provided geometry {}."
+    geometry_error = (
+        "UP42 only accepts single geometries, the provided geometry {}."
+    )
     if len(fc["features"]) != 1:
         raise ValueError(geometry_error.format("contains multiple geometries"))
 
@@ -254,7 +286,9 @@ def read_json(path_or_dict: dict | str | pathlib.Path | None) -> dict | None:
 def stac_client(auth: requests.auth.AuthBase):
     # pystac client accepts both returning and non-returning request modifiers
     # requests.auth.AuthBase is a returning request modifier interface
-    request_modifier = cast(Callable[[requests.Request], requests.Request | None], auth)
+    request_modifier = cast(
+        Callable[[requests.Request], requests.Request | None], auth
+    )
     return pystac_client.Client.open(
         url=host.endpoint("/v2/assets/stac/"),
         request_modifier=request_modifier,
@@ -279,13 +313,17 @@ class SortingField:
         return f"{self.name},{order}"
 
 
-def paged_query(params: dict[str, Any], endpoint: str, session: requests.Session):
+def paged_query(
+    params: dict[str, Any], endpoint: str, session: requests.Session
+):
     params = {key: value for key, value in params.items() if value is not None}
     params["page"] = 0
 
     def get_pages():
         while True:
-            response = session.get(host.endpoint(endpoint), params=params).json()
+            response = session.get(
+                host.endpoint(endpoint), params=params
+            ).json()
             yield response["content"]
             params["page"] += 1
             if params["page"] >= response["totalPages"]:

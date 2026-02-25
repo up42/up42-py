@@ -55,15 +55,22 @@ class TestParameterlessTemplates:
         ],
     )
     def test_should_construct_single_item_job_templates(self, template_class):
-        template = template_class(title=tpc.TITLE, item=item, workspace_id=constants.WORKSPACE_ID)
+        template = template_class(
+            title=tpc.TITLE, item=item, workspace_id=constants.WORKSPACE_ID
+        )
         assert template.is_valid and template.cost == COST
         assert template.inputs == {"title": tpc.TITLE, "item": tpc.ITEM_URL}
 
 
 @pytest.mark.usefixtures("template_post_init")
 class TestPansharpening:
-    @pytest.mark.parametrize("grey_weight", [templates.GreyWeight(band="red", weight=random.random()), None])
-    def test_should_construct_template(self, grey_weight: templates.GreyWeight | None):
+    @pytest.mark.parametrize(
+        "grey_weight",
+        [templates.GreyWeight(band="red", weight=random.random()), None],
+    )
+    def test_should_construct_template(
+        self, grey_weight: templates.GreyWeight | None
+    ):
         template = templates.Pansharpening(
             title=tpc.TITLE,
             item=item,
@@ -71,10 +78,20 @@ class TestPansharpening:
             workspace_id=constants.WORKSPACE_ID,
         )
         grey_weights = (
-            {"greyWeights": [{"band": grey_weight.band, "weight": grey_weight.weight}]} if grey_weight else {}
+            {
+                "greyWeights": [
+                    {"band": grey_weight.band, "weight": grey_weight.weight}
+                ]
+            }
+            if grey_weight
+            else {}
         )
         assert template.is_valid and template.cost == COST
-        assert template.inputs == {"title": tpc.TITLE, "item": tpc.ITEM_URL, **grey_weights}
+        assert template.inputs == {
+            "title": tpc.TITLE,
+            "item": tpc.ITEM_URL,
+            **grey_weights,
+        }
 
 
 @pytest.mark.usefixtures("template_post_init")
@@ -119,7 +136,9 @@ class TestMultiItemJobTemplate:
     @pytest.mark.usefixtures("process_found_and_eula_accepted")
     def test_should_provide_inputs(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="discount", credits=-1)
-        body_matcher = helpers.match_request_body({"inputs": {"title": tpc.TITLE, "items": [tpc.ITEM_URL]}})
+        body_matcher = helpers.match_request_body(
+            {"inputs": {"title": tpc.TITLE, "items": [tpc.ITEM_URL]}}
+        )
         requests_mock.post(
             tpc.VALIDATION_URL,
             status_code=200,
@@ -128,7 +147,10 @@ class TestMultiItemJobTemplate:
         requests_mock.post(
             tpc.COST_URL,
             status_code=200,
-            json={"pricingStrategy": cost.strategy, "totalCredits": cost.credits},
+            json={
+                "pricingStrategy": cost.strategy,
+                "totalCredits": cost.credits,
+            },
             additional_matcher=body_matcher,
         )
         template = SampleMultiItemJobTemplate(
@@ -149,7 +171,9 @@ class TestSingleItemJobTemplate:
     @pytest.mark.usefixtures("process_found_and_eula_accepted")
     def test_should_provide_inputs(self, requests_mock: req_mock.Mocker):
         cost = processing.Cost(strategy="discount", credits=-1)
-        body_matcher = helpers.match_request_body({"inputs": {"title": tpc.TITLE, "item": tpc.ITEM_URL}})
+        body_matcher = helpers.match_request_body(
+            {"inputs": {"title": tpc.TITLE, "item": tpc.ITEM_URL}}
+        )
         requests_mock.post(
             tpc.VALIDATION_URL,
             status_code=200,
@@ -158,7 +182,10 @@ class TestSingleItemJobTemplate:
         requests_mock.post(
             tpc.COST_URL,
             status_code=200,
-            json={"pricingStrategy": cost.strategy, "totalCredits": cost.credits},
+            json={
+                "pricingStrategy": cost.strategy,
+                "totalCredits": cost.credits,
+            },
             additional_matcher=body_matcher,
         )
         template = SampleSingleItemJobTemplate(
@@ -182,7 +209,9 @@ class SampleJobTemplate(templates.JobTemplate):
 
 
 class TestJobTemplate:
-    def test_should_fail_to_construct_if_getting_process_fails(self, requests_mock: req_mock.Mocker):
+    def test_should_fail_to_construct_if_getting_process_fails(
+        self, requests_mock: req_mock.Mocker
+    ):
         error_code = random.choice([x for x in range(400, 599) if x != 404])
 
         requests_mock.get(
@@ -193,7 +222,9 @@ class TestJobTemplate:
             _ = SampleJobTemplate(title=tpc.TITLE)
         assert error.value.response.status_code == error_code
 
-    def test_should_be_invalid_if_process_not_found(self, requests_mock: req_mock.Mocker):
+    def test_should_be_invalid_if_process_not_found(
+        self, requests_mock: req_mock.Mocker
+    ):
         error = processing.ValidationError(
             name="ProcessNotFound",
             message=f"The process {tpc.PROCESS_ID} does not exist.",
@@ -203,7 +234,9 @@ class TestJobTemplate:
         assert not template.is_valid
         assert template.errors == {error}
 
-    def test_should_be_invalid_if_eula_not_accepted(self, requests_mock: req_mock.Mocker):
+    def test_should_be_invalid_if_eula_not_accepted(
+        self, requests_mock: req_mock.Mocker
+    ):
         error = processing.ValidationError(
             name="EulaNotAccepted",
             message=f"EULA for the process {tpc.PROCESS_ID} not accepted.",
@@ -215,32 +248,49 @@ class TestJobTemplate:
         assert template.errors == {error}
 
     @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_fails_to_construct_if_validation_fails(self, requests_mock: req_mock.Mocker):
+    def test_fails_to_construct_if_validation_fails(
+        self, requests_mock: req_mock.Mocker
+    ):
         error_code = random.randint(430, 599)
         requests_mock.post(
             tpc.VALIDATION_URL,
             status_code=error_code,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": tpc.TITLE}}),
+            additional_matcher=helpers.match_request_body(
+                {"inputs": {"title": tpc.TITLE}}
+            ),
         )
         with pytest.raises(requests.exceptions.HTTPError) as error:
             _ = SampleJobTemplate(title=tpc.TITLE)
         assert error.value.response.status_code == error_code
 
     @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_should_be_invalid_if_inputs_are_malformed(self, requests_mock: req_mock.Mocker):
-        error = processing.ValidationError(name="InvalidSchema", message="data.inputs must contain ['item'] properties")
+    def test_should_be_invalid_if_inputs_are_malformed(
+        self, requests_mock: req_mock.Mocker
+    ):
+        error = processing.ValidationError(
+            name="InvalidSchema",
+            message="data.inputs must contain ['item'] properties",
+        )
         requests_mock.post(
             tpc.VALIDATION_URL,
             status_code=400,
-            json={"title": "Bad Request", "status": 400, "schema-error": error.message},
-            additional_matcher=helpers.match_request_body({"inputs": {"title": tpc.TITLE}}),
+            json={
+                "title": "Bad Request",
+                "status": 400,
+                "schema-error": error.message,
+            },
+            additional_matcher=helpers.match_request_body(
+                {"inputs": {"title": tpc.TITLE}}
+            ),
         )
         template = SampleJobTemplate(title=tpc.TITLE)
         assert not template.is_valid
         assert template.errors == {error}
 
     @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_should_be_invalid_if_inputs_are_invalid(self, requests_mock: req_mock.Mocker):
+    def test_should_be_invalid_if_inputs_are_invalid(
+        self, requests_mock: req_mock.Mocker
+    ):
         requests_mock.post(
             tpc.VALIDATION_URL,
             status_code=422,
@@ -249,24 +299,32 @@ class TestJobTemplate:
                 "status": 422,
                 "errors": [dataclasses.asdict(tpc.INVALID_TITLE_ERROR)],
             },
-            additional_matcher=helpers.match_request_body({"inputs": {"title": tpc.TITLE}}),
+            additional_matcher=helpers.match_request_body(
+                {"inputs": {"title": tpc.TITLE}}
+            ),
         )
         template = SampleJobTemplate(title=tpc.TITLE)
         assert not template.is_valid
         assert template.errors == {tpc.INVALID_TITLE_ERROR}
 
     @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_fails_to_construct_if_evaluation_fails(self, requests_mock: req_mock.Mocker):
+    def test_fails_to_construct_if_evaluation_fails(
+        self, requests_mock: req_mock.Mocker
+    ):
         error_code = random.randint(400, 599)
         requests_mock.post(
             tpc.VALIDATION_URL,
             status_code=200,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": tpc.TITLE}}),
+            additional_matcher=helpers.match_request_body(
+                {"inputs": {"title": tpc.TITLE}}
+            ),
         )
         requests_mock.post(
             tpc.COST_URL,
             status_code=error_code,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": tpc.TITLE}}),
+            additional_matcher=helpers.match_request_body(
+                {"inputs": {"title": tpc.TITLE}}
+            ),
         )
 
         with pytest.raises(requests.exceptions.HTTPError) as error:
@@ -281,11 +339,15 @@ class TestJobTemplate:
         ],
     )
     @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_should_construct(self, requests_mock: req_mock.Mocker, cost: processing.Cost):
+    def test_should_construct(
+        self, requests_mock: req_mock.Mocker, cost: processing.Cost
+    ):
         requests_mock.post(
             tpc.VALIDATION_URL,
             status_code=200,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": tpc.TITLE}}),
+            additional_matcher=helpers.match_request_body(
+                {"inputs": {"title": tpc.TITLE}}
+            ),
         )
         cost_payload = {
             key: value
@@ -301,7 +363,9 @@ class TestJobTemplate:
             tpc.COST_URL,
             status_code=200,
             json=cost_payload,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": tpc.TITLE}}),
+            additional_matcher=helpers.match_request_body(
+                {"inputs": {"title": tpc.TITLE}}
+            ),
         )
         template = SampleJobTemplate(title=tpc.TITLE)
         assert template.is_valid
@@ -314,20 +378,29 @@ class TestJobTemplate:
         requests_mock.post(
             tpc.VALIDATION_URL,
             status_code=200,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": tpc.TITLE}}),
+            additional_matcher=helpers.match_request_body(
+                {"inputs": {"title": tpc.TITLE}}
+            ),
         )
-        cost_payload = {"pricingStrategy": cost.strategy, "totalCredits": cost.credits}
+        cost_payload = {
+            "pricingStrategy": cost.strategy,
+            "totalCredits": cost.credits,
+        }
         requests_mock.post(
             tpc.COST_URL,
             status_code=200,
             json=cost_payload,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": tpc.TITLE}}),
+            additional_matcher=helpers.match_request_body(
+                {"inputs": {"title": tpc.TITLE}}
+            ),
         )
         requests_mock.post(
             tpc.EXECUTION_URL,
             status_code=200,
             json=tpc.JOB_METADATA,
-            additional_matcher=helpers.match_request_body({"inputs": {"title": tpc.TITLE}}),
+            additional_matcher=helpers.match_request_body(
+                {"inputs": {"title": tpc.TITLE}}
+            ),
         )
         template = SampleJobTemplate(title=tpc.TITLE)
         assert template.execute() == tpc.JOB

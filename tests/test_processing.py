@@ -20,8 +20,13 @@ def as_java_timestamp(value: datetime.datetime):
 
 
 class TestCost:
-    @pytest.mark.parametrize("high_value", [11, 11.0, processing.Cost(strategy="strategy", credits=11)])
-    @pytest.mark.parametrize("low_value", [9, 9.0, processing.Cost(strategy="strategy", credits=9)])
+    @pytest.mark.parametrize(
+        "high_value",
+        [11, 11.0, processing.Cost(strategy="strategy", credits=11)],
+    )
+    @pytest.mark.parametrize(
+        "low_value", [9, 9.0, processing.Cost(strategy="strategy", credits=9)]
+    )
     def test_should_compare_with_numbers_and_costs_using_credits(
         self,
         high_value: processing.CostType,
@@ -47,7 +52,9 @@ class TestJob:
         assert not job.collection
 
     @pytest.mark.parametrize("status", processing.TERMINAL_STATUSES)
-    def test_should_track_until_job_finishes(self, requests_mock: req_mock.Mocker, status: processing.JobStatus):
+    def test_should_track_until_job_finishes(
+        self, requests_mock: req_mock.Mocker, status: processing.JobStatus
+    ):
         updated = tpc.NOW + datetime.timedelta(minutes=4)
         started = tpc.NOW + datetime.timedelta(minutes=2)
         finished = tpc.NOW + datetime.timedelta(minutes=3)
@@ -79,9 +86,17 @@ class TestJob:
         )
         job = dataclasses.replace(tpc.JOB)
         job.track(wait=1, retries=2)
-        assert job == dataclasses.replace(tpc.JOB, finished=finished, started=started, updated=updated, status=status)
+        assert job == dataclasses.replace(
+            tpc.JOB,
+            finished=finished,
+            started=started,
+            updated=updated,
+            status=status,
+        )
 
-    def test_fails_to_track_if_job_retrieval_fails(self, requests_mock: req_mock.Mocker):
+    def test_fails_to_track_if_job_retrieval_fails(
+        self, requests_mock: req_mock.Mocker
+    ):
         requests_mock.get(
             url=tpc.JOB_URL,
             status_code=500,
@@ -91,7 +106,9 @@ class TestJob:
             job.track(wait=1, retries=10)
         assert requests_mock.call_count == 1
 
-    def test_fails_to_track_if_job_finishes_after_attempts_finished(self, requests_mock: req_mock.Mocker):
+    def test_fails_to_track_if_job_finishes_after_attempts_finished(
+        self, requests_mock: req_mock.Mocker
+    ):
         requests_mock.get(
             url=tpc.JOB_URL,
             json=tpc.JOB_METADATA,
@@ -101,13 +118,21 @@ class TestJob:
             job.track(wait=1, retries=2)
         assert requests_mock.call_count == 2
 
-    @pytest.mark.parametrize("process_id", [None, [tpc.PROCESS_ID, "another-id"]])
+    @pytest.mark.parametrize(
+        "process_id", [None, [tpc.PROCESS_ID, "another-id"]]
+    )
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
-    @pytest.mark.parametrize("status", [None, random.choices(list(processing.JobStatus), k=2)])
+    @pytest.mark.parametrize(
+        "status", [None, random.choices(list(processing.JobStatus), k=2)]
+    )
     @pytest.mark.parametrize("min_duration", [None, 1])
     @pytest.mark.parametrize("max_duration", [None, 10])
-    @pytest.mark.parametrize("sort_by", [None, processing.JobSorting.process_id.desc])
-    @pytest.mark.parametrize("ids", [None, [str(uuid.uuid4()), str(uuid.uuid4())]])
+    @pytest.mark.parametrize(
+        "sort_by", [None, processing.JobSorting.process_id.desc]
+    )
+    @pytest.mark.parametrize(
+        "ids", [None, [str(uuid.uuid4()), str(uuid.uuid4())]]
+    )
     def test_should_get_all_jobs(
         self,
         requests_mock: req_mock.Mocker,

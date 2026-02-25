@@ -59,7 +59,9 @@ class _Workspace:
             region: The desired region to use for all SDK operations.
         """
         host.REGION = region
-        credential_sources = client.collect_credentials(cfg_file, username, password)
+        credential_sources = client.collect_credentials(
+            cfg_file, username, password
+        )
         up42_client = client.create(credential_sources, host.token_endpoint())
         logger.info("Authentication with UP42 successful!")
         self._session = up42_client.session

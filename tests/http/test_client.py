@@ -23,8 +23,14 @@ class TestCreate:
     @pytest.mark.parametrize(
         "sources, detected_settings",
         [
-            [[EMPTY_ACCOUNT_CREDENTIALS, ACCOUNT_CREDENTIALS], [None, SETTINGS]],
-            [[ACCOUNT_CREDENTIALS, EMPTY_ACCOUNT_CREDENTIALS], [SETTINGS, None]],
+            [
+                [EMPTY_ACCOUNT_CREDENTIALS, ACCOUNT_CREDENTIALS],
+                [None, SETTINGS],
+            ],
+            [
+                [ACCOUNT_CREDENTIALS, EMPTY_ACCOUNT_CREDENTIALS],
+                [SETTINGS, None],
+            ],
         ],
     )
     def test_should_create_if_only_one_source_is_given(
@@ -49,9 +55,13 @@ class TestCreate:
         )
         assert result.auth == auth
         assert result.session == session
-        detect_settings.assert_has_calls([mock.call(source) for source in sources])
+        detect_settings.assert_has_calls(
+            [mock.call(source) for source in sources]
+        )
         detect_retriever.assert_called_with(SETTINGS)
-        create_auth.assert_called_with(retrieve, config.TokenProviderSettings(token_url=TOKEN_URL))
+        create_auth.assert_called_with(
+            retrieve, config.TokenProviderSettings(token_url=TOKEN_URL)
+        )
         create_session.assert_called_with(auth)
 
     @pytest.mark.parametrize(
@@ -82,7 +92,9 @@ class TestCreate:
                 create_auth=self.unreachable,
                 create_session=self.unreachable,
             )
-        detect_settings.assert_has_calls([mock.call(source) for source in sources])
+        detect_settings.assert_has_calls(
+            [mock.call(source) for source in sources]
+        )
         self.unreachable.assert_not_called()
 
 

@@ -20,7 +20,9 @@ def workspace(request):
     if "no_workspace" not in request.keywords:
         with mock.patch("up42.base.workspace") as workspace_mock:
             session = requests.Session()
-            session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
+            session.hooks = {
+                "response": lambda response, *args, **kwargs: response.raise_for_status()
+            }
             workspace_mock.session = session
             workspace_mock.id = constants.WORKSPACE_ID
             workspace_mock.auth = lambda request: request

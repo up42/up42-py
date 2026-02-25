@@ -24,7 +24,9 @@ from up42 import utils
     ],
 )
 def test_format_time(date, set_end_of_day, result_time):
-    formatted_time = utils.format_time(date=date, set_end_of_day=set_end_of_day)
+    formatted_time = utils.format_time(
+        date=date, set_end_of_day=set_end_of_day
+    )
     assert isinstance(formatted_time, str)
     assert formatted_time == result_time
 
@@ -32,8 +34,13 @@ def test_format_time(date, set_end_of_day, result_time):
 class TestDownloadArchive:
     archive_url = "https://clouddownload.api.com/abcdef"
 
-    @pytest.mark.parametrize("source", ["tests/mock_data/result_tif.tgz", "tests/mock_data/result_tif.zip"])
-    def test_should_download_archive(self, requests_mock: req_mock.Mocker, tmp_path, source: str):
+    @pytest.mark.parametrize(
+        "source",
+        ["tests/mock_data/result_tif.tgz", "tests/mock_data/result_tif.zip"],
+    )
+    def test_should_download_archive(
+        self, requests_mock: req_mock.Mocker, tmp_path, source: str
+    ):
         requests_mock.get(
             url=self.archive_url,
             content=pathlib.Path(source).read_bytes(),
@@ -118,12 +125,16 @@ class TestPagedQuery:
     content = [{"id": f"id{idx}"} for idx in [1, 2]]
 
     def query(self):
-        return utils.paged_query(self.params | {"ignored": None}, self.endpoint, requests.Session())
+        return utils.paged_query(
+            self.params | {"ignored": None}, self.endpoint, requests.Session()
+        )
 
     def test_should_query_all_pages(self, requests_mock: req_mock.Mocker):
         for page in [0, 1]:
             response = {"content": self.content, "totalPages": 2}
-            requests_mock.get(url=self.base_url + f"&page={page}", json=response)
+            requests_mock.get(
+                url=self.base_url + f"&page={page}", json=response
+            )
         assert list(self.query()) == self.content * 2
 
     def test_should_query_empty_pages(self, requests_mock: req_mock.Mocker):
