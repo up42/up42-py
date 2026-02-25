@@ -171,7 +171,9 @@ class Job:
             for key, value in {
                 "workspaceId": workspace_id,
                 "processId": ",".join(process_id) if process_id else None,
-                "status": ",".join(entry.value for entry in status) if status else None,
+                "status": ",".join(entry.value for entry in status)
+                if status
+                else None,
                 "minDuration": min_duration,
                 "maxDuration": max_duration,
                 "limit": page_size,
@@ -182,14 +184,23 @@ class Job:
         }
 
         def get_pages():
-            page = cls.session.get(host.endpoint("/v2/processing/jobs"), params=query_params).json()
+            page = cls.session.get(
+                host.endpoint("/v2/processing/jobs"), params=query_params
+            ).json()
             while page:
                 yield page["jobs"]
                 next_page_url = next(
-                    (link["href"] for link in page["links"] if link["rel"] == "next"),
+                    (
+                        link["href"]
+                        for link in page["links"]
+                        if link["rel"] == "next"
+                    ),
                     None,
                 )
-                page = next_page_url and cls.session.get(host.endpoint(next_page_url)).json()
+                page = (
+                    next_page_url
+                    and cls.session.get(host.endpoint(next_page_url)).json()
+                )
 
         for page in get_pages():
             for metadata in page:

@@ -108,7 +108,9 @@ class TestDataProduct:
     def test_should_provide_no_schema_if_missing_id(self):
         assert not dataclasses.replace(self.data_product, id=None).schema
 
-    def test_should_provide_schema(self, requests_mock: req_mock.Mocker) -> None:
+    def test_should_provide_schema(
+        self, requests_mock: req_mock.Mocker
+    ) -> None:
         schema = {"schema": "some-schema"}
         url = f"{constants.API_HOST}/orders/schema/{constants.DATA_PRODUCT_ID}"
         requests_mock.get(url=url, json=schema)
@@ -132,28 +134,40 @@ class TestProvider:
             (dataclasses.replace(provider, roles=["HOST"]), True),
         ],
     )
-    def test_should_compute_whether_provider_is_host(self, provider, is_host: bool) -> None:
+    def test_should_compute_whether_provider_is_host(
+        self, provider, is_host: bool
+    ) -> None:
         assert provider.is_host == is_host
 
     def test_fails_to_search_if_provider_is_not_host(self):
         with pytest.raises(glossary.InvalidHost):
-            next(dataclasses.replace(self.provider, roles=["PRODUCER"]).search())
+            next(
+                dataclasses.replace(self.provider, roles=["PRODUCER"]).search()
+            )
 
-    def test_fails_to_search_if_search_request_is_invalid(self, requests_mock: req_mock.Mocker):
+    def test_fails_to_search_if_search_request_is_invalid(
+        self, requests_mock: req_mock.Mocker
+    ):
         error_message = "invalid request"
         requests_mock.post(
             url=self.search_url,
             status_code=422,
             json={
                 "data": {},
-                "error": {"code": 422, "message": error_message, "details": "ignored"},
+                "error": {
+                    "code": 422,
+                    "message": error_message,
+                    "details": "ignored",
+                },
             },
         )
         with pytest.raises(glossary.InvalidSearchRequest, match=error_message):
             next(self.provider.search())
 
     @pytest.mark.parametrize("error_code", [400, 401, 403, 500])
-    def test_should_propagate_search_failures(self, error_code: int, requests_mock: req_mock.Mocker):
+    def test_should_propagate_search_failures(
+        self, error_code: int, requests_mock: req_mock.Mocker
+    ):
         requests_mock.post(
             url=self.search_url,
             status_code=error_code,
@@ -197,7 +211,9 @@ class TestProvider:
         if intersects:
             search_params["intersects"] = intersects
         if start_date or end_date:
-            search_params["datetime"] = f"{expected_start_datetime}/{expected_end_datetime}"
+            search_params[
+                "datetime"
+            ] = f"{expected_start_datetime}/{expected_end_datetime}"
         if cql_query:
             search_params["query"] = cql_query
         if collections:
@@ -222,7 +238,19 @@ class TestProvider:
             },
             additional_matcher=helpers.match_request_body(search_params),
         )
-        assert list(self.provider.search(bbox, intersects, cql_query, collections, start_date, end_date)) == [SCENE] * 5
+        assert (
+            list(
+                self.provider.search(
+                    bbox,
+                    intersects,
+                    cql_query,
+                    collections,
+                    start_date,
+                    end_date,
+                )
+            )
+            == [SCENE] * 5
+        )
 
 
 class TestProductGlossary:
@@ -234,7 +262,9 @@ class TestProductGlossary:
             glossary.CollectionType.TASKING,
         ],
     )
-    @pytest.mark.parametrize("sort_by", [None, glossary.CollectionSorting.name])
+    @pytest.mark.parametrize(
+        "sort_by", [None, glossary.CollectionSorting.name]
+    )
     def test_should_get_collections(
         self,
         requests_mock: req_mock.Mocker,
@@ -272,8 +302,20 @@ class TestProductGlossary:
                 f"{constants.API_HOST}/v2/collections?{sorting_param}page={page}",
                 json={"content": collections, "totalPages": 2},
             )
-        possible_types = [collection_type] if collection_type else list(glossary.CollectionType)
+        possible_types = (
+            [collection_type]
+            if collection_type
+            else list(glossary.CollectionType)
+        )
         assert (
-            list(glossary.ProductGlossary.get_collections(collection_type=collection_type, sort_by=sort_by))
-            == [dataclasses.replace(COLLECTION, type=possible_type) for possible_type in possible_types] * 2
+            list(
+                glossary.ProductGlossary.get_collections(
+                    collection_type=collection_type, sort_by=sort_by
+                )
+            )
+            == [
+                dataclasses.replace(COLLECTION, type=possible_type)
+                for possible_type in possible_types
+            ]
+            * 2
         )

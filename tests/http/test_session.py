@@ -37,12 +37,18 @@ def set_token(request: requests.Request):
 @pytest.fixture(name="auth_session")
 def create_session():
     auth = mock.MagicMock(side_effect=set_token)
-    create_adapter = mock.MagicMock(return_value=requests.adapters.HTTPAdapter())
-    return up42_session.create(auth=auth, create_adapter=create_adapter, version=SDK_VERSION)
+    create_adapter = mock.MagicMock(
+        return_value=requests.adapters.HTTPAdapter()
+    )
+    return up42_session.create(
+        auth=auth, create_adapter=create_adapter, version=SDK_VERSION
+    )
 
 
 @pytest.mark.parametrize("method, call", METHODS_WITH_CALLS)
-def test_should_respond_on_good_status(requests_mock: req_mock.Mocker, auth_session, method, call):
+def test_should_respond_on_good_status(
+    requests_mock: req_mock.Mocker, auth_session, method, call
+):
     status_code = random.randint(200, 399)
     requests_mock.request(
         method,
@@ -55,7 +61,9 @@ def test_should_respond_on_good_status(requests_mock: req_mock.Mocker, auth_sess
 
 
 @pytest.mark.parametrize("method, call", METHODS_WITH_CALLS)
-def test_fails_on_bad_status(requests_mock: req_mock.Mocker, auth_session, method, call):
+def test_fails_on_bad_status(
+    requests_mock: req_mock.Mocker, auth_session, method, call
+):
     status_code = random.randint(400, 599)
     requests_mock.request(
         method,

@@ -23,13 +23,21 @@ def _merge(
     right: config.CredentialsSettings | None,
 ):
     if all([left, right]):
-        raise MultipleCredentialsSources("Multiple sources of credentials provided")
+        raise MultipleCredentialsSources(
+            "Multiple sources of credentials provided"
+        )
     return left or right
 
 
-SettingsDetector: TypeAlias = Callable[[dict | None], config.CredentialsSettings | None]
-RetrieverDetector: TypeAlias = Callable[[config.CredentialsSettings], oauth.TokenRetriever]
-AuthFactory: TypeAlias = Callable[[oauth.TokenRetriever, config.TokenProviderSettings], oauth.Up42Auth]
+SettingsDetector: TypeAlias = Callable[
+    [dict | None], config.CredentialsSettings | None
+]
+RetrieverDetector: TypeAlias = Callable[
+    [config.CredentialsSettings], oauth.TokenRetriever
+]
+AuthFactory: TypeAlias = Callable[
+    [oauth.TokenRetriever, config.TokenProviderSettings], oauth.Up42Auth
+]
 
 
 def create(
@@ -40,11 +48,16 @@ def create(
     create_auth: AuthFactory = oauth.Up42Auth,
     create_session: SessionFactory = http_session.create,
 ):
-    possible_settings = [detect_settings(credentials) for credentials in credential_sources]
+    possible_settings = [
+        detect_settings(credentials) for credentials in credential_sources
+    ]
     settings = functools.reduce(_merge, possible_settings)
     if settings:
         token_settings = config.TokenProviderSettings(token_url=token_url)
-        return Client(create_auth(detect_retriever(settings), token_settings), create_session)
+        return Client(
+            create_auth(detect_retriever(settings), token_settings),
+            create_session,
+        )
     raise MissingCredentials
 
 

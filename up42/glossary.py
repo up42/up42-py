@@ -79,7 +79,9 @@ class Provider:
     # TODO: switch to Optional[str] = None in 3.0.0
     description: str = ""
     # TODO: switch Sequence[Literal["PRODUCER", "HOST"]] = ("HOST",) in 3.0.0
-    roles: list[Literal["PRODUCER", "HOST"]] = dataclasses.field(default_factory=lambda: ["HOST"])
+    roles: list[Literal["PRODUCER", "HOST"]] = dataclasses.field(
+        default_factory=lambda: ["HOST"]
+    )
 
     @property
     def is_host(self):
@@ -98,8 +100,14 @@ class Provider:
             raise InvalidHost("Provider does not host collections")
         datetime_str = None
         if start_date or end_date:
-            start_datetime = utils.format_time(start_date) if start_date else ".."
-            end_datetime = utils.format_time(end_date, set_end_of_day=True) if end_date else ".."
+            start_datetime = (
+                utils.format_time(start_date) if start_date else ".."
+            )
+            end_datetime = (
+                utils.format_time(end_date, set_end_of_day=True)
+                if end_date
+                else ".."
+            )
             datetime_str = f"{start_datetime}/{end_datetime}"
 
         payload = {
@@ -121,13 +129,19 @@ class Provider:
                     page: dict = self.session.post(url, json=payload).json()
                     yield page["features"]
                     url = next(
-                        (link["href"] for link in page["links"] if link["rel"] == "next"),
+                        (
+                            link["href"]
+                            for link in page["links"]
+                            if link["rel"] == "next"
+                        ),
                         None,
                     )
                 except requests.HTTPError as http_error:
                     if http_error.response.status_code == 422:
                         error = http_error.response.json()["error"]
-                        raise InvalidSearchRequest(error["message"]) from http_error
+                        raise InvalidSearchRequest(
+                            error["message"]
+                        ) from http_error
                     raise http_error
 
         for page in get_pages():
@@ -151,7 +165,9 @@ class Provider:
             resolution=properties.get("resolution"),
             delivery_time=properties.get("deliveryTime"),
             quicklook=utils.ImageFile(
-                url=host.endpoint(f"/catalog/{self.name}/image/{scene_id}/quicklook"),
+                url=host.endpoint(
+                    f"/catalog/{self.name}/image/{scene_id}/quicklook"
+                ),
                 file_name=f"quicklook_{scene_id}.jpg",
                 session=self.session,
             ),
@@ -211,7 +227,9 @@ class ProductGlossary:
             current_page = 0
             while True:
                 query_params["page"] = current_page
-                page = cls.session.get(host.endpoint("/v2/collections"), params=query_params).json()
+                page = cls.session.get(
+                    host.endpoint("/v2/collections"), params=query_params
+                ).json()
                 total_pages = page["totalPages"]
                 yield page["content"]
                 current_page += 1
@@ -220,7 +238,10 @@ class ProductGlossary:
 
         for page_content in get_pages():
             for collection in page_content:
-                if collection_type is None or collection["type"] == collection_type.value:
+                if (
+                    collection_type is None
+                    or collection["type"] == collection_type.value
+                ):
                     metadata = collection.get("metadata")
                     yield Collection(
                         name=collection["name"],
@@ -228,7 +249,10 @@ class ProductGlossary:
                         description=collection["description"],
                         type=CollectionType(collection["type"]),
                         integrations=collection["integrations"],
-                        providers=[Provider(**provider) for provider in collection["providers"]],
+                        providers=[
+                            Provider(**provider)
+                            for provider in collection["providers"]
+                        ],
                         data_products=[
                             DataProduct(
                                 name=data_product["name"],
@@ -244,6 +268,8 @@ class ProductGlossary:
                             product_type=metadata.get("productType"),
                             resolution_class=metadata.get("resolutionClass"),
                             resolution_value=metadata.get("resolutionValue")
-                            and ResolutionValue(**metadata.get("resolutionValue")),
+                            and ResolutionValue(
+                                **metadata.get("resolutionValue")
+                            ),
                         ),
                     )

@@ -29,7 +29,9 @@ class TestFileProvider:
         asset = pystac.Asset(href="http://example.com", title="some-title")
         assert not asset.file  # type: ignore
 
-    def test_should_provide_image_file_with_signed_url(self, requests_mock: req_mock.Mocker):
+    def test_should_provide_image_file_with_signed_url(
+        self, requests_mock: req_mock.Mocker
+    ):
         requests_mock.post(
             url=f"{STAC_ASSET_HREF}/download-url",
             json={"url": DOWNLOAD_URL},
@@ -63,16 +65,26 @@ class TestUpdateItem:
             json=response,
             additional_matcher=helpers.match_request_body(
                 {
-                    stac.UP42_USER_TITLE_KEY: item.properties[stac.UP42_USER_TITLE_KEY],
-                    stac.UP42_USER_TAGS_KEY: item.properties[stac.UP42_USER_TAGS_KEY],
+                    stac.UP42_USER_TITLE_KEY: item.properties[
+                        stac.UP42_USER_TITLE_KEY
+                    ],
+                    stac.UP42_USER_TAGS_KEY: item.properties[
+                        stac.UP42_USER_TAGS_KEY
+                    ],
                 }
             ),
         )
 
         item.update()  # type: ignore
 
-        assert item.properties[stac.UP42_USER_TITLE_KEY] == response["properties"][stac.UP42_USER_TITLE_KEY]
-        assert item.properties[stac.UP42_USER_TAGS_KEY] == response["properties"][stac.UP42_USER_TAGS_KEY]
+        assert (
+            item.properties[stac.UP42_USER_TITLE_KEY]
+            == response["properties"][stac.UP42_USER_TITLE_KEY]
+        )
+        assert (
+            item.properties[stac.UP42_USER_TAGS_KEY]
+            == response["properties"][stac.UP42_USER_TAGS_KEY]
+        )
 
 
 EXTENSIONS = {
@@ -120,7 +132,9 @@ class TestUp42ExtensionProvider:
         description="",
         extent=pystac.Extent(
             spatial=pystac.SpatialExtent(bboxes=[[1.0, 2.0, 3.0, 4.0]]),
-            temporal=pystac.TemporalExtent(intervals=[[dt.datetime.now(), None]]),
+            temporal=pystac.TemporalExtent(
+                intervals=[[dt.datetime.now(), None]]
+            ),
         ),
         extra_fields=EXTENSIONS,
     )
@@ -140,7 +154,9 @@ class TestUp42ExtensionProvider:
         [(item, item.properties), (collection, collection.extra_fields)],
     )
     @pytest.mark.parametrize("attribute, key", MAPPING)
-    def test_should_set_up42_extension(self, entity, entity_dict, attribute, key):
+    def test_should_set_up42_extension(
+        self, entity, entity_dict, attribute, key
+    ):
         new_value = "new-value"
         setattr(entity.up42, attribute, new_value)  # type: ignore
         assert entity_dict[key] == new_value
@@ -163,7 +179,9 @@ class TestBulkDeletion:
         description="",
         extent=pystac.Extent(
             spatial=pystac.SpatialExtent(bboxes=[[1.0, 2.0, 3.0, 4.0]]),
-            temporal=pystac.TemporalExtent(intervals=[[dt.datetime.now(), None]]),
+            temporal=pystac.TemporalExtent(
+                intervals=[[dt.datetime.now(), None]]
+            ),
         ),
         extra_fields={},
     )
@@ -172,7 +190,9 @@ class TestBulkDeletion:
     def test_should_raise_and_not_submit_when_missing_items(self):
         mock_stac_client = mock.Mock()
         mock_stac_client.get_items.return_value = iter([self.items[0]])
-        mock_stac_client.get_collection.return_value = self.collection_with_all_items
+        mock_stac_client.get_collection.return_value = (
+            self.collection_with_all_items
+        )
         bulk_deletion = stac.BulkDeletion(self.items[0].id)
         bulk_deletion.stac_client = mock_stac_client
         with pytest.raises(stac.IncompleteCollectionDeletionError):
@@ -185,7 +205,9 @@ class TestBulkDeletion:
         )
         mock_stac_client = mock.Mock()
         mock_stac_client.get_items.return_value = iter(self.items)
-        mock_stac_client.get_collection.return_value = self.collection_with_all_items
+        mock_stac_client.get_collection.return_value = (
+            self.collection_with_all_items
+        )
 
         bulk_deletion = stac.BulkDeletion(self.items[0].id, self.items[1].id)
         bulk_deletion.stac_client = mock_stac_client

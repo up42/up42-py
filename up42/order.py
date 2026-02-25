@@ -147,10 +147,14 @@ class Order:
                     acquisition_mode=order_details.get("acquisitionMode"),
                     max_cloud_cover=order_details.get("maxCloudCover"),
                     max_incidence_angle=order_details.get("maxIncidenceAngle"),
-                    geometric_processing=order_details.get("geometricProcessing"),
+                    geometric_processing=order_details.get(
+                        "geometricProcessing"
+                    ),
                     projection=order_details.get("projection"),
                     pixel_coding=order_details.get("pixelCoding"),
-                    radiometric_processing=order_details.get("radiometricProcessing"),
+                    radiometric_processing=order_details.get(
+                        "radiometricProcessing"
+                    ),
                     spectral_bands=order_details.get("spectralBands"),
                     priority=order_details.get("priority"),
                     min_bh=order_details.get("minBH"),
@@ -161,7 +165,10 @@ class Order:
                     looks=order_details.get("looks"),
                 )
             else:
-                details = ArchiveOrderDetails(aoi=order_details["aoi"], image_id=order_details.get("imageId"))
+                details = ArchiveOrderDetails(
+                    aoi=order_details["aoi"],
+                    image_id=order_details.get("imageId"),
+                )
         return Order(
             id=data["id"],
             display_name=data["displayName"],
@@ -195,7 +202,10 @@ class Order:
             "status": status,
             "subStatus": sub_status,
         }
-        return map(cls._from_metadata, utils.paged_query(params, "/v2/orders", cls.session))
+        return map(
+            cls._from_metadata,
+            utils.paged_query(params, "/v2/orders", cls.session),
+        )
 
     @classmethod
     def update(
@@ -210,16 +220,22 @@ class Order:
         if tags is not None:
             body["tags"] = tags
 
-        metadata = cls.session.patch(url=url, json=body, headers=headers).json()
+        metadata = cls.session.patch(
+            url=url, json=body, headers=headers
+        ).json()
         return Order._from_metadata(metadata)
 
     def cancel(self) -> CancelOrder:
         if self.status not in ["CREATED", "PLACEMENT_FAILED"]:
-            raise OrderCannotBeCanceled(f"Order with id {self.id} cannot be canceled in its current status.")
+            raise OrderCannotBeCanceled(
+                f"Order with id {self.id} cannot be canceled in its current status."
+            )
 
         url = host.endpoint(f"/v2/orders/{self.id}/cancellation")
         metadata = self.session.post(url=url).json()
-        return CancelOrder(order_id=metadata["orderId"], status=metadata["status"])
+        return CancelOrder(
+            order_id=metadata["orderId"], status=metadata["status"]
+        )
 
     @property
     def is_fulfilled(self) -> bool:
@@ -230,7 +246,10 @@ class Order:
         return self.status == "FULFILLED"
 
     def track(self, report_time: float = 120):
-        logger.info("Tracking order updates, reporting every %s seconds...", report_time)
+        logger.info(
+            "Tracking order updates, reporting every %s seconds...",
+            report_time,
+        )
 
         @tnc.retry(
             wait=tnc.wait_fixed(report_time),
@@ -242,9 +261,13 @@ class Order:
             for field in dataclasses.fields(order):
                 setattr(self, field.name, getattr(order, field.name))
             sub_status = self.details and self.details.sub_status
-            sub_status_msg = f": {sub_status}" if sub_status is not None else ""
+            sub_status_msg = (
+                f": {sub_status}" if sub_status is not None else ""
+            )
 
-            logger.info("Order is %s! - %s", self.status + sub_status_msg, self.id)
+            logger.info(
+                "Order is %s! - %s", self.status + sub_status_msg, self.id
+            )
             if self.status in ["FAILED_PERMANENTLY"]:
                 raise FailedOrder("Order has failed!")
             if self.status == "CANCELED":

@@ -21,7 +21,9 @@ class Token:
 
 
 class TokenRetriever(Protocol):
-    def __call__(self, session: requests.Session, settings: config.TokenProviderSettings) -> Token:
+    def __call__(
+        self, session: requests.Session, settings: config.TokenProviderSettings
+    ) -> Token:
         ...
 
 
@@ -30,7 +32,9 @@ class AccountTokenRetriever:
         self.username = settings.username
         self.password = settings.password
 
-    def __call__(self, session: requests.Session, settings: config.TokenProviderSettings) -> Token:
+    def __call__(
+        self, session: requests.Session, settings: config.TokenProviderSettings
+    ) -> Token:
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
         }
@@ -50,7 +54,9 @@ class AccountTokenRetriever:
         if response.ok:
             token_data = response.json()
             access_token = token_data["access_token"]
-            expires_on = dt.datetime.now() + dt.timedelta(seconds=token_data["expires_in"] - settings.expiry_offset)
+            expires_on = dt.datetime.now() + dt.timedelta(
+                seconds=token_data["expires_in"] - settings.expiry_offset
+            )
             return Token(access_token=access_token, expires_on=expires_on)
         raise WrongCredentials
 
@@ -68,7 +74,9 @@ class Up42Auth(requests.auth.AuthBase):
         self._token = self._fetch_token()
         self._lock = threading.Lock()
 
-    def __call__(self, request: requests.PreparedRequest) -> requests.PreparedRequest:
+    def __call__(
+        self, request: requests.PreparedRequest
+    ) -> requests.PreparedRequest:
         request.headers["Authorization"] = f"Bearer {self._access_token}"
         return request
 

@@ -11,7 +11,9 @@ from up42 import order, utils
 
 ACCOUNT_ID = str(uuid.uuid4())
 ORDER_URL = f"{constants.API_HOST}/v2/orders/{constants.ORDER_ID}"
-ORDER_PLACEMENT_URL = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
+ORDER_PLACEMENT_URL = (
+    f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
+)
 ORDER_INFO = {
     "id": constants.ORDER_ID,
     "status": "CREATED",
@@ -109,7 +111,9 @@ def _archive_order(base_order: order.Order, archive_order_metadata: dict):
     return dataclasses.replace(
         base_order,
         display_name="archive-order",
-        details=order.ArchiveOrderDetails(aoi=details["aoi"], image_id=details["imageId"]),
+        details=order.ArchiveOrderDetails(
+            aoi=details["aoi"], image_id=details["imageId"]
+        ),
         info=archive_order_metadata,
     )
 
@@ -160,7 +164,11 @@ def _data_order(
     tasking_order: order.Order,
     request,
 ):
-    return {"BASE": base_order, "ARCHIVE": archive_order, "TASKING": tasking_order}[request.param]
+    return {
+        "BASE": base_order,
+        "ARCHIVE": archive_order,
+        "TASKING": tasking_order,
+    }[request.param]
 
 
 class TestOrder:
@@ -200,8 +208,16 @@ class TestOrder:
             ("OTHER STATUS", False),
         ],
     )
-    def test_should_compute_is_fulfilled(self, data_order: order.Order, status: order.OrderStatus, expected: bool):
-        assert dataclasses.replace(data_order, status=status).is_fulfilled == expected
+    def test_should_compute_is_fulfilled(
+        self,
+        data_order: order.Order,
+        status: order.OrderStatus,
+        expected: bool,
+    ):
+        assert (
+            dataclasses.replace(data_order, status=status).is_fulfilled
+            == expected
+        )
 
     @parameterize_with_order_data
     def test_should_track_order_status_until_fulfilled(
@@ -211,7 +227,10 @@ class TestOrder:
         order_metadata: dict,
     ):
         statuses = ["PLACED", "BEING_FULFILLED", "FULFILLED"]
-        responses = [{"json": order_metadata | {"status": status}} for status in statuses]
+        responses = [
+            {"json": order_metadata | {"status": status}}
+            for status in statuses
+        ]
         requests_mock.get(ORDER_URL, responses)
         # The IDE/linter will not issue a warning because you are explicitly
         # storing the result, even if you don't use it.
@@ -269,7 +288,10 @@ class TestOrder:
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize("order_type", [None, "ARCHIVE", "TASKING"])
     @pytest.mark.parametrize("status", [None, ["CREATED", "PLACED"]])
-    @pytest.mark.parametrize("sub_status", [None, ["FEASIBILITY_WAITING_UPLOAD", "QUOTATION_WAITING_UPLOAD"]])
+    @pytest.mark.parametrize(
+        "sub_status",
+        [None, ["FEASIBILITY_WAITING_UPLOAD", "QUOTATION_WAITING_UPLOAD"]],
+    )
     @pytest.mark.parametrize("display_name", [None, "display-name"])
     @pytest.mark.parametrize("tags", [None, ["some", "tags"]])
     @pytest.mark.parametrize("sort_by", [None, order.OrderSorting.created_at])
@@ -357,34 +379,62 @@ class TestOrder:
         updated_metadata = order_metadata.copy()
         updated_metadata["tags"] = new_tag
         requests_mock.patch(
-            url=ORDER_URL, additional_matcher=helpers.match_request_body({"tags": new_tag}), json=updated_metadata
+            url=ORDER_URL,
+            additional_matcher=helpers.match_request_body({"tags": new_tag}),
+            json=updated_metadata,
         )
-        expected_order = dataclasses.replace(data_order, tags=new_tag, info=updated_metadata)
-        assert order.Order.update(constants.ORDER_ID, new_tag) == expected_order
+        expected_order = dataclasses.replace(
+            data_order, tags=new_tag, info=updated_metadata
+        )
+        assert (
+            order.Order.update(constants.ORDER_ID, new_tag) == expected_order
+        )
 
     def test_update_without_tags_makes_no_changes(
-        self, requests_mock: req_mock.Mocker, base_order_metadata: dict, base_order: order.Order
+        self,
+        requests_mock: req_mock.Mocker,
+        base_order_metadata: dict,
+        base_order: order.Order,
     ):
-        requests_mock.patch(url=ORDER_URL, additional_matcher=helpers.match_request_body({}), json=base_order_metadata)
+        requests_mock.patch(
+            url=ORDER_URL,
+            additional_matcher=helpers.match_request_body({}),
+            json=base_order_metadata,
+        )
         assert order.Order.update(constants.ORDER_ID) == base_order
 
     def test_update_with_empty_tags_removes_existing(
-        self, requests_mock: req_mock.Mocker, base_order_metadata: dict, base_order: order.Order
+        self,
+        requests_mock: req_mock.Mocker,
+        base_order_metadata: dict,
+        base_order: order.Order,
     ):
         updated_metadata = base_order_metadata.copy()
         updated_metadata["tags"] = []
         requests_mock.patch(
-            url=ORDER_URL, additional_matcher=helpers.match_request_body({"tags": []}), json=updated_metadata
+            url=ORDER_URL,
+            additional_matcher=helpers.match_request_body({"tags": []}),
+            json=updated_metadata,
         )
-        expected_order = dataclasses.replace(base_order, tags=[], info=updated_metadata)
+        expected_order = dataclasses.replace(
+            base_order, tags=[], info=updated_metadata
+        )
         assert order.Order.update(constants.ORDER_ID, []) == expected_order
 
-    def test_update_handles_error_response(self, requests_mock: req_mock.Mocker):
-        requests_mock.patch(url=ORDER_URL, status_code=500, json={"error": "Internal Server Error"})
+    def test_update_handles_error_response(
+        self, requests_mock: req_mock.Mocker
+    ):
+        requests_mock.patch(
+            url=ORDER_URL,
+            status_code=500,
+            json={"error": "Internal Server Error"},
+        )
         with pytest.raises(Exception):
             order.Order.update(constants.ORDER_ID, ["fail"])
 
-    def test_update_handles_malformed_response(self, requests_mock: req_mock.Mocker):
+    def test_update_handles_malformed_response(
+        self, requests_mock: req_mock.Mocker
+    ):
         requests_mock.patch(url=ORDER_URL, json={"unexpected": "data"})
         with pytest.raises(KeyError):
             order.Order.update(constants.ORDER_ID, ["bad"])
@@ -400,7 +450,11 @@ class TestOrder:
         ],
     )
     def test_cancel_behavior(
-        self, requests_mock: req_mock.Mocker, data_order: order.Order, status: order.OrderStatus, can_cancel: bool
+        self,
+        requests_mock: req_mock.Mocker,
+        data_order: order.Order,
+        status: order.OrderStatus,
+        can_cancel: bool,
     ):
         data_order = dataclasses.replace(data_order, status=status)
 
@@ -418,4 +472,6 @@ class TestOrder:
         else:
             with pytest.raises(order.OrderCannotBeCanceled) as exc_info:
                 data_order.cancel()
-            assert f"Order with id {data_order.id} cannot be canceled" in str(exc_info.value)
+            assert f"Order with id {data_order.id} cannot be canceled" in str(
+                exc_info.value
+            )

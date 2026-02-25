@@ -7,7 +7,10 @@ from up42.http import config
 
 
 def create(
-    supply_settings: Callable[[], config.ResilienceSettings] = config.ResilienceSettings, include_post: bool = False
+    supply_settings: Callable[
+        [], config.ResilienceSettings
+    ] = config.ResilienceSettings,
+    include_post: bool = False,
 ) -> adapters.HTTPAdapter:
     settings = supply_settings()
     allowed_methods = set(util.Retry.DEFAULT_ALLOWED_METHODS)

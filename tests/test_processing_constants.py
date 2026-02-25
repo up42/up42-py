@@ -22,10 +22,13 @@ ITEM_URL = "https://item-url"
 COLLECTION_URL = f"https://collections/{COLLECTION_ID}"
 PROCESS_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}"
 EULA_URL = f"{constants.API_HOST}/v2/eulas/{EULA_ID}"
-VALIDATION_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/validation"
+VALIDATION_URL = (
+    f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/validation"
+)
 COST_URL = f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/cost"
 EXECUTION_URL = (
-    f"{constants.API_HOST}/v2/processing/processes/{PROCESS_ID}/execution?workspaceId={constants.WORKSPACE_ID}"
+    f"{constants.API_HOST}/v2/processing/processes"
+    f"/{PROCESS_ID}/execution?workspaceId={constants.WORKSPACE_ID}"
 )
 JOBS_URL = f"{constants.API_HOST}/v2/processing/jobs"
 JOB_URL = f"{JOBS_URL}/{JOB_ID}"
@@ -66,7 +69,9 @@ DEFINITION = {
     }
 }
 
-INVALID_TITLE_ERROR = processing.ValidationError(name="InvalidTitle", message="title is too long")
+INVALID_TITLE_ERROR = processing.ValidationError(
+    name="InvalidTitle", message="title is too long"
+)
 
 JOB_METADATA: processing.JobMetadata = {
     "processID": PROCESS_ID,

@@ -8,7 +8,11 @@ from up42 import order_template
 
 DISPLAY_NAME = "display-name"
 TAGS = ["some", "tags"]
-FEATURES = geojson.FeatureCollection(features=[geojson.Feature(geometry={"type": "Point", "coordinates": [0, 0]})])
+FEATURES = geojson.FeatureCollection(
+    features=[
+        geojson.Feature(geometry={"type": "Point", "coordinates": [0, 0]})
+    ]
+)
 PARAMS = {"some": "params"}
 PAYLOAD = {
     "displayName": DISPLAY_NAME,
@@ -17,10 +21,14 @@ PAYLOAD = {
     "featureCollection": FEATURES,
     "params": PARAMS,
 }
-ERROR = order_template.OrderError(index=1, message="Failed", details="Invalid geometry")
+ERROR = order_template.OrderError(
+    index=1, message="Failed", details="Invalid geometry"
+)
 COST = order_template.OrderCost(index=0, credits=10, size=50, unit="SQ_KM")
 ORDER_REFERENCE = order_template.OrderReference(index=0, id=constants.ORDER_ID)
-ESTIMATE = order_template.Estimate(items=[COST, ERROR], credits=COST.credits, size=COST.size, unit=COST.unit)
+ESTIMATE = order_template.Estimate(
+    items=[COST, ERROR], credits=COST.credits, size=COST.size, unit=COST.unit
+)
 ERRORS = {
     "errors": [
         {
@@ -83,7 +91,10 @@ class TestBatchOrderTemplate:
             "tags": TAGS,
             "featureCollection": FEATURES,
         }
-        assert template._payload == expected_payload  # pylint: disable=protected-access
+        assert (
+            template._payload  # pylint: disable=protected-access
+            == expected_payload
+        )
         assert template.estimate == ESTIMATE
         assert template.place() == [ORDER_REFERENCE, ERROR]
 
@@ -104,6 +115,9 @@ class TestBatchOrderTemplate:
             "params": PARAMS,
             "featureCollection": FEATURES,
         }
-        assert template._payload == expected_payload  # pylint: disable=protected-access
+        assert (
+            template._payload  # pylint: disable=protected-access
+            == expected_payload
+        )
         assert template.estimate == ESTIMATE
         assert template.place() == [ORDER_REFERENCE, ERROR]

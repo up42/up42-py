@@ -16,7 +16,9 @@ class IncompleteCollectionDeletionError(ValueError):
 class FileProvider:
     session = base.Session()
 
-    def __get__(self, obj: pystac.Asset | None, obj_type=None) -> utils.ImageFile | None:
+    def __get__(
+        self, obj: pystac.Asset | None, obj_type=None
+    ) -> utils.ImageFile | None:
         if obj:
             if obj.href.startswith(host.endpoint("")):
                 url = obj.href + "/download-url"
@@ -36,13 +38,19 @@ class UpdateItem:
     session = base.Session()
 
     def __call__(self, item):
-        url = host.endpoint(f"/v2/assets/stac/collections/{item.collection_id}/items/{item.id}")
+        url = host.endpoint(
+            f"/v2/assets/stac/collections/{item.collection_id}/items/{item.id}"
+        )
         response = pystac.Item.from_dict(
             self.session.patch(
                 url=url,
                 json={
-                    UP42_USER_TITLE_KEY: item.properties.get(UP42_USER_TITLE_KEY),
-                    UP42_USER_TAGS_KEY: item.properties.get(UP42_USER_TAGS_KEY),
+                    UP42_USER_TITLE_KEY: item.properties.get(
+                        UP42_USER_TITLE_KEY
+                    ),
+                    UP42_USER_TAGS_KEY: item.properties.get(
+                        UP42_USER_TAGS_KEY
+                    ),
                 },
             ).json()
         )
@@ -82,7 +90,9 @@ class Up42Extension:
 
 
 class Up42ExtensionProvider:
-    def __get__(self, obj: pystac.Item | pystac.Collection | None, obj_type=None):
+    def __get__(
+        self, obj: pystac.Item | pystac.Collection | None, obj_type=None
+    ):
         if obj:
             if obj_type == pystac.Item:
                 return Up42Extension(obj.properties)  # type: ignore
@@ -116,8 +126,13 @@ class BulkDeletion:
             collection_ids.add(item.collection_id)
 
         for collection_id in collection_ids:
-            collection_items = self.stac_client.get_collection(collection_id).get_items()
-            collection_item_ids = {item_in_collection.id for item_in_collection in collection_items}
+            collection_items = self.stac_client.get_collection(
+                collection_id
+            ).get_items()
+            collection_item_ids = {
+                item_in_collection.id
+                for item_in_collection in collection_items
+            }
             missing_items = collection_item_ids - self._item_ids
             if missing_items:
                 error_msg = (
