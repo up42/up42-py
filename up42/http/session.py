@@ -4,10 +4,10 @@ from typing import TypeAlias
 import requests
 
 from up42 import utils
+from up42.constants import REPOSITORY_URL
 from up42.http import http_adapter
 
 SCHEMAS = ["http", "https"]
-REPOSITORY_URL = "https://github.com/up42/up42-py"
 HttpAdapterFactory: TypeAlias = Callable[[], requests.adapters.HTTPAdapter]
 
 

@@ -10,6 +10,7 @@ from dateutil import parser
 
 from tests import constants
 from up42 import utils
+from up42.constants import REPOSITORY_URL
 
 
 @pytest.mark.parametrize(
@@ -72,6 +73,26 @@ class TestDownloadArchive:
 def test_get_up42_py_version(version: mock.Mock):
     assert utils.get_up42_py_version() == "some_version"
     version.assert_called_with("up42-py")
+
+
+@mock.patch("up42.utils.pystac_client.Client.open")
+@mock.patch("importlib.metadata.version", return_value="1.2.3")
+def test_stac_client_sets_user_agent_header(
+    version: mock.Mock, open_client: mock.Mock
+):
+    auth = mock.Mock(spec=requests.auth.AuthBase)
+    request = mock.MagicMock()
+    request.headers = {}
+    auth.return_value = request
+
+    utils.stac_client(auth)
+    open_client.assert_called_once()
+    request_modifier = open_client.call_args.kwargs["request_modifier"]
+    request_modifier(request)
+    assert (
+        request.headers["User-Agent"]
+        == f"up42-py/{version.return_value} ({REPOSITORY_URL})"
+    )
 
 
 def test_read_json_should_skip_reading_if_path_is_none():
