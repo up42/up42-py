@@ -17,8 +17,7 @@ import pystac_client
 import requests
 import tqdm
 
-from up42 import host
-from up42.constants import REPOSITORY_URL
+from up42 import constants, host
 
 TIMEOUT = 120  # seconds
 CHUNK_SIZE = 1024
@@ -287,7 +286,7 @@ def stac_client(auth: requests.auth.AuthBase):
     def request_modifier(request: requests.Request) -> requests.Request | None:
         request.headers[
             "User-Agent"
-        ] = f"up42-py/{get_up42_py_version()} ({REPOSITORY_URL})"
+        ] = f"up42-py/{get_up42_py_version()} ({constants.REPOSITORY_URL})"
         return auth(request)
 
     return pystac_client.Client.open(

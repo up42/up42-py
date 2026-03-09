@@ -8,9 +8,8 @@ import requests
 import requests_mock as req_mock
 from dateutil import parser
 
-from tests import constants
-from up42 import utils
-from up42.constants import REPOSITORY_URL
+from tests import constants as test_constants
+from up42 import constants, utils
 
 
 @pytest.mark.parametrize(
@@ -91,7 +90,7 @@ def test_stac_client_sets_user_agent_header(
     request_modifier(request)
     assert (
         request.headers["User-Agent"]
-        == f"up42-py/{version.return_value} ({REPOSITORY_URL})"
+        == f"up42-py/{version.return_value} ({constants.REPOSITORY_URL})"
     )
 
 
@@ -142,7 +141,7 @@ class TestSortingField:
 class TestPagedQuery:
     params = {"param": "value"}
     endpoint = "/some-end-point"
-    base_url = constants.API_HOST + endpoint + "?param=value"
+    base_url = test_constants.API_HOST + endpoint + "?param=value"
     content = [{"id": f"id{idx}"} for idx in [1, 2]]
 
     def query(self):

@@ -3,8 +3,7 @@ from typing import TypeAlias
 
 import requests
 
-from up42 import utils
-from up42.constants import REPOSITORY_URL
+from up42 import constants, utils
 from up42.http import http_adapter
 
 SCHEMAS = ["http", "https"]
@@ -33,6 +32,6 @@ def create(
     session.headers = {
         "Content-Type": "application/json",
         "cache-control": "no-cache",
-        "User-Agent": f"up42-py/{version} ({REPOSITORY_URL})",
+        "User-Agent": f"up42-py/{version} ({constants.REPOSITORY_URL})",
     }
     return session
