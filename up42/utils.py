@@ -9,6 +9,7 @@ import tarfile
 import tempfile
 import warnings
 import zipfile
+from collections.abc import Callable
 from typing import Any, cast
 from urllib import parse
 
@@ -283,15 +284,14 @@ def read_json(path_or_dict: dict | str | pathlib.Path | None) -> dict | None:
 
 
 def stac_client(auth: requests.auth.AuthBase):
-    def request_modifier(request: requests.Request) -> requests.Request | None:
-        request.headers[
-            "User-Agent"
-        ] = f"up42-py/{get_up42_py_version()} ({constants.REPOSITORY_URL})"
-        return auth(request)
-
     return pystac_client.Client.open(
         url=host.endpoint("/v2/assets/stac/"),
-        request_modifier=request_modifier,
+        headers={
+            "User-Agent": f"up42-py/{get_up42_py_version()} ({constants.REPOSITORY_URL})"
+        },
+        request_modifier=cast(
+            Callable[[requests.Request], requests.Request | None], auth
+        ),
     )
 
 

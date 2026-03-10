@@ -80,17 +80,12 @@ def test_stac_client_sets_user_agent_header(
     version: mock.Mock, open_client: mock.Mock
 ):
     auth = mock.Mock(spec=requests.auth.AuthBase)
-    request = mock.MagicMock()
-    request.headers = {}
-    auth.return_value = request
 
     utils.stac_client(auth)
     open_client.assert_called_once()
-    request_modifier = open_client.call_args.kwargs["request_modifier"]
-    request_modifier(request)
-    assert (
-        request.headers["User-Agent"]
-        == f"up42-py/{version.return_value} ({constants.REPOSITORY_URL})"
+    call_kwargs = open_client.call_args.kwargs
+    assert call_kwargs["headers"]["User-Agent"] == (
+        f"up42-py/{version.return_value} ({constants.REPOSITORY_URL})"
     )
 
 
