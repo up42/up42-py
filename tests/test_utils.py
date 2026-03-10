@@ -79,9 +79,7 @@ def test_get_up42_py_version(version: mock.Mock):
 def test_stac_client_sets_user_agent_header(
     version: mock.Mock, open_client: mock.Mock
 ):
-    auth = mock.MagicMock()
-
-    utils.stac_client(auth)
+    utils.stac_client(mock.MagicMock())
     open_client.assert_called_once()
     call_kwargs = open_client.call_args.kwargs
     assert call_kwargs["headers"]["User-Agent"] == (
