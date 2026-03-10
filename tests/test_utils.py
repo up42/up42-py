@@ -74,17 +74,19 @@ def test_get_up42_py_version(version: mock.Mock):
     version.assert_called_with("up42-py")
 
 
-@mock.patch("up42.utils.pystac_client.Client.open")
-@mock.patch("importlib.metadata.version", return_value="1.2.3")
+@mock.patch("importlib.metadata.version", return_value="some_version")
 def test_stac_client_sets_user_agent_header(
-    version: mock.Mock, open_client: mock.Mock
+    version: mock.Mock, requests_mock: req_mock.Mocker
 ):
-    utils.stac_client(mock.MagicMock())
-    open_client.assert_called_once()
-    call_kwargs = open_client.call_args.kwargs
-    assert call_kwargs["headers"]["User-Agent"] == (
-        f"up42-py/{version.return_value} ({constants.REPOSITORY_URL})"
+    requests_mock.get(
+        test_constants.URL_STAC_CATALOG,
+        request_headers={
+            "User-Agent": f"up42-py/{version.return_value} ({constants.REPOSITORY_URL})",
+        },
+        json=test_constants.STAC_CATALOG_RESPONSE,
     )
+    assert utils.stac_client(mock.MagicMock(side_effect=lambda req: req))
+    assert requests_mock.called
 
 
 def test_read_json_should_skip_reading_if_path_is_none():
