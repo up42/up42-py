@@ -79,7 +79,7 @@ def test_get_up42_py_version(version: mock.Mock):
 def test_stac_client_sets_user_agent_header(
     version: mock.Mock, open_client: mock.Mock
 ):
-    auth = mock.Mock(spec=requests.auth.AuthBase)
+    auth = mock.MagicMock()
 
     utils.stac_client(auth)
     open_client.assert_called_once()
