@@ -18,7 +18,7 @@ import pystac_client
 import requests
 import tqdm
 
-from up42 import host
+from up42 import constants, host
 
 TIMEOUT = 120  # seconds
 CHUNK_SIZE = 1024
@@ -284,14 +284,14 @@ def read_json(path_or_dict: dict | str | pathlib.Path | None) -> dict | None:
 
 
 def stac_client(auth: requests.auth.AuthBase):
-    # pystac client accepts both returning and non-returning request modifiers
-    # requests.auth.AuthBase is a returning request modifier interface
-    request_modifier = cast(
-        Callable[[requests.Request], requests.Request | None], auth
-    )
     return pystac_client.Client.open(
         url=host.endpoint("/v2/assets/stac/"),
-        request_modifier=request_modifier,
+        headers={
+            "User-Agent": f"up42-py/{get_up42_py_version()} ({constants.REPOSITORY_URL})"
+        },
+        request_modifier=cast(
+            Callable[[requests.Request], requests.Request | None], auth
+        ),
     )
 
 

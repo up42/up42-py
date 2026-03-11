@@ -5,6 +5,7 @@ import pytest
 import requests
 import requests_mock as req_mock
 
+from up42 import constants
 from up42.http import session as up42_session
 
 SOME_URL = "https://something.com"
@@ -25,7 +26,7 @@ REQUEST_HEADERS = {
     "Content-Type": "application/json",
     "Authorization": AUTHORIZATION_VALUE,
     "cache-control": "no-cache",
-    "User-Agent": f"up42-py/{SDK_VERSION} ({up42_session.REPOSITORY_URL})",
+    "User-Agent": f"up42-py/{SDK_VERSION} ({constants.REPOSITORY_URL})",
 }
 
 
