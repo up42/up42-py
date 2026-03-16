@@ -65,15 +65,20 @@ def test_should_respond_on_good_status(
 def test_fails_on_bad_status(
     requests_mock: req_mock.Mocker, auth_session, method, call
 ):
+    body = '{"type": "https://docs.up42.com/problems/eula-not-accepted", "title": "EULA not accepted"}'
     status_code = random.randint(400, 599)
     requests_mock.request(
         method,
         SOME_URL,
         request_headers=REQUEST_HEADERS,
         status_code=status_code,
+        text=body,
     )
     with pytest.raises(requests.exceptions.HTTPError) as exc_info:
         call(auth_session, SOME_URL)
     response = exc_info.value.response
     assert response is not None and response.status_code == status_code
+    assert "Response body:" in str(exc_info.value)
+    assert "eula-not-accepted" in str(exc_info.value)
+    assert "EULA not accepted" in str(exc_info.value)
     assert requests_mock.called_once
