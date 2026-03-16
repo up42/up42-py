@@ -82,3 +82,19 @@ def test_fails_on_bad_status(
     assert "eula-not-accepted" in str(exc_info.value)
     assert "EULA not accepted" in str(exc_info.value)
     assert requests_mock.called_once
+
+
+def test_http_error_skips_body_when_response_not_json(
+    requests_mock: req_mock.Mocker, auth_session
+):
+    requests_mock.get(
+        SOME_URL,
+        request_headers=REQUEST_HEADERS,
+        status_code=500,
+        text="<html>Internal Server Error</html>",
+    )
+    with pytest.raises(requests.exceptions.HTTPError) as exc_info:
+        auth_session.get(SOME_URL)
+    assert exc_info.value.response.status_code == 500
+    assert "Response body:" not in str(exc_info.value)
+    assert "500 Server Error" in str(exc_info.value)
