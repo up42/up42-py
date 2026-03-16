@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 3.4.0a2
+**March 16, 2026**
+### Changed
+- Changed the exception messages from errors coming from the API to include the response body.
+
 ### 3.4.0a1
 **March 9, 2026**
 ### Added
