@@ -65,15 +65,44 @@ def test_should_respond_on_good_status(
 def test_fails_on_bad_status(
     requests_mock: req_mock.Mocker, auth_session, method, call
 ):
+    body = '{"type": "https://docs.up42.com/problems/eula-not-accepted", "title": "EULA not accepted"}'
     status_code = random.randint(400, 599)
     requests_mock.request(
         method,
         SOME_URL,
         request_headers=REQUEST_HEADERS,
         status_code=status_code,
+        text=body,
     )
     with pytest.raises(requests.exceptions.HTTPError) as exc_info:
         call(auth_session, SOME_URL)
-    response = exc_info.value.response
-    assert response is not None and response.status_code == status_code
+
+    http_error = exc_info.value
+    error_message = str(http_error)
+
+    assert http_error.response is not None
+    assert http_error.response.status_code == status_code
+    assert "Response body:" in error_message
+    assert "eula-not-accepted" in error_message
+    assert "EULA not accepted" in error_message
+    assert requests_mock.called_once
+
+
+def test_http_error_skips_body_when_response_not_json(
+    requests_mock: req_mock.Mocker, auth_session
+):
+    requests_mock.get(
+        SOME_URL,
+        request_headers=REQUEST_HEADERS,
+        status_code=500,
+        text="<html>Internal Server Error</html>",
+    )
+    with pytest.raises(requests.exceptions.HTTPError) as exc_info:
+        auth_session.get(SOME_URL)
+
+    http_error = exc_info.value
+    error_message = str(http_error)
+    assert http_error.response.status_code == 500
+    assert "Response body:" not in error_message
+    assert "500 Server Error" in error_message
     assert requests_mock.called_once
