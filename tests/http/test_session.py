@@ -76,11 +76,15 @@ def test_fails_on_bad_status(
     )
     with pytest.raises(requests.exceptions.HTTPError) as exc_info:
         call(auth_session, SOME_URL)
-    response = exc_info.value.response
-    assert response is not None and response.status_code == status_code
-    assert "Response body:" in str(exc_info.value)
-    assert "eula-not-accepted" in str(exc_info.value)
-    assert "EULA not accepted" in str(exc_info.value)
+
+    http_error = exc_info.value
+    error_message = str(http_error)
+
+    assert http_error.response is not None
+    assert http_error.response.status_code == status_code
+    assert "Response body:" in error_message
+    assert "eula-not-accepted" in error_message
+    assert "EULA not accepted" in error_message
     assert requests_mock.called_once
 
 
@@ -95,6 +99,10 @@ def test_http_error_skips_body_when_response_not_json(
     )
     with pytest.raises(requests.exceptions.HTTPError) as exc_info:
         auth_session.get(SOME_URL)
-    assert exc_info.value.response.status_code == 500
-    assert "Response body:" not in str(exc_info.value)
-    assert "500 Server Error" in str(exc_info.value)
+
+    http_error = exc_info.value
+    error_message = str(http_error)
+    assert http_error.response.status_code == 500
+    assert "Response body:" not in error_message
+    assert "500 Server Error" in error_message
+    assert requests_mock.called_once
