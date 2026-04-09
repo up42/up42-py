@@ -29,12 +29,11 @@ class JobStatus(enum.Enum):
     RUNNING = "running"
     SUCCESSFUL = "successful"
     FAILED = "failed"
-    CAPTURED = "captured"
     RELEASED = "released"
 
 
 TERMINAL_STATUSES = [
-    JobStatus.CAPTURED,
+    JobStatus.SUCCESSFUL,
     JobStatus.RELEASED,
     JobStatus.INVALID,
     JobStatus.REJECTED,
