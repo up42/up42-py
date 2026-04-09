@@ -30,6 +30,10 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 3.4.1a2
+**April 9, 2026**
+- Remove job status CAPTURED. And through it fix processing job tracking to wait until job is successful or credits are released.
+
 ### 3.4.1a1
 **April 9, 2026**
 ### Security
@@ -37,7 +41,6 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Updated requests to >=2.33.1
 ### Changed
 - Migrated from deprecated poetry.dev-dependencies section to dependency groups
-- Remove job status CAPTURED. And through it fix processing job tracking to wait until job is successful or credits are released.
 
 ### 3.4.0
 **March 30, 2026**
