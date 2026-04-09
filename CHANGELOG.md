@@ -37,6 +37,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 - Updated requests to >=2.33.1
 ### Changed
 - Migrated from deprecated poetry.dev-dependencies section to dependency groups
+- Remove job status CAPTURED. And through it fix processing job tracking to wait until job is successful or credits are released.
 
 ### 3.4.0
 **March 30, 2026**
