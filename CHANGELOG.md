@@ -30,7 +30,7 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-### 3.4.2a1
+### 3.4.1a2
 **April 15, 2026**
 ### Added
 - Added a new processing job template: `OrthorectificationIntermap`.
