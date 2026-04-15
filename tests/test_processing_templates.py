@@ -52,6 +52,7 @@ class TestParameterlessTemplates:
             templates.UpsamplingNS,
             templates.UpsamplingNSSentinel,
             templates.TrueColorConversion,
+            templates.OrthorectificationIntermap,
         ],
     )
     def test_should_construct_single_item_job_templates(self, template_class):

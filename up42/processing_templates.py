@@ -218,6 +218,11 @@ class TrueColorConversion(WorkspaceIdSingleItemTemplate):
 
 
 @dataclasses.dataclass
+class OrthorectificationIntermap(WorkspaceIdSingleItemTemplate):
+    process_id = "orthorectification-intermap"
+
+
+@dataclasses.dataclass
 class SimularityJobTemplate(JobTemplate):
     title: str
     source_item: pystac.Item
