@@ -30,6 +30,17 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 3.5.0
+**April 27, 2026**
+### Changed
+- Migrated from deprecated poetry.dev-dependencies section to dependency groups
+### Added
+- Added a new processing job template: `OrthorectificationIntermap`.
+### Security
+- Updated black to >=26.3.1.
+- Updated requests to >=2.33.1
+
+
 ### 3.5.0a1
 **April 15, 2026**
 ### Added
