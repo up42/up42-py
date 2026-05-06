@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### 3.6.0a1
 **May 6, 2026**
 ### Changed
-- Increased minimum Python version to 3.12
+- Increased minimum Python version to 3.11
 
 ### 3.5.0
 **April 27, 2026**
