@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 3.6.0a1
+**May 6, 2026**
+### Changed
+- Increased minimum Python version to 3.12
+
 ### 3.5.0
 **April 27, 2026**
 ### Changed
