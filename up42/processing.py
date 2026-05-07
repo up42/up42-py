@@ -29,12 +29,11 @@ class JobStatus(enum.Enum):
     RUNNING = "running"
     SUCCESSFUL = "successful"
     FAILED = "failed"
-    CAPTURED = "captured"
     RELEASED = "released"
 
 
 TERMINAL_STATUSES = [
-    JobStatus.CAPTURED,
+    JobStatus.SUCCESSFUL,
     JobStatus.RELEASED,
     JobStatus.INVALID,
     JobStatus.REJECTED,
@@ -74,10 +73,6 @@ class JobSorting:
     credits = utils.SortingField("creditConsumption.credits", ascending=False)
 
 
-def _to_datetime(value: str | None):
-    return value and datetime.datetime.fromisoformat(value[:ISO_FORMAT_LENGTH])
-
-
 @dataclasses.dataclass
 class Job:
     session = base.Session()
@@ -105,10 +100,21 @@ class Job:
 
     @staticmethod
     def from_metadata(metadata: JobMetadata) -> "Job":
+        # TODO: remove after 4.0.0 release when the API stops emitting "captured".
+        def enrich_status(value: str) -> JobStatus:
+            legacy_status_aliases = {"captured": JobStatus.SUCCESSFUL}
+            return legacy_status_aliases.get(value) or JobStatus(value)
+
+        def to_datetime(value: str | None):
+            return value and datetime.datetime.fromisoformat(
+                value[:ISO_FORMAT_LENGTH]
+            )
+
         results: JobResults = metadata.get("results") or {}
         errors = results.get("errors") or []
         validation_errors = [ValidationError(**error) for error in errors]
         consumption = metadata.get("creditConsumption") or {}
+
         return Job(
             process_id=metadata["processID"],
             id=metadata["jobID"],
@@ -118,11 +124,11 @@ class Job:
             errors=validation_errors or None,
             credits=consumption.get("credits"),
             definition=metadata["definition"],
-            status=JobStatus(metadata["status"]),
-            created=_to_datetime(metadata["created"]),
-            started=_to_datetime(metadata["started"]),
-            finished=_to_datetime(metadata["finished"]),
-            updated=_to_datetime(metadata["updated"]),
+            status=enrich_status(metadata["status"]),
+            created=to_datetime(metadata["created"]),
+            started=to_datetime(metadata["started"]),
+            finished=to_datetime(metadata["finished"]),
+            updated=to_datetime(metadata["updated"]),
         )
 
     def track(self, *, wait: int = 60, retries: int = 60 * 24 * 3):
@@ -166,14 +172,19 @@ class Job:
         # used for performance tuning and testing only
         page_size: int | None = None,
     ) -> Iterator["Job"]:
+        # TODO: remove after 4.0.0 release after the API stops emitting "captured".
+        def enrich_status(statuses: list["JobStatus"]) -> str:
+            values = [entry.value for entry in statuses]
+            if JobStatus.SUCCESSFUL in statuses:
+                values.append("captured")
+            return ",".join(values)
+
         query_params = {
             key: str(value)
             for key, value in {
                 "workspaceId": workspace_id,
                 "processId": ",".join(process_id) if process_id else None,
-                "status": ",".join(entry.value for entry in status)
-                if status
-                else None,
+                "status": enrich_status(status) if status else None,
                 "minDuration": min_duration,
                 "maxDuration": max_duration,
                 "limit": page_size,

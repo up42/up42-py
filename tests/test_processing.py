@@ -42,6 +42,19 @@ class TestJob:
         requests_mock.get(url=tpc.JOB_URL, json=tpc.JOB_METADATA)
         assert processing.Job.get(tpc.JOB_ID) == tpc.JOB
 
+    @pytest.mark.parametrize("api_status", ["captured", "successful"])
+    def test_should_parse_legacy_captured_status_as_successful(
+        self, api_status: str
+    ):
+        metadata: processing.JobMetadata = {
+            **tpc.JOB_METADATA,
+            "status": api_status,
+        }
+        assert (
+            processing.Job.from_metadata(metadata).status
+            == processing.JobStatus.SUCCESSFUL
+        )
+
     def test_should_get_collection(self):
         stac_client = tpc.JOB.stac_client = mock.MagicMock()
         assert tpc.JOB.collection == stac_client.get_collection.return_value
@@ -123,7 +136,18 @@ class TestJob:
     )
     @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize(
-        "status", [None, random.choices(list(processing.JobStatus), k=2)]
+        "status",
+        [
+            None,
+            random.choices(
+                [
+                    status
+                    for status in processing.JobStatus
+                    if status is not processing.JobStatus.SUCCESSFUL
+                ],
+                k=2,
+            ),
+        ],
     )
     @pytest.mark.parametrize("min_duration", [None, 1])
     @pytest.mark.parametrize("max_duration", [None, 10])
@@ -190,4 +214,26 @@ class TestJob:
                 )
             )
             == [tpc.JOB] * 5
+        )
+
+    def test_should_query_jobs_with_captured_when_successful_filtered(
+        self, requests_mock: req_mock.Mocker
+    ):
+        query = urllib.parse.urlencode({"status": "successful,captured"})
+        successful_metadata = {**tpc.JOB_METADATA, "status": "successful"}
+        captured_metadata = {**tpc.JOB_METADATA, "status": "captured"}
+        requests_mock.get(
+            url=f"{tpc.JOBS_URL}?{query}",
+            complete_qs=True,
+            json={
+                "jobs": [successful_metadata, captured_metadata],
+                "links": [],
+            },
+        )
+        successful_job = dataclasses.replace(
+            tpc.JOB, status=processing.JobStatus.SUCCESSFUL
+        )
+        assert (
+            list(processing.Job.all(status=[processing.JobStatus.SUCCESSFUL]))
+            == [successful_job] * 2
         )
