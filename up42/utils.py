@@ -1,5 +1,6 @@
 import dataclasses
 import datetime
+import enum
 import functools
 import importlib.metadata
 import json
@@ -98,6 +99,77 @@ def deprecation(
         return wrapper
 
     return actual_decorator
+
+
+DeprecatedMembers = dict[str, tuple[str | None, str]]
+
+
+class DeprecatedEnumMeta(enum.EnumMeta):
+    """
+    Metaclass that emits a `DeprecationWarning` when an enum member listed in
+    the enum's deprecation table is accessed by name or constructed by value.
+
+    Usage:
+
+        class JobStatus(
+            enum.Enum,
+            metaclass=DeprecatedEnumMeta,
+            deprecated_members={"DEPRECATED_MEMBER": ("NEW_MEMBER", "4.0.0")},
+        ):
+            ...
+    """
+
+    def __new__(
+        mcs,
+        name,
+        bases,
+        namespace,
+        deprecated_members: DeprecatedMembers | None = None,
+        **kwargs,
+    ):
+        cls = super().__new__(mcs, name, bases, namespace, **kwargs)
+        cls._deprecated_members_ = dict(deprecated_members or {})  # type: ignore[attr-defined]
+        return cls
+
+    # pylint: disable=unused-argument
+    def __init__(
+        cls,
+        name,
+        bases,
+        namespace,
+        deprecated_members: DeprecatedMembers | None = None,
+        **kwargs,
+    ):
+        super().__init__(name, bases, namespace, **kwargs)
+
+    def __getattribute__(cls, name):
+        member = super().__getattribute__(name)
+        if name.startswith("_"):
+            return member
+        _maybe_warn_deprecated_enum_member(cls, name)
+        return member
+
+    def __call__(cls, value, *args, **kwargs):
+        member = super().__call__(value, *args, **kwargs)
+        _maybe_warn_deprecated_enum_member(cls, member.name)
+        return member
+
+
+def _maybe_warn_deprecated_enum_member(cls: type, name: str) -> None:
+    deprecated: DeprecatedMembers = (
+        cls.__dict__.get("_deprecated_members_") or {}
+    )
+    entry = deprecated.get(name)
+    if entry is None:
+        return
+    replacement, version = entry
+    replace_with = f" Use `{replacement}` instead." if replacement else ""
+    warnings.warn(
+        f"`{cls.__name__}.{name}` is deprecated and will be removed "
+        f"in version {version}.{replace_with}",
+        DeprecationWarning,
+        stacklevel=3,
+    )
 
 
 def _unpack_tar_files(

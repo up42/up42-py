@@ -1,6 +1,7 @@
 import dataclasses
 import datetime
 import enum
+import warnings
 from collections.abc import Iterator
 from typing import TypedDict
 
@@ -18,7 +19,11 @@ class ValidationError:
     name: str
 
 
-class JobStatus(enum.Enum):
+class JobStatus(
+    enum.Enum,
+    metaclass=utils.DeprecatedEnumMeta,
+    deprecated_members={"CAPTURED": (None, "4.0.0")},
+):
     CREATED = "created"
     LICENSED = "licensed"
     UNLICENSED = "unlicensed"
@@ -33,13 +38,15 @@ class JobStatus(enum.Enum):
     RELEASED = "released"
 
 
-TERMINAL_STATUSES = [
-    JobStatus.CAPTURED,
-    JobStatus.RELEASED,
-    JobStatus.INVALID,
-    JobStatus.REJECTED,
-    JobStatus.UNLICENSED,
-]
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", DeprecationWarning)
+    TERMINAL_STATUSES = [
+        JobStatus.CAPTURED,
+        JobStatus.RELEASED,
+        JobStatus.INVALID,
+        JobStatus.REJECTED,
+        JobStatus.UNLICENSED,
+    ]
 
 
 class JobResults(TypedDict, total=False):
@@ -109,6 +116,9 @@ class Job:
         errors = results.get("errors") or []
         validation_errors = [ValidationError(**error) for error in errors]
         consumption = metadata.get("creditConsumption") or {}
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            status = JobStatus(metadata["status"])
         return Job(
             process_id=metadata["processID"],
             id=metadata["jobID"],
@@ -118,7 +128,7 @@ class Job:
             errors=validation_errors or None,
             credits=consumption.get("credits"),
             definition=metadata["definition"],
-            status=JobStatus(metadata["status"]),
+            status=status,
             created=_to_datetime(metadata["created"]),
             started=_to_datetime(metadata["started"]),
             finished=_to_datetime(metadata["finished"]),
