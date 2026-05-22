@@ -1,6 +1,7 @@
 import dataclasses
 import datetime
 import random
+import re
 import urllib.parse
 import uuid
 import warnings
@@ -39,26 +40,25 @@ class TestCost:
 
 
 class TestJobStatusDeprecation:
+    # pylint: disable=protected-access
     def test_should_warn_on_attribute_access(self):
         with pytest.warns(
             FutureWarning,
-            match=(
-                r"`JobStatus\.CAPTURED` is deprecated and will be removed in version 4\.0\.0\."
-            ),
+            match=re.escape(processing._CAPTURED_DEPRECATION_MESSAGE),
         ):
             _ = processing.JobStatus.CAPTURED
 
     def test_should_warn_on_item_access(self):
         with pytest.warns(
             FutureWarning,
-            match=r"`JobStatus\.CAPTURED` is deprecated",
+            match=re.escape(processing._CAPTURED_DEPRECATION_MESSAGE),
         ):
             _ = processing.JobStatus["CAPTURED"]
 
     def test_should_warn_on_value_based_construction(self):
         with pytest.warns(
             FutureWarning,
-            match=r"`JobStatus\.CAPTURED` is deprecated",
+            match=re.escape(processing._CAPTURED_DEPRECATION_MESSAGE),
         ):
             processing.JobStatus("captured")
 
