@@ -48,6 +48,13 @@ class TestJobStatusDeprecation:
         ):
             _ = processing.JobStatus.CAPTURED
 
+    def test_should_warn_on_item_access(self):
+        with pytest.warns(
+            FutureWarning,
+            match=r"`JobStatus\.CAPTURED` is deprecated",
+        ):
+            _ = processing.JobStatus["CAPTURED"]
+
     def test_should_warn_on_value_based_construction(self):
         with pytest.warns(
             FutureWarning,
