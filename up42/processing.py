@@ -3,7 +3,7 @@ import datetime
 import enum
 import warnings
 from collections.abc import Iterator
-from typing import TypedDict
+from typing import Any, TypedDict
 
 import pystac
 import tenacity as tnc
@@ -19,10 +19,47 @@ class ValidationError:
     name: str
 
 
+_CAPTURED_DEPRECATION_MESSAGE = (
+    "`JobStatus.CAPTURED` is deprecated and will be removed in version 4.0.0."
+)
+
+_DEPRECATED_JOB_STATUS_MEMBERS = {"CAPTURED": _CAPTURED_DEPRECATION_MESSAGE}
+
+
+class _JobStatusMeta(enum.EnumMeta):
+    def __getattribute__(cls, name):
+        if name == "CAPTURED":
+            warnings.warn(
+                _CAPTURED_DEPRECATION_MESSAGE,
+                FutureWarning,
+                stacklevel=2,
+            )
+        return super().__getattribute__(name)
+
+    def __call__(cls, value, *args, **kwargs):
+        member = super().__call__(value, *args, **kwargs)
+        if member.name == "CAPTURED":
+            warnings.warn(
+                _CAPTURED_DEPRECATION_MESSAGE,
+                FutureWarning,
+                stacklevel=2,
+            )
+        return member
+
+    def __getitem__(cls, name):
+        member: Any = super().__getitem__(name)
+        if name in _DEPRECATED_JOB_STATUS_MEMBERS:
+            warnings.warn(
+                _DEPRECATED_JOB_STATUS_MEMBERS[name],
+                FutureWarning,
+                stacklevel=2,
+            )
+        return member
+
+
 class JobStatus(
     enum.Enum,
-    metaclass=utils.DeprecatedEnumMeta,
-    deprecated_members={"CAPTURED": (None, "4.0.0")},
+    metaclass=_JobStatusMeta,
 ):
     CREATED = "created"
     LICENSED = "licensed"
@@ -38,8 +75,9 @@ class JobStatus(
     RELEASED = "released"
 
 
+# Prevent the SDK itself from emitting the warning when declaring this list
 with warnings.catch_warnings():
-    warnings.simplefilter("ignore", DeprecationWarning)
+    warnings.simplefilter("ignore", FutureWarning)
     TERMINAL_STATUSES = [
         JobStatus.CAPTURED,
         JobStatus.RELEASED,
@@ -116,9 +154,6 @@ class Job:
         errors = results.get("errors") or []
         validation_errors = [ValidationError(**error) for error in errors]
         consumption = metadata.get("creditConsumption") or {}
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", DeprecationWarning)
-            status = JobStatus(metadata["status"])
         return Job(
             process_id=metadata["processID"],
             id=metadata["jobID"],
@@ -128,7 +163,7 @@ class Job:
             errors=validation_errors or None,
             credits=consumption.get("credits"),
             definition=metadata["definition"],
-            status=status,
+            status=JobStatus(metadata["status"]),
             created=_to_datetime(metadata["created"]),
             started=_to_datetime(metadata["started"]),
             finished=_to_datetime(metadata["finished"]),

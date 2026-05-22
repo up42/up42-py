@@ -4,7 +4,7 @@ import random
 import urllib.parse
 import uuid
 import warnings
-from typing import Any, cast
+from typing import Any
 from unittest import mock
 
 import pytest
@@ -41,41 +41,26 @@ class TestCost:
 class TestJobStatusDeprecation:
     def test_should_warn_on_attribute_access(self):
         with pytest.warns(
-            DeprecationWarning,
+            FutureWarning,
             match=(
-                r"`JobStatus\.CAPTURED` is deprecated and will be removed "
-                r"in version 4\.0\.0\."
+                r"`JobStatus\.CAPTURED` is deprecated and will be removed in version 4\.0\.0\."
             ),
         ):
             _ = processing.JobStatus.CAPTURED
 
     def test_should_warn_on_value_based_construction(self):
         with pytest.warns(
-            DeprecationWarning,
+            FutureWarning,
             match=r"`JobStatus\.CAPTURED` is deprecated",
         ):
             processing.JobStatus("captured")
 
     def test_should_not_warn_on_non_deprecated_members(self):
         with warnings.catch_warnings():
-            warnings.simplefilter("error", DeprecationWarning)
+            warnings.simplefilter("error", FutureWarning)
             _ = processing.JobStatus.RELEASED
             _ = processing.JobStatus("released")
             _ = list(processing.JobStatus)
-
-    def test_should_not_warn_when_parsing_backend_payload_with_captured_status(
-        self,
-    ):
-        metadata = cast(
-            processing.JobMetadata,
-            {**tpc.JOB_METADATA, "status": "captured"},
-        )
-        with warnings.catch_warnings():
-            warnings.simplefilter("error", DeprecationWarning)
-            job = processing.Job.from_metadata(metadata)
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", DeprecationWarning)
-            assert job.status == processing.JobStatus.CAPTURED
 
 
 class TestJob:

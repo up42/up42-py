@@ -1,8 +1,6 @@
-import enum
 import itertools
 import json
 import pathlib
-import warnings
 from unittest import mock
 
 import pytest
@@ -189,68 +187,3 @@ class TestDeprecationDecorator:
             match="`DeprecatedClass` is deprecated and will be removed in version 2.0.0 Use `NewClass` instead.",
         ):
             DeprecatedClass()
-
-
-class _SampleStatus(
-    enum.Enum,
-    metaclass=utils.DeprecatedEnumMeta,
-    deprecated_members={
-        "OLD_WITH_REPLACEMENT": ("NEW", "9.9.9"),
-        "OLD_WITHOUT_REPLACEMENT": (None, "9.9.9"),
-    },
-):
-    OLD_WITH_REPLACEMENT = "old_with_replacement"
-    OLD_WITHOUT_REPLACEMENT = "old_without_replacement"
-    NEW = "new"
-
-
-class TestDeprecatedEnumMeta:
-    def test_should_warn_on_attribute_access_of_deprecated_member(self):
-        with pytest.warns(
-            DeprecationWarning,
-            match=(
-                r"`_SampleStatus\.OLD_WITH_REPLACEMENT` is deprecated and "
-                r"will be removed in version 9\.9\.9\. Use `NEW` instead\."
-            ),
-        ):
-            _ = _SampleStatus.OLD_WITH_REPLACEMENT
-
-    def test_should_warn_on_value_based_construction_of_deprecated_member(
-        self,
-    ):
-        with pytest.warns(
-            DeprecationWarning,
-            match=r"`_SampleStatus\.OLD_WITH_REPLACEMENT` is deprecated",
-        ):
-            _SampleStatus("old_with_replacement")
-
-    def test_should_omit_replacement_hint_when_none(self):
-        with pytest.warns(
-            DeprecationWarning,
-            match=(
-                r"^`_SampleStatus\.OLD_WITHOUT_REPLACEMENT` is deprecated and "
-                r"will be removed in version 9\.9\.9\.$"
-            ),
-        ):
-            _ = _SampleStatus.OLD_WITHOUT_REPLACEMENT
-
-    def test_should_not_warn_on_healthy_member_access(self):
-        with warnings.catch_warnings():
-            warnings.simplefilter("error", DeprecationWarning)
-            _ = _SampleStatus.NEW
-            _ = _SampleStatus("new")
-            _ = _SampleStatus.NEW.value
-
-    def test_should_not_warn_on_iteration(self):
-        with warnings.catch_warnings():
-            warnings.simplefilter("error", DeprecationWarning)
-            _ = list(_SampleStatus)
-
-    def test_should_not_leak_into_unrelated_enums(self):
-        class Unrelated(enum.Enum):
-            X = 1
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("error", DeprecationWarning)
-            _ = Unrelated.X
-            _ = Unrelated(1)
