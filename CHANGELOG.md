@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### 3.6.0a1
 **May 26, 2026**
 ### Deprecated
-- `JobStatus.CAPTURED` is deprecated and will be removed in version `4.0.0`.
+- `JobStatus.CAPTURED` is deprecated and will be removed in version `4.0.0` and replaced by `JobStatus.SUCCESSFUL`.
 
 ### 3.5.0
 **April 27, 2026**
