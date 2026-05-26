@@ -3,7 +3,7 @@ import datetime
 import enum
 import warnings
 from collections.abc import Iterator
-from typing import Any, TypedDict
+from typing import TypedDict
 
 import pystac
 import tenacity as tnc
@@ -24,38 +24,29 @@ _CAPTURED_DEPRECATION_MESSAGE = (
     "Use `JobStatus.SUCCESSFUL` instead."
 )
 
-_DEPRECATED_JOB_STATUS_MEMBERS = {"CAPTURED": _CAPTURED_DEPRECATION_MESSAGE}
-
 
 class _JobStatusMeta(enum.EnumMeta):
     def __getattribute__(cls, name):
-        if name == "CAPTURED":
-            warnings.warn(
-                _CAPTURED_DEPRECATION_MESSAGE,
-                FutureWarning,
-                stacklevel=2,
-            )
+        _check_deprecated(name)
         return super().__getattribute__(name)
 
     def __call__(cls, value, *args, **kwargs):
         member = super().__call__(value, *args, **kwargs)
-        if member.name == "CAPTURED":
-            warnings.warn(
-                _CAPTURED_DEPRECATION_MESSAGE,
-                FutureWarning,
-                stacklevel=2,
-            )
+        _check_deprecated(member.name)
         return member
 
     def __getitem__(cls, name):
-        member: Any = super().__getitem__(name)
-        if name in _DEPRECATED_JOB_STATUS_MEMBERS:
-            warnings.warn(
-                _DEPRECATED_JOB_STATUS_MEMBERS[name],
-                FutureWarning,
-                stacklevel=2,
-            )
-        return member
+        _check_deprecated(name)
+        return super().__getitem__(name)
+
+
+def _check_deprecated(name):
+    if name == "CAPTURED":
+        warnings.warn(
+            _CAPTURED_DEPRECATION_MESSAGE,
+            FutureWarning,
+            stacklevel=2,
+        )
 
 
 class JobStatus(
