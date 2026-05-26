@@ -21,6 +21,7 @@ class ValidationError:
 
 _CAPTURED_DEPRECATION_MESSAGE = (
     "`JobStatus.CAPTURED` is deprecated and will be removed in version 4.0.0."
+    "Use `JobStatus.SUCCESSFUL` instead."
 )
 
 _DEPRECATED_JOB_STATUS_MEMBERS = {"CAPTURED": _CAPTURED_DEPRECATION_MESSAGE}
@@ -72,6 +73,7 @@ class JobStatus(
     SUCCESSFUL = "successful"
     FAILED = "failed"
     CAPTURED = "captured"
+    """`JobStatus.CAPTURED` is deprecated and will be removed in version 4.0.0. Use `JobStatus.SUCCESSFUL` instead."""
     RELEASED = "released"
 
 
@@ -84,6 +86,7 @@ with warnings.catch_warnings():
         JobStatus.INVALID,
         JobStatus.REJECTED,
         JobStatus.UNLICENSED,
+        JobStatus.SUCCESSFUL,
     ]
 
 
