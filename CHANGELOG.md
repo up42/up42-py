@@ -34,6 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **May 28, 2026**
 ### Deprecated
 - `JobStatus.CAPTURED` is deprecated and will be removed in version `4.0.0` and replaced by `JobStatus.SUCCESSFUL`.
+- Support for Python 3.10 is officially deprecated as of this release. Starting with version `4.0.0`, the minimum required Python version will be 3.11.
 
 ### 3.6.0a1
 **May 28, 2026**
