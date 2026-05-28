@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 3.6.0
+**May 28, 2026**
+### Deprecated
+- `JobStatus.CAPTURED` is deprecated and will be removed in version `4.0.0` and replaced by `JobStatus.SUCCESSFUL`.
+
 ### 3.6.0a1
 **May 28, 2026**
 ### Deprecated
