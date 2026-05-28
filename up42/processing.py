@@ -45,7 +45,6 @@ def _check_deprecated(name):
         warnings.warn(
             _CAPTURED_DEPRECATION_MESSAGE,
             FutureWarning,
-            stacklevel=2,
         )
 
 
