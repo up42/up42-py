@@ -1,6 +1,7 @@
 import dataclasses
 import datetime
 import enum
+import warnings
 from collections.abc import Iterator
 from typing import TypedDict
 
@@ -18,7 +19,39 @@ class ValidationError:
     name: str
 
 
-class JobStatus(enum.Enum):
+_CAPTURED_DEPRECATION_MESSAGE = (
+    "`JobStatus.CAPTURED` is deprecated and will be removed in version 4.0.0."
+    "Use `JobStatus.SUCCESSFUL` instead."
+)
+
+
+class _JobStatusMeta(enum.EnumMeta):
+    def __getattribute__(cls, name):
+        _check_deprecated(name)
+        return super().__getattribute__(name)
+
+    def __call__(cls, value, *args, **kwargs):
+        member = super().__call__(value, *args, **kwargs)
+        _check_deprecated(member.name)
+        return member
+
+    def __getitem__(cls, name):
+        _check_deprecated(name)
+        return super().__getitem__(name)
+
+
+def _check_deprecated(name):
+    if name == "CAPTURED":
+        warnings.warn(
+            _CAPTURED_DEPRECATION_MESSAGE,
+            FutureWarning,
+        )
+
+
+class JobStatus(
+    enum.Enum,
+    metaclass=_JobStatusMeta,
+):
     CREATED = "created"
     LICENSED = "licensed"
     UNLICENSED = "unlicensed"
@@ -30,16 +63,21 @@ class JobStatus(enum.Enum):
     SUCCESSFUL = "successful"
     FAILED = "failed"
     CAPTURED = "captured"
+    """`JobStatus.CAPTURED` is deprecated and will be removed in version 4.0.0. Use `JobStatus.SUCCESSFUL` instead."""
     RELEASED = "released"
 
 
-TERMINAL_STATUSES = [
-    JobStatus.CAPTURED,
-    JobStatus.RELEASED,
-    JobStatus.INVALID,
-    JobStatus.REJECTED,
-    JobStatus.UNLICENSED,
-]
+# Prevent the SDK itself from emitting the warning when declaring this list
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", FutureWarning)
+    TERMINAL_STATUSES = [
+        JobStatus.CAPTURED,
+        JobStatus.RELEASED,
+        JobStatus.INVALID,
+        JobStatus.REJECTED,
+        JobStatus.UNLICENSED,
+        JobStatus.SUCCESSFUL,
+    ]
 
 
 class JobResults(TypedDict, total=False):

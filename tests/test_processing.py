@@ -1,8 +1,10 @@
 import dataclasses
 import datetime
 import random
+import re
 import urllib.parse
 import uuid
+import warnings
 from typing import Any
 from unittest import mock
 
@@ -35,6 +37,37 @@ class TestCost:
         cost = processing.Cost(strategy="strategy", credits=10)
         assert cost > low_value and cost >= low_value
         assert cost < high_value and cost <= high_value
+
+
+class TestJobStatusDeprecation:
+    # pylint: disable=protected-access
+    def test_should_warn_on_attribute_access(self):
+        with pytest.warns(
+            FutureWarning,
+            match=re.escape(processing._CAPTURED_DEPRECATION_MESSAGE),
+        ):
+            _ = processing.JobStatus.CAPTURED
+
+    def test_should_warn_on_item_access(self):
+        with pytest.warns(
+            FutureWarning,
+            match=re.escape(processing._CAPTURED_DEPRECATION_MESSAGE),
+        ):
+            _ = processing.JobStatus["CAPTURED"]
+
+    def test_should_warn_on_value_based_construction(self):
+        with pytest.warns(
+            FutureWarning,
+            match=re.escape(processing._CAPTURED_DEPRECATION_MESSAGE),
+        ):
+            processing.JobStatus("captured")
+
+    def test_should_not_warn_on_non_deprecated_members(self):
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", FutureWarning)
+            _ = processing.JobStatus.RELEASED
+            _ = processing.JobStatus("released")
+            _ = list(processing.JobStatus)
 
 
 class TestJob:
