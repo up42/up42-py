@@ -30,10 +30,21 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-### 3.6.0a1
-**May 6, 2026**
-### Changed
+### 4.0.0a1
+**June 2, 2026**
+### Security
 - Increased minimum Python version to 3.11
+
+### 3.6.0
+**May 28, 2026**
+### Deprecated
+- `JobStatus.CAPTURED` is deprecated and will be removed in version `4.0.0` and replaced by `JobStatus.SUCCESSFUL`.
+- Support for Python 3.10 is officially deprecated as of this release. Starting with version `4.0.0`, the minimum required Python version will be 3.11.
+
+### 3.6.0a1
+**May 28, 2026**
+### Deprecated
+- `JobStatus.CAPTURED` is deprecated and will be removed in version `4.0.0` and replaced by `JobStatus.SUCCESSFUL`.
 
 ### 3.5.0
 **April 27, 2026**
