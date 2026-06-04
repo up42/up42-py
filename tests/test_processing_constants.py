@@ -30,6 +30,8 @@ EXECUTION_URL = (
     f"{constants.API_HOST}/v2/processing/processes"
     f"/{PROCESS_ID}/execution?workspaceId={constants.WORKSPACE_ID}"
 )
+BUDGET_ID = str(uuid.uuid4())
+EXECUTION_URL_WITH_BUDGET = f"{EXECUTION_URL}&budgetId={BUDGET_ID}"
 JOBS_URL = f"{constants.API_HOST}/v2/processing/jobs"
 JOB_URL = f"{JOBS_URL}/{JOB_ID}"
 

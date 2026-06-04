@@ -373,37 +373,45 @@ class TestJobTemplate:
         assert not template.errors
         assert template.cost == cost
 
+    @pytest.mark.parametrize(
+        ("execution_url", "budget_id"),
+        [
+            (tpc.EXECUTION_URL, None),
+            (tpc.EXECUTION_URL_WITH_BUDGET, tpc.BUDGET_ID),
+        ],
+    )
     @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_should_execute(self, requests_mock: req_mock.Mocker):
+    def test_should_execute(
+        self,
+        requests_mock: req_mock.Mocker,
+        execution_url: str,
+        budget_id: str | None,
+    ):
         cost = processing.Cost(strategy="none", credits=1)
+        body_matcher = helpers.match_request_body(
+            {"inputs": {"title": tpc.TITLE}}
+        )
         requests_mock.post(
             tpc.VALIDATION_URL,
             status_code=200,
-            additional_matcher=helpers.match_request_body(
-                {"inputs": {"title": tpc.TITLE}}
-            ),
+            additional_matcher=body_matcher,
         )
-        cost_payload = {
-            "pricingStrategy": cost.strategy,
-            "totalCredits": cost.credits,
-        }
         requests_mock.post(
             tpc.COST_URL,
             status_code=200,
-            json=cost_payload,
-            additional_matcher=helpers.match_request_body(
-                {"inputs": {"title": tpc.TITLE}}
-            ),
+            json={
+                "pricingStrategy": cost.strategy,
+                "totalCredits": cost.credits,
+            },
+            additional_matcher=body_matcher,
         )
         requests_mock.post(
-            tpc.EXECUTION_URL,
+            execution_url,
             status_code=200,
             json=tpc.JOB_METADATA,
-            additional_matcher=helpers.match_request_body(
-                {"inputs": {"title": tpc.TITLE}}
-            ),
+            additional_matcher=body_matcher,
         )
         template = SampleJobTemplate(title=tpc.TITLE)
-        assert template.execute() == tpc.JOB
+        assert template.execute(budget_id=budget_id) == tpc.JOB
         assert template.is_valid and not template.errors
         assert template.cost == cost
