@@ -107,7 +107,7 @@ class JobTemplate:
     def is_valid(self) -> bool:
         return not self.errors
 
-    def execute(self, *, budget_id: str | None = None) -> processing.Job:
+    def execute(self, budget_id: str | None = None) -> processing.Job:
         url = host.endpoint(
             f"/v2/processing/processes/{self.process_id}/execution"
         )
