@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 4.0.0a2
+**June 4, 2026**
+### Added
+- Added optional `budget_id` parameter to `JobTemplate.execute()`
+
 ### 4.0.0a1
 **June 2, 2026**
 ### Security

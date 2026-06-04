@@ -107,13 +107,13 @@ class JobTemplate:
     def is_valid(self) -> bool:
         return not self.errors
 
-    def execute(self) -> processing.Job:
+    def execute(self, *, budget_id: str | None = None) -> processing.Job:
         url = host.endpoint(
             f"/v2/processing/processes/{self.process_id}/execution"
         )
         job_metadata = self.session.post(
             url,
-            params={"workspaceId": self.workspace_id},
+            params={"workspaceId": self.workspace_id, "budgetId": budget_id},
             json={"inputs": self.inputs},
         ).json()
         return processing.Job.from_metadata(job_metadata)
