@@ -1,5 +1,6 @@
 import dataclasses
-from typing import Optional, TypeAlias, Literal, Iterator
+from collections.abc import Iterator
+from typing import Literal, TypeAlias
 
 from up42 import base, host, utils
 
@@ -10,8 +11,10 @@ BudgetStatus: TypeAlias = Literal[
     "INACTIVE",
 ]
 
+
 class BudgetSorting:
     updated_at = utils.SortingField(name="updatedAt")
+
 
 @dataclasses.dataclass
 class Budget:
@@ -23,16 +26,16 @@ class Budget:
     created_at: str
     updated_at: str
 
-    description: Optional[str] = None
-    external_id: Optional[str] = None
+    description: str | None = None
+    external_id: str | None = None
 
     @classmethod
     def create(
         cls,
         name: str,
         status: BudgetStatus,
-        description: Optional[str] = None,
-        external_id: Optional[str] = None,
+        description: str | None = None,
+        external_id: str | None = None,
     ) -> "Budget":
         url = host.endpoint("/v2/budgets")
         payload = {
@@ -47,7 +50,9 @@ class Budget:
 
     def save(self):
         if not self.id:
-            raise ValueError("Cannot save a budget without an id. Use Budget.create() to create a new budget.")
+            raise ValueError(
+                "Cannot save a budget without an id. Use Budget.create() to create a new budget."
+            )
         url = host.endpoint(f"/v2/budgets/{self.id}")
         payload = {
             "name": self.name,
@@ -58,7 +63,6 @@ class Budget:
         response_json = self.session.put(url=url, json=payload).json()["data"]
         self.updated_at = response_json["updatedAt"]
         logger.info("Saved budget %s", self.id)
-
 
     @staticmethod
     def _from_metadata(metadata: dict) -> "Budget":
@@ -82,9 +86,9 @@ class Budget:
 
     @classmethod
     def all(
-            cls,
-            status: list[BudgetStatus] | None = None,
-            sort_by: utils.SortingField | None = None,
+        cls,
+        status: list[BudgetStatus] | None = None,
+        sort_by: utils.SortingField | None = None,
     ) -> Iterator["Budget"]:
         logger.debug("Listing budgets with status=%s, sort_by=%s", status, sort_by)
         params = {
@@ -120,7 +124,7 @@ class BudgetUsage:
 class BudgetSettings:
     session = base.Session()
     enforcement_enabled: bool
-    budget_settings_id: Optional[str]
+    budget_settings_id: str | None
 
     @staticmethod
     def _from_metadata(metadata: dict) -> "BudgetSettings":
@@ -143,5 +147,7 @@ class BudgetSettings:
             "enforcementEnabled": enforcement_enabled,
         }
         metadata = cls.session.patch(url=url, json=payload).json()["data"]
-        logger.info("Updated budget settings: enforcement_enabled=%s", enforcement_enabled)
+        logger.info(
+            "Updated budget settings: enforcement_enabled=%s", enforcement_enabled
+        )
         return cls._from_metadata(metadata)

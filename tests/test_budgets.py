@@ -7,7 +7,7 @@ import pytest
 import requests_mock as req_mock
 
 from tests import constants
-from up42 import budgets
+from up42 import budgets, utils
 
 BUDGET_ID = str(uuid.uuid4())
 BUDGETS_URL = f"{constants.API_HOST}/v2/budgets"
@@ -49,7 +49,9 @@ def _budget():
 
 
 class TestBudget:
-    def test_should_get_budget(self, requests_mock: req_mock.Mocker, budget: budgets.Budget):
+    def test_should_get_budget(
+        self, requests_mock: req_mock.Mocker, budget: budgets.Budget
+    ):
         requests_mock.get(url=BUDGET_URL, json={"data": metadata})
         assert budgets.Budget.get(BUDGET_ID) == budget
 
@@ -140,8 +142,8 @@ class TestBudget:
     )
     def test_should_get_all_budgets(
         self,
-        status: list[str] | None,
-        sort_by: budgets.BudgetSorting | None,
+        status: list[budgets.BudgetStatus] | None,
+        sort_by: utils.SortingField | None,
         requests_mock: req_mock.Mocker,
         budget: budgets.Budget,
     ):
@@ -155,7 +157,9 @@ class TestBudget:
         requests_mock.get(url=f"{BUDGETS_URL}?{query}", json=response)
         assert list(budgets.Budget.all(status=status, sort_by=sort_by)) == [budget]
 
-    def test_should_get_usage(self, requests_mock: req_mock.Mocker, budget: budgets.Budget):
+    def test_should_get_usage(
+        self, requests_mock: req_mock.Mocker, budget: budgets.Budget
+    ):
         usage_metadata = {
             "budgetId": BUDGET_ID,
             "consumedCredits": 42,
@@ -191,4 +195,3 @@ class TestBudget:
         assert requests_mock.last_request and requests_mock.last_request.json() == {
             "enforcementEnabled": False,
         }
-
