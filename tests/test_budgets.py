@@ -102,14 +102,20 @@ class TestBudget:
         assert created.id == metadata["id"]
         assert created.name == metadata["name"]
         assert created.created_by == metadata["createdBy"]
-        assert requests_mock.last_request and requests_mock.last_request.json() == {
-            "name": metadata["name"],
-            "description": metadata["description"],
-            "externalId": metadata["externalId"],
-            "status": metadata["status"],
-        }
+        assert (
+            requests_mock.last_request
+            and requests_mock.last_request.json()
+            == {
+                "name": metadata["name"],
+                "description": metadata["description"],
+                "externalId": metadata["externalId"],
+                "status": metadata["status"],
+            }
+        )
 
-    def test_should_save(self, requests_mock: req_mock.Mocker, budget: budgets.Budget):
+    def test_should_save(
+        self, requests_mock: req_mock.Mocker, budget: budgets.Budget
+    ):
         budget.name = "new-name"
         budget.description = "new-description"
         budget.external_id = "new-external-id"
@@ -118,16 +124,22 @@ class TestBudget:
         requests_mock.put(BUDGET_URL, json={"data": {"updatedAt": updated_at}})
         budget.save()
         assert budget.updated_at == updated_at
-        assert requests_mock.last_request and requests_mock.last_request.json() == {
-            "name": "new-name",
-            "description": "new-description",
-            "externalId": "new-external-id",
-            "status": "INACTIVE",
-        }
+        assert (
+            requests_mock.last_request
+            and requests_mock.last_request.json()
+            == {
+                "name": "new-name",
+                "description": "new-description",
+                "externalId": "new-external-id",
+                "status": "INACTIVE",
+            }
+        )
 
     def test_save_should_raise_without_id(self, budget: budgets.Budget):
         budget.id = ""
-        with pytest.raises(ValueError, match="Cannot save a budget without an id"):
+        with pytest.raises(
+            ValueError, match="Cannot save a budget without an id"
+        ):
             budget.save()
 
     @pytest.mark.parametrize(
@@ -155,7 +167,9 @@ class TestBudget:
         query = urllib.parse.urlencode(query_params, doseq=True)
         response = {"content": [metadata], "totalPages": 1}
         requests_mock.get(url=f"{BUDGETS_URL}?{query}", json=response)
-        assert list(budgets.Budget.all(status=status, sort_by=sort_by)) == [budget]
+        assert list(budgets.Budget.all(status=status, sort_by=sort_by)) == [
+            budget
+        ]
 
     def test_should_get_usage(
         self, requests_mock: req_mock.Mocker, budget: budgets.Budget
@@ -167,7 +181,9 @@ class TestBudget:
         url = f"{BUDGET_URL}/usage"
         requests_mock.get(url=url, json={"data": usage_metadata})
         usage = budget.get_usage()
-        assert usage == budgets.BudgetUsage(budget_id=BUDGET_ID, consumed_credits=42)
+        assert usage == budgets.BudgetUsage(
+            budget_id=BUDGET_ID, consumed_credits=42
+        )
 
     def test_should_get_settings(self, requests_mock: req_mock.Mocker):
         settings_metadata = {
@@ -192,6 +208,10 @@ class TestBudget:
         assert settings == budgets.BudgetSettings(
             enforcement_enabled=False, budget_settings_id="setting-456"
         )
-        assert requests_mock.last_request and requests_mock.last_request.json() == {
-            "enforcementEnabled": False,
-        }
+        assert (
+            requests_mock.last_request
+            and requests_mock.last_request.json()
+            == {
+                "enforcementEnabled": False,
+            }
+        )

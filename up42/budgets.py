@@ -90,7 +90,9 @@ class Budget:
         status: list[BudgetStatus] | None = None,
         sort_by: utils.SortingField | None = None,
     ) -> Iterator["Budget"]:
-        logger.debug("Listing budgets with status=%s, sort_by=%s", status, sort_by)
+        logger.debug(
+            "Listing budgets with status=%s, sort_by=%s", status, sort_by
+        )
         params = {
             "sort": sort_by,
             "status": status,
@@ -148,6 +150,7 @@ class BudgetSettings:
         }
         metadata = cls.session.patch(url=url, json=payload).json()["data"]
         logger.info(
-            "Updated budget settings: enforcement_enabled=%s", enforcement_enabled
+            "Updated budget settings: enforcement_enabled=%s",
+            enforcement_enabled,
         )
         return cls._from_metadata(metadata)
