@@ -33,14 +33,11 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### 4.0.0a4
 **June 12, 2026**
 ### Added
-- Added `budgets` module with `Budget`, `BudgetUsage`, `BudgetSettings` dataclasses and `BudgetSorting` utility.
+- Added `budgets` module with `Budget`, `BudgetUsage` dataclasses and `BudgetSorting` utility.
 - Added `Budget.get()` to retrieve a single budget by ID.
 - Added `Budget.all()` to list budgets with optional status filtering and sorting.
-- Added `Budget.create()` to create a new budget.
-- Added `Budget.save()` to persist changes of an existing budget to the server.
 - Added `Budget.get_usage()` to retrieve usage for a specific budget.
-- Added module-level `BudgetSettings.get()` and `BudgetSettings.update()` to manage account-wide budget settings.
-- Added `test_budgets.py` with tests for all budget operations.
+- Added `test_budgets.py` with tests for budget and budget usage fetch endpoints.
 
 ### 4.0.0a3
 **June 4, 2026**

@@ -29,41 +29,6 @@ class Budget:
     description: str | None = None
     external_id: str | None = None
 
-    @classmethod
-    def create(
-        cls,
-        name: str,
-        status: BudgetStatus,
-        description: str | None = None,
-        external_id: str | None = None,
-    ) -> "Budget":
-        url = host.endpoint("/v2/budgets")
-        payload = {
-            "name": name,
-            "description": description,
-            "externalId": external_id,
-            "status": status,
-        }
-        response_json = cls.session.post(url=url, json=payload).json()["data"]
-        logger.info("Created budget %s", response_json["id"])
-        return cls._from_metadata(response_json)
-
-    def save(self):
-        if not self.id:
-            raise ValueError(
-                "Cannot save a budget without an id. Use Budget.create() to create a new budget."
-            )
-        url = host.endpoint(f"/v2/budgets/{self.id}")
-        payload = {
-            "name": self.name,
-            "description": self.description,
-            "externalId": self.external_id,
-            "status": self.status,
-        }
-        response_json = self.session.put(url=url, json=payload).json()["data"]
-        self.updated_at = response_json["updatedAt"]
-        logger.info("Saved budget %s", self.id)
-
     @staticmethod
     def _from_metadata(metadata: dict) -> "Budget":
         return Budget(
@@ -120,37 +85,3 @@ class BudgetUsage:
             budget_id=metadata["budgetId"],
             consumed_credits=metadata["consumedCredits"],
         )
-
-
-@dataclasses.dataclass
-class BudgetSettings:
-    session = base.Session()
-    enforcement_enabled: bool
-    budget_settings_id: str | None
-
-    @staticmethod
-    def _from_metadata(metadata: dict) -> "BudgetSettings":
-        return BudgetSettings(
-            enforcement_enabled=metadata["enforcementEnabled"],
-            budget_settings_id=metadata.get("budgetSettingId"),
-        )
-
-    @classmethod
-    def get(cls) -> "BudgetSettings":
-        url = host.endpoint("/v2/budgets/settings")
-        logger.debug("Fetching budget settings")
-        metadata = cls.session.get(url).json()["data"]
-        return cls._from_metadata(metadata)
-
-    @classmethod
-    def update(cls, enforcement_enabled: bool) -> "BudgetSettings":
-        url = host.endpoint("/v2/budgets/settings")
-        payload = {
-            "enforcementEnabled": enforcement_enabled,
-        }
-        metadata = cls.session.patch(url=url, json=payload).json()["data"]
-        logger.info(
-            "Updated budget settings: enforcement_enabled=%s",
-            enforcement_enabled,
-        )
-        return cls._from_metadata(metadata)
