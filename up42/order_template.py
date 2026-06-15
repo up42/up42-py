@@ -57,6 +57,7 @@ class BatchOrderTemplate:
     features: geojson.FeatureCollection
     params: dict
     tags: list[str] | None = None
+    budget_id: str | None = None
 
     def __post_init__(self):
         self.__estimate()
@@ -71,6 +72,8 @@ class BatchOrderTemplate:
         }
         if self.tags is not None:
             payload["tags"] = self.tags
+        if self.budget_id is not None:
+            payload["budgetId"] = self.budget_id
         return payload
 
     def __estimate(self):
@@ -85,6 +88,21 @@ class BatchOrderTemplate:
         )
 
     def place(self) -> list[OrderReference | OrderError]:
+        """
+        Place the order based on the template configuration.
+
+        If a budget_id was provided during template initialization, the order
+        will be charged against that budget. Otherwise, it uses the workspace's
+        default payment method.
+
+        Returns:
+            A list containing OrderReference objects for successful orders and
+            OrderError objects for any failures.
+
+        Raises:
+            HTTPError: If the API request fails (e.g., invalid budget_id,
+                budget exhausted, or insufficient permissions).
+        """
         url = host.endpoint(f"/v2/orders?workspaceId={self.workspace_id}")
         batch = self.session.post(url=url, json=self._payload).json()
         return _get_items(batch, OrderReference)
