@@ -104,14 +104,16 @@ class TestBudget:
         requests_mock: req_mock.Mocker,
         budget: budgets.Budget,
     ):
-        query_params: dict = {"page": 0}
-        if status:
-            query_params["status"] = status
+        query_params: dict = {}
         if sort_by:
             query_params["sort"] = str(sort_by)
-        query = urllib.parse.urlencode(query_params, doseq=True)
+        if status:
+            query_params["status"] = status
+        query_params["page"] = 0
+        query = urllib.parse.urlencode(query_params, doseq=True, safe="")
         response = {"content": [metadata], "totalPages": 1}
-        requests_mock.get(url=f"{BUDGETS_URL}?{query}", json=response)
+        url = BUDGETS_URL + (query and f"?{query}")
+        requests_mock.get(url=url, json=response)
         assert list(budgets.Budget.all(status=status, sort_by=sort_by)) == [
             budget
         ]
