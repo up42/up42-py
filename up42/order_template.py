@@ -57,6 +57,7 @@ class BatchOrderTemplate:
     features: geojson.FeatureCollection
     params: dict
     tags: list[str] | None = None
+    budget_id: str | None = None
 
     def __post_init__(self):
         self.__estimate()
@@ -71,6 +72,8 @@ class BatchOrderTemplate:
         }
         if self.tags is not None:
             payload["tags"] = self.tags
+        if self.budget_id is not None:
+            payload["budgetId"] = self.budget_id
         return payload
 
     def __estimate(self):

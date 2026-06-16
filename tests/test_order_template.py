@@ -1,3 +1,4 @@
+import uuid
 from unittest import mock
 
 import geojson  # type: ignore
@@ -77,12 +78,14 @@ class TestBatchOrderTemplate:
         requests_mock.post(url=estimate_url, json=ESTIMATE_PAYLOAD)
         placement_url = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
         requests_mock.post(url=placement_url, json=PLACEMENT_PAYLOAD)
+        budget_id = str(uuid.uuid4())
         template = order_template.BatchOrderTemplate(
             data_product_id=constants.DATA_PRODUCT_ID,
             display_name=DISPLAY_NAME,
             tags=TAGS,
             features=FEATURES,
             params=PARAMS,
+            budget_id=budget_id,
         )
         expected_payload = {
             "dataProduct": constants.DATA_PRODUCT_ID,
@@ -90,6 +93,7 @@ class TestBatchOrderTemplate:
             "params": PARAMS,
             "tags": TAGS,
             "featureCollection": FEATURES,
+            "budgetId": budget_id,
         }
         assert (
             template._payload  # pylint: disable=protected-access
@@ -98,7 +102,9 @@ class TestBatchOrderTemplate:
         assert template.estimate == ESTIMATE
         assert template.place() == [ORDER_REFERENCE, ERROR]
 
-    def test_should_place_without_tags(self, requests_mock: req_mock.Mocker):
+    def test_should_place_without_tags_or_budget_id(
+        self, requests_mock: req_mock.Mocker
+    ):
         estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
         requests_mock.post(url=estimate_url, json=ESTIMATE_PAYLOAD)
         placement_url = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
