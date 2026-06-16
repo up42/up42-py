@@ -378,13 +378,18 @@ class TestOrder:
         new_tag = ["new_tag"]
         updated_metadata = order_metadata.copy()
         updated_metadata["tags"] = new_tag
+        budget_id = str(uuid.uuid4())
+        updated_metadata["budgetId"] = budget_id
         requests_mock.patch(
             url=ORDER_URL,
             additional_matcher=helpers.match_request_body({"tags": new_tag}),
             json=updated_metadata,
         )
         expected_order = dataclasses.replace(
-            data_order, tags=new_tag, info=updated_metadata
+            data_order,
+            tags=new_tag,
+            budget_id=budget_id,
+            info=updated_metadata,
         )
         assert (
             order.Order.update(constants.ORDER_ID, new_tag) == expected_order
@@ -438,6 +443,69 @@ class TestOrder:
         requests_mock.patch(url=ORDER_URL, json={"unexpected": "data"})
         with pytest.raises(KeyError):
             order.Order.update(constants.ORDER_ID, ["bad"])
+
+    def test_update_handles_problem_response(
+        self, requests_mock: req_mock.Mocker
+    ):
+        budget_id = str(uuid.uuid4())
+        error_response = {
+            "status": 400,
+            "title": "Budget cannot be updated because credits have already been deducted",
+            "type": "https://docs.up42.com/problems/bad-order-request",
+            "detail": "Can't patch budgetId for an already deducted order",
+        }
+
+        requests_mock.patch(
+            url=ORDER_URL,
+            status_code=400,
+            json=error_response,
+        )
+
+        with pytest.raises(Exception):
+            order.Order.update(constants.ORDER_ID, budget_id=budget_id)
+
+    def test_update_with_budget_id_set_to_none_removes_budget(
+        self,
+        requests_mock: req_mock.Mocker,
+        base_order_metadata: dict,
+        base_order: order.Order,
+    ):
+        updated_metadata = base_order_metadata.copy()
+        updated_metadata["budgetId"] = None
+        requests_mock.patch(
+            url=ORDER_URL,
+            additional_matcher=helpers.match_request_body({"budgetId": None}),
+            json=updated_metadata,
+        )
+        expected_order = dataclasses.replace(
+            base_order, budget_id=None, info=updated_metadata
+        )
+        assert (
+            order.Order.update(constants.ORDER_ID, budget_id=None)
+            == expected_order
+        )
+
+    def test_update_without_budget_id_does_not_include_in_body(
+        self,
+        requests_mock: req_mock.Mocker,
+        base_order_metadata: dict,
+        base_order: order.Order,
+    ):
+        new_tags = ["new_tag"]
+        updated_metadata = base_order_metadata.copy()
+        updated_metadata["tags"] = new_tags
+        requests_mock.patch(
+            url=ORDER_URL,
+            additional_matcher=helpers.match_request_body({"tags": new_tags}),
+            json=updated_metadata,
+        )
+        expected_order = dataclasses.replace(
+            base_order, tags=new_tags, info=updated_metadata
+        )
+        assert (
+            order.Order.update(constants.ORDER_ID, tags=new_tags)
+            == expected_order
+        )
 
     @pytest.mark.parametrize(
         "status, can_cancel",
