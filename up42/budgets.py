@@ -4,8 +4,6 @@ from typing import Literal, TypeAlias
 
 from up42 import base, host, utils
 
-logger = utils.get_logger(__name__)
-
 BudgetStatus: TypeAlias = Literal[
     "ACTIVE",
     "INACTIVE",
@@ -45,7 +43,6 @@ class Budget:
     @classmethod
     def get(cls, budget_id: str) -> "Budget":
         url = host.endpoint(f"/v2/budgets/{budget_id}")
-        logger.debug("Fetching budget %s", budget_id)
         metadata = cls.session.get(url).json()["data"]
         return cls._from_metadata(metadata)
 
@@ -55,9 +52,6 @@ class Budget:
         status: list[BudgetStatus] | None = None,
         sort_by: utils.SortingField | None = None,
     ) -> Iterator["Budget"]:
-        logger.debug(
-            "Listing budgets with status=%s, sort_by=%s", status, sort_by
-        )
         params = {
             "sort": sort_by,
             "status": status,
@@ -69,7 +63,6 @@ class Budget:
 
     def get_usage(self) -> "BudgetUsage":
         url = host.endpoint(f"/v2/budgets/{self.id}/usage")
-        logger.debug("Fetching usage for budget %s", self.id)
         metadata = self.session.get(url).json()["data"]
         return BudgetUsage.from_metadata(metadata)
 
