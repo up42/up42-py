@@ -43,7 +43,7 @@ class Budget:
     @classmethod
     def get(cls, budget_id: str) -> "Budget":
         url = host.endpoint(f"/v2/budgets/{budget_id}")
-        metadata = cls.session.get(url).json()["data"]
+        metadata = cls.session.get(url).json()
         return cls._from_metadata(metadata)
 
     @classmethod
@@ -63,7 +63,7 @@ class Budget:
 
     def get_usage(self) -> "BudgetUsage":
         url = host.endpoint(f"/v2/budgets/{self.id}/usage")
-        metadata = self.session.get(url).json()["data"]
+        metadata = self.session.get(url).json()
         return BudgetUsage.from_metadata(metadata)
 
 

@@ -52,7 +52,7 @@ class TestBudget:
     def test_should_get_budget(
         self, requests_mock: req_mock.Mocker, budget: budgets.Budget
     ):
-        requests_mock.get(url=BUDGET_URL, json={"data": metadata})
+        requests_mock.get(url=BUDGET_URL, json=metadata)
         assert budgets.Budget.get(BUDGET_ID) == budget
 
     @pytest.mark.parametrize(
@@ -82,7 +82,7 @@ class TestBudget:
     def test_should_handle_null_optional_fields(
         self, requests_mock: req_mock.Mocker, response_metadata: dict
     ):
-        requests_mock.get(url=BUDGET_URL, json={"data": response_metadata})
+        requests_mock.get(url=BUDGET_URL, json=response_metadata)
         result = budgets.Budget.get(BUDGET_ID)
         assert result.description is None
         assert result.external_id is None
@@ -124,7 +124,7 @@ class TestBudget:
             "consumedCredits": 42,
         }
         url = f"{BUDGET_URL}/usage"
-        requests_mock.get(url=url, json={"data": usage_metadata})
+        requests_mock.get(url=url, json=usage_metadata)
         usage = budget.get_usage()
         assert usage == budgets.BudgetUsage(
             budget_id=BUDGET_ID, consumed_credits=42
