@@ -4,6 +4,7 @@ import uuid
 from typing import Any
 
 import pytest
+import requests
 import requests_mock as req_mock
 
 from tests import constants, helpers
@@ -34,6 +35,7 @@ def _base_order_metadata():
         "type": "ARCHIVE",
         "dataProductId": constants.DATA_PRODUCT_ID,
         "tags": ["some", "tags"],
+        "budgetId": str(uuid.uuid4()),
     }
 
 
@@ -102,6 +104,7 @@ def _base_order(base_order_metadata: dict):
         tags=["some", "tags"],
         info=base_order_metadata,
         details=None,
+        budget_id=str(uuid.uuid4()),
     )
 
 
@@ -447,8 +450,7 @@ class TestOrder:
     def test_update_handles_problem_response(
         self, requests_mock: req_mock.Mocker
     ):
-        budget_id = str(uuid.uuid4())
-        error_response = {
+        mocked_response = {
             "status": 400,
             "title": "Budget cannot be updated because credits have already been deducted",
             "type": "https://docs.up42.com/problems/bad-order-request",
@@ -458,11 +460,14 @@ class TestOrder:
         requests_mock.patch(
             url=ORDER_URL,
             status_code=400,
-            json=error_response,
+            json=mocked_response,
         )
 
-        with pytest.raises(Exception):
-            order.Order.update(constants.ORDER_ID, budget_id=budget_id)
+        with pytest.raises(requests.HTTPError) as exc_info:
+            order.Order.update(constants.ORDER_ID, ["fail"])
+        assert exc_info.value.response.status_code == 400
+        response = exc_info.value.response.json()
+        assert response == mocked_response
 
     def test_update_with_budget_id_set_to_none_removes_budget(
         self,
