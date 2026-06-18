@@ -8,6 +8,8 @@ from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
 
+_UNSET = object()
+
 OrderType: TypeAlias = Literal["TASKING", "ARCHIVE"]
 
 
@@ -125,6 +127,7 @@ class Order:
     data_product_id: str | None
     tags: list[str] | None
     info: dict = dataclasses.field(repr=False)
+    budget_id: str | None = None
 
     @classmethod
     def get(cls, order_id: str) -> "Order":
@@ -179,6 +182,7 @@ class Order:
             details=details,
             data_product_id=data.get("dataProductId"),
             tags=data.get("tags"),
+            budget_id=data.get("budgetId"),
             info=data,
         )
 
@@ -212,13 +216,16 @@ class Order:
         cls,
         order_id: str,
         tags: list[str] | None = None,
+        budget_id: str | None = _UNSET,  # type: ignore
     ) -> "Order":
         url = host.endpoint(f"/v2/orders/{order_id}")
         headers = {"Content-Type": "application/merge-patch+json"}
 
-        body = {}
+        body: dict[str, Any] = {}
         if tags is not None:
             body["tags"] = tags
+        if budget_id is not _UNSET:
+            body["budgetId"] = budget_id
 
         metadata = cls.session.patch(
             url=url, json=body, headers=headers
