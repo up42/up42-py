@@ -301,6 +301,9 @@ class TestOrder:
     @pytest.mark.parametrize(
         "budget_ids", [None, [BUDGET_ID, str(uuid.uuid4())]]
     )
+    @pytest.mark.parametrize(
+        "ids", [None, [constants.ORDER_ID, str(uuid.uuid4())]]
+    )
     @pytest.mark.parametrize("sort_by", [None, order.OrderSorting.created_at])
     @parameterize_with_order_data
     def test_should_get_all(
@@ -312,6 +315,7 @@ class TestOrder:
         display_name: str | None,
         tags: list[str] | None,
         budget_ids: list[str] | None,
+        ids: list[str] | None,
         sort_by: utils.SortingField | None,
         requests_mock: req_mock.Mocker,
         data_order: order.Order,
@@ -332,6 +336,8 @@ class TestOrder:
             query_params["tags"] = tags
         if budget_ids:
             query_params["budgetIds"] = ",".join(budget_ids)
+        if ids:
+            query_params["orderIds"] = ",".join(ids)
         if sort_by:
             query_params["sort"] = str(sort_by)
 
@@ -349,6 +355,7 @@ class TestOrder:
             requests_mock.get(url=url, json=response)
 
         orders = order.Order.all(
+            ids=ids,
             workspace_id=workspace_id,
             order_type=order_type,
             status=status,
