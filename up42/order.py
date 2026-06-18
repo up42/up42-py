@@ -1,4 +1,5 @@
 import dataclasses
+import warnings
 from collections.abc import Iterator
 from typing import Any, Literal, TypeAlias, TypedDict
 
@@ -118,13 +119,19 @@ class Order:
     id: str
     display_name: str
     status: OrderStatus
-    workspace_id: str
+    user_id: str
     account_id: str
     type: OrderType
     details: OrderDetails | None
     data_product_id: str | None
     tags: list[str] | None
     info: dict = dataclasses.field(repr=False)
+
+    @property
+    @utils.deprecation(replacement_name="user_id", version="5.0.0")
+    def workspace_id(self) -> str:
+        """Deprecated: Use user_id instead."""
+        return self.user_id
 
     @classmethod
     def get(cls, order_id: str) -> "Order":
@@ -173,7 +180,7 @@ class Order:
             id=data["id"],
             display_name=data["displayName"],
             status=data["status"],
-            workspace_id=data["workspaceId"],
+            user_id=data.get("userId", data["workspaceId"]),
             account_id=data["accountId"],
             type=data["type"],
             details=details,
@@ -185,6 +192,7 @@ class Order:
     @classmethod
     def all(
         cls,
+        user_id: str | None = None,
         workspace_id: str | None = None,
         order_type: OrderType | None = None,
         status: list[OrderStatus] | None = None,
@@ -193,9 +201,20 @@ class Order:
         tags: list[str] | None = None,
         sort_by: utils.SortingField | None = None,
     ) -> Iterator["Order"]:
+        # Handle deprecated workspace_id parameter
+        if workspace_id is not None:
+            warnings.warn(
+                "`workspace_id` parameter is deprecated and will be removed in version 5.0.0. "
+                "Use `user_id` instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            if user_id is None:
+                user_id = workspace_id
+        
         params = {
             "sort": sort_by,
-            "workspaceId": workspace_id,
+            "workspaceId": user_id,  # API still uses workspaceId
             "displayName": display_name,
             "type": order_type,
             "tags": tags,

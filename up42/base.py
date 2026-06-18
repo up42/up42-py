@@ -85,15 +85,55 @@ class Session:
 
 
 class WorkspaceId:
+    """Deprecated descriptor. Use UserId instead.
+    
+    This descriptor is deprecated and will be removed in version 5.0.0.
+    Use `UserId` instead.
+    """
+
     def __get__(self, obj, obj_type=None) -> str:
+        warnings.warn(
+            "`WorkspaceId` is deprecated and will be removed in version 5.0.0. "
+            "Use `UserId` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if obj:
             return obj.__dict__.get("workspace_id", workspace.id)
         return workspace.id
 
     def __set__(self, obj, value: str) -> None:
+        warnings.warn(
+            "`WorkspaceId` is deprecated and will be removed in version 5.0.0. "
+            "Use `UserId` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if value == self:
             value = workspace.id
         obj.__dict__["workspace_id"] = value
+
+
+# Alternatively could use decorator but descriptors need instance warnings
+# @utils.deprecation(replacement_name="UserId", version="5.0.0")
+# class WorkspaceId: ...
+
+
+class UserId:
+    """Descriptor for user_id field with default from workspace.
+    
+    This is the non-deprecated replacement for WorkspaceId descriptor.
+    """
+
+    def __get__(self, obj, obj_type=None) -> str:
+        if obj:
+            return obj.__dict__.get("user_id", workspace.id)
+        return workspace.id
+
+    def __set__(self, obj, value: str) -> None:
+        if value == self:
+            value = workspace.id
+        obj.__dict__["user_id"] = value
 
 
 class StacClient:

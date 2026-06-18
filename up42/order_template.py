@@ -51,7 +51,8 @@ def _get_items(data: dict, result_type):
 @dataclasses.dataclass
 class BatchOrderTemplate:
     session = base.Session()
-    workspace_id = base.WorkspaceId()
+    user_id: str | base.UserId = dataclasses.field(default_factory=lambda: base.UserId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=lambda: base.WorkspaceId())
     data_product_id: str
     display_name: str
     features: geojson.FeatureCollection
@@ -88,6 +89,8 @@ class BatchOrderTemplate:
         )
 
     def place(self) -> list[OrderReference | OrderError]:
-        url = host.endpoint(f"/v2/orders?workspaceId={self.workspace_id}")
+        # Use user_id if available, fall back to workspace_id for backward compatibility
+        id_to_use = self.user_id if hasattr(self, 'user_id') and self.user_id else self.workspace_id
+        url = host.endpoint(f"/v2/orders?workspaceId={id_to_use}")
         batch = self.session.post(url=url, json=self._payload).json()
         return _get_items(batch, OrderReference)

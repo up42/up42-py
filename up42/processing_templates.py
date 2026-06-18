@@ -11,6 +11,7 @@ from up42 import base, host, processing
 class JobTemplate:
     session = base.Session()
     process_id: ClassVar[str]
+    user_id: str | base.UserId
     workspace_id: str | base.WorkspaceId
     errors: set[processing.ValidationError] = set()
     process_description: dict = {}
@@ -111,9 +112,11 @@ class JobTemplate:
         url = host.endpoint(
             f"/v2/processing/processes/{self.process_id}/execution"
         )
+        # Use user_id if available, fall back to workspace_id for backward compatibility
+        id_to_use = self.user_id if hasattr(self, 'user_id') and self.user_id else self.workspace_id
         job_metadata = self.session.post(
             url,
-            params={"workspaceId": self.workspace_id, "budgetId": budget_id},
+            params={"workspaceId": id_to_use, "budgetId": budget_id},
             json={"inputs": self.inputs},
         ).json()
         return processing.Job.from_metadata(job_metadata)
@@ -145,16 +148,14 @@ class MultiItemJobTemplate(JobTemplate):
 # TODO: drop these with Python 3.10 kw_only=True data classes
 @dataclasses.dataclass
 class WorkspaceIdSingleItemTemplate(SingleItemJobTemplate):
-    workspace_id: str | base.WorkspaceId = dataclasses.field(
-        default=base.WorkspaceId()
-    )
+    user_id: str | base.UserId = dataclasses.field(default_factory=lambda: base.UserId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=lambda: base.WorkspaceId())
 
 
 @dataclasses.dataclass
 class WorkspaceIdMultiItemTemplate(MultiItemJobTemplate):
-    workspace_id: str | base.WorkspaceId = dataclasses.field(
-        default=base.WorkspaceId()
-    )
+    user_id: str | base.UserId = dataclasses.field(default_factory=lambda: base.UserId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=lambda: base.WorkspaceId())
 
 
 @dataclasses.dataclass

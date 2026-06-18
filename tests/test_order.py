@@ -475,3 +475,104 @@ class TestOrder:
             assert f"Order with id {data_order.id} cannot be canceled" in str(
                 exc_info.value
             )
+
+
+class TestWorkspaceIdDeprecation:
+    """Tests for workspace_id deprecation warnings in Order class."""
+
+    def test_should_warn_on_workspace_id_field_access(
+        self, base_order_metadata: dict
+    ):
+        """Accessing workspace_id field should emit DeprecationWarning."""
+        test_order = order.Order._from_metadata(base_order_metadata)
+        with pytest.warns(
+            DeprecationWarning,
+            match=r"`workspace_id` is deprecated and will be removed in version 5\.0\.0\. Use `user_id` instead\.",
+        ):
+            _ = test_order.workspace_id
+
+    def test_should_not_warn_on_user_id_field_access(
+        self, base_order_metadata: dict
+    ):
+        """Accessing user_id field should not emit warnings."""
+        test_order = order.Order._from_metadata(base_order_metadata)
+        import warnings
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", DeprecationWarning)
+            _ = test_order.user_id  # Should not raise
+
+    def test_should_populate_user_id_from_workspace_id(
+        self, base_order_metadata: dict
+    ):
+        """user_id should be populated from workspaceId in API response."""
+        test_order = order.Order._from_metadata(base_order_metadata)
+        # Access user_id without triggering workspace_id warning
+        import warnings
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", DeprecationWarning)
+            assert test_order.user_id == constants.WORKSPACE_ID
+
+    def test_should_populate_user_id_from_user_id_field(self):
+        """user_id should be populated from userId field if present in API response."""
+        metadata = {
+            "id": constants.ORDER_ID,
+            "userId": "new-user-id-123",
+            "workspaceId": constants.WORKSPACE_ID,
+            "accountId": ACCOUNT_ID,
+            "displayName": "test-order",
+            "status": "CREATED",
+            "type": "ARCHIVE",
+        }
+        test_order = order.Order._from_metadata(metadata)
+        import warnings
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", DeprecationWarning)
+            assert test_order.user_id == "new-user-id-123"
+
+    def test_should_warn_on_workspace_id_parameter(
+        self, requests_mock: req_mock.Mocker
+    ):
+        """Using workspace_id parameter in Order.all() should emit DeprecationWarning."""
+        requests_mock.get(
+            f"{constants.API_HOST}/v2/orders",
+            json={"content": [], "totalPages": 0},
+        )
+        with pytest.warns(
+            DeprecationWarning,
+            match=r"`workspace_id` parameter is deprecated and will be removed in version 5\.0\.0\. Use `user_id` instead\.",
+        ):
+            list(order.Order.all(workspace_id="test-workspace-id"))
+
+    def test_should_not_warn_on_user_id_parameter(
+        self, requests_mock: req_mock.Mocker
+    ):
+        """Using user_id parameter in Order.all() should not emit warnings."""
+        requests_mock.get(
+            f"{constants.API_HOST}/v2/orders",
+            json={"content": [], "totalPages": 0},
+        )
+        import warnings
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", DeprecationWarning)
+            list(order.Order.all(user_id="test-user-id"))  # Should not raise
+
+    def test_should_use_user_id_in_api_call(
+        self, requests_mock: req_mock.Mocker
+    ):
+        """Order.all() should send workspaceId parameter to API when user_id is provided."""
+        mock = requests_mock.get(
+            f"{constants.API_HOST}/v2/orders",
+            json={"content": [], "totalPages": 0},
+        )
+        import warnings
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", DeprecationWarning)
+            list(order.Order.all(user_id="test-user-id"))
+
+        # Verify the API call used workspaceId parameter
+        assert "workspaceId=test-user-id" in mock.last_request.url

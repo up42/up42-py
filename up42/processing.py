@@ -123,7 +123,7 @@ class Job:
     process_id: str
     id: str
     account_id: str
-    workspace_id: str | None
+    user_id: str | None
     definition: dict
     status: JobStatus
     created: datetime.datetime
@@ -133,6 +133,12 @@ class Job:
     credits: int | None = None
     started: datetime.datetime | None = None
     finished: datetime.datetime | None = None
+
+    @property
+    @utils.deprecation(replacement_name="user_id", version="5.0.0")
+    def workspace_id(self) -> str | None:
+        """Deprecated: Use user_id instead."""
+        return self.user_id
 
     @property
     def collection(self) -> pystac.Collection | None:
@@ -151,7 +157,7 @@ class Job:
             process_id=metadata["processID"],
             id=metadata["jobID"],
             account_id=metadata["accountID"],
-            workspace_id=metadata["workspaceID"],
+            user_id=metadata.get("userId", metadata["workspaceID"]),
             collection_url=results.get("collection"),
             errors=validation_errors or None,
             credits=consumption.get("credits"),
@@ -194,6 +200,7 @@ class Job:
     def all(
         cls,
         process_id: list[str] | None = None,
+        user_id: str | None = None,
         workspace_id: str | None = None,
         status: list[JobStatus] | None = None,
         min_duration: int | None = None,
@@ -204,10 +211,21 @@ class Job:
         # used for performance tuning and testing only
         page_size: int | None = None,
     ) -> Iterator["Job"]:
+        # Handle deprecated workspace_id parameter
+        if workspace_id is not None:
+            warnings.warn(
+                "`workspace_id` parameter is deprecated and will be removed in version 5.0.0. "
+                "Use `user_id` instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            if user_id is None:
+                user_id = workspace_id
+        
         query_params = {
             key: str(value)
             for key, value in {
-                "workspaceId": workspace_id,
+                "workspaceId": user_id,  # API still uses workspaceId
                 "processId": ",".join(process_id) if process_id else None,
                 "status": ",".join(entry.value for entry in status)
                 if status

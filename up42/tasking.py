@@ -3,6 +3,7 @@ Tasking functionality
 """
 
 import dataclasses
+import warnings
 from collections.abc import Iterator
 from typing import Literal, TypeAlias
 
@@ -35,10 +36,16 @@ class Quotation:
     updated_at: str
     decided_at: str | None
     account_id: str
-    workspace_id: str
+    user_id: str
     order_id: str
     credits_price: int
     decision: QuotationStatus
+
+    @property
+    @utils.deprecation(replacement_name="user_id", version="5.0.0")
+    def workspace_id(self) -> str:
+        """Deprecated: Use user_id instead."""
+        return self.user_id
 
     def accept(self):
         self.decision = "ACCEPTED"
@@ -63,7 +70,7 @@ class Quotation:
             updated_at=metadata["updatedAt"],
             decided_at=metadata["decisionAt"],
             account_id=metadata["accountId"],
-            workspace_id=metadata["workspaceId"],
+            user_id=metadata.get("userId", metadata["workspaceId"]),
             order_id=metadata["orderId"],
             credits_price=metadata["creditsPrice"],
             decision=metadata["decision"],
@@ -73,13 +80,25 @@ class Quotation:
     def all(
         cls,
         quotation_id: str | None = None,
+        user_id: str | None = None,
         workspace_id: str | None = None,
         order_id: str | None = None,
         decision: list[QuotationStatus] | None = None,
         sort_by: utils.SortingField | None = None,
     ) -> Iterator["Quotation"]:
+        # Handle deprecated workspace_id parameter
+        if workspace_id is not None:
+            warnings.warn(
+                "`workspace_id` parameter is deprecated and will be removed in version 5.0.0. "
+                "Use `user_id` instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            if user_id is None:
+                user_id = workspace_id
+        
         params = {
-            "workspaceId": workspace_id,
+            "workspaceId": user_id,  # API still uses workspaceId
             "id": quotation_id,
             "orderId": order_id,
             "decision": decision,

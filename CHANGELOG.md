@@ -30,6 +30,12 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 4.0.0a5
+**June 18, 2026**
+### Deprecated
+- `workspace_id` field in `Order`, `Quotation`, and `Job` classes is deprecated and will be removed in version `5.0.0`. Use `user_id` instead.
+- `workspace_id` parameter in `Order.all()` and `Quotation.all()` methods is deprecated and will be removed in version `5.0.0`. Use `user_id` parameter instead.
+
 ### 4.0.0a4
 **June 15, 2026**
 ### Added

@@ -134,3 +134,39 @@ class TestStacClient:
         stac_client = base.stac_client()
         assert isinstance(stac_client, pystac_client.Client)
         assert requests_mock.called
+
+
+class TestWorkspaceIdDescriptorDeprecation:
+    """Tests for WorkspaceId descriptor deprecation warnings."""
+
+    def test_should_warn_on_workspace_id_descriptor_get(self):
+        """Using WorkspaceId descriptor should emit DeprecationWarning on get."""
+        record = ActiveRecord(workspace_id="custom_workspace_id")
+        with pytest.warns(
+            DeprecationWarning,
+            match=r"`WorkspaceId` is deprecated and will be removed in version 5\.0\.0\. Use `UserId` instead\.",
+        ):
+            _ = record.class_workspace_id
+
+    def test_should_warn_on_workspace_id_descriptor_set(self):
+        """Using WorkspaceId descriptor should emit DeprecationWarning on set."""
+        with pytest.warns(
+            DeprecationWarning,
+            match=r"`WorkspaceId` is deprecated and will be removed in version 5\.0\.0\. Use `UserId` instead\.",
+        ):
+            record = ActiveRecord(workspace_id="custom_workspace_id")
+
+    def test_user_id_descriptor_should_not_warn(self):
+        """UserId descriptor should not emit warnings."""
+        import warnings
+
+        @dataclasses.dataclass(eq=True)
+        class TestRecord:
+            user_id: str | base.UserId = dataclasses.field(
+                default_factory=lambda: base.UserId()
+            )
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", DeprecationWarning)
+            record = TestRecord()
+            _ = record.user_id  # Should not raise
