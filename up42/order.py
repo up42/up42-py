@@ -206,7 +206,7 @@ class Order:
             "tags": tags,
             "status": status,
             "subStatus": sub_status,
-            "budgetIds": budget_ids,
+            "budgetIds": ",".join(budget_ids) if budget_ids else None,
         }
         return map(
             cls._from_metadata,

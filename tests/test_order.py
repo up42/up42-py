@@ -329,7 +329,7 @@ class TestOrder:
         if tags:
             query_params["tags"] = tags
         if budget_ids:
-            query_params["budgetIds"] = budget_ids
+            query_params["budgetIds"] = ",".join(budget_ids)
         if sort_by:
             query_params["sort"] = str(sort_by)
 
