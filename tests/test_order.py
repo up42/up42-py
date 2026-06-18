@@ -382,24 +382,27 @@ class TestOrder:
         new_tag = ["new_tag"]
         updated_metadata = order_metadata.copy()
         updated_metadata["tags"] = new_tag
-        budget_id = str(uuid.uuid4())
-        updated_metadata["budgetId"] = budget_id
+        new_budget_id = str(uuid.uuid4())
+        updated_metadata["budgetId"] = new_budget_id
         requests_mock.patch(
             url=ORDER_URL,
-            additional_matcher=helpers.match_request_body({"tags": new_tag}),
+            additional_matcher=helpers.match_request_body(
+                {"tags": new_tag, "budgetId": new_budget_id}
+            ),
             json=updated_metadata,
         )
         expected_order = dataclasses.replace(
             data_order,
             tags=new_tag,
-            budget_id=budget_id,
+            budget_id=new_budget_id,
             info=updated_metadata,
         )
         assert (
-            order.Order.update(constants.ORDER_ID, new_tag) == expected_order
+            order.Order.update(constants.ORDER_ID, new_tag, new_budget_id)
+            == expected_order
         )
 
-    def test_update_without_tags_makes_no_changes(
+    def test_empty_update_makes_no_changes(
         self,
         requests_mock: req_mock.Mocker,
         base_order_metadata: dict,
@@ -429,6 +432,27 @@ class TestOrder:
             base_order, tags=[], info=updated_metadata
         )
         assert order.Order.update(constants.ORDER_ID, []) == expected_order
+
+    def test_update_with_budget_id_set_to_none_removes_budget(
+        self,
+        requests_mock: req_mock.Mocker,
+        base_order_metadata: dict,
+        base_order: order.Order,
+    ):
+        updated_metadata = base_order_metadata.copy()
+        updated_metadata["budgetId"] = None
+        requests_mock.patch(
+            url=ORDER_URL,
+            additional_matcher=helpers.match_request_body({"budgetId": None}),
+            json=updated_metadata,
+        )
+        expected_order = dataclasses.replace(
+            base_order, budget_id=None, info=updated_metadata
+        )
+        assert (
+            order.Order.update(constants.ORDER_ID, budget_id=None)
+            == expected_order
+        )
 
     def test_update_handles_error_response(
         self, requests_mock: req_mock.Mocker
@@ -469,49 +493,6 @@ class TestOrder:
         assert exc_info.value.response.status_code == 400
         response = exc_info.value.response.json()
         assert response == mocked_response
-
-    def test_update_with_budget_id_set_to_none_removes_budget(
-        self,
-        requests_mock: req_mock.Mocker,
-        base_order_metadata: dict,
-        base_order: order.Order,
-    ):
-        updated_metadata = base_order_metadata.copy()
-        updated_metadata["budgetId"] = None
-        requests_mock.patch(
-            url=ORDER_URL,
-            additional_matcher=helpers.match_request_body({"budgetId": None}),
-            json=updated_metadata,
-        )
-        expected_order = dataclasses.replace(
-            base_order, budget_id=None, info=updated_metadata
-        )
-        assert (
-            order.Order.update(constants.ORDER_ID, budget_id=None)
-            == expected_order
-        )
-
-    def test_update_without_budget_id_does_not_include_in_body(
-        self,
-        requests_mock: req_mock.Mocker,
-        base_order_metadata: dict,
-        base_order: order.Order,
-    ):
-        new_tags = ["new_tag"]
-        updated_metadata = base_order_metadata.copy()
-        updated_metadata["tags"] = new_tags
-        requests_mock.patch(
-            url=ORDER_URL,
-            additional_matcher=helpers.match_request_body({"tags": new_tags}),
-            json=updated_metadata,
-        )
-        expected_order = dataclasses.replace(
-            base_order, tags=new_tags, info=updated_metadata
-        )
-        assert (
-            order.Order.update(constants.ORDER_ID, tags=new_tags)
-            == expected_order
-        )
 
     @pytest.mark.parametrize(
         "status, can_cancel",
