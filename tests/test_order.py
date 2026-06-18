@@ -298,7 +298,9 @@ class TestOrder:
     )
     @pytest.mark.parametrize("display_name", [None, "display-name"])
     @pytest.mark.parametrize("tags", [None, ["some", "tags"]])
-    @pytest.mark.parametrize("budget_ids", [None, BUDGET_ID])
+    @pytest.mark.parametrize(
+        "budget_ids", [None, BUDGET_ID, str(uuid.uuid4())]
+    )
     @pytest.mark.parametrize("sort_by", [None, order.OrderSorting.created_at])
     @parameterize_with_order_data
     def test_should_get_all(
