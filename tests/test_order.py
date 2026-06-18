@@ -298,6 +298,9 @@ class TestOrder:
     )
     @pytest.mark.parametrize("display_name", [None, "display-name"])
     @pytest.mark.parametrize("tags", [None, ["some", "tags"]])
+    @pytest.mark.parametrize(
+        "budget_ids", [None, [BUDGET_ID, str(uuid.uuid4())]]
+    )
     @pytest.mark.parametrize("sort_by", [None, order.OrderSorting.created_at])
     @parameterize_with_order_data
     def test_should_get_all(
@@ -308,6 +311,7 @@ class TestOrder:
         sub_status: list[order.OrderSubStatus] | None,
         display_name: str | None,
         tags: list[str] | None,
+        budget_ids: list[str] | None,
         sort_by: utils.SortingField | None,
         requests_mock: req_mock.Mocker,
         data_order: order.Order,
@@ -326,6 +330,8 @@ class TestOrder:
             query_params["displayName"] = display_name
         if tags:
             query_params["tags"] = tags
+        if budget_ids:
+            query_params["budgetIds"] = ",".join(budget_ids)
         if sort_by:
             query_params["sort"] = str(sort_by)
 
@@ -349,6 +355,7 @@ class TestOrder:
             sub_status=sub_status,
             display_name=display_name,
             tags=tags,
+            budget_ids=budget_ids,
             sort_by=sort_by,
         )
         orders_list = list(orders)

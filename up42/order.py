@@ -195,6 +195,7 @@ class Order:
         sub_status: list[OrderSubStatus] | None = None,
         display_name: str | None = None,
         tags: list[str] | None = None,
+        budget_ids: list[str] | None = None,
         sort_by: utils.SortingField | None = None,
     ) -> Iterator["Order"]:
         params = {
@@ -205,6 +206,7 @@ class Order:
             "tags": tags,
             "status": status,
             "subStatus": sub_status,
+            "budgetIds": ",".join(budget_ids) if budget_ids else None,
         }
         return map(
             cls._from_metadata,
