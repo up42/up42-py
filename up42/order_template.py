@@ -51,12 +51,12 @@ def _get_items(data: dict, result_type):
 @dataclasses.dataclass
 class BatchOrderTemplate:
     session = base.Session()
-    user_id: str | base.UserId = dataclasses.field(default_factory=lambda: base.UserId())
-    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=lambda: base.WorkspaceId())
     data_product_id: str
     display_name: str
     features: geojson.FeatureCollection
     params: dict
+    user_id: str | base.UserId = dataclasses.field(default_factory=lambda: base.UserId())
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=lambda: base.WorkspaceId())
     tags: list[str] | None = None
     budget_id: str | None = None
 

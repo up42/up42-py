@@ -52,7 +52,7 @@ class TestQuotation:
         updated_at="updated-at",
         decided_at="decided-at",
         account_id=ACCOUNT_ID,
-        workspace_id=constants.WORKSPACE_ID,
+        user_id=constants.WORKSPACE_ID,
         order_id=constants.ORDER_ID,
         credits_price=10,
         decision="ACCEPTED",

@@ -154,7 +154,7 @@ class TestWorkspaceIdDescriptorDeprecation:
             DeprecationWarning,
             match=r"`WorkspaceId` is deprecated and will be removed in version 5\.0\.0\. Use `UserId` instead\.",
         ):
-            record = ActiveRecord(workspace_id="custom_workspace_id")
+            _ = ActiveRecord(workspace_id="custom_workspace_id")
 
     def test_user_id_descriptor_should_not_warn(self):
         """UserId descriptor should not emit warnings."""

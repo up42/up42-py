@@ -93,7 +93,7 @@ def _order_metadata(
 def _base_order(base_order_metadata: dict):
     return order.Order(
         id=constants.ORDER_ID,
-        workspace_id=constants.WORKSPACE_ID,
+        user_id=constants.WORKSPACE_ID,
         account_id=ACCOUNT_ID,
         display_name="base-order",
         status="CREATED",
@@ -542,7 +542,8 @@ class TestWorkspaceIdDeprecation:
         )
         with pytest.warns(
             DeprecationWarning,
-            match=r"`workspace_id` parameter is deprecated and will be removed in version 5\.0\.0\. Use `user_id` instead\.",
+            match=r"`workspace_id` parameter is deprecated and will be removed "
+            r"in version 5\.0\.0\. Use `user_id` instead\.",
         ):
             list(order.Order.all(workspace_id="test-workspace-id"))
 
@@ -575,4 +576,5 @@ class TestWorkspaceIdDeprecation:
             list(order.Order.all(user_id="test-user-id"))
 
         # Verify the API call used workspaceId parameter
+        assert mock.last_request is not None
         assert "workspaceId=test-user-id" in mock.last_request.url
