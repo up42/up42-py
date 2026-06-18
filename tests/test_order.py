@@ -22,6 +22,7 @@ ORDER_INFO = {
     "createdAt": "2023-01-01T12:00:00Z",
     "updatedAt": "2023-01-01T12:30:00Z",
 }
+BUDGET_ID = str(uuid.uuid4())
 
 
 @pytest.fixture(name="base_order_metadata")
@@ -35,7 +36,7 @@ def _base_order_metadata():
         "type": "ARCHIVE",
         "dataProductId": constants.DATA_PRODUCT_ID,
         "tags": ["some", "tags"],
-        "budgetId": str(uuid.uuid4()),
+        "budgetId": BUDGET_ID,
     }
 
 
@@ -104,7 +105,7 @@ def _base_order(base_order_metadata: dict):
         tags=["some", "tags"],
         info=base_order_metadata,
         details=None,
-        budget_id=str(uuid.uuid4()),
+        budget_id=BUDGET_ID,
     )
 
 
