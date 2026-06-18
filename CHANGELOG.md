@@ -33,12 +33,12 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### 4.0.0a7
 **June 18, 2026**
 ### Added
-- Added `budget_id` field to `Order` dataclass to return budget UUID when present in API responses.
 - Added `budget_ids` parameter to `Order.all()` to filter orders by budget IDs (accepts list of budget UUIDs).
 
 ### 4.0.0a6
 **June 16, 2026**
 ### Added
+- Added `budget_id` field to `Order` dataclass to return budget UUID when present in API responses.
 - Added optional `budget_id` parameter to `Order.update()` to allow updating the budget for an order.
 
 ### 4.0.0a5
