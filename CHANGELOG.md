@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 4.0.0a8
+**June 18, 2026**
+### Added
+- Added `ids` parameter to `Order.all()` to filter orders by order IDs
+
 ### 4.0.0a7
 **June 18, 2026**
 ### Added
