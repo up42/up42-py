@@ -139,11 +139,11 @@ class TestBudgetSettings:
         self, requests_mock: req_mock.Mocker
     ):
         budget_setting_id = str(uuid.uuid4())
-        metadata = {
+        response = {
             "budgetSettingId": budget_setting_id,
             "enforcementEnabled": True,
         }
-        requests_mock.get(url=BUDGET_SETTINGS_URL, json=metadata)
+        requests_mock.get(url=BUDGET_SETTINGS_URL, json=response)
         assert budgets.BudgetSettings.get() == budgets.BudgetSettings(
             budget_setting_id=budget_setting_id,
             enforcement_enabled=True,
