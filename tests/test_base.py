@@ -170,3 +170,26 @@ class TestWorkspaceIdDescriptorDeprecation:
             warnings.simplefilter("error", DeprecationWarning)
             record = TestRecord()
             _ = record.user_id  # Should not raise
+
+    def test_user_id_descriptor_should_provide_instance_value(self):
+        """UserId descriptor should provide custom instance value when set."""
+
+        @dataclasses.dataclass(eq=True)
+        class TestRecord:
+            class_user_id = base.UserId()
+            user_id: str | base.UserId = dataclasses.field(
+                default=base.UserId()
+            )
+
+        record = TestRecord()
+        record.user_id = "custom_user_id_123"
+        assert record.user_id == "custom_user_id_123"
+
+    def test_user_id_descriptor_class_level_access(self):
+        """UserId descriptor should return workspace.id on class-level access."""
+
+        @dataclasses.dataclass(eq=True)
+        class TestRecord:
+            class_user_id = base.UserId()
+
+        assert TestRecord.class_user_id == constants.WORKSPACE_ID

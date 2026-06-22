@@ -415,3 +415,43 @@ class TestJobTemplate:
         assert template.execute(budget_id=budget_id) == tpc.JOB
         assert template.is_valid and not template.errors
         assert template.cost == cost
+
+    @pytest.mark.usefixtures("process_found_and_eula_accepted")
+    def test_should_execute_with_custom_user_id(
+        self, requests_mock: req_mock.Mocker
+    ):
+        """Test executing job with a custom user_id."""
+        custom_user_id = "custom-user-456"
+        execution_url = (
+            f"{constants.API_HOST}/v2/processing/processes/{tpc.PROCESS_ID}"
+            f"/execution?workspaceId={custom_user_id}"
+        )
+        cost = processing.Cost(strategy="none", credits=1)
+        body_matcher = helpers.match_request_body(
+            {"inputs": {"title": tpc.TITLE}}
+        )
+        requests_mock.post(
+            tpc.VALIDATION_URL,
+            status_code=200,
+            additional_matcher=body_matcher,
+        )
+        requests_mock.post(
+            tpc.COST_URL,
+            status_code=200,
+            json={
+                "pricingStrategy": cost.strategy,
+                "totalCredits": cost.credits,
+            },
+            additional_matcher=body_matcher,
+        )
+        requests_mock.post(
+            execution_url,
+            status_code=200,
+            json=tpc.JOB_METADATA,
+            additional_matcher=body_matcher,
+        )
+        template = SampleJobTemplate(title=tpc.TITLE)
+        template.user_id = custom_user_id
+        assert template.execute() == tpc.JOB
+        assert template.is_valid and not template.errors
+        assert template.cost == cost

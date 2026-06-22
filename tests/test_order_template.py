@@ -127,3 +127,23 @@ class TestBatchOrderTemplate:
         )
         assert template.estimate == ESTIMATE
         assert template.place() == [ORDER_REFERENCE, ERROR]
+
+    def test_should_place_with_custom_user_id(
+        self, requests_mock: req_mock.Mocker
+    ):
+        """Test placing order with a custom user_id."""
+        estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
+        requests_mock.post(url=estimate_url, json=ESTIMATE_PAYLOAD)
+        custom_user_id = "custom-user-123"
+        placement_url = (
+            f"{constants.API_HOST}/v2/orders?workspaceId={custom_user_id}"
+        )
+        requests_mock.post(url=placement_url, json=PLACEMENT_PAYLOAD)
+        template = order_template.BatchOrderTemplate(
+            data_product_id=constants.DATA_PRODUCT_ID,
+            display_name=DISPLAY_NAME,
+            features=FEATURES,
+            params=PARAMS,
+            user_id=custom_user_id,
+        )
+        assert template.place() == [ORDER_REFERENCE, ERROR]
