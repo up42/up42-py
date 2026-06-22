@@ -184,6 +184,6 @@ class TestDeprecationDecorator:
     def test_deprecation_warning_on_class(self):
         with pytest.warns(
             DeprecationWarning,
-            match="`DeprecatedClass` is deprecated and will be removed in version 2.0.0 Use `NewClass` instead.",
+            match="`DeprecatedClass` is deprecated and will be removed in version 2.0.0. Use `NewClass` instead.",
         ):
             DeprecatedClass()
