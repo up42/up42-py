@@ -9,6 +9,8 @@ from up42 import base, host, utils
 
 logger = utils.get_logger(__name__)
 
+_UNSET = object()
+
 OrderType: TypeAlias = Literal["TASKING", "ARCHIVE"]
 
 
@@ -126,6 +128,7 @@ class Order:
     data_product_id: str | None
     tags: list[str] | None
     info: dict = dataclasses.field(repr=False)
+    budget_id: str | None = None
 
     @property
     @utils.deprecation(replacement_name="user_id", version="5.0.0")
@@ -186,6 +189,7 @@ class Order:
             details=details,
             data_product_id=data.get("dataProductId"),
             tags=data.get("tags"),
+            budget_id=data.get("budgetId"),
             info=data,
         )
 
@@ -199,6 +203,8 @@ class Order:
         sub_status: list[OrderSubStatus] | None = None,
         display_name: str | None = None,
         tags: list[str] | None = None,
+        budget_ids: list[str] | None = None,
+        ids: list[str] | None = None,
         sort_by: utils.SortingField | None = None,
     ) -> Iterator["Order"]:
         # Handle deprecated workspace_id parameter
@@ -220,6 +226,8 @@ class Order:
             "tags": tags,
             "status": status,
             "subStatus": sub_status,
+            "budgetIds": ",".join(budget_ids) if budget_ids else None,
+            "orderIds": ",".join(ids) if ids else None,
         }
         return map(
             cls._from_metadata,
@@ -231,13 +239,16 @@ class Order:
         cls,
         order_id: str,
         tags: list[str] | None = None,
+        budget_id: str | None = _UNSET,  # type: ignore
     ) -> "Order":
         url = host.endpoint(f"/v2/orders/{order_id}")
         headers = {"Content-Type": "application/merge-patch+json"}
 
-        body = {}
+        body: dict[str, Any] = {}
         if tags is not None:
             body["tags"] = tags
+        if budget_id is not _UNSET:
+            body["budgetId"] = budget_id
 
         metadata = cls.session.patch(
             url=url, json=body, headers=headers

@@ -30,11 +30,35 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-### 4.0.0a5
-**June 18, 2026**
+### 4.0.0a9
+**June 22, 2026**
 ### Deprecated
 - `workspace_id` field in `Order`, `Quotation`, and `Job` classes is deprecated and will be removed in version `5.0.0`. Use `user_id` instead.
 - `workspace_id` parameter in `Order.all()` and `Quotation.all()` methods is deprecated and will be removed in version `5.0.0`. Use `user_id` parameter instead.
+### 4.0.0a8
+**June 18, 2026**
+### Added
+- Added `ids` parameter to `Order.all()` to filter orders by order IDs
+
+### 4.0.0a7
+**June 18, 2026**
+### Added
+- Added `budget_ids` parameter to `Order.all()` to filter orders by budget IDs (accepts list of budget UUIDs).
+
+### 4.0.0a6
+**June 16, 2026**
+### Added
+- Added `budget_id` field to `Order` dataclass to return budget UUID when present in API responses.
+- Added optional `budget_id` parameter to `Order.update()` to allow updating the budget for an order.
+
+### 4.0.0a5
+**June 16, 2026**
+### Added
+- Added `budgets` module with `Budget`, `BudgetUsage` dataclasses and `BudgetSorting` utility.
+- Added `Budget.get()` to retrieve a single budget by ID.
+- Added `Budget.all()` to list budgets with optional status filtering and sorting.
+- Added `Budget.get_usage()` to retrieve usage for a specific budget.
+- Added `test_budgets.py` with tests for budget and budget usage fetch endpoints.
 
 ### 4.0.0a4
 **June 15, 2026**

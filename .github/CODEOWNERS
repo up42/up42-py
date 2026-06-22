@@ -4,6 +4,7 @@ CHANGELOG.md @up42/user-sdk @up42/data-sdk @up42/processing-sdk @up42/catalog-sd
 /up42/http @up42/user-sdk
 /up42/__init__.py @up42/user-sdk @up42/data-sdk @up42/processing-sdk @up42/catalog-sdk
 /up42/base.py @up42/user-sdk
+/up42/budgets.py @up42/user-sdk
 /up42/host.py @up42/user-sdk
 /up42/catalog.py @up42/data-sdk @up42/catalog-sdk
 /up42/glossary.py @up42/data-sdk @up42/catalog-sdk
@@ -16,6 +17,7 @@ CHANGELOG.md @up42/user-sdk @up42/data-sdk @up42/processing-sdk @up42/catalog-sd
 /tests/http @up42/user-sdk
 /tests/helpers.py @up42/user-sdk @up42/data-sdk @up42/processing-sdk @up42/catalog-sdk
 /tests/test_base.py @up42/user-sdk
+/tests/test_budgets.py @up42/user-sdk
 /tests/test_catalog.py @up42/data-sdk @up42/catalog-sdk
 /tests/test_glossary.py @up42/data-sdk @up42/catalog-sdk
 /tests/test_host.py @up42/user-sdk
