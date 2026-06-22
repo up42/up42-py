@@ -57,7 +57,7 @@ class TestParameterlessTemplates:
     )
     def test_should_construct_single_item_job_templates(self, template_class):
         template = template_class(
-            title=tpc.TITLE, item=item, workspace_id=constants.WORKSPACE_ID
+            title=tpc.TITLE, item=item, user_id=constants.WORKSPACE_ID
         )
         assert template.is_valid and template.cost == COST
         assert template.inputs == {"title": tpc.TITLE, "item": tpc.ITEM_URL}
@@ -76,7 +76,7 @@ class TestPansharpening:
             title=tpc.TITLE,
             item=item,
             grey_weights=[grey_weight] if grey_weight else None,
-            workspace_id=constants.WORKSPACE_ID,
+            user_id=constants.WORKSPACE_ID,
         )
         grey_weights = (
             {
@@ -102,7 +102,7 @@ class TestSimularityProcesses:
             title=tpc.TITLE,
             source_item=item,
             reference_item=second_item,
-            workspace_id=constants.WORKSPACE_ID,
+            user_id=constants.WORKSPACE_ID,
         )
         assert template.is_valid and template.cost == COST
         assert template.inputs == {
@@ -116,7 +116,7 @@ class TestSimularityProcesses:
             title=tpc.TITLE,
             source_item=item,
             reference_item=second_item,
-            workspace_id=constants.WORKSPACE_ID,
+            user_id=constants.WORKSPACE_ID,
             sensitivity=5,
         )
         assert template.is_valid and template.cost == COST
@@ -202,7 +202,7 @@ class TestSingleItemJobTemplate:
 class SampleJobTemplate(templates.JobTemplate):
     title: str
     process_id = tpc.PROCESS_ID
-    workspace_id = constants.WORKSPACE_ID
+    user_id = constants.WORKSPACE_ID
 
     @property
     def inputs(self) -> dict:

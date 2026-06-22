@@ -12,7 +12,6 @@ class JobTemplate:
     session = base.Session()
     process_id: ClassVar[str]
     user_id: str | base.UserId
-    workspace_id: str | base.WorkspaceId
     errors: set[processing.ValidationError] = set()
     process_description: dict = {}
 
@@ -113,14 +112,10 @@ class JobTemplate:
             f"/v2/processing/processes/{self.process_id}/execution"
         )
         # Use user_id if provided as a string, otherwise use workspace.id
-        if hasattr(self, "user_id") and isinstance(self.user_id, str):
+        if isinstance(self.user_id, str):
             id_to_use = self.user_id
-        elif hasattr(self, "workspace_id") and isinstance(
-            self.workspace_id, str
-        ):
-            id_to_use = self.workspace_id
         else:
-            # Descriptors or not set, get the actual value from workspace
+            # Descriptor not resolved, get the actual value from workspace
             id_to_use = base.workspace.id
         job_metadata = self.session.post(
             url,
@@ -157,17 +152,11 @@ class MultiItemJobTemplate(JobTemplate):
 @dataclasses.dataclass
 class WorkspaceIdSingleItemTemplate(SingleItemJobTemplate):
     user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
-    workspace_id: str | base.WorkspaceId = dataclasses.field(
-        default_factory=base.WorkspaceId
-    )
 
 
 @dataclasses.dataclass
 class WorkspaceIdMultiItemTemplate(MultiItemJobTemplate):
     user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
-    workspace_id: str | base.WorkspaceId = dataclasses.field(
-        default_factory=base.WorkspaceId
-    )
 
 
 @dataclasses.dataclass
@@ -240,9 +229,7 @@ class SimularityJobTemplate(JobTemplate):
     title: str
     source_item: pystac.Item
     reference_item: pystac.Item
-    workspace_id: str | base.WorkspaceId = dataclasses.field(
-        default=base.WorkspaceId()
-    )
+    user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
 
     @property
     def inputs(self) -> dict:
@@ -278,9 +265,7 @@ class GreyWeight:
 @dataclasses.dataclass
 class Pansharpening(SingleItemJobTemplate):
     grey_weights: list[GreyWeight] | None = None
-    workspace_id: str | base.WorkspaceId = dataclasses.field(
-        default=base.WorkspaceId()
-    )
+    user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
     process_id = "pansharpening"
 
     @property
