@@ -554,7 +554,11 @@ class TestWorkspaceIdDeprecation:
         self, base_order_metadata: dict
     ):
         """Accessing workspace_id field should emit DeprecationWarning."""
-        test_order = order.Order._from_metadata(base_order_metadata)
+        test_order = (
+            order.Order._from_metadata(  # pylint: disable=protected-access
+                base_order_metadata
+            )
+        )
         with pytest.warns(
             DeprecationWarning,
             match=r"`workspace_id` is deprecated and will be removed in version 5\.0\.0\. Use `user_id` instead\.",
@@ -565,7 +569,11 @@ class TestWorkspaceIdDeprecation:
         self, base_order_metadata: dict
     ):
         """Accessing user_id field should not emit warnings."""
-        test_order = order.Order._from_metadata(base_order_metadata)
+        test_order = (
+            order.Order._from_metadata(  # pylint: disable=protected-access
+                base_order_metadata
+            )
+        )
 
         with warnings.catch_warnings():
             warnings.simplefilter("error", DeprecationWarning)
@@ -575,7 +583,11 @@ class TestWorkspaceIdDeprecation:
         self, base_order_metadata: dict
     ):
         """user_id should be populated from workspaceId in API response."""
-        test_order = order.Order._from_metadata(base_order_metadata)
+        test_order = (
+            order.Order._from_metadata(  # pylint: disable=protected-access
+                base_order_metadata
+            )
+        )
         # Access user_id without triggering workspace_id warning
 
         with warnings.catch_warnings():
@@ -593,7 +605,11 @@ class TestWorkspaceIdDeprecation:
             "status": "CREATED",
             "type": "ARCHIVE",
         }
-        test_order = order.Order._from_metadata(metadata)
+        test_order = (
+            order.Order._from_metadata(  # pylint: disable=protected-access
+                metadata
+            )
+        )
 
         with warnings.catch_warnings():
             warnings.simplefilter("error", DeprecationWarning)

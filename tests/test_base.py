@@ -159,6 +159,7 @@ class TestWorkspaceIdDescriptorDeprecation:
 
     def test_user_id_descriptor_should_not_warn(self):
         """UserId descriptor should not emit warnings."""
+
         @dataclasses.dataclass(eq=True)
         class TestRecord:
             user_id: str | base.UserId = dataclasses.field(

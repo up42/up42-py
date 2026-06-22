@@ -86,7 +86,7 @@ class Session:
 
 class WorkspaceId:
     """Deprecated descriptor. Use UserId instead.
-    
+
     This descriptor is deprecated and will be removed in version 5.0.0.
     Use `UserId` instead.
     """
@@ -121,7 +121,7 @@ class WorkspaceId:
 
 class UserId:
     """Descriptor for user_id field with default from workspace.
-    
+
     This is the non-deprecated replacement for WorkspaceId descriptor.
     """
 

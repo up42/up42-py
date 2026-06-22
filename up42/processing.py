@@ -153,7 +153,7 @@ class Job:
         errors = results.get("errors") or []
         validation_errors = [ValidationError(**error) for error in errors]
         consumption = metadata.get("creditConsumption") or {}
-        user_id: str | None = metadata.get("userId", metadata["workspaceID"])  # type: ignore[typeddict-item]
+        user_id: str | None = metadata.get("userId", metadata["workspaceID"])  # type: ignore[assignment,typeddict-item]
         return Job(
             process_id=metadata["processID"],
             id=metadata["jobID"],
@@ -222,7 +222,7 @@ class Job:
             )
             if user_id is None:
                 user_id = workspace_id
-        
+
         query_params = {
             key: str(value)
             for key, value in {

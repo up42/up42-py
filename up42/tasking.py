@@ -96,7 +96,7 @@ class Quotation:
             )
             if user_id is None:
                 user_id = workspace_id
-        
+
         params = {
             "workspaceId": user_id,  # API still uses workspaceId
             "id": quotation_id,

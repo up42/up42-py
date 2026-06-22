@@ -113,7 +113,11 @@ class JobTemplate:
             f"/v2/processing/processes/{self.process_id}/execution"
         )
         # Use user_id if available, fall back to workspace_id for backward compatibility
-        id_to_use = self.user_id if hasattr(self, 'user_id') and self.user_id else self.workspace_id
+        id_to_use = (
+            self.user_id
+            if hasattr(self, "user_id") and self.user_id
+            else self.workspace_id
+        )
         job_metadata = self.session.post(
             url,
             params={"workspaceId": id_to_use, "budgetId": budget_id},
@@ -149,13 +153,17 @@ class MultiItemJobTemplate(JobTemplate):
 @dataclasses.dataclass
 class WorkspaceIdSingleItemTemplate(SingleItemJobTemplate):
     user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
-    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=base.WorkspaceId)
+    workspace_id: str | base.WorkspaceId = dataclasses.field(
+        default_factory=base.WorkspaceId
+    )
 
 
 @dataclasses.dataclass
 class WorkspaceIdMultiItemTemplate(MultiItemJobTemplate):
     user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
-    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=base.WorkspaceId)
+    workspace_id: str | base.WorkspaceId = dataclasses.field(
+        default_factory=base.WorkspaceId
+    )
 
 
 @dataclasses.dataclass

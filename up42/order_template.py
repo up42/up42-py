@@ -56,7 +56,9 @@ class BatchOrderTemplate:
     features: geojson.FeatureCollection
     params: dict
     user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
-    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=base.WorkspaceId)
+    workspace_id: str | base.WorkspaceId = dataclasses.field(
+        default_factory=base.WorkspaceId
+    )
     tags: list[str] | None = None
     budget_id: str | None = None
 
@@ -90,7 +92,11 @@ class BatchOrderTemplate:
 
     def place(self) -> list[OrderReference | OrderError]:
         # Use user_id if available, fall back to workspace_id for backward compatibility
-        id_to_use = self.user_id if hasattr(self, 'user_id') and self.user_id else self.workspace_id
+        id_to_use = (
+            self.user_id
+            if hasattr(self, "user_id") and self.user_id
+            else self.workspace_id
+        )
         url = host.endpoint(f"/v2/orders?workspaceId={id_to_use}")
         batch = self.session.post(url=url, json=self._payload).json()
         return _get_items(batch, OrderReference)
