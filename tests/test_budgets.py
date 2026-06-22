@@ -135,9 +135,7 @@ class TestBudget:
 
 
 class TestBudgetSettings:
-    def test_should_get_budget_settings(
-        self, requests_mock: req_mock.Mocker
-    ):
+    def test_should_get_budget_settings(self, requests_mock: req_mock.Mocker):
         budget_setting_id = str(uuid.uuid4())
         response = {
             "budgetSettingId": budget_setting_id,
