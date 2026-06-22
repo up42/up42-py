@@ -1,6 +1,7 @@
 import dataclasses
 import urllib
 import uuid
+import warnings
 from typing import Any
 
 import pytest
@@ -565,7 +566,6 @@ class TestWorkspaceIdDeprecation:
     ):
         """Accessing user_id field should not emit warnings."""
         test_order = order.Order._from_metadata(base_order_metadata)
-        import warnings
 
         with warnings.catch_warnings():
             warnings.simplefilter("error", DeprecationWarning)
@@ -577,7 +577,6 @@ class TestWorkspaceIdDeprecation:
         """user_id should be populated from workspaceId in API response."""
         test_order = order.Order._from_metadata(base_order_metadata)
         # Access user_id without triggering workspace_id warning
-        import warnings
 
         with warnings.catch_warnings():
             warnings.simplefilter("error", DeprecationWarning)
@@ -595,7 +594,6 @@ class TestWorkspaceIdDeprecation:
             "type": "ARCHIVE",
         }
         test_order = order.Order._from_metadata(metadata)
-        import warnings
 
         with warnings.catch_warnings():
             warnings.simplefilter("error", DeprecationWarning)
@@ -624,7 +622,6 @@ class TestWorkspaceIdDeprecation:
             f"{constants.API_HOST}/v2/orders",
             json={"content": [], "totalPages": 0},
         )
-        import warnings
 
         with warnings.catch_warnings():
             warnings.simplefilter("error", DeprecationWarning)
@@ -638,7 +635,6 @@ class TestWorkspaceIdDeprecation:
             f"{constants.API_HOST}/v2/orders",
             json={"content": [], "totalPages": 0},
         )
-        import warnings
 
         with warnings.catch_warnings():
             warnings.simplefilter("error", DeprecationWarning)
