@@ -12,6 +12,7 @@ from up42 import budgets, utils
 BUDGET_ID = str(uuid.uuid4())
 BUDGETS_URL = f"{constants.API_HOST}/v2/budgets"
 BUDGET_URL = f"{BUDGETS_URL}/{BUDGET_ID}"
+BUDGET_SETTINGS_URL = f"{BUDGETS_URL}/settings"
 
 
 def random_alphanumeric():
@@ -131,3 +132,35 @@ class TestBudget:
         assert usage == budgets.BudgetUsage(
             budget_id=BUDGET_ID, consumed_credits=42
         )
+
+
+class TestBudgetSettings:
+    def test_should_get_budget_settings(
+        self, requests_mock: req_mock.Mocker
+    ):
+        budget_setting_id = str(uuid.uuid4())
+        metadata = {
+            "budgetSettingId": budget_setting_id,
+            "enforcementEnabled": True,
+        }
+        requests_mock.get(url=BUDGET_SETTINGS_URL, json=metadata)
+        assert budgets.BudgetSettings.get() == budgets.BudgetSettings(
+            budget_setting_id=budget_setting_id,
+            enforcement_enabled=True,
+        )
+
+    @pytest.mark.parametrize(
+        "response_metadata",
+        [
+            {"enforcementEnabled": False},
+            {"budgetSettingId": None, "enforcementEnabled": False},
+        ],
+        ids=["missing_budget_setting_id", "explicit_null_budget_setting_id"],
+    )
+    def test_should_handle_null_budget_setting_id(
+        self, requests_mock: req_mock.Mocker, response_metadata: dict
+    ):
+        requests_mock.get(url=BUDGET_SETTINGS_URL, json=response_metadata)
+        result = budgets.BudgetSettings.get()
+        assert result.budget_setting_id is None
+        assert result.enforcement_enabled is False

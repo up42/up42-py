@@ -22,7 +22,7 @@ from typing import cast
 
 # pylint: disable=only-importing-modules-is-allowed
 from up42.base import authenticate, stac_client
-from up42.budgets import Budget, BudgetSorting
+from up42.budgets import Budget, BudgetSettings, BudgetSorting
 from up42.glossary import (
     CollectionSorting,
     CollectionType,
@@ -56,6 +56,7 @@ __all__ = [
     ).__name__
     for obj in [
         Budget,
+        BudgetSettings,
         BudgetSorting,
         Order,
         OrderSorting,
