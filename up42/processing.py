@@ -153,11 +153,12 @@ class Job:
         errors = results.get("errors") or []
         validation_errors = [ValidationError(**error) for error in errors]
         consumption = metadata.get("creditConsumption") or {}
+        user_id: str | None = metadata.get("userId", metadata["workspaceID"])  # type: ignore[typeddict-item]
         return Job(
             process_id=metadata["processID"],
             id=metadata["jobID"],
             account_id=metadata["accountID"],
-            user_id=metadata.get("userId", metadata["workspaceID"]),
+            user_id=user_id,
             collection_url=results.get("collection"),
             errors=validation_errors or None,
             credits=consumption.get("credits"),

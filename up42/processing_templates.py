@@ -148,14 +148,14 @@ class MultiItemJobTemplate(JobTemplate):
 # TODO: drop these with Python 3.10 kw_only=True data classes
 @dataclasses.dataclass
 class WorkspaceIdSingleItemTemplate(SingleItemJobTemplate):
-    user_id: str | base.UserId = dataclasses.field(default_factory=lambda: base.UserId())
-    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=lambda: base.WorkspaceId())
+    user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=base.WorkspaceId)
 
 
 @dataclasses.dataclass
 class WorkspaceIdMultiItemTemplate(MultiItemJobTemplate):
-    user_id: str | base.UserId = dataclasses.field(default_factory=lambda: base.UserId())
-    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=lambda: base.WorkspaceId())
+    user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=base.WorkspaceId)
 
 
 @dataclasses.dataclass

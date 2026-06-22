@@ -55,8 +55,8 @@ class BatchOrderTemplate:
     display_name: str
     features: geojson.FeatureCollection
     params: dict
-    user_id: str | base.UserId = dataclasses.field(default_factory=lambda: base.UserId())
-    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=lambda: base.WorkspaceId())
+    user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
+    workspace_id: str | base.WorkspaceId = dataclasses.field(default_factory=base.WorkspaceId)
     tags: list[str] | None = None
     budget_id: str | None = None
 
