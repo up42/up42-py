@@ -1,4 +1,5 @@
 import dataclasses
+import warnings
 
 import pystac_client
 import pytest
@@ -158,12 +159,10 @@ class TestWorkspaceIdDescriptorDeprecation:
 
     def test_user_id_descriptor_should_not_warn(self):
         """UserId descriptor should not emit warnings."""
-        import warnings
-
         @dataclasses.dataclass(eq=True)
         class TestRecord:
             user_id: str | base.UserId = dataclasses.field(
-                default_factory=lambda: base.UserId()
+                default_factory=base.UserId
             )
 
         with warnings.catch_warnings():
