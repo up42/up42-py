@@ -91,12 +91,16 @@ class BatchOrderTemplate:
         )
 
     def place(self) -> list[OrderReference | OrderError]:
-        # Use user_id if available, fall back to workspace_id for backward compatibility
-        id_to_use = (
-            self.user_id
-            if hasattr(self, "user_id") and self.user_id
-            else self.workspace_id
-        )
+        # Use user_id if provided as a string, otherwise use workspace.id
+        if hasattr(self, "user_id") and isinstance(self.user_id, str):
+            id_to_use = self.user_id
+        elif hasattr(self, "workspace_id") and isinstance(
+            self.workspace_id, str
+        ):
+            id_to_use = self.workspace_id
+        else:
+            # Descriptors or not set, get the actual value from workspace
+            id_to_use = base.workspace.id
         url = host.endpoint(f"/v2/orders?workspaceId={id_to_use}")
         batch = self.session.post(url=url, json=self._payload).json()
         return _get_items(batch, OrderReference)
