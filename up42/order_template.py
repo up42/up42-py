@@ -55,11 +55,17 @@ class BatchOrderTemplate:
     display_name: str
     features: geojson.FeatureCollection
     params: dict
-    user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
+    workspace_id: str | None = None
     tags: list[str] | None = None
     budget_id: str | None = None
 
     def __post_init__(self):
+        if self.workspace_id is not None:
+            warnings.warn(
+                "`workspace_id` is deprecated and will be removed in version 5.0.0.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
         self.__estimate()
 
     @property
@@ -88,12 +94,7 @@ class BatchOrderTemplate:
         )
 
     def place(self) -> list[OrderReference | OrderError]:
-        # Use user_id if provided as a string, otherwise use workspace.id
-        if isinstance(self.user_id, str):
-            id_to_use = self.user_id
-        else:
-            # Descriptor not resolved, get the actual value from workspace
-            id_to_use = base.workspace.id
-        url = host.endpoint(f"/v2/orders?workspaceId={id_to_use}")
+        workspace_id = self.workspace_id or base.workspace.id
+        url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
         batch = self.session.post(url=url, json=self._payload).json()
         return _get_items(batch, OrderReference)

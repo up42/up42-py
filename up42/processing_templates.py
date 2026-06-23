@@ -1,5 +1,6 @@
 import abc
 import dataclasses
+import warnings
 from typing import ClassVar
 
 import pystac
@@ -11,7 +12,7 @@ from up42 import base, host, processing
 class JobTemplate:
     session = base.Session()
     process_id: ClassVar[str]
-    user_id: str | base.UserId
+    workspace_id: str | None
     errors: set[processing.ValidationError] = set()
     process_description: dict = {}
 
@@ -21,6 +22,12 @@ class JobTemplate:
         pass
 
     def __post_init__(self):
+        if self.workspace_id is not None:
+            warnings.warn(
+                "`workspace_id` is deprecated and will be removed in version 5.0.0.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
         self.__validate()
         if self.is_valid:
             self.__evaluate()
@@ -111,15 +118,10 @@ class JobTemplate:
         url = host.endpoint(
             f"/v2/processing/processes/{self.process_id}/execution"
         )
-        # Use user_id if provided as a string, otherwise use workspace.id
-        if isinstance(self.user_id, str):
-            id_to_use = self.user_id
-        else:
-            # Descriptor not resolved, get the actual value from workspace
-            id_to_use = base.workspace.id
+        workspace_id = self.workspace_id or base.workspace.id
         job_metadata = self.session.post(
             url,
-            params={"workspaceId": id_to_use, "budgetId": budget_id},
+            params={"workspaceId": workspace_id, "budgetId": budget_id},
             json={"inputs": self.inputs},
         ).json()
         return processing.Job.from_metadata(job_metadata)
@@ -151,12 +153,12 @@ class MultiItemJobTemplate(JobTemplate):
 # TODO: drop these with Python 3.10 kw_only=True data classes
 @dataclasses.dataclass
 class WorkspaceIdSingleItemTemplate(SingleItemJobTemplate):
-    user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
+    workspace_id: str | None = None
 
 
 @dataclasses.dataclass
 class WorkspaceIdMultiItemTemplate(MultiItemJobTemplate):
-    user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
+    workspace_id: str | None = None
 
 
 @dataclasses.dataclass
@@ -229,7 +231,7 @@ class SimularityJobTemplate(JobTemplate):
     title: str
     source_item: pystac.Item
     reference_item: pystac.Item
-    user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
+    workspace_id: str | None = None
 
     @property
     def inputs(self) -> dict:
@@ -265,7 +267,7 @@ class GreyWeight:
 @dataclasses.dataclass
 class Pansharpening(SingleItemJobTemplate):
     grey_weights: list[GreyWeight] | None = None
-    user_id: str | base.UserId = dataclasses.field(default_factory=base.UserId)
+    workspace_id: str | None = None
     process_id = "pansharpening"
 
     @property

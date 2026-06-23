@@ -52,7 +52,7 @@ class TestQuotation:
         updated_at="updated-at",
         decided_at="decided-at",
         account_id=ACCOUNT_ID,
-        user_id=constants.WORKSPACE_ID,
+        workspace_id=constants.WORKSPACE_ID,
         order_id=constants.ORDER_ID,
         credits_price=10,
         decision="ACCEPTED",
@@ -145,14 +145,27 @@ class TestQuotation:
             }
             requests_mock.get(url=url, json=response)
 
-        quotations = tasking.Quotation.all(
-            quotation_id=quotation_id,
-            workspace_id=workspace_id,
-            order_id=order_id,
-            decision=decision,
-            sort_by=sort_by,
-        )
-        assert list(quotations) == [self.quotation] * 4
+        def call():
+            return list(
+                tasking.Quotation.all(
+                    quotation_id=quotation_id,
+                    workspace_id=workspace_id,
+                    order_id=order_id,
+                    decision=decision,
+                    sort_by=sort_by,
+                )
+            )
+
+        if workspace_id is not None:
+            with pytest.warns(
+                DeprecationWarning,
+                match=r"`workspace_id` parameter is deprecated and will be removed in version 5\.0\.0\.",
+            ):
+                quotations = call()
+        else:
+            quotations = call()
+
+        assert quotations == [self.quotation] * 4
 
 
 class TestFeasibilityStudy:

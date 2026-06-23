@@ -121,7 +121,7 @@ class Order:
     id: str
     display_name: str
     status: OrderStatus
-    user_id: str
+    workspace_id: str
     account_id: str
     type: OrderType
     details: OrderDetails | None
@@ -129,12 +129,6 @@ class Order:
     tags: list[str] | None
     info: dict = dataclasses.field(repr=False)
     budget_id: str | None = None
-
-    @property
-    @utils.deprecation(replacement_name="user_id", version="5.0.0")
-    def workspace_id(self) -> str:
-        """Deprecated: Use user_id instead."""
-        return self.user_id
 
     @classmethod
     def get(cls, order_id: str) -> "Order":
@@ -183,7 +177,7 @@ class Order:
             id=data["id"],
             display_name=data["displayName"],
             status=data["status"],
-            user_id=data.get("userId", data["workspaceId"]),
+            workspace_id=data["workspaceId"],
             account_id=data["accountId"],
             type=data["type"],
             details=details,
@@ -196,7 +190,6 @@ class Order:
     @classmethod
     def all(
         cls,
-        user_id: str | None = None,
         workspace_id: str | None = None,
         order_type: OrderType | None = None,
         status: list[OrderStatus] | None = None,
@@ -210,17 +203,14 @@ class Order:
         # Handle deprecated workspace_id parameter
         if workspace_id is not None:
             warnings.warn(
-                "`workspace_id` parameter is deprecated and will be removed in version 5.0.0. "
-                "Use `user_id` instead.",
+                "`workspace_id` parameter is deprecated and will be removed in version 5.0.0.",
                 DeprecationWarning,
                 stacklevel=2,
             )
-            if user_id is None:
-                user_id = workspace_id
 
         params = {
             "sort": sort_by,
-            "workspaceId": user_id,  # API still uses workspaceId
+            "workspaceId": workspace_id,
             "displayName": display_name,
             "type": order_type,
             "tags": tags,

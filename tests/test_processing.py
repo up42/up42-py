@@ -210,8 +210,8 @@ class TestJob:
                 "links": [],
             },
         )
-        assert (
-            list(
+        def call():
+            return list(
                 processing.Job.all(
                     process_id=process_id,
                     workspace_id=workspace_id,
@@ -222,5 +222,14 @@ class TestJob:
                     ids=ids,
                 )
             )
-            == [tpc.JOB] * 5
-        )
+
+        if workspace_id is not None:
+            with pytest.warns(
+                DeprecationWarning,
+                match=r"`workspace_id` parameter is deprecated and will be removed in version 5\.0\.0\.",
+            ):
+                jobs = call()
+        else:
+            jobs = call()
+
+        assert jobs == [tpc.JOB] * 5

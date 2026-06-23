@@ -2,6 +2,7 @@ import uuid
 from unittest import mock
 
 import geojson  # type: ignore
+import pytest
 import requests_mock as req_mock
 
 from tests import constants
@@ -128,22 +129,28 @@ class TestBatchOrderTemplate:
         assert template.estimate == ESTIMATE
         assert template.place() == [ORDER_REFERENCE, ERROR]
 
-    def test_should_place_with_custom_user_id(
+    def test_should_place_with_custom_workspace_id(
         self, requests_mock: req_mock.Mocker
     ):
-        """Test placing order with a custom user_id."""
         estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
         requests_mock.post(url=estimate_url, json=ESTIMATE_PAYLOAD)
-        custom_user_id = "custom-user-123"
+
+        custom_workspace_id = "custom-workspace-123"
         placement_url = (
-            f"{constants.API_HOST}/v2/orders?workspaceId={custom_user_id}"
+            f"{constants.API_HOST}/v2/orders?workspaceId={custom_workspace_id}"
         )
         requests_mock.post(url=placement_url, json=PLACEMENT_PAYLOAD)
-        template = order_template.BatchOrderTemplate(
-            data_product_id=constants.DATA_PRODUCT_ID,
-            display_name=DISPLAY_NAME,
-            features=FEATURES,
-            params=PARAMS,
-            user_id=custom_user_id,
-        )
+
+        with pytest.warns(
+            DeprecationWarning,
+            match=r"`workspace_id` is deprecated and will be removed in version 5\.0\.0\.",
+        ):
+            template = order_template.BatchOrderTemplate(
+                data_product_id=constants.DATA_PRODUCT_ID,
+                display_name=DISPLAY_NAME,
+                features=FEATURES,
+                params=PARAMS,
+                workspace_id=custom_workspace_id,
+            )
+
         assert template.place() == [ORDER_REFERENCE, ERROR]

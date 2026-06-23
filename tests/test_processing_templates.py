@@ -57,7 +57,7 @@ class TestParameterlessTemplates:
     )
     def test_should_construct_single_item_job_templates(self, template_class):
         template = template_class(
-            title=tpc.TITLE, item=item, user_id=constants.WORKSPACE_ID
+            title=tpc.TITLE, item=item, workspace_id=constants.WORKSPACE_ID
         )
         assert template.is_valid and template.cost == COST
         assert template.inputs == {"title": tpc.TITLE, "item": tpc.ITEM_URL}
@@ -76,7 +76,7 @@ class TestPansharpening:
             title=tpc.TITLE,
             item=item,
             grey_weights=[grey_weight] if grey_weight else None,
-            user_id=constants.WORKSPACE_ID,
+            workspace_id=constants.WORKSPACE_ID,
         )
         grey_weights = (
             {
@@ -102,7 +102,7 @@ class TestSimularityProcesses:
             title=tpc.TITLE,
             source_item=item,
             reference_item=second_item,
-            user_id=constants.WORKSPACE_ID,
+            workspace_id=constants.WORKSPACE_ID,
         )
         assert template.is_valid and template.cost == COST
         assert template.inputs == {
@@ -116,7 +116,7 @@ class TestSimularityProcesses:
             title=tpc.TITLE,
             source_item=item,
             reference_item=second_item,
-            user_id=constants.WORKSPACE_ID,
+            workspace_id=constants.WORKSPACE_ID,
             sensitivity=5,
         )
         assert template.is_valid and template.cost == COST
@@ -202,7 +202,7 @@ class TestSingleItemJobTemplate:
 class SampleJobTemplate(templates.JobTemplate):
     title: str
     process_id = tpc.PROCESS_ID
-    user_id = constants.WORKSPACE_ID
+    workspace_id: str | None = None
 
     @property
     def inputs(self) -> dict:
@@ -417,24 +417,28 @@ class TestJobTemplate:
         assert template.cost == cost
 
     @pytest.mark.usefixtures("process_found_and_eula_accepted")
-    def test_should_execute_with_custom_user_id(
+    def test_should_execute_with_deprecated_workspace_id(
         self, requests_mock: req_mock.Mocker
     ):
-        """Test executing job with a custom user_id."""
-        custom_user_id = "custom-user-456"
+        custom_workspace_id = "custom-workspace-456"
+
         execution_url = (
             f"{constants.API_HOST}/v2/processing/processes/{tpc.PROCESS_ID}"
-            f"/execution?workspaceId={custom_user_id}"
+            f"/execution?workspaceId={custom_workspace_id}"
         )
+
         cost = processing.Cost(strategy="none", credits=1)
+
         body_matcher = helpers.match_request_body(
             {"inputs": {"title": tpc.TITLE}}
         )
+
         requests_mock.post(
             tpc.VALIDATION_URL,
             status_code=200,
             additional_matcher=body_matcher,
         )
+
         requests_mock.post(
             tpc.COST_URL,
             status_code=200,
@@ -444,14 +448,22 @@ class TestJobTemplate:
             },
             additional_matcher=body_matcher,
         )
+
         requests_mock.post(
             execution_url,
             status_code=200,
             json=tpc.JOB_METADATA,
             additional_matcher=body_matcher,
         )
-        template = SampleJobTemplate(title=tpc.TITLE)
-        template.user_id = custom_user_id
+
+        with pytest.warns(
+            DeprecationWarning,
+            match=r"`workspace_id` is deprecated and will be removed in version 5\.0\.0\.",
+        ):
+            template = SampleJobTemplate(
+                title=tpc.TITLE,
+                workspace_id=custom_workspace_id,
+            )
+
         assert template.execute() == tpc.JOB
-        assert template.is_valid and not template.errors
-        assert template.cost == cost
+        

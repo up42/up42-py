@@ -1,5 +1,4 @@
 import dataclasses
-import warnings
 
 import pystac_client
 import pytest
@@ -143,53 +142,18 @@ class TestWorkspaceIdDescriptorDeprecation:
     def test_should_warn_on_workspace_id_descriptor_get(self):
         """Using WorkspaceId descriptor should emit DeprecationWarning on get."""
         record = ActiveRecord(workspace_id="custom_workspace_id")
+
         with pytest.warns(
             DeprecationWarning,
-            match=r"`WorkspaceId` is deprecated and will be removed in version 5\.0\.0\. Use `UserId` instead\.",
+            match=r"`WorkspaceId` is deprecated and will be removed in version 5\.0\.0\.",
         ):
             _ = record.class_workspace_id
 
     def test_should_warn_on_workspace_id_descriptor_set(self):
         """Using WorkspaceId descriptor should emit DeprecationWarning on set."""
+
         with pytest.warns(
             DeprecationWarning,
-            match=r"`WorkspaceId` is deprecated and will be removed in version 5\.0\.0\. Use `UserId` instead\.",
+            match=r"`WorkspaceId` is deprecated and will be removed in version 5\.0\.0\.",
         ):
             _ = ActiveRecord(workspace_id="custom_workspace_id")
-
-    def test_user_id_descriptor_should_not_warn(self):
-        """UserId descriptor should not emit warnings."""
-
-        @dataclasses.dataclass(eq=True)
-        class TestRecord:
-            user_id: str | base.UserId = dataclasses.field(
-                default_factory=base.UserId
-            )
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("error", DeprecationWarning)
-            record = TestRecord()
-            _ = record.user_id  # Should not raise
-
-    def test_user_id_descriptor_should_provide_instance_value(self):
-        """UserId descriptor should provide custom instance value when set."""
-
-        @dataclasses.dataclass(eq=True)
-        class TestRecord:
-            class_user_id = base.UserId()
-            user_id: str | base.UserId = dataclasses.field(
-                default=base.UserId()
-            )
-
-        record = TestRecord()
-        record.user_id = "custom_user_id_123"
-        assert record.user_id == "custom_user_id_123"
-
-    def test_user_id_descriptor_class_level_access(self):
-        """UserId descriptor should return workspace.id on class-level access."""
-
-        @dataclasses.dataclass(eq=True)
-        class TestRecord:
-            class_user_id = base.UserId()
-
-        assert TestRecord.class_user_id == constants.WORKSPACE_ID

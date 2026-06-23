@@ -36,16 +36,10 @@ class Quotation:
     updated_at: str
     decided_at: str | None
     account_id: str
-    user_id: str
+    workspace_id: str
     order_id: str
     credits_price: int
     decision: QuotationStatus
-
-    @property
-    @utils.deprecation(replacement_name="user_id", version="5.0.0")
-    def workspace_id(self) -> str:
-        """Deprecated: Use user_id instead."""
-        return self.user_id
 
     def accept(self):
         self.decision = "ACCEPTED"
@@ -70,7 +64,7 @@ class Quotation:
             updated_at=metadata["updatedAt"],
             decided_at=metadata["decisionAt"],
             account_id=metadata["accountId"],
-            user_id=metadata.get("userId", metadata["workspaceId"]),
+            workspace_id=metadata["workspaceId"],
             order_id=metadata["orderId"],
             credits_price=metadata["creditsPrice"],
             decision=metadata["decision"],
@@ -80,7 +74,6 @@ class Quotation:
     def all(
         cls,
         quotation_id: str | None = None,
-        user_id: str | None = None,
         workspace_id: str | None = None,
         order_id: str | None = None,
         decision: list[QuotationStatus] | None = None,
@@ -89,16 +82,13 @@ class Quotation:
         # Handle deprecated workspace_id parameter
         if workspace_id is not None:
             warnings.warn(
-                "`workspace_id` parameter is deprecated and will be removed in version 5.0.0. "
-                "Use `user_id` instead.",
+                "`workspace_id` parameter is deprecated and will be removed in version 5.0.0.",
                 DeprecationWarning,
                 stacklevel=2,
             )
-            if user_id is None:
-                user_id = workspace_id
 
         params = {
-            "workspaceId": user_id,  # API still uses workspaceId
+            "workspaceId": workspace_id,
             "id": quotation_id,
             "orderId": order_id,
             "decision": decision,
