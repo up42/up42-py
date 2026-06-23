@@ -205,12 +205,13 @@ class Job:
         page_size: int | None = None,
     ) -> Iterator["Job"]:
             # Warn users before workspace_id is removed in v5.0.0
+        if workspace_id is not None:
             warnings.warn(
-                "`workspace_id` parameter is deprecated and will be removed in version 5.0.0.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-
+                    "`workspace_id` parameter is deprecated and will be removed in version 5.0.0.",
+                    DeprecationWarning,
+                    stacklevel=2,
+                )
+                
         query_params = {
             key: str(value)
             for key, value in {

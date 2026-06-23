@@ -1,4 +1,5 @@
 import dataclasses
+import warnings
 from typing import Literal
 
 import geojson  # type: ignore

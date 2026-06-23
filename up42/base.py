@@ -85,7 +85,7 @@ class Session:
 
 
 class WorkspaceId:
-        """Deprecated descriptor for workspace_id.
+    """Deprecated descriptor for workspace_id.
 
     This descriptor will be removed in version 5.0.0.
     """
