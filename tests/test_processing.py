@@ -210,6 +210,7 @@ class TestJob:
                 "links": [],
             },
         )
+
         def call():
             return list(
                 processing.Job.all(

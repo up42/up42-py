@@ -466,4 +466,3 @@ class TestJobTemplate:
             )
 
         assert template.execute() == tpc.JOB
-        
