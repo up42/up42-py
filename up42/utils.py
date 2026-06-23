@@ -91,7 +91,7 @@ def deprecation(
                 if replacement_name
                 else ""
             )
-            message = f"`{func.__name__}` is deprecated and will be removed in version {version}{replace_with}."
+            message = f"`{func.__name__}` is deprecated and will be removed in version {version}.{replace_with}"
             warnings.warn(message, DeprecationWarning, stacklevel=2)
             return func(*args, **kwargs)
 
