@@ -30,12 +30,19 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
-### 4.0.0a9
+
+### 4.0.0a10
 **June 24, 2026**
 ### Deprecated
 - `workspace_id` field in SDK classes is deprecated and will be removed in version `5.0.0`.
 - `workspace_id` parameters across SDK methods are deprecated and will be removed in version `5.0.0`.
 - During the deprecation period, `workspace_id` remains supported for backward compatibility and will emit a `DeprecationWarning` when used.
+
+### 4.0.0a9
+**June 24, 2026**
+### Added
+- Added `BudgetSettings` dataclass to represent the budget settings for an account.
+- Added `BudgetSettings.get()` to retrieve the budget settings for the account.
 
 ### 4.0.0a8
 **June 18, 2026**
