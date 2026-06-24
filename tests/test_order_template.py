@@ -141,31 +141,16 @@ class TestBatchOrderTemplate:
         )
         requests_mock.post(url=placement_url, json=PLACEMENT_PAYLOAD)
 
-        template = order_template.BatchOrderTemplate(
-            data_product_id=constants.DATA_PRODUCT_ID,
-            display_name=DISPLAY_NAME,
-            features=FEATURES,
-            params=PARAMS,
-            workspace_id=custom_workspace_id,
-        )
-
-        assert template.place() == [ORDER_REFERENCE, ERROR]
-
-    def test_should_warn_when_using_default_workspace_id(
-        self, requests_mock: req_mock.Mocker
-    ):
-        estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
-        requests_mock.post(url=estimate_url, json=ESTIMATE_PAYLOAD)
-
-        template = order_template.BatchOrderTemplate(
-            data_product_id=constants.DATA_PRODUCT_ID,
-            display_name=DISPLAY_NAME,
-            features=FEATURES,
-            params=PARAMS,
-        )
-
         with pytest.warns(
             DeprecationWarning,
-            match=r"`WorkspaceId` is deprecated and will be removed in version 5\.0\.0\.",
+            match=r"`workspace_id` is deprecated and will be removed in version 5\.0\.0\.",
         ):
-            _ = template.workspace_id
+            template = order_template.BatchOrderTemplate(
+                data_product_id=constants.DATA_PRODUCT_ID,
+                display_name=DISPLAY_NAME,
+                features=FEATURES,
+                params=PARAMS,
+                workspace_id=custom_workspace_id,
+            )
+
+        assert template.place() == [ORDER_REFERENCE, ERROR]
