@@ -1,5 +1,4 @@
 import dataclasses
-import warnings
 from typing import Literal
 
 import geojson  # type: ignore
@@ -56,17 +55,13 @@ class BatchOrderTemplate:
     display_name: str
     features: geojson.FeatureCollection
     params: dict
-    workspace_id: str | None = None
+    workspace_id: str | base.WorkspaceId = dataclasses.field(
+        default_factory=base.WorkspaceId
+    )
     tags: list[str] | None = None
     budget_id: str | None = None
 
     def __post_init__(self):
-        if self.workspace_id is not None:
-            warnings.warn(
-                "`workspace_id` is deprecated and will be removed in version 5.0.0.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
         self.__estimate()
 
     @property
@@ -95,7 +90,6 @@ class BatchOrderTemplate:
         )
 
     def place(self) -> list[OrderReference | OrderError]:
-        workspace_id = self.workspace_id or base.workspace.id
-        url = host.endpoint(f"/v2/orders?workspaceId={workspace_id}")
+        url = host.endpoint(f"/v2/orders?workspaceId={self.workspace_id}")
         batch = self.session.post(url=url, json=self._payload).json()
         return _get_items(batch, OrderReference)
