@@ -22,7 +22,8 @@ class JobTemplate:
         pass
 
     def __post_init__(self):
-        if self.workspace_id is not None:
+        workspace_id = getattr(self, "workspace_id", None)
+        if workspace_id is not None:
             warnings.warn(
                 "`workspace_id` is deprecated and will be removed in version 5.0.0.",
                 DeprecationWarning,
