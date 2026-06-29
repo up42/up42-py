@@ -30,6 +30,27 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 4.0.0
+**June 29, 2026**
+### Added
+- Added `BudgetSettings` dataclass to represent the budget settings for an account.
+- Added `BudgetSettings.get()` to retrieve the budget settings for the account.
+- Added `ids` parameter to `Order.all()` to filter orders by order IDs
+- Added `budget_ids` parameter to `Order.all()` to filter orders by budget IDs (accepts list of budget UUIDs).
+- Added `budget_id` field to `Order` dataclass to return budget UUID when present in API responses.
+- Added optional `budget_id` parameter to `Order.update()` to allow updating the budget for an order.
+- Added `budgets` module with `Budget`, `BudgetUsage` dataclasses and `BudgetSorting` utility.
+- Added `Budget.get()` to retrieve a single budget by ID.
+- Added `Budget.all()` to list budgets with optional status filtering and sorting.
+- Added `Budget.get_usage()` to retrieve usage for a specific budget.
+- Added `test_budgets.py` with tests for budget and budget usage fetch endpoints.
+- Added optional `budget_id` parameter to `BatchOrderTemplate` to allow specifying a budget when creating orders.
+- Added optional `budget_id` parameter to `JobTemplate.execute()`
+
+### Security
+- Updated urllib3 to >=2.7.0.
+- Increased minimum Python version to 3.11
+
 ### 4.0.0a9
 **June 24, 2026**
 ### Added
