@@ -68,6 +68,26 @@ class Budget:
 
 
 @dataclasses.dataclass
+class BudgetSettings:
+    session = base.Session()
+    enforcement_enabled: bool
+    budget_setting_id: str | None = None
+
+    @staticmethod
+    def _from_metadata(metadata: dict) -> "BudgetSettings":
+        return BudgetSettings(
+            enforcement_enabled=metadata["enforcementEnabled"],
+            budget_setting_id=metadata.get("budgetSettingId"),
+        )
+
+    @classmethod
+    def get(cls) -> "BudgetSettings":
+        url = host.endpoint("/v2/budgets/settings")
+        metadata = cls.session.get(url).json()
+        return cls._from_metadata(metadata)
+
+
+@dataclasses.dataclass
 class BudgetUsage:
     budget_id: str
     consumed_credits: int
