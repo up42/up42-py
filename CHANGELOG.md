@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 4.1.0a1
+**August 6, 2026**
+### Security
+- Updated idna to >=3.1.5
+
 ### 4.0.0
 **June 29, 2026**
 ### Added
