@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 4.1.0a2
+**August 27, 2026**
+### Fixed
+- Added packaging to main dependencies to fix a runtime error for missing module on python >3.13 environments
+
 ### 4.1.0a1
 **August 6, 2026**
 ### Security
