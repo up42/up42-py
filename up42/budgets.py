@@ -15,6 +15,19 @@ class BudgetSorting:
 
 
 @dataclasses.dataclass
+class ValidityPeriod:
+    start_date: str
+    end_date: str
+
+    @staticmethod
+    def _from_metadata(metadata: dict) -> "ValidityPeriod":
+        return ValidityPeriod(
+            start_date=metadata["startDate"],
+            end_date=metadata["endDate"],
+        )
+
+
+@dataclasses.dataclass
 class Budget:
     session = base.Session()
     id: str
@@ -27,8 +40,16 @@ class Budget:
     description: str | None = None
     external_id: str | None = None
 
+    spend_limit: int | None = None
+    validity_period: ValidityPeriod | None = None
+
+    consumed_credits: int | None = None
+    remaining_credits: int | None = None
+    usage_percentage: float | None = None
+
     @staticmethod
     def _from_metadata(metadata: dict) -> "Budget":
+        validity_period = metadata.get("validityPeriod")
         return Budget(
             id=metadata["id"],
             name=metadata["name"],
@@ -38,12 +59,17 @@ class Budget:
             created_by=metadata["createdBy"],
             created_at=metadata["createdAt"],
             updated_at=metadata["updatedAt"],
+            spend_limit=metadata.get("spendLimit"),
+            validity_period=ValidityPeriod._from_metadata(validity_period) if validity_period else None,
+            consumed_credits=metadata.get("consumedCredits"),
+            remaining_credits=metadata.get("remainingCredits"),
+            usage_percentage=metadata.get("usagePercentage"),
         )
 
     @classmethod
-    def get(cls, budget_id: str) -> "Budget":
+    def get(cls, budget_id: str, include_usage: bool = False) -> "Budget":
         url = host.endpoint(f"/v2/budgets/{budget_id}")
-        metadata = cls.session.get(url).json()
+        metadata = cls.session.get(url, params={"includeUsage": include_usage}).json()
         return cls._from_metadata(metadata)
 
     @classmethod
@@ -51,10 +77,12 @@ class Budget:
         cls,
         status: list[BudgetStatus] | None = None,
         sort_by: utils.SortingField | None = None,
+        include_usage: bool = False,
     ) -> Iterator["Budget"]:
         params = {
             "sort": sort_by,
             "status": status,
+            "includeUsage": include_usage,
         }
         return map(
             cls._from_metadata,
