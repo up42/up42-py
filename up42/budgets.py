@@ -60,7 +60,9 @@ class Budget:
             created_at=metadata["createdAt"],
             updated_at=metadata["updatedAt"],
             spend_limit=metadata.get("spendLimit"),
-            validity_period=ValidityPeriod.from_metadata(validity_period) if validity_period else None,
+            validity_period=ValidityPeriod.from_metadata(validity_period)
+            if validity_period
+            else None,
             consumed_credits=metadata.get("consumedCredits"),
             remaining_credits=metadata.get("remainingCredits"),
             usage_percentage=metadata.get("usagePercentage"),
@@ -69,7 +71,9 @@ class Budget:
     @classmethod
     def get(cls, budget_id: str, include_usage: bool = False) -> "Budget":
         url = host.endpoint(f"/v2/budgets/{budget_id}")
-        metadata = cls.session.get(url, params={"includeUsage": include_usage}).json()
+        metadata = cls.session.get(
+            url, params={"includeUsage": include_usage}
+        ).json()
         return cls._from_metadata(metadata)
 
     @classmethod

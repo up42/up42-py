@@ -1,9 +1,9 @@
+import dataclasses
+import datetime
 import random
 import string
 import urllib.parse
 import uuid
-import datetime
-import dataclasses
 
 import pytest
 import requests_mock as req_mock
@@ -13,7 +13,9 @@ from up42 import budgets, utils
 
 BUDGET_ID = str(uuid.uuid4())
 BUDGETS_URL = f"{constants.API_HOST}/v2/budgets"
-BUDGETS_URL_WITH_INCLUDE_USAGE = f"{constants.API_HOST}/v2/budgets?includeUsage=true"
+BUDGETS_URL_WITH_INCLUDE_USAGE = (
+    f"{constants.API_HOST}/v2/budgets?includeUsage=true"
+)
 BUDGET_URL = f"{BUDGETS_URL}/{BUDGET_ID}"
 BUDGET_URL_WITH_INCLUDE_USAGE = f"{BUDGETS_URL}/{BUDGET_ID}?includeUsage=true"
 BUDGET_SETTINGS_URL = f"{BUDGETS_URL}/settings"
@@ -34,8 +36,14 @@ def random_metadata() -> dict:
         "createdAt": random_alphanumeric(),
         "updatedAt": random_alphanumeric(),
         "validityPeriod": {
-            "startDate": (datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=1)).isoformat(),
-            "endDate": (datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)).isoformat()
+            "startDate": (
+                datetime.datetime.now(datetime.UTC)
+                - datetime.timedelta(days=1)
+            ).isoformat(),
+            "endDate": (
+                datetime.datetime.now(datetime.UTC)
+                + datetime.timedelta(days=1)
+            ).isoformat(),
         },
         "spendLimit": random.randint(1000, 10000),
     }
@@ -93,7 +101,9 @@ class TestBudget:
     def test_should_get_budget_with_usage(
         self, requests_mock: req_mock.Mocker, full_budget: budgets.Budget
     ):
-        requests_mock.get(url=BUDGET_URL_WITH_INCLUDE_USAGE, json=full_metadata)
+        requests_mock.get(
+            url=BUDGET_URL_WITH_INCLUDE_USAGE, json=full_metadata
+        )
         assert budgets.Budget.get(BUDGET_ID, include_usage=True) == full_budget
 
     @pytest.mark.parametrize(
@@ -164,9 +174,7 @@ class TestBudget:
     ):
         response = {"content": [full_metadata], "totalPages": 1}
         requests_mock.get(url=BUDGETS_URL_WITH_INCLUDE_USAGE, json=response)
-        assert list(budgets.Budget.all(include_usage=True)) == [
-            full_budget
-        ]
+        assert list(budgets.Budget.all(include_usage=True)) == [full_budget]
 
     def test_should_get_usage(
         self, requests_mock: req_mock.Mocker, budget: budgets.Budget
