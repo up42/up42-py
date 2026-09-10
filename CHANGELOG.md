@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 4.2.0a1
+**September 10, 2026**
+### Added
+- Budget Limit Attributes to `Budget.get()` and `Budget.all()` to return budget limit attributes when present in API responses.
+
 ### 4.1.0
 **August 31, 2026**
 ### Fixed
