@@ -20,7 +20,7 @@ class ValidityPeriod:
     end_date: str
 
     @staticmethod
-    def _from_metadata(metadata: dict) -> "ValidityPeriod":
+    def from_metadata(metadata: dict) -> "ValidityPeriod":
         return ValidityPeriod(
             start_date=metadata["startDate"],
             end_date=metadata["endDate"],
@@ -60,7 +60,7 @@ class Budget:
             created_at=metadata["createdAt"],
             updated_at=metadata["updatedAt"],
             spend_limit=metadata.get("spendLimit"),
-            validity_period=ValidityPeriod._from_metadata(validity_period) if validity_period else None,
+            validity_period=ValidityPeriod.from_metadata(validity_period) if validity_period else None,
             consumed_credits=metadata.get("consumedCredits"),
             remaining_credits=metadata.get("remainingCredits"),
             usage_percentage=metadata.get("usagePercentage"),
