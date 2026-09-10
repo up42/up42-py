@@ -69,7 +69,9 @@ class Budget:
         )
 
     @classmethod
-    def get(cls, budget_id: str, include_usage: bool = None) -> "Budget":
+    def get(
+        cls, budget_id: str, include_usage: bool | None = None
+    ) -> "Budget":
         url = host.endpoint(f"/v2/budgets/{budget_id}")
         metadata = cls.session.get(
             url, params={"includeUsage": include_usage}
@@ -81,7 +83,7 @@ class Budget:
         cls,
         status: list[BudgetStatus] | None = None,
         sort_by: utils.SortingField | None = None,
-        include_usage: bool = None,
+        include_usage: bool | None = None,
     ) -> Iterator["Budget"]:
         params = {
             "sort": sort_by,

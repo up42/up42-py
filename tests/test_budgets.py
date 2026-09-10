@@ -39,11 +39,15 @@ def random_metadata() -> dict:
             "startDate": (
                 datetime.datetime.now(datetime.UTC)
                 - datetime.timedelta(days=1)
-            ).isoformat().split("T")[0],  # Only keep the date part,
+            )
+            .isoformat()
+            .split("T")[0],  # Only keep the date part,
             "endDate": (
                 datetime.datetime.now(datetime.UTC)
                 + datetime.timedelta(days=1)
-            ).isoformat().split("T")[0],  # Only keep the date part
+            )
+            .isoformat()
+            .split("T")[0],  # Only keep the date part
         },
         "spendLimit": random.randint(1000, 10000),
     }
@@ -103,7 +107,8 @@ class TestBudget:
     ):
         requests_mock.get(
             complete_qs=True,
-            url=BUDGET_URL_WITH_INCLUDE_USAGE, json=full_metadata
+            url=BUDGET_URL_WITH_INCLUDE_USAGE,
+            json=full_metadata,
         )
         assert budgets.Budget.get(BUDGET_ID, include_usage=True) == full_budget
 
@@ -139,7 +144,9 @@ class TestBudget:
     def test_should_handle_null_optional_fields(
         self, requests_mock: req_mock.Mocker, response_metadata: dict
     ):
-        requests_mock.get(complete_qs=True, url=BUDGET_URL, json=response_metadata)
+        requests_mock.get(
+            complete_qs=True, url=BUDGET_URL, json=response_metadata
+        )
         result = budgets.Budget.get(BUDGET_ID)
         assert result.description is None
         assert result.external_id is None
@@ -202,14 +209,22 @@ class TestBudget:
                 url=f"{BUDGETS_URL_WITH_INCLUDE_USAGE}&page={page_index}",
                 json=page,
             )
-        assert list(budgets.Budget.all(include_usage=True)) == [budget, full_budget, third_budget]
+        assert list(budgets.Budget.all(include_usage=True)) == [
+            budget,
+            full_budget,
+            third_budget,
+        ]
         assert requests_mock.call_count == total_pages
 
     def test_should_get_all_budgets_with_usage(
         self, requests_mock: req_mock.Mocker, full_budget: budgets.Budget
     ):
         response = {"content": [full_metadata], "totalPages": 1}
-        requests_mock.get(complete_qs=True, url=f"{BUDGETS_URL_WITH_INCLUDE_USAGE}&page=0", json=response)
+        requests_mock.get(
+            complete_qs=True,
+            url=f"{BUDGETS_URL_WITH_INCLUDE_USAGE}&page=0",
+            json=response,
+        )
         assert list(budgets.Budget.all(include_usage=True)) == [full_budget]
 
     def test_should_get_usage(
@@ -234,7 +249,9 @@ class TestBudgetSettings:
             "budgetSettingId": budget_setting_id,
             "enforcementEnabled": True,
         }
-        requests_mock.get(complete_qs=True, url=BUDGET_SETTINGS_URL, json=response)
+        requests_mock.get(
+            complete_qs=True, url=BUDGET_SETTINGS_URL, json=response
+        )
         assert budgets.BudgetSettings.get() == budgets.BudgetSettings(
             budget_setting_id=budget_setting_id,
             enforcement_enabled=True,
@@ -251,7 +268,9 @@ class TestBudgetSettings:
     def test_should_handle_null_budget_setting_id(
         self, requests_mock: req_mock.Mocker, response_metadata: dict
     ):
-        requests_mock.get(complete_qs=True, url=BUDGET_SETTINGS_URL, json=response_metadata)
+        requests_mock.get(
+            complete_qs=True, url=BUDGET_SETTINGS_URL, json=response_metadata
+        )
         result = budgets.BudgetSettings.get()
         assert result.budget_setting_id is None
         assert result.enforcement_enabled is False

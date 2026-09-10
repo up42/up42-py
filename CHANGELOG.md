@@ -34,7 +34,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 **September 10, 2026**
 ### Added
 - Added Budget Limit & Usage Attributes to `Budget.get()` and `Budget.all()` Response.
-  - Budget Limit 
+  - Budget Limit
     - `spend_limit`
     - `validity_period`
       - `start_date`
