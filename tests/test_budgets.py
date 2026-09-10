@@ -199,10 +199,10 @@ class TestBudget:
         for page_index, page in enumerate(pages):
             requests_mock.get(
                 complete_qs=True,
-                url=f"{BUDGETS_URL}?page={page_index}",
+                url=f"{BUDGETS_URL_WITH_INCLUDE_USAGE}&page={page_index}",
                 json=page,
             )
-        assert list(budgets.Budget.all()) == [budget, full_budget, third_budget]
+        assert list(budgets.Budget.all(include_usage=True)) == [budget, full_budget, third_budget]
         assert requests_mock.call_count == total_pages
 
     def test_should_get_all_budgets_with_usage(
