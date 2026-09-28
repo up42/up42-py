@@ -30,6 +30,21 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 4.2.0
+**September 28, 2026**
+### Added
+- Added Budget Limit & Usage Attributes to `Budget.get()` and `Budget.all()` Response.
+  - Budget Limit
+    - `spend_limit`
+    - `validity_period`
+      - `start_date`
+      - `end_date`
+  - Budget Usage
+    - `consumed_credits`
+    - `remaining_credits`
+    - `usage_percentage`
+- Added new Optional Parameter `include_usage` to `Budget.get()` and `Budget.all()` to include budget usage in the response.
+
 ### 4.2.0a1
 **September 10, 2026**
 ### Added
