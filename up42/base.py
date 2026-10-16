@@ -76,7 +76,11 @@ authenticate = workspace.authenticate
 
 
 def stac_client():
-    return utils.stac_client(workspace.auth)
+    return utils.stac_client(workspace.auth, "/v2/assets/stac/")
+
+
+def catalog_client():
+    return utils.stac_client(workspace.auth, "/v2/catalog/")
 
 
 class Session:

@@ -2,6 +2,7 @@ import itertools
 import json
 import pathlib
 from unittest import mock
+from urllib import parse
 
 import pytest
 import requests
@@ -68,6 +69,35 @@ class TestDownloadArchive:
             )
 
 
+class TestGetFilename:
+    @pytest.mark.parametrize(
+        "disposition, expected",
+        [
+            pytest.param("inline; filename=image", "image.png", id="unquoted"),
+            pytest.param('inline; filename="image"', "image.png", id="quoted"),
+        ],
+    )
+    def test_should_get_filename_from_signed_url(
+        self, disposition: str, expected: str
+    ):
+        signed_url = "https://signed.url/image.png?" + parse.urlencode(
+            {"response-content-disposition": disposition}
+        )
+        assert (
+            utils.get_filename(signed_url, default_filename="default")
+            == expected
+        )
+
+    def test_should_get_default_filename_without_disposition(self):
+        with pytest.warns(UserWarning):
+            assert (
+                utils.get_filename(
+                    "https://signed.url/image.png", default_filename="default"
+                )
+                == "default.png"
+            )
+
+
 @mock.patch("importlib.metadata.version", return_value="some_version")
 def test_get_up42_py_version(version: mock.Mock):
     assert utils.get_up42_py_version() == "some_version"
@@ -85,7 +115,9 @@ def test_stac_client_sets_user_agent_header(
         },
         json=test_constants.STAC_CATALOG_RESPONSE,
     )
-    assert utils.stac_client(mock.MagicMock(side_effect=lambda req: req))
+    assert utils.stac_client(
+        mock.MagicMock(side_effect=lambda req: req), "/v2/assets/stac/"
+    )
     assert requests_mock.called
 
 

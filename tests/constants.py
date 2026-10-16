@@ -7,6 +7,7 @@ DATA_PRODUCT_ID = "47dadb27-9532-4552-93a5-48f70a83eaef"
 ORDER_ID = "da2310a2-c7fb-42ed-bead-fb49ad862c67"
 URL_STAC_CATALOG = f"{API_HOST}/v2/assets/stac/"
 URL_STAC_SEARCH = f"{API_HOST}/v2/assets/stac/search"
+URL_CATALOG = f"{API_HOST}/v2/catalog/"
 
 STAC_CATALOG_RESPONSE = {
     "conformsTo": [

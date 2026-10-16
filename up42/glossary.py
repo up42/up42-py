@@ -84,9 +84,11 @@ class Provider:
     )
 
     @property
+    @utils.deprecation(None, "5.0.0")
     def is_host(self):
         return "HOST" in self.roles
 
+    @utils.deprecation("up42.catalog_client.search", "5.0.0")
     def search(
         self,
         bbox: BoundingBox | None = None,
@@ -96,7 +98,7 @@ class Provider:
         start_date: str | None = None,
         end_date: str | None = None,
     ) -> Iterator[Scene]:
-        if not self.is_host:
+        if "HOST" not in self.roles:
             raise InvalidHost("Provider does not host collections")
         datetime_str = None
         if start_date or end_date:

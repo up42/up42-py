@@ -34,6 +34,8 @@ def get_filename(signed_url: str, default_filename: str) -> str:
         file_name = parse.parse_qs(parsed_url.query)[
             "response-content-disposition"
         ][0].split("filename=")[1]
+        if file_name.startswith('"'):
+            file_name = file_name[1:].split('"', 1)[0]
         return f"{file_name}{extension}"
     except (IndexError, KeyError):
         warnings.warn(
@@ -91,7 +93,7 @@ def deprecation(
                 if replacement_name
                 else ""
             )
-            message = f"`{func.__name__}` is deprecated and will be removed in version {version}{replace_with}."
+            message = f"`{func.__qualname__}` is deprecated and will be removed in version {version}{replace_with}."
             warnings.warn(message, DeprecationWarning, stacklevel=2)
             return func(*args, **kwargs)
 
@@ -283,9 +285,9 @@ def read_json(path_or_dict: dict | str | pathlib.Path | None) -> dict | None:
     return cast(dict | None, path_or_dict)
 
 
-def stac_client(auth: requests.auth.AuthBase):
+def stac_client(auth: requests.auth.AuthBase, mount_point: str):
     return pystac_client.Client.open(
-        url=host.endpoint("/v2/assets/stac/"),
+        url=host.endpoint(mount_point),
         headers={
             "User-Agent": f"up42-py/{get_up42_py_version()} ({constants.REPOSITORY_URL})"
         },

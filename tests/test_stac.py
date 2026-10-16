@@ -17,7 +17,10 @@ def extend_stac_objects():
 
 ASSET_ID = "asset-id"
 DOWNLOAD_URL = f"{constants.API_HOST}/abcdef.tgz"
-STAC_ASSET_HREF = f"{constants.API_HOST}/v2/assets/{ASSET_ID}"
+STORAGE_ASSET_HREF = f"{constants.API_HOST}/v2/assets/{ASSET_ID}"
+CATALOG_ITEM_HREF = (
+    f"{constants.API_HOST}/v2/catalog/collections/collection-id/items/item-id"
+)
 
 
 class TestFileProvider:
@@ -29,14 +32,37 @@ class TestFileProvider:
         asset = pystac.Asset(href="http://example.com", title="some-title")
         assert not asset.file  # type: ignore
 
+    @pytest.mark.parametrize(
+        "href, download_url_endpoint",
+        [
+            pytest.param(
+                STORAGE_ASSET_HREF,
+                f"{STORAGE_ASSET_HREF}/download-url",
+                id="storage",
+            ),
+            pytest.param(
+                f"{CATALOG_ITEM_HREF}/assets/thumbnail/download-url",
+                f"{CATALOG_ITEM_HREF}/assets/thumbnail/download-url",
+                id="catalog-thumbnail",
+            ),
+            pytest.param(
+                f"{CATALOG_ITEM_HREF}/assets/quicklook/download-url",
+                f"{CATALOG_ITEM_HREF}/assets/quicklook/download-url",
+                id="catalog-quicklook",
+            ),
+        ],
+    )
     def test_should_provide_image_file_with_signed_url(
-        self, requests_mock: req_mock.Mocker
+        self,
+        href: str,
+        download_url_endpoint: str,
+        requests_mock: req_mock.Mocker,
     ):
         requests_mock.post(
-            url=f"{STAC_ASSET_HREF}/download-url",
+            url=download_url_endpoint,
             json={"url": DOWNLOAD_URL},
         )
-        asset = pystac.Asset(href=STAC_ASSET_HREF)
+        asset = pystac.Asset(href=href)
         expected = utils.ImageFile(url=DOWNLOAD_URL)
         assert asset.file == expected  # type: ignore
 
