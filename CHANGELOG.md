@@ -31,7 +31,7 @@ You can check your current version with the following command:
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
 ### 4.3.0a1
-**October 19, 2026**
+**October 22, 2026**
 ### Added
 - Added `up42.catalog_client` to provide a pystac client for the UP42 Catalog.
 ### Changed
