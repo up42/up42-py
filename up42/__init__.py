@@ -21,7 +21,7 @@ from collections.abc import Callable
 from typing import cast
 
 # pylint: disable=only-importing-modules-is-allowed
-from up42.base import authenticate, stac_client
+from up42.base import authenticate, catalog_client, stac_client
 from up42.budgets import Budget, BudgetSettings, BudgetSorting
 from up42.glossary import (
     CollectionSorting,
@@ -62,6 +62,7 @@ __all__ = [
         OrderSorting,
         authenticate,
         stac_client,
+        catalog_client,
         Job,
         JobSorting,
         JobStatus,

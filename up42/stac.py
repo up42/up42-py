@@ -13,21 +13,27 @@ class IncompleteCollectionDeletionError(ValueError):
     pass
 
 
+DOWNLOAD_URL_SUFFIX = "/download-url"
+
+
+def _download_url(href: str) -> str:
+    if href.endswith(DOWNLOAD_URL_SUFFIX):
+        return href
+    return href + DOWNLOAD_URL_SUFFIX
+
+
 class FileProvider:
     session = base.Session()
 
     def __get__(
         self, obj: pystac.Asset | None, obj_type=None
     ) -> utils.ImageFile | None:
-        if obj:
-            if obj.href.startswith(host.endpoint("")):
-                url = obj.href + "/download-url"
-                signed_url = self.session.post(url=url).json()["url"]
-                return utils.ImageFile(url=signed_url)
-            else:
-                return None
-        else:
+        if not obj:
             raise AttributeError
+        if not obj.href.startswith(host.endpoint("")):
+            return None
+        response = self.session.post(url=_download_url(obj.href))
+        return utils.ImageFile(url=response.json()["url"])
 
 
 UP42_USER_TITLE_KEY = "up42-user:title"

@@ -134,3 +134,15 @@ class TestStacClient:
         stac_client = base.stac_client()
         assert isinstance(stac_client, pystac_client.Client)
         assert requests_mock.called
+
+
+class TestCatalogClient:
+    def test_should_provide_catalog_client(
+        self, requests_mock: req_mock.Mocker
+    ):
+        requests_mock.get(
+            constants.URL_CATALOG, json=constants.STAC_CATALOG_RESPONSE
+        )
+        catalog_client = base.catalog_client()
+        assert isinstance(catalog_client, pystac_client.Client)
+        assert requests_mock.called

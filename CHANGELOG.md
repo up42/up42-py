@@ -30,6 +30,18 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 4.3.0a1
+**October 22, 2026**
+### Added
+- Added `up42.catalog_client` to provide a pystac client for the UP42 Catalog.
+### Changed
+- `Asset.file` now supports asset hrefs that already point to the `/download-url` endpoint, e.g. catalog thumbnails and quicklooks.
+### Fixed
+- Downloads via `Asset.file` no longer keep the quotes of quoted file names from the signed URL.
+### Deprecated
+- `Provider.search` is deprecated and will be removed in version `5.0.0`. Use `up42.catalog_client.search` instead.
+- `Provider.is_host` is deprecated and will be removed in version `5.0.0`.
+
 ### 4.2.0
 **September 28, 2026**
 ### Added
