@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 4.4.0a1
+**November 1, 2026**
+### Security
+- Updated urllib3 to >=2.8.0.
+
 ### 4.3.0
 **October 26, 2026**
 ### Added
