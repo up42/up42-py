@@ -70,6 +70,7 @@ class Quotation:
         )
 
     @classmethod
+    @utils.deprecated_argument("workspace_id", "5.0.0")
     def all(
         cls,
         quotation_id: str | None = None,
@@ -121,6 +122,7 @@ class FeasibilityStudy:
         """Raised when trying to save a FeasibilityStudy without a chosen decision option."""
 
     @classmethod
+    @utils.deprecated_argument("workspace_id", "5.0.0")
     def all(
         cls,
         feasibility_study_id: str | None = None,

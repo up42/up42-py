@@ -187,6 +187,7 @@ class Order:
         )
 
     @classmethod
+    @utils.deprecated_argument("workspace_id", "5.0.0")
     def all(
         cls,
         workspace_id: str | None = None,

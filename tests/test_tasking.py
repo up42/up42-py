@@ -1,6 +1,7 @@
 import dataclasses
 import urllib.parse
 import uuid
+import warnings
 from typing import Any
 
 import pytest
@@ -93,7 +94,6 @@ class TestQuotation:
         )
 
     @pytest.mark.parametrize("quotation_id", [None, QUOTATION_ID])
-    @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize("order_id", [None, constants.ORDER_ID])
     @pytest.mark.parametrize(
         "decision",
@@ -115,7 +115,6 @@ class TestQuotation:
         self,
         requests_mock: req_mock.Mocker,
         quotation_id: str | None,
-        workspace_id: str | None,
         order_id: str | None,
         decision: list[tasking.QuotationStatus] | None,
         sort_by: utils.SortingField | None,
@@ -123,8 +122,6 @@ class TestQuotation:
         query_params: dict[str, Any] = {}
         if quotation_id:
             query_params["id"] = quotation_id
-        if workspace_id:
-            query_params["workspaceId"] = workspace_id
         if order_id:
             query_params["orderId"] = order_id
         if decision:
@@ -147,12 +144,37 @@ class TestQuotation:
 
         quotations = tasking.Quotation.all(
             quotation_id=quotation_id,
-            workspace_id=workspace_id,
             order_id=order_id,
             decision=decision,
             sort_by=sort_by,
         )
         assert list(quotations) == [self.quotation] * 4
+
+    def test_should_warn_when_getting_all_with_workspace_id(
+        self, requests_mock: req_mock.Mocker
+    ):
+        requests_mock.get(
+            url=f"{constants.API_HOST}/v2/tasking/quotation?workspaceId={constants.WORKSPACE_ID}&page=0",
+            json={"content": [], "totalPages": 1},
+        )
+        with pytest.warns(
+            DeprecationWarning,
+            match="`workspace_id` is deprecated and will be removed in version 5.0.0.",
+        ):
+            assert not list(
+                tasking.Quotation.all(workspace_id=constants.WORKSPACE_ID)
+            )
+
+    def test_should_not_warn_when_getting_all_without_workspace_id(
+        self, requests_mock: req_mock.Mocker
+    ):
+        requests_mock.get(
+            url=f"{constants.API_HOST}/v2/tasking/quotation?page=0",
+            json={"content": [], "totalPages": 1},
+        )
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            assert not list(tasking.Quotation.all())
 
 
 class TestFeasibilityStudy:
@@ -187,7 +209,6 @@ class TestFeasibilityStudy:
     )
 
     @pytest.mark.parametrize("feasibility_study_id", [None, FEASIBILITY_ID])
-    @pytest.mark.parametrize("workspace_id", [None, WORKSPACE_ID])
     @pytest.mark.parametrize("order_id", [None, ORDER_ID])
     @pytest.mark.parametrize(
         "decision", [None, ["NOT_DECIDED", "ACCEPTED"], ["ACCEPTED"]]
@@ -206,7 +227,6 @@ class TestFeasibilityStudy:
         self,
         requests_mock: req_mock.Mocker,
         feasibility_study_id: str | None,
-        workspace_id: str | None,
         order_id: str | None,
         decision: list[tasking.FeasibilityStatus] | None,
         sort_by: utils.SortingField | None,
@@ -214,8 +234,6 @@ class TestFeasibilityStudy:
         query_params: dict[str, Any] = {}
         if feasibility_study_id:
             query_params["id"] = feasibility_study_id
-        if workspace_id:
-            query_params["workspaceId"] = workspace_id
         if order_id:
             query_params["orderId"] = order_id
         if decision:
@@ -236,12 +254,37 @@ class TestFeasibilityStudy:
             requests_mock.get(url=url, json=response)
         feasibility_studies = tasking.FeasibilityStudy.all(
             feasibility_study_id=feasibility_study_id,
-            workspace_id=workspace_id,
             order_id=order_id,
             decision=decision,
             sort_by=sort_by,
         )
         assert list(feasibility_studies) == [self.feasibility_study] * 4
+
+    def test_should_warn_when_getting_all_with_workspace_id(
+        self, requests_mock: req_mock.Mocker
+    ):
+        requests_mock.get(
+            url=f"{constants.API_HOST}/v2/tasking/feasibility-studies?workspaceId={self.WORKSPACE_ID}&page=0",
+            json={"content": [], "totalPages": 1},
+        )
+        with pytest.warns(
+            DeprecationWarning,
+            match="`workspace_id` is deprecated and will be removed in version 5.0.0.",
+        ):
+            assert not list(
+                tasking.FeasibilityStudy.all(workspace_id=self.WORKSPACE_ID)
+            )
+
+    def test_should_not_warn_when_getting_all_without_workspace_id(
+        self, requests_mock: req_mock.Mocker
+    ):
+        requests_mock.get(
+            url=f"{constants.API_HOST}/v2/tasking/feasibility-studies?page=0",
+            json={"content": [], "totalPages": 1},
+        )
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            assert not list(tasking.FeasibilityStudy.all())
 
     def test_should_accept(self):
         feasibility_study = dataclasses.replace(
