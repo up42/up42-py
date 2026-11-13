@@ -2,6 +2,7 @@ import dataclasses
 import datetime
 import functools
 import importlib.metadata
+import inspect
 import json
 import logging
 import pathlib
@@ -95,6 +96,37 @@ def deprecation(
             )
             message = f"`{func.__qualname__}` is deprecated and will be removed in version {version}{replace_with}."
             warnings.warn(message, DeprecationWarning, stacklevel=2)
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return actual_decorator
+
+
+def deprecated_argument(
+    argument_name: str,
+    version: str,
+):
+    """
+    Decorator for deprecation warnings on a single argument, raised only when it is passed.
+
+    Args:
+        argument_name: Name of the deprecated argument.
+        version: The breaking package version
+    """
+
+    def actual_decorator(func):
+        signature = inspect.signature(func)
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            bound = signature.bind_partial(*args, **kwargs)
+            if bound.arguments.get(argument_name) is not None:
+                warnings.warn(
+                    f"`{argument_name}` is deprecated and will be removed in version {version}.",
+                    DeprecationWarning,
+                    stacklevel=2,
+                )
             return func(*args, **kwargs)
 
         return wrapper

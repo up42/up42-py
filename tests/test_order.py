@@ -1,6 +1,7 @@
 import dataclasses
 import urllib
 import uuid
+import warnings
 from typing import Any
 
 import pytest
@@ -289,7 +290,6 @@ class TestOrder:
     ):
         assert "info" not in repr(data_order)
 
-    @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize("order_type", [None, "ARCHIVE", "TASKING"])
     @pytest.mark.parametrize("status", [None, ["CREATED", "PLACED"]])
     @pytest.mark.parametrize(
@@ -308,7 +308,6 @@ class TestOrder:
     @parameterize_with_order_data
     def test_should_get_all(
         self,
-        workspace_id: str | None,
         order_type: order.OrderType | None,
         status: list[order.OrderStatus] | None,
         sub_status: list[order.OrderSubStatus] | None,
@@ -322,8 +321,6 @@ class TestOrder:
         order_metadata: dict,
     ):
         query_params: dict[str, Any] = {}
-        if workspace_id:
-            query_params["workspaceId"] = workspace_id
         if order_type:
             query_params["type"] = order_type
         if status:
@@ -356,7 +353,6 @@ class TestOrder:
 
         orders = order.Order.all(
             ids=ids,
-            workspace_id=workspace_id,
             order_type=order_type,
             status=status,
             sub_status=sub_status,
@@ -385,6 +381,32 @@ class TestOrder:
                 assert hasattr(order_item.details, "polarization")
                 assert hasattr(order_item.details, "scene_size")
                 assert hasattr(order_item.details, "looks")
+
+    def test_should_warn_when_getting_all_with_workspace_id(
+        self, requests_mock: req_mock.Mocker
+    ):
+        requests_mock.get(
+            url=f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}&page=0",
+            json={"content": [], "totalPages": 1},
+        )
+        with pytest.warns(
+            DeprecationWarning,
+            match="`workspace_id` is deprecated and will be removed in version 5.0.0.",
+        ):
+            assert not list(
+                order.Order.all(workspace_id=constants.WORKSPACE_ID)
+            )
+
+    def test_should_not_warn_when_getting_all_without_workspace_id(
+        self, requests_mock: req_mock.Mocker
+    ):
+        requests_mock.get(
+            url=f"{constants.API_HOST}/v2/orders?page=0",
+            json={"content": [], "totalPages": 1},
+        )
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            assert not list(order.Order.all())
 
     @parameterize_with_order_data
     def test_should_update(
