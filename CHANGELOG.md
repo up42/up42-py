@@ -30,6 +30,13 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+
+### 4.4.0a2
+**November 16, 2026**
+### Deprecated
+- `Job.workspace_id` is deprecated and will be removed in version `5.0.0`.
+- `JobTemplate.workspace_id` is deprecated and will be removed in version `5.0.0`.
+
 ### 4.4.0a1
 **November 1, 2026**
 ### Security
