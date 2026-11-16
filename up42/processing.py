@@ -95,6 +95,7 @@ class JobMetadata(TypedDict):
     jobID: str
     accountID: str
     workspaceID: str | None
+    """`workspaceID` is deprecated and will be removed in version 5.0.0."""
     definition: dict
     results: JobResults | None
     creditConsumption: dict | None
@@ -128,6 +129,7 @@ class Job:
     id: str
     account_id: str
     workspace_id: str | None
+    """`workspace_id` is deprecated and will be removed in version 5.0.0."""
     definition: dict
     status: JobStatus
     created: datetime.datetime
@@ -208,6 +210,7 @@ class Job:
         # used for performance tuning and testing only
         page_size: int | None = None,
     ) -> Iterator["Job"]:
+        """`workspace_id` is deprecated and will be removed in version 5.0.0."""
         if workspace_id is not None:
             warnings.warn(
                 WORKSPACE_ID_DEPRECATION_MESSAGE,
