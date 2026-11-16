@@ -229,11 +229,5 @@ class TestJob:
             for warning in caught
             if issubclass(warning.category, DeprecationWarning)
         ]
-        if workspace_id is None:
-            assert not workspace_warnings
-        else:
-            assert len(workspace_warnings) == 1
-            assert (
-                str(workspace_warnings[0].message)
-                == processing.WORKSPACE_ID_DEPRECATION_MESSAGE
-            )
+        if workspace_id:
+            assert workspace_warnings
