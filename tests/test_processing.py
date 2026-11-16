@@ -210,8 +210,9 @@ class TestJob:
                 "links": [],
             },
         )
-        assert (
-            list(
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always", DeprecationWarning)
+            jobs = list(
                 processing.Job.all(
                     process_id=process_id,
                     workspace_id=workspace_id,
@@ -222,5 +223,17 @@ class TestJob:
                     ids=ids,
                 )
             )
-            == [tpc.JOB] * 5
-        )
+        assert jobs == [tpc.JOB] * 5
+        workspace_warnings = [
+            warning
+            for warning in caught
+            if issubclass(warning.category, DeprecationWarning)
+        ]
+        if workspace_id is None:
+            assert not workspace_warnings
+        else:
+            assert len(workspace_warnings) == 1
+            assert (
+                str(workspace_warnings[0].message)
+                == processing.WORKSPACE_ID_DEPRECATION_MESSAGE
+            )

@@ -12,6 +12,10 @@ from up42 import base, host, utils
 
 ISO_FORMAT_LENGTH = 23  # precision including milliseconds
 
+WORKSPACE_ID_DEPRECATION_MESSAGE = (
+    "`workspace_id` is deprecated and will be removed in version 5.0.0."
+)
+
 
 @dataclasses.dataclass(frozen=True)
 class ValidationError:
@@ -204,6 +208,12 @@ class Job:
         # used for performance tuning and testing only
         page_size: int | None = None,
     ) -> Iterator["Job"]:
+        if workspace_id is not None:
+            warnings.warn(
+                WORKSPACE_ID_DEPRECATION_MESSAGE,
+                DeprecationWarning,
+                stacklevel=2,
+            )
         query_params = {
             key: str(value)
             for key, value in {

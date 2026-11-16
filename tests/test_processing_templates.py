@@ -412,6 +412,10 @@ class TestJobTemplate:
             additional_matcher=body_matcher,
         )
         template = SampleJobTemplate(title=tpc.TITLE)
-        assert template.execute(budget_id=budget_id) == tpc.JOB
+        with pytest.warns(
+            DeprecationWarning,
+            match="workspace_id",
+        ):
+            assert template.execute(budget_id=budget_id) == tpc.JOB
         assert template.is_valid and not template.errors
         assert template.cost == cost

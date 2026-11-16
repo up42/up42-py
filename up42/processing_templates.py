@@ -1,5 +1,6 @@
 import abc
 import dataclasses
+import warnings
 from typing import ClassVar
 
 import pystac
@@ -108,6 +109,11 @@ class JobTemplate:
         return not self.errors
 
     def execute(self, budget_id: str | None = None) -> processing.Job:
+        warnings.warn(
+            processing.WORKSPACE_ID_DEPRECATION_MESSAGE,
+            DeprecationWarning,
+            stacklevel=2,
+        )
         url = host.endpoint(
             f"/v2/processing/processes/{self.process_id}/execution"
         )
