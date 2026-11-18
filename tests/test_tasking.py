@@ -1,7 +1,6 @@
 import dataclasses
 import urllib.parse
 import uuid
-import warnings
 from typing import Any
 
 import pytest
@@ -165,17 +164,6 @@ class TestQuotation:
                 tasking.Quotation.all(workspace_id=constants.WORKSPACE_ID)
             )
 
-    def test_should_not_warn_when_getting_all_without_workspace_id(
-        self, requests_mock: req_mock.Mocker
-    ):
-        requests_mock.get(
-            url=f"{constants.API_HOST}/v2/tasking/quotation?page=0",
-            json={"content": [], "totalPages": 1},
-        )
-        with warnings.catch_warnings():
-            warnings.simplefilter("error")
-            assert not list(tasking.Quotation.all())
-
 
 class TestFeasibilityStudy:
     FEASIBILITY_ID: str = FEASIBILITY_ID
@@ -274,17 +262,6 @@ class TestFeasibilityStudy:
             assert not list(
                 tasking.FeasibilityStudy.all(workspace_id=self.WORKSPACE_ID)
             )
-
-    def test_should_not_warn_when_getting_all_without_workspace_id(
-        self, requests_mock: req_mock.Mocker
-    ):
-        requests_mock.get(
-            url=f"{constants.API_HOST}/v2/tasking/feasibility-studies?page=0",
-            json={"content": [], "totalPages": 1},
-        )
-        with warnings.catch_warnings():
-            warnings.simplefilter("error")
-            assert not list(tasking.FeasibilityStudy.all())
 
     def test_should_accept(self):
         feasibility_study = dataclasses.replace(

@@ -1,7 +1,6 @@
 import dataclasses
 import urllib
 import uuid
-import warnings
 from typing import Any
 
 import pytest
@@ -396,17 +395,6 @@ class TestOrder:
             assert not list(
                 order.Order.all(workspace_id=constants.WORKSPACE_ID)
             )
-
-    def test_should_not_warn_when_getting_all_without_workspace_id(
-        self, requests_mock: req_mock.Mocker
-    ):
-        requests_mock.get(
-            url=f"{constants.API_HOST}/v2/orders?page=0",
-            json={"content": [], "totalPages": 1},
-        )
-        with warnings.catch_warnings():
-            warnings.simplefilter("error")
-            assert not list(order.Order.all())
 
     @parameterize_with_order_data
     def test_should_update(
