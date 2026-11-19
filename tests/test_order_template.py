@@ -76,8 +76,10 @@ class TestBatchOrderTemplate:
     def test_should_place(self, requests_mock: req_mock.Mocker):
         estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
         requests_mock.post(url=estimate_url, json=ESTIMATE_PAYLOAD)
-        placement_url = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
-        requests_mock.post(url=placement_url, json=PLACEMENT_PAYLOAD)
+        placement_url = f"{constants.API_HOST}/v2/orders"
+        requests_mock.post(
+            url=placement_url, json=PLACEMENT_PAYLOAD, complete_qs=True
+        )
         budget_id = str(uuid.uuid4())
         template = order_template.BatchOrderTemplate(
             data_product_id=constants.DATA_PRODUCT_ID,
@@ -107,8 +109,10 @@ class TestBatchOrderTemplate:
     ):
         estimate_url = f"{constants.API_HOST}/v2/orders/estimate"
         requests_mock.post(url=estimate_url, json=ESTIMATE_PAYLOAD)
-        placement_url = f"{constants.API_HOST}/v2/orders?workspaceId={constants.WORKSPACE_ID}"
-        requests_mock.post(url=placement_url, json=PLACEMENT_PAYLOAD)
+        placement_url = f"{constants.API_HOST}/v2/orders"
+        requests_mock.post(
+            url=placement_url, json=PLACEMENT_PAYLOAD, complete_qs=True
+        )
         template = order_template.BatchOrderTemplate(
             data_product_id=constants.DATA_PRODUCT_ID,
             display_name=DISPLAY_NAME,

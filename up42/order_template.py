@@ -88,6 +88,6 @@ class BatchOrderTemplate:
         )
 
     def place(self) -> list[OrderReference | OrderError]:
-        url = host.endpoint(f"/v2/orders?workspaceId={self.workspace_id}")
+        url = host.endpoint("/v2/orders")
         batch = self.session.post(url=url, json=self._payload).json()
         return _get_items(batch, OrderReference)
