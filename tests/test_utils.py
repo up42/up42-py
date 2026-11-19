@@ -1,6 +1,7 @@
 import itertools
 import json
 import pathlib
+import warnings
 from unittest import mock
 from urllib import parse
 
@@ -205,6 +206,11 @@ class DeprecatedClass:
     pass
 
 
+@utils.deprecated_argument("old", "2.0.0")
+def function_with_deprecated_argument(new=None, old=None):
+    return new, old
+
+
 class TestDeprecationDecorator:
     def test_deprecation_warning_on_function(self):
         with pytest.warns(
@@ -219,3 +225,26 @@ class TestDeprecationDecorator:
             match="`DeprecatedClass` is deprecated and will be removed in version 2.0.0 Use `NewClass` instead.",
         ):
             DeprecatedClass()
+
+
+class TestDeprecatedArgumentDecorator:
+    @pytest.mark.parametrize(
+        "args, kwargs", [((None, "value"), {}), ((), {"old": "value"})]
+    )
+    def test_should_warn_when_argument_is_passed(
+        self, args: tuple, kwargs: dict
+    ):
+        with pytest.warns(
+            DeprecationWarning,
+            match="`old` is deprecated and will be removed in version 2.0.0.",
+        ):
+            assert function_with_deprecated_argument(*args, **kwargs) == (
+                None,
+                "value",
+            )
+
+    @pytest.mark.parametrize("kwargs", [{}, {"old": None}, {"new": "value"}])
+    def test_should_not_warn_when_argument_is_not_passed(self, kwargs: dict):
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            function_with_deprecated_argument(**kwargs)
