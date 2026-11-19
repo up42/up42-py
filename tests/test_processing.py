@@ -154,7 +154,6 @@ class TestJob:
     @pytest.mark.parametrize(
         "process_id", [None, [tpc.PROCESS_ID, "another-id"]]
     )
-    @pytest.mark.parametrize("workspace_id", [None, constants.WORKSPACE_ID])
     @pytest.mark.parametrize(
         "status", [None, random.choices(list(processing.JobStatus), k=2)]
     )
@@ -170,7 +169,6 @@ class TestJob:
         self,
         requests_mock: req_mock.Mocker,
         process_id: list[str] | None,
-        workspace_id: str | None,
         status: list[processing.JobStatus] | None,
         min_duration: int | None,
         max_duration: int | None,
@@ -180,8 +178,6 @@ class TestJob:
         query_params: dict[str, Any] = {}
         if process_id:
             query_params["processId"] = ",".join(process_id)
-        if workspace_id:
-            query_params["workspaceId"] = workspace_id
         if status:
             query_params["status"] = ",".join(entry.value for entry in status)
         if min_duration:
@@ -210,12 +206,10 @@ class TestJob:
                 "links": [],
             },
         )
-        with warnings.catch_warnings(record=True) as caught:
-            warnings.simplefilter("always", DeprecationWarning)
-            jobs = list(
+        assert (
+            list(
                 processing.Job.all(
                     process_id=process_id,
-                    workspace_id=workspace_id,
                     status=status,
                     min_duration=min_duration,
                     max_duration=max_duration,
@@ -223,11 +217,20 @@ class TestJob:
                     ids=ids,
                 )
             )
-        assert jobs == [tpc.JOB] * 5
-        workspace_warnings = [
-            warning
-            for warning in caught
-            if issubclass(warning.category, DeprecationWarning)
-        ]
-        if workspace_id:
-            assert workspace_warnings
+            == [tpc.JOB] * 5
+        )
+
+    def test_should_warn_when_getting_all_with_workspace_id(
+        self, requests_mock: req_mock.Mocker
+    ):
+        requests_mock.get(
+            url=f"{tpc.JOBS_URL}?workspaceId={constants.WORKSPACE_ID}",
+            json={"jobs": [], "links": []},
+        )
+        with pytest.warns(
+            DeprecationWarning,
+            match="`workspace_id` is deprecated and will be removed in version 5.0.0.",
+        ):
+            assert not list(
+                processing.Job.all(workspace_id=constants.WORKSPACE_ID)
+            )

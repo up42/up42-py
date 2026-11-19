@@ -1,6 +1,5 @@
 import abc
 import dataclasses
-import warnings
 from typing import ClassVar
 
 import pystac
@@ -13,7 +12,6 @@ class JobTemplate:
     session = base.Session()
     process_id: ClassVar[str]
     workspace_id: str | base.WorkspaceId
-    """`workspace_id` is deprecated and will be removed in version 5.0.0."""
     errors: set[processing.ValidationError] = set()
     process_description: dict = {}
 
@@ -110,12 +108,6 @@ class JobTemplate:
         return not self.errors
 
     def execute(self, budget_id: str | None = None) -> processing.Job:
-        """`workspace_id` is deprecated and will be removed in version 5.0.0."""
-        warnings.warn(
-            processing.WORKSPACE_ID_DEPRECATION_MESSAGE,
-            DeprecationWarning,
-            stacklevel=2,
-        )
         url = host.endpoint(
             f"/v2/processing/processes/{self.process_id}/execution"
         )
