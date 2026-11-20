@@ -33,7 +33,7 @@ For more information, see [UP42 Python package description](https://pypi.org/pro
 ### 4.4.0a4
 **November 20, 2026**
 ### Added
-- Added `user_id` to `Item.up42` and `Collection.up42`. It carries the same value as `workspace_id`.
+- Added `user_id` to `Item.up42` and `Collection.up42`.
 ### Deprecated
 - The `workspace_id` attribute of `Item.up42` and `Collection.up42` is deprecated and will be removed in version `5.0.0`. Use `user_id` instead.
 
