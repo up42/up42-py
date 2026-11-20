@@ -191,6 +191,7 @@ class Job:
         return cls.from_metadata(metadata)
 
     @classmethod
+    @utils.deprecated_argument("workspace_id", "5.0.0")
     def all(
         cls,
         process_id: list[str] | None = None,
