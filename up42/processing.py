@@ -31,10 +31,6 @@ class JobStatus(enum.Enum):
     FAILED = "failed"
     RELEASED = "released"
 
-    @classmethod
-    def _missing_(cls, value):
-        return cls.SUCCESSFUL if value == "captured" else None
-
 
 TERMINAL_STATUSES = [
     JobStatus.RELEASED,

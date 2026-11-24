@@ -30,6 +30,11 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 5.0.0a2
+**November 24, 2026**
+### Removed
+- The legacy `captured` job status is no longer parsed as `JobStatus.SUCCESSFUL`; the API no longer returns it.
+
 ### 5.0.0a1
 **November 24, 2026**
 ### Removed

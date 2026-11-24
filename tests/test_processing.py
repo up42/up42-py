@@ -38,14 +38,10 @@ class TestCost:
 
 
 class TestJobStatus:
-    def test_should_parse_captured_as_successful(self):
-        assert (
-            processing.JobStatus("captured") == processing.JobStatus.SUCCESSFUL
-        )
-
-    def test_should_reject_unknown_status(self):
+    @pytest.mark.parametrize("value", ["captured", "unknown"])
+    def test_should_reject_unknown_status(self, value: str):
         with pytest.raises(ValueError):
-            processing.JobStatus("unknown")
+            processing.JobStatus(value)
 
 
 class TestJob:
