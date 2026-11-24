@@ -1,7 +1,6 @@
 import dataclasses
 import datetime
 import enum
-import warnings
 from collections.abc import Iterator
 from typing import TypedDict
 
@@ -19,39 +18,7 @@ class ValidationError:
     name: str
 
 
-_CAPTURED_DEPRECATION_MESSAGE = (
-    "`JobStatus.CAPTURED` is deprecated and will be removed in version 4.0.0."
-    "Use `JobStatus.SUCCESSFUL` instead."
-)
-
-
-class _JobStatusMeta(enum.EnumMeta):
-    def __getattribute__(cls, name):
-        _check_deprecated(name)
-        return super().__getattribute__(name)
-
-    def __call__(cls, value, *args, **kwargs):
-        member = super().__call__(value, *args, **kwargs)
-        _check_deprecated(member.name)
-        return member
-
-    def __getitem__(cls, name):
-        _check_deprecated(name)
-        return super().__getitem__(name)
-
-
-def _check_deprecated(name):
-    if name == "CAPTURED":
-        warnings.warn(
-            _CAPTURED_DEPRECATION_MESSAGE,
-            FutureWarning,
-        )
-
-
-class JobStatus(
-    enum.Enum,
-    metaclass=_JobStatusMeta,
-):
+class JobStatus(enum.Enum):
     CREATED = "created"
     LICENSED = "licensed"
     UNLICENSED = "unlicensed"
@@ -62,22 +29,20 @@ class JobStatus(
     RUNNING = "running"
     SUCCESSFUL = "successful"
     FAILED = "failed"
-    CAPTURED = "captured"
-    """`JobStatus.CAPTURED` is deprecated and will be removed in version 4.0.0. Use `JobStatus.SUCCESSFUL` instead."""
     RELEASED = "released"
 
+    @classmethod
+    def _missing_(cls, value):
+        return cls.SUCCESSFUL if value == "captured" else None
 
-# Prevent the SDK itself from emitting the warning when declaring this list
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore", FutureWarning)
-    TERMINAL_STATUSES = [
-        JobStatus.CAPTURED,
-        JobStatus.RELEASED,
-        JobStatus.INVALID,
-        JobStatus.REJECTED,
-        JobStatus.UNLICENSED,
-        JobStatus.SUCCESSFUL,
-    ]
+
+TERMINAL_STATUSES = [
+    JobStatus.RELEASED,
+    JobStatus.INVALID,
+    JobStatus.REJECTED,
+    JobStatus.UNLICENSED,
+    JobStatus.SUCCESSFUL,
+]
 
 
 class JobResults(TypedDict, total=False):
