@@ -30,10 +30,22 @@ You can check your current version with the following command:
 
 For more information, see [UP42 Python package description](https://pypi.org/project/up42-py/).
 
+### 4.4.0a6
+**November 26, 2026**
+### Deprecated
+- The `workspace_id` attribute of `BatchOrderTemplate` is deprecated and will be removed in version `5.0.0`.
+
+### 4.4.0a5
+**November 26, 2026**
+### Security
+- Updated certifi to >=2026.10.18.
+- Updated filelock to >=4.2.1.
+
 ### 4.4.0a4
 **November 25, 2026**
 ### Deprecated
-- The `workspace_id` attribute of `BatchOrderTemplate` is deprecated and will be removed in version `5.0.0`.
+- The `workspace_id` attribute of `Item.up42` and `Collection.up42` is deprecated and will be removed in version `5.0.0`.
+
 ### 4.4.0a3
 **November 19, 2026**
 ### Deprecated

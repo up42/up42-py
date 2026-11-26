@@ -86,13 +86,22 @@ class Up42Extension:
     order_id = Up42ExtensionProperty("up42-order:id")
     asset_id = Up42ExtensionProperty("up42-system:asset_id")
     account_id = Up42ExtensionProperty("up42-system:account_id")
-    workspace_id = Up42ExtensionProperty("up42-system:workspace_id")
     job_id = Up42ExtensionProperty("up42-system:job_id")
     source = Up42ExtensionProperty("up42-system:source")
     metadata_version = Up42ExtensionProperty("up42-system:metadata_version")
 
     def __init__(self, reference: dict):
         self._reference = reference
+
+    @property
+    @utils.deprecation(None, "5.0.0")
+    def workspace_id(self):
+        return self._reference.get("up42-system:workspace_id")
+
+    @workspace_id.setter
+    @utils.deprecation(None, "5.0.0")
+    def workspace_id(self, value):
+        self._reference["up42-system:workspace_id"] = value
 
 
 class Up42ExtensionProvider:

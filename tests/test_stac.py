@@ -137,7 +137,6 @@ MAPPING = [
     ("order_id", "up42-order:id"),
     ("asset_id", "up42-system:asset_id"),
     ("account_id", "up42-system:account_id"),
-    ("workspace_id", "up42-system:workspace_id"),
     ("job_id", "up42-system:job_id"),
     ("source", "up42-system:source"),
     ("metadata_version", "up42-system:metadata_version"),
@@ -186,6 +185,30 @@ class TestUp42ExtensionProvider:
         new_value = "new-value"
         setattr(entity.up42, attribute, new_value)  # type: ignore
         assert entity_dict[key] == new_value
+
+    def test_should_warn_when_getting_workspace_id(self):
+        with pytest.warns(
+            DeprecationWarning,
+            match=(
+                "`Up42Extension.workspace_id` is deprecated and will be "
+                "removed in version 5.0.0."
+            ),
+        ):
+            assert self.item.up42.workspace_id == "workspace-id"  # type: ignore
+
+    def test_should_warn_when_setting_workspace_id(self):
+        item = self.item.clone()
+        with pytest.warns(
+            DeprecationWarning,
+            match=(
+                "`Up42Extension.workspace_id` is deprecated and will be "
+                "removed in version 5.0.0."
+            ),
+        ):
+            item.up42.workspace_id = "new-workspace-id"  # type: ignore
+        assert (
+            item.properties["up42-system:workspace_id"] == "new-workspace-id"
+        )
 
 
 class TestBulkDeletion:
